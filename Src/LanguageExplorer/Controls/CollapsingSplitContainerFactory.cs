@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,25 +36,19 @@ namespace LanguageExplorer.Controls
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
-			string toolMachineName,
-			LcmCache cache,
-			IRecordList recordList,
-			DataTree dataTree,
-			ToolStripMenuItem printMenu)
+			string toolMachineName, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
 		{
 			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			var parentSplitterPanelControl = mainCollapsingSplitContainer.SecondPanel;
-
 			parentSplitterPanelControl.SuspendLayout();
 			foreach (Control childControl in parentSplitterPanelControl.Controls)
 			{
 				childControl.Dispose();
 			}
 			parentSplitterPanelControl.Controls.Clear();
-
 			var recordBar = new RecordBar(flexComponentParameters.PropertyTable)
 			{
 				IsFlatList = false
@@ -63,16 +57,13 @@ namespace LanguageExplorer.Controls
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
-
 			var paneBarContainer = new PaneBarContainer(recordEditView, paneBar);
 			var panel2ChildControlAsControl = (Control)paneBarContainer;
-
 			var newCollapsingSplitContainer = new CollapsingSplitContainer
 			{
 				SecondCollapseZone = BasicSecondCollapseZoneWidth
 			};
 			newCollapsingSplitContainer.SuspendLayout();
-
 			newCollapsingSplitContainer.Orientation = verticalSplitter ? Orientation.Vertical : Orientation.Horizontal;
 			newCollapsingSplitContainer.FirstControl = recordBar;
 			newCollapsingSplitContainer.FirstLabel = AreaResources.ksRecordListLabel;
@@ -81,18 +72,15 @@ namespace LanguageExplorer.Controls
 			parentSplitterPanelControl.Controls.Add(newCollapsingSplitContainer);
 			newCollapsingSplitContainer.Dock = DockStyle.Fill;
 			paneBarContainer.InitializeFlexComponent(flexComponentParameters);
-
 			newCollapsingSplitContainer.ResumeLayout();
 			parentSplitterPanelControl.ResumeLayout();
 			panelButton.BringToFront();
 			recordBar.BringToFront();
 			panel2ChildControlAsControl.BringToFront();
-
 			newCollapsingSplitContainer.SplitterDistance = flexComponentParameters.PropertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
 			mainCollapsingSplitContainer.SecondControl = newCollapsingSplitContainer;
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			recordEditView.FinishInitialization();
-
 			return newCollapsingSplitContainer;
 		}
 

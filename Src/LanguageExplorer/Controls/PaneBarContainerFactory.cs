@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,6 @@ namespace LanguageExplorer.Controls
 				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
 			mainChildControl.BringToFront();
-
 			return newPaneBarContainer;
 		}
 
@@ -63,7 +62,6 @@ namespace LanguageExplorer.Controls
 				}
 			}
 			mainChildControl.BringToFront();
-
 			return newPaneBarContainer;
 		}
 

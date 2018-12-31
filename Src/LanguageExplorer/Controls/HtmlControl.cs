@@ -1,13 +1,14 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
-using System.Windows.Forms;
-using MsHtmHstInterop;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Gecko;
+using MsHtmHstInterop;
 
 namespace LanguageExplorer.Controls
 {
@@ -15,11 +16,6 @@ namespace LanguageExplorer.Controls
 	public class HtmlControl : MainUserControl
 	{
 		private string m_url;
-		private GeckoWebBrowser m_browser;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		private Container components = null;
 
 		/// <summary>
@@ -39,7 +35,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get the browser.
 		/// </summary>
-		public GeckoWebBrowser Browser => m_browser;
+		public GeckoWebBrowser Browser { get; private set; }
 
 		/// <summary>
 		/// Get/Set the URL for the control.
@@ -56,12 +52,11 @@ namespace LanguageExplorer.Controls
 			{
 				// Review (Hasso): is there a case in which we would *want* to set m_url to null specifically (not about:blank)?
 				m_url = value ?? "about:blank";
-
-				if (m_browser.Handle == IntPtr.Zero)
+				if (Browser.Handle == IntPtr.Zero)
 				{
 					return; // This should never happen.
 				}
-				m_browser.Navigate(m_url);
+				Browser.Navigate(m_url);
 			}
 		}
 
@@ -72,14 +67,13 @@ namespace LanguageExplorer.Controls
 		/// Used for allowing a web page/JavaScript to interact with C# code.
 		/// (See Src\LexText\ParserUI\ParseWordDlg.cs for an example)
 		/// </remarks>
-		public object Document => m_browser.Document;
+		public object Document => Browser.Document;
 
 		/// <summary>
 		/// The HTML text of the document currently loaded in the browser
 		/// TODO: implement get for GeckoFX browser
 		/// </summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText
 		{
 			get
@@ -89,7 +83,7 @@ namespace LanguageExplorer.Controls
 			}
 			set
 			{
-				m_browser.LoadHtml(value, null);
+				Browser.LoadHtml(value, null);
 			}
 		}
 
@@ -100,7 +94,7 @@ namespace LanguageExplorer.Controls
 			InitializeComponent();
 			AccNameDefault = "HtmlControl";	// default accessibility name
 			// no right-click context menu needed
-			m_browser.NoDefaultContextMenu = true;
+			Browser.NoDefaultContextMenu = true;
 
 		}
 
@@ -111,11 +105,11 @@ namespace LanguageExplorer.Controls
 		{
 			try
 			{
-				m_browser.GoBack();
+				Browser.GoBack();
 			}
 			catch
 			{
-				m_browser.Refresh();
+				Browser.Refresh();
 			}
 		}
 
@@ -126,11 +120,11 @@ namespace LanguageExplorer.Controls
 		{
 			try
 			{
-				m_browser.GoForward();
+				Browser.GoForward();
 			}
 			catch
 			{
-				m_browser.Refresh();
+				Browser.Refresh();
 			}
 		}
 
@@ -147,8 +141,6 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get key state.
 		/// </summary>
-		/// <param name="vKey"></param>
-		/// <returns></returns>
 		[DllImport("User32.dll")]
 		public static extern short GetAsyncKeyState(int vKey);
 
@@ -171,7 +163,6 @@ namespace LanguageExplorer.Controls
 					case (uint)Keys.PageDown:
 					case (uint)Keys.PageUp:
 						throw new COMException("", 1);  // returns HRESULT = S_FALSE
-
 					case (uint) Keys.F:			// all of these are the same: allow these control key sequences
 					case (uint) Keys.End:
 					case (uint) Keys.Home:
@@ -194,19 +185,20 @@ namespace LanguageExplorer.Controls
 		/// </param>
 		protected override void Dispose( bool disposing )
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if ( disposing )
 			{
-				m_browser?.Dispose();
+				Browser?.Dispose();
 				components?.Dispose();
 			}
 			m_url = null;
-			m_browser = null;
+			Browser = null;
 
 			base.Dispose( disposing );
 		}
@@ -222,22 +214,22 @@ namespace LanguageExplorer.Controls
 		{
 //			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HtmlControl));
 			//this.m_browser = new AxSHDocVw.AxWebBrowser();
-			this.m_browser = new GeckoWebBrowser();
+			this.Browser = new GeckoWebBrowser();
 			//((System.ComponentModel.ISupportInitialize)(this.m_browser)).BeginInit();
 			this.SuspendLayout();
 			//
 			// m_browser
 			//
-			this.m_browser.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.Browser.Dock = System.Windows.Forms.DockStyle.Fill;
 			//this.m_browser.Enabled = true;
 			//this.m_browser.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("m_browser.OcxState")));
-			this.m_browser.Size = new System.Drawing.Size(320, 184);
-			this.m_browser.TabIndex = 1;
+			this.Browser.Size = new System.Drawing.Size(320, 184);
+			this.Browser.TabIndex = 1;
 			//
 			// HtmlControl
 			//
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																		  this.m_browser});
+																		  this.Browser});
 			this.Name = "HtmlControl";
 			this.Size = new System.Drawing.Size(320, 184);
 			//((System.ComponentModel.ISupportInitialize)(this.m_browser)).EndInit();

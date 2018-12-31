@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,19 +19,16 @@ namespace LanguageExplorer.Controls
 	/// of user input and then doing some search function after either a pause or a
 	/// change in the text box.
 	/// </summary>
-	public class SearchTimer: IDisposable
+	public sealed class SearchTimer : IDisposable
 	{
 		private readonly Timer m_timer;
 		private bool m_fTimerTickSet;
 		private readonly Control m_owningControl;
 		private readonly int m_interval;
 		private List<Control> m_controlsToDisable;
-
 		private readonly Searcher m_searcher;
 
-		/// <summary>
-		/// Creates a SearchTimer.
-		/// </summary>
+		/// <summary />
 		/// <param name="owningControl">This control's cursor will be changed to WaitCursor while searching.</param>
 		/// <param name="interval">Number of milliseconds to pause after user input before starting a search.</param>
 		/// <param name="searcher">The delegate that will do the searching.</param>
@@ -42,9 +39,7 @@ namespace LanguageExplorer.Controls
 			m_controlsToDisable = controlsToDisable;
 		}
 
-		/// <summary>
-		/// Creates a SearchTimer.
-		/// </summary>
+		/// <summary />
 		/// <param name="owningControl">This control's cursor will be changed to WaitCursor while searching.</param>
 		/// <param name="interval">Number of milliseconds to pause after user input before starting a search.</param>
 		/// <param name="searcher">The delegate that will do the searching.</param>
@@ -54,12 +49,10 @@ namespace LanguageExplorer.Controls
 			{
 				throw new ArgumentNullException(nameof(owningControl));
 			}
-
 			if (searcher == null)
 			{
 				throw new ArgumentNullException(nameof(searcher));
 			}
-
 			m_timer = new Timer();
 			m_owningControl = owningControl;
 			m_interval = interval;
@@ -67,26 +60,25 @@ namespace LanguageExplorer.Controls
 		}
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary/>
+
+		/// <summary />
 		~SearchTimer()
 		{
 			Dispose(false);
 		}
-#endif
 
-		/// <summary/>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
-		protected virtual void Dispose(bool disposing)
+		/// <summary />
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (IsDisposed)
@@ -106,7 +98,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// When the timer interval elapses, this method runs the search function.
 		/// </summary>
-		protected virtual void TimerEventProcessor(object sender, EventArgs eventArgs)
+		private void TimerEventProcessor(object sender, EventArgs eventArgs)
 		{
 			var oldCursor = m_owningControl.Cursor;
 			try

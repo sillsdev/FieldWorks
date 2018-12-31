@@ -5,9 +5,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SilEncConverters40;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Controls
 {

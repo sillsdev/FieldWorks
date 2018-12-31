@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,15 +28,10 @@ namespace LanguageExplorer.Controls
 		/// <remarks>If we don't initialize this, we will get black borders around paragraphs
 		/// unless the caller always remembers to set the bacground color.</remarks>
 		protected Color m_BackColor = SystemColors.Window;
-		/// <summary>Label to be stuck at start of first paragraph.</summary>
-		protected ITsString m_tssLabel;
-		/// <summary>overall text direction</summary>
-		protected bool m_fRtl;
-		/// <summary><c>true</c> if paragraphs are displayed lazily</summary>
-		protected bool m_fLazy;
+
 		/// <summary>The view construtor's height estimator</summary>
 		protected IHeightEstimator m_heightEstimator;
-		private ContentTypes m_contentType = ContentTypes.kctNormal;
+
 		private ITsString m_oneSpaceString;
 		#endregion
 
@@ -146,29 +141,17 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets or sets the label to be stuck at start of first paragraph.
 		/// </summary>
-		public ITsString Label
-		{
-			get { return m_tssLabel; }
-			set { m_tssLabel = value; }
-		}
+		public ITsString Label { get; set; }
 
 		/// <summary>
 		/// Gets or sets the overall text direction.
 		/// </summary>
-		public bool RightToLeft
-		{
-			get { return m_fRtl; }
-			set { m_fRtl = value; }
-		}
+		public bool RightToLeft { get; set; }
 
 		/// <summary>
 		/// Gets or sets if data should be loaded lazily.
 		/// </summary>
-		public bool Lazy
-		{
-			get { return m_fLazy; }
-			set { m_fLazy = value; }
-		}
+		public bool Lazy { get; set; }
 
 		/// <summary>
 		/// Gets or sets the default writing system id for the view constructor. Only the setter
@@ -216,11 +199,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Controls which of the three kinds of paragraph content is displayed.
 		/// </summary>
-		protected virtual ContentTypes ContentType
-		{
-			get { return m_contentType; }
-			set { m_contentType = value; }
-		}
+		protected virtual ContentTypes ContentType { get; set; } = ContentTypes.kctNormal;
 
 		/// <summary>
 		/// Gets/sets option to display the translation of StTxtPara rather than Contents.
@@ -335,7 +314,6 @@ namespace LanguageExplorer.Controls
 			//	2. If the creator of the view constructor specified a default style
 			//		and background color, invoke those as overrides.
 			var tsTextProps = (ITsTextProps)vwenv.DataAccess.get_UnknownProp(paraHvo, StParaTags.kflidStyleRules);
-
 			if (vc.DefaultParaStyle.Length > 0)
 			{
 				vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, vc.DefaultParaStyle);
@@ -357,14 +335,6 @@ namespace LanguageExplorer.Controls
 			{
 				ApplyParagraphStyleProps(vwenv, paraHvo, vc);
 			}
-			// This was causing assertions in the layoutmgr
-			// TODO (TE-5777): Should be able to do this with an in-memory stylesheet.
-			//			if (DisplayTranslation)
-			//			{
-			//				// display the back translation text as double spaced
-			//				vwenv.set_IntProperty((int)FwTextPropType.ktptLineHeight,
-			//					(int)FwTextPropVar.ktpvRelative, 20000);
-			//			}
 			// The body of the paragraph is either editable or not.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, vc.Editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);
 			// Make the paragraph containing the paragraph contents.
@@ -400,7 +370,6 @@ namespace LanguageExplorer.Controls
 					vwenv.AddObj(hvoOuter, vc, (int)StTextFrags.kfrFootnoteReference);
 				}
 			}
-
 			if (contentType == ContentTypes.kctSimpleBT)
 			{
 				// If a translation is being shown instead of the paragraph, then show it instead
@@ -442,7 +411,6 @@ namespace LanguageExplorer.Controls
 			bool fIsRightToLeftPara;
 			int wsPara;
 			GetWsAndDirectionForPara(paraHvo, out fIsRightToLeftPara, out wsPara);
-
 			// This sets the current default paragraph writing system from the relevant field spec.
 			// It will only be applied if the paragraph itself lacks a writing system.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBaseWs, (int)FwTextPropVar.ktpvDefault, wsPara);
@@ -457,8 +425,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="paraHvo">The HVO of the paragraph.</param>
 		/// <param name="fIsRightToLeftPara">flag indicating whether direction is right to left.</param>
 		/// <param name="wsPara">The writing system.</param>
-		protected void GetWsAndDirectionForPara(int paraHvo, out bool fIsRightToLeftPara,
-			out int wsPara)
+		protected void GetWsAndDirectionForPara(int paraHvo, out bool fIsRightToLeftPara, out int wsPara)
 		{
 			fIsRightToLeftPara = RightToLeft;
 			wsPara = DefaultWs;
@@ -512,7 +479,6 @@ namespace LanguageExplorer.Controls
 						vwenv.AddObjVecItems(StTextTags.kflidParagraphs, this, (int)StTextFrags.kfrFootnotePara);
 						break;
 					}
-
 				case (int)StTextFrags.kfrText:
 					{
 						if (HandleEmptyText(vwenv, hvo))
@@ -523,7 +489,7 @@ namespace LanguageExplorer.Controls
 						{
 							return; // leave view empty, better than crashing.
 						}
-						if (m_fLazy)
+						if (Lazy)
 						{
 							vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this, (int)StTextFrags.kfrPara);
 						}
@@ -546,17 +512,15 @@ namespace LanguageExplorer.Controls
 					{
 						// The label is not editable.
 						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-						vwenv.AddString(m_tssLabel);
+						vwenv.AddString(Label);
 						break;
 					}
-
 				case (int)StTextFrags.kfrPara:
 				case (int)StTextFrags.kfrFootnotePara:
 					{
 						InsertParagraphBody(vwenv, hvo, frag, true, ContentType, this);
 						break;
 					}
-
 				case (int)StTextFrags.kfrTranslation:
 					{
 						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, Editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);

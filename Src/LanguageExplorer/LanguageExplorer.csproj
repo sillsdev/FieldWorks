@@ -399,7 +399,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
-    <Compile Include="Controls\IsSfmFile.cs" />
+    <Compile Include="SfmToXml\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
     <Compile Include="Controls\ProgressHandler.cs" />
     <Compile Include="Impls\IFlexConverterOnlyForTesting.cs" />
@@ -407,7 +407,7 @@
     <Compile Include="Impls\LexImportCustomField.cs" />
     <Compile Include="Impls\LexImportField.cs" />
     <Compile Include="Impls\LexImportFields.cs" />
-    <Compile Include="Controls\LocationInfo.cs" />
+    <Compile Include="Impls\LocationInfo.cs" />
     <Compile Include="Controls\MaxStringWidthForColumnEnv.cs" />
     <Compile Include="Controls\MoveOrCopyFilesController.cs" />
     <Compile Include="Controls\MoveOrCopyFilesDlg.cs">
@@ -1216,7 +1216,6 @@
     <Compile Include="Controls\DetailControls\ViewSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\FwAccessibleObject.cs" />
     <Compile Include="Controls\HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1542,7 +1541,7 @@
     <Compile Include="Controls\XMLViews\NonEmptyTargetControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ObjectLabels.cs" />
+    <Compile Include="Controls\ObjectLabel.cs" />
     <Compile Include="Controls\XMLViews\ObjectListPublisher.cs" />
     <Compile Include="Controls\XMLViews\PartGenerator.cs" />
     <Compile Include="Controls\XMLViews\ReallySimpleListChooser.cs">

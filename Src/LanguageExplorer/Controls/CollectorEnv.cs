@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,14 +58,10 @@ namespace LanguageExplorer.Controls
 		#region Data members
 		/// <summary />
 		protected IVwEnv m_baseEnv;
-		/// <summary />
-		protected ISilDataAccess m_sda;
-		/// <summary>The object we are currently building a display of.</summary>
-		protected int m_hvoCurr;
+
 		/// <summary>Collection of StackItems, keeps track of outer context.</summary>
 		protected List<StackItem> m_stack = new List<StackItem>();
-		/// <summary>Prop currently being built</summary>
-		protected int m_tagCurrent;
+
 		/// <summary />
 		protected int m_ws;
 		/// <summary>tracks the current vector item being added in AddObj </summary>
@@ -88,10 +84,6 @@ namespace LanguageExplorer.Controls
 		/// cleared (and we note an occurrence of ktagNotAnAttr) if it is set
 		/// when clearing m_fIsPropOpen.</summary>
 		protected bool m_fGotNonPropInfo;
-		/// <summary>This is used to detect virtual properties in setting notifiers.  See LT-8245.</summary>
-		protected IFwMetaDataCache m_mdc;
-		/// <summary>This is used to find virtual property handlers in setting notifiers.  See LT-8245</summary>
-		protected IVwCacheDa m_cda;
 		#endregion
 
 		#region Constructor
@@ -107,8 +99,8 @@ namespace LanguageExplorer.Controls
 		public CollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot)
 		{
 			m_baseEnv = baseEnv;
-			m_sda = sda;
-			m_hvoCurr = baseEnv?.OpenObject ?? hvoRoot;
+			DataAccess = sda;
+			OpenObject = baseEnv?.OpenObject ?? hvoRoot;
 		}
 		#endregion
 
@@ -116,21 +108,13 @@ namespace LanguageExplorer.Controls
 		/// Get/set the metadata cache.  This is needed to detect virtual properties in setting
 		/// notifiers.  See LT-8245.
 		/// </summary>
-		public IFwMetaDataCache MetaDataCache
-		{
-			get { return m_mdc; }
-			set { m_mdc = value; }
-		}
+		public IFwMetaDataCache MetaDataCache { get; set; }
 
 		/// <summary>
 		/// Get/set the cache data access.  This is needed to get virtual properties handlers in
 		/// setting notifiers.  See LT-8245.
 		/// </summary>
-		public IVwCacheDa CacheDa
-		{
-			get { return m_cda; }
-			set { m_cda = value; }
-		}
+		public IVwCacheDa CacheDa { get; set; }
 
 		/// <summary>
 		/// Resets this instance.
@@ -139,7 +123,7 @@ namespace LanguageExplorer.Controls
 		{
 			m_vectorItemIndex.Clear();
 			m_ws = 0;
-			m_tagCurrent = 0;
+			CurrentPropTag = 0;
 			m_stack.Clear();
 			m_cpropPrev = new PrevPropCounter();
 		}
@@ -148,7 +132,7 @@ namespace LanguageExplorer.Controls
 		/// Gets the property currently being built.
 		/// </summary>
 		/// <value>The current prop tag.</value>
-		protected int CurrentPropTag => m_tagCurrent;
+		protected int CurrentPropTag { get; set; }
 
 		/// <summary>
 		/// Gets the count of previous occurrences of the given property at our current stack
@@ -168,7 +152,7 @@ namespace LanguageExplorer.Controls
 		/// Gets the count of the previous occurrences of the given property at the bottom
 		/// of the stack.
 		/// </summary>
-		public int CountOfPrevPropAtRoot => (m_stack.Count == 0) ? m_cpropPrev.GetCount(m_tagCurrent) : m_cpropPrev.GetCount(m_stack[0].m_tag);
+		public int CountOfPrevPropAtRoot => m_stack.Count == 0 ? m_cpropPrev.GetCount(CurrentPropTag) : m_cpropPrev.GetCount(m_stack[0].m_tag);
 
 		/// <summary>
 		/// Accumulate a TsString into our result. The base implementation does nothing.
@@ -207,8 +191,8 @@ namespace LanguageExplorer.Controls
 		/// <param name="ihvo">The index of this object in the collection being displayed.</param>
 		protected virtual void OpenTheObject(int hvo, int ihvo)
 		{
-			m_stack.Add(new StackItem(m_hvoCurr, hvo, m_tagCurrent, ihvo));
-			m_hvoCurr = hvo;
+			m_stack.Add(new StackItem(OpenObject, hvo, CurrentPropTag, ihvo));
+			OpenObject = hvo;
 			m_fIsPropOpen = false;
 		}
 
@@ -228,8 +212,8 @@ namespace LanguageExplorer.Controls
 			CheckForNonPropInfo();
 			var top = m_stack[m_stack.Count - 1];
 			m_stack.RemoveAt(m_stack.Count - 1);
-			m_hvoCurr = top.m_hvoOuter;
-			m_tagCurrent = top.m_tag;
+			OpenObject = top.m_hvoOuter;
+			CurrentPropTag = top.m_tag;
 			m_ws = 0;
 			// objects are always added as part of some property, so if we close one,
 			// we must be back inside the property we were in when we added it.
@@ -260,9 +244,8 @@ namespace LanguageExplorer.Controls
 		{
 			CheckForNonPropInfo();
 			m_fIsPropOpen = true;
-
 			IncrementPropCount(tag);
-			m_tagCurrent = tag;
+			CurrentPropTag = tag;
 			m_ws = ws;
 		}
 
@@ -319,7 +302,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		public void AddLazyItems(int[] _rghvo, int chvo, IVwViewConstructor _vwvc, int frag)
+		public void AddLazyItems(int[] rghvo, int chvo, IVwViewConstructor vwvc, int frag)
 		{
 			throw new NotSupportedException("AddLazyItems is not supported");
 		}
@@ -335,10 +318,10 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		public virtual void AddUnicodeProp(int tag, int ws, IVwViewConstructor _vwvc)
+		public virtual void AddUnicodeProp(int tag, int ws, IVwViewConstructor vwvc)
 		{
 			OpenProp(tag, ws);
-			AddResultString(m_sda.get_UnicodeProp(m_hvoCurr, tag), ws);
+			AddResultString(DataAccess.get_UnicodeProp(OpenObject, tag), ws);
 			CloseProp();
 		}
 
@@ -402,7 +385,7 @@ namespace LanguageExplorer.Controls
 		public virtual void AddObjVec(int tag, IVwViewConstructor vc, int frag)
 		{
 			OpenVecProp(tag);
-			vc.DisplayVec(this, m_hvoCurr, tag, frag);
+			vc.DisplayVec(this, OpenObject, tag, frag);
 			CloseProp();
 		}
 
@@ -415,9 +398,7 @@ namespace LanguageExplorer.Controls
 			m_fIsParaOpen = false;
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public virtual void OpenParagraph()
 		{
 			OpenFlowObject();
@@ -439,9 +420,7 @@ namespace LanguageExplorer.Controls
 			AddTsString(tss);
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseTableBody()
 		{
 			CloseFlowObject();
@@ -455,12 +434,10 @@ namespace LanguageExplorer.Controls
 			OpenParagraph();
 		}
 
-		/// <summary>
-		/// Member CurrentObject
-		/// </summary>
+		/// <summary />
 		public int CurrentObject()
 		{
-			return m_hvoCurr;
+			return OpenObject;
 		}
 
 		/// <summary>
@@ -470,25 +447,19 @@ namespace LanguageExplorer.Controls
 		{
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseDiv()
 		{
 			CloseFlowObject();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseTableRow()
 		{
 			CloseFlowObject();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void OpenTable(int cCols, VwLength vlWidth, int mpBorder, VwAlignment vwalign, VwFramePosition frmpos, VwRule vwrule, int mpSpacing, int mpPadding, bool fSelectOneCol)
 		{
 			OpenFlowObject();
@@ -505,7 +476,7 @@ namespace LanguageExplorer.Controls
 		/// fixed by the IVwEnv interface. Compare OpenTheObject(), which handles changing
 		/// which one is current.
 		/// </summary>
-		public int OpenObject => m_hvoCurr;
+		public int OpenObject { get; protected set; }
 
 		/// <summary>
 		/// Member AddStringProp
@@ -517,7 +488,7 @@ namespace LanguageExplorer.Controls
 				return;
 			}
 			OpenProp(tag);
-			AddTsString(m_sda.get_StringProp(m_hvoCurr, tag));
+			AddTsString(DataAccess.get_StringProp(OpenObject, tag));
 			CloseProp();
 		}
 
@@ -580,7 +551,7 @@ namespace LanguageExplorer.Controls
 				return;
 			}
 			OpenProp(tag);
-			AddResultString(m_sda.get_IntProp(m_hvoCurr, tag).ToString());
+			AddResultString(DataAccess.get_IntProp(OpenObject, tag).ToString());
 			CloseProp();
 		}
 
@@ -617,9 +588,7 @@ namespace LanguageExplorer.Controls
 		{
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public virtual void OpenTableBody()
 		{
 			OpenFlowObject();
@@ -663,7 +632,7 @@ namespace LanguageExplorer.Controls
 				return;
 			}
 			OpenProp(tag, ws);
-			AddTsString(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
+			AddTsString(DataAccess.get_MultiStringAlt(OpenObject, tag, ws));
 			CloseProp();
 		}
 
@@ -693,7 +662,7 @@ namespace LanguageExplorer.Controls
 			{
 				return;
 			}
-			var hvoItem = m_sda.get_ObjectProp(m_hvoCurr, tag);
+			var hvoItem = DataAccess.get_ObjectProp(OpenObject, tag);
 			if (hvoItem != 0)
 			{
 				OpenProp(tag);
@@ -715,9 +684,7 @@ namespace LanguageExplorer.Controls
 			dmpy = 10;
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void OpenSpan()
 		{
 			OpenFlowObject();
@@ -737,9 +704,7 @@ namespace LanguageExplorer.Controls
 			CloseProp();
 		}
 
-		/// <summary>
-		/// Member AddPicture
-		/// </summary>
+		/// <summary />
 		/// <param name="pict">pict</param>
 		/// <param name="tag">tag</param>
 		/// <param name="ttpCaption">The TTP caption.</param>
@@ -760,9 +725,7 @@ namespace LanguageExplorer.Controls
 			CloseParagraph();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseTableFooter()
 		{
 			CloseFlowObject();
@@ -782,9 +745,7 @@ namespace LanguageExplorer.Controls
 			CloseProp();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void OpenTableHeader()
 		{
 			OpenFlowObject();
@@ -796,17 +757,13 @@ namespace LanguageExplorer.Controls
 			OpenParagraph();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseTableHeader()
 		{
 			CloseFlowObject();
 		}
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public virtual void OpenTableCell(int nRowSpan, int nColSpan)
 		{
 			OpenFlowObject();
@@ -815,11 +772,9 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets a DataAccess
 		/// </summary>
-		public ISilDataAccess DataAccess => m_sda;
+		public ISilDataAccess DataAccess { get; }
 
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
+		/// <summary />
 		public void CloseTable()
 		{
 			CloseFlowObject();
@@ -843,9 +798,9 @@ namespace LanguageExplorer.Controls
 				OpenProp((int)VwSpecialAttrTags.ktagNotAnAttr);
 			}
 			int ihvo;
-			if (m_vectorItemIndex.TryGetValue(m_tagCurrent, out ihvo))
+			if (m_vectorItemIndex.TryGetValue(CurrentPropTag, out ihvo))
 			{
-				m_vectorItemIndex[m_tagCurrent] = ++ihvo;
+				m_vectorItemIndex[CurrentPropTag] = ++ihvo;
 			}
 			else
 			{
@@ -926,7 +881,7 @@ namespace LanguageExplorer.Controls
 			}
 			OpenProp(tag);
 			int[] items = null;
-			var managedSda = m_sda as ISilDataAccessManaged;
+			var managedSda = DataAccess as ISilDataAccessManaged;
 			int cobj;
 			if (managedSda != null)
 			{
@@ -934,16 +889,16 @@ namespace LanguageExplorer.Controls
 				// Note: we COULD do this with the VecProp method of the regular ISilDataAccess.
 				// But in practice the SDA will (almost?) always be a managed one, and using the
 				// COM VecProp involves marshalling that is messy and slow on both sides.
-				items = managedSda.VecProp(m_hvoCurr, tag);
+				items = managedSda.VecProp(OpenObject, tag);
 				cobj = items.Length;
 			}
 			else
 			{
-				cobj = m_sda.get_VecSize(m_hvoCurr, tag);
+				cobj = DataAccess.get_VecSize(OpenObject, tag);
 			}
 			for (var i = 0; i < cobj; i++)
 			{
-				var hvoItem = items?[i] ?? m_sda.get_VecItem(m_hvoCurr, tag, i);
+				var hvoItem = items?[i] ?? DataAccess.get_VecItem(OpenObject, tag, i);
 				if (DisplayThisObject(hvoItem, tag))
 				{
 					OpenTheObject(hvoItem, i);
@@ -969,10 +924,10 @@ namespace LanguageExplorer.Controls
 				return;
 			}
 			OpenProp(tag);
-			var cobj = m_sda.get_VecSize(m_hvoCurr, tag);
+			var cobj = DataAccess.get_VecSize(OpenObject, tag);
 			for (var i = cobj - 1; i >= 0; --i)
 			{
-				var hvoItem = m_sda.get_VecItem(m_hvoCurr, tag, i);
+				var hvoItem = DataAccess.get_VecItem(OpenObject, tag, i);
 				if (DisplayThisObject(hvoItem, tag))
 				{
 					OpenTheObject(hvoItem, i);
@@ -984,7 +939,6 @@ namespace LanguageExplorer.Controls
 					break;
 				}
 			}
-
 			CloseProp();
 		}
 

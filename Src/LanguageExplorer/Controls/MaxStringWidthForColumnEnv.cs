@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,19 +18,19 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	internal class MaxStringWidthForColumnEnv : StringMeasureEnv
 	{
-		IDictionary<int, Font> m_wsToFont = new Dictionary<int, Font>();
-		int m_fontWs = 0;
-		IVwStylesheet m_styleSheet = null;
-		ILgWritingSystemFactory m_wsf = null;
-
+		private IDictionary<int, Font> m_wsToFont = new Dictionary<int, Font>();
+		private int m_fontWs;
+		private IVwStylesheet m_styleSheet;
+		private ILgWritingSystemFactory m_wsf;
 		/// <summary>Index of the column being examined.</summary>
 		protected int m_icolToWatch = -1;
 		/// <summary>Index of the current column.</summary>
 		protected int m_icolCurr = -1;
 		/// <summary>Index of the current row.</summary>
-		int m_irowCurr = -1;
+		private int m_irowCurr = -1;
 		/// <summary>Number of columns spanned by the current cell.</summary>
-		protected int m_nColSpanCurr = 0;
+		protected int m_nColSpanCurr;
+		private bool m_fInPara;
 
 		/// <summary />
 		public MaxStringWidthForColumnEnv(IVwStylesheet stylesheet, ISilDataAccess sda, int hvoRoot, Graphics graphics, int icolumn)
@@ -62,7 +62,6 @@ namespace LanguageExplorer.Controls
 			base.OpenTableCell(nRowSpan, nColSpan);
 		}
 
-		bool m_fInPara;
 
 		/// <summary />
 		public override void OpenParagraph()

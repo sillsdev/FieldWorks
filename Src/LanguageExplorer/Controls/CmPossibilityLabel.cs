@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,21 +11,17 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.Controls
 {
 	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widget that wants to list them.
+	/// Class used when returning a list of objects for a UI Widget that wants to list them.
 	/// </summary>
 	public class CmPossibilityLabel : ObjectLabel
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty, string displayWs)
 			: base(cache, pos, displayNameProperty, displayWs)
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty)
 			: base(cache, pos, displayNameProperty)
 		{
@@ -34,7 +30,6 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets the possibility.
 		/// </summary>
-		/// <value>The possibility.</value>
 		public ICmPossibility Possibility => (ICmPossibility)Object;
 
 		#region ITssValue Implementation
@@ -135,7 +130,7 @@ namespace LanguageExplorer.Controls
 						abbrWs = userWs;
 					}
 					if ((m_displayNameProperty != null)
-					    && (m_displayNameProperty == "LongName"))
+						&& (m_displayNameProperty == "LongName"))
 					{
 						Debug.Assert(!string.IsNullOrEmpty(abbr));
 						tisb.AppendTsString(TsStringUtils.MakeString(abbr, abbrWs));
@@ -144,7 +139,6 @@ namespace LanguageExplorer.Controls
 					Debug.Assert(!string.IsNullOrEmpty(name));
 					tisb.AppendTsString(TsStringUtils.MakeString(name, nameWs));
 				}
-
 				return tisb.GetString();
 			}
 		}

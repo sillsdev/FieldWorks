@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var englishWS = m_cache.WritingSystemFactory.GetWsFromStr("en");
 			if (m_fDoingMorphType)
 			{
-				m_writer.WriteAttributeString("type", GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, englishWS)));
+				m_writer.WriteAttributeString("type", GetText(DataAccess.get_MultiStringAlt(OpenObject, tag, englishWS)));
 				// also output the GUID so any tool that processes the output can know for sure which morphtype it is
 				// Save the morphtype.  See LT-8288.
 				m_guidMorphType = WriteGuidAttributeForCurrentObj();
@@ -146,7 +146,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else if (m_fItemIsOpen)
 			{
-				WriteLangAndContent(ws, tag == LexSenseTags.kflidGloss ? GetMarkedGloss(m_hvoCurr, tag, ws) : m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
+				WriteLangAndContent(ws, tag == LexSenseTags.kflidGloss ? GetMarkedGloss(OpenObject, tag, ws) : DataAccess.get_MultiStringAlt(OpenObject, tag, ws));
 			}
 			else
 			{
@@ -169,7 +169,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					default:
 						if (tag == m_flidStTextTitle)
 						{
-							var tssTitle = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+							var tssTitle = DataAccess.get_MultiStringAlt(OpenObject, tag, ws);
 							if (!pendingTitles.Contains(tssTitle))
 							{
 								pendingTitles.Add(tssTitle);
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						else if (tag == m_flidStTextSource)
 						{
-							var source = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+							var source = DataAccess.get_MultiStringAlt(OpenObject, tag, ws);
 							if (!pendingSources.Contains(source))
 							{
 								pendingSources.Add(source);
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						else if (tag == CmMajorObjectTags.kflidDescription)
 						{
-							var comment = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+							var comment = DataAccess.get_MultiStringAlt(OpenObject, tag, ws);
 							if (!pendingComments.Contains(comment))
 							{
 								pendingComments.Add(comment);
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						else
 						{
-							Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws);
+							Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", OpenObject, tag, ws);
 						}
 						break;
 				}
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected Guid WriteGuidAttributeForCurrentObj()
 		{
-			return WriteGuidAttributeForObj(m_hvoCurr);
+			return WriteGuidAttributeForObj(OpenObject);
 		}
 
 		protected Guid WriteGuidAttributeForObj(int hvo)
@@ -222,7 +222,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private ITsString GetMarkedGloss(int hvo, int tag, int ws)
 		{
-			var tss = m_sda.get_MultiStringAlt(hvo, tag, ws);
+			var tss = DataAccess.get_MultiStringAlt(hvo, tag, ws);
 			string sPrefix = null;
 			string sPostfix = null;
 			if (m_guidMorphType == m_mmtEnclitic.Guid)
@@ -261,13 +261,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_writer.WriteString(m_sPendingPrefix);
 				m_sPendingPrefix = null;
 			}
-			m_writer.WriteString(GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws)));
+			m_writer.WriteString(GetText(DataAccess.get_MultiStringAlt(OpenObject, tag, ws)));
 		}
 
 		private void WriteItem(int tag, string itemType, int alt)
 		{
 			var ws = alt;
-			var tss = ws == 0 ? m_sda.get_StringProp(m_hvoCurr, tag) : m_sda.get_MultiStringAlt(m_hvoCurr, tag, alt);
+			var tss = ws == 0 ? DataAccess.get_StringProp(OpenObject, tag) : DataAccess.get_MultiStringAlt(OpenObject, tag, alt);
 			WriteItem(itemType, tss);
 		}
 
@@ -549,10 +549,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//here the m_hvoCurr object is an StText object, store the IText owner
 					//so that we can pull data from it to close out the interlinear-text element
 					//Naylor 11-2011
-					text = m_repoObj.GetObject(m_hvoCurr).Owner;
+					text = m_repoObj.GetObject(OpenObject).Owner;
 					if (text is IScrBook || text is IScrSection)
 					{
-						m_writer.WriteAttributeString("guid", m_repoObj.GetObject(m_hvoCurr).Guid.ToString());
+						m_writer.WriteAttributeString("guid", m_repoObj.GetObject(OpenObject).Guid.ToString());
 					}
 					else
 					{
@@ -726,10 +726,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (tag)
 			{
 				case MoMorphTypeTags.kflidPrefix:
-					m_sPendingPrefix = m_sda.get_UnicodeProp(m_hvoCurr, tag);
+					m_sPendingPrefix = DataAccess.get_UnicodeProp(OpenObject, tag);
 					break;
 				case MoMorphTypeTags.kflidPostfix:
-					m_writer.WriteString(m_sda.get_UnicodeProp(m_hvoCurr, tag));
+					m_writer.WriteString(DataAccess.get_UnicodeProp(OpenObject, tag));
 					break;
 			}
 			base.AddUnicodeProp(tag, ws, vwvc);
@@ -740,7 +740,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void SetRootObject(ICmObject objRoot)
 		{
-			m_hvoCurr = objRoot.Hvo;
+			OpenObject = objRoot.Hvo;
 			SetTextTitleAndMetadata(objRoot as IStText);
 		}
 

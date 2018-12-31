@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -56,12 +56,10 @@ namespace LanguageExplorer.Controls
 			MainControl = mainControl;
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
-
 			if (mainControl is IPaneBarUser)
 			{
 				((IPaneBarUser)mainControl).MainPaneBar = PaneBar;
 			}
-
 			Dock = DockStyle.Fill;
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
@@ -79,7 +77,6 @@ namespace LanguageExplorer.Controls
 					Width = Parent.Width;
 				}
 			}
-
 			base.OnLayout(levent);
 		}
 
@@ -93,7 +90,6 @@ namespace LanguageExplorer.Controls
 					Width = Parent.Width;
 				}
 			}
-
 			base.OnSizeChanged(e);
 		}
 
@@ -154,7 +150,6 @@ namespace LanguageExplorer.Controls
 			{
 				throw new ArgumentNullException(nameof(targetCandidates));
 			}
-
 			// Don't bother with the IPaneBar.
 			// Just check out the main control.
 			return ((ICtrlTabProvider)MainControl).PopulateCtrlTabTargetCandidateList(targetCandidates);

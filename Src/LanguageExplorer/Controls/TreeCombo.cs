@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,9 +40,7 @@ namespace LanguageExplorer.Controls
 
 		#region Construction and disposal
 
-		/// <summary>
-		/// Construct one.
-		/// </summary>
+		/// <summary />
 		public TreeCombo()
 		{
 			base.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -70,13 +68,11 @@ namespace LanguageExplorer.Controls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
 			if (disposing)
 			{
@@ -107,14 +103,13 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets or sets the drop down style.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ComboBoxStyle DropDownStyle
 		{
 			get
 			{
 				return ComboBoxStyle.DropDownList;
 			}
-
 			set
 			{
 				// do nothing
@@ -130,7 +125,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get the tree...this is mainly for methods that load the nodes.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PopupTree Tree => m_dropDownBox as PopupTree;
 
 		/// <summary>
@@ -152,7 +147,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get/set the stylesheet for the combo box.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
 			get
@@ -188,7 +183,6 @@ namespace LanguageExplorer.Controls
 					{
 						nFontSize = ((LcmStyleSheet)value).NormalFontSize;
 					}
-
 					var nFontSizeTree = (int)(Tree.Font.SizeInPoints * 1000);
 					if (nFontSize > nFontSizeTree)
 					{
@@ -204,7 +198,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get/Set the selected node.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TreeNode SelectedNode
 		{
 			get
@@ -221,7 +215,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get/Set the selected item from the list; null if none is selected.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override object SelectedItem
 		{
 			get
@@ -271,7 +265,7 @@ namespace LanguageExplorer.Controls
 		{
 			if (node == null)
 			{
-				TextBox.Text = "";
+				TextBox.Text = string.Empty;
 			}
 			else
 			{

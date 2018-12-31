@@ -17,7 +17,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls
 {
-	internal class MasterCategory
+	internal sealed class MasterCategory
 	{
 		private string m_id;
 		private string m_abbrev;
@@ -108,32 +108,31 @@ namespace LanguageExplorer.Controls
 			{
 				return; // It's already in the database, so nothing more can be done.
 			}
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory,
-				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				int newOwningFlid;
+				int insertLocation;
+				DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out newOwningFlid, out insertLocation);
+				var wsf = cache.WritingSystemFactory;
+				Debug.Assert(POS != null);
+				var termWs = wsf.GetWsFromStr(m_termWs);
+				var abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
+				var defWs = wsf.GetWsFromStr(m_defWs);
+				if (m_node == null)
 				{
-					int newOwningFlid;
-					int insertLocation;
-					DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out newOwningFlid, out insertLocation);
-					var wsf = cache.WritingSystemFactory;
-					Debug.Assert(POS != null);
-					var termWs = wsf.GetWsFromStr(m_termWs);
-					var abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
-					var defWs = wsf.GetWsFromStr(m_defWs);
-					if (m_node == null)
-					{
-						// should not happen, but just in case... we still get something useful
-						POS.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
-						POS.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
-						POS.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
-					}
-					else
-					{
-						SetContentFromNode(cache, "abbrev", false, POS.Abbreviation);
-						SetContentFromNode(cache, "term", true, POS.Name);
-						SetContentFromNode(cache, "def", false, POS.Description);
-					}
-					POS.CatalogSourceId = m_id;
-				});
+					// should not happen, but just in case... we still get something useful
+					POS.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
+					POS.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
+					POS.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
+				}
+				else
+				{
+					SetContentFromNode(cache, "abbrev", false, POS.Abbreviation);
+					SetContentFromNode(cache, "term", true, POS.Name);
+					SetContentFromNode(cache, "def", false, POS.Description);
+				}
+				POS.CatalogSourceId = m_id;
+			});
 		}
 
 		private void SetContentFromNode(LcmCache cache, string sNodeName, bool fFixName, ITsMultiString item)

@@ -246,7 +246,6 @@ namespace LanguageExplorer.Controls
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
-
 				var helpTopicProvider = (m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 				if (helpTopicProvider != null) // Will be null when running tests
 				{
@@ -539,7 +538,6 @@ namespace LanguageExplorer.Controls
 			{
 				return m_ctxt;
 			}
-
 			set
 			{
 				m_ctxt = value;
@@ -846,6 +844,7 @@ namespace LanguageExplorer.Controls
 				}
 				return base.get_UnicodeProp(hvo, tag);
 			}
+
 			/// <summary>
 			/// Called when processing the where clause of the area configuration XML
 			/// </summary>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,7 @@ using SIL.Reporting;
 namespace LanguageExplorer.Controls
 {
 	/// <summary>Used to move or copy media files when they are linked to a FieldWorks project</summary>
-	public static class MoveOrCopyFilesController
+	internal static class MoveOrCopyFilesController
 	{
 		/// <summary>
 		/// Checks to see whether the given files are located in the given root directory (or any subfolder of it), and if not, prompts the user to
@@ -60,7 +60,6 @@ namespace LanguageExplorer.Controls
 				Logger.WriteError(e);
 				return files;
 			}
-
 			// Check whether the file is found within the directory.
 			if (files.All(f => FileIsInExternalLinksFolder(f, sRootDirExternalLinks)))
 			{
@@ -68,7 +67,7 @@ namespace LanguageExplorer.Controls
 			}
 			using (var dlg = new MoveOrCopyFilesDlg())
 			{
-				dlg.Initialize2(subFolder, helpTopicProvider);
+				dlg.Initialize(subFolder, helpTopicProvider);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					var choice = dlg.Choice;

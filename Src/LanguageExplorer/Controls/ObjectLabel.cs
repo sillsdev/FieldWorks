@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,7 @@ using SIL.LCModel.DomainServices;
 namespace LanguageExplorer.Controls
 {
 	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
+	/// class used when returning a list of objects for a UI Widget that wants to list them.
 	/// </summary>
 	public class ObjectLabel : ITssValue
 	{
@@ -20,15 +20,12 @@ namespace LanguageExplorer.Controls
 		/// This controls which writing system will be tried for the name to display.
 		/// </summary>
 		protected IEnumerable<int> m_writingSystemIds;
-
 		/// <summary>
 		/// controls which property of the object will be used for the name to display.
 		/// </summary>
 		protected string m_displayNameProperty;
-
 		/// <summary />
 		protected string m_displayWs;
-
 		/// <summary />
 		protected string m_bestWs;
 
@@ -75,7 +72,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs, string displayNameProperty, string displayWs, bool fIncludeNone)
 		{
-			foreach(var obj in objs)
+			foreach (var obj in objs)
 			{
 				yield return CreateObjectLabel(cache, obj, displayNameProperty, displayWs);
 			}
@@ -112,17 +109,13 @@ namespace LanguageExplorer.Controls
 			return CreateObjectLabels(cache, objs, null, null);
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty)
 			: this(cache, obj, displayNameProperty, "analysis")
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty, string sDisplayWs)
 		{
 			Cache = cache;
@@ -188,7 +181,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Create the ordered vector of writing sytems to try for displaying names.
+		/// Create the ordered vector of writing systems to try for displaying names.
 		/// </summary>
 		protected void EstablishWritingSystemsToTry(string sDisplayWs)
 		{
@@ -199,15 +192,11 @@ namespace LanguageExplorer.Controls
 
 			if (string.IsNullOrEmpty(sDisplayWs))
 			{
-				sDisplayWs = "analysis vernacular";		// very general default.
+				sDisplayWs = "analysis vernacular";     // very general default.
 			}
 			const int flid = 0;
-			m_writingSystemIds = WritingSystemServices.GetWritingSystemIdsFromLabel(Cache,
-				sDisplayWs,
-				Cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
-				Object.Hvo,
-				flid,
-				null);
+			m_writingSystemIds = WritingSystemServices.GetWritingSystemIdsFromLabel(Cache, sDisplayWs, Cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
+				Object.Hvo, flid, null);
 		}
 
 		#region ITssValue Implementation
@@ -232,17 +221,17 @@ namespace LanguageExplorer.Controls
 							case "InterlinearNameTSS":
 								return msa.InterlinearNameTSS;
 							case "LongName":
-							{
-								return TsStringUtils.MakeString(msa.LongName, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-							}
+								{
+									return TsStringUtils.MakeString(msa.LongName, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+								}
 							case "LongNameTs":
-							{
-								return msa.LongNameTs;
-							}
+								{
+									return msa.LongNameTs;
+								}
 							case "ChooserNameTS":
-							{
-								return msa.ChooserNameTS;
-							}
+								{
+									return msa.ChooserNameTS;
+								}
 						}
 					}
 					else if (m_displayNameProperty == "LongNameTSS" && Object is ILexSense)
@@ -277,29 +266,20 @@ namespace LanguageExplorer.Controls
 		#endregion ITssValue Implementation
 
 		/// <summary>
-		/// Structure used when returning a list of objects for a UI Widget that wants to list them.
+		/// Class used when returning a list of objects for a UI Widget that wants to list them.
 		/// </summary>
 		private sealed class MoInflClassLabel : ObjectLabel
 		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
+			/// <summary />
 			public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty, string displayWs)
 				: base(cache, inflClass, displayNameProperty, displayWs)
-			{
-			}
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty)
-				: base(cache, inflClass, displayNameProperty)
 			{
 			}
 
 			/// <summary>
 			/// Gets the inflection class.
 			/// </summary>
-			public IMoInflClass InflectionClass => (IMoInflClass)Object;
+			private IMoInflClass InflectionClass => (IMoInflClass)Object;
 
 			/// <summary>
 			/// the sub items of the possibility

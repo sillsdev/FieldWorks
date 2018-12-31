@@ -1,7 +1,8 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -38,7 +39,7 @@ namespace LanguageExplorer.Controls
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -112,7 +113,6 @@ namespace LanguageExplorer.Controls
 					m_textbox.Select(selStart + text.Length, 0);
 				}
 			}
-
 			m_textbox.Focus();
 			// Do select AFTER focus, otherwise, focus changes selection to whole box.
 			m_textbox.Select(newSelStart, newSelLength);
@@ -141,7 +141,6 @@ namespace LanguageExplorer.Controls
 			var selLen = m_textbox.SelectionLength;
 			var selStart = m_textbox.SelectionStart;
 			var bldr = m_textbox.Tss.GetBldr();
-
 			if (selLen > 0)
 			{
 				bldr.Replace(selStart + selLen, selStart + selLen, rightText, null); // do this BEFORE inserting leftText and changing the position
@@ -158,13 +157,11 @@ namespace LanguageExplorer.Controls
 					MessageBox.Show(FwCoreDlgs.ksNeedTextSelection, FwCoreDlgs.ksError);
 					return;
 				}
-
 				bldr.Replace(selStart, selStart, leftText + rightText, null);
 				m_textbox.Tss = bldr.GetString();
 				m_textbox.Focus();
 				m_textbox.Select(selStart + leftText.Length, 0);
 			}
-
 			m_textbox.Refresh();
 		}
 	}

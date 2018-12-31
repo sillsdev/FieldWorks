@@ -1,12 +1,13 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace LanguageExplorer.Controls
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Contains information about a location. This is essentially a cheap IVwSelection

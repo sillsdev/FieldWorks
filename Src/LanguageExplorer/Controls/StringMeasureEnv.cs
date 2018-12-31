@@ -1,10 +1,9 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Drawing;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -41,7 +40,7 @@ namespace LanguageExplorer.Controls
 		public int Width { get; protected set; }
 
 		/// <summary>
-		/// Gets the System.Drawing.Graphics object.
+		/// Gets the Graphics object.
 		/// </summary>
 		protected Graphics GraphicsObj { get; }
 
@@ -50,7 +49,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public override void AddResultString(string s)
 		{
-			base.AddResultString (s);
+			base.AddResultString(s);
 			if (s == null)
 			{
 				return;

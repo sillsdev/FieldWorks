@@ -82,7 +82,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			base.AddObjProp(tag, vc, frag);
-			var hvoItem = m_sda.get_ObjectProp(m_hvoCurr, tag);
+			var hvoItem = DataAccess.get_ObjectProp(OpenObject, tag);
 			if (hvoItem == 0 && m_hvosInCell.Count == 0)
 			{
 				m_hvosInCell.Add(0);

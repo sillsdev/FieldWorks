@@ -34,13 +34,13 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected override void DoFind(ITsString tss, int tag)
 		{
-			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
+			m_textSourceInit.SetString(tss, m_vc, DataAccess.WritingSystemFactory);
 
 			var textSource = (IVwTextSource) m_textSourceInit;
 			var ichBegin = textSource.LengthSearch;
 			if (m_StartLocation != null)
 			{
-				Debug.Assert(m_StartLocation.TopLevelHvo == m_hvoCurr && m_StartLocation.m_tag == tag);
+				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichMin;
 			}
 
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Impls
 
 			// If we haven't gotten to the same occurrence of the same object property, we haven't
 			// hit the limit.
-			if (m_LimitLocation.TopLevelHvo != m_hvoCurr || m_LimitLocation.m_tag != tag || m_LimitLocation.m_cpropPrev != CPropPrev(tag))
+			if (m_LimitLocation.TopLevelHvo != OpenObject || m_LimitLocation.m_tag != tag || m_LimitLocation.m_cpropPrev != CPropPrev(tag))
 			{
 				return false;
 			}

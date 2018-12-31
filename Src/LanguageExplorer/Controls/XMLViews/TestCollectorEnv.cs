@@ -129,7 +129,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void NoteEmptyObjectDependency(int tag)
 		{
-			var hvoObj = m_sda.get_ObjectProp(m_hvoCurr, tag);
+			var hvoObj = DataAccess.get_ObjectProp(OpenObject, tag);
 			if (hvoObj == 0)
 			{
 				NoteEmptyDependency(tag);
@@ -138,7 +138,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void NoteEmptyVectorDependency(int tag)
 		{
-			var chvo = m_sda.get_VecSize(m_hvoCurr, tag);
+			var chvo = DataAccess.get_VecSize(OpenObject, tag);
 			if (chvo == 0)
 			{
 				NoteEmptyDependency(tag);
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void NoteEmptyDependency(int tag)
 		{
-			NoteDependency(new[] { m_hvoCurr }, new[] { tag }, 1);
+			NoteDependency(new[] { OpenObject }, new[] { tag }, 1);
 		}
 
 		/// <summary>

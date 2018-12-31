@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,18 +16,14 @@ namespace LanguageExplorer.Controls
 	{
 		private bool m_isFind;
 
-		/// <summary>
-		/// Constructor for Regex Helper Context Menu, assumes it is for a search
-		/// </summary>
+		/// <summary />
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
 		public RegexHelperContextMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider) : this(textbox, helpTopicProvider, true)
 		{
 		}
 
-		/// <summary>
-		/// Constructor for the Regex Helper Context Menu
-		/// </summary>
+		/// <summary />
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
 		/// <param name="isFind">True if the menu is for searching, false if it is for replacing (shows the $n options)</param>
@@ -89,7 +85,7 @@ namespace LanguageExplorer.Controls
 		private void groupRegexText(string text)
 		{
 			var selLen = m_textbox.SelectionLength;
-			if(selLen > 0)
+			if (selLen > 0)
 			{
 				GroupText("(", ")");
 				var selStart = m_textbox.SelectionStart + 1;

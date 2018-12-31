@@ -79,7 +79,7 @@ namespace LanguageExplorer.Impls
 			Reset(); // Just in case
 			// Enhance JohnT: if we need to handle more than one root object, this would
 			// be one place to loop over them.
-			m_vc.Display(this, m_hvoCurr, m_frag);
+			m_vc.Display(this, OpenObject, m_frag);
 
 			if (m_LocationFound == null && StoppedAtLimit)
 			{
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Impls
 				// We actually had a prop open already, but we still need to do the checks for
 				// this string. In this case m_tagCurrent should hold the tag that belongs to
 				// the open property.
-				CheckForStartLocationAndLimit(m_tagCurrent);
+				CheckForStartLocationAndLimit(CurrentPropTag);
 			}
 		}
 
@@ -168,7 +168,7 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 
-			DoFind(m_sda.get_StringProp(m_hvoCurr, tag), tag);
+			DoFind(DataAccess.get_StringProp(OpenObject, tag), tag);
 
 			// We now processed the start location, so continue normally
 			m_StartLocation = null;
@@ -191,7 +191,7 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 
-			DoFind(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws), tag);
+			DoFind(DataAccess.get_MultiStringAlt(OpenObject, tag, ws), tag);
 
 			// We now processed the start location, so continue normally
 			m_StartLocation = null;
@@ -316,13 +316,13 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected virtual void DoFind(ITsString tss, int tag)
 		{
-			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
+			m_textSourceInit.SetString(tss, m_vc, DataAccess.WritingSystemFactory);
 
 			var textSource = m_textSourceInit as IVwTextSource;
 			var ichBegin = 0;
 			if (m_StartLocation != null)
 			{
-				Debug.Assert(m_StartLocation.TopLevelHvo == m_hvoCurr && m_StartLocation.m_tag == tag);
+				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichLim;
 			}
 

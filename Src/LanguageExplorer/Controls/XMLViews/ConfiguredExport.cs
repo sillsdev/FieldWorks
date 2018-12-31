@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_writer = w;
 			m_cache = cache;
 			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
-			m_mdc = cache.MetaDataCacheAccessor;
+			MetaDataCache = cache.MetaDataCacheAccessor;
 			m_sFormat = sFormat.ToLowerInvariant();
 			if (m_sFormat == "xhtml")
 			{
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void AddTimeProp(int tag, uint flags)
 		{
-			m_sTimeField = GetFieldXmlElementName(m_sda.MetaDataCache.GetFieldName(tag), tag / 1000);
+			m_sTimeField = GetFieldXmlElementName(DataAccess.MetaDataCache.GetFieldName(tag), tag / 1000);
 		}
 
 		/// <summary>
@@ -282,7 +282,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void AddTsString(ITsString tss)
 		{
-			var cpt = (CellarPropertyType)m_mdc.GetFieldType(m_tagCurrent);
+			var cpt = (CellarPropertyType)MetaDataCache.GetFieldType(CurrentPropTag);
 			if (cpt == CellarPropertyType.GenDate)
 			{
 				WriteTsString(tss, TabsToIndent());
@@ -428,7 +428,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
 			var clid = obj.ClassID;
-			var sClass = m_sda.MetaDataCache.GetClassName(clid);
+			var sClass = DataAccess.MetaDataCache.GetClassName(clid);
 			IndentLine();
 			if (m_cc == CurrentContext.insideLink)
 			{
@@ -951,7 +951,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sXml;
 			try
 			{
-				var mdc = m_sda.GetManagedMetaDataCache();
+				var mdc = DataAccess.GetManagedMetaDataCache();
 				var cpt = (CellarPropertyType)mdc.GetFieldType(flid);
 				var sField = mdc.GetFieldName(flid);
 				switch (cpt)
@@ -994,7 +994,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						// XML element tags.
 						if (!m_dictCustomUserLabels.TryGetValue(flid, out sUserLabel))
 						{
-							sUserLabel = m_sda.MetaDataCache.GetFieldLabel(flid);
+							sUserLabel = DataAccess.MetaDataCache.GetFieldLabel(flid);
 							m_dictCustomUserLabels.Add(flid, sUserLabel);
 						}
 						sXml = sXml.Replace(' ', '.');
@@ -1061,7 +1061,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sClass = null;
 			if (clid > 0 && clid < 10000)
 			{
-				sClass = m_sda.MetaDataCache.GetClassName(clid);
+				sClass = DataAccess.MetaDataCache.GetClassName(clid);
 			}
 			string sXml;
 			var sClass2 = string.Empty;
@@ -1150,11 +1150,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			try
 			{
-				if (m_sda.MetaDataCache.get_IsVirtual(flid))
+				if (DataAccess.MetaDataCache.get_IsVirtual(flid))
 				{
 					return string.Empty;
 				}
-				var sDestClass = m_sda.MetaDataCache.GetDstClsName(flid);
+				var sDestClass = DataAccess.MetaDataCache.GetDstClsName(flid);
 				if (m_cc == CurrentContext.insideLink)
 				{
 					sDestClass = sDestClass + "Link";

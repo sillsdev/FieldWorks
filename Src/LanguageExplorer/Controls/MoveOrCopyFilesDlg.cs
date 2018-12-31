@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,21 +19,14 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	public partial class MoveOrCopyFilesDlg : Form
 	{
-
-		#region Member variables
 		private string m_sHelpTopic;
 		private IHelpTopicProvider m_helpTopicProvider;
-		#endregion
-
-		#region Constructor
-
 
 		/// <summary />
 		public MoveOrCopyFilesDlg()
 		{
 			InitializeComponent();
 		}
-		#endregion
 
 		#region Event handlers
 
@@ -86,7 +79,6 @@ namespace LanguageExplorer.Controls
 			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyToNewDir, cFiles);
 			m_msgOldDir.Text = string.Format(FwCoreDlgs.ksPreviousFolder, FwUtils.ShortenMyDocsPath(sOldDir));
 			m_msgNewDir.Text = string.Format(FwCoreDlgs.ksNewFolder, FwUtils.ShortenMyDocsPath(sNewDir));
-
 			SetupHelp(helpTopicProvider, "khtpMoveOrCopyFiles");
 		}
 
@@ -95,11 +87,10 @@ namespace LanguageExplorer.Controls
 		/// whenever a file from outside LangProject.LinkedFilesRootDir is linked from this project
 		/// to find out whether the user wants to move or copy into LangProject.LinkedFilesRootDir or to leave the file where it is.
 		/// </summary>
-		public void Initialize2(string sRootDir, IHelpTopicProvider helpTopicProvider)
+		public void Initialize(string sRootDir, IHelpTopicProvider helpTopicProvider)
 		{
 			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyFilesToLinkedFilesDir);
 			m_msgOldDir.Text = string.Format(FwCoreDlgs.ksLinkedFilesFolder, FwUtils.ShortenMyDocsPath(sRootDir));
-
 			// Adjust dialog size to conceal empty space left by invisible m_msgNewDir.
 			// Buttons are anchored to the bottom, so they'll move automatically.
 			m_msgNewDir.Visible = false;
@@ -109,7 +100,6 @@ namespace LanguageExplorer.Controls
 			MinimumSize = szNew;
 			Size = szNew;
 			m_btnLeave.Enabled = true;
-
 			SetupHelp(helpTopicProvider, "khtpMoveOrCopyFile");
 		}
 
@@ -131,7 +121,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets the choice the user made (copy, move or leave).
 		/// </summary>
-		public FileLocationChoice Choice { get; private set; }
+		internal FileLocationChoice Choice { get; private set; }
 
 		/// <summary>
 		/// Fix so that 120DPI fonts don't push the buttons to the bottom of the dialog.  (See comment added to LT-8968.)

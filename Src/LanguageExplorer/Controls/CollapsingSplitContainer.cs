@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,17 +25,12 @@ namespace LanguageExplorer.Controls
 		public const int kCollapsedSize = 16;
 		/// <summary />
 		public const int kCollapseZone = 35;
-
 		/// <summary />
 		protected int m_firstCollapseZone = kCollapseZone;
 		/// <summary />
 		protected int m_secondCollapseZone = kCollapseZone;
-
 		private const int kIconOffset = 10;
 		private const int kLabelOffset = kIconOffset;
-
-		#region Data Members (non-Designer)
-
 		// The control with the icon.
 		private UserControl m_firstIconControl;
 		// The control with the icon.
@@ -45,11 +40,13 @@ namespace LanguageExplorer.Controls
 		private Control m_firstFrontedControl;
 		private Control m_secondFrontedControl;
 		// Labels to show on the button when one pane is minimized.
-		private string m_firstLabel = "";
-		private string m_secondLabel = "";
+		private string m_firstLabel = string.Empty;
+		private string m_secondLabel = string.Empty;
 		// Expand Button images in the four possible orientations.
 		private readonly Image[] m_expandSplitterIcons = new Image[4];
-		#endregion Data Members (non-Designer)
+		private int m_previousSplitterPosition = 40;
+		private int m_restoreSplitterPosition = 40;
+		private bool m_wantResetControls = true;
 
 		#region Construction
 
@@ -61,55 +58,45 @@ namespace LanguageExplorer.Controls
 			{
 				AccessibleName = "CollapsingSplitContainer";
 			}
-
 			// These buttons are set for Fill Dock.
 			// Another main control can be added,
 			// and it will be set for Fill in an event handler here.
 			// Only one of the two controls will actually be used, however,
 			// as they get swapped in and out of the parent control.
 			SuspendLayout();
-
 			Panel1MinSize = kCollapsedSize;
 			m_firstIconControl = new UserControl();
 			if (m_firstIconControl.AccessibleName == null)
 			{
 				m_firstIconControl.AccessibleName = "FirstIconControl";
 			}
-
 			m_firstIconControl.Dock = DockStyle.Fill;
 			Panel1.Controls.Add(m_firstIconControl);
 			m_firstIconControl.Click += m_panel1Btn_Click;
 			m_firstIconControl.Paint += m_panel1Btn_Paint;
-
 			FixedPanel = FixedPanel.Panel1;
-
 			Panel2MinSize = kCollapsedSize;
 			m_secondIconControl = new UserControl();
 			if (m_secondIconControl.AccessibleName == null)
 			{
 				m_secondIconControl.AccessibleName = "SecondIconControl";
 			}
-
 			m_secondIconControl.Dock = DockStyle.Fill;
 			Panel2.Controls.Add(m_secondIconControl);
 			m_secondIconControl.Click += m_panel2Btn_Click;
 			m_secondIconControl.Paint += m_panel2Btn_Paint;
-
 			// make sure Panel1 and Panel2 have AccessibleNames
 			if (Panel1.AccessibleName == null)
 			{
 				Panel1.AccessibleName = "CSC.SplitContainer.One";
 			}
-
 			if (Panel2 != null && Panel2.AccessibleName == null)
 			{
 				Panel2.AccessibleName = "CSC.SplitContainer.Two";
 			}
 			Panel2.Layout += Panel2_Layout;
 			Panel2.SizeChanged += Panel2_SizeChanged;
-
 			ResumeLayout(false);
-
 			// Convert the one icon into its four variants.
 			// Down
 			var image = m_imageList16x16.Images[0].Clone() as Image;
@@ -125,7 +112,6 @@ namespace LanguageExplorer.Controls
 			image = m_imageList16x16.Images[0].Clone() as Image;
 			image.RotateFlip(RotateFlipType.Rotate270FlipNone);
 			m_expandSplitterIcons[3] = image;
-
 			Panel1.SizeChanged += Panel1_SizeChanged;
 			BackColor = Color.FromKnownColor(KnownColor.Control); // so the splitter itself is gray
 			Panel1.BackColor = Color.FromKnownColor(KnownColor.Window); // the content areas should be white if not covered.
@@ -179,12 +165,10 @@ namespace LanguageExplorer.Controls
 				{
 					return m_firstMainControl;
 				}
-
 				if (Panel1Collapsed || SplitterDistance == kCollapsedSize || m_secondMainControl.Parent != null)
 				{
 					return m_secondMainControl;
 				}
-
 				return null; // No sensible control can be found, so return null.
 			}
 		}
@@ -208,7 +192,6 @@ namespace LanguageExplorer.Controls
 				{
 					value = new Panel();
 				}
-
 				value.Dock = DockStyle.Fill;
 				if (Panel1.Controls.Contains(m_firstMainControl))
 				{
@@ -281,8 +264,9 @@ namespace LanguageExplorer.Controls
 					SecondPanel.ResumeLayout();
 				}
 				else
+				{
 					m_secondMainControl = value;
-
+				}
 				ResetControl(SecondPanel, value);
 			}
 		}
@@ -303,7 +287,7 @@ namespace LanguageExplorer.Controls
 			int newZoneValue;
 			using (var gr = CreateGraphics())
 			{
-				newZoneValue = Math.Max((int) (newValue*gr.DpiX)/MiscUtils.kdzmpInch, kCollapseZone);
+				newZoneValue = Math.Max((int)(newValue * gr.DpiX) / MiscUtils.kdzmpInch, kCollapseZone);
 			}
 			return newZoneValue;
 		}
@@ -334,7 +318,6 @@ namespace LanguageExplorer.Controls
 		protected void ResetSplitterEventHandler(bool reactivate)
 		{
 			SplitterMoved -= OnSplitterMoved;
-
 			if (reactivate)
 			{
 				SplitterMoved += OnSplitterMoved;
@@ -355,7 +338,6 @@ namespace LanguageExplorer.Controls
 			Image icon;
 			var x = 0;
 			var y = 0;
-
 			if (Orientation == Orientation.Vertical)
 			{
 				y = kIconOffset;
@@ -374,7 +356,6 @@ namespace LanguageExplorer.Controls
 			using (var g = e.Graphics)
 			{
 				g.DrawImage(icon, x, y);
-
 				if (string.IsNullOrEmpty(label))
 				{
 					return;
@@ -415,7 +396,6 @@ namespace LanguageExplorer.Controls
 			Image icon;
 			var x = 0;
 			var y = 0;
-
 			if (Orientation == Orientation.Vertical)
 			{
 				y = kIconOffset;
@@ -429,27 +409,22 @@ namespace LanguageExplorer.Controls
 			DoBtnPaint(e, x, y, icon, m_secondLabel);
 		}
 
-		private bool m_inSplitterMovedMethod;
-		private int m_previousSplitterPosition = 40;
-		private int m_restoreSplitterPosition = 40;
 		/// <summary />
-		protected bool InSplitterMovedMethod => m_inSplitterMovedMethod;
+		protected bool InSplitterMovedMethod { get; private set; }
 
 		/// <summary />
 		protected virtual void OnSplitterMoved(object sender, SplitterEventArgs e)
 		{
-			if (m_inSplitterMovedMethod)
+			if (InSplitterMovedMethod)
 			{
 				return;
 			}
-
 			if (m_firstMainControl == null || m_secondMainControl == null)
 			{
 				m_previousSplitterPosition = SplitterDistance; // Remember it, if nothing else.
 				return;
 			}
-
-			m_inSplitterMovedMethod = true;
+			InSplitterMovedMethod = true;
 			try
 			{
 				// See if some ISnapSplitPosition wants to take over.
@@ -478,7 +453,6 @@ namespace LanguageExplorer.Controls
 						}
 					}
 				}
-
 				// In order to get here, no ISnapSplitPosition took over in the above code,
 				// if it had a chance at all, that is.
 				if (m_wantResetControls)
@@ -489,7 +463,7 @@ namespace LanguageExplorer.Controls
 			}
 			finally
 			{
-				m_inSplitterMovedMethod = false;
+				InSplitterMovedMethod = false;
 			}
 		}
 
@@ -500,7 +474,7 @@ namespace LanguageExplorer.Controls
 			// That is likely to be larger than the minimum sizes (Panel1MinSize and Panel2MinSize).
 			// In cases that have such a min suitable size, we also shrink to our real min sizes,
 			// when the SD results in it being too narrow.
-
+			//
 			// In order to get here, no ISnapSplitPosition took over in the above code,
 			// if it had a chance at all, that is.
 			bool shouldCollapse;
@@ -508,7 +482,7 @@ namespace LanguageExplorer.Controls
 			{
 				// Panel1 Shrinking (moved left or up)
 				shouldCollapse = (!IsInitializing) && SplitterDistance <= m_firstCollapseZone;
-				if (!shouldCollapse && InsideSecondCollapseZone() && m_restoreSplitterPosition > m_firstCollapseZone)
+				if (!shouldCollapse && InsideSecondCollapseZone && m_restoreSplitterPosition > m_firstCollapseZone)
 				{
 					SplitterDistance = m_restoreSplitterPosition;
 				}
@@ -519,7 +493,7 @@ namespace LanguageExplorer.Controls
 				// Panel2 shrinking (moved right or down)
 				// We need to notice if the new SplitterDistance is at the place where
 				// it can't keep going. If it is, then Panel2 gets minimized to the icon state.
-				shouldCollapse = (!IsInitializing) && InsideSecondCollapseZone();
+				shouldCollapse = (!IsInitializing) && InsideSecondCollapseZone;
 				SetControls(Panel2, shouldCollapse, m_secondIconControl, Panel1, m_firstMainControl);
 			}
 			else
@@ -555,12 +529,7 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		private bool InsideSecondCollapseZone()
-		{
-			return Orientation == Orientation.Vertical
-				? Width - SplitterDistance - SplitterWidth <= m_secondCollapseZone
-				: Height - SplitterDistance - SplitterWidth <= m_secondCollapseZone;
-		}
+		private bool InsideSecondCollapseZone => Orientation == Orientation.Vertical ? Width - SplitterDistance - SplitterWidth <= m_secondCollapseZone : Height - SplitterDistance - SplitterWidth <= m_secondCollapseZone;
 
 		private void SetControls(SplitterPanel panelA, bool shouldCollapse, UserControl minControl, SplitterPanel panelB, Control otherMainControl)
 		{
@@ -596,7 +565,6 @@ namespace LanguageExplorer.Controls
 			{
 				FixedPanel = FixedPanel.Panel1;
 			}
-
 			ResetControl(panelB, otherMainControl);
 
 		}
@@ -621,7 +589,6 @@ namespace LanguageExplorer.Controls
 			panel.ResumeLayout();
 		}
 
-		private bool m_wantResetControls = true;
 		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
@@ -648,7 +615,6 @@ namespace LanguageExplorer.Controls
 			{
 				((IPostLayoutInit)FirstControl).PostLayoutInit();
 			}
-
 			if (SecondControl is IPostLayoutInit)
 			{
 				((IPostLayoutInit)SecondControl).PostLayoutInit();

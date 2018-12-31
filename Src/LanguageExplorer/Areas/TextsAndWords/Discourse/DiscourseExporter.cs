@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 							WriteStringProp(tag, "rownum", 0);
 							break;
 						case ConstChartVc.kfragComment:
-							WriteStringProp(tag, "clauseMkr", 0, "target", m_sda.get_StringProp(m_hvoCurr, tag).Text);
+							WriteStringProp(tag, "clauseMkr", 0, "target", DataAccess.get_StringProp(OpenObject, tag).Text);
 							break;
 					}
 					break;
@@ -173,7 +173,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					break;
 				case WfiGlossTags.kflidForm:
 					m_wsGloss = ws;
-					m_glossesInCellCollector.Add(m_sda.get_MultiStringAlt(m_hvoCurr, tag, m_wsGloss).Text ?? string.Empty);
+					m_glossesInCellCollector.Add(DataAccess.get_MultiStringAlt(OpenObject, tag, m_wsGloss).Text ?? string.Empty);
 					break;
 				case ConstChartTagTags.kflidTag:
 					WriteStringProp(tag, "lit", ws); // missing marker.
@@ -191,7 +191,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void WriteStringProp(int tag, string elementTag, int alt, string extraAttr = null, string extraAttrVal = null)
 		{
 			var ws = alt;
-			var tss = ws == 0 ? m_sda.get_StringProp(m_hvoCurr, tag) : m_sda.get_MultiStringAlt(m_hvoCurr, tag, alt);
+			var tss = ws == 0 ? DataAccess.get_StringProp(OpenObject, tag) : DataAccess.get_MultiStringAlt(OpenObject, tag, alt);
 			if (elementTag == "word")
 			{
 				WriteWordForm(elementTag, tss, ws, extraAttr);
@@ -309,7 +309,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var ws = GetWsFromTsString(tss);
 			var newTss = TsStringUtils.MakeString(tss == ((ConstChartVc)m_vc).m_sMovedTextBefore ? "Preposed" : "Postposed", ws);
-			var hvoTarget = m_sda.get_ObjectProp(m_hvoCurr, ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
+			var hvoTarget = DataAccess.get_ObjectProp(OpenObject, ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
 			if (ConstituentChartLogic.HasPreviousMovedItemOnLine(m_chart, hvoTarget))
 			{
 				WriteStringVal("moveMkr", ws, newTss, "targetFirstOnLine", "false");

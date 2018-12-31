@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls
 		public int Hvo { get; protected set; }
 
 		/// <summary>
-		/// Special combo item tag, to further identify otherwise ambiguious combo selections. default = 0;
+		/// Special combo item tag, to further identify otherwise ambiguous combo selections. default = 0;
 		/// </summary>
 		public int Tag { get; protected set; }
 
@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		/// <param name="hvoAnalysis"></param>
 		/// <param name="text"></param>
-		/// <param name="tag">special tag, to identify an otherwise ambiguious combo selections.</param>
+		/// <param name="tag">special tag, to identify an otherwise ambiguous combo selections.</param>
 		public HvoTssComboItem(int hvoAnalysis, ITsString text, int tag)
 		{
 			Init(hvoAnalysis, text, tag);

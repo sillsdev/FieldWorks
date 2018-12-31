@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,7 +38,6 @@ namespace LanguageExplorer.Controls
 			{
 				toolStripMenuItem.ShortcutKeys = shortcutKeys;
 			}
-
 			return toolStripMenuItem;
 		}
 
@@ -70,9 +69,7 @@ namespace LanguageExplorer.Controls
 		internal static ToolStripMenuItem CreateHotLinkToolStripMenuItem(IList<Tuple<ToolStripMenuItem, EventHandler>> hotLinkItems, EventHandler eventHandler, string menuText, string menuTooltip = "", Image image = null)
 		{
 			var hotlinkToolStripMenuItem = CreateToolStripMenuItem(eventHandler, MungeTheMenuText(menuText, true), menuTooltip, Keys.None, image);
-
 			hotLinkItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(hotlinkToolStripMenuItem, eventHandler));
-
 			return hotlinkToolStripMenuItem;
 		}
 
@@ -89,9 +86,7 @@ namespace LanguageExplorer.Controls
 		internal static ToolStripMenuItem CreateToolStripMenuItemForToolStripMenuItem(IList<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ToolStripMenuItem mainMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
 		{
 			var toolStripMenuItem = CreateToolStripMenuItemForToolStripMenuItem(mainMenuStrip, eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image, insertIndex);
-
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-
 			return toolStripMenuItem;
 		}
 
@@ -104,18 +99,14 @@ namespace LanguageExplorer.Controls
 		internal static ToolStripMenuItem CreateToolStripMenuItemForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
 		{
 			var toolStripMenuItem = CreateToolStripMenuItem(eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image);
-
 			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, toolStripMenuItem, insertIndex);
-
 			return toolStripMenuItem;
 		}
 
 		internal static ToolStripSeparator CreateToolStripSeparatorForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex = int.MaxValue)
 		{
 			var newToolStripSeparator = new ToolStripSeparator();
-
 			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, newToolStripSeparator, insertIndex);
-
 			return newToolStripSeparator;
 		}
 
@@ -129,9 +120,7 @@ namespace LanguageExplorer.Controls
 		internal static ToolStripMenuItem CreateBaseMenuForToolStripMenuItem(ContextMenuStrip mainMenuStrip, string menuText, int insertIndex = int.MaxValue)
 		{
 			var toolStripMenuItem = new ToolStripMenuItem(MungeTheMenuText(menuText));
-
 			InsertToolStripMenuItem(mainMenuStrip.Items, toolStripMenuItem, insertIndex);
-
 			return toolStripMenuItem;
 		}
 
@@ -144,20 +133,15 @@ namespace LanguageExplorer.Controls
 		internal static ToolStripMenuItem CreateToolStripMenuItemForContextMenuStrip(IList<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
 		{
 			var toolStripMenuItem = CreateToolStripMenuItem(eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image);
-
 			InsertToolStripMenuItem(contextMenuStrip.Items, toolStripMenuItem, insertIndex);
-
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-
 			return toolStripMenuItem;
 		}
 
 		internal static ToolStripSeparator CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip mainMenuStrip, int insertIndex = int.MaxValue)
 		{
 			var newToolStripSeparator = new ToolStripSeparator();
-
 			InsertToolStripMenuItem(mainMenuStrip.Items, newToolStripSeparator, insertIndex);
-
 			return newToolStripSeparator;
 		}
 

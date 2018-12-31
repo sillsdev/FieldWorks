@@ -1,8 +1,9 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
@@ -15,17 +16,12 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	internal class RootSiteControl : RootSite
 	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
+		private Container components;
 
 		/// <summary />
 		public RootSiteControl() : base(null)
 		{
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
 			// RootSiteControl should handle tabs like a control
 			AcceptsTab = false;
 			SuppressPrintHandling = true; // Controls shouldn't handle OnPrint.
@@ -47,10 +43,12 @@ namespace LanguageExplorer.Controls
 			try
 			{
 				if (RootBox.Selection == null)
+				{
 					//!!!!!!!!!!!!! if you stop here on an exception, it's
 					//just because you have the "break into debugger" set in the Debug:exceptions menu.
 					//!!!!!!!!!!!!!!!
 					RootBox.MakeSimpleSel(true, true, false, true); // Add IP.
+				}
 			}
 			catch
 			{ /* Do nothing, if there isn't a selection. */ }
@@ -85,7 +83,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			components = new Container();
 		}
 		#endregion
 	}

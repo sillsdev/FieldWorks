@@ -1,14 +1,15 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls
 {
@@ -28,19 +29,8 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	public class FwComboBox : FwComboBoxBase, IComboList
 	{
-		#region Events
-
 		/// <summary />
 		public event EventHandler SelectedIndexChanged;
-
-		#endregion Events
-
-		#region Data members
-
-		// The previous combo box text string
-		private ITsString m_tssPrevious;
-
-		#endregion Data members
 
 		#region Construction and disposal
 
@@ -71,9 +61,10 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -93,7 +84,7 @@ namespace LanguageExplorer.Controls
 					ListBox.SameItemSelected -= m_listBox_SameItemSelected;
 				}
 			}
-			m_tssPrevious = null;
+			PreviousTextBoxText = null;
 
 			base.Dispose(disposing);
 		}
@@ -105,7 +96,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Make the list box accessible so its height can be adjusted.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ComboListBox ListBox => m_dropDownBox as ComboListBox;
 
 		/// <summary>
@@ -128,7 +119,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets or sets the style sheet.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
 			get
@@ -151,7 +142,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get/Set the selected item from the list; null if none is selected.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override object SelectedItem
 		{
 			get
@@ -173,7 +164,7 @@ namespace LanguageExplorer.Controls
 		/// Generally it is preferred to use the Tss property, giving access to the full
 		/// styled string.
 		/// </summary>
-		[BrowsableAttribute(true), DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -190,7 +181,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// The real string of the embedded control.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ITsString Tss
 		{
 			get
@@ -215,7 +206,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override int WritingSystemCode
 		{
 			get
@@ -232,7 +223,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// The real WSF of the embedded control.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -266,18 +257,8 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// This property contains the previous text box text string
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ITsString PreviousTextBoxText
-		{
-			get
-			{
-				return m_tssPrevious;
-			}
-			set
-			{
-				m_tssPrevious = value;
-			}
-		}
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public ITsString PreviousTextBoxText { get; set; }
 
 		#endregion Properties
 
@@ -367,7 +348,7 @@ namespace LanguageExplorer.Controls
 					// (Don't do this if typing is allowed, because we get a selection change to -1
 					// when the user types something not in the list, and we don't want to erase what
 					// the user typed.)
-					PreviousTextBoxText = TextBox.Tss;	// save for future use (if needed)
+					PreviousTextBoxText = TextBox.Tss;  // save for future use (if needed)
 					var bldr = TextBox.Tss.GetBldr();
 					var props = bldr.get_Properties(0);
 					var str = bldr.GetString().Text;
@@ -381,7 +362,7 @@ namespace LanguageExplorer.Controls
 			else
 			{
 				// It's a real selection, so copy to the text box.
-				PreviousTextBoxText = TextBox.Tss;	// save for future use (if needed)
+				PreviousTextBoxText = TextBox.Tss;  // save for future use (if needed)
 				TextBox.Tss = ListBox.SelectedTss;
 			}
 			if (fNeedFocus)

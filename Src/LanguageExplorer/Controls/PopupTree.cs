@@ -1,8 +1,9 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -32,12 +33,9 @@ namespace LanguageExplorer.Controls
 
 		private FwTreeView m_treeView;
 		private FwPopupMessageFilter m_fwPopupMessageFilter;
-		private TreeNode m_tnMouseDown;     // Store the node indicated by a MouseDown event.
-											/// <summary>
-											/// Required designer variable.
-											/// </summary>
-		private System.ComponentModel.Container components = null;
-
+		// Store the node indicated by a MouseDown event.
+		private TreeNode m_tnMouseDown;
+		private Container components = null;
 		private bool m_fShown; // true after Show() completes, prevents spurious Hide during spurious AfterSelect.
 
 		/// <summary />
@@ -150,7 +148,6 @@ namespace LanguageExplorer.Controls
 		{
 			var iPreviousSelected = -1;
 			int iStarting;
-
 			// If the new start key matches the start key for the current selection,
 			// we'll start our search from there.
 			if (m_treeView.SelectedNode != null && m_treeView.SelectedNode.Text.ToLower().StartsWith(start.ToLower()))
@@ -165,10 +162,8 @@ namespace LanguageExplorer.Controls
 				// start our search from the beginning
 				iStarting = 0;
 			}
-
 			var iEnding = m_treeView.Nodes.Count - 1;
 			var fFound = FindAndSelectNodeStartingWith(iStarting, iEnding, start);
-
 			if (!fFound && iStarting != 0)
 			{
 				// Cycle from the beginning and see if we find a match before our
@@ -315,9 +310,9 @@ namespace LanguageExplorer.Controls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -465,7 +460,6 @@ namespace LanguageExplorer.Controls
 				LaunchingForm = ActiveForm;
 			}
 			Debug.Assert(LaunchingForm != this);
-
 			if (Platform.IsMono)
 			{
 				// FWNX-520: avoid a weird mono problem
@@ -475,11 +469,9 @@ namespace LanguageExplorer.Controls
 			{
 				Show();
 			}
-
 			m_fShown = true;
 			var selNode = m_treeView.SelectedNode;
 			selNode?.EnsureVisible();
-
 			m_fwPopupMessageFilter = new FwPopupMessageFilter(this);
 			Application.AddMessageFilter(m_fwPopupMessageFilter);
 			m_treeView.Focus();
@@ -496,9 +488,7 @@ namespace LanguageExplorer.Controls
 		{
 			Debug.Assert(!Platform.IsMono, "Method only needed on Windows (FWNX-399)");
 			var tn = m_treeView.GetNodeAt(e.X, e.Y);
-			if (tn != null &&
-				(e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width) &&
-				(e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height))
+			if (tn != null && e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width && e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height)
 			{
 				m_tnMouseDown = tn;
 			}
@@ -517,10 +507,7 @@ namespace LanguageExplorer.Controls
 		{
 			Debug.Assert(!Platform.IsMono, "Method only needed on Windows (FWNX-399)");
 			var tn = m_treeView.GetNodeAt(e.X, e.Y);
-			if (tn != null &&
-				tn == m_tnMouseDown &&
-				(e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width) &&
-				(e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height))
+			if (tn != null && tn == m_tnMouseDown && e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width && e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height)
 			{
 				tn = m_treeView.SelectedNode;
 				if (tn == null || tn == m_tnMouseDown || (tn == null && m_tnMouseDown != null))
@@ -639,7 +626,9 @@ namespace LanguageExplorer.Controls
 				}
 				retVal = FindNode(node.Nodes, hvo);
 				if (retVal != null)
+				{
 					break;
+				}
 			}
 			return retVal;
 		}
@@ -662,7 +651,7 @@ namespace LanguageExplorer.Controls
 		{
 			private PopupTree m_popupTree;
 
-			/// <summary>Constructor for filter object</summary>
+			/// <summary />
 			public FwPopupMessageFilter(PopupTree popupTree)
 			{
 				m_popupTree = popupTree;
@@ -721,9 +710,9 @@ namespace LanguageExplorer.Controls
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-				// Must not be run more than once.
 				if (IsDisposed)
 				{
+					// No need to run it more than once.
 					return;
 				}
 
@@ -746,7 +735,6 @@ namespace LanguageExplorer.Controls
 			{
 				switch ((Win32.WinMsgs)m.Msg)
 				{
-
 					case Win32.WinMsgs.WM_NCLBUTTONDOWN:
 					case Win32.WinMsgs.WM_NCLBUTTONUP:
 					case Win32.WinMsgs.WM_LBUTTONDOWN:
@@ -767,14 +755,12 @@ namespace LanguageExplorer.Controls
 							{
 								return false;
 							}
-
 							// On Mono clicking on the FwListBox Scrollbar causes return from Control.FromHandle
 							// to be a ImplicitScrollBar which is a child of the FwListBox.
 							if (c is ScrollBar && c.Parent == m_popupTree.m_treeView)
 							{
 								return false;
 							}
-
 							// Any other click is captured and causes the list box to go away.
 							// Only do this if the popup tree is visible
 							if (m_popupTree.Visible)
@@ -800,6 +786,12 @@ namespace LanguageExplorer.Controls
 			protected override void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
 				base.Dispose(disposing);
 			}
 
@@ -818,11 +810,7 @@ namespace LanguageExplorer.Controls
 			/// </summary>
 			protected override bool IsInputKey(Keys keyData)
 			{
-				if (keyData == Keys.Tab || keyData == (Keys.Tab | Keys.Shift))
-				{
-					return true;
-				}
-				return base.IsInputKey(keyData);
+				return keyData == Keys.Tab || keyData == (Keys.Tab | Keys.Shift) || base.IsInputKey(keyData);
 			}
 
 			protected override void WndProc(ref Message m)

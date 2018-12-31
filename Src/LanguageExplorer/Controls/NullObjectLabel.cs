@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,7 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.Controls
 {
 	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
+	/// Class used when returning a list of objects for a UI Widget that wants to list them.
 	/// </summary>
 	public class NullObjectLabel : ObjectLabel
 	{
@@ -22,9 +22,7 @@ namespace LanguageExplorer.Controls
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public NullObjectLabel(LcmCache cache)
 			: base(cache, null, null)
 		{
