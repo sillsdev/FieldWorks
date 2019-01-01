@@ -1,13 +1,13 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Filters
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class BadSpellingMatcher : BaseMatcher
 	{
-		int m_ws;
+		private int m_ws;
 
 		/// <summary>
 		/// Required constructor for persistence.
@@ -36,8 +36,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool Matches(ITsString arg)
 		{
-			var dict = SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory);
-			return new SpellCheckMethod(arg, dict, WritingSystemFactory.get_EngineOrNull(m_ws)).Run();
+			return new SpellCheckMethod(arg, SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory), WritingSystemFactory.get_EngineOrNull(m_ws)).Run();
 		}
 
 		/// <summary>
@@ -150,7 +149,6 @@ namespace LanguageExplorer.Filters
 				var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 				var fFoundOurWs = ws == m_ws.Handle;
 				var fFoundOtherWs = ws != m_ws.Handle;
-
 				while (tri.ichLim < ichLimWord)
 				{
 					props = m_tss.FetchRunInfoAt(tri.ichLim, out tri);

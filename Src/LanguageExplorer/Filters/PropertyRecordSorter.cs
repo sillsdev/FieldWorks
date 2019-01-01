@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ namespace LanguageExplorer.Filters
 	public class PropertyRecordSorter : RecordSorter
 	{
 		private IComparer m_comp;
-
 		private LcmCache m_cache;
 
 		/// <summary />
@@ -107,19 +106,13 @@ namespace LanguageExplorer.Filters
 				// Make sure at least 1 so we don't divide by zero.
 				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
 			}
-
 			records.Sort(m_comp);
-
 #if DEBUG
 			// only do this if the timing switch is info or verbose
 			if (RuntimeSwitches.RecordTimingSwitch.TraceInfo)
 			{
-				var tc2 = Environment.TickCount;
 				var ts1 = DateTime.Now - dt1;
-				var s = "PropertyRecordSorter: Sorting " + records.Count + " records took " +
-						(tc2 - tc1) + " ticks," + " or " + ts1.Minutes + ":" + ts1.Seconds + "." +
-						ts1.Milliseconds.ToString("d3") + " min:sec.";
-				Debug.WriteLine(s, RuntimeSwitches.RecordTimingSwitch.DisplayName);
+				Debug.WriteLine($"PropertyRecordSorter: Sorting {records.Count} records took {Environment.TickCount - tc1} ticks, or {ts1.Minutes}:{ts1.Seconds}.{ts1.Milliseconds:d3} min:sec.", RuntimeSwitches.RecordTimingSwitch.DisplayName);
 			}
 #endif
 		}
@@ -130,7 +123,7 @@ namespace LanguageExplorer.Filters
 		public override void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords)
 		{
 			var fc = new LcmCompare(PropertyName, m_cache);
-			MergeInto(records, newRecords, (IComparer) fc);
+			MergeInto(records, newRecords, (IComparer)fc);
 			fc.CloseCollatingEngine(); // Release the ICU data file.
 		}
 

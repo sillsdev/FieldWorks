@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -71,7 +71,6 @@ using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
 using LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics;
 using LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit;
 using LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance;
-using LanguageExplorer.HelpTopics;
 using LanguageExplorer.Impls;
 
 namespace LanguageExplorer

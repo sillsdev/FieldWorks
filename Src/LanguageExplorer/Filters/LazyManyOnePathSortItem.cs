@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,20 +20,18 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// The actual item that we are sorting, filtering, etc. by.
 		/// </summary>
-		ICmObjectOrId m_item;
-
+		private ICmObjectOrId m_item;
 		/// <summary>
 		/// The repository that can interpret ICmObjectOrIds and give ICmObjects.
 		/// </summary>
 		private ICmObjectRepository m_repo;
-
 		/// <summary>
 		/// Array of objects in the path. m_pathObjects[0] is one of the original list items.
 		/// m_pathObjects[n+1] is an object in property m_pathFlids[n] of m_pathObjects[n].
 		/// m_item is an object in property m_pathFlids[last] of m_pathObjects[last].
 		/// </summary>
-		ICmObjectOrId[] m_pathObjects;
-		int[] m_pathFlids;
+		private ICmObjectOrId[] m_pathObjects;
+		private int[] m_pathFlids;
 
 		public LazyManyOnePathSortItem(string persistInfo, ICmObjectRepository repo)
 		{
@@ -42,12 +40,12 @@ namespace LanguageExplorer.Filters
 			m_item = ParseGuidRep(repo, chunks[0]);
 			if (chunks.Length > 1)
 			{
-				var pathLen = chunks.Length/2;
+				var pathLen = chunks.Length / 2;
 				m_pathObjects = new ICmObjectOrId[pathLen];
 				m_pathFlids = new int[pathLen];
 				for (var i = 0; i < pathLen; i++)
 				{
-					m_pathFlids[i] = int.Parse(chunks[i*2 + 1]);
+					m_pathFlids[i] = int.Parse(chunks[i * 2 + 1]);
 					m_pathObjects[i] = ParseGuidRep(repo, chunks[i * 2 + 2]);
 				}
 			}
@@ -132,7 +130,7 @@ namespace LanguageExplorer.Filters
 		{
 			return m_pathObjects == null && index == 0
 				? KeyObject
-				: (index == m_pathObjects.Length ? KeyObject : m_repo.GetHvoFromObjectOrId(m_pathObjects[index]));
+				: index == m_pathObjects.Length ? KeyObject : m_repo.GetHvoFromObjectOrId(m_pathObjects[index]);
 		}
 
 		public int PathFlid(int index)

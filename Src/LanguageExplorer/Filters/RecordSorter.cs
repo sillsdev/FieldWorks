@@ -1,13 +1,13 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Xml.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
 {
@@ -16,6 +16,10 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public abstract class RecordSorter : IPersistAsXml, IStoresLcmCache, IReportsSortProgress, INoteComparision
 	{
+		internal int m_comparisonsDone;
+		internal int m_comparisonsEstimated;
+		internal int m_percentDone;
+
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
 		/// record sorter equivalent to yourself.
@@ -26,7 +30,6 @@ namespace LanguageExplorer.Filters
 		/// re-created sorter.
 		/// This default implementation does nothing.
 		/// </summary>
-		/// <param name="element"></param>
 		public virtual void PersistAsXml(XElement element)
 		{
 		}
@@ -128,9 +131,6 @@ namespace LanguageExplorer.Filters
 			get; set;
 		}
 
-		internal int m_comparisonsDone;
-		internal int m_comparisonsEstimated;
-		internal int m_percentDone;
 		public void ComparisonOccurred()
 		{
 			if (SetPercentDone == null)
@@ -138,7 +138,7 @@ namespace LanguageExplorer.Filters
 				return;
 			}
 			m_comparisonsDone++;
-			var newPercentDone = m_comparisonsDone*100/m_comparisonsEstimated;
+			var newPercentDone = m_comparisonsDone * 100 / m_comparisonsEstimated;
 			if (newPercentDone == m_percentDone)
 			{
 				return;

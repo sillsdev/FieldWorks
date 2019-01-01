@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,9 +20,7 @@ namespace LanguageExplorer.Filters
 		{
 		}
 
-		/// <summary>
-		/// Normal constructor for most uses.
-		/// </summary>
+		/// <summary />
 		protected StringFinderBase(ISilDataAccess sda)
 		{
 			DataAccess = sda;
@@ -55,20 +53,21 @@ namespace LanguageExplorer.Filters
 
 		public virtual ITsString Key(IManyOnePathSortItem item)
 		{
-			throw new NotImplementedException("Don't have new Key function implemented on class " + this.GetType());
+			throw new NotSupportedException("Don't have new Key function implemented on class " + this.GetType());
 		}
-
 
 		public ISilDataAccess DataAccess { get; set; }
 
 		/// <summary>
-		/// Stringses the specified hvo.
+		/// Strings the specified hvo.
 		/// </summary>
 		public abstract string[] Strings(int hvo);
+
 		/// <summary>
 		/// Answer true if they are the 'same' finder (will find the same strings).
 		/// </summary>
 		public abstract bool SameFinder(IStringFinder other);
+
 		/// <summary>
 		/// Add to collector the IManyOnePathSortItems which this sorter derives from
 		/// the specified object. This default method makes a single mopsi not involving any

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Filters
 		#region StringFinder Members
 
 		/// <summary>
-		/// Stringses the specified hvo.
+		/// Strings the specified hvo.
 		/// </summary>
 		public override string[] Strings(int hvo)
 		{

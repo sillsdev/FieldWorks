@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,9 +38,12 @@ namespace LanguageExplorer.Filters
 		public ITsString Label { get; set; }
 
 		/// <summary />
+		/// <remarks>
+		/// Most matchers won't have to override this - regex is one that does though
+		/// </remarks>
 		public virtual bool IsValid()
 		{
-			return true;	// most matchers won't have to override this - regex is one that does though
+			return true;
 		}
 
 		/// <summary />
@@ -58,7 +61,7 @@ namespace LanguageExplorer.Filters
 		/// <summary />
 		public virtual ITsString MakeValid()
 		{
-			return null;	// should only be called if CanMakeValid it true and that class should implement it.
+			return null;    // should only be called if CanMakeValid it true and that class should implement it.
 		}
 		#endregion
 

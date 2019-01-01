@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,126 +14,9 @@ namespace LanguageExplorer.Filters
 {
 	public class AndSorter : RecordSorter
 	{
-		private sealed class AndSorterComparer : IComparer, ICloneable
-		{
-			private ArrayList m_sorters;
-			private ArrayList m_comps;
-
-			/// <summary>
-			/// Creates a new AndSortComparer
-			/// </summary>
-			public AndSorterComparer(ArrayList sorters)
-			{
-				m_sorters = sorters;
-				m_comps = new ArrayList();
-				foreach (RecordSorter rs in m_sorters)
-				{
-					var comp = rs.getComparer();
-					(comp as StringFinderCompare)?.Init();
-					m_comps.Add(comp);
-				}
-			}
-
-			#region IComparer Members
-
-			public int Compare(object x, object y)
-			{
-				var ret = 0;
-				for (var i = 0; i < m_sorters.Count; i++)
-				{
-					ret = ((IComparer)m_comps[i]).Compare(x, y);
-					if (ret != 0)
-					{
-						break;
-					}
-				}
-
-				return ret;
-			}
-
-			#endregion
-
-			#region ICloneable Members
-
-			/// <summary>
-			/// Clones the current object
-			/// </summary>
-			public object Clone()
-			{
-				return new AndSorterComparer(m_sorters);
-			}
-
-			#endregion
-
-			/// <summary />
-			public override bool Equals(object obj)
-			{
-				if (obj == null)
-				{
-					return false;
-				}
-				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
-				// is marked with [MonoTODO] and might not work as expected in 4.0.
-				if (GetType() != obj.GetType())
-				{
-					return false;
-				}
-				var that = (AndSorterComparer)obj;
-				if (m_comps == null)
-				{
-					if (that.m_comps != null)
-					{
-						return false;
-					}
-				}
-				else
-				{
-					if (m_comps.Count != that.m_comps?.Count)
-					{
-						return false;
-					}
-					if (m_comps.Cast<object>().Where((t, i) => m_comps[i] != that.m_comps[i]).Any())
-					{
-						return false;
-					}
-				}
-				if (m_sorters == null)
-				{
-					if (that.m_sorters != null)
-					{
-						return false;
-					}
-				}
-				else
-				{
-					if (m_sorters.Count != that.m_sorters?.Count)
-					{
-						return false;
-					}
-					return !m_sorters.Cast<object>().Where((t, i) => m_sorters[i] != that.m_sorters[i]).Any();
-				}
-				return true;
-			}
-
-			/// <summary />
-			public override int GetHashCode()
-			{
-				var hash = GetType().GetHashCode();
-				if (m_comps != null)
-				{
-					hash += m_comps.Count * 3;
-				}
-				if (m_sorters != null)
-				{
-					hash += m_sorters.Count * 17;
-				}
-				return hash;
-			}
-		}
-
 		public AndSorter() { }
 
-		public AndSorter(ArrayList sorters): this()
+		public AndSorter(ArrayList sorters) : this()
 		{
 			foreach (RecordSorter rs in sorters)
 			{
@@ -263,7 +146,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void InitXml(XElement element)
 		{
-			base.InitXml (element);
+			base.InitXml(element);
 			Sorters = new ArrayList(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
@@ -280,6 +163,122 @@ namespace LanguageExplorer.Filters
 				{
 					rs.Cache = value;
 				}
+			}
+		}
+
+		private sealed class AndSorterComparer : IComparer, ICloneable
+		{
+			private ArrayList m_sorters;
+			private ArrayList m_comps;
+
+			/// <summary>
+			/// Creates a new AndSortComparer
+			/// </summary>
+			public AndSorterComparer(ArrayList sorters)
+			{
+				m_sorters = sorters;
+				m_comps = new ArrayList();
+				foreach (RecordSorter rs in m_sorters)
+				{
+					var comp = rs.getComparer();
+					(comp as StringFinderCompare)?.Init();
+					m_comps.Add(comp);
+				}
+			}
+
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				var ret = 0;
+				for (var i = 0; i < m_sorters.Count; i++)
+				{
+					ret = ((IComparer)m_comps[i]).Compare(x, y);
+					if (ret != 0)
+					{
+						break;
+					}
+				}
+				return ret;
+			}
+
+			#endregion
+
+			#region ICloneable Members
+
+			/// <summary>
+			/// Clones the current object
+			/// </summary>
+			public object Clone()
+			{
+				return new AndSorterComparer(m_sorters);
+			}
+
+			#endregion
+
+			/// <summary />
+			public override bool Equals(object obj)
+			{
+				if (obj == null)
+				{
+					return false;
+				}
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
+				if (GetType() != obj.GetType())
+				{
+					return false;
+				}
+				var that = (AndSorterComparer)obj;
+				if (m_comps == null)
+				{
+					if (that.m_comps != null)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if (m_comps.Count != that.m_comps?.Count)
+					{
+						return false;
+					}
+					if (m_comps.Cast<object>().Where((t, i) => m_comps[i] != that.m_comps[i]).Any())
+					{
+						return false;
+					}
+				}
+				if (m_sorters == null)
+				{
+					if (that.m_sorters != null)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if (m_sorters.Count != that.m_sorters?.Count)
+					{
+						return false;
+					}
+					return !m_sorters.Cast<object>().Where((t, i) => m_sorters[i] != that.m_sorters[i]).Any();
+				}
+				return true;
+			}
+
+			/// <summary />
+			public override int GetHashCode()
+			{
+				var hash = GetType().GetHashCode();
+				if (m_comps != null)
+				{
+					hash += m_comps.Count * 3;
+				}
+				if (m_sorters != null)
+				{
+					hash += m_sorters.Count * 17;
+				}
+				return hash;
 			}
 		}
 	}

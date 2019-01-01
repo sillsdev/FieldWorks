@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class RegExpMatcher : SimpleStringMatcher
 	{
-		/// <summary>
-		/// normal constructor
-		/// </summary>
+		/// <summary />
 		public RegExpMatcher(IVwPattern pattern) : base(pattern)
 		{
 			Init();
@@ -24,7 +22,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// default for persistence
 		/// </summary>
-		public RegExpMatcher() {}
+		public RegExpMatcher() { }
 
 		/// <summary />
 		void Init()
@@ -69,7 +67,6 @@ namespace LanguageExplorer.Filters
 			{
 				errMsg = "U_REGEX_RULE_SYNTAX";
 			}
-
 			// handle the case where the error msg has bubbled up from a base class
 			if (errMsg == null)
 			{
@@ -78,7 +75,6 @@ namespace LanguageExplorer.Filters
 					return base.ErrorMessage();
 				}
 			}
-
 			switch (errMsg)
 			{
 				default:
@@ -138,6 +134,5 @@ namespace LanguageExplorer.Filters
 			}
 			return finalErrorMessage;
 		}
-
 	}
 }

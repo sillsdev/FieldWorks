@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,9 +19,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public int NotEqualValue { get; private set; }
 
-		/// <summary>
-		/// normal constructor.
-		/// </summary>
+		/// <summary />
 		public NotEqualIntMatcher(int val)
 		{
 			NotEqualValue = val;
@@ -43,6 +41,7 @@ namespace LanguageExplorer.Filters
 		{
 			return stringval != null && int.Parse(stringval.Text) != NotEqualValue;
 		}
+
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
@@ -59,7 +58,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (element);
+			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "val", NotEqualValue.ToString());
 		}
 
@@ -68,7 +67,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void InitXml(XElement element)
 		{
-			base.InitXml (element);
+			base.InitXml(element);
 			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(element, "val");
 		}
 	}

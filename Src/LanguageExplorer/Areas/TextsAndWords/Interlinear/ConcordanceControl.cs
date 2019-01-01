@@ -302,7 +302,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			kGramCategory,
 			kWordCategory,
 			kTags
-		};
+		}
+
+		/// <summary>
+		/// Like the base class, but match ignores case.
+		/// </summary>
+		private sealed class ExactCaseInsensitiveLiteralMatcher : ExactLiteralMatcher
+		{
+			public ExactCaseInsensitiveLiteralMatcher(string target, int ws)
+				: base(target.ToLower(), ws)
+			{
+			}
+
+			internal override bool MatchText(string p)
+			{
+				return base.MatchText(p.ToLower());
+			}
+		}
 
 		/// <summary>
 		/// This class stores the objects used by the combo box by the Word Cat. and Lex. Gram. Info. lines.

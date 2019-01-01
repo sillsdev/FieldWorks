@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,15 +28,7 @@ namespace LanguageExplorer.Filters
 		{
 			var xn = int.Parse(x.ToString());
 			var yn = int.Parse(y.ToString());
-			if (xn < yn)
-			{
-				return -1;
-			}
-			if (xn > yn)
-			{
-				return 1;
-			}
-			return 0;
+			return xn < yn ? -1 : xn > yn ? 1 : 0;
 		}
 
 		#endregion

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,10 +21,8 @@ namespace LanguageExplorer.Filters
 		private CoreWritingSystemDefinition m_ws;
 
 		#region Constructors, etc.
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="ws">The writing system.</param>
+
+		/// <summary />
 		public WritingSystemComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;

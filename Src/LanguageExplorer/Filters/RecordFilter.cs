@@ -1,7 +1,7 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
+
 // <remarks>
 //	At the moment (July 2004), the only instances of this class do filtering in memory.
 //	This does not imply that all filtering will always be done in memory, only that we haven't
@@ -10,17 +10,17 @@
 //	filters which can use LCM properties, and one which will somehow contribute to the Where
 //	clause which populates the RecordList. In that case, the RecordList will be aware of the filter
 //	and will be responsible for somehow incorporating its filtering desires as it does the query.
-
+//
 // (JohnT, May 2004). Added additional classes and interfaces designed to support a filter bar
 // in a Browse view. (Should these be spread across more files?)
-
+//
 // The filter bar looks like a set of combos, one per column, which the user can fill in to limit
 // the items shown in the view to ones that satisfy some condition.
-
+//
 // The idea here is that, given the XML that defines a cell view, if it is one of the types we
 // recognize, we instantiate a corresponding implementation of the StringFinder interface, which
 // allows us to obtain the strings shown in the cell given the base object.
-
+//
 // Then, given the full object list, we populate a combo box menu with 'blanks', 'non-blanks',
 // and a list of the unique values that occur (found by applying the string finder to the objects;
 // if more than about 30 are found, give up). Menu could also contain 'use patterns' (then the user
@@ -35,11 +35,10 @@
 // is set, or there was an original filter defining the list, we further combine all the filters
 // using an AndFilter.
 // </remarks>
-
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Filters
@@ -53,7 +52,6 @@ namespace LanguageExplorer.Filters
 			Name = FiltersStrings.ksUnknown;
 			id = "Unknown";
 		}
-
 
 		/// <summary>
 		/// Set the cache on the specified object if it wants it.
@@ -155,7 +153,7 @@ namespace LanguageExplorer.Filters
 
 		/// <summary>
 		/// If this or a contained filter is considered equal to the argument, answer the filter
-		/// or subfilter that is consiered equal.
+		/// or subfilter that is considered equal.
 		/// Record Filters that can contain more than one filter (e.g. AndFilter) should override this.
 		/// </summary>
 		public virtual RecordFilter EqualContainedFilter(RecordFilter other)

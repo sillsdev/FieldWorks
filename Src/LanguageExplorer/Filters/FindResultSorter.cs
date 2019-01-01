@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,13 +45,12 @@ namespace LanguageExplorer.Filters
 				var yStringArray = stringComparer.GetValue(y, stringComparer.SortedFromEnd);
 				var xString = xStringArray.Length == 0 ? string.Empty : xStringArray[0];
 				var yString = yStringArray.Length == 0 ? string.Empty : yStringArray[0];
-
 				// Avoid string comparisons if the result is already what we would possibly return
-				if(comparerResult >= 0)
+				if (comparerResult >= 0)
 				{
 					// Exact matches of the search string should sort to the top by virtue of being the shortest
 					// starts with matches should sort just below exact matches
-					if(xString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
+					if (xString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
 						&& !yString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase))
 					{
 						return -1;
@@ -61,7 +60,7 @@ namespace LanguageExplorer.Filters
 				{
 					// Exact matches of the search string should sort to the top by virtue of being the shortest
 					// starts with matches should sort just below exact matches
-					if(yString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
+					if (yString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
 						&& !xString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase))
 					{
 						return 1;

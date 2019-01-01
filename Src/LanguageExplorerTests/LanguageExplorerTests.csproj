@@ -261,7 +261,7 @@
     <Compile Include="Filters\FindResultsSorterTests.cs" />
     <Compile Include="Filters\RangeIntMatcherTests.cs" />
     <Compile Include="Filters\TestPersistence.cs" />
-    <Compile Include="Filters\WordformFiltersTests.cs" />
+    <Compile Include="Areas\WordformFiltersTests.cs" />
     <Compile Include="Impls\FindCollectorEnvTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
     <Compile Include="Impls\FwHelpAboutTests.cs" />

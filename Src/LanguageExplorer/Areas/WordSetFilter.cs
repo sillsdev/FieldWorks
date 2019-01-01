@@ -1,21 +1,22 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
 using System.Xml.Linq;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.Filters
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// A filter for selecting a group of wordform spaced on a "IWfiWordSet"
 	/// </summary>
-	public class WordSetFilter : RecordFilter
+	internal sealed class WordSetFilter : RecordFilter
 	{
 		/// <summary />
-		protected int[] m_hvos;
+		private int[] m_hvos;
 
 		/// <summary />
 		public WordSetFilter(IWfiWordSet wordSet)
@@ -54,7 +55,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (element);
+			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "id", id);
 			XmlUtils.SetAttribute(element, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
 		}
@@ -64,7 +65,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void InitXml(XElement element)
 		{
-			base.InitXml (element);
+			base.InitXml(element);
 			id = XmlUtils.GetMandatoryAttributeValue(element, "id");
 			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "wordlist");
 		}
@@ -80,11 +81,11 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		public override bool Accept (IManyOnePathSortItem item)
+		public override bool Accept(IManyOnePathSortItem item)
 		{
 			var hvo = item.KeyObject;
 
-			for (var i = m_hvos.Length-1; i>=0; i--)
+			for (var i = m_hvos.Length - 1; i >= 0; i--)
 			{
 				if (m_hvos[i] == hvo)
 				{

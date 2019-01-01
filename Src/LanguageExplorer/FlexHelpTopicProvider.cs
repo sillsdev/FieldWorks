@@ -8,7 +8,7 @@ using System.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
-namespace LanguageExplorer.HelpTopics
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// FLEx-specific HelpTopicProvider
@@ -35,7 +35,7 @@ namespace LanguageExplorer.HelpTopics
 
 			if (s_helpResources == null)
 			{
-				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths", Assembly.GetExecutingAssembly());
+				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 
 			// First try to find it in our resource file. If that doesn't work, try the more general one

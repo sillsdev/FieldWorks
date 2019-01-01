@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -108,7 +108,7 @@ namespace LanguageExplorer.Filters
 			{
 				return gen.Precision != GenDate.PrecisionType.After;
 			}
-			if (!gen.IsAD && !fAD)		// Both BC
+			if (!gen.IsAD && !fAD)      // Both BC
 			{
 				if (gen.Year > date.Year)
 				{
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Filters
 					return false;
 				}
 			}
-			if (gen.IsAD && fAD)		// Both AD
+			if (gen.IsAD && fAD)        // Both AD
 			{
 				if (gen.Year < date.Year)
 				{
@@ -155,7 +155,7 @@ namespace LanguageExplorer.Filters
 			{
 				return true;
 			}
-			if (!gen.IsAD && !fAD)		// Both BC
+			if (!gen.IsAD && !fAD)      // Both BC
 			{
 				if (gen.Year > date.Year)
 				{
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Filters
 					return gen.Precision == GenDate.PrecisionType.Before;
 				}
 			}
-			if (gen.IsAD && fAD)		// Both AD
+			if (gen.IsAD && fAD)        // Both AD
 			{
 				if (gen.Year < date.Year)
 				{
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-			if (!gen.IsAD && !fAD)		// Both BC
+			if (!gen.IsAD && !fAD)      // Both BC
 			{
 				if (gen.Year > date.Year)
 				{
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Filters
 					return gen.Precision != GenDate.PrecisionType.Before;
 				}
 			}
-			if (gen.IsAD && fAD)		// Both AD
+			if (gen.IsAD && fAD)        // Both AD
 			{
 				if (gen.Year < date.Year)
 				{
@@ -249,7 +249,7 @@ namespace LanguageExplorer.Filters
 			{
 				return gen.Precision == GenDate.PrecisionType.After;
 			}
-			if (!gen.IsAD && !fAD)		// Both BC
+			if (!gen.IsAD && !fAD)      // Both BC
 			{
 				if (gen.Year > date.Year)
 				{
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Filters
 					return true;
 				}
 			}
-			if (gen.IsAD && fAD)		// Both AD
+			if (gen.IsAD && fAD)        // Both AD
 			{
 				if (gen.Year < date.Year)
 				{
@@ -302,11 +302,8 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-			return End == dtOther.End &&
-				Start == dtOther.Start &&
-				MatchType == dtOther.MatchType &&
-				HandleGenDate == dtOther.HandleGenDate &&
-				(!HandleGenDate || (IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD && UnspecificMatching == dtOther.UnspecificMatching));
+			return End == dtOther.End && Start == dtOther.Start && MatchType == dtOther.MatchType && HandleGenDate == dtOther.HandleGenDate
+			       && (!HandleGenDate || IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD && UnspecificMatching == dtOther.UnspecificMatching);
 		}
 
 		public override void PersistAsXml(XElement element)

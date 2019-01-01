@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,10 +19,8 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
-		/// <summary>
-		/// Normal constructor.
-		/// </summary>
-		public GenRecordSorter(IComparer comp): this()
+		/// <summary />
+		public GenRecordSorter(IComparer comp) : this()
 		{
 			Comparer = comp;
 		}
@@ -77,7 +75,6 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-
 			if (CompatibleComparers(Comparer, grsOther.Comparer))
 			{
 				return true;
@@ -119,11 +116,10 @@ namespace LanguageExplorer.Filters
 		private static bool CompatibleComparers(IComparer first, IComparer second)
 		{
 			// identity
-			if (first == second)
+			if (ReferenceEquals(first, second))
 			{
 				return true;
 			}
-
 			// IcuComparers on same Ws?
 			var firstIcu = first as IcuComparer;
 			var secondIcu = second as IcuComparer;
@@ -131,7 +127,6 @@ namespace LanguageExplorer.Filters
 			{
 				return true;
 			}
-
 			// WritingSystemComparers on same Ws?
 			var firstWs = first as WritingSystemComparer;
 			var secondWs = second as WritingSystemComparer;
@@ -139,13 +134,11 @@ namespace LanguageExplorer.Filters
 			{
 				return true;
 			}
-
 			// Both IntStringComparers?
 			if (first is IntStringComparer && second is IntStringComparer)
 			{
 				return true;
 			}
-
 			// LcmComparers on the same property?
 			var firstLcm = first as LcmCompare;
 			var secondLcm = second as LcmCompare;
@@ -184,7 +177,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void InitXml(XElement element)
 		{
-			base.InitXml (element);
+			base.InitXml(element);
 			var compNode = element.Elements().First();
 			if (compNode.Name != "comparer")
 			{
@@ -223,7 +216,9 @@ namespace LanguageExplorer.Filters
 				((StringFinderCompare)Comparer).CollectItems(hvo, collector);
 			}
 			else
+			{
 				base.CollectItems(hvo, collector);
+			}
 		}
 
 		/// <summary>
@@ -242,12 +237,9 @@ namespace LanguageExplorer.Filters
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
 				// Make sure at least 1 so we don't divide by zero.
-				m_comparisonsEstimated = Math.Max(records.Count*(int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
+				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
 			}
-
-			//records.Sort(m_comp);
 			MergeSort.Sort(ref records, Comparer);
-
 			if (Comparer is StringFinderCompare)
 			{
 				((StringFinderCompare)Comparer).Cleanup();
@@ -272,9 +264,7 @@ namespace LanguageExplorer.Filters
 			{
 				((StringFinderCompare)Comparer).Init();
 			}
-
 			MergeInto(records, newRecords, Comparer);
-
 			if (Comparer is StringFinderCompare)
 			{
 				((StringFinderCompare)Comparer).Cleanup();

@@ -903,11 +903,10 @@
     <Compile Include="Filters\DateMatchType.cs" />
     <Compile Include="Filters\DateTimeMatcher.cs" />
     <Compile Include="Filters\EndMatcher.cs" />
-    <Compile Include="Filters\ExactCaseInsensitiveLiteralMatcher.cs" />
     <Compile Include="Filters\ExactLiteralMatcher.cs" />
     <Compile Include="Filters\ExactMatcher.cs" />
     <Compile Include="Filters\FilterBarCellFilter.cs" />
-    <Compile Include="Filters\FilterChangeEventArgs.cs" />
+    <Compile Include="FilterChangeEventArgs.cs" />
     <Compile Include="Filters\FiltersStrings.Designer.cs">
       <DependentUpon>FiltersStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -951,8 +950,8 @@
     <Compile Include="Filters\StringFinderBase.cs" />
     <Compile Include="Filters\StringFinderCompare.cs" />
     <Compile Include="Filters\UncheckAll.cs" />
-    <Compile Include="Filters\WfiRecordFilterListProvider.cs" />
-    <Compile Include="Filters\WordSetFilter.cs" />
+    <Compile Include="Areas\WfiRecordFilterListProvider.cs" />
+    <Compile Include="Areas\WordSetFilter.cs" />
     <Compile Include="Filters\WritingSystemComparer.cs" />
     <Compile Include="Impls\ArchiveWithRamp.cs">
       <SubType>Form</SubType>
@@ -3086,7 +3085,7 @@
     <Compile Include="Dumpster\ReversalListener.cs" />
     <Compile Include="Areas\TextsAndWords\WordformApplicationServices.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\WordsEditToolMenuHandler.cs" />
-    <Compile Include="HelpTopics\FlexHelpTopicProvider.cs" />
+    <Compile Include="FlexHelpTopicProvider.cs" />
     <Compile Include="IArea.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -3531,7 +3530,7 @@
       <DependentUpon>WordformGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="HelpTopics\HelpTopicPaths.resx" />
+    <EmbeddedResource Include="HelpTopicPaths.resx" />
     <EmbeddedResource Include="images\Morphology\ImageHolder.resx">
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>

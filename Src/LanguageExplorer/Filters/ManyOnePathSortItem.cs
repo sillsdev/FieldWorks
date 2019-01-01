@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,12 +26,10 @@ namespace LanguageExplorer.Filters
 		/// m_pathObjects[n+1] is an object in property m_pathFlids[n] of m_pathObjects[n].
 		/// m_hvoItem is an object in property m_pathFlids[last] of m_pathObjects[last].
 		/// </summary>
-		int[] m_pathObjects;
-		int[] m_pathFlids;
+		private int[] m_pathObjects;
+		private int[] m_pathFlids;
 
-		/// <summary>
-		/// Construct one.
-		/// </summary>
+		/// <summary />
 		public ManyOnePathSortItem(int hvoItem, int[] pathObjects, int[] pathFlids)
 		{
 			Init(hvoItem, pathObjects, pathFlids);
@@ -67,7 +65,6 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Assert that id is valid. (May not catch all problems.)
 		/// </summary>
-		/// <param name="id"></param>
 		public static void AssertValidId(int id)
 		{
 			if (id > 0 || id <= MaxObjectId)
@@ -99,7 +96,6 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Assert all the MOPSIs in the list are valid.
 		/// </summary>
-		/// <param name="list"></param>
 		public static void AssertValidList(ArrayList list)
 		{
 			foreach (ManyOnePathSortItem item in list)
@@ -111,7 +107,6 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Assert all the hvos in the array are valid
 		/// </summary>
-		/// <param name="hvos"></param>
 		public static void AssertValidHvoArray(int[] hvos)
 		{
 			foreach (var hvo in hvos)

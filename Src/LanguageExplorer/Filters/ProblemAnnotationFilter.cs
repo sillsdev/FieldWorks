@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace LanguageExplorer.Filters
 	/// this filter passes CmAnnotations which are pointing at objects of the class listed
 	/// in the targetClasses attribute.
 	/// </summary>
-	public class ProblemAnnotationFilter: RecordFilter
+	public class ProblemAnnotationFilter : RecordFilter
 	{
 		private LcmCache m_cache;
 
@@ -64,11 +64,10 @@ namespace LanguageExplorer.Filters
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
-			var classList =XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
-			var classes= classList.Split(',');
-
+			var classList = XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
+			var classes = classList.Split(',');
 			//enhance: currently, this will require that we name every subclass as well.
-			foreach(var name in classes)
+			foreach (var name in classes)
 			{
 				var cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
 				if (cls <= 0)
@@ -82,20 +81,18 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		public override bool Accept (IManyOnePathSortItem item)
+		public override bool Accept(IManyOnePathSortItem item)
 		{
 			var obj = item.KeyObjectUsing(m_cache);
 			if (!(obj is ICmBaseAnnotation))
 			{
 				return false; // It's not a base annotation
 			}
-
 			var annotation = (ICmBaseAnnotation)obj;
 			if (annotation.BeginObjectRA == null)
 			{
 				return false;
 			}
-
 			var cls = annotation.BeginObjectRA.ClassID;
 			foreach (var i in ClassIds)
 			{

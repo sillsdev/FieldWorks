@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -211,21 +211,18 @@ namespace LanguageExplorer.Filters
 				{
 					return SubComparer is ReverseComparer ? -1 : 1;
 				}
-
 				// We pass GetValue m_fSortedFromEnd, and it is responsible for taking care of flipping the string if that's needed.
 				// The reason to do it there is because sometimes a sort key will have a homograph number appeneded to the end.
 				// If we do the flipping here, the resulting string will be a backwards homograph number followed by the backwards
 				// sort key itself.  GetValue should know enough to return the flipped string followed by a regular homograph number.
 				var keysA = GetValue(x, SortedFromEnd);
 				var keysB = GetValue(y, SortedFromEnd);
-
 				// There will usually only be one element in the array, but just in case...
 				if (SortedFromEnd)
 				{
 					Array.Reverse(keysA);
 					Array.Reverse(keysB);
 				}
-
 				var cstrings = Math.Min(keysA.Length, keysB.Length);
 				for (var i = 0; i < cstrings; i++)
 				{
@@ -439,7 +436,6 @@ namespace LanguageExplorer.Filters
 					}
 				}
 			}
-
 			if (SubComparer == null)
 			{
 				return that.SubComparer == null;

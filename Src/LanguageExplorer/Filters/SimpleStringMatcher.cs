@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,8 +26,8 @@ namespace LanguageExplorer.Filters
 		protected IVwTextSource m_ts;
 		/// <summary />
 		protected ITsString m_tssSource;
-		/// <summary />
-		protected const int m_MaxSearchStringLength = 1000;	// max length of search string
+		/// <summary>max length of search string</summary>
+		protected const int m_MaxSearchStringLength = 1000;
 		/// <summary />
 		protected XElement m_persistNode;
 		/// <summary />
@@ -49,9 +49,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// This class explicitly looks for a particular ws.
 		/// </summary>
-		public override int WritingSystem => !string.IsNullOrEmpty(Pattern?.IcuLocale) && WritingSystemFactory != null
-			? WritingSystemFactory.GetWsFromStr(Pattern.IcuLocale)
-			: 0;
+		public override int WritingSystem => !string.IsNullOrEmpty(Pattern?.IcuLocale) && WritingSystemFactory != null ? WritingSystemFactory.GetWsFromStr(Pattern.IcuLocale) : 0;
 
 		/// <summary>
 		/// default for persistence
@@ -64,8 +62,7 @@ namespace LanguageExplorer.Filters
 		private void Init()
 		{
 			m_textSourceInit = VwStringTextSourceClass.Create();
-			m_ts = m_textSourceInit as IVwTextSource;
-
+			m_ts = (IVwTextSource)m_textSourceInit;
 			if (Pattern == null)
 			{
 				Pattern = VwPatternClass.Create();
@@ -189,7 +186,6 @@ namespace LanguageExplorer.Filters
 
 		/// <summary />
 		/// <remarks>For most subclasses, it is enough if it is the same class and pattern.</remarks>
-		/// ---------------------------------------------------------------------------------------
 		public override bool SameMatcher(IMatcher other)
 		{
 			if (!(other is SimpleStringMatcher))
@@ -231,7 +227,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override string ErrorMessage()
 		{
-			return HasError() ? string.Format(FiltersStrings.ksMatchStringToLongLength0, m_MaxSearchStringLength ) : base.ErrorMessage();
+			return HasError() ? string.Format(FiltersStrings.ksMatchStringToLongLength0, m_MaxSearchStringLength) : base.ErrorMessage();
 		}
 
 		/// <summary>
@@ -283,7 +279,6 @@ namespace LanguageExplorer.Filters
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-
 			m_persistNode = element;
 		}
 
@@ -296,7 +291,6 @@ namespace LanguageExplorer.Filters
 			set
 			{
 				base.Cache = value;
-
 				if (m_persistNode != null && Pattern.Pattern == null)
 				{
 					var ws = XmlUtils.GetOptionalIntegerValue(m_persistNode, "ws", value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);

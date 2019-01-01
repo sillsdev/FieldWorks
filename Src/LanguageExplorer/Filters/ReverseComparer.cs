@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,9 +19,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class ReverseComparer : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
 	{
-		/// <summary>
-		/// normal constructor
-		/// </summary>
+		/// <summary />
 		public ReverseComparer(IComparer comp)
 		{
 			SubComp = comp;

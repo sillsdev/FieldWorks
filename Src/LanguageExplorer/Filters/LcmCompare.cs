@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,15 +15,13 @@ using SIL.Xml;
 namespace LanguageExplorer.Filters
 {
 	/// <summary />
-	internal class LcmCompare : IComparer, IPersistAsXml
+	internal sealed class LcmCompare : IComparer, IPersistAsXml
 	{
 		/// <summary />
-		protected ICollator m_collater;
+		private ICollator m_collater;
 		/// <summary />
-		protected bool m_fUseKeys;
-		internal INoteComparision ComparisonNoter { get; set; }
+		private bool m_fUseKeys;
 		private Dictionary<object, string> m_sortKeyCache;
-
 		private LcmCache m_cache;
 
 		/// <summary />
@@ -31,7 +29,7 @@ namespace LanguageExplorer.Filters
 		{
 			m_cache = cache;
 			Init();
-			PropertyName= propertyName;
+			PropertyName = propertyName;
 			m_fUseKeys = propertyName == "ShortName";
 			m_sortKeyCache = new Dictionary<object, string>();
 		}
@@ -49,10 +47,12 @@ namespace LanguageExplorer.Filters
 			m_collater = null;
 		}
 
+		internal INoteComparision ComparisonNoter { get; set; }
+
 		/// <summary>
 		/// Gets the name of the property.
 		/// </summary>
-		public string PropertyName { get; protected set; }
+		public string PropertyName { get; private set; }
 
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
@@ -76,19 +76,15 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the property.
 		/// </summary>
-		protected object GetProperty(ICmObject target, string property)
+		private object GetProperty(ICmObject target, string property)
 		{
 			var type = target.GetType();
-			var info = type.GetProperty(property,
-				BindingFlags.Instance |
-				BindingFlags.Public |
-				BindingFlags.FlattenHierarchy);
+			var info = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 			if (info == null)
 			{
 				throw new ArgumentException($"There is no public property named '{property}' in {type}. Remember, properties often end in a multi-character suffix such as OA, OS, RA, RS, or Accessor.");
 			}
-
-			return info.GetValue(target,null);
+			return info.GetValue(target, null);
 		}
 
 		/// <summary>
@@ -108,9 +104,8 @@ namespace LanguageExplorer.Filters
 
 		private ICmObject GetObjFromItem(object x)
 		{
-			var itemX = x as IManyOnePathSortItem;
 			// This is slightly clumsy but currently it's the only way we have to get a cache.
-			return itemX.KeyObjectUsing(m_cache);
+			return ((IManyOnePathSortItem)x).KeyObjectUsing(m_cache);
 		}
 
 		// Compare two objects (expected to be ManyOnePathSortItems).
@@ -126,7 +121,6 @@ namespace LanguageExplorer.Filters
 		public int Compare(object x, object y)
 		{
 			ComparisonNoter?.ComparisonOccurred(); // for progress reporting.
-
 			if (x == y)
 			{
 				return 0;
@@ -139,13 +133,11 @@ namespace LanguageExplorer.Filters
 			{
 				return 1;
 			}
-
 			// One time overhead
 			if (m_collater == null)
 			{
 				OpenCollatingEngine((GetObjFromItem(x)).SortKeyWs);
 			}
-
 			return m_collater.Compare(GetObjFromCacheOrItem(x), GetObjFromCacheOrItem(y));
 		}
 

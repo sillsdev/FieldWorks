@@ -1,15 +1,15 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Filters
+namespace LanguageExplorer.Areas
 {
-	public class WfiRecordFilterListProvider :  IRecordFilterListProvider
-
+	public class WfiRecordFilterListProvider : IRecordFilterListProvider
 	{
 		/// <summary />
 		protected LcmCache _cache;
@@ -66,8 +66,7 @@ namespace LanguageExplorer.Filters
 		public void ReLoad()
 		{
 			Filters.Clear();
-
-			foreach(var words in _cache.LangProject.MorphologicalDataOA.TestSetsOC)
+			foreach (var words in _cache.LangProject.MorphologicalDataOA.TestSetsOC)
 			{
 				Filters.Add(new WordSetFilter(words));
 			}
@@ -94,7 +93,7 @@ namespace LanguageExplorer.Filters
 		{
 			if (Filters.Count == 0)
 			{
-				return false;	// we aren't providing any items.
+				return false;   // we aren't providing any items.
 			}
 			var currentFilter = argument;
 			RecordFilter matchingFilter;
@@ -114,7 +113,6 @@ namespace LanguageExplorer.Filters
 				// the current filter doesn't have one of our filters, so remove the WordSetNullFilter.
 				Filters.RemoveAt(0);
 			}
-
 			// allow others to handle this message.
 			return false;
 		}

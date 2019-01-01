@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,11 +29,8 @@ namespace LanguageExplorer.Filters
 		public string WsCode { get; protected set; }
 
 		#region Constructors, etc.
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public IcuComparer(string sWs)
 		{
 			WsCode = sWs;
@@ -42,15 +39,13 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Default constructor for use with IPersistAsXml
 		/// </summary>
-		public IcuComparer(): this(null)
+		public IcuComparer() : this(null)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Opens the collating engine.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------------
 		public void OpenCollatingEngine()
 		{
 			if (m_lce == null)
@@ -64,11 +59,9 @@ namespace LanguageExplorer.Filters
 			m_lce.Open(WsCode);
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Closes the collating engine.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------------
 		public void CloseCollatingEngine()
 		{
 			if (m_lce != null)
@@ -76,17 +69,15 @@ namespace LanguageExplorer.Filters
 				m_lce.Close();
 				//Marshal.ReleaseComObject(m_lce);
 				var disposable = m_lce as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 				m_lce = null;
 			}
-			if (m_htskey != null)
-				m_htskey.Clear();
+			m_htskey?.Clear();
 		}
 		#endregion
 
 		#region IComparer Members
-		/// ------------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
 		/// </summary>
@@ -96,61 +87,66 @@ namespace LanguageExplorer.Filters
 		/// Value Condition Less than zero x is less than y. Zero x equals y. Greater than zero x is greater than y.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
-		/// ------------------------------------------------------------------------------------------
 		public int Compare(object x, object y)
 		{
-			string a = x as string;
-			string b = y as string;
+			var a = x as string;
+			var b = y as string;
 			if (a == b)
+			{
 				return 0;
+			}
 			if (a == null)
+			{
 				return 1;
+			}
 			if (b == null)
+			{
 				return -1;
-			byte[] ka = null;
-			byte[] kb = null;
+			}
+			byte[] ka;
+			byte[] kb;
 			if (m_lce != null)
 			{
-				object kaObj = m_htskey[a];
+				var kaObj = m_htskey[a];
 				if (kaObj != null)
 				{
 					ka = (byte[])kaObj;
 				}
 				else
 				{
-					ka = (byte[])m_lce.get_SortKeyVariant(a,
-						LgCollatingOptions.fcoDefault);
+					ka = (byte[])m_lce.get_SortKeyVariant(a, LgCollatingOptions.fcoDefault);
 					m_htskey.Add(a, ka);
 				}
-				object kbObj = m_htskey[b];
+				var kbObj = m_htskey[b];
 				if (kbObj != null)
 				{
 					kb = (byte[])kbObj;
 				}
 				else
 				{
-					kb = (byte[])m_lce.get_SortKeyVariant(b,
-						LgCollatingOptions.fcoDefault);
+					kb = (byte[])m_lce.get_SortKeyVariant(b, LgCollatingOptions.fcoDefault);
 					m_htskey.Add(b, kb);
 				}
 			}
 			else
 			{
 				OpenCollatingEngine();
-				ka = (byte[])m_lce.get_SortKeyVariant(a,
-					LgCollatingOptions.fcoDefault);
-				kb = (byte[])m_lce.get_SortKeyVariant(b,
-					LgCollatingOptions.fcoDefault);
+				ka = (byte[])m_lce.get_SortKeyVariant(a, LgCollatingOptions.fcoDefault);
+				kb = (byte[])m_lce.get_SortKeyVariant(b, LgCollatingOptions.fcoDefault);
 				CloseCollatingEngine();
 			}
 			// This is what m_lce.CompareVariant(ka,kb,...) would do.
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
-			int nVal = 0;
+			int nVal;
 			if (ka.Length == 0)
+			{
 				nVal = -kb.Length; // zero if equal, neg if b is longer (considered larger)
+			}
 			else if (kb.Length == 0)
+			{
 				nVal = 1; // ka is longer and considered larger.
+			}
 			else
 			{
 				// Normal case, null termination should be present.
@@ -159,7 +155,7 @@ namespace LanguageExplorer.Filters
 				{
 					// skip merrily along until strings differ or end.
 				}
-				nVal = (int)(ka[ib] - kb[ib]);
+				nVal = ka[ib] - kb[ib];
 			}
 			return nVal;
 		}
@@ -167,23 +163,17 @@ namespace LanguageExplorer.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="element">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void PersistAsXml(XElement element)
 		{
 			XmlUtils.SetAttribute(element, "ws", WsCode);
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="element">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void InitXml(XElement element)
 		{
 			WsCode = XmlUtils.GetMandatoryAttributeValue(element, "ws");
@@ -191,41 +181,51 @@ namespace LanguageExplorer.Filters
 
 		#endregion
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <summary />
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (this.GetType() != obj.GetType())
+			if (GetType() != obj.GetType())
+			{
 				return false;
-			IcuComparer that = (IcuComparer)obj;
+			}
+			var that = (IcuComparer)obj;
 			if (m_htskey == null)
 			{
 				if (that.m_htskey != null)
+				{
 					return false;
+				}
 			}
 			else
 			{
 				if (that.m_htskey == null)
+				{
 					return false;
-				if (this.m_htskey.Count != that.m_htskey.Count)
+				}
+				if (m_htskey.Count != that.m_htskey.Count)
+				{
 					return false;
-				IDictionaryEnumerator ie = that.m_htskey.GetEnumerator();
+				}
+				var ie = that.m_htskey.GetEnumerator();
 				while (ie.MoveNext())
 				{
 					if (!m_htskey.ContainsKey(ie.Key) || m_htskey[ie.Key] != ie.Value)
+					{
 						return false;
+					}
 				}
 			}
-			if (this.m_lce != that.m_lce)
+			if (m_lce != that.m_lce)
+			{
 				return false;
-			return this.WsCode == that.WsCode;
+			}
+			return WsCode == that.WsCode;
 		}
 
 		/// <summary>
@@ -234,13 +234,19 @@ namespace LanguageExplorer.Filters
 		/// <returns></returns>
 		public override int GetHashCode()
 		{
-			int hash = GetType().GetHashCode();
+			var hash = GetType().GetHashCode();
 			if (m_htskey != null)
+			{
 				hash += m_htskey.Count * 53;
+			}
 			if (m_lce != null)
+			{
 				hash += m_lce.GetHashCode();
+			}
 			if (WsCode != null)
+			{
 				hash *= WsCode.GetHashCode();
+			}
 			return hash;
 		}
 	}

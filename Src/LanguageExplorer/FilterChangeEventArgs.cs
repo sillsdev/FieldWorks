@@ -1,8 +1,10 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace LanguageExplorer.Filters
+using LanguageExplorer.Filters;
+
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Event arguments for FilterChangeHandler event.
@@ -10,7 +12,7 @@ namespace LanguageExplorer.Filters
 	/// more difficult to avoid refreshing the list twice when switching from one filter to
 	/// another. Arguably, both add and remove could be arrays. But so far there has been no
 	/// need for this, and if we do, we can easily keep the current constructor but change
-	/// the acessors, which are probably rather less used.
+	/// the accessors, which are probably rather less used.
 	/// </summary>
 	public class FilterChangeEventArgs
 	{

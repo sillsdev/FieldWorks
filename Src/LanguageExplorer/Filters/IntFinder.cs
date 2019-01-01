@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (element);
+			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "flid", Flid.ToString());
 		}
 
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void InitXml(XElement element)
 		{
-			base.InitXml (element);
+			base.InitXml(element);
 			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid");
 		}
 
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override string[] Strings(int hvo)
 		{
-			return new[] {DataAccess.get_IntProp(hvo, Flid).ToString()};
+			return new[] { DataAccess.get_IntProp(hvo, Flid).ToString() };
 		}
 
 		/// <summary>
