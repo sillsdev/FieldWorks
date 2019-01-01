@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
-using System.Drawing;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -22,7 +22,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			m_helpTopicProvider = helpProvider;
 			// Clear away example text
 			explanationLabel.Text = string.Empty;
-
 			if (MiscUtils.IsUnix)
 			{
 				var optimalWidthOnMono = 582;

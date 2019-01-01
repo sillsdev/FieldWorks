@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,8 @@ using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Cellar;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.Xml;
 
 namespace LanguageExplorer.DictionaryConfiguration
@@ -20,7 +20,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// configuration settings to new formats.
 	/// <note>Most of these methods were moved here from the XmlDocConfigureDlg class</note>
 	/// </summary>
-	public static class LegacyConfigurationUtils
+	internal static class LegacyConfigurationUtils
 	{
 		internal static void BuildTreeFromLayoutAndParts(XElement configurationLayoutsNode, ILayoutConverter converter)
 		{
@@ -63,17 +63,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 							break;
 						}
 					}
-
 					if (!fReversalIndex)
 					{
 						continue;
 					}
-					foreach(var ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
+					foreach (var ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
 						var ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 						var sWsTag = ws.Id;
-						converter.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
-						// Create a copy of the layoutType node for the specific writing system.
+						converter.ExpandWsTaggedNodes(sWsTag);  // just in case we have a new index.
+																// Create a copy of the layoutType node for the specific writing system.
 						var xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType, ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
 						var rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
 						converter.AddDictionaryTypeItem(xnRealLayout, rgltnStyle);
@@ -160,7 +159,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				converter.LogConversionError(msg);
 				return null;
 			}
-			mainLayoutNode.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
+			mainLayoutNode.ParentLayout = layout;   // not really the parent layout, but the parent of this node's children
 			var sVisible = XmlUtils.GetOptionalAttributeValue(layout, "visibility");
 			mainLayoutNode.Checked = sVisible != "never";
 			AddChildNodes(layout, mainLayoutNode, mainLayoutNode.Nodes.Count, converter);
@@ -172,8 +171,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var fMerging = iStart < ltnParent.Nodes.Count;
 			var className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
-			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
-																						new[] { "ref", "label" });
+			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache, new[] { "ref", "label" });
 			foreach (var node in nodes)
 			{
 				if (node.Name.LocalName == "sublayout")
@@ -207,12 +205,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (!fHide)
 					{
 						ltn = new LayoutTreeNode(node, converter, className)
-							{
-								OriginalIndex = ltnParent.Nodes.Count,
-								ParentLayout = layout,
-								HiddenNode = converter.LayoutLevels.HiddenPartRef,
-								HiddenNodeLayout = converter.LayoutLevels.HiddenLayout
-							};
+						{
+							OriginalIndex = ltnParent.Nodes.Count,
+							ParentLayout = layout,
+							HiddenNode = converter.LayoutLevels.HiddenPartRef,
+							HiddenNodeLayout = converter.LayoutLevels.HiddenLayout
+						};
 						if (!string.IsNullOrEmpty(ltn.LexRelType))
 						{
 							converter.BuildRelationTypeList(ltn);
@@ -251,7 +249,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 							continue;
 						}
 						var cNew = ltn.Nodes.Count - cOrig;
-						if(cNew > 1)
+						if (cNew > 1)
 						{
 							var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
 							converter.LogConversionError(msg);
@@ -359,14 +357,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (clidDst == MoFormTags.kClassId && !sLayout.StartsWith("publi"))
 			{
-				return;	// ignore the layouts used by the LexEntry-Jt-Headword part.
+				return; // ignore the layouts used by the LexEntry-Jt-Headword part.
 			}
-
 			if (string.IsNullOrEmpty(sLayout) || string.IsNullOrEmpty(sClass))
 			{
 				return;
 			}
-
 			if (sTargetClasses == null)
 			{
 				sTargetClasses = sClass;
@@ -377,17 +373,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				subLayout = converter.GetLayoutElement(rgsClasses[0], sLayout);
 			}
-
 			if (subLayout != null)
 			{
 				var iStart = ltn.Nodes.Count;
 				var cNodes = subLayout.Elements().Count();
 				AddChildNodes(subLayout, ltn, iStart, converter);
-
 				var fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xn, "repeatedConfig", false);
 				if (fRepeatedConfig)
 				{
-					return;		// repeats an earlier part element (probably as a result of <if>s)
+					return;     // repeats an earlier part element (probably as a result of <if>s)
 				}
 				for (var i = 1; i < rgsClasses.Length; i++)
 				{
@@ -435,20 +429,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return false;
 			}
-
 			if (!first.HasAttributes && (second.HasAttributes))
 			{
 				return false;
 			}
-			if(!first.HasAttributes)
+			if (!first.HasAttributes)
 			{
 				return ChildNodesMatch(first.Elements().ToList(), second.Elements().ToList());
 			}
-			if(first.Attributes().Count() != second.Attributes().Count())
+			if (first.Attributes().Count() != second.Attributes().Count())
 			{
 				return false;
 			}
-
 			var firstAttSet = new SortedList<string, string>();
 			var secondAttSet = new SortedList<string, string>();
 			var firstAttributes = first.Attributes().ToList();
@@ -461,7 +453,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var firstIter = firstAttSet.GetEnumerator())
 			using (var secondIter = secondAttSet.GetEnumerator())
 			{
-				for(;firstIter.MoveNext() && secondIter.MoveNext();)
+				for (; firstIter.MoveNext() && secondIter.MoveNext();)
 				{
 					if (!firstIter.Current.Equals(secondIter.Current))
 					{
@@ -491,7 +483,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var firstIter = firstAtSet.GetEnumerator())
 			using (var secondIter = secondAtSet.GetEnumerator())
 			{
-				for (; firstIter.MoveNext() && secondIter.MoveNext(); )
+				for (; firstIter.MoveNext() && secondIter.MoveNext();)
 				{
 					if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
 					{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// Code for converting between unicode characters and their codepoints.
 	/// </summary>
-	static class UnicodeCharacterEditingHelper
+	internal static class UnicodeCharacterEditingHelper
 	{
 		/// <summary>
 		/// If input ends in one or more hex digits, replace them with a UTF-16 character at that codepoint. Only up to 4 hex digits are supported.
@@ -28,7 +28,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return input;
 			}
-
 			// Matches 1 to 4 hex digits at the end of input, and replaces them with the result of the lambda.
 			// U+ or u+ is optional, and will be omitted from the output.
 			return Regex.Replace(input, @"(?:[Uu]\+)?([0-9A-Fa-f]{1,4})$", (match) =>
@@ -37,19 +36,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					return match.Value;
 				}
-
 				var hexdigits = match.Groups[1].Value;
-
 				int codepoint;
 				if (!int.TryParse(hexdigits, NumberStyles.AllowHexSpecifier, null, out codepoint))
 				{
 					// Failed somehow.
 					return match.Value;
 				}
-
 				// Converting to a char should not overflow since hexdigits is never more than 4 digits.
 				var character = Convert.ToChar(codepoint);
-
 				return char.IsSurrogate(character) ? match.Value : character.ToString();
 			});
 		}
@@ -64,16 +59,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return input;
 			}
-
 			var lastCharacter = input.Last();
-
 			if (char.IsSurrogate(lastCharacter))
 			{
 				return input;
 			}
-
-			var hexCodepoint = ((int)lastCharacter).ToString("X4");
-			return input.Remove(input.Length - 1) + hexCodepoint;
+			return input.Remove(input.Length - 1) + ((int)lastCharacter).ToString("X4");
 		}
 
 		/// <summary>
@@ -87,7 +78,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		/// <summary>
 		/// Attach to a TextBox's KeyDown event. When user presses ALT-X, replace
-		/// the preceeding hex-digits with a corresponding character from that codepoint, or the preceeding
+		/// the preceding hex-digits with a corresponding character from that codepoint, or the preceding
 		/// non-hex-digit with the hex-digits of the character's codepoint.
 		/// See LT-13359.
 		/// Preserves insertion point location, and current selection.

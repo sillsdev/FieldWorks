@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 {
 	public partial class DictionaryConfigurationTreeControl : UserControl
 	{
+		private readonly ContextMenuStrip _ctrlRightClickMenu;
+
 		/// <summary>
 		/// For events occurring on TreeNodes in the TreeView in this control.
 		/// </summary>
@@ -58,10 +60,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public event TreeNodeEventHandler UnCheckAll;
 
-		private readonly ContextMenuStrip m_CtrlRightClickMenu;
-
-		private readonly ToolTip m_toolTip;
-
 		/// <summary>
 		/// Tree of TreeNodes.
 		/// </summary>
@@ -101,46 +99,39 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			InitializeComponent();
 
-			m_toolTip = new ToolTip();
-			m_toolTip.SetToolTip(moveUp, LanguageExplorerResources.MoveUp);
-			m_toolTip.SetToolTip(moveDown, LanguageExplorerResources.MoveDown);
-			m_toolTip.SetToolTip(duplicate, DictionaryConfigurationStrings.Duplicate);
-			m_toolTip.SetToolTip(remove, DictionaryConfigurationStrings.Delete);
-			m_toolTip.SetToolTip(rename, DictionaryConfigurationStrings.EditLabel);
-			m_toolTip.SetToolTip(highlight, DictionaryConfigurationStrings.HighlightAffectedContent);
-
+			var toolTip = new ToolTip();
+			toolTip.SetToolTip(moveUp, LanguageExplorerResources.MoveUp);
+			toolTip.SetToolTip(moveDown, LanguageExplorerResources.MoveDown);
+			toolTip.SetToolTip(duplicate, DictionaryConfigurationStrings.Duplicate);
+			toolTip.SetToolTip(remove, DictionaryConfigurationStrings.Delete);
+			toolTip.SetToolTip(rename, DictionaryConfigurationStrings.EditLabel);
+			toolTip.SetToolTip(highlight, DictionaryConfigurationStrings.HighlightAffectedContent);
 			moveUp.Click += (sender, args) =>
 			{
 				MoveUp?.Invoke(tree.SelectedNode);
 			};
-
 			moveDown.Click += (sender, args) =>
 			{
 				MoveDown?.Invoke(tree.SelectedNode);
 			};
-
 			duplicate.Click += (sender, args) =>
 			{
 				Duplicate?.Invoke(tree.SelectedNode);
 			};
-
 			remove.Click += (sender, args) =>
 			{
 				Remove?.Invoke(tree.SelectedNode);
 			};
-
 			rename.Click += (sender, args) =>
 			{
 				Rename?.Invoke(tree.SelectedNode);
 			};
-
 			highlight.Click += (sender, args) =>
 			{
-				Highlight?.Invoke(tree.SelectedNode, highlight, m_toolTip);
+				Highlight?.Invoke(tree.SelectedNode, highlight, toolTip);
 			};
-
 			// Create the ContextMenuStrip.
-			m_CtrlRightClickMenu = new ContextMenuStrip();
+			_ctrlRightClickMenu = new ContextMenuStrip();
 			// Create the checkall and uncheckall items
 			var checkAllItem = new DisposableToolStripMenuItem
 			{
@@ -152,12 +143,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Text = DictionaryConfigurationStrings.ConfigurationTreeControl_ClearAllChildren,
 				DisplayStyle = ToolStripItemDisplayStyle.Text
 			};
-			m_CtrlRightClickMenu.Items.AddRange(new ToolStripItem[] { checkAllItem, uncheckAllItem });
+			_ctrlRightClickMenu.Items.AddRange(new ToolStripItem[] { checkAllItem, uncheckAllItem });
 			// If the user selects one of the items perform the action and select the node they right clicked on
-			m_CtrlRightClickMenu.ItemClicked += (menu, args) =>
+			_ctrlRightClickMenu.ItemClicked += (menu, args) =>
 			{
-				var selectedNode = (TreeNode)m_CtrlRightClickMenu.Tag;
-				if(args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_SelectAllChildren && CheckAll != null)
+				var selectedNode = (TreeNode)_ctrlRightClickMenu.Tag;
+				if (args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_SelectAllChildren && CheckAll != null)
 				{
 					tree.SelectedNode = selectedNode;
 					CheckAll(selectedNode);
@@ -179,12 +170,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			// store the node under the mouse click
 			var selectedNode = tree.GetNodeAt(buttonArgs.X, buttonArgs.Y);
-			if(selectedNode != null)
+			if (selectedNode != null)
 			{
 				// pass the node under the mouse click through the menu item
-				m_CtrlRightClickMenu.Tag = selectedNode;
+				_ctrlRightClickMenu.Tag = selectedNode;
 				// show the menu
-				m_CtrlRightClickMenu.Show(tree, buttonArgs.Location);
+				_ctrlRightClickMenu.Show(tree, buttonArgs.Location);
 			}
 		}
 	}

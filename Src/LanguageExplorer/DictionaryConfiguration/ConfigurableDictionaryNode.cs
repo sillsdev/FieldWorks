@@ -1,20 +1,20 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Text.RegularExpressions;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// This class allows configuring an element of dictionary data
 	/// </summary>
-	[XmlType (AnonymousType = false, TypeName = @"ConfigurationItem")]
+	[XmlType(AnonymousType = false, TypeName = @"ConfigurationItem")]
 	public class ConfigurableDictionaryNode
 	{
 		public override string ToString()
@@ -49,20 +49,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			get
 			{
-				string localizedLabel;
-				if (StringTable == null)
-				{
-					localizedLabel = LabelSuffix == null ? Label : $"{Label} ({LabelSuffix})";
-				}
-				else
-				{
-					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : $"{StringTable.LocalizeAttributeValue(Label)} ({StringTable.LocalizeAttributeValue(LabelSuffix)})";
-				}
-				if (DictionaryNodeOptions is DictionaryNodeGroupingOptions)
-				{
-					return $"[{localizedLabel}]";
-				}
-				return localizedLabel;
+				var localizedLabel = StringTable == null ? LabelSuffix == null
+						? Label : $"{Label} ({LabelSuffix})"
+							: LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label)
+								: $"{StringTable.LocalizeAttributeValue(Label)} ({StringTable.LocalizeAttributeValue(LabelSuffix)})";
+				return DictionaryNodeOptions is DictionaryNodeGroupingOptions ? $"[{localizedLabel}]" : localizedLabel;
 			}
 		}
 
@@ -108,7 +99,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Whether the node's style selection should use character or paragraph styles. Allows specifying special cases like Minor Entry - Components (LT-15834).
 		/// </summary>
-		[XmlAttribute(AttributeName="styleType")]
+		[XmlAttribute(AttributeName = "styleType")]
 		public StyleTypes StyleType { get; set; }
 
 		/// <summary>
@@ -278,7 +269,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent, bool isRecursiveCall = false)
 		{
 			var clone = new ConfigurableDictionaryNode();
-
 			// Copy everything over at first, importantly handling strings, bools.
 			var properties = typeof(ConfigurableDictionaryNode).GetProperties();
 			foreach (var property in properties)
@@ -293,7 +283,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			clone.ReferencedNode = ReferencedNode; // GetProperties() doesn't return internal properties; copy here
 			clone.Parent = parent;
-
 			// Deep-clone Children
 			if (Children != null && Children.Any())
 			{
@@ -316,13 +305,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				clone.ReferenceItem = null;
 				clone.Children = ReferencedNode.Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 			}
-
 			// Deep-clone DictionaryNodeOptions
 			if (DictionaryNodeOptions != null)
 			{
 				clone.DictionaryNodeOptions = DictionaryNodeOptions.DeepClone();
 			}
-
 			return clone;
 		}
 
@@ -334,8 +321,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public override bool Equals(object other)
 		{
 			var otherNode = other as ConfigurableDictionaryNode;
-			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix ||
-			    FieldDescription != otherNode.FieldDescription)
+			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix || FieldDescription != otherNode.FieldDescription)
 			{
 				return false;
 			}
@@ -374,7 +360,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var duplicate = DeepCloneUnderSameParent();
 			duplicate.IsDuplicate = true;
-
 			// Provide a suffix to distinguish among similar dictionary items.
 			var suffix = 1;
 			var labelSuffix = string.IsNullOrEmpty(duplicate.LabelSuffix) ? "" : duplicate.LabelSuffix;
@@ -385,15 +370,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				labelSuffix = labelSuffix.Remove(labelSuffix.LastIndexOf(copy.Value));
 			}
 			duplicate.LabelSuffix = string.Concat(labelSuffix, suffix);
-
 			// Check that no siblings have a matching suffix, and that no children of grouping siblings have a matching suffix
 			while (duplicate.NodeWithSameDisplayLabelExists(duplicate.LabelSuffix, siblings))
 			{
 				suffix++;
 				duplicate.LabelSuffix = string.Concat(labelSuffix, suffix);
 			}
-			//duplicate.LabelSuffix += suffix;
-
 			var locationOfThisNode = siblings.IndexOf(this);
 			siblings.Insert(locationOfThisNode + 1, duplicate);
 			return duplicate;
@@ -408,7 +390,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-
 			Parent.Children.Remove(this);
 			Parent = null;
 		}
@@ -427,7 +408,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return false;
 			}
-
 			LabelSuffix = newSuffix;
 			return true;
 		}

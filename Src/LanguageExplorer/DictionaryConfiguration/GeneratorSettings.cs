@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,6 +25,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
 		{
 		}
+
 		internal GeneratorSettings(LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
 		{
 			Guard.AgainstNull(cache, nameof(cache));

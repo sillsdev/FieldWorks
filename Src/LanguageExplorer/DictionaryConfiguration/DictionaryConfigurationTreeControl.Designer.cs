@@ -1,8 +1,8 @@
-﻿// Copyright (c) 2014-2018 SIL International
+﻿// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace LanguageExplorer.DictionaryConfiguration
@@ -20,14 +20,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
-				for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)
+				for (int i = _ctrlRightClickMenu.Items.Count - 1; i >= 0; i--)
 				{
-					m_CtrlRightClickMenu.Items[i].Dispose();
+					_ctrlRightClickMenu.Items[i].Dispose();
 				}
-				m_CtrlRightClickMenu.Dispose();
+				_ctrlRightClickMenu.Dispose();
 				components?.Dispose();
 			}
 			base.Dispose(disposing);

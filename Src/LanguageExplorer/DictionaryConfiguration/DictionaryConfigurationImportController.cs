@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,54 +41,46 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// View that this controller manipulates.
 		/// </summary>
 		private DictionaryConfigurationImportDlg _view;
+		/// <summary>
+		/// Path to the config that we are preparing to import.
+		/// </summary>
+		internal string _temporaryImportConfigLocation;
+		/// <summary>
+		/// New publications that will be added by the import.
+		/// </summary>
+		internal IEnumerable<string> _newPublications;
+		/// <summary>
+		/// The custom fields found in the lift file which will be added if they aren't present in the project
+		/// </summary>
+		internal IEnumerable<string> _customFieldsToImport;/// <summary>
+		/// Label of configuration in file being imported. May be different than final label used, such as if a configuration already exists with that label.
+		/// </summary>
+		internal string _originalConfigLabel;
+		/// <summary>
+		/// Label to use for configuration being imported if we use a label that isn't already in use.
+		/// </summary>
+		internal string _proposedNewConfigLabel;
+		/// <summary>
+		/// Path to the lift file with the custom fields we are planning to import.
+		/// </summary>
+		private string _importLiftLocation;
+		/// <summary>
+		/// Location of the temporary styles file during import process.
+		/// </summary>
+		private string _importStylesLocation;
+		/// <summary>
+		/// Is the import config is valid to the current view.
+		/// </summary>
+		private bool _isInvalidConfigFile;
 
 		/// <summary>
 		/// New configuration to be imported. And it was imported, if ImportHappened.
 		/// </summary>
 		public DictionaryConfigurationModel NewConfigToImport { get; set; }
 
-		/// <summary>
-		/// Path to the config that we are preparing to import.
-		/// </summary>
-		internal string _temporaryImportConfigLocation;
-
-		/// <summary>
-		/// New publications that will be added by the import.
-		/// </summary>
-		internal IEnumerable<string> _newPublications;
-
-		/// <summary>
-		/// The custom fields found in the lift file which will be added if they aren't present in the project
-		/// </summary>
-		internal IEnumerable<string> _customFieldsToImport;
-
 		/// <summary>Did the configuration get imported.</summary>
 		public bool ImportHappened;
 
-		/// <summary>
-		/// Label of configuration in file being imported. May be different than final label used, such as if a configuration already exists with that label.
-		/// </summary>
-		internal string _originalConfigLabel;
-
-		/// <summary>
-		/// Label to use for configuration being imported if we use a label that isn't already in use.
-		/// </summary>
-		internal string _proposedNewConfigLabel;
-
-		/// <summary>
-		/// Path to the lift file with the custom fields we are planning to import.
-		/// </summary>
-		private string _importLiftLocation;
-
-		/// <summary>
-		/// Location of the temporary styles file during import process.
-		/// </summary>
-		private string _importStylesLocation;
-
-		/// <summary>
-		/// Is the import config is valid to the current view.
-		/// </summary>
-		private bool _isInvalidConfigFile;
 
 		/// <summary/>
 		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir, List<DictionaryConfigurationModel> configurations)
@@ -104,16 +96,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal void DoImport()
 		{
 			Debug.Assert(NewConfigToImport != null);
-
 			ImportCustomFields(_importLiftLocation);
-
 			// If the configuration to import has the same label as an existing configuration in the project folder
 			// then overwrite the existing configuration.
 			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label
 				&& Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
-
-			NewConfigToImport.Publications.ForEach(
-				publication =>
+			NewConfigToImport.Publications.ForEach(publication =>
 				{
 					AddPublicationTypeIfNotPresent(publication, _cache);
 				});
@@ -132,7 +120,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 #endif
 				_view.explanationLabel.Text = DictionaryConfigurationStrings.kstidCannotImport;
 			}
-
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
 			NewConfigToImport.FilePath = _temporaryImportConfigLocation;
 			NewConfigToImport.Load(_cache);
@@ -148,21 +135,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				NewConfigToImport.Label = _proposedNewConfigLabel;
 			}
-
 			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk. Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigDir, _configurations, NewConfigToImport);
-
 			var outputConfigPath = existingConfigurationInTheWay != null ? existingConfigurationInTheWay.FilePath : NewConfigToImport.FilePath;
-
 			File.Move(_temporaryImportConfigLocation, outputConfigPath);
-
 			NewConfigToImport.FilePath = outputConfigPath;
 			_configurations.Add(NewConfigToImport);
-
 			// phone home (analytics)
 			var configType = NewConfigToImport.Type;
-			var configDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(
-				configType == ConfigType.Reversal
+			var configDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(configType == ConfigType.Reversal
 					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
@@ -172,16 +153,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ImportStyles(string importStylesLocation)
 		{
 			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name));
-
 			// For LT-18267, record based on and next properties of styles not
 			// being exported, so they can be reconnected to the imported
 			// styles of the same name.
-			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name)).ToDictionary(
-				style => style.Name,
+			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name)).ToDictionary(style => style.Name,
 				style => new
 				{
-						BasedOn = style.BasedOnRA?.Name,
-						Next = style.NextRA?.Name
+					BasedOn = style.BasedOnRA?.Name,
+					Next = style.NextRA?.Name
 				});
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
@@ -201,15 +180,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
-
 				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name));
-
 				postimportStylesToReconnect.ForEach(postimportStyleToRewire =>
 				{
 					var correspondingPreImportStyleInfo = preimportStyleLinks[postimportStyleToRewire.Name];
-
 					postimportStyleToRewire.BasedOnRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.BasedOn);
-
 					postimportStyleToRewire.NextRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Next);
 				});
 			});
@@ -223,16 +198,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				string sFilename;
 				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
-				if (fMigrationNeeded)
-				{
-					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
-				}
-				else
-				{
-					sFilename = liftPathname;
-				}
+				var sFilename = fMigrationNeeded ? Migrator.MigrateToLatestVersion(liftPathname) : liftPathname;
 				var flexImporter = new FlexLiftMerger(_cache, MergeStyle.MsKeepOnlyNew, true);
 				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 				flexImporter.LiftFile = liftPathname;
@@ -241,7 +208,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					flexImporter.LoadLiftRanges(liftRangesFile);
 				}
-
 				parser.ReadLiftFile(sFilename);
 			});
 		}
@@ -261,7 +227,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static ICmPossibility AddPublicationType(string name, LcmCache cache)
 		{
 			Debug.Assert(cache.LangProject.LexDbOA.PublicationTypesOA != null);
-
 			var item = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
@@ -270,7 +235,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			});
 			return item;
 		}
-
 
 		/// <summary>
 		/// Prepare this controller to import from a dictionary configuration zip file.
@@ -290,7 +254,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				_newPublications = null;
 				return;
 			}
-
 			try
 			{
 				using (var zip = new ZipFile(configurationZipPath))
@@ -299,7 +262,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					var configInZip = zip.SelectEntries("*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension).First();
 					configInZip.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
-					if(!FileUtils.IsFileReadableAndWritable(_temporaryImportConfigLocation))
+					if (!FileUtils.IsFileReadableAndWritable(_temporaryImportConfigLocation))
 					{
 						File.SetAttributes(_temporaryImportConfigLocation, FileAttributes.Normal);
 					}
@@ -318,9 +281,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				ClearValuesOnError();
 				return;
 			}
-
 			NewConfigToImport = new DictionaryConfigurationModel(_temporaryImportConfigLocation, _cache);
-
 			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
 			var configDirectory = Path.GetFileName(_projectConfigDir);
 			if (DictionaryConfigurationServices.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
@@ -331,16 +292,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 			_isInvalidConfigFile = false;
-
 			// Reset flag
 			ImportHappened = false;
-
 			_newPublications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
-
 			_customFieldsToImport = CustomFieldsInLiftFile(_importLiftLocation);
 			// Use the full list of publications in the XML file, even ones that don't exist in the project.
 			NewConfigToImport.Publications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).ToList();
-
 			// Make a new, unique label for the imported configuration, if needed.
 			var newConfigLabel = NewConfigToImport.Label;
 			_originalConfigLabel = NewConfigToImport.Label;
@@ -351,7 +308,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			NewConfigToImport.Label = newConfigLabel;
 			_proposedNewConfigLabel = newConfigLabel;
-
 			// Not purporting to use any particular file location yet.
 			NewConfigToImport.FilePath = null;
 		}
@@ -411,7 +367,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				openDialog.Title = DictionaryConfigurationStrings.kstidChooseFile;
 				openDialog.Filter = DictionaryConfigurationStrings.kstidZipFiles + "|*.zip";
 				openDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
 				var result = openDialog.ShowDialog(_view);
 				if (result != DialogResult.OK)
 				{
@@ -441,7 +396,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				_view.explanationLabel.Text = invalidConfigFileMsg + DictionaryConfigurationStrings.kstidCannotImport;
 				return;
 			}
-
 			if (_originalConfigLabel == _proposedNewConfigLabel)
 			{
 				mainStatus = string.Format(DictionaryConfigurationStrings.kstidImportingConfig, NewConfigToImport.Label);
@@ -452,19 +406,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 						? DictionaryConfigurationStrings.kstidImportingConfigNewName
 						: DictionaryConfigurationStrings.kstidImportingAndOverwritingConfiguration, NewConfigToImport.Label);
 			}
-
 			if (_newPublications != null && _newPublications.Any())
 			{
 				publicationStatus = DictionaryConfigurationStrings.kstidPublicationsWillBeAdded + Environment.NewLine + string.Join(", ", _newPublications);
 			}
-
 			if (_customFieldsToImport != null && _customFieldsToImport.Any())
 			{
 				customFieldStatus = DictionaryConfigurationStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
 			}
-
-			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}",
-				mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
+			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}", mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
 				DictionaryConfigurationStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);
 			_view.Refresh();
 		}
@@ -475,27 +425,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public void RefreshBasedOnNewlySelectedImportFile()
 		{
 			PrepareImport(_view.importPathTextBox.Text);
-
 			if (NewConfigToImport == null || _isInvalidConfigFile)
 			{
 				// We aren't ready to import. Something didn't work right.
-
 				RefreshStatusDisplay();
 				_view.overwriteGroupBox.Visible = false;
 				_view.importButton.Enabled = false;
 				return;
 			}
-
 			// Reset the overwrite setting when choosing a new file.
 			_view.notOverwriteRadioOption.Checked = true;
-
 			// Update overwrite radio labels
 			_view.doOverwriteRadioOption.Text = string.Format(DictionaryConfigurationStrings.kstidOverwriteConfiguration, _originalConfigLabel);
 			_view.notOverwriteRadioOption.Text = string.Format(DictionaryConfigurationStrings.kstidUseNewConfigName, NewConfigToImport.Label);
-
 			// Give the option to overwrite only if there is something to overwrite.
 			_view.overwriteGroupBox.Visible = _originalConfigLabel != _proposedNewConfigLabel;
-
 			RefreshStatusDisplay();
 			_view.importButton.Enabled = true;
 		}

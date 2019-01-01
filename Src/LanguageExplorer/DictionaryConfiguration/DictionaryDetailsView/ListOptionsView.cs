@@ -1,10 +1,11 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,7 +31,13 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			base.Dispose(disposing);
 		}
 
@@ -44,19 +51,20 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-
 			if (!Platform.IsMono)
+			{
 				return;
-
+			}
 			Control firstCheckBox = checkBoxDisplayOption.Visible ? checkBoxDisplayOption : checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null;
 			Control secondCheckBox = firstCheckBox != checkBoxDisplayOption2 ? checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null : null;
-
 			if (firstCheckBox != null && secondCheckBox != null) // Trying to display both option checkboxes
 			{
 				// account for the vertical space needed for both checkboxes and a little buffer
 				var listViewBottom = this.Height - firstCheckBox.Height - secondCheckBox.Height - 3;
 				if (listView.Location.Y + listView.Height > listViewBottom)
+				{
 					listView.Size = new Size(listView.Width, listViewBottom - listView.Location.Y);
+				}
 				var firstCheckBoxTop = listViewBottom + 3;
 				var secondCheckBoxTop = firstCheckBoxTop + firstCheckBox.Height;
 				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
@@ -67,15 +75,13 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				// account for the vertical space needed for a single checkbox plus buffer
 				var listViewBottom = this.Height - firstCheckBox.Height - 3;
 				if (listView.Location.Y + listView.Height > listViewBottom)
+				{
 					listView.Size = new Size(listView.Width, listViewBottom - listView.Location.Y);
+				}
 				var firstCheckBoxTop = listViewBottom + 3;
 				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
 			}
 		}
-
-		//
-		// User configuration properties
-		//
 
 		/// <summary>Whether or not the single "display option" checkbox below the list is checked</summary>
 		public bool DisplayOptionCheckBoxChecked
@@ -99,10 +105,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			}
 			get { return listView.Items.Cast<ListViewItem>().ToList(); }
 		}
-
-		//
-		// View setup properties
-		//
 
 		/// <summary>Label for the "DisplayOption" CheckBox below the list, eg "Disp WS Abbrevs" or "Disp Complex Forms in Paragraphs"</summary>
 		public string DisplayOptionCheckBoxLabel { set { checkBoxDisplayOption.Text = value; } }

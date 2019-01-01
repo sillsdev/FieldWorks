@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				{' ', "\u2219"},
 				// Right-arrow
 				{'\t', "\u279D"},
-
 				// http://en.wikipedia.org/wiki/Bi-directional_text
 				{'\u200F', "[RLM]"},
 				{'\u200E', "[LRM]"},
@@ -50,7 +49,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				{'\u2067', "[RLI]"},
 				{'\u2068', "[FSI]"},
 				{'\u2069', "[PDI]"},
-
 				{'\u200D', "[ZWJ]"},
 				{'\uFEFF', "[ZWNBSP]"},
 				{'\u200C', "[ZWNJ]"},
@@ -67,7 +65,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		{
 			var textBox = ((TextBox)sender);
 			var selectionStart = textBox.SelectionStart;
-
 			// Separately handle the parts before and after
 			// the insertion point to more robustly handle
 			// different substitution situations while still
@@ -77,7 +74,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			var lastPart = textBox.Text.Substring(selectionStart);
 			var firstPartAsVisible = InvisibleToVisibleCharacters(firstPart);
 			textBox.Text = firstPartAsVisible + InvisibleToVisibleCharacters(lastPart);
-
 			// Keep insertion point in the same place, and even if visible replacement strings are longer than one character.
 			textBox.SelectionStart = firstPartAsVisible.Length;
 			// Just eliminate the selection, if any.
@@ -119,7 +115,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			{
 				PopulateCssCharacterSubstitutions();
 			}
-
 			foreach (var replacement in s_cssCharacterSubstitutions)
 			{
 				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);

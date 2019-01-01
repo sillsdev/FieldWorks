@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,7 +61,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			var dictionaryFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var reversalFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
-
 			string configPath;
 			// There is only one default config for reversals
 			if (config.IsReversal)
@@ -111,15 +110,19 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void ChooseAppropriateComplexForms(DictionaryConfigurationModel migratingModel)
 		{
 			if (!migratingModel.IsHybrid)
+			{
 				return;
+			}
 			DictionaryConfigurationServices.PerformActionOnNodes(migratingModel.Parts, parentNode =>
 			{
 				if (parentNode.ReferencedOrDirectChildren != null && parentNode.ReferencedOrDirectChildren.Any(node => node.FieldDescription == "Subentries"))
+				{
 					parentNode.ReferencedOrDirectChildren.Where(sib => sib.FieldDescription == "VisibleComplexFormBackRefs").ForEach(sib =>
 					{
 						sib.Label = "Other Referenced Complex Forms";
 						sib.FieldDescription = "ComplexFormsNotSubentries";
 					});
+				}
 			});
 		}
 
@@ -142,7 +145,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				if (IsComplexFormsNode(config.Parts[i]))
 				{
 					config.Parts.RemoveAt(i);
-		}
+				}
 			}
 		}
 
@@ -152,8 +155,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			return options != null && options.ListId == ListIds.Complex;
 		}
 
-		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig,
-			ConfigurableDictionaryNode oldConfigPart, ConfigurableDictionaryNode currentDefaultConfigPart)
+		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, ConfigurableDictionaryNode oldConfigPart,
+			ConfigurableDictionaryNode currentDefaultConfigPart)
 		{
 			var oldVersion = oldConfig.Version;
 			if (oldVersion < FirstAlphaMigrator.VersionAlpha3)
@@ -249,7 +252,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				return; // safety net
 			}
-
 			var etymNodes = new List<ConfigurableDictionaryNode>();
 			DictionaryConfigurationServices.PerformActionOnNodes(oldConfigPart.Children, node =>
 			{
@@ -258,7 +260,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					etymNodes.Add(node); // since we have to do some node deleting, just collect up the relevant nodes
 				}
 			});
-
 			foreach (var node in etymNodes)
 			{
 				if (node.IsCustomField) // Unfortunately there are some pathological users who have ancient custom fields named etymology
@@ -282,30 +283,28 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				node.Before = "(";
 				node.Between = " ";
 				node.After = ") ";
-
 				if (node.Children == null)
+				{
 					continue;
-
+				}
 				// enable Gloss node
 				var glossNode = node.Children.Find(n => n.Label == "Gloss");
 				if (glossNode != null)
 				{
 					glossNode.IsEnabled = true;
 				}
-
 				// enable Source Language Notes
 				var notesList = node.Children.Find(n => n.FieldDescription == "LanguageNotes");
 				if (notesList != null) // ran into some cases where this node didn't exist in reversal config!
 				{
 					notesList.IsEnabled = true;
 				}
-
 				// remove old children
-				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
+				var nodesToRemove = new[] { "Etymological Form", "Comment", "Source" };
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
-			DictionaryConfigurationServices.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
+			DictionaryConfigurationServices.PerformActionOnNodes(etymNodes, n => { n.IsCustomField = false; });
 		}
 
 		private static void RemoveReferencedHeadwordSubField(ConfigurableDictionaryNode part)
@@ -342,7 +341,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			var dictConfigFiles = new List<string>(DictionaryConfigurationServices.ConfigFilesInDir(reversalIndexConfigLoc));
-
 			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (var fName in dictConfigFiles)
 			{
@@ -353,36 +351,35 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					continue;
 				}
 				var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-					if (wsValue == Path.GetFileNameWithoutExtension(fName))
+				if (wsValue == Path.GetFileNameWithoutExtension(fName))
 				{
-						continue;
+					continue;
 				}
-					if (!File.Exists(newFName))
-					{
-						File.Move(fName, newFName);
-					}
-					else
-					{
+				if (!File.Exists(newFName))
+				{
+					File.Move(fName, newFName);
+				}
+				else
+				{
 					var files = Directory.GetFiles(Path.GetDirectoryName(fName));
 					var count = 0;
 					for (var i = 0; i < files.Length; i++)
+					{
+						if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
 						{
-							if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
-							{
 							var m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
-								if (m.Success)
-								{
-									count++;
-								}
+							if (m.Success)
+							{
+								count++;
 							}
 						}
-
-					newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
-						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
-						File.Move(fName, newFName);
 					}
+					newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
+					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
+					File.Move(fName, newFName);
 				}
 			}
+		}
 
 		/// <summary>
 		/// Reads the .fwdictconfig config file and gets the writing system name and version
@@ -422,9 +419,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void MigrateNewChildNodesAndOptionsInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
 			// REVIEW (Hasso) 2017.03: If this is a NoteInParaStyles node: Rather than overwriting the user's Options, copy their Options into a new WS&ParaOptions
-			if ((destinationNode.DictionaryNodeOptions == null ||
-			    DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) &&
-				sourceNode.DictionaryNodeOptions != null)
+			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription))
+			    && sourceNode.DictionaryNodeOptions != null)
 			{
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			}
@@ -526,7 +522,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				if (child.Children != null)
 				{
 					possibleMatches.AddRange(child.Children);
-			}
+				}
 			}
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
@@ -547,8 +543,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				else
 				{
 					destinationParentNode.Children.Add(newChildNode);
+				}
 			}
-		}
 		}
 
 		/// <summary>LT-18286: One Sharing Parent in Hybrid erroneously got direct children (from a migration step). Remove them.</summary>

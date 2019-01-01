@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,14 +29,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XElement> configViews, XElement current)
 		{
 			InitializeComponent();
-
 			m_propertyTable = propertyTable;
 			Presenter = new DictionaryConfigManager(this, configViews, current);
 			m_objType = objType;
-
 			// Make a help topic ID
 			m_helpTopicId = generateChooserHelpTopicID(m_objType);
-
 			m_helpProvider = new HelpProvider
 			{
 				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile
@@ -54,7 +51,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var candidateID = "khtpManage";
 			// Should we capitalize the next letter?
 			var nextCapital = true;
-
 			// Lets turn our field into a candidate help page!
 			foreach (var ch in fromStr)
 			{
@@ -75,7 +71,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					nextCapital = true; // next letter should be a capital
 				}
 			}
-
 			return candidateID;
 		}
 
@@ -91,7 +86,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="listItems"></param>
 		/// <param name="selectedItem">The code for the item that should be selected
 		/// in the dialog ListView.</param>
-		public void SetListViewItems(IEnumerable<Tuple<string,string>> listItems, string selectedItem)
+		public void SetListViewItems(IEnumerable<Tuple<string, string>> listItems, string selectedItem)
 		{
 			var itemList = listItems.Select(item => new VisibleListItem(item.Item1, item.Item2)).ToList();
 			CheckForValidSelectedItem(itemList, selectedItem);
@@ -112,7 +107,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return; // Just in case.
 			}
-
 			// find code in list, select that index
 			var idx = -1;
 			foreach (VisibleListItem item in m_listView.Items)
@@ -188,12 +182,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return; // what happened?
 			}
-			var dr = MessageBox.Show(
-				string.Format(DictionaryConfigurationStrings.ksConfirmDelete, m_objType, CurrentSelectedItem.Name),
-				string.Format(DictionaryConfigurationStrings.ksConfirmDeleteTitle, m_objType),
-				MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question,
-				MessageBoxDefaultButton.Button2);
+			var dr = MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksConfirmDelete, m_objType, CurrentSelectedItem.Name),
+				string.Format(DictionaryConfigurationStrings.ksConfirmDeleteTitle, m_objType), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 			if (dr == DialogResult.Yes)
 			{
 				Presenter.TryMarkForDeletion(CurrentSelectedItem.Code);
@@ -225,13 +215,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_btnCopy.Enabled = false;
 				return;
 			}
-
 			// Only allow deleting non-protected configuration.
 			m_btnDelete.Enabled = !Presenter.IsConfigProtected(newSelection.Code);
-
 			// Only allow copying a configuration that existed before opening this dialog.
 			m_btnCopy.Enabled = !Presenter.IsConfigNew(newSelection.Code);
-
 			// The selected view should be selected if the user clicks OK.
 			Presenter.FinalConfigurationView = newSelection.Code;
 		}

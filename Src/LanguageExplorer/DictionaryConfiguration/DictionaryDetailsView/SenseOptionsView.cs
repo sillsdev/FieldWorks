@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,17 +15,13 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 	/// </summary>
 	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
-
 		public SenseOptionsView(bool isSubsense)
 		{
 			InitializeComponent();
-
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
-
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
-
 			if (!isSubsense)
 			{
 				return;
@@ -66,7 +62,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string NumberingStyle
 		{
-			get{ return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
+			get { return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
 			set
 			{
 				if (string.IsNullOrEmpty(value))

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,11 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private ISimpleLogger m_logger;
 		internal const int VersionAlpha2 = 5;
 		internal const int VersionAlpha3 = 8;
+		private const string Abbr = "Abbreviation"; // good for label and field
+		private const string Name = "Name"; // good for label and field
+		private const string ReversePrefix = "Reverse "; // for reverse labels
+		private const string RevAbbr = "ReverseAbbr";
+		private const string RevName = "ReverseName";
 
 		public FirstAlphaMigrator(string appVersion, LcmCache cache, ISimpleLogger logger)
 		{
@@ -47,7 +52,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			// original migration neglected to update the version number; -1 (Pre83) is the same as 1 (Alpha1)
 			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 ||
-			    alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
+				alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
 			{
 				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
 			}
@@ -165,7 +170,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						DictionaryNodeOptions = subNode.DictionaryNodeOptions.DeepClone()
 					});
 					break;
-				case "SubentriesOS": // SubentriesOS uniquely identifies Reversal Index subentries
+				case "SubentriesOS":
+					// SubentriesOS uniquely identifies Reversal Index subentries
 					// Add in the new reversal subsubentries node
 					subNode.Children.Add(new ConfigurableDictionaryNode
 					{
@@ -202,7 +208,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				return nextNode;
 			}
 			// If we couldn't find the node, this is probably a test that didn't have a full model
-			m_logger.WriteLine($"Unable to find '{string.Join(DictionaryConfigurationServices.NodePathSeparator, new[] {"Main Entry"}.Concat(ancestors))}'");
+			m_logger.WriteLine($"Unable to find '{string.Join(DictionaryConfigurationServices.NodePathSeparator, new[] { "Main Entry" }.Concat(ancestors))}'");
 			m_logger.WriteLine(failureMessage + "'");
 			return new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 		}
@@ -223,7 +229,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					break;
 				case "SensesOS":
 					if (configNode.Parent.FieldDescription == "SensesOS") // update only subsenses
+					{
 						configNode.ReferenceItem = "MainEntrySubsenses";
+					}
 					break;
 				case "SubentriesOS": // uniquely identifies Reversal Index Subentries
 					configNode.ReferenceItem = "AllReversalSubentries";
@@ -309,8 +317,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						else if (n.FieldDescription.Contains("EntryType"))
 						{
 							var parentFd = n.Parent.FieldDescription;
-							if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType ||
-								isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
+							if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType || isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
 							{
 								if (parentFd == "ComplexFormEntryRefs")
 								{
@@ -334,7 +341,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 								SetEntryTypeChildrenBackward(n);
 							}
 						}
-						else if ((n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses") || (n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
+						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses" || (n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
 						{
 							n.Label = "Referenced Headword";
 						}
@@ -398,50 +405,52 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				return;
 			}
-
 			if (node.Label != "Pictures")
 			{
 				return;
 			}
-
 			node.Children.RemoveAll(child => child.Label == "Sense Number");
-
 			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = WritingSystemType.Analysis,
+				DisplayWritingSystemAbbreviations = false,
+				Options = new List<DictionaryNodeOption>
 				{
-					WsType = WritingSystemType.Analysis,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeOption>
-						{
-							new DictionaryNodeOption {Id = "analysis", IsEnabled = true}
-						}
-				};
-
+					new DictionaryNodeOption {Id = "analysis", IsEnabled = true}
+				}
+			};
 			var vernacularWsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = WritingSystemType.Vernacular,
+				DisplayWritingSystemAbbreviations = false,
+				Options = new List<DictionaryNodeOption>
 				{
-					WsType = WritingSystemType.Vernacular,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeOption>
-						{
-							new DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
-						}
-				};
-
+					new DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+				}
+			};
 			var headwordNode = new ConfigurableDictionaryNode
-				{
-					After = "  ", Between = " ", Label = "Headword", FieldDescription = "Owner",
-					SubField="OwnerOutlineName", CSSClassNameOverride="headword",
-					Style="Dictionary-Headword",
-					IsEnabled = true, DictionaryNodeOptions = vernacularWsOptions
-				};
-
-			var glossNode = new ConfigurableDictionaryNode
-				{
-					After = " ", Between = " ", Label = "Gloss", FieldDescription = "Owner",
-					SubField="Gloss",
-					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions
-				};
-
+			{
+				After = "  ",
+				Between = " ",
+				Label = "Headword",
+				FieldDescription = "Owner",
+				SubField = "OwnerOutlineName",
+				CSSClassNameOverride = "headword",
+				Style = "Dictionary-Headword",
+				IsEnabled = true,
+				DictionaryNodeOptions = vernacularWsOptions
+			};
 			node.Children.Add(headwordNode);
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = " ",
+				Label = "Gloss",
+				FieldDescription = "Owner",
+				SubField = "Gloss",
+				IsEnabled = true,
+				DictionaryNodeOptions = analysisWsOptions
+			};
 			node.Children.Add(glossNode);
 		}
 
@@ -455,23 +464,15 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				return;
 			}
-
 			if (!string.IsNullOrEmpty(label))
 			{
 				node.Label = label;
 			}
-
 			if (!string.IsNullOrEmpty(fieldDescription))
 			{
 				node.FieldDescription = fieldDescription;
 			}
 		}
-
-		private const string Abbr = "Abbreviation"; // good for label and field
-		private const string Name = "Name"; // good for label and field
-		private const string ReversePrefix = "Reverse "; // for reverse labels
-		private const string RevAbbr = "ReverseAbbr";
-		private const string RevName = "ReverseName";
 
 		/// <summary>
 		/// Makes sure EntryType node contains Abbreviation and Name nodes

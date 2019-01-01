@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,9 +27,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private IFlexApp m_app;
 		private IHelpTopicProvider m_helpTopicProvider;
 		protected HelpProvider m_helpProvider;
-
-		protected string m_helpTopic = ""; // Default help topic ID
-
+		protected string m_helpTopic = string.Empty; // Default help topic ID
 		private bool m_masterRefreshRequired;
 
 		public void SetupDialog(HomographConfiguration hc, LcmCache cache, LcmStyleSheet stylesheet, IFlexApp app, IHelpTopicProvider helpTopicProvider)
@@ -38,7 +36,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
-
 			m_homographConfiguration = hc;
 			m_cache = cache;
 			m_stylesheet = stylesheet;
@@ -49,7 +46,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				SetHelpButtonEnabled();
 			}
-
 			if (hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.Main))
 			{
 				m_radioHide.Checked = false;
@@ -127,7 +123,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_radioBefore.Checked = false;
 			}
 			EnableControls();
-
 		}
 
 		private void m_linkConfigHomographNumber_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -137,14 +132,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private void RunStyleDialog(string styleName)
 		{
-			using (var dlg = new FwStylesDlg(null, m_cache, m_stylesheet,
-				m_cache.WritingSystemFactory.get_EngineOrNull(m_cache.DefaultUserWs).RightToLeftScript,
-				m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
-				m_stylesheet.GetDefaultBasedOnStyleName(),
-				m_app.MeasurementSystem,
-				styleName, //m_stylesheet.GetDefaultBasedOnStyleName(),
-				styleName,
-				m_app, m_helpTopicProvider))
+			using (var dlg = new FwStylesDlg(null, m_cache, m_stylesheet, m_cache.WritingSystemFactory.get_EngineOrNull(m_cache.DefaultUserWs).RightToLeftScript,
+				m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript), m_stylesheet.GetDefaultBasedOnStyleName(), m_app.MeasurementSystem,
+				styleName, styleName, m_app, m_helpTopicProvider))
 			{
 				dlg.CanSelectParagraphBackgroundColor = false;
 				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)

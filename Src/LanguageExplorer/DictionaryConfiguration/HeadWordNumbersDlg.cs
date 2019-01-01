@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 
@@ -21,6 +21,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
 		private FwTextBox[] _digitBoxes;
+		private IHelpTopicProvider m_helpTopicProvider;
+		protected HelpProvider m_helpProvider;
+		protected string m_helpTopic = string.Empty; // Default help topic ID
 
 		public HeadwordNumbersDlg()
 		{
@@ -126,11 +129,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			set { m_configurationDescription.Text = value; }
 		}
 
-		private IHelpTopicProvider m_helpTopicProvider;
-		protected HelpProvider m_helpProvider;
-
-		protected string m_helpTopic = ""; // Default help topic ID
-
 		public string CurrentHomographStyle
 		{
 			get { return _homographStyleCombo.Items[0].ToString(); }
@@ -222,6 +220,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public IEnumerable<string> CustomDigits
 		{
+			get { return _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text)); }
 			set
 			{
 				var digitsArray = value.ToArray();
@@ -229,7 +228,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					return;
 				}
-
 				if (digitsArray.Length != 10)
 				{
 					return;
@@ -239,8 +237,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					_digitBoxes[i].Text = digitsArray[i];
 				}
 			}
-
-			get { return _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text)); }
 		}
 
 		public event EventHandler CustomDigitsChanged

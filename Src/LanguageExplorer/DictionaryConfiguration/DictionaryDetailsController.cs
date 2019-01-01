@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,11 +9,11 @@ using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -27,16 +27,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private readonly IPropertyTable m_propertyTable;
 		private readonly LcmCache m_cache;
 		private readonly LcmStyleSheet m_styleSheet;
-
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
-
 		/// <summary>ConfigurableDictionaryNode to model the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
-
 		/// <summary>The DictionaryConfigurationModel that owns the node being configured.</summary>
 		private DictionaryConfigurationModel m_configModel;
-
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options => m_node.DictionaryNodeOptions;
 
@@ -69,15 +65,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			m_configModel = model;
 			m_node = node;
-
 			View.SuspendLayout();
-
 			ResetView(View, node);
-
 			// Populate Styles dropdown
 			var isPara = m_node.StyleType == StyleTypes.Paragraph || m_node.Parent == null;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
-
 			// Test for Options type
 			UserControl optionsView = null;
 			if (Options != null)
@@ -88,7 +80,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
+					optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions)Options);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
@@ -97,7 +89,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
-					optionsView = LoadListOptions((DictionaryNodeListOptions) Options);
+					optionsView = LoadListOptions((DictionaryNodeListOptions)Options);
 				}
 				else if (Options is DictionaryNodeGroupingOptions)
 				{
@@ -118,7 +110,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				optionsView = LoadGrammaticalInfoOptions();
 			}
 			// else, show only the default details (style, before, between, after)
-
 			// Notify users of shared nodes
 			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
 			{
@@ -178,14 +169,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			View.OptionsView = optionsView;
-
 			// Register eventhandlers
 			View.StyleSelectionChanged += OnViewOnStyleSelectionChanged;
 			View.StyleButtonClick += OnViewOnStyleButtonClick;
 			View.BeforeTextChanged += OnViewOnBeforeTextChanged;
 			View.BetweenTextChanged += OnViewOnBetweenTextChanged;
 			View.AfterTextChanged += OnViewOnAfterTextChanged;
-
 			View.ResumeLayout();
 		}
 
@@ -195,7 +184,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				throw new ArgumentNullException();
 			}
-
 			foreach (var node in nodes)
 			{
 				if (match(node))
@@ -252,7 +240,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			view.BeforeTextChanged -= OnViewOnBeforeTextChanged;
 			view.BetweenTextChanged -= OnViewOnBetweenTextChanged;
 			view.AfterTextChanged -= OnViewOnAfterTextChanged;
-
 			view.BeforeText = node.Before;
 			view.BetweenText = node.Between;
 			view.AfterText = node.After;
@@ -269,18 +256,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
-
 			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsOptions, m_cache); // REVIEW (Hasso) 2017.04: is this redundant to the model.Load sync?
-
 			wsOptionsView.AvailableItems = availableWSs;
-
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
 			wsOptionsView.DisplayOptionCheckBox2Visible = false;
-
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
-
 			if (!m_node.IsHeadWord)
 			{
 				return wsOptionsView;
@@ -299,23 +281,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 				DisplayOptionCheckBoxChecked = wsapoptions.DisplayWritingSystemAbbreviations,
 				DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph
 			};
-
 			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsapoptions, m_cache);
-
 			wsapOptionsView.AvailableItems = availableWSs;
-
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsapOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
-
 			wsapOptionsView.DisplayOptionCheckBox2Visible = true;
 			wsapOptionsView.DisplayOptionCheckBox2Label = DictionaryConfigurationStrings.ksDisplayNoteInParagraphs;
 			wsapOptionsView.DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph;
 			ToggleViewForShowInPara(wsapoptions.DisplayEachInAParagraph);
-
 			// Prevent events from firing while the view is being initialized
 			wsapOptionsView.Load += WritingSystemEventHandlerAdder(wsapOptionsView, wsapoptions);
 			wsapOptionsView.Load += WritingSystemAndParaEventHandlerAdder(wsapOptionsView, wsapoptions);
-
 			if (!m_node.IsHeadWord)
 			{
 				return wsapOptionsView;
@@ -356,7 +332,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.DisplayOptionCheckBoxChecked;
 					RefreshPreview();
 				};
-
 				wsOptionsView.Load -= WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 			};
 		}
@@ -394,13 +369,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// load character Style (number) and paragraph Style (sense)
 			senseOptionsView.SetStyles(m_charStyles, senseOptions.NumberStyle);
 			View.SetStyles(m_paraStyles, m_node.Style, true);
-
-			// (dis)actviate appropriate parts of the view
+			// (dis)activate appropriate parts of the view
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
 			senseOptionsView.FirstSenseInlineVisible = senseOptions.DisplayEachSenseInAParagraph;
-
-			// Register eventhandlers
+			// Register event handlers
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
 			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
@@ -426,7 +399,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				senseOptions.DisplayFirstSenseInline = senseOptionsView.FirstSenseInline;
 				RefreshPreview();
 			};
-
 			// add senseOptionsView to the DetailsView
 			return senseOptionsView;
 		}
@@ -435,7 +407,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private UserControl LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
-
 			var listAndParaOptions = listOptions as DictionaryNodeListAndParaOptions;
 			if (listAndParaOptions == null)
 			{
@@ -448,10 +419,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			listOptionsView.DisplayOptionCheckBox2Visible = false;
 			InternalLoadList(listOptions, listOptionsView);
-
 			// Prevent events from firing while the view is being initialized
 			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
-
 			return listOptionsView;
 		}
 
@@ -467,7 +436,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// REVIEW (Hasso) 2017.04: verifying available options is already accomplished in model.Load; here it is redundant.
 				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
 				listOptionsView.ListViewLabel = label;
-
 				// Insert saved items in their saved order, with their saved check-state
 				var insertionIdx = 0;
 				foreach (var optn in listOptions.Options)
@@ -479,7 +447,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						availableOptions.Insert(insertionIdx++, savedItem);
 					}
 				}
-
 				listOptionsView.AvailableItems = availableOptions;
 			}
 		}
@@ -487,7 +454,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void LoadParagraphOptions(DictionaryNodeListAndParaOptions listAndParaOptions, IDictionaryListOptionsView listOptionsView)
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayComplexFormsInParagraphs;
-
 			switch (m_node.FieldDescription)
 			{
 				case "Subentries":
@@ -516,7 +482,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
 					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
-
 				var listAndParaOptions = listOptions as DictionaryNodeListAndParaOptions;
 				if (listAndParaOptions != null)
 				{
@@ -528,7 +493,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						RefreshPreview();
 					};
 				}
-
 				listOptionsView.Load -= ListEventHandlerAdder(listOptionsView, listOptions);
 			};
 		}
@@ -555,7 +519,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					ToggleViewForShowInPara(groupOptions.DisplayEachInAParagraph);
 					RefreshPreview();
 				};
-
 				groupOptionsView.DescriptionChanged += (sender, e) =>
 				{
 					groupOptions.Description = groupOptionsView.Description;
@@ -606,18 +569,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst,
 				DisplayOptionCheckBox2Visible = false
 			};
-
 			// The option to show grammatical info first is stored on the Sense node, which should be Grammatical Info's direct parent
 			var senseOptions = (DictionaryNodeSenseOptions)m_node.Parent.DictionaryNodeOptions;
-
 			optionsView.DisplayOptionCheckBoxChecked = senseOptions.ShowSharedGrammarInfoFirst;
-
 			optionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
 			{
 				senseOptions.ShowSharedGrammarInfoFirst = optionsView.DisplayOptionCheckBoxChecked;
 				RefreshPreview();
 			};
-
 			return optionsView;
 		}
 
@@ -633,7 +592,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				m_charStyles.Clear();
 			}
-
 			if (m_paraStyles == null)
 			{
 				m_paraStyles = new List<StyleComboItem>();
@@ -642,7 +600,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				m_paraStyles.Clear();
 			}
-
 			m_charStyles.Add(new StyleComboItem(null));
 			// Per LT-10950, we don't want 'none' as an option for paragraph style, so don't add null to ParaStyles
 			foreach (var style in m_styleSheet.Styles)
@@ -656,7 +613,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					m_paraStyles.Add(new StyleComboItem(style));
 				}
 			}
-
 			m_charStyles.Sort();
 			m_paraStyles.Sort();
 		}
@@ -722,7 +678,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private List<ListViewItem> GetComplexFormTypes()
 		{
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA);
-			result.Insert(0, new ListViewItem("<" + LanguageExplorerResources.ksNoComplexFormType + ">")
+			result.Insert(0, new ListViewItem($"<{LanguageExplorerResources.ksNoComplexFormType}>")
 			{
 				Checked = true,
 				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
@@ -733,7 +689,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private List<ListViewItem> GetNoteTypes()
 		{
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA);
-			result.Insert(0, new ListViewItem("<" + DictionaryConfigurationStrings.ksNoExtendedNoteType + ">")
+			result.Insert(0, new ListViewItem($"<{DictionaryConfigurationStrings.ksNoExtendedNoteType}>")
 			{
 				Checked = true,
 				Tag = XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString()
@@ -744,7 +700,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private List<ListViewItem> GetVariantTypes()
 		{
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA);
-			result.Insert(0, new ListViewItem("<" + LanguageExplorerResources.ksNoVariantType + ">")
+			result.Insert(0, new ListViewItem($"<{LanguageExplorerResources.ksNoVariantType}>")
 			{
 				Checked = true,
 				Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
@@ -770,7 +726,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private List<ListViewItem> GetLexicalRelationTypes(ListIds listId)
 		{
 			var lexRelTypesSubset = new List<ListViewItem>();
-
 			var allRelationTypes = m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.ToList();
 			allRelationTypes.Sort(ComparePossibilitiesByName);
 			foreach (var relType in allRelationTypes)
@@ -812,7 +767,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						}.StorageString.Substring(1)
 					});
 				}
-
 				switch (mappingType)
 				{
 					case LexRefTypeTags.MappingTypes.kmtEntryTree:
@@ -842,7 +796,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						break;
 				}
 			}
-
 			return lexRelTypesSubset;
 		}
 
@@ -853,7 +806,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return y == null ? 0 : -1;
 			}
-
 			if (y == null)
 			{
 				return 1;
@@ -886,8 +838,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var dlg = new HeadwordNumbersDlg())
 			{
 				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
-				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
-				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
+				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox)sender, ((ComboBox)sender).Text);
 				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 				dlg.SetStyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
@@ -904,14 +855,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-#if RANDYTODO
-			// TODO: Needs to be able to create FlexStylesXmlAccessor, which is now in LangExp.
-			// TODO: Enable after xWorks is merged into Lang Exp.
 			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
-			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
-				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App),
-				m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
-#endif
+			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled), defaultStyle, m_styleSheet, m_cache, View.TopLevelControl,
+				m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
+				new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 		}
 
 		private void BeforeTextChanged()
@@ -949,7 +896,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ListItemCheckedChanged(IDictionaryListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;
-
 			// Validate: Default and Specific WS's cannot be concurrently checked; at least one is always checked
 			if (!e.Item.Checked)
 			{
@@ -974,7 +920,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					item.Checked = false;
 				}
 			}
-
 			if (wsOptions != null)
 			{
 				// Displaying WS Abbreviations is available only when multiple WS's are selected.
@@ -982,7 +927,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Don't clear the checkbox while users are working, but don't persist an invalid value.
 				wsOptions.DisplayWritingSystemAbbreviations = listOptionsView.DisplayOptionCheckBoxEnabled && listOptionsView.DisplayOptionCheckBoxChecked;
 			}
-
 			SerializeListOptionsAndRefreshPreview(items);
 		}
 
@@ -994,20 +938,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Id = item.Tag is int ? WritingSystemServices.GetMagicWsNameFromId((int)item.Tag) : (string)item.Tag,
 				IsEnabled = item.Checked
 			}).ToList();
-
 			if (Options is DictionaryNodeWritingSystemOptions)
 			{
-				((DictionaryNodeWritingSystemOptions) Options).Options = options;
+				((DictionaryNodeWritingSystemOptions)Options).Options = options;
 			}
 			else if (Options is DictionaryNodeListOptions)
 			{
-				((DictionaryNodeListOptions) Options).Options = options;
+				((DictionaryNodeListOptions)Options).Options = options;
 			}
 			else
 			{
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 			}
-
 			RefreshPreview();
 		}
 
@@ -1041,12 +983,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				throw new ArgumentOutOfRangeException();
 			}
-
 			var newIdx = direction == Direction.Up ? item.Index - 1 : item.Index + 1;
 			var items = item.ListView.Items;
 			items.RemoveAt(item.Index);
 			items.Insert(newIdx, item);
-
 			SerializeListOptionsAndRefreshPreview(items);
 		}
 		#endregion ListChanges

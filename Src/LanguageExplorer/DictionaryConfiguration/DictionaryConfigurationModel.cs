@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
@@ -84,7 +85,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Field Descriptions of configuration nodes for notes which should have paragraph styles
 		/// </summary>
 		[XmlIgnore]
-		public static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
+		public static List<string> NoteInParaStyles = new List<string> { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
 		[XmlElement("HomographConfiguration")]
 		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
@@ -100,7 +101,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					return true;
 				}
-
 				// Fallback for migration
 				if (string.IsNullOrEmpty(FilePath))
 				{
@@ -127,7 +127,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					return ConfigType.Reversal;
 				}
-
 				if (IsRootBased)
 				{
 					return ConfigType.Root;
@@ -153,7 +152,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			LastModified = DateTime.Now;
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			var settings = new XmlWriterSettings { Indent = true };
-			using(var writer = XmlWriter.Create(FilePath, settings))
+			using (var writer = XmlWriter.Create(FilePath, settings))
 			{
 				serializer.Serialize(writer, this);
 			}
@@ -223,7 +222,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			using (var reader = XmlReader.Create(path))
 			{
-				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
+				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
 				return model.Publications;
 			}
 		}
@@ -253,7 +252,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public DictionaryConfigurationModel DeepClone()
 		{
 			var clone = new DictionaryConfigurationModel();
-
 			// Copy everything over at first, importantly handling strings and primitives.
 			var properties = typeof(DictionaryConfigurationModel).GetProperties();
 			foreach (var property in properties.Where(prop => prop.CanWrite)) // Skip any read-only properties
@@ -261,26 +259,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
-
 			// Deep-clone SharedItems
 			if (SharedItems != null)
 			{
 				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
 			}
-
 			// Deep-clone Parts
 			if (Parts != null)
 			{
 				clone.Parts = Parts.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
 				SpecifyParentsAndReferences(clone.Parts, clone.SharedItems);
 			}
-
 			// Clone Publications
 			if (Publications != null)
 			{
 				clone.Publications = new List<string>(Publications);
 			}
-
 			return clone;
 		}
 
@@ -289,13 +283,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, List<ConfigurableDictionaryNode> sharedItems = null)
 		{
-			if (nodes == null)
-			{
-				throw new ArgumentNullException();
-			}
+			Guard.AgainstNull(nodes, nameof(nodes));
 
 			var rollingNodes = new List<ConfigurableDictionaryNode>(nodes);
-
 			while (rollingNodes.Any())
 			{
 				var node = rollingNodes[0];
@@ -304,19 +294,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					DictionaryConfigurationController.LinkReferencedNode(sharedItems, node, node.ReferenceItem);
 				}
-
 				if (node.Children == null)
 				{
 					continue;
 				}
-
 				foreach (var child in node.Children)
 				{
 					child.Parent = node;
 				}
 				rollingNodes.AddRange(node.Children);
 			}
-
 			if (sharedItems != null && !ReferenceEquals(nodes, sharedItems))
 			{
 				SpecifyParentsAndReferences(sharedItems, sharedItems);

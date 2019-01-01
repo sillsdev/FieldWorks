@@ -1,13 +1,14 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using System.Diagnostics;
 using NAudio.Lame;
 using NAudio.Wave;
+using SIL.Code;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.DictionaryConfiguration
@@ -15,7 +16,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// Converts a .wav file into an .mp3 file
 	/// </summary>
-	public static class WavConverter
+	internal static class WavConverter
 	{
 		/// <summary>
 		/// Performs the .wav to .mp3 conversion
@@ -24,35 +25,30 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		/// <param name="sourceFilePath">Path to wav file</param>
 		/// <param name="destinationFilePath">Path to where the converted file should be saved</param>
-		public static void WavToMp3(string sourceFilePath, string destinationFilePath)
+		internal static void WavToMp3(string sourceFilePath, string destinationFilePath)
 		{
-			if (string.IsNullOrEmpty(sourceFilePath))
-			{
-				throw new ArgumentNullException(sourceFilePath);
-			}
-
-			if (string.IsNullOrEmpty(destinationFilePath))
-			{
-				throw new ArgumentNullException(destinationFilePath);
-			}
+			Guard.AgainstNullOrEmptyString(sourceFilePath, nameof(sourceFilePath));
+			Guard.AgainstNullOrEmptyString(destinationFilePath, nameof(destinationFilePath));
 
 			if (!Path.GetExtension(sourceFilePath).Equals(".wav"))
 			{
 				throw new Exception("Source file is not a .wav file.");
 			}
-
 			if (!File.Exists(sourceFilePath))
 			{
 				throw new Exception("The source file path is invalid.");
 			}
-
 			var wavBytes = ReadWavFile(sourceFilePath);
 			var wavHash = MD5.Create().ComputeHash(wavBytes);
 			SaveBytes(Path.ChangeExtension(destinationFilePath, ".txt"), wavHash);
 			if (Platform.IsWindows)
+			{
 				ConvertBytesToMp3_Windows(wavBytes, destinationFilePath);
+			}
 			else
+			{
 				ConvertWavToMp3Linux(sourceFilePath, destinationFilePath);
+			}
 		}
 
 		private static void ConvertBytesToMp3_Windows(byte[] wavBytes, string destinationFilePath)
@@ -77,8 +73,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					WindowStyle = ProcessWindowStyle.Hidden,
 					FileName = "/bin/bash",
-					Arguments = string.Format("-c 'lame -h {0} {1}'", sourceFilePath,
-						destinationFilePath),
+					Arguments = $"-c 'lame -h {sourceFilePath} {destinationFilePath}'",
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};
@@ -119,7 +114,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				destinationPath = Path.ChangeExtension(destinationPath, ".mp3");
 			}
-
 			if (File.Exists(Path.GetFileName(destinationPath)))
 			{
 				throw new Exception("The conversion failed because the destination file path already exists.");
@@ -136,7 +130,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="sourcePath">Path to .wav file</param>
 		/// <param name="destinationPath">Path to where the converted file should be saved</param>
 		/// <returns></returns>
-		public static SaveFile AlreadyExists(string sourcePath, string destinationPath)
+		internal static SaveFile AlreadyExists(string sourcePath, string destinationPath)
 		{
 			var txtPath = Path.ChangeExtension(destinationPath, ".txt");
 			if (!Path.GetExtension(destinationPath).Equals(".mp3"))
@@ -147,19 +141,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return SaveFile.DoesNotExist;
 			}
-
 			var currentWav = MD5.Create().ComputeHash(File.ReadAllBytes(sourcePath));
 			byte[] originalWav = { };
 			if (File.Exists(txtPath))
 			{
 				originalWav = File.ReadAllBytes(txtPath);
 			}
-
 			if (currentWav.Length != originalWav.Length)
 			{
 				return SaveFile.NotIdenticalExists;
 			}
-
 			var i = -1;
 			do
 			{

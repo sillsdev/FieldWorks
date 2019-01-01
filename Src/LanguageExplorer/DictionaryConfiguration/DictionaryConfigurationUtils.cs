@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using SIL.LCModel;
 using System.Linq;
+using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -51,7 +51,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					do
 					{
 						reader.Read();
-					} while(reader.NodeType != XmlNodeType.Element);
+					} while (reader.NodeType != XmlNodeType.Element);
 					// Get the root xml element to grab the "name" value
 					var configName = reader["name"];
 					if (configName == null)
@@ -78,10 +78,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-
 			var model = new DictionaryConfigurationModel(reversalIndexConfiguration, cache);
 			var reversalIndexConfigWritingSystemLanguage = model.WritingSystem;
-
 			var currentAnalysisWsList = cache.LanguageProject.AnalysisWritingSystems;
 			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.Id == reversalIndexConfigWritingSystemLanguage);
 			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
@@ -100,7 +98,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (ListItem reversalIndexConfiguration in display.List)
 			{
 				if (reversalIndexConfiguration is SeparatorItem)
+				{
 					continue;
+				}
 				if (reversalIndexConfiguration.value.EndsWith(DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension))
 				{
 					display.List.Remove(reversalIndexConfiguration);

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,12 +30,20 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 	/// </summary>
 	internal class PreHistoricMigrator : ILayoutConverter
 	{
+		public const int VersionPre83 = -1;
+		public const int VersionAlpha1 = 1;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
 		private ISimpleLogger m_logger;
-
+		/// <summary>
+		/// The innermost directory of the configurations presently being migrated.
+		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
+		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
+		/// interfaces, so we store it as a member variable.
+		/// </summary>
+		internal string m_configDirSuffixBeingMigrated;
 		/// <summary>
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
 		/// Value is Dictionary of custom fields: Key is custom field Label, Value is custom field Name
@@ -44,14 +52,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// Needed because we can't look Custom Fields' Names up in our shipping Configurations as we do for standard Fields. Cached for performance.
 		/// </summary>
 		private Dictionary<string, Dictionary<string, string>> m_classToCustomFieldsLabelToName;
-
-		/// <summary>
-		/// The innermost directory of the configurations presently being migrated.
-		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
-		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
-		/// interfaces, so we store it as a member variable.
-		/// </summary>
-		internal string m_configDirSuffixBeingMigrated;
 
 		/// <summary>
 		/// Constructor for tests
@@ -64,9 +64,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_propertyTable = propertyTable;
 		}
 
-		public const int VersionPre83 = -1;
-		public const int VersionAlpha1 = 1;
-
 		/// <summary>
 		/// Name of the folder where the static 8.3Alpha1 configuration files are stored
 		/// for migration of older dbs.
@@ -78,25 +75,21 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
-
 			if (!ConfigsNeedMigratingFromPre83())
 			{
 				return;
 			}
 			m_logger.WriteLine($"{AppVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}");
 			var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-
 			m_logger.WriteLine("Migrating dictionary configurations");
 			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.DictionaryConfigurationDirectoryName;
 			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-				"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
 				Cache.ActionHandlerAccessor, PerformMigrationUOW);
 			m_logger.WriteLine($"Migrating Reversal Index configurations, if any - {DateTime.Now:h:mm:ss}");
 			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName;
 			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-				"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
 				Cache.ActionHandlerAccessor, PerformMigrationUOW);
 		}
 
@@ -184,7 +177,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			const string extension = LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
-
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			const string defaultLexemeName = DictionaryConfigurationServices.LexemeFileName + extension;
@@ -193,74 +185,70 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			switch (layout)
 			{
 				case "publishStem":
-				{
-					convertedModel.FilePath = Path.Combine(projectPath, defaultLexemeName);
-					// Though the name change from Stem to Lexeme happened after we shipped the Alpha we will change the name here for pre-Alpha projects
-					alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
-						Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
-					break;
-				}
+					{
+						convertedModel.FilePath = Path.Combine(projectPath, defaultLexemeName);
+						// Though the name change from Stem to Lexeme happened after we shipped the Alpha we will change the name here for pre-Alpha projects
+						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache, Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
+						break;
+					}
 				case "publishRoot":
-				{
-					convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
-					alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache,
-						Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
-					break;
-				}
+					{
+						convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
+						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache, Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
+						break;
+					}
 				case "publishReversal":
-				{
-					convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-					alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache,
-						Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
-					break;
-				}
+					{
+						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
+						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache, Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
+						break;
+					}
 				default:
-				{
-					// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
-					// We will write out the new configuration to a file which uses what the user named it but preserving the integer
-					// as a potential customer support aid.
-					var customSuffixIndex = layout.IndexOf('#');
-					if (customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 					{
-						var customFileName = $"{convertedModel.Label}-Stem-{layout.Substring(customSuffixIndex)}{extension}";
-						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
-							Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
-					}
-					else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
-					{
-						var customFileName = $"{convertedModel.Label}-Root-{layout.Substring(customSuffixIndex)}{extension}";
-						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache,
-							Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
-					}
-					else if (layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
-					{
-						// Label similar to publishReversal-en#Engli704, including one or both suffixes
-						var languageSuffixIndex = layout.IndexOf('-') + 1;
-						string reversalIndex;
-						if (languageSuffixIndex > 0)
+						// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
+						// We will write out the new configuration to a file which uses what the user named it but preserving the integer
+						// as a potential customer support aid.
+						var customSuffixIndex = layout.IndexOf('#');
+						if (customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 						{
-							var languageCode = customSuffixIndex > 0
-								? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
-								: layout.Substring(languageSuffixIndex);
-							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).Id;
+							var customFileName = $"{convertedModel.Label}-Stem-{layout.Substring(customSuffixIndex)}{extension}";
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
+							alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache, Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
+						}
+						else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
+						{
+							var customFileName = $"{convertedModel.Label}-Root-{layout.Substring(customSuffixIndex)}{extension}";
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
+							alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache, Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
+						}
+						else if (layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
+						{
+							// Label similar to publishReversal-en#Engli704, including one or both suffixes
+							var languageSuffixIndex = layout.IndexOf('-') + 1;
+							string reversalIndex;
+							if (languageSuffixIndex > 0)
+							{
+								var languageCode = customSuffixIndex > 0
+									? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
+									: layout.Substring(languageSuffixIndex);
+								reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).Id;
+							}
+							else
+							{
+								reversalIndex = "AllReversalIndexes";
+							}
+							var customFileName = customSuffixIndex > 0
+								? $"{convertedModel.Label}-{reversalIndex}-{layout.Substring(customSuffixIndex)}{extension}"
+								: $"{reversalIndex}{extension}";
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
+							alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache, Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
 						}
 						else
 						{
-							reversalIndex = "AllReversalIndexes";
+							throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
 						}
-						var customFileName = customSuffixIndex > 0
-							? $"{convertedModel.Label}-{reversalIndex}-{layout.Substring(customSuffixIndex)}{extension}"
-							: $"{reversalIndex}{extension}";
-						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache,
-							Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
+						break;
 					}
-					else
-						throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
-					break;
-				}
 			}
 			CopyNewDefaultsIntoConvertedModel(convertedModel, alpha83DefaultModel);
 		}
@@ -270,7 +258,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			convertedModel.SharedItems = convertedModel.SharedItems ?? new List<ConfigurableDictionaryNode>();
 			convertedModel.IsRootBased = alphaDefaultModel.IsRootBased;
-
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but in FLEx versions 8.3.0 through 8.3.4, they were configured in a separate "Main Entries (Complex Forms)" node.
 			// REVIEW (Hasso) 2017.02: would it be safe to rip out this intermediate step?
@@ -288,17 +275,15 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 			else
 			{
-				if (alphaDefaultModel.Label == LanguageExplorerConstants.AllReversalIndexes
-					&& convertedModel.Label != LanguageExplorerConstants.AllReversalIndexes)
+				if (alphaDefaultModel.Label == LanguageExplorerConstants.AllReversalIndexes && convertedModel.Label != LanguageExplorerConstants.AllReversalIndexes)
 				{
 					// If this is a WS-specific Reversal Index, set its WS
 					DictionaryConfigurationServices.SetWritingSystemForReversalModel(convertedModel, Cache);
 				}
 				else if (convertedModel.Label == LanguageExplorerConstants.AllReversalIndexes)
 				{
-					convertedModel.WritingSystem = "";
+					convertedModel.WritingSystem = string.Empty;
 				}
-
 				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], alphaDefaultModel.Parts[0]); // copy defaults into Main Entry
 				for (var i = 1; i < convertedModel.Parts.Count; ++i)
 				{
@@ -306,7 +291,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					// split into Complex Forms and Variants
 					var currentDefaultComplexNode = alphaDefaultModel.Parts[1];
 					var currentDefaultVariantNode = alphaDefaultModel.Parts[2];
-
 					var convertedNode = convertedModel.Parts[i];
 					var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;
 					var hasComplexTypesSelected = HasComplexFormTypesSelected(selectedMinorEntryTypes);
@@ -333,7 +317,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					}
 				}
 			}
-
 			convertedModel.Version = VersionAlpha1; // Pre83 Migration is complete; update the version
 		}
 
@@ -405,14 +388,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				IsEnabled = node.Checked,
 				DictionaryNodeOptions = CreateOptionsFromLayoutTreeNode(node)
 			};
-
 			// Custom fields were implicitly marked in the old configuration files.  Decode the implicit marking.  See LT-17032.
 			if (node.Configuration != null && node.Configuration.Attributes().Any())
 			{
 				var attr = node.Configuration.Attribute("ref");
 				convertedNode.IsCustomField = (attr != null && attr.Value == "$child");
 			}
-
 			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
 			// ReSharper disable LocalizableElement - Justification: node.Parent.Text should not be localized during migration.
 			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
@@ -420,7 +401,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
 			}
 			// ReSharper restore LocalizableElement
-
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
 			{
@@ -443,7 +423,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					convertedNode.IsDuplicate = false;
 				}
 			}
-
 			if (node.Nodes.Count > 0)
 			{
 				convertedNode.Children = new List<ConfigurableDictionaryNode>();
@@ -460,7 +439,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			var path = $"{child.Label} ({child.DupString})";
 			var node = child;
 			while (node.Parent != null // If 'Minor Entry' is duplicated, both copies get a new, common parent 'Minor Entry', which does not affect migration
-				// apart from making log entries about 'Minor Entry > Minor Entry (1) > and so on'
+									   // apart from making log entries about 'Minor Entry > Minor Entry (1) > and so on'
 				&& !(node.Parent.Parent == null || ((LayoutTreeNode)node.Parent).Label.Equals(node.Label)))
 			{
 				node = (LayoutTreeNode)node.Parent;
@@ -510,7 +489,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				if (node.EntryType == "complex" && node.PartName != "LexEntry-Jt-StemMinorComponentsConfig")
 				{
 					options = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = node.ShowComplexFormPara };
-
 					if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
 					{
 						// LT-15834
@@ -523,7 +501,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				}
 				SetListOptionsProperties(node.EntryType, node.EntryTypeSequence, (DictionaryNodeListOptions)options);
 			}
-
 			return options;
 		}
 
@@ -603,19 +580,16 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				convertedNode.Style = currentDefaultNode.Style;
 			}
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
-
 			if (convertedModel.Version == VersionPre83 && IsReferencedEntriesNode(convertedNode))
 			{
 				ConvertReferencedEntries(convertedNode, currentDefaultNode);
 				return;
 			}
-
 			// top-level nodes (Main, Minor, and Reversal Index Entry) don't need Surrounding Characters (Before, Between, After)
 			if (convertedNode.Parent == null)
 			{
 				convertedNode.After = convertedNode.Between = convertedNode.Before = null;
 			}
-
 			if (convertedNode.Children == null || !convertedNode.Children.Any())
 			{
 				// if the new default node has children and the converted node doesn't, they need to be added
@@ -625,8 +599,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					if (convertedNode.Label == "Subsenses")
 					{
 						// considering these clone recursive because we are presently copying the entire model
-						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(
-							node => node.DeepCloneUnderParent(convertedNode, true)));
+						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderParent(convertedNode, true)));
 						CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode);
 					}
 				}
@@ -659,8 +632,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			var newHeadword = newChildren.First(child => child.Label == "Referenced Headword");
 			var oldHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Headword");
 			// Usually "Referenced Sense Headword" but in one case it is "Referenced Sense"
-			var oldSenseHeadwordNode = convertedNode.Children.FirstOrDefault(child => child.Label.StartsWith("Referenced Sense"))
-				?? new ConfigurableDictionaryNode();
+			var oldSenseHeadwordNode = convertedNode.Children.FirstOrDefault(child => child.Label.StartsWith("Referenced Sense")) ?? new ConfigurableDictionaryNode();
 			newHeadword.IsEnabled = oldHeadwordNode.IsEnabled || oldSenseHeadwordNode.IsEnabled;
 			newHeadword.Before = !string.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
 			newHeadword.Between = !string.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
@@ -671,7 +643,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				newHeadword.DictionaryNodeOptions = oldOptions.DeepClone();
 			}
-
 			var newGloss = newChildren.First(child => child.Label == "Gloss (or Summary Definition)");
 			var oldSummaryNode = convertedNode.Children.First(child => child.Label == "Summary Definition");
 			var oldGlossNode = convertedNode.Children.FirstOrDefault(child => child.Label == "Gloss") ?? new ConfigurableDictionaryNode();
@@ -686,7 +657,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				newGloss.DictionaryNodeOptions = oldOptions.DeepClone();
 			}
-
 			if (convertedNode.Children.Count != 4)
 			{
 				m_logger.WriteLine($"{DictionaryConfigurationServices.BuildPathStringFromNode(convertedNode)} had children (probably duplicates) that were not migrated.");
@@ -705,9 +675,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_logger.IncreaseIndent();
 			SetupCustomFieldNameDictionaries();
 			Dictionary<string, string> cfLabelToName;
-			SetupCustomField(child,
-				// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
-				(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
+			// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
+			SetupCustomField(child, parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName)
 					? cfLabelToName
 					: null);
 			m_logger.DecreaseIndent();
@@ -778,13 +747,16 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				case "Abbreviation":
 					// Don't rename Components -> Complex Form Type -> Abbreviation,
 					// but do rename Subentries -> CFT -> Abbreviations to Reverse Abbreviation
-					if (child.Parent.Label == "Complex Form Type" &&
-						child.Parent.Parent.Label == "Subentries")
+					if (child.Parent.Label == "Complex Form Type" && child.Parent.Parent.Label == "Subentries")
+					{
 						return "Reverse Abbreviation";
+					}
 					break;
 				case "Features":
 					if (child.Parent.Label == "Grammatical Info.")
+					{
 						return "Inflection Features";
+					}
 					break;
 				case "Form":
 					switch (child.Parent.Label)
@@ -794,7 +766,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						case "Subentry Under Reference":
 							return "Referenced Headword";
 					}
-
 					break;
 				case "Category":
 					if (child.Parent.Label == "Reversal Entry")
@@ -810,7 +781,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					break;
 				case "Homograph Number":
 					return "Secondary Homograph Number";
-				//case "Headword": now handled in FirstAlphaMigrator
+					//case "Headword": now handled in FirstAlphaMigrator
 			}
 			return child.Label;
 		}
@@ -823,7 +794,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 			m_classToCustomFieldsLabelToName = new Dictionary<string, Dictionary<string, string>>();
 			var metaDataCache = Cache.MetaDataCacheAccessor;
-
 			foreach (var classToCustomFields in DictionaryConfigurationController.BuildCustomFieldMap(Cache))
 			{
 				var labelToName = m_classToCustomFieldsLabelToName[classToCustomFields.Key] = new Dictionary<string, string>();
@@ -850,7 +820,6 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				node.FieldDescription = node.Label;
 			}
-
 			var metaDataCache = Cache.GetManagedMetaDataCache();
 			if (node.Children != null)
 			{
@@ -928,8 +897,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		}
 		/// <summary>Attempts to find and return a node from the currentDefaultChildren whose Label matches childLabel.</summary>
 		/// <returns>true if successful</returns>
-		private static bool TryGetMatchingNode(string childLabel,
-			IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren,
+		private static bool TryGetMatchingNode(string childLabel, IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren,
 			out ConfigurableDictionaryNode matchFromCurrentDefault)
 		{
 			matchFromCurrentDefault = currentDefaultChildren.FirstOrDefault(baseChild => childLabel == baseChild.Label);
@@ -991,8 +959,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						}
 						senseNumberStyle.Rules = propsBldr.GetTextProps();
 					}
-					styleSheet.PutStyle(senseNumberStyleName, "Used for configuring some sense numbers in the dictionary",
-						senseNumberStyle.Hvo, 0, 0, (int)StyleType.kstCharacter, false, false, propsBldr.GetTextProps());
+					styleSheet.PutStyle(senseNumberStyleName, "Used for configuring some sense numbers in the dictionary", senseNumberStyle.Hvo, 0, 0, (int)StyleType.kstCharacter, false, false, propsBldr.GetTextProps());
 					matchedOrCreated = true;
 				}
 				else if (LayoutOptionsMatchStyle(styleSheet.Styles[senseNumberStyleName], node))
@@ -1021,12 +988,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				return false;
 			}
 			// if we have bold or italic info in the node but it doesn't match the style
-			if (!string.IsNullOrEmpty(node.NumStyle) && ((node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value) ||
-				(!node.NumStyle.Contains("-bold") && node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet && !fontInfo.Bold.Value) ||
-				(node.NumStyle.Contains("bold") && !fontInfo.Bold.ValueIsSet) || (!node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet) ||
-				(node.NumStyle.Contains("-italic") && fontInfo.Italic.ValueIsSet && fontInfo.Italic.Value) ||
-				(!node.NumStyle.Contains("-italic") && node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet && !fontInfo.Italic.Value) ||
-				(node.NumStyle.Contains("italic") && !fontInfo.Italic.ValueIsSet) || (!node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet)))
+			if (!string.IsNullOrEmpty(node.NumStyle) && (node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value
+				|| !node.NumStyle.Contains("-bold") && node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet && !fontInfo.Bold.Value
+				|| node.NumStyle.Contains("bold") && !fontInfo.Bold.ValueIsSet || !node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet
+				|| node.NumStyle.Contains("-italic") && fontInfo.Italic.ValueIsSet && fontInfo.Italic.Value
+				|| !node.NumStyle.Contains("-italic") && node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet && !fontInfo.Italic.Value
+				|| node.NumStyle.Contains("italic") && !fontInfo.Italic.ValueIsSet || !node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet))
 			{
 				return false;
 			}
@@ -1042,6 +1009,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 			return true;
 		}
+
 		private List<DictionaryNodeOption> MigrateWsOptions(string wsLabel)
 		{
 			return wsLabel.Split(',').Select(item => new DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
@@ -1066,8 +1034,11 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		}
 
 		public string AppVersion { get; }
+
 		public LcmCache Cache { get; }
+
 		public bool UseStringTable => false;
+
 		public LayoutLevels LayoutLevels { get; private set; }
 
 		public void ExpandWsTaggedNodes(string sWsTag)

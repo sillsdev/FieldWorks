@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 
@@ -14,7 +15,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// This class is responsible for manipulating the model and view related to HeadwordNumbers when configuring
 	/// a dictionary or reversal index.
 	/// </summary>
-	class HeadwordNumbersController
+	internal class HeadwordNumbersController
 	{
 		private IHeadwordNumbersView _view;
 		private DictionaryConfigurationModel _model;
@@ -23,27 +24,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, LcmCache cache)
 		{
-			if (view == null || model == null || cache == null)
-			{
-				throw new ArgumentNullException();
-			}
+			Guard.AgainstNull(view, nameof(view));
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(cache, nameof(cache));
 
 			_view = view;
 			_model = model;
 			_cache = cache;
 			_homographConfig = GetHeadwordConfiguration();
 			_view.Description = string.Format(DictionaryConfigurationStrings.ConfigureHomograph_ConfigDescription,
-				model.IsReversal ? LanguageExplorerResources.ReversalIndex : LanguageExplorerResources.Dictionary,
-				Environment.NewLine,
-				model.Label);
+				model.IsReversal ? LanguageExplorerResources.ReversalIndex : LanguageExplorerResources.Dictionary, Environment.NewLine, model.Label);
 			_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
 			_view.AvailableWritingSystems = cache.LangProject.CurrentAnalysisWritingSystems.Union(cache.LangProject.CurrentVernacularWritingSystems);
 			_view.CustomDigits = _homographConfig.CustomHomographNumberList;
 			if (_cache.LangProject.AllWritingSystems.Any(ws => ws.Id == _homographConfig.HomographWritingSystem))
 			{
-				_view.HomographWritingSystem = string.IsNullOrEmpty(_homographConfig.HomographWritingSystem)
-					? null
-					: _cache.LangProject.AllWritingSystems.First(ws => ws.Id == _homographConfig.HomographWritingSystem).DisplayLabel;
+				_view.HomographWritingSystem = string.IsNullOrEmpty(_homographConfig.HomographWritingSystem) ? null : _cache.LangProject.AllWritingSystems.First(ws => ws.Id == _homographConfig.HomographWritingSystem).DisplayLabel;
 			}
 			else
 			{
@@ -88,8 +84,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				_homographConfig.ShowHwNumInCrossRef = _view.ShowHomographOnCrossRef;
 				_homographConfig.ShowSenseNumber = _view.ShowSenseNumber;
 			}
-			_homographConfig.HomographWritingSystem = string.IsNullOrEmpty(_view.HomographWritingSystem) ? null :
-				_cache.LangProject.AllWritingSystems.First(ws => ws.DisplayLabel == _view.HomographWritingSystem).Id;
+			_homographConfig.HomographWritingSystem = string.IsNullOrEmpty(_view.HomographWritingSystem) ? null : _cache.LangProject.AllWritingSystems.First(ws => ws.DisplayLabel == _view.HomographWritingSystem).Id;
 			_homographConfig.CustomHomographNumberList = _view.CustomDigits == null ? new List<string>() : new List<string>(_view.CustomDigits);
 			_model.HomographConfiguration = _homographConfig;
 			_homographConfig.ExportToHomographConfiguration(_cache.ServiceLocator.GetInstance<HomographConfiguration>());

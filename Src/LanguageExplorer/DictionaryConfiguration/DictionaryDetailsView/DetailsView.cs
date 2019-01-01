@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,33 +22,24 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		private readonly int m_deltaStyleCombo;
 		private readonly int m_deltaTextBoxLabel;
 		private readonly int m_deltaTextBox;
+		private UserControl m_OptionsView;
 
 		public DetailsView()
 		{
 			InitializeComponent();
-
 			// Capture the initial offsets to use in updating when our Height changes.
 			m_deltaStyleLabel = Height - labelStyle.Location.Y;
 			m_deltaStyleCombo = Height - dropDownStyle.Location.Y;
 			m_deltaTextBoxLabel = Height - labelAfter.Location.Y;
 			m_deltaTextBox = Height - textBoxAfter.Location.Y;
-
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxBetween.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
-
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxBetween.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
-
 			buttonStyles.Click += SwapComboBoxAsSenderForButtonClickEvent;
 		}
-
-		private UserControl m_OptionsView;
-
-		//
-		// User configuration properties
-		//
 
 		public string BeforeText
 		{
@@ -69,10 +60,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		}
 
 		public string Style => ((StyleComboItem)dropDownStyle.SelectedItem).Style?.Name;
-
-		//
-		// View setup properties
-		//
 
 		public bool StylesVisible
 		{
@@ -98,19 +85,19 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		{
 			set
 			{
-				if(m_OptionsView != null)
+				if (m_OptionsView != null)
 				{
 					panelOptions.Controls.Remove(m_OptionsView);
 					m_OptionsView.Dispose();
 				}
 				m_OptionsView = value;
-				if(m_OptionsView != null)
+				if (m_OptionsView != null)
 				{
 					m_OptionsView.Dock = DockStyle.Fill;
 					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
 					// Set the initial size to whatever is available.
-					SetPanelOptionsSize ();
+					SetPanelOptionsSize();
 				}
 			}
 		}
@@ -164,7 +151,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles = false)
 		{
 			labelStyle.Text = usingParaStyles ? LanguageExplorerResources.ksParagraphStyleForContent : LanguageExplorerResources.ksCharacterStyleForContent;
-
 			dropDownStyle.Items.Clear();
 			dropDownStyle.Items.AddRange(styles.ToArray());
 			dropDownStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.

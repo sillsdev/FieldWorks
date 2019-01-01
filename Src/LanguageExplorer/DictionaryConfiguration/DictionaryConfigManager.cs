@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,10 +22,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private Inventory m_layouts;
 		private Inventory m_parts;
 		protected Dictionary<string, DictConfigItem> m_configList;
-
 		protected string m_originalView;
 		protected string m_currentView;
-
 		protected bool m_fPersisted;
 		protected List<XElement> m_originalViewConfigNodes;
 
@@ -36,10 +34,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			Viewer = viewer;
 			m_originalViewConfigNodes = configViews;
-
 			m_configList = new Dictionary<string, DictConfigItem>();
 			m_fPersisted = false;
-
 			LoadDataFromInventory(current);
 		}
 
@@ -51,7 +47,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// Tuples are <uniqueCode, dispName, IsProtected>
 			var configList = new List<Tuple<string, string, bool>>();
-
 			// put them in configList and feed them into the Manager's dictionary.
 			foreach (var xnView in m_originalViewConfigNodes)
 			{
@@ -60,18 +55,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var fProtected = !sLayout.Contains(Inventory.kcMarkLayoutCopy);
 				configList.Add(new Tuple<string, string, bool>(sLayout, sLabel, fProtected));
 			}
-
 			LoadInternalDictionary(configList);
-
 			var sLayoutCurrent = XmlUtils.GetMandatoryAttributeValue(current, "layout");
 			m_originalView = sLayoutCurrent;
 			m_currentView = m_originalView;
-
 			if (m_configList.Count == 0)
 			{
 				return;
 			}
-
 			// Now set up the actual dialog's contents
 			RefreshView();
 		}
@@ -79,8 +70,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void RefreshView()
 		{
 			// Tuples are (uniqueCode, displayName)
-			var viewItems = m_configList.Where(item => !item.Value.UserMarkedDelete).Select(
-				item => new Tuple<string, string>(item.Key, item.Value.DispName));
+			var viewItems = m_configList.Where(item => !item.Value.UserMarkedDelete).Select(item => new Tuple<string, string>(item.Key, item.Value.DispName));
 			Viewer.SetListViewItems(viewItems, m_currentView);
 		}
 
@@ -148,7 +138,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // At least its not there, so deleting it is successful!
-				// ReSharper restore HeuristicUnreachableCode
+							 // ReSharper restore HeuristicUnreachableCode
 			}
 
 			if (item.IsProtected)
@@ -199,7 +189,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-
 			// Copy item
 			InternalCopyConfigItem(item);
 			RefreshView();
@@ -240,14 +229,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return; // Should get here if we didn't have a valid item selected!
-				// ReSharper restore HeuristicUnreachableCode
+						// ReSharper restore HeuristicUnreachableCode
 			}
-
 			// Do not allow protected configurations to be renamed.
 			// This is now checked before the edit is allowed! Nevermind!
-
 			var filteredName = MiscUtils.FilterForFileName(newName, MiscUtils.FilenameFilterStrength.kFilterBackup);
-
 			if (NameAlreadyInUse(filteredName))
 			{
 				ShowAlreadyInUseMsg();
@@ -255,7 +241,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				RefreshView();
 				return;
 			}
-
 			item.DispName = filteredName;
 		}
 
@@ -292,7 +277,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // Should get here if we didn't have a valid item selected!
-				// ReSharper restore HeuristicUnreachableCode
+							 // ReSharper restore HeuristicUnreachableCode
 			}
 			return item.IsProtected;
 		}
@@ -310,7 +295,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // Should get here if we didn't have a valid item selected!
-				// ReSharper restore HeuristicUnreachableCode
+							 // ReSharper restore HeuristicUnreachableCode
 			}
 			return item.IsNew;
 		}

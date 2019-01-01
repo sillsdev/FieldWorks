@@ -90,7 +90,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				MyRecordList.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
-
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 			if (browser != null)
 			{

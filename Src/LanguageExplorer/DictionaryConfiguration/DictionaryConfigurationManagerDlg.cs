@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,8 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.Linq;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Linq;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -21,22 +21,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public DictionaryConfigurationManagerDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
-
 			m_toolTip = new ToolTip();
 			m_toolTip.SetToolTip(copyButton, DictionaryConfigurationStrings.DuplicateViewToolTip);
 			m_toolTip.SetToolTip(removeButton, DictionaryConfigurationStrings.DeleteViewTooltip);
 			m_toolTip.SetToolTip(resetButton, DictionaryConfigurationStrings.ResetViewTooltip);
 			m_toolTip.SetToolTip(exportButton, DictionaryConfigurationStrings.ExportSelected);
 			m_toolTip.SetToolTip(importButton, DictionaryConfigurationStrings.ImportView);
-
 			m_helpTopicProvider = helpTopicProvider;
-
 			// Allow renaming via the keyboard
 			configurationsListView.KeyUp += ConfigurationsListViewKeyUp;
 			// Make the Configuration selection more obvious when the control loses focus (LT-15450).
 			configurationsListView.LostFocus += OnLostFocus;
 			configurationsListView.GotFocus += OnGotFocus;
-
 			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

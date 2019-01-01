@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,30 +21,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 		// These are basic values that we need to know for every node.
 		// **Important Note**: In most cases, adding a member variable here means you need to add it to
 		// CopyValuesTo() also, so that a duplicate node will end up with the right values.
-		string m_sPartName;
-		string m_sLabel;
-		string m_sVisibility;
-
+		private string m_sPartName;
+		private string m_sLabel;
+		private string m_sVisibility;
 		// These values depend on the particular node, and affect what is displayed in the
 		// details pane.  If a string value is null, then the corresponding control (and
 		// label) is not shown.
-		string m_sWsLabel;
-
-		bool m_fShowComplexFormPara;
-
+		private string m_sWsLabel;
+		private bool m_fShowComplexFormPara;
 		// These are used to trace creating, deleting, and moving nodes.
-		string m_sDup;
-		int m_cSubnodes = -1;
-		int m_idxOrig = -1;
+		private string m_sDup;
+		private int m_cSubnodes = -1;
+		private int m_idxOrig = -1;
 		// **NB**: If you're planning to add a member variable here, see the Important Note above.
-		XElement m_xnCallingLayout;
-
+		private XElement m_xnCallingLayout;
 		/// <summary>
 		/// This node is a hidden child that provides/receives the style name.
 		/// </summary>
-		XElement m_xnHiddenChild;
-
-		bool m_fStyleFromHiddenChild;
+		private XElement m_xnHiddenChild;
+		private bool m_fStyleFromHiddenChild;
 
 		internal LayoutTreeNode(XElement config, ILayoutConverter converter, string classParent)
 		{
@@ -77,7 +72,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_sVisibility = XmlUtils.GetOptionalAttributeValue(config, "visibility", "always");
 				ContentVisible = m_sVisibility.ToLowerInvariant() != "never";
 				Param = XmlUtils.GetOptionalAttributeValue(config, "param");
-
 				m_sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(config, "ws"));
 				WsType = XmlUtils.GetOptionalAttributeValue(config, "wsType");
 				if (m_sWsLabel != null && string.IsNullOrEmpty(WsType))
@@ -145,7 +139,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Before = XmlUtils.GetOptionalAttributeValue(config, "before", "");
 				Between = XmlUtils.GetOptionalAttributeValue(config, "sep", sSep);
 				After = XmlUtils.GetOptionalAttributeValue(config, "after", " ");
-
 				StyleName = XmlUtils.GetOptionalAttributeValue(config, "style");
 				FlowType = XmlUtils.GetOptionalAttributeValue(config, "flowType", "span");
 				if (FlowType == "span")
@@ -177,7 +170,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 					Between = null;
 					After = null;
-					// This is subtly differerent: in a div, we will hide or disable the before control (value null) unless the XML
+					// This is subtly different: in a div, we will hide or disable the before control (value null) unless the XML
 					// explicitly calls for it by including the attribute. Above we provided an empty string default,
 					// which enables the empty control.
 					Before = XmlUtils.GetOptionalAttributeValue(config, "before");
@@ -199,7 +192,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				NumFont = XmlUtils.GetOptionalAttributeValue(config, "numfont");
 				ShowSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(config, "singlegraminfofirst", false);
 				ShowSenseAsPara = FlowType == "divInPara" && Param != null && Param.EndsWith("_AsPara");
-
 				PreventNullStyle = XmlUtils.GetOptionalBooleanAttributeValue(config, "preventnullstyle", false);
 				m_fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(config, "showasindentedpara", false);
 				if (m_fShowComplexFormPara)
@@ -209,7 +201,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				ShowWsLabels = XmlUtils.GetOptionalBooleanAttributeValue(config, "showLabels", false);
 				m_sDup = XmlUtils.GetOptionalAttributeValue(config, "dup");
 				IsDuplicate = !string.IsNullOrEmpty(m_sDup);
-
 				LexRelType = XmlUtils.GetOptionalAttributeValue(config, "lexreltype");
 				if (!string.IsNullOrEmpty(LexRelType))
 				{
@@ -1235,7 +1226,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					continue;
 				}
-
 				// Update numerals and punctuation
 				var sNumber = Number;
 				var sNumberChild = ltn.Number;
@@ -1254,7 +1244,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						Number = sNumberChild;
 					}
 				}
-
 				// Update style
 				var sStyle = NumStyle;
 				var sStyleChild = ltn.NumStyle;
@@ -1271,7 +1260,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						NumStyle = sStyleChild;
 					}
 				}
-
 				// Update font
 				var sFont = NumFont;
 				var sFontChild = ltn.NumFont;
@@ -1288,7 +1276,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 						NumFont = sFontChild;
 					}
 				}
-
 				// Update whether a single sense is numbered
 				var bNumSingle = NumberSingleSense;
 				var bNumSingleChild = ltn.NumberSingleSense;

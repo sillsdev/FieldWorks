@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,12 +36,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		protected override DictionaryNodeOptions DeepCloneInto(DictionaryNodeOptions target)
 		{
 			base.DeepCloneInto(target);
-
 			((DictionaryNodeListOptions)target).Options = Options.Select(dno => new DictionaryNodeOption
 			{
-				Id = dno.Id, IsEnabled = dno.IsEnabled
+				Id = dno.Id,
+				IsEnabled = dno.IsEnabled
 			}).ToList();
-
 			return target;
 		}
 	}
