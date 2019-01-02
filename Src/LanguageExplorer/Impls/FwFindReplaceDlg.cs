@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,20 +10,20 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.ViewsInterfaces;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
@@ -48,23 +48,6 @@ namespace LanguageExplorer.Impls
 		private event MatchNotFoundHandler MatchNotFound;
 		#endregion
 
-		#region Enumerations
-		/// <summary>
-		/// Status of matches during find/replace
-		/// </summary>
-		private enum MatchType
-		{
-			/// <summary />
-			NotSet,
-			/// <summary>no match found after previous match</summary>
-			NoMoreMatchesFound,
-			/// <summary>no match found in whole document</summary>
-			NoMatchFound,
-			/// <summary>A replace all is done and it made replacements</summary>
-			ReplaceAllFinished
-		}
-		#endregion
-
 		#region Data members
 		/// <summary>all the search settings</summary>
 		private IVwPattern m_vwFindPattern;
@@ -78,21 +61,17 @@ namespace LanguageExplorer.Impls
 		private bool m_cacheMadeLocally = false;
 		/// <summary />
 		private IVwSelection m_vwSelectionForPattern;
-
 		/// <summary />
 		private ITsString m_prevSearchText;
 		/// <summary />
 		private SearchKiller m_searchKiller = new SearchKiller();
 		private bool m_messageFilterInstalled;
-
 		private string m_sMoreButtonText;
 		private int m_heightDlgMore;
 		private int m_heightTabControlMore;
 		private int m_heightDlgLess;
 		private int m_heightTabControlLess;
-
 		private bool m_fLastDirectionForward;
-
 		private TabPage tabFind;
 		private TabPage tabReplace;
 		private TabControl tabControls;
@@ -115,7 +94,6 @@ namespace LanguageExplorer.Impls
 		private Label lblFindFormatText;
 		/// <summary />
 		private Label lblReplaceFormatText;
-
 		private bool m_initialActivate;
 		private bool m_inReplace;
 		private bool m_inFind;
@@ -125,20 +103,15 @@ namespace LanguageExplorer.Impls
 		private Button m_okButton;
 		/// <summary></summary>
 		private CheckBox chkUseRegularExpressions;
-
 		private IHelpTopicProvider m_helpTopicProvider;
-
 		private IPropertyTable m_propertyTable;
-
 		private string s_helpTopic;
 		private HelpProvider helpProvider;
-
 		// Used by EnableControls to remember what was enabled when things were disabled for
 		// the duration of an operation, in order to put them right afterwards.
 		private Dictionary<Control, bool> m_enableStates;
 		private Button btnRegexMenuFind;
 		private Button btnRegexMenuReplace;
-
 		private RegexHelperContextMenu _regexContextContextMenuFind;
 		/// <summary />
 		private MenuItem mnuWritingSystem;
@@ -234,8 +207,7 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		/// <remarks>ENHANCE JohnT: it may need more arguments, for example, the name of the
 		/// kind of object we can restrict the search to, a list of fields.</remarks>
-		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite, bool fReplace, bool fOverlays,
-			Form owner, IHelpTopicProvider helpTopicProvider, IApp app, int wsEdit)
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite, bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider, IApp app, int wsEdit)
 		{
 			fweditFindText.controlID = "Find";
 			fweditReplaceText.controlID = "Replace";
@@ -252,7 +224,6 @@ namespace LanguageExplorer.Impls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-
 			SetOwner(rootSite, owner);
 			var readOnly = rootSite is SimpleRootSite && ((SimpleRootSite)rootSite).ReadOnlyView;
 			if (readOnly)
@@ -269,7 +240,6 @@ namespace LanguageExplorer.Impls
 					tabControls.Controls.Add(tabReplace);
 				}
 			}
-
 			var wsf = m_cache.WritingSystemFactory;
 			fweditFindText.WritingSystemFactory = fweditReplaceText.WritingSystemFactory = wsf;
 			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
@@ -281,24 +251,18 @@ namespace LanguageExplorer.Impls
 			fweditReplaceText.WritingSystemCode = wsEdit;
 			FindText = EnsureValidWs(wsEdit, vwPattern.Pattern);
 			ReplaceText = EnsureValidWs(wsEdit, vwPattern.ReplaceWith);
-
 			tabControls.SelectedTab = fReplace ? tabReplace : tabFind;
 			tabControls_SelectedIndexChanged(null, new EventArgs());
-
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
 				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			}
-
 			SetCheckboxStates(vwPattern);
-
 			_regexContextContextMenuFind?.Dispose();
 			_regexContextContextMenuFind = new RegexHelperContextMenu(fweditFindText, m_helpTopicProvider);
 			_regexContextContextMenuReplace?.Dispose();
 			_regexContextContextMenuReplace = new RegexHelperContextMenu(fweditReplaceText, m_helpTopicProvider, false);
-
 			EnableRegexMenuReplaceButton();
-
 			// get the current selection text (if available) to fill in the find pattern.
 			IVwSelection sel = null;
 			if (rootSite?.RootBox != null)
@@ -375,7 +339,6 @@ namespace LanguageExplorer.Impls
 					ReplaceText = replaceBldr.GetString();
 				}
 			}
-
 			SetFormatLabels();
 			return true;
 		}
@@ -434,13 +397,11 @@ namespace LanguageExplorer.Impls
 			// Must set the stylesheet for the FwEdit boxes before calling SetDialogValues since
 			// that call can reset the text in those boxes.
 			fweditFindText.StyleSheet = fweditReplaceText.StyleSheet = stylesheet;
-
 			// For now pass a null writing system string since it isn't used at all.
 			if (!SetDialogValues(cache, vwPattern, null, true, false, owner, helpTopicProvider, app, wsEdit))
 			{
 				return false;
 			}
-
 			FindText = vwPattern.Pattern;
 			// Reconfigure the dialog for this special purpose. The Find/Replace buttons go away,
 			// we have an OK button which is the default.
@@ -476,9 +437,9 @@ namespace LanguageExplorer.Impls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -525,7 +486,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			if (bldr.Text.EndsWith(endOfPara))
 			{
 				bldr.Replace(bldr.Length - endOfPara.Length, bldr.Length, null, null);
@@ -602,7 +562,6 @@ namespace LanguageExplorer.Impls
 			{
 				fweditFindText.StyleSheet = fweditReplaceText.StyleSheet = rootSite.RootBox.Stylesheet;
 			}
-
 			if (newOwner != null && Owner != newOwner)
 			{
 				Owner = newOwner;
@@ -623,7 +582,7 @@ namespace LanguageExplorer.Impls
 				var ttp = tsb.get_Properties(0);
 				int nVar;
 				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-				string sWs = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
+				var sWs = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 				if (sWs == null)
 				{
 					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, nVar, wsEdit);
@@ -1024,9 +983,7 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			FindNext();
-
 			// After a find next, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
@@ -1071,13 +1028,11 @@ namespace LanguageExplorer.Impls
 			{
 				return;  // discard event
 			}
-
 			var rootSite = ActiveView;
 			if (rootSite == null)
 			{
 				return;
 			}
-
 			using (var undoTaskHelper = new UndoTaskHelper(rootSite, "kstidUndoReplace"))
 			{
 				// Replace the selection with the replacement text, but don't allow deletion
@@ -1085,7 +1040,6 @@ namespace LanguageExplorer.Impls
 				DoReplace(CurrentSelection);
 				undoTaskHelper.RollBack = false;
 			}
-
 			// After a replace, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
@@ -1109,7 +1063,6 @@ namespace LanguageExplorer.Impls
 				DoReplaceAll();
 				undoHelper.RollBack = false;
 			}
-
 			// After a replace, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
@@ -1127,10 +1080,8 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			PrepareToFind();
 			m_inReplace = true;
-
 			// suppress the standard message; ReplaceAll shows its own based on how many matches we find (although the text is the same for 0 found)
 			if (MatchNotFound == null)
 			{
@@ -1147,11 +1098,8 @@ namespace LanguageExplorer.Impls
 					m_searchKiller.Control = this;  // used for redrawing
 					m_searchKiller.StopControl = btnClose;  // need to know the stop button
 					m_vwFindPattern.ReplaceWith = ReplaceText;
-
 					var initialSelection = CurrentSelection;
-
 					InitializeFindEnvironment(rootSite);
-
 					// TODO Enhance (Hasso) 2015.08: place CurrentSelection in a variable?
 					// Starting at the beginning is a workaround for LT-16537 (starting position is not adjusted after each replacement).
 					for (FindFromAndWrap(SelectAtBeginning(), true); IsReplacePossible(CurrentSelection); FindFromAndWrap(CurrentSelection, false))
@@ -1159,11 +1107,9 @@ namespace LanguageExplorer.Impls
 						DoReplacement(CurrentSelection, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, (FindText.Length == 0));
 						replaceCount++;
 					}
-
 					// Reset the selection to what the user had selected before the ReplaceAll.
 					// TODO Enhance (Hasso) 2015.08: adjust the selection to reflect length changes in the text (easier once LT-16537 is fixed)
 					SelectionHelper.Create(initialSelection, rootSite).SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
-
 					Debug.WriteLine("Replace all took " + (DateTime.Now - start));
 				}
 			}
@@ -1187,7 +1133,6 @@ namespace LanguageExplorer.Impls
 				{
 					return;
 				}
-
 				try
 				{
 					if (MiscUtils.IsUnix)
@@ -1197,7 +1142,6 @@ namespace LanguageExplorer.Impls
 						tabReplace.UseWaitCursor = true;
 						tabReplace.Parent.UseWaitCursor = true;
 					}
-
 					MessageBox.Show(Owner, msg, m_app.ApplicationName);
 				}
 				finally
@@ -1248,12 +1192,9 @@ namespace LanguageExplorer.Impls
 			{
 				DialogResult = DialogResult.Cancel;
 				Close();
-
 				return;
 			}
-
 			SaveDialogValues(); // This needs to be done before the Regex is checked because it sets up m_vwFindPattern
-
 			// LT-3310 - make sure if it's a regular expression that it is valid.
 			// The following technique is what was added to the filtering code, so
 			// it makes some sense to follow that pattern here.  This allows us to
@@ -1385,8 +1326,7 @@ namespace LanguageExplorer.Impls
 					btnReplaceAll.Show();
 				}
 				// Move More button beside Replace button
-				btnMore.Location = new Point(btnReplace.Location.X - btnReplace.Width - 6,
-					btnReplace.Location.Y);
+				btnMore.Location = new Point(btnReplace.Location.X - btnReplace.Width - 6, btnReplace.Location.Y);
 				fweditReplaceText.Show();
 				lblReplaceText.Show();
 				fweditFindText.Select();
@@ -1399,7 +1339,6 @@ namespace LanguageExplorer.Impls
 					chkUseRegularExpressions.Enabled = false;
 				}
 			}
-
 			SetHelpTopicId();
 			SetFormatLabels();
 			EnableRegexMenuReplaceButton();
@@ -1500,7 +1439,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// Handle the F3 (Find Next shorcut) when the dialog is active (but not in spec-only
+			// Handle the F3 (Find Next shortcut) when the dialog is active (but not in spec-only
 			// mode, since that mode can't actually perform a Find!)
 			if (!m_inGetSpecs && e.KeyCode == Keys.F3)
 			{
@@ -1522,7 +1461,6 @@ namespace LanguageExplorer.Impls
 				m_messageFilterInstalled = true;
 				Application.AddMessageFilter(this);
 			}
-
 			base.OnActivated(e);
 			// TODO (TimS): possibly make ShowRangeSelAfterLostFocus an interface method so
 			// other apps (i.e. DN) can do this.
@@ -1615,7 +1553,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			if (enable)
 			{
 				var reallyEnable = true;
@@ -1658,7 +1595,6 @@ namespace LanguageExplorer.Impls
 					AdjustControlState(ctrl, newEnableStatus);
 				}
 			}
-
 			foreach (Control ctrl in panelSearchOptions.Controls)
 			{
 				AdjustControlState(ctrl, newEnableStatus);
@@ -1688,9 +1624,7 @@ namespace LanguageExplorer.Impls
 				// REVIEW(TimS): Should we beep or something to tell the user that the replace
 				// could not happen (TE-8289)?
 			}
-
 			btnClose.Text = FwCoreDlgs.kstidClose;
-
 			FindNext();
 		}
 
@@ -1781,26 +1715,21 @@ namespace LanguageExplorer.Impls
 				}
 				return;
 			}
-
 			var rootSite = ActiveView;
 			if (rootSite == null)
 			{
 				return;
 			}
-
 			if (m_fLastDirectionForward != fSearchForward)
 			{
 				// Changing search direction. Reset current selection (resets the search limit)
 				m_vwSelectionForPattern = null;
 				m_fLastDirectionForward = fSearchForward;
 			}
-
 			SetupFindPattern();
-
 			// Get the selection from the root box in order to compare it with the one from
 			// the pattern.
 			var vwselRootb = rootSite.RootBox.Selection;
-
 			// If the pattern's selection is different from the current selection in the
 			// rootbox or if a new search has been started then set things up to begin
 			// searching at the current selection.
@@ -1810,10 +1739,10 @@ namespace LanguageExplorer.Impls
 				InitializeFindEnvironment(rootSite, fSearchForward);
 			}
 			Debug.Assert(m_findEnvironment != null);
-
 			if (vwselRootb == null)
+			{
 				vwselRootb = rootSite.RootBox.MakeSimpleSel(true, true, false, true);
-
+			}
 			// Find the pattern.
 			if (vwselRootb != null)
 			{
@@ -1825,7 +1754,6 @@ namespace LanguageExplorer.Impls
 					// Change the cancel button to a stop
 					PrepareToFind();
 					m_inFind = true;
-
 					try
 					{
 						if (PatternIsValid())
@@ -1865,7 +1793,6 @@ namespace LanguageExplorer.Impls
 			btnClose.Text = FwCoreDlgs.kstidStop;
 			btnClose.Click -= btnClose_Click;
 			btnClose.Click += OnStop;
-
 			// Disable controls
 			EnableControls(false);
 			btnClose.Focus();
@@ -1881,7 +1808,7 @@ namespace LanguageExplorer.Impls
 			// Enable controls
 			EnableControls(true);
 			// Restore the close button
-			btnClose.Text = (fMakeCloseBtnSayClose) ? FwCoreDlgs.kstidClose : (string)btnClose.Tag;
+			btnClose.Text = fMakeCloseBtnSayClose ? FwCoreDlgs.kstidClose : (string)btnClose.Tag;
 			btnClose.Click += btnClose_Click;
 			btnClose.Click -= OnStop;
 			MatchNotFound -= SuppressAllMatchNotFoundMessages;
@@ -1971,7 +1898,6 @@ namespace LanguageExplorer.Impls
 		{
 			Debug.Assert(m_findEnvironment != null);
 			m_findEnvironment.HasWrapped = true;
-
 			// Have we gone full circle and reached the point where we started?
 			if (m_findEnvironment.StoppedAtLimit)
 			{
@@ -1981,7 +1907,6 @@ namespace LanguageExplorer.Impls
 			{
 				// Wrap around to start searching at the top or bottom of the view.
 				FindFrom(null);
-
 				// If, after wrapping around to begin searching from the top, we hit the
 				// starting point, then display the same message as if we went full circle.
 				if (!m_findEnvironment.FoundMatch)
@@ -2000,12 +1925,10 @@ namespace LanguageExplorer.Impls
 			m_vwSelectionForPattern = null;
 			var fShowMsg = true;
 			var defaultMsg = fFirstTry ? FwCoreDlgs.kstidNoMatchMsg : FwCoreDlgs.kstidNoMoreMatchesMsg;
-
 			if (MatchNotFound != null)
 			{
 				fShowMsg = MatchNotFound(this, defaultMsg, fFirstTry ? MatchType.NoMatchFound : MatchType.NoMoreMatchesFound);
 			}
-
 			if (fShowMsg && !m_searchKiller.AbortRequest)
 			{
 				// Show message that entire document was searched only if the search was not aborted (TE-3567).
@@ -2025,7 +1948,6 @@ namespace LanguageExplorer.Impls
 			{
 				return null;
 			}
-
 			rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
 			var selHelper = SelectionHelper.Create(rootSite);
 			selHelper.IchAnchor = 0;
@@ -2033,7 +1955,6 @@ namespace LanguageExplorer.Impls
 			selHelper.SetNumberOfPreviousProps(SelLimitType.Anchor, 0);
 			selHelper.SetNumberOfPreviousProps(SelLimitType.End, 0);
 			m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
-
 			var rootBox = rootSite.RootBox;
 			return rootBox?.Selection;
 		}
@@ -2055,7 +1976,6 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-
 			return m_vwFindPattern.MatchWhole(vwsel) && vwsel.CanFormatChar;
 		}
 
@@ -2078,11 +1998,9 @@ namespace LanguageExplorer.Impls
 			{
 				return; // desperate defensive programming.
 			}
-
 			// Get ORCs from selection so that they can be appended after the text has been replaced.
 			var stringBldr = tssSel.GetBldr();
 			ReplaceString(stringBldr, tssSel, 0, tssSel.Length, tssReplace, 0, fEmptySearch, fUseWS);
-
 			// finally - do the replacement
 			sel.ReplaceWithTsString(stringBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD));
 		}
@@ -2104,18 +2022,15 @@ namespace LanguageExplorer.Impls
 		/// <param name="fUseWs">if set to <c>true</c> use the writing system used in the
 		/// replace string of the Find/Replace dialog.</param>
 		/// <returns>Change in length of the string.</returns>
-		private static int ReplaceString(ITsStrBldr tsbBuilder, ITsString tssInput,
-			int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch, bool fUseWs)
+		private static int ReplaceString(ITsStrBldr tsbBuilder, ITsString tssInput, int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch, bool fUseWs)
 		{
 			var initialLength = tsbBuilder.Length;
 			var replaceRunCount = tssReplace.RunCount;
-
 			// Determine whether to replace the sStyleName. We do this if any of the runs of
 			// the replacement string have the sStyleName set (to something other than
 			// Default Paragraph Characters).
 			var fUseStyle = false;
 			var fUseTags = false;
-
 			// ENHANCE (EberhardB): If we're not doing a RegEx search we could store these flags
 			// since they don't change.
 			TsRunInfo runInfo;
@@ -2128,26 +2043,13 @@ namespace LanguageExplorer.Impls
 					fUseStyle = true;
 				}
 			}
-
 			var iRunInput = tssInput.get_RunAt(ichMinInput);
 			var selProps = tssInput.get_Properties(iRunInput);
 			var propsBldr = selProps.GetBldr();
-
-			// Remove all tags that are anywhere in the Find-what string. But also include any
-			// other tags that are present in the first run of the found string. So the resulting
-			// replacement string will have any tags in the first char of the selection plus
-			// any specified replacement tags.
-			//			Vector<StrUni> vstuTagsToRemove;
-			//			GetTagsToRemove(m_qtssFindWhat, &fUseTags, vstuTagsToRemove);
-			//			Vector<StrUni> vstuTagsToInclude;
-			//			GetTagsToInclude(qtssSel, vstuTagsToRemove, vstuTagsToInclude);
-
 			// Make a string builder to accumulate the real replacement string.
-
 			// Copy the runs of the replacement string, adjusting the properties.
 			// Make a string builder to accumulate the real replacement string.
 			var stringBldr = TsStringUtils.MakeStrBldr();
-
 			// Copy the runs of the replacement string, adjusting the properties.
 			for (var irun = 0; irun < replaceRunCount; irun++)
 			{
@@ -2170,7 +2072,6 @@ namespace LanguageExplorer.Impls
 					if (fUseStyle)
 					{
 						var sStyleName = ttpReplaceRun.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-
 						propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, sStyleName == LcmStyleSheet.kstrDefaultCharStyle ? null : sStyleName);
 					}
 					ttpReplaceRun = propsBldr.GetTextProps();
@@ -2180,7 +2081,6 @@ namespace LanguageExplorer.Impls
 					// Its not a footnote so copy all props exactly from (the first run of the) matched text.
 					ttpReplaceRun = selProps;
 				}
-
 				// Insert modified run into string builder.
 				if (fEmptySearch && tssReplace.Length == 0)
 				{
@@ -2198,7 +2098,6 @@ namespace LanguageExplorer.Impls
 					stringBldr.Replace(runInfo.ichMin, runInfo.ichMin, tssReplace.get_RunText(irun), ttpReplaceRun);
 				}
 			}
-
 			tsbBuilder.ReplaceTsString(delta + ichMinInput, delta + ichLimInput, stringBldr.GetString());
 			var finalLength = tsbBuilder.Length;
 			return finalLength - initialLength;
@@ -2229,7 +2128,7 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Fill the Writing Systems menu with an alphebetized list of all writing systems
+		/// Fill the Writing Systems menu with an alphabetized list of all writing systems
 		/// defined in this language project. The writing system of the current selection
 		/// (if there is exactly one) will be checked; otherwise, nothing will be checked.
 		/// </summary>
@@ -2238,7 +2137,6 @@ namespace LanguageExplorer.Impls
 			// First clear any items added previously
 			mnuWritingSystem.MenuItems.Clear();
 			EventHandler clickEvent = WritingSystemMenu_Click;
-
 			// Convert from Set to List, since the Set can't sort.
 			var writingSystems = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 			writingSystems.Sort((x, y) => x.DisplayLabel.CompareTo(y.DisplayLabel));
@@ -2259,15 +2157,12 @@ namespace LanguageExplorer.Impls
 		public void PopulateStyleMenu()
 		{
 			// TODO: Convert this method to use StyleListHelper.
-
 			// First clear any items added previously
 			mnuStyle.MenuItems.Clear();
 			var clickEvent = new EventHandler(StyleMenu_Click);
-
 			var sSelectedStyle = LastTextBoxInFocus.SelectedStyle;
 			var mnuItem = new MenuItem(FwCoreDlgs.kstidNoStyle, clickEvent) { Checked = (sSelectedStyle == string.Empty) };
 			mnuStyle.MenuItems.Add(mnuItem);
-
 			mnuItem = new MenuItem(StyleUtils.DefaultParaCharsStyleName, clickEvent)
 			{
 				Checked = (sSelectedStyle == LcmStyleSheet.kstrDefaultCharStyle)
@@ -2294,7 +2189,6 @@ namespace LanguageExplorer.Impls
 				}
 			}
 			styleNames.Sort();
-
 			foreach (var s in styleNames)
 			{
 				mnuItem = new MenuItem(s, clickEvent) { Checked = (sSelectedStyle == s) };
@@ -2393,7 +2287,6 @@ namespace LanguageExplorer.Impls
 					multipleWs = true;
 				}
 				prevWs = ws;
-
 				// check for styles
 				var charStyle = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				if (charStyle != prevStyleName && prevStyleName != string.Empty)
@@ -2402,7 +2295,6 @@ namespace LanguageExplorer.Impls
 				}
 				prevStyleName = charStyle;
 			}
-
 			if (prevStyleName == null)
 			{
 				prevStyleName = string.Empty;
@@ -2411,9 +2303,7 @@ namespace LanguageExplorer.Impls
 			{
 				prevStyleName = StyleUtils.DefaultParaCharsStyleName;
 			}
-
 			Debug.Assert(prevWs > 0, "We should always have a writing system");
-
 			// no more than 1 style and only 1 writing system
 			if (!multipleStyles && !multipleWs)
 			{
@@ -2426,14 +2316,7 @@ namespace LanguageExplorer.Impls
 				else if (prevStyleName != string.Empty)
 				{
 					fShowLabels = true;
-					if (!chkMatchWS.Checked)
-					{
-						formatText.Text = prevStyleName;
-					}
-					else
-					{
-						formatText.Text = string.Format(FwCoreDlgs.kstidOneStyleOneWS, prevStyleName, currentWs == null ? string.Empty : currentWs.DisplayLabel);
-					}
+					formatText.Text = !chkMatchWS.Checked ? prevStyleName : string.Format(FwCoreDlgs.kstidOneStyleOneWS, prevStyleName, currentWs == null ? string.Empty : currentWs.DisplayLabel);
 				}
 				// No style (WS displayed)
 				else if (chkMatchWS.Checked)
@@ -2443,7 +2326,7 @@ namespace LanguageExplorer.Impls
 				}
 			}
 			// multiple styles or multiple writing systems (displayed)
-			else if (multipleStyles || (multipleWs && chkMatchWS.Checked))
+			else if (multipleStyles || multipleWs && chkMatchWS.Checked)
 			{
 				fShowLabels = true;
 				// multiple styles
@@ -2452,14 +2335,7 @@ namespace LanguageExplorer.Impls
 					// only one writing system or multiple writing systems (not displayed)
 					if (!multipleWs || !chkMatchWS.Checked)
 					{
-						if (!chkMatchWS.Checked) // don't show writing system info
-						{
-							formatText.Text = FwCoreDlgs.kstidMultipleStyles;
-						}
-						else // show writing system info
-						{
-							formatText.Text = string.Format(FwCoreDlgs.kstidMultipleStylesOneWS, currentWs == null ? string.Empty : currentWs.DisplayLabel);
-						}
+						formatText.Text = !chkMatchWS.Checked ? FwCoreDlgs.kstidMultipleStyles : string.Format(FwCoreDlgs.kstidMultipleStylesOneWS, currentWs == null ? string.Empty : currentWs.DisplayLabel);
 					}
 					// multiple writing systems (displayed)
 					else
@@ -2468,18 +2344,17 @@ namespace LanguageExplorer.Impls
 					}
 				}
 				// Multiple writing systems and no more than 1 style
-				else if (multipleWs && !multipleStyles)
+				else
 				{
 					formatText.Text = prevStyleName == string.Empty ? FwCoreDlgs.kstidMultipleWritingSystems : string.Format(FwCoreDlgs.kstidOneStyleMultipleWS, prevStyleName);
 				}
 			}
 			// multiple writing systems (not displayed) and one style
-			else if (multipleWs && !chkMatchWS.Checked && prevStyleName != string.Empty)
+			else if (!chkMatchWS.Checked && prevStyleName != string.Empty)
 			{
 				formatText.Text = prevStyleName;
 				fShowLabels = true;
 			}
-
 			format.Visible = fShowLabels;
 			formatText.Visible = fShowLabels;
 		}
@@ -2549,7 +2424,21 @@ namespace LanguageExplorer.Impls
 		}
 		#endregion
 
-		#region SearchKiller
+		/// <summary>
+		/// Status of matches during find/replace
+		/// </summary>
+		private enum MatchType
+		{
+			/// <summary />
+			NotSet,
+			/// <summary>no match found after previous match</summary>
+			NoMoreMatchesFound,
+			/// <summary>no match found in whole document</summary>
+			NoMatchFound,
+			/// <summary>A replace all is done and it made replacements</summary>
+			ReplaceAllFinished
+		}
+
 		/// <summary>
 		/// Implements a search killer
 		/// </summary>
@@ -2576,12 +2465,10 @@ namespace LanguageExplorer.Impls
 			public void FlushMessages()
 			{
 				Control?.Update();
-
 				if (Platform.IsMono)
 				{
 					return;
 				}
-
 				// Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
 				// Process keystrokes and lbutton events so the user can stop the dlg work.
 				// This should allow the dlg to be stopped mid stream with out the risk
@@ -2592,25 +2479,29 @@ namespace LanguageExplorer.Impls
 				Win32.MSG msg;
 				while (PeekMessage(Win32.WinMsgs.WM_KEYDOWN, Win32.WinMsgs.WM_KEYUP, out msg) || PeekMessage(Win32.WinMsgs.WM_LBUTTONDOWN, Win32.WinMsgs.WM_LBUTTONUP, out msg))
 				{
-					if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+					switch (msg.message)
 					{
-						stopButtonDown = StopControl != null && msg.hwnd == StopControl.Handle;
-					}
-					else if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONUP)
-					{
-						if (StopControl != null && msg.hwnd == StopControl.Handle && stopButtonDown)
+						case (int)Win32.WinMsgs.WM_LBUTTONDOWN:
+							stopButtonDown = StopControl != null && msg.hwnd == StopControl.Handle;
+							break;
+						case (int)Win32.WinMsgs.WM_LBUTTONUP:
 						{
-							((Button)StopControl).PerformClick();
-							stopButtonDown = false;
+							if (StopControl != null && msg.hwnd == StopControl.Handle && stopButtonDown)
+							{
+								((Button)StopControl).PerformClick();
+								stopButtonDown = false;
+							}
+							break;
+						}
+						default:
+						{
+							if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN && msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE && StopControl != null && msg.hwnd == StopControl.Handle)
+							{
+								((Button)StopControl).PerformClick();
+							}
+							break;
 						}
 					}
-					else if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN &&
-						msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
-							StopControl != null && msg.hwnd == StopControl.Handle)
-					{
-						((Button)StopControl).PerformClick();
-					}
-
 					if (!Win32.IsDialogMessage(Control.Handle, ref msg))
 					{
 						Win32.TranslateMessage(ref msg);
@@ -2624,7 +2515,7 @@ namespace LanguageExplorer.Impls
 			/// Peeks at the pending messages and if it finds any message in the given range, that
 			/// message is removed from the stack and passed back to be handled immediately.
 			/// </summary>
-			/// <param name="min">The minumum message to handle.</param>
+			/// <param name="min">The minimum message to handle.</param>
 			/// <param name="max">The maximum message to handle.</param>
 			/// <param name="msg">The message found, if any.</param>
 			/// <returns><c>true</c> if a matching message is found; <c>false</c> otherwise.</returns>
@@ -2635,6 +2526,5 @@ namespace LanguageExplorer.Impls
 			}
 			#endregion
 		}
-		#endregion
 	}
 }

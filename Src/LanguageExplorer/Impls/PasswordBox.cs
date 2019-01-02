@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,19 +24,15 @@ namespace LanguageExplorer.Impls
 			m_eye = new PictureBox();
 			((System.ComponentModel.ISupportInitialize)(m_eye)).BeginInit();
 			SuspendLayout();
-
 			m_eye.Image = LanguageExplorerResources.password_reveal_eye_16x16;
 			m_eye.Name = "eyePicture";
 			m_eye.Size = new Size(16, 16);
 			m_eye.TabIndex = 0;
 			m_eye.TabStop = false;
 			m_eye.Cursor = Cursors.Arrow;
-
 			PasswordChar = m_PasswordChar;
-
 			m_eye.MouseDown += RevealPassword;
 			m_eye.MouseUp += HidePassword;
-
 			Controls.Add(m_eye);
 		}
 

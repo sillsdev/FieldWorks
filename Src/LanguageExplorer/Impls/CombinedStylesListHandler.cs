@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,7 +46,6 @@ namespace LanguageExplorer.Impls
 			_sortedCharacterStyleInformation = new SortedSet<string>();
 			_allStyleInformation = new Dictionary<string, BaseStyleInfo>();
 			_sortedAllStyleInformation = new SortedSet<string>();
-
 			_mainWnd = mainWnd;
 			_subscriber = subscriber;
 			_stylesheet = stylesheet;
@@ -54,9 +53,7 @@ namespace LanguageExplorer.Impls
 			_formatToolStripComboBox.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 			_formatToolStripComboBox.Enabled = false;
 			_subscriber.Subscribe("ResetStyleSheet", ResetStyleSheet);
-
 			CollectStyleInformation();
-
 			Application.Idle += ApplicationOnIdle;
 		}
 
@@ -109,7 +106,7 @@ namespace LanguageExplorer.Impls
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -168,9 +165,7 @@ Debug.WriteLine($"End2: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 #endif
 				return;
 			}
-
 			_skipProcessingClickEvent = true;
-
 			var enabled = false;
 			var newText = string.Empty;
 			try
@@ -193,7 +188,6 @@ Debug.WriteLine($"End3: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 #endif
 					return; // No change.
 				}
-
 				SortedSet<string> newSet = null;
 				if (enabled)
 				{
@@ -253,12 +247,9 @@ Debug.WriteLine($"End4: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 		{
 			_characterStyleInformation.Clear();
 			_sortedCharacterStyleInformation.Clear();
-
 			_allStyleInformation.Clear();
 			_sortedAllStyleInformation.Clear();
-
 			_formatToolStripComboBox.Items.Clear();
-
 			foreach (var styleInfo in _stylesheet.Styles)
 			{
 				if (styleInfo.RealStyle.Type == StyleType.kstCharacter)
@@ -294,7 +285,6 @@ Debug.WriteLine($"End4: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 				// Code was confused, so leave what was selected.
 				return;
 			}
-
 			// Someone wasn't happy with what the user selected and changed it
 			// Unwire event handler, and reset selected style to returned value, and rewire event handler.
 			_skipProcessingClickEvent = true;

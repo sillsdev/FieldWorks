@@ -1020,7 +1020,6 @@
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\DataTreeStackContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />
-    <Compile Include="Impls\RefreshInterest.cs" />
     <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />

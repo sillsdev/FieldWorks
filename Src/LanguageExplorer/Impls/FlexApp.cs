@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,7 +46,6 @@ namespace LanguageExplorer.Impls
 		[Import]
 		private ExportFactory<IFwMainWnd> WindowFactory { get; set; }
 		private List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>> _windows = new List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>>();
-
 		private static bool m_fResourceFailed;
 		/// <summary>
 		///  Web browser to use in Linux
@@ -55,7 +54,6 @@ namespace LanguageExplorer.Impls
 		[Import]
 		private IHelpTopicProvider m_helpTopicProvider;
 		private bool m_fInitialized;
-
 		/// <summary></summary>
 		private int m_nEnableLevel;
 		/// <summary>
@@ -79,13 +77,11 @@ namespace LanguageExplorer.Impls
 		private IVwPattern m_findPattern;
 		private IFwMainWnd m_windowToCloseOnIdle;
 
-#endregion Data Members
+		#endregion Data Members
 
-#region Construction and Initializing
+		#region Construction and Initializing
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		/// <remarks>
 		/// Called by MEF
 		/// </remarks>
@@ -99,16 +95,14 @@ namespace LanguageExplorer.Impls
 				LatestAppStartupTime = DateTime.Now.ToUniversalTime().Ticks.ToString()
 			};
 			RegistrySettings.AddErrorReportingInfo();
-
 			Application.EnterThreadModal += Application_EnterThreadModal;
 			Application.LeaveThreadModal += Application_LeaveThreadModal;
-
 			Application.AddMessageFilter(this);
 		}
 
-#endregion Construction and Initializing
+		#endregion Construction and Initializing
 
-#region non-interface properties
+		#region non-interface properties
 
 		/// <summary>
 		/// Guid for the application (used for uniquely identifying DB items that "belong" to
@@ -179,9 +173,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private IVwPattern FindPattern => m_findPattern ?? (m_findPattern = VwPatternClass.Create());
 
-#endregion non-interface properties
+		#endregion non-interface properties
 
-#region IMessageFilter interface implementation
+		#region IMessageFilter interface implementation
 
 		/// <summary>
 		/// Filters out a message before it is dispatched.
@@ -192,11 +186,10 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg != (int) Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int) Win32.WinMsgs.WM_KEYUP)
+			if (m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYUP)
 			{
 				return false;
 			}
-
 			var key = ((Keys)(int)m.WParam & Keys.KeyCode);
 			// There is a known issue in older versions of Keyman (< 7.1.268) where the KMTip addin sends a 0x88 keystroke
 			// in order to communicate changes in state to the Keyman engine. When a button is clicked while a text control
@@ -211,12 +204,11 @@ namespace LanguageExplorer.Impls
 					return true;
 				}
 			}
-
 			return false;
 		}
-#endregion IMessageFilter interface implementation
+		#endregion IMessageFilter interface implementation
 
-#region ISettings interface implementation
+		#region ISettings interface implementation
 
 		/// <summary>
 		/// The RegistryKey for this application.
@@ -243,9 +235,9 @@ namespace LanguageExplorer.Impls
 		{
 			throw new NotSupportedException("'SaveSettingsNow' is not supported. Use 'SaveSettings' method instead.");
 		}
-#endregion ISettings interface implementation
+		#endregion ISettings interface implementation
 
-#region IFeedbackInfoProvider interface implementation
+		#region IFeedbackInfoProvider interface implementation
 		/// <summary>
 		/// E-mail address for bug reports, etc.
 		/// </summary>
@@ -256,9 +248,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string FeedbackEmailAddress => "FLEXUsage@sil.org";
 
-#endregion IFeedbackInfoProvider interface implementation
+		#endregion IFeedbackInfoProvider interface implementation
 
-#region IHelpTopicProvider interface implementation
+		#region IHelpTopicProvider interface implementation
 		/// <summary>
 		/// Gets a URL identifying a Help topic.
 		/// </summary>
@@ -274,14 +266,14 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string HelpFile => m_helpTopicProvider.HelpFile;
 
-#endregion IHelpTopicProvider interface implementation
+		#endregion IHelpTopicProvider interface implementation
 
-#region IDisposable interface implementation
+		#region IDisposable interface implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -320,9 +312,9 @@ namespace LanguageExplorer.Impls
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed || BeingDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -332,10 +324,8 @@ namespace LanguageExplorer.Impls
 			{
 				// Dispose managed resources here.
 				UpdateAppRuntimeCounter();
-
 				Logger.WriteEvent("Disposing app: " + GetType().Name);
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
-
 				// Dispose managed resources here.
 				var mainWnds = new List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>>(_windows); // Use another list, since _windows may change.
 				_windows.Clear(); // In fact, just clear the main array, so the windows won't have to worry so much.
@@ -354,15 +344,11 @@ namespace LanguageExplorer.Impls
 					mainWnd.Dispose();
 				}
 				m_findReplaceDlg?.Dispose();
-
 				ResourceHelper.ShutdownHelper();
-
 				RegistrySettings?.Dispose();
 				MessageBoxExManager.DisposeAllMessageBoxes();
-
 				Application.EnterThreadModal -= Application_EnterThreadModal;
 				Application.LeaveThreadModal -= Application_LeaveThreadModal;
-
 				Application.RemoveMessageFilter(this);
 				PictureHolder.Dispose();
 				DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh;
@@ -377,8 +363,8 @@ namespace LanguageExplorer.Impls
 			m_suppressedCacheInfo = null;
 			PictureHolder = null;
 
-			IsDisposed = true;
 			BeingDisposed = false;
+			IsDisposed = true;
 		}
 
 		/// <summary>
@@ -414,9 +400,9 @@ namespace LanguageExplorer.Impls
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-#endregion IDisposable interface implementation
+		#endregion IDisposable interface implementation
 
-#region IApp interface implementation
+		#region IApp interface implementation
 
 		/// <summary>
 		/// Return a string from a resource ID
@@ -492,7 +478,7 @@ namespace LanguageExplorer.Impls
 		public void RestartSpellChecking()
 		{
 			foreach (Control wnd in MainWindows)
-		{
+			{
 				RestartSpellChecking(wnd);
 			}
 		}
@@ -511,24 +497,20 @@ namespace LanguageExplorer.Impls
 				// Susanna asked that refresh affect only the currently active project, which is
 				// what the string and List variables below attempt to handle.  See LT-6444.
 				var activeWnd = ActiveForm as IFwMainWnd;
-
 				var rgxw = new List<IFwMainWnd>();
 				foreach (var wnd in MainWindows)
 				{
 					wnd.PrepareToRefresh();
 					rgxw.Add(wnd);
 				}
-
 				if (activeWnd != null)
 				{
 					rgxw.Remove(activeWnd);
 				}
-
 				foreach (var xwnd in rgxw)
 				{
 					xwnd.FinishRefresh();
 				}
-
 				// LT-3963: active window changes as a result of a refresh.
 				// Make sure focus doesn't switch to another FLEx application / window also
 				// make sure the application focus isn't lost all together.
@@ -544,7 +526,6 @@ namespace LanguageExplorer.Impls
 				}
 				return true;
 			}
-
 			if (m_suppressedCacheInfo != null)
 			{
 				var messages = m_suppressedCacheInfo.Queue;
@@ -554,18 +535,15 @@ namespace LanguageExplorer.Impls
 				}
 				return true;
 			}
-
 			if (sync == SyncMsg.ksyncFullRefresh)
 			{
 				RefreshAllViews();
 				return false;
 			}
-
 			foreach (var wnd in MainWindows)
 			{
 				wnd.PreSynchronize(sync);
 			}
-
 			if (sync == SyncMsg.ksyncWs)
 			{
 				// REVIEW TeTeam: AfLpInfo::Synchronize calls AfLpInfo::FullRefresh, which
@@ -575,7 +553,6 @@ namespace LanguageExplorer.Impls
 				RefreshAllViews();
 				return false;
 			}
-
 			if (MainWindows.All(wnd => wnd.Synchronize(sync)))
 			{
 				return true;
@@ -603,7 +580,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			// TE-1913: Prevent user from accessing windows that are open to the same project.
 			// Originally this was used for importing.
 			foreach (var fwMainWnd in MainWindows)
@@ -645,7 +621,6 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-
 			int hvoRoot, frag;
 			IVwViewConstructor vc;
 			IVwStylesheet ss;
@@ -654,14 +629,11 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-
 			if (FindReplaceDialog == null)
 			{
 				m_findReplaceDlg = new FwFindReplaceDlg();
 			}
-
-			var fOverlay = (rootsite.RootBox.Overlay != null);
-
+			var fOverlay = rootsite.RootBox.Overlay != null;
 			if (m_findReplaceDlg.SetDialogValues(cache, FindPattern, rootsite, fReplace, fOverlay, mainForm, this, this))
 			{
 				m_findReplaceDlg.Show();
@@ -720,24 +692,21 @@ namespace LanguageExplorer.Impls
 			{
 				CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 			}
-
 			foreach (var cf in lp.PicturesOC)
 			{
 				CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 			}
 			//Get the files which are pointed to by links in TsStrings
 			CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-
 			var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, oldLinkedFilesRootDir);
 			foreach (var linkInfo in hyperlinks)
 			{
 				if (!rgFilesToMove.Contains(linkInfo.RelativePath) && FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath)) &&
-				    !FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
+					!FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
 				{
 					rgFilesToMove.Add(linkInfo.RelativePath);
 				}
 			}
-
 			if (!rgFilesToMove.Any())
 			{
 				return false;
@@ -756,19 +725,17 @@ namespace LanguageExplorer.Impls
 			}
 			if (action == FileLocationChoice.Leave) // Expand path
 			{
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-					() =>
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var cf in lp.MediaOC)
 					{
-						foreach (var cf in lp.MediaOC)
-						{
-							ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-						}
-
-						foreach (var cf in lp.PicturesOC)
-						{
-							ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-						}
-					});
+						ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+					}
+					foreach (var cf in lp.PicturesOC)
+					{
+						ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+					}
+				});
 				// Hyperlinks are always already full paths.
 				return false;
 			}
@@ -796,7 +763,6 @@ namespace LanguageExplorer.Impls
 						File.Copy(sOldPathname, sNewPathname);
 						File.Delete(sOldPathname);
 					}
-
 					else
 					{
 						File.Copy(sOldPathname, sNewPathname);
@@ -810,7 +776,6 @@ namespace LanguageExplorer.Impls
 			}
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
 				() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
-
 			// If any files failed to be moved or copied above, try again now that we've
 			// opened a new window and had more time elapse (and more demand to reuse
 			// memory) since the failure.
@@ -843,9 +808,9 @@ namespace LanguageExplorer.Impls
 			return true;
 		}
 
-#endregion IApp interface implementation
+		#endregion IApp interface implementation
 
-#region IFlexApp interface implementation
+		#region IFlexApp interface implementation
 
 		/// <summary>
 		/// Array of main windows that are currently open for this application. This array can
@@ -884,9 +849,8 @@ namespace LanguageExplorer.Impls
 			var exportLifetimeContext = WindowFactory.CreateExport();
 			var factoryMadeIFwMainWnd = exportLifetimeContext.Value;
 			_windows.Add(new Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>(factoryMadeIFwMainWnd, exportLifetimeContext));
-
-			FwAppArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
-
+			// Make sure the next window that is opened doesn't default to the same place
+			FwAppArgs.ClearLinkInformation();
 			if (isNewCache)
 			{
 				InitializePartInventories(progressDlg, true);
@@ -907,7 +871,6 @@ namespace LanguageExplorer.Impls
 				factoryMadeIFwMainWndAsForm.FormClosing += FwMainWindowOnFormClosing;
 				factoryMadeIFwMainWndAsForm.Show(); // Show method loads persisted settings for window & controls
 				factoryMadeIFwMainWndAsForm.Activate(); // This makes main window come to front after splash screen closes
-
 				// adjust position if this is an additional window
 				if (wndCopyFrom != null)
 				{
@@ -923,10 +886,8 @@ namespace LanguageExplorer.Impls
 					factoryMadeIFwMainWndAsForm.DesktopBounds = rcNewWnd;
 					factoryMadeIFwMainWndAsForm.StartPosition = FormStartPosition.Manual;
 				}
-
 				m_fInitialized = true;
 			}
-
 			return factoryMadeIFwMainWndAsForm;
 		}
 
@@ -940,13 +901,11 @@ namespace LanguageExplorer.Impls
 				progressDlg.Message = LanguageExplorerResources.ksInitializingLayouts_;
 			}
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, ApplicationName, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
-
 			var currentReversalIndices = Cache.LanguageProject.LexDbOA.CurrentReversalIndices;
 			if (!currentReversalIndices.Any())
 			{
 				currentReversalIndices = new List<IReversalIndex>(Cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray());
 			}
-
 			foreach (var reversalIndex in currentReversalIndices)
 			{
 				LayoutCache.InitializeLayoutsForWsTag(reversalIndex.WritingSystem, Cache.ProjectId.Name);
@@ -1034,7 +993,6 @@ namespace LanguageExplorer.Impls
 		public bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
-
 			// The try-catch block is modeled after that used by TeScrInitializer.Initialize(),
 			// as the suggestion for fixing LT-8797.
 			try
@@ -1079,20 +1037,16 @@ namespace LanguageExplorer.Impls
 		{
 			if (IsDisposed || BeingDisposed)
 			{
-				return;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
-
 			if (!MainWindows.Contains(fwMainWindow))
 			{
 				return; // It isn't our window.
 			}
-
 			// NOTE: The main window that was passed in is most likely already disposed, so
 			// make sure we don't call anything that would throw an ObjectDisposedException!
-			var gonerTuple = (_windows
-				.Select(tuple => new {tuple, currentWindow = tuple.Item1})
-				.Where(@t => @t.currentWindow == fwMainWindow)
-				.Select(@t => @t.tuple)).FirstOrDefault();
+			var gonerTuple = _windows.Select(tuple => new { tuple, currentWindow = tuple.Item1 })
+				.Where(@t => @t.currentWindow == fwMainWindow).Select(@t => @t.tuple).FirstOrDefault();
 			if (gonerTuple != null)
 			{
 				_windows.Remove(gonerTuple);
@@ -1102,12 +1056,10 @@ namespace LanguageExplorer.Impls
 				form.FormClosing -= FwMainWindowOnFormClosing;
 				gonerTuple.Item2.Dispose(); // Disposing the factory also disposes the IFwMainWnd it created.
 			}
-
 			if (ActiveMainWindow == fwMainWindow)
 			{
 				ActiveMainWindow = null; // Just in case
 			}
-
 			if (!_windows.Any())
 			{
 				m_fwManager.ExecuteAsync(m_fwManager.ShutdownApp, this);
@@ -1146,7 +1098,6 @@ namespace LanguageExplorer.Impls
 			{
 				str = ResourceHelper.GetResourceString(stid);
 			}
-
 			return str;
 		}
 
@@ -1189,7 +1140,6 @@ namespace LanguageExplorer.Impls
 			MessageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksCreatingCustomGramCategory, true, "info");
 			MessageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksCreatingCustomLexRefType, true, "info");
 			MessageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksShowingSemanticClassification, true, "info");
-
 			MessageBoxExManager.ReadSettingsFile();
 			if (progressDlg != null)
 			{
@@ -1251,7 +1201,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			// Get position and size
 			var rcNewWnd = wndCopyFrom.DesktopBounds;
-
 			// However, desktopBounds are not useful when window is maximized; in that case
 			// get the info from Persistence instead... NormalStateDesktopBounds
 			if (wndCopyFrom.WindowState == FormWindowState.Maximized)
@@ -1260,22 +1209,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				rcNewWnd.Width -= SystemInformation.CaptionHeight * 2;
 				rcNewWnd.Height -= SystemInformation.CaptionHeight * 2;
 			}
-
 			//Offset right and down
 			rcNewWnd.X += SystemInformation.CaptionHeight;
 			rcNewWnd.Y += SystemInformation.CaptionHeight;
-
-			// We we will check if we went too far right or down, as Word 2002 checks.
-			// If rcNewWnd is beyond bottom or right of screen...
-			// Get the working area of the screen on which the new window will be placed.
-			//Rectangle rcScrn = Screen.FromRectangle(rcNewWnd).WorkingArea;
-
 			// If our adjusted rcNewWnd is partly off the screen, move it so it is fully
 			// on the screen its mostly on. Note: this will only be necessary when the window
 			// being copied from is partly off the screen in a single monitor system or
 			// spanning multiple monitors in a multiple monitor system.
 			ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
-
 			// Set the properties of the new window
 			wndNew.DesktopBounds = rcNewWnd;
 			wndNew.StartPosition = FormStartPosition.Manual;
@@ -1322,7 +1263,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-
 			(ctrl as ISettings)?.SaveSettingsNow();
 			(ctrl as IRootSite)?.CloseRootBox();
 
@@ -1412,7 +1352,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			rcUpperLeft.Width = CascadeSize(rcUpperLeft.Width, currentWindow.MinimumSize.Width);
 			rcUpperLeft.Height = CascadeSize(rcUpperLeft.Height, currentWindow.MinimumSize.Height);
 			var rc = rcUpperLeft;
-
 			foreach (Form wnd in MainWindows)
 			{
 				// Ignore windows that are on other screens or which are minimized.
@@ -1422,7 +1361,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					{
 						wnd.WindowState = FormWindowState.Normal;
 					}
-
 					wnd.DesktopBounds = rc;
 					wnd.Activate();
 					rc.Offset(SystemInformation.CaptionHeight, SystemInformation.CaptionHeight);
@@ -1432,7 +1370,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					}
 				}
 			}
-
 			// Make the active window the last one and activate it.
 			if (currentWindow.WindowState == FormWindowState.Maximized)
 			{
@@ -1483,12 +1420,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// tiled windows.</param>
 		/// <param name="windowSpacing">The distance, in pixels, between the left or top edge
 		/// of each tiled window. If there is only one window, this is undefined.</param>
-		private static void CalcTileSizeAndSpacing(Screen scrn, ICollection<IFwMainWnd> windowsToTile,
-			int screenDimension, int minWindowDimension,
-			out int desiredWindowDimension, out int windowSpacing)
+		private static void CalcTileSizeAndSpacing(Screen scrn, ICollection<IFwMainWnd> windowsToTile, int screenDimension, int minWindowDimension, out int desiredWindowDimension, out int windowSpacing)
 		{
 			var windowCount = windowsToTile.Count;
-
 			// Don't count windows if they're minimized.
 			foreach (Form wnd in windowsToTile)
 			{
@@ -1497,9 +1431,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					windowCount--;
 				}
 			}
-
 			desiredWindowDimension = windowSpacing = screenDimension / windowCount;
-
 			// Check if our desired window width is smaller than the minimum. If so, then
 			// calculate what the overlap should be.
 			if (desiredWindowDimension >= minWindowDimension)
@@ -1507,7 +1439,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				return;
 			}
 			double overlap = (minWindowDimension * windowCount - screenDimension) / (windowCount - 1);
-
 			windowSpacing = minWindowDimension - (int)Math.Round(overlap + 0.5);
 			desiredWindowDimension = minWindowDimension;
 		}
@@ -1542,7 +1473,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// and location for tiled windows, even though it's highly likely this will
 			// change below.
 			var rcDesired = scrn.WorkingArea;
-
 			// Get the proper window width or height and the space between the windows
 			// as they are tiled.
 			if (orientation == WindowTiling.Stacked)
@@ -1555,18 +1485,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Width, wndCurr.MinimumSize.Width, out desiredDimension, out windowSpacing);
 				rcDesired.Width = desiredDimension;
 			}
-
 			// There is a strange situation when a user's task bar is at the right or top
 			// of the primary display. The working area returns the correct rectangle that
-			// does not include the task bar. However, we cannot set a widnow's X or Y
+			// does not include the task bar. However, we cannot set a window's X or Y
 			// coordinate to the working area's X or Y. If the window is to be located
 			// in the upper left corner next to the task bar, X and Y must be 0.
 			rcDesired.X -= ScreenHelper.TaskbarWidth;
 			rcDesired.Y -= ScreenHelper.TaskbarHeight;
-
 			// Move the active window to its proper place and size.
 			wndCurr.DesktopBounds = rcDesired;
-
 			// Now move the rest of the non minimized windows to their proper place.
 			foreach (Form wnd in windowsToTile)
 			{
@@ -1574,7 +1501,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					wnd.WindowState = FormWindowState.Normal;
 				}
-
 				if (wnd != wndCurr && wnd.WindowState != FormWindowState.Minimized && Screen.FromControl(wnd).WorkingArea == scrn.WorkingArea)
 				{
 					if (orientation == WindowTiling.Stacked)
@@ -1589,7 +1515,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					wnd.DesktopBounds = rcDesired;
 				}
 			}
-
 			// If there was any overlapping of tiled windows, go from bottom to the top
 			// or right to left and activate each window so the tiling looks correct. i.e.
 			// Each window is overlapped on its top edge by the window directly on top or left.
@@ -1606,7 +1531,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					}
 				}
 			}
-
 			// Finally, make the current window active.
 			wndCurr.Activate();
 		}
@@ -1636,17 +1560,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return; // Nothing to do
 			}
-
 			m_suppressedCacheInfo.Count--;
 			if (m_suppressedCacheInfo.Count > 0)
 			{
 				return; // Still nested
 			}
-
 			BeginUpdate();
 			var messages = m_suppressedCacheInfo.Queue;
 			m_suppressedCacheInfo = null;
-
 			var fProcessUndoRedoAfter = false;
 			var savedUndoRedo = SyncMsg.ksyncFullRefresh; // Arbitrary
 			foreach (var synchMsg in messages)
@@ -1665,12 +1586,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					break; // One resulted in Refresh everything, ignore other synch msgs.
 				}
 			}
-
 			if (fProcessUndoRedoAfter)
 			{
 				Synchronize(savedUndoRedo);
 			}
-
 			// NOTE: This code may present a race condition, because there is a slight
 			// possibility that a sync message can come to the App at
 			// this point and then get cleared from the syncMessages list and never get run.
@@ -1776,18 +1695,20 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			Form formActive = ActiveForm;
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive != null)
-						{
+			{
 				bool fRestore;
 				using (RestoreDefaultsDlg dlg = new RestoreDefaultsDlg(this))
+				{
 					fRestore = (dlg.ShowDialog(formActive) == DialogResult.Yes);
+				}
 				if (fRestore)
-							{
+				{
 					InitializePartInventories(null, false);
 					ReplaceMainWindow(wndActive);
-						}
-					}
-					return true;
 				}
+			}
+			return true;
+		}
 
 		/// <summary>
 		/// Display a file given a path relative to the FieldWorks/Helps directory.
@@ -1799,18 +1720,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName,
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotShowX, path),
-					LexTextStrings.ksError);
-			});
+			string path = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName, Path.DirectorySeparatorChar);
+			OpenDocument(path, (e) => { MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotShowX, path), LexTextStrings.ksError); });
 			return true;
 		}
 #endif
-
-		#region SuppressedCacheInfo class
 
 		/// <summary>
 		/// Helper class that contains queued SyncMsgs and a reference count for
@@ -1820,11 +1734,17 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			/// <summary>Reference count</summary>
 			public int Count = 1;
+
 			/// <summary>SyncMsg queue</summary>
 			public readonly Queue<SyncMsg> Queue = new Queue<SyncMsg>();
 		}
 
-		#endregion
+		private enum RefreshInterest
+		{
+			NotSupressingRefresh,
+			SupressingRefreshAndWantRefresh,
+			SupressingRefreshButDoNotWantRefresh
+		}
 
 		/// <summary>
 		/// The different window tiling options

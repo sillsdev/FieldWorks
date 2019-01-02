@@ -1,7 +1,8 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+//#define SHOWDEBUGMESSAGES
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -62,11 +63,13 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+#if SHOWDEBUGMESSAGES
 #if RANDYTODO
-		// TODO: remove '_lastMessage' & '_lastNewValue' in the end. They are useful for debugging some kinds of re-entrant issues, but not really needed, otherwise.
+		// TODO: remove '_lastMessage' & '_lastNewValue' in the end. They are useful for debugging some kinds of re-entrant issues, but not otherwise needed.
 #endif
 		private string _lastMessage;
 		private object _lastNewValue;
+#endif
 		/// <summary>
 		/// Publish the message using the new value.
 		/// </summary>
@@ -78,6 +81,7 @@ namespace LanguageExplorer.Impls
 
 			try
 			{
+#if SHOWDEBUGMESSAGES
 				if (_lastMessage == message && _lastNewValue.ToString() == newValue.ToString())
 				{
 					Console.WriteLine($@"Why, pray tell, do we need to redo the very same message ({message}) with the very same new value?");
@@ -86,17 +90,21 @@ namespace LanguageExplorer.Impls
 				{
 					Console.WriteLine($@"About to publish: '{message}'.");
 				}
+#endif
 				using (Detect.Reentry(this, "Publish").AndThrow())
 				{
+#if SHOWDEBUGMESSAGES
 					_lastMessage = message;
 					_lastNewValue = newValue;
+#endif
 					HashSet<Action<object>> subscribers;
 					if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
 					{
+#if SHOWDEBUGMESSAGES
 						Console.WriteLine($@"Nobody likes me ({message}), everybody hates me, guess I'll go eat some worms....");
+#endif
 						return;
 					}
-
 					foreach (var subscriberAction in subscribers)
 					{
 						// NB: It is possible that the action's object is disposed,
@@ -106,15 +114,19 @@ namespace LanguageExplorer.Impls
 						subscriberAction(newValue);
 					}
 				}
+#if SHOWDEBUGMESSAGES
 				Console.WriteLine($@"Finished publishing: '{message}'.");
+#endif
 			}
 			finally
 			{
+#if SHOWDEBUGMESSAGES
 				_lastMessage = null;
 				_lastNewValue = null;
+#endif
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }

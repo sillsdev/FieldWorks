@@ -1,8 +1,10 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,11 +24,9 @@ namespace LanguageExplorer.Impls
 	{
 		#region Data members
 
-		private System.ComponentModel.IContainer components;
-
+		private IContainer components;
 		private const double BytesPerMiB = 1024 * 1024;
 		private const double BytesPerGiB = 1024 * BytesPerMiB;
-
 		private readonly string m_sAvailableMemoryFmt;
 		private readonly string m_sTitleFmt;
 		private readonly string m_sAvailableDiskSpaceFmt;
@@ -106,10 +106,10 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -259,7 +259,6 @@ namespace LanguageExplorer.Impls
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-
 			try
 			{
 				// Set the Application label to the name of the app
@@ -267,7 +266,6 @@ namespace LanguageExplorer.Impls
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
-
 				// List the copyright information
 				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
 				var list = acknowlegements.Keys.ToList();
@@ -278,18 +276,14 @@ namespace LanguageExplorer.Impls
 					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
 				}
 				txtCopyright.Text = text;
-
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
-
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
-
 				// Set the memory information
 				var memStatEx = new Win32.MemoryStatusEx();
 				memStatEx.dwLength = (uint)Marshal.SizeOf(memStatEx);
 				Win32.GlobalMemoryStatusEx(ref memStatEx);
 				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
-
 				// Set the available disk space information.
 				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
 				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);

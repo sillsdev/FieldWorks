@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,11 +31,12 @@ namespace LanguageExplorer.Impls
 		private LcmCache _cache;
 		private ToolStripMenuItem _toolsMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newToolsMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-
-		// Number of distinct macros we support.
-		// Note that just increasing this won't help. You will also need to add new commands and menu items to the
-		// XML configuration, typically Main.xml, with appropriate key parameters. Even then some work will be needed in GetMacroIndex
-		// to remove the assumption that slots are assigned to consecutive keys.
+		/// <summary>
+		/// Number of distinct macros we support.
+		/// Note that just increasing this won't help. You will also need to add new commands and menu items to the
+		/// XML configuration, typically Main.xml, with appropriate key parameters. Even then some work will be needed in GetMacroIndex
+		/// to remove the assumption that slots are assigned to consecutive keys.
+		/// </summary>
 		private const int MacroCount = 11;
 
 		internal void InitializeForTests(LcmCache cache)
@@ -50,7 +51,6 @@ namespace LanguageExplorer.Impls
 		{
 			_mainWindow = majorFlexComponentParameters.MainWindow;
 			_cache = majorFlexComponentParameters.LcmCache;
-
 			if (!_importedMacros.Any())
 			{
 				// No imported macros to add.
@@ -103,7 +103,6 @@ namespace LanguageExplorer.Impls
 		private void Macro_Clicked(object sender, EventArgs e)
 		{
 			var macro = (IFlexMacro)((ToolStripMenuItem)sender).Tag;
-
 			ICmObject obj;
 			int flid;
 			int ws;
@@ -235,9 +234,9 @@ namespace LanguageExplorer.Impls
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

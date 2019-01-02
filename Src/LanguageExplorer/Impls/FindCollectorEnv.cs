@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Impls
 {
@@ -27,7 +26,6 @@ namespace LanguageExplorer.Impls
 		protected LocationInfo m_LimitLocation;
 		/// <summary>Location to start current find next</summary>
 		protected LocationInfo m_StartLocation;
-
 		/// <summary />
 		protected IVwViewConstructor m_vc;
 		/// <summary />
@@ -75,12 +73,11 @@ namespace LanguageExplorer.Impls
 			m_StartLocation = startLocation;
 			m_LocationFound = null;
 			StoppedAtLimit = false;
-
-			Reset(); // Just in case
+			// Just in case
+			Reset();
 			// Enhance JohnT: if we need to handle more than one root object, this would
 			// be one place to loop over them.
 			m_vc.Display(this, OpenObject, m_frag);
-
 			if (m_LocationFound == null && StoppedAtLimit)
 			{
 				m_LimitLocation = null;
@@ -105,7 +102,6 @@ namespace LanguageExplorer.Impls
 			{
 				return true;
 			}
-
 			var cPropPrev = CPropPrev(tag);
 			return (m_StartLocation.m_location.Where(lev => lev.tag == tag && lev.cpropPrevious == cPropPrev).Select(lev => lev.hvo == hvoItem)).FirstOrDefault();
 		}
@@ -120,13 +116,11 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			if (m_fGotNonPropInfo)
 			{
 				// This should clear the m_fGotNonPropInfo flag and increment the count of
 				// props for the ktagGapInAttrs
 				base.CheckForNonPropInfo();
-
 				// If our start location was in the object we just added (which isn't checked
 				// by the normal find code), we need to set the start location to null so that
 				// the find code will start looking for a match.
@@ -141,7 +135,6 @@ namespace LanguageExplorer.Impls
 		public override void AddString(ITsString tss)
 		{
 			base.AddString(tss);
-
 			if (!m_fGotNonPropInfo)
 			{
 				// We actually had a prop open already, but we still need to do the checks for
@@ -160,16 +153,12 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			base.AddStringProp(tag, vwvc);
-
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
 			{
 				return;
 			}
-
 			DoFind(DataAccess.get_StringProp(OpenObject, tag), tag);
-
 			// We now processed the start location, so continue normally
 			m_StartLocation = null;
 		}
@@ -183,16 +172,12 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			base.AddStringAltMember(tag, ws, vwvc);
-
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
 			{
 				return;
 			}
-
 			DoFind(DataAccess.get_MultiStringAlt(OpenObject, tag, ws), tag);
-
 			// We now processed the start location, so continue normally
 			m_StartLocation = null;
 		}
@@ -213,7 +198,6 @@ namespace LanguageExplorer.Impls
 				{
 					return false;
 				}
-
 				m_searchKiller.FlushMessages();
 				return m_searchKiller.AbortRequest;
 			}
@@ -245,11 +229,11 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected bool CurrentLocationIsStartLocation(int tag)
 		{
-			return (m_StartLocation != null && CurrentStackIsSameAsLocationInfo(m_StartLocation, tag));
+			return m_StartLocation != null && CurrentStackIsSameAsLocationInfo(m_StartLocation, tag);
 		}
 
 		/// <summary>
-		/// Determines if the current stack loacation and the specified tag match the location
+		/// Determines if the current stack location and the specified tag match the location
 		/// specified in the given LocationInfo
 		/// </summary>
 		/// <param name="info">The LocationInfo to check.</param>
@@ -261,7 +245,6 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-
 			// If we haven't gotten to the same occurrence of the same object property, we haven't
 			// hit the starting point.
 			for (var lev = 0; lev < m_stack.Count; lev++)
@@ -271,17 +254,15 @@ namespace LanguageExplorer.Impls
 				// the selection levels are in opposite order.
 				var iourStackLev = m_stack.Count - lev - 1;
 				var stackInfo = m_stack[iourStackLev];
-				var cPrevProps = (iourStackLev > 0 ? m_stack[iourStackLev - 1].m_cpropPrev.GetCount(stackInfo.m_tag) : m_cpropPrev.GetCount(stackInfo.m_tag));
-
+				var cPrevProps = iourStackLev > 0 ? m_stack[iourStackLev - 1].m_cpropPrev.GetCount(stackInfo.m_tag) : m_cpropPrev.GetCount(stackInfo.m_tag);
 				if (limInfo.tag != stackInfo.m_tag || limInfo.cpropPrevious != cPrevProps || limInfo.hvo != stackInfo.m_hvo)
 				{
 					return false; // Can't be at the same location
 				}
 			}
-
 			// ENHANCE: If we ever need to handle multiple root objects, we'd need to check
 			// ihvoRoot here.
-			return (info.m_tag == tag && info.m_cpropPrev == CPropPrev(tag));
+			return info.m_tag == tag && info.m_cpropPrev == CPropPrev(tag);
 		}
 
 		/// <summary>
@@ -296,7 +277,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			if (CurrentLocationIsStartLocation(tag))
 			{
 				m_StartLocation = null;
@@ -317,7 +297,6 @@ namespace LanguageExplorer.Impls
 		protected virtual void DoFind(ITsString tss, int tag)
 		{
 			m_textSourceInit.SetString(tss, m_vc, DataAccess.WritingSystemFactory);
-
 			var textSource = m_textSourceInit as IVwTextSource;
 			var ichBegin = 0;
 			if (m_StartLocation != null)
@@ -325,7 +304,6 @@ namespace LanguageExplorer.Impls
 				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichLim;
 			}
-
 			int ichMin, ichLim;
 			// When we re-wrote the find stuff to use this FindCollectorEnv, we removed some
 			// whacky code from the FwFindReplaceDlg to try to deal with a sporadic failure
@@ -357,7 +335,6 @@ namespace LanguageExplorer.Impls
 		protected virtual bool PassedLimit(int tag, int testIch)
 		{
 			Debug.Assert(!StoppedAtLimit);
-
 			// If we don't have a limit, we're still looking for our start position.
 			if (m_LimitLocation == null)
 			{
@@ -372,10 +349,9 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-
 			// We are back in the same string. If we have hit or passed the limit offset, then
 			// return true
-			return (testIch < 0 || testIch >= m_LimitLocation.m_ichMin);
+			return testIch < 0 || testIch >= m_LimitLocation.m_ichMin;
 		}
 		#endregion
 
@@ -455,9 +431,9 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Add the public property for knowing if the object has been disposed of yet
 		/// </summary>
-		public bool IsDisposed
+		private bool IsDisposed
 		{
-			get; private set;
+			get; set;
 		}
 
 		#endregion

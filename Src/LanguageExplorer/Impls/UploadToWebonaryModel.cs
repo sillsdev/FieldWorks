@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Impls
 {
-
 	public class UploadToWebonaryModel
 	{
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
@@ -25,7 +24,6 @@ namespace LanguageExplorer.Impls
 		private const string WebonaryConfiguration = "WebonaryConfiguration_ProjectSetting";
 		//  Unicode line break to insert between reversals
 		private const string ReversalSeperator = "\u2028";
-
 		private string m_selectedConfiguration;
 
 		public string SiteName { get; set; }
@@ -48,7 +46,7 @@ namespace LanguageExplorer.Impls
 					return m_selectedConfiguration;
 				}
 				var pathToCurrentConfiguration = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
-				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
+				var curConfig = Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
 				return curConfig?.Label;
 			}
 			set { m_selectedConfiguration = value; }
@@ -56,10 +54,10 @@ namespace LanguageExplorer.Impls
 
 		public ICollection<string> SelectedReversals { get; set; }
 
-
 		public List<string> Publications { get; set; }
 
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
+
 		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
 		private IPropertyTable PropertyTable { get; }
@@ -84,14 +82,13 @@ namespace LanguageExplorer.Impls
 
 		private void LoadFromSettings()
 		{
-				var appSettings = PropertyTable.GetValue<IFwApplicationSettings>("AppSettings");
-				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
-				{
-					RememberPassword = true;
-					Password = DecryptPassword(appSettings.WebonaryPass);
-				}
-				UserName = appSettings.WebonaryUser;
-
+			var appSettings = PropertyTable.GetValue<IFwApplicationSettings>("AppSettings");
+			if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
+			{
+				RememberPassword = true;
+				Password = DecryptPassword(appSettings.WebonaryPass);
+			}
+			UserName = appSettings.WebonaryUser;
 			SiteName = PropertyTable.GetValue<string>(WebonarySite, null);
 			SelectedPublication = PropertyTable.GetValue<string>(WebonaryPublication, null);
 			SelectedConfiguration = PropertyTable.GetValue<string>(WebonaryConfiguration, null);
@@ -103,11 +100,10 @@ namespace LanguageExplorer.Impls
 			var appSettings = PropertyTable.GetValue<IFwApplicationSettings>("AppSettings");
 			appSettings.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
 			appSettings.WebonaryUser = UserName;
-
 			PropertyTable.SetProperty(WebonarySite, SiteName, true);
 			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals.Keys), true);
 			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), true);
-			if(m_selectedConfiguration != null)
+			if (m_selectedConfiguration != null)
 			{
 				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, settingsGroup: SettingsGroup.LocalSettings);
 			}

@@ -133,7 +133,7 @@ namespace LanguageExplorer.Impls
 			{
 				customTag = " (" + RefField + ")";
 			}
-			return new[] {"\\"+Marker,						// col 1
+			return new[] {"\\" + Marker,						// col 1
 				Convert.ToString(Order), // col 2
 				Convert.ToString(Count),	// col 3
 				Description,					// col 4

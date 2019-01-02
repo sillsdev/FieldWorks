@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -101,9 +101,7 @@ namespace LanguageExplorer.Impls
 		private ISharedEventHandlers _sharedEventHandlers = new SharedEventHandlers();
 		private HashSet<string> _temporaryPropertyNames = new HashSet<string>();
 
-		/// <summary>
-		/// Create new instance of window.
-		/// </summary>
+		/// <summary />
 		public FwMainWnd()
 		{
 			InitializeComponent();
@@ -115,7 +113,6 @@ namespace LanguageExplorer.Impls
 			{
 				return true;
 			}
-
 			// Create the crash detector file for next time.
 			// Make sure the folder exists first.
 			Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
@@ -132,7 +129,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			// It will be the same as what is now in the file and the prop table,
 			// so skip updating the table.
 			_persistWindowSize = false;
@@ -172,8 +168,7 @@ namespace LanguageExplorer.Impls
 		/// so if it exists before being created, the app didn't close properly,
 		/// and will start without using the saved settings.
 		/// </summary>
-		private static string CrashOnStartupDetectorPathName => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-			"SIL", "FieldWorks", "CrashOnStartupDetector.tmp");
+		private static string CrashOnStartupDetectorPathName => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SIL", "FieldWorks", "CrashOnStartupDetector.tmp");
 
 		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
@@ -211,13 +206,11 @@ namespace LanguageExplorer.Impls
 			{
 				DiscardProperties();
 			}
-
 			FormWindowState state;
 			if (PropertyTable.TryGetValue("windowState", out state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
 			{
 				WindowState = state;
 			}
-
 			Point persistedLocation;
 			if (PropertyTable.TryGetValue("windowLocation", out persistedLocation, SettingsGroup.GlobalSettings))
 			{
@@ -227,7 +220,6 @@ namespace LanguageExplorer.Impls
 				//when it is Show()n.
 				StartPosition = FormStartPosition.Manual;
 			}
-
 			Size persistedSize;
 			if (!PropertyTable.TryGetValue("windowSize", out persistedSize, SettingsGroup.GlobalSettings))
 			{
@@ -257,7 +249,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			PropertyTable.SetProperty("windowState", WindowState, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetProperty("windowLocation", Location, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetProperty("windowSize", Size, true, settingsGroup: SettingsGroup.GlobalSettings);
@@ -292,7 +283,6 @@ namespace LanguageExplorer.Impls
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
-
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
 			mainContainer.Panel1Collapsed = false;
@@ -303,7 +293,6 @@ namespace LanguageExplorer.Impls
 				SetSplitContainerDistance(mainContainer, sd);
 			}
 			_sidePane.Initalize(_areaRepository, _viewToolStripMenuItem, View_Area_Tool_Clicked);
-
 			mainContainer.ResumeLayout(false);
 		}
 
@@ -321,18 +310,15 @@ namespace LanguageExplorer.Impls
 				_currentArea.ActiveTool = clickedTool;
 				return;  // Not much else to do.
 			}
-
 			using (new IdleProcessingHelper(this))
 			{
 				ClearDuringTransition();
-
 				// Reset Edit->Find state to default conditions. Each tool can then sort out what to do with it
 				findToolStripMenuItem.Visible = true;
 				findToolStripMenuItem.Enabled = false;
 				toolStripButtonFindText.Visible = toolStripButtonFindText.Enabled = false;
 				replaceToolStripMenuItem.Visible = true;
 				replaceToolStripMenuItem.Enabled = false;
-
 				if (_currentArea.ActiveTool != null)
 				{
 					_currentArea.ActiveTool = null;
@@ -344,7 +330,6 @@ namespace LanguageExplorer.Impls
 				var toolName = _currentTool.MachineName;
 				PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, true, settingsGroup: SettingsGroup.LocalSettings);
 				PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-
 				// Do some logging.
 				Logger.WriteEvent("Switched to " + _currentTool.MachineName);
 				// Should we report a tool change?
@@ -354,13 +339,11 @@ namespace LanguageExplorer.Impls
 					_toolsReportedToday.Clear();
 					_lastToolChange = DateTime.Now;
 				}
-
 				if (!_toolsReportedToday.Contains(toolName))
 				{
 					_toolsReportedToday.Add(toolName);
 					UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
 				}
-
 				_currentTool.Activate(_majorFlexComponentParameters);
 			}
 		}
@@ -373,7 +356,6 @@ namespace LanguageExplorer.Impls
 				_currentArea.ActiveTool = null;
 				return; // Not much else to do.
 			}
-
 			using (new IdleProcessingHelper(this))
 			{
 				ClearDuringTransition();
@@ -403,7 +385,6 @@ namespace LanguageExplorer.Impls
 		{
 			PropertyTable.UserSettingDirectory = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			PropertyTable.LocalSettingsId = "local";
-
 			if (!Directory.Exists(PropertyTable.UserSettingDirectory))
 			{
 				Directory.CreateDirectory(PropertyTable.UserSettingDirectory);
@@ -427,7 +408,6 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault("SidebarWidthGlobal", 140, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault("RecordListWidthGlobal", 200, true, settingsGroup: SettingsGroup.GlobalSettings);
-
 			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
 			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
 			PropertyTable.SetDefault("SortedFromEnd", false, true);
@@ -542,7 +522,6 @@ namespace LanguageExplorer.Impls
 				MinWidth = 40,
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
-
 			// Insert second, so it ends up in the middle of the three that are inserted.
 			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar)
 			{
@@ -551,7 +530,6 @@ namespace LanguageExplorer.Impls
 				MinWidth = 40,
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
-
 			// Insert last, so it ends up first in the three that are inserted.
 			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar)
 			{
@@ -573,12 +551,10 @@ namespace LanguageExplorer.Impls
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-
 			if (!_persistWindowSize)
 			{
 				return;
 			}
-
 			// Don't bother storing the size if we are maximized or minimized.
 			// If we did, then when the user exits the application and then runs it again,
 			//then switches to the normal state, we would be switching to a bizarre size.
@@ -591,7 +567,6 @@ namespace LanguageExplorer.Impls
 		protected override void OnMove(EventArgs e)
 		{
 			base.OnMove(e);
-
 			if (!_persistWindowSize)
 			{
 				return;
@@ -611,16 +586,12 @@ namespace LanguageExplorer.Impls
 		public void SaveSettings()
 		{
 			SaveWindowSettings();
-
 			// Have current IArea put any needed properties into the table.
 			_currentArea.EnsurePropertiesAreCurrent();
-
 			// Have current ITool put any needed properties into the table.
 			_currentTool.EnsurePropertiesAreCurrent();
-
 			// first save global settings, ignoring database specific ones.
 			PropertyTable.SaveGlobalSettings();
-
 			// now save database specific settings.
 			PropertyTable.SaveLocalSettings();
 		}
@@ -701,23 +672,17 @@ namespace LanguageExplorer.Impls
 		{
 			_windowIsCopy = windowIsCopy;
 			_startupLink = linkArgs; // May be null.
-
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
-
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			SetupCustomStatusBarPanels();
-
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
-
 			_viewHelper = new ActiveViewHelper(this);
 			_linkHandler = new LinkHandler(this, Cache, toolStripButtonHistoryBack, toolStripButtonHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
 			_linkHandler.InitializeFlexComponent(flexComponentParameters);
-
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();
-
 			_dataNavigationManager = new DataNavigationManager(new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
 			{
 				{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
@@ -725,60 +690,42 @@ namespace LanguageExplorer.Impls
 				{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
 				{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
 			});
-
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
-
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, toolStripComboBoxStyles);
-
 			SetupParserMenuItems();
-
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
-				_parserMenuManager, _dataNavigationManager, flexComponentParameters,
-				Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
+				_parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			SetTemporaryProperties();
-
 			RecordListServices.Setup(_majorFlexComponentParameters);
-
 			// Most tools show it, but let them deal with it and its event handler.
 			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
 			fileExportMenu.Visible = false;
 			fileExportMenu.Enabled = false;
 			deleteToolStripButton.Click += Edit_Delete_Click;
-
 			// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
 			// Windows: Enable the menu if we can find the CharMap program.
 			specialCharacterToolStripMenuItem.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
-
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-
 			IdleQueue = new IdleQueue();
-
 			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
 			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
-
 			Cache.DomainDataByFlid.AddNotification(this);
 			showVernacularSpellingErrorsToolStripMenuItem.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
 			if (showVernacularSpellingErrorsToolStripMenuItem.Checked)
 			{
 				EnableVernacularSpelling();
 			}
-
 			_macroMenuHandler.Initialize(_majorFlexComponentParameters);
-
 			SetupOutlookBar();
-
 			SetWindowTitle();
-
 			SetupWindowSizeIfNeeded(restoreSize);
-
 			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
-
 			Application.Idle += Application_Idle;
 		}
 
@@ -789,7 +736,7 @@ namespace LanguageExplorer.Impls
 		public Rectangle NormalStateDesktopBounds { get; private set; }
 
 		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
+		/// Called just before a window synchronizes it's views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
 		public void PreSynchronize(SyncMsg sync)
@@ -798,7 +745,7 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
@@ -822,7 +769,6 @@ namespace LanguageExplorer.Impls
 			var startupLink = _startupLink;
 			_startupLink = null;
 			LinkHandler.PublishFollowLinkMessage(Publisher, startupLink);
-
 			return true;
 		}
 
@@ -855,21 +801,18 @@ namespace LanguageExplorer.Impls
 			// Susanna asked that refresh affect only the currently active project, which is
 			// what the string and List variables below attempt to handle.  See LT-6444.
 			var activeWnd = ActiveForm as IFwMainWnd;
-
 			var allMainWindowsExceptActiveWindow = new List<IFwMainWnd>();
 			foreach (var otherMainWindow in _flexApp.MainWindows.Where(mw => mw != activeWnd))
 			{
 				otherMainWindow.PrepareToRefresh();
 				allMainWindowsExceptActiveWindow.Add(otherMainWindow);
 			}
-
 			// Now that all IFwMainWnds except currently active one have done basic refresh preparation,
 			// have them all finish refreshing.
 			foreach (var otherMainWindow in allMainWindowsExceptActiveWindow)
 			{
 				otherMainWindow.FinishRefresh();
 			}
-
 			// LT-3963: active IFwMainWnd changes as a result of a refresh.
 			// Make sure focus doesn't switch to another FLEx application / window also
 			// make sure the application focus isn't lost all together.
@@ -974,7 +917,6 @@ namespace LanguageExplorer.Impls
 					Application.Idle += Application_Idle;
 				}
 			}
-			// This bundle of resume calls *must* (read: it is imperative that) be suspended in the SuspendIdleProcessing method.
 			foreach (var idleProcessingHelper in _idleProcessingHelpers.Pop())
 			{
 				idleProcessingHelper.Dispose();
@@ -1016,9 +958,9 @@ namespace LanguageExplorer.Impls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -1034,7 +976,6 @@ namespace LanguageExplorer.Impls
 					}
 				}
 				_idleProcessingHelpers.Clear();
-
 				deleteToolStripButton.Click -= Edit_Delete_Click;
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
@@ -1048,23 +989,19 @@ namespace LanguageExplorer.Impls
 				_writingSystemListHandler?.Dispose();
 				_combinedStylesListHandler?.Dispose();
 				_linkHandler?.Dispose();
-
 				// Get rid of known, temporary, properties
 				foreach (var temporaryPropertyName in _temporaryPropertyNames)
 				{
 					PropertyTable.RemoveProperty(temporaryPropertyName);
 				}
 				_temporaryPropertyNames.Clear();
-
 				components?.Dispose();
-
 				// TODO: Is this comment still relevant?
 				// TODO: Seems like FLEx worked well with it in this place (in the original window) for a long time.
 				// The removing of the window needs to happen later; after this main window is
 				// already disposed of. This is needed for side-effects that require a running
 				// message loop.
 				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
-
 				_dataNavigationManager?.Dispose();
 				_sidePane?.Dispose();
 				_viewHelper?.Dispose();
@@ -1180,7 +1117,6 @@ namespace LanguageExplorer.Impls
 			try
 			{
 				var pathMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "Demo Movies.html");
-
 				OpenDocument<Win32Exception>(pathMovies, win32err =>
 				{
 					if (win32err.NativeErrorCode == 1155)
@@ -1195,7 +1131,6 @@ namespace LanguageExplorer.Impls
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
 						var pathNoMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "notfound.html");
-
 						OpenDocument<Win32Exception>(pathNoMovies, win32err2 =>
 						{
 							if (win32err2.NativeErrorCode == 1155)
@@ -1357,7 +1292,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
@@ -1430,7 +1364,6 @@ namespace LanguageExplorer.Impls
 		private void File_Back_up_this_Project(object sender, EventArgs e)
 		{
 			SaveSettings();
-
 			_flexApp.FwManager.BackupProject(this);
 		}
 
@@ -1457,16 +1390,13 @@ namespace LanguageExplorer.Impls
 				MessageBoxUtils.Show($"Error: Cannot create project shortcut because destination directory '{directory}' does not exist.");
 				return;
 			}
-
 			var applicationArguments = "-" + FwAppArgs.kProject + " \"" + _flexApp.Cache.ProjectId.Handle + "\"";
 			var description = ResourceHelper.FormatResourceString("kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName, _flexApp.ApplicationName);
-
 			if (MiscUtils.IsUnix)
 			{
 				var projectName = _flexApp.Cache.ProjectId.UiName;
 				const string pathExtension = ".desktop";
 				var launcherPath = Path.Combine(directory, projectName + pathExtension);
-
 				// Choose a different name if already in use
 				var tailNumber = 2;
 				while (FileUtils.SimilarFileExists(launcherPath))
@@ -1475,21 +1405,14 @@ namespace LanguageExplorer.Impls
 					launcherPath = Path.Combine(directory, projectName + tail + pathExtension);
 					tailNumber++;
 				}
-
 				const string applicationExecutablePath = "fieldworks-flex";
 				const string iconPath = "fieldworks-flex";
 				if (string.IsNullOrEmpty(applicationExecutablePath))
+				{
 					return;
-				var content = string.Format(
-					"[Desktop Entry]{0}" +
-					"Version=1.0{0}" +
-					"Terminal=false{0}" +
-					"Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
-					"Icon=" + iconPath + "{0}" +
-					"Type=Application{0}" +
-					"Name=" + projectName + "{0}" +
-					"Comment=" + description + "{0}", Environment.NewLine);
-
+				}
+				var content = string.Format("[Desktop Entry]{0}" + "Version=1.0{0}" + "Terminal=false{0}" + "Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
+					"Icon=" + iconPath + "{0}" + "Type=Application{0}" + "Name=" + projectName + "{0}" + "Comment=" + description + "{0}", Environment.NewLine);
 				// Don't write a BOM
 				using (var launcher = FileUtils.OpenFileForWrite(launcherPath, new UTF8Encoding(false)))
 				{
@@ -1500,11 +1423,9 @@ namespace LanguageExplorer.Impls
 			else
 			{
 				WshShell shell = new WshShellClass();
-
 				var filename = _flexApp.Cache.ProjectId.UiName;
 				filename = Path.ChangeExtension(filename, "lnk");
 				var linkPath = Path.Combine(directory, filename);
-
 				var link = (IWshShortcut)shell.CreateShortcut(linkPath);
 				if (link.FullName != linkPath)
 				{
@@ -1531,13 +1452,11 @@ namespace LanguageExplorer.Impls
 					filesToArchive = dlg.FilesToArchive;
 				}
 			}
-
 			// if there are no files to archive, return now.
 			if ((filesToArchive == null) || (filesToArchive.Count == 0))
 			{
 				return;
 			}
-
 			// show the RAMP dialog
 			var ramp = new ReapRamp();
 			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
@@ -1553,7 +1472,6 @@ namespace LanguageExplorer.Impls
 			projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
-
 			// show dialog
 			var model = new UploadToWebonaryModel(PropertyTable)
 			{
@@ -1622,7 +1540,6 @@ namespace LanguageExplorer.Impls
 		private void Help_XLingPaper(object sender, EventArgs e)
 		{
 			var xLingPaperPathname = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "XLingPap", "UserDoc.htm");
-
 			OpenDocument(xLingPaperPathname, err =>
 			{
 				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotShowX, xLingPaperPathname), LanguageExplorerResources.ksError);
@@ -1682,7 +1599,6 @@ namespace LanguageExplorer.Impls
 				// Normal undo processing.
 				var baseUndo = undoEnabled ? ah.GetUndoText() : LanguageExplorerResources.Undo;
 				rawUndoText = string.IsNullOrEmpty(baseUndo) ? LanguageExplorerResources.Undo : baseUndo;
-
 				// Normal Redo processing.
 				var baseRedo = redoEnabled ? ah.GetRedoText() : LanguageExplorerResources.Redo;
 				rawRedoText = string.IsNullOrEmpty(baseRedo) ? LanguageExplorerResources.Redo : baseRedo;
@@ -1791,9 +1707,7 @@ very simple minor adjustments. ;)"
 		{
 			// Tools make it visible as needed.
 			InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
-
 			base.OnLoad(e);
-
 			var currentArea = _areaRepository.PersistedOrDefaultArea;
 			var currentTool = currentArea.PersistedOrDefaultTool;
 			_sidePane.TabClicked += Area_Clicked;
@@ -1806,7 +1720,6 @@ very simple minor adjustments. ;)"
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-
 			// Set WM_CLASS on Linux (LT-19085)
 			if (Platform.IsLinux && _flexApp != null)
 			{
@@ -1880,7 +1793,6 @@ very simple minor adjustments. ;)"
 					return;
 				}
 			}
-
 			// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			var ah = Cache.DomainDataByFlid.GetActionHandler();
 			using (new WaitCursor(this))
@@ -1909,7 +1821,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 // TODO: Remove when finished sorting out idle issues.
 //Debug.WriteLine($"End 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
-
 			var activeView = _viewHelper.ActiveView;
 			var hasActiveView = activeView != null;
 			if (hasActiveView)
@@ -1961,7 +1872,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 #endif
 			}
 			toolStripButtonChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
-
 			// Enable/disable toolbar buttons.
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.
@@ -1972,7 +1882,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 // TODO: Remove when finished sorting out idle issues.
 //Debug.WriteLine($"End 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
-
 			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.
@@ -1983,7 +1892,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 // TODO: Remove when finished sorting out idle issues.
 //Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
-
 			if (linkToFileToolStripMenuItem.Visible)
 			{
 				linkToFileToolStripMenuItem.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
@@ -2006,7 +1914,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return rootSite.CanApplyStyle;
 			}
-
 			var selection = selectionHelper.Selection;
 			return selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara);
 		}
@@ -2042,7 +1949,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				stylesDlg.CanSelectParagraphBackgroundColor = true;
 				refreshAllViews = stylesDlg.ShowDialog(this) == DialogResult.OK && ((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 || (stylesDlg.ChangeType & StyleChangeType.Added) > 0);
 			}
-
 			if (refreshAllViews)
 			{
 				RefreshAllViews();
@@ -2134,7 +2040,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					rootsite.ShowRangeSelAfterLostFocus = true;
 				}
-
 				var sel = _viewHelper.ActiveView.EditingHelper.CurrentSelection.Selection;
 				// Try to get the style names from the selection.
 				string paraStyleName = null;
@@ -2149,7 +2054,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					applyStyleDlg.ApplicableStyleContexts = new List<ContextValues>(new[] { ContextValues.General });
 					applyStyleDlg.CanApplyCharacterStyle = sel.CanFormatChar;
 					applyStyleDlg.CanApplyParagraphStyle = sel.CanFormatPara;
-
 					if (applyStyleDlg.ShowDialog(this) != DialogResult.OK)
 					{
 						return;
@@ -2174,7 +2078,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		/// <summary>
 		/// When a new FwMainWnd is a copy of another FwMainWnd and the new FwMainWnd's Show()
-		/// method is called, the .net framework will mysteriously add the height of the menu
+		/// method is called, the .Net framework will mysteriously add the height of the menu
 		/// bar (and border) to the preset window height.
 		/// Aaarghhh! So we intercept the CreateParams in order to set it back to the desired
 		/// height.
@@ -2243,7 +2147,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 				pathname = fileDialog.FileName;
 			}
-
 			if (string.IsNullOrEmpty(pathname))
 			{
 				return;
@@ -2258,7 +2161,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void SpecialCharacterToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var program = MiscUtils.IsUnix ? "gucharmap" :  "charmap.exe";
+			var program = MiscUtils.IsUnix ? "gucharmap" : "charmap.exe";
 			MiscUtils.RunProcess(program, null, MiscUtils.IsUnix ? exception => { MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksUnableToStartGnomeCharMap, program)); } : (Action<Exception>)null);
 		}
 

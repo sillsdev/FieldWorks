@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Ionic.Zip;
-using SIL.LCModel;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Ionic.Zip;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Impls
@@ -28,6 +28,8 @@ namespace LanguageExplorer.Impls
 		private readonly LcmCache m_cache;
 		private readonly DictionaryExportService m_exportService;
 		private PublicationActivator m_publicationActivator;
+		private bool _isDisposed;
+
 		/// <summary>
 		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
 		/// </summary>
@@ -47,12 +49,18 @@ namespace LanguageExplorer.Impls
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			if (disposing)
 			{
 				m_publicationActivator?.Dispose();
 			}
 			m_publicationActivator = null;
+			_isDisposed = true;
 		}
 
 		public void Dispose()
@@ -75,7 +83,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Table of reversal indexes and their counts.
 		/// </summary>
-		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
+		public SortedDictionary<string, int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
 			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
 		}
@@ -100,7 +108,7 @@ namespace LanguageExplorer.Impls
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(LanguageExplorerResources.BeginCompressingDataForWebonary);
-			using(var zipFile = new ZipFile())
+			using (var zipFile = new ZipFile())
 			{
 				RecursivelyAddFilesToZip(zipFile, tempDirectoryToCompress, "", webonaryView);
 				zipFile.Save(zipFileToUpload);
@@ -114,7 +122,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
 		{
-			foreach(var file in Directory.EnumerateFiles(dirToCompress))
+			foreach (var file in Directory.EnumerateFiles(dirToCompress))
 			{
 				if (!IsSupportedWebonaryFile(file))
 				{
@@ -124,7 +132,7 @@ namespace LanguageExplorer.Impls
 				zipFile.AddFile(file, dirInZip);
 				webonaryView.UpdateStatus(Path.GetFileName(file));
 			}
-			foreach(var dir in Directory.EnumerateDirectories(dirToCompress))
+			foreach (var dir in Directory.EnumerateDirectories(dirToCompress))
 			{
 				RecursivelyAddFilesToZip(zipFile, dir, Path.Combine(dirInZip, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))), webonaryView);
 			}
@@ -175,14 +183,12 @@ namespace LanguageExplorer.Impls
 
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
-
 			using (var client = CreateWebClient())
 			{
 				var credentials = $"{model.UserName}:{model.Password}";
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
 				client.Headers.Add("user-agent", $"FieldWorks Language Explorer v.{Assembly.GetExecutingAssembly().GetName().Version}");
 				client.Headers[HttpRequestHeader.Accept] = "*/*";
-
 				byte[] response;
 				try
 				{
@@ -203,7 +209,6 @@ namespace LanguageExplorer.Impls
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
-
 				if (client.ResponseStatusCode == HttpStatusCode.Found)
 				{
 					view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
@@ -213,20 +218,14 @@ namespace LanguageExplorer.Impls
 				{
 					if (!responseText.Contains("error"))
 					{
-						view.UpdateStatus("Upload successful. " +
-							"Preparing your data for publication. " +
-							"This may take several minutes to a few hours depending on the size of your dictionary. " +
-							"You will receive an email when the process is complete. " +
-							"You can examine the progress on the admin page of your Webonary site. "+
-							"You may now safely close this dialog.");
+						view.UpdateStatus("Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. " +
+							"You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog.");
 						view.SetStatusCondition(WebonaryStatusCondition.Success);
 						return;
 					}
-
 					view.UpdateStatus("The upload was successful; however, there were errors processing your data.");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-
 				if (responseText.Contains("Wrong username or password"))
 				{
 					view.UpdateStatus("Error: Wrong username or password");
@@ -254,42 +253,36 @@ namespace LanguageExplorer.Impls
 		{
 			view.UpdateStatus("Uploading to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
-
 			if (string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-
-			if(string.IsNullOrEmpty(model.UserName))
+			if (string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus("Error: No username specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-
 			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus("Error: No Password specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-
-			if(string.IsNullOrEmpty(model.SelectedPublication))
+			if (string.IsNullOrEmpty(model.SelectedPublication))
 			{
 				view.UpdateStatus("Error: No Publication specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-
-			if(string.IsNullOrEmpty(model.SelectedConfiguration))
+			if (string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
 				view.UpdateStatus("Error: No Configuration specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			var zipBasename = UploadFilename(model, view);
 			if (zipBasename == null)
@@ -312,6 +305,7 @@ namespace LanguageExplorer.Impls
 		internal static string UploadFilename(UploadToWebonaryModel basedOnModel, IUploadToWebonaryView view)
 		{
 			Guard.AgainstNull(basedOnModel, nameof(basedOnModel));
+
 			if (string.IsNullOrEmpty(basedOnModel.SiteName))
 			{
 				throw new ArgumentException("basedOnModel");
@@ -339,10 +333,12 @@ namespace LanguageExplorer.Impls
 			};
 			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
 		}
+
 		private sealed class PublicationActivator : IDisposable
 		{
 			private readonly string m_currentPublication;
 			private readonly IPropertyTable m_propertyTable;
+			private bool _isDisposed;
 
 			internal PublicationActivator(IPropertyTable propertyTable)
 			{
@@ -360,6 +356,12 @@ namespace LanguageExplorer.Impls
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
 				if (disposing)
 				{
 					if (!string.IsNullOrEmpty(m_currentPublication))
@@ -367,6 +369,8 @@ namespace LanguageExplorer.Impls
 						m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, doBroadcastIfChanged: true);
 					}
 				}
+
+				_isDisposed = true;
 			}
 
 			~PublicationActivator()

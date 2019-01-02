@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -102,7 +102,6 @@ namespace LanguageExplorer.Impls
 
 			IRecordList recordListToGet;
 			_recordLists.TryGetValue(recordListId, out recordListToGet);
-
 			return recordListToGet;
 		}
 
@@ -138,11 +137,9 @@ namespace LanguageExplorer.Impls
 			{
 				return retVal;
 			}
-
 			retVal = recordListFactoryMethod(_cache, _flexComponentParameters, recordListId, statusBar);
 			retVal.InitializeFlexComponent(_flexComponentParameters);
 			AsRecordListRepository.AddRecordList(retVal);
-
 			return retVal;
 		}
 
@@ -162,11 +159,9 @@ namespace LanguageExplorer.Impls
 			{
 				return retVal;
 			}
-
 			retVal = recordListFactoryMethod(customList, _cache, _flexComponentParameters, recordListId, statusBar);
 			retVal.InitializeFlexComponent(_flexComponentParameters);
 			AsRecordListRepository.AddRecordList(retVal);
-
 			return retVal;
 		}
 		#endregion

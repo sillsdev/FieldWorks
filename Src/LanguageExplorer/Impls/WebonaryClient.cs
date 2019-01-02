@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,7 +25,6 @@ namespace LanguageExplorer.Impls
 				((HttpWebRequest)request).Timeout = -1;
 				((HttpWebRequest)request).AllowAutoRedirect = false;
 			}
-
 			return request;
 		}
 
@@ -55,15 +54,13 @@ namespace LanguageExplorer.Impls
 
 		protected override WebResponse GetWebResponse(WebRequest request)
 		{
-			var response = base.GetWebResponse(request);
-			return SetStatusAndReturn((HttpWebResponse)response);
+			return SetStatusAndReturn((HttpWebResponse)base.GetWebResponse(request));
 		}
 
 
 		protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result)
 		{
-			var response = base.GetWebResponse(request, result);
-			return SetStatusAndReturn((HttpWebResponse)response);
+			return SetStatusAndReturn((HttpWebResponse)base.GetWebResponse(request, result));
 		}
 
 		private WebResponse SetStatusAndReturn(HttpWebResponse response)

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,6 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem _writingSystemToolStripMenuItem;
 		private List<CoreWritingSystemDefinition> _allWritingSystemDefinitions;
 
-
 		internal WritingSystemListHandler(IFwMainWnd mainWnd, LcmCache cache, ISubscriber subscriber, ToolStripComboBox formatToolStripComboBox, ToolStripMenuItem writingSystemToolStripMenuItem)
 		{
 			Guard.AgainstNull(mainWnd, nameof(mainWnd));
@@ -42,15 +41,11 @@ namespace LanguageExplorer.Impls
 			_mainWnd = mainWnd;
 			_cache = cache;
 			_subscriber = subscriber;
-
 			_allWritingSystemDefinitions = _cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
-
 			_formatToolStripComboBox = formatToolStripComboBox;
 			_writingSystemToolStripMenuItem = writingSystemToolStripMenuItem;
 			_subscriber.Subscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
-
 			SetupControlsForWritingSystems();
-
 			Application.Idle += ApplicationOnIdle;
 		}
 
@@ -59,7 +54,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -112,7 +107,7 @@ namespace LanguageExplorer.Impls
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.

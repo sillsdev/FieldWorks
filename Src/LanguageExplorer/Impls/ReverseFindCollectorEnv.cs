@@ -1,9 +1,8 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -35,15 +34,13 @@ namespace LanguageExplorer.Impls
 		protected override void DoFind(ITsString tss, int tag)
 		{
 			m_textSourceInit.SetString(tss, m_vc, DataAccess.WritingSystemFactory);
-
-			var textSource = (IVwTextSource) m_textSourceInit;
+			var textSource = (IVwTextSource)m_textSourceInit;
 			var ichBegin = textSource.LengthSearch;
 			if (m_StartLocation != null)
 			{
 				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichMin;
 			}
-
 			int ichMin, ichLim;
 			// When we re-wrote the find stuff to use this FindCollectorEnv, we removed some
 			// whacky code from the FwFindReplaceDlg to try to deal with a sporadic failure
@@ -75,26 +72,22 @@ namespace LanguageExplorer.Impls
 		protected override bool PassedLimit(int tag, int testIch)
 		{
 			Debug.Assert(!StoppedAtLimit);
-
 			// If we don't have a limit, we're still looking for our start position.
 			if (m_LimitLocation == null)
 			{
 				return false;
 			}
-
 			// If our start location is after the limit then we haven't hit the limit
 			if (m_StartLocation != null && m_StartLocation.m_ichLim <= m_LimitLocation.m_ichMin && !HasWrapped)
 			{
 				return false;
 			}
-
 			// If we haven't gotten to the same occurrence of the same object property, we haven't
 			// hit the limit.
 			if (m_LimitLocation.TopLevelHvo != OpenObject || m_LimitLocation.m_tag != tag || m_LimitLocation.m_cpropPrev != CPropPrev(tag))
 			{
 				return false;
 			}
-
 			// We are back in the same string. If we have hit or passed the limit offset, then
 			// return true;
 			return (testIch < 0 || testIch <= m_LimitLocation.m_ichLim);

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -63,10 +63,8 @@ namespace LanguageExplorer.Impls
 					AreaServices.ListsAreaMachineName
 				};
 				var retval = new List<IArea>(knownAreas.Select(knownAreaName => GetArea(knownAreaName)));
-
 				// Add user-defined areas in unspecified order, but after the fully supported areas.
 				retval.AddRange(m_areas.Where(userDefinedArea => !knownAreas.Contains(userDefinedArea.MachineName)));
-
 				return retval;
 			}
 		}

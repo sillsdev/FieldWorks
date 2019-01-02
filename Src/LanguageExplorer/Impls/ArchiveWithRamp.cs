@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.LCModel;
-using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace LanguageExplorer.Impls
 {
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Impls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
-
 			get_Last_Backup();
 		}
 
@@ -66,7 +65,6 @@ namespace LanguageExplorer.Impls
 		{
 			var backups = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			var projName = backups.AvailableProjectNames.FirstOrDefault(s => s == m_cache.ProjectId.Name);
-
 			if (!string.IsNullOrEmpty(projName))
 			{
 				var fileDate = backups.GetAvailableVersions(projName).FirstOrDefault();
@@ -82,7 +80,6 @@ namespace LanguageExplorer.Impls
 					}
 				}
 			}
-
 			// no backup found if you are here
 			m_rbNewBackup.Checked = true;
 			m_rbExistingBackup.Visible = false;

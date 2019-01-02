@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Security;
-using System.Windows.Forms;
-using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -28,7 +28,6 @@ namespace LanguageExplorer.Impls
 	{
 		[Import]
 		private IPublisher Publisher { get; set; }
-
 		private ConcurrentDictionary<string, Property> m_properties;
 		private string m_localSettingsId;
 		private string m_userSettingDirectory = string.Empty;
@@ -58,7 +57,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -242,6 +241,7 @@ namespace LanguageExplorer.Impls
 				AsIPropertyTable.RemoveProperty("currentContentControl");
 				AsIPropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
+			// This does not need to list every assimilated project, but only those that had persisted properties to upgrade.
 			var assimilatedAssemblies = new HashSet<string>
 			{
 				"xCore.dll",
@@ -258,7 +258,7 @@ namespace LanguageExplorer.Impls
 				"FdoUi.dll",
 				"DetailControls.dll",
 				"XMLViews.dll",
-				"Filters.dll",
+				"Filters.dll"
 			};
 			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
 			// We want to fix all of those to use the correct assembly (LanguageExplorer) and new namespace.
@@ -305,7 +305,6 @@ namespace LanguageExplorer.Impls
 				SetPropertyInternal(propertykvp.Value.name, element.ToString(), true, false);
 			}
 			SetPropertyInternal(propertyTableVersion, CurrentPropertyTableVersion, true, false);
-
 			AsIPropertyTable.SaveGlobalSettings();
 			AsIPropertyTable.SaveLocalSettings();
 		}
@@ -330,7 +329,6 @@ namespace LanguageExplorer.Impls
 				{
 					throw new ArgumentNullException(nameof(value), @"Cannot set 'UserSettingDirectory' to null or empty string.");
 				}
-
 				m_userSettingDirectory = value;
 			}
 		}
@@ -360,7 +358,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-
 			try
 			{
 				var szr = new XmlSerializer(typeof(Property[]));
@@ -429,12 +426,12 @@ namespace LanguageExplorer.Impls
 				default:
 					throw new NotSupportedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
 				case SettingsGroup.BestSettings:
-				{
-					var key = FormatPropertyNameForLocalSettings(name);
-					return GetProperty(key) != null ?
-						key // local exists. We don't care if global exists, or not, since we prefer local over global.
-						: name; // Whether a global property exists, or not, go with the global internal property name.
-				}
+					{
+						var key = FormatPropertyNameForLocalSettings(name);
+						return GetProperty(key) != null ?
+							key // local exists. We don't care if global exists, or not, since we prefer local over global.
+							: name; // Whether a global property exists, or not, go with the global internal property name.
+					}
 				case SettingsGroup.LocalSettings:
 					return FormatPropertyNameForLocalSettings(name);
 				case SettingsGroup.GlobalSettings:
@@ -446,7 +443,6 @@ namespace LanguageExplorer.Impls
 		{
 			Property result;
 			m_properties.TryGetValue(key, out result);
-
 			return result;
 		}
 
@@ -537,21 +533,12 @@ namespace LanguageExplorer.Impls
 			if (m_properties.ContainsKey(key))
 			{
 				var property = m_properties[key];
-				// May update the persistance, as in when a default was created which persists, but now we want to not persist it.
+				// May update the persistence, as in when a default was created which persists, but now we want to not persist it.
 				property.doPersist = persistProperty;
 				var oldValue = property.value;
 				var bothNull = (oldValue == null && newValue == null);
 				var oldExists = (oldValue != null);
-				didChange = !( bothNull
-								|| (oldExists
-									&&
-									(	ReferenceEquals(oldValue, newValue) // Referencing the very same object?
-										|| oldValue.Equals(newValue)) // Same content (e.g.: The color Red is Red, no matter if it is the same instance)?
-#if RANDYTODO
-										|| oldValue?.ToString() == newValue?.ToString() // Close enough for government work.
-#endif
-									)
-								);
+				didChange = !(bothNull || oldExists && (ReferenceEquals(oldValue, newValue) || oldValue.Equals(newValue)));
 				if (didChange)
 				{
 					if (property.value != null && property.doDispose)
@@ -568,7 +555,6 @@ namespace LanguageExplorer.Impls
 					doPersist = persistProperty
 				};
 			}
-
 			if (didChange && doBroadcastIfChanged && Publisher != null)
 			{
 				var localSettingsPrefix = GetPathPrefixForSettingsId(AsIPropertyTable.LocalSettingsId);
@@ -596,7 +582,7 @@ namespace LanguageExplorer.Impls
 		{
 			try
 			{
-				var szr = new XmlSerializer(typeof (Property[]));
+				var szr = new XmlSerializer(typeof(Property[]));
 				var path = SettingsPath(settingsId);
 				Directory.CreateDirectory(Path.GetDirectoryName(path)); // Just in case it does not exist.
 				using (var writer = new StreamWriter(path))
@@ -620,7 +606,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private string GetPathPrefixForSettingsId(string settingsId)
+		private static string GetPathPrefixForSettingsId(string settingsId)
 		{
 			return string.IsNullOrEmpty(settingsId) ? string.Empty : FormatPropertyNameForLocalSettings(string.Empty, settingsId);
 		}
@@ -628,12 +614,9 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get a file path for the project settings file.
 		/// </summary>
-		/// <param name="settingsId"></param>
-		/// <returns></returns>
 		private string SettingsPath(string settingsId)
 		{
-			var pathPrefix = GetPathPrefixForSettingsId(settingsId);
-			return Path.Combine(AsIPropertyTable.UserSettingDirectory, pathPrefix + "Settings.xml");
+			return Path.Combine(AsIPropertyTable.UserSettingDirectory, GetPathPrefixForSettingsId(settingsId) + "Settings.xml");
 		}
 
 		private static string FormatPropertyNameForLocalSettings(string name, string settingsId)
@@ -648,7 +631,7 @@ namespace LanguageExplorer.Impls
 
 		private void ReadPropertyArrayForDeserializing(Property[] list)
 		{
-			foreach(var property in list)
+			foreach (var property in list)
 			{
 				//I know it is strange, but the serialization code will give us a
 				//	null property if there were no other properties.
@@ -685,7 +668,6 @@ namespace LanguageExplorer.Impls
 					list.Add(property);
 				}
 			}
-
 			return list.ToArray();
 		}
 

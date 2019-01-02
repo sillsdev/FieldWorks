@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,9 @@ namespace LanguageExplorer.Impls
 	public class WebonaryException : Exception
 	{
 		public WebException WebException { get; }
+
 		public HttpStatusCode StatusCode { get; internal set; }
+
 		/// <summary>
 		/// The full response returned by the server. Useful for debugging connection issues.
 		/// </summary>

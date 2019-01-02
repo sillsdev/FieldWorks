@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,24 +40,19 @@ namespace LanguageExplorer.Impls
 		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
-
 			if (MiscUtils.IsUnix)
 			{
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 			}
-
 			m_controller = controller;
 			Model = model;
 			LoadFromModel();
-
 			m_helpTopicProvider = propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
-
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>
 			{
-				Process.Start(((LinkLabel) sender).Text.Substring(args.Link.Start, args.Link.Length));
+				Process.Start(((LinkLabel)sender).Text.Substring(args.Link.Start, args.Link.Length));
 			};
-
 			// Restore the location and size from last time we called this dialog.
 			if (PropertyTable != null)
 			{
@@ -65,18 +60,16 @@ namespace LanguageExplorer.Impls
 				var szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
-					var rect = new Rectangle((Point) locWnd, (Size) szWnd);
+					var rect = new Rectangle((Point)locWnd, (Size)szWnd);
 					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
 			}
-
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog.
 			Shown += (sender, args) => { Height = Height - outputLogTextbox.Height; };
-
 			// Handle localizable explanation area with link.
 			var explanationText = LanguageExplorerResources.toApplyForWebonaryAccountExplanation;
 			var explanationTextLink = LanguageExplorerResources.toApplyForWebonaryAccountLink;
@@ -99,9 +92,7 @@ namespace LanguageExplorer.Impls
 				howManyPubsAlertLabel.Text = string.Format(LanguageExplorerResources.ksErrorNoViewOnPublication);
 				return;
 			}
-
 			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
-
 			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
 			var middle = string.Empty;
 			foreach (var reversalIndex in reversalCounts.Keys)
@@ -123,7 +114,6 @@ namespace LanguageExplorer.Impls
 					middle += string.Format(LanguageExplorerResources.ReversalEntries, reversalCounts[reversalIndex], reversalIndex);
 				}
 			}
-
 			howManyPubsAlertLabel.Text = string.Format(LanguageExplorerResources.PublicationEntriesLabel, countOfDictionaryEntries, middle);
 		}
 
@@ -163,7 +153,6 @@ namespace LanguageExplorer.Impls
 			{
 				configurationBox.Items.Add(config);
 			}
-
 			if (availableConfigurations.Contains(selectedConfiguration))
 			{
 				configurationBox.SelectedItem = selectedConfiguration;
@@ -171,15 +160,14 @@ namespace LanguageExplorer.Impls
 			else if (availableConfigurations.Any())
 			{
 				configurationBox.SelectedIndex = 0;
-		}
+			}
 		}
 
 		private void PopulateReversalsCheckboxListByPublication(string publication)
 		{
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
-				&& prop.Value.Label != LanguageExplorerConstants.AllReversalIndexes
-			  && !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
+				&& prop.Value.Label != LanguageExplorerConstants.AllReversalIndexes && !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
 			{
@@ -196,35 +184,35 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-				// Load the contents of the drop down and checkbox list controls
-				PopulatePublicationsList();
-				if(Model.RememberPassword)
-				{
-					rememberPasswordCheckbox.Checked = true;
-					webonaryPasswordTextbox.Text = Model.Password;
-				}
-				webonaryUsernameTextbox.Text = Model.UserName;
-				webonarySiteNameTextbox.Text = Model.SiteName;
-				if (!string.IsNullOrEmpty(Model.SelectedPublication) && publicationBox.Items.Contains(Model.SelectedPublication))
-				{
-					publicationBox.SelectedItem = Model.SelectedPublication;
-				}
-				else
-				{
-					publicationBox.SelectedIndex = 0;
-				}
-				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
-				SetSelectedReversals(Model.SelectedReversals);
-			if(!string.IsNullOrEmpty(Model.SelectedConfiguration))
-				{
-					configurationBox.SelectedItem = Model.SelectedConfiguration;
-				}
-				else
-				{
-					configurationBox.SelectedIndex = 0;
-				}
-				UpdateEntriesToBePublishedLabel();
+			// Load the contents of the drop down and checkbox list controls
+			PopulatePublicationsList();
+			if (Model.RememberPassword)
+			{
+				rememberPasswordCheckbox.Checked = true;
+				webonaryPasswordTextbox.Text = Model.Password;
 			}
+			webonaryUsernameTextbox.Text = Model.UserName;
+			webonarySiteNameTextbox.Text = Model.SiteName;
+			if (!string.IsNullOrEmpty(Model.SelectedPublication) && publicationBox.Items.Contains(Model.SelectedPublication))
+			{
+				publicationBox.SelectedItem = Model.SelectedPublication;
+			}
+			else
+			{
+				publicationBox.SelectedIndex = 0;
+			}
+			PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
+			SetSelectedReversals(Model.SelectedReversals);
+			if (!string.IsNullOrEmpty(Model.SelectedConfiguration))
+			{
+				configurationBox.SelectedItem = Model.SelectedConfiguration;
+			}
+			else
+			{
+				configurationBox.SelectedIndex = 0;
+			}
+			UpdateEntriesToBePublishedLabel();
+		}
 
 		private void SaveToModel()
 		{
@@ -233,11 +221,11 @@ namespace LanguageExplorer.Impls
 			Model.UserName = webonaryUsernameTextbox.Text;
 			Model.SiteName = webonarySiteNameTextbox.Text;
 			Model.SelectedReversals = GetSelectedReversals();
-			if(configurationBox.SelectedItem != null)
+			if (configurationBox.SelectedItem != null)
 			{
 				Model.SelectedConfiguration = configurationBox.SelectedItem.ToString();
 			}
-			if(publicationBox.SelectedItem != null)
+			if (publicationBox.SelectedItem != null)
 			{
 				Model.SelectedPublication = publicationBox.SelectedItem.ToString();
 			}
@@ -251,9 +239,9 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 			//Check every reversal in the list that was in the given list (e.g. from settings)
-			for(var i = 0; i < reversalsCheckedListBox.Items.Count; ++i)
+			for (var i = 0; i < reversalsCheckedListBox.Items.Count; ++i)
 			{
-				if(selectedReversals.Contains(reversalsCheckedListBox.Items[i].ToString()))
+				if (selectedReversals.Contains(reversalsCheckedListBox.Items[i].ToString()))
 				{
 					reversalsCheckedListBox.SetItemChecked(i, true);
 				}
@@ -287,7 +275,6 @@ namespace LanguageExplorer.Impls
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			}
 			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
-
 			m_controller.UploadToWebonary(Model, this);
 		}
 
@@ -353,13 +340,12 @@ namespace LanguageExplorer.Impls
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
 			if (MiscUtils.IsUnix)
 			{
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
+			}
 		}
-	}
 	}
 }
