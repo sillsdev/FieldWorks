@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.UtilityTools
 {
@@ -87,6 +87,7 @@ namespace LanguageExplorer.UtilityTools
 			m_dlg.WhatDescription = TransductionSampleStrings.ksDemoOfUsingPython;
 			m_dlg.RedoDescription = TransductionSampleStrings.ksCannotUndoTransducingCitForms;
 		}
+
 		/// <summary>
 		/// Have the utility do what it does.
 		/// </summary>
@@ -96,27 +97,25 @@ namespace LanguageExplorer.UtilityTools
 			{
 				var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				m_dlg.ProgressBar.Maximum = cache.LanguageProject.LexDbOA.Entries.Count();
-				m_dlg.ProgressBar.Step=1;
+				m_dlg.ProgressBar.Step = 1;
 				var locale = InvokePython("-icu"); //ask the python script for the icu local
 				locale = locale.Trim();
 				var ws = cache.WritingSystemFactory.GetWsFromStr(locale);
-
 				if (ws == 0)
 				{
 					MessageBox.Show(string.Format(TransductionSampleStrings.ksCannotLocateWsForX, locale));
 					return;
 				}
-
 				foreach (var e in cache.LanguageProject.LexDbOA.Entries)
 				{
 					var a = e.CitationForm;
 					var src = a.VernacularDefaultWritingSystem.Text;
-					var output = InvokePython("-i "+src).Trim();
+					var output = InvokePython("-i " + src).Trim();
 					a.set_String(ws, TsStringUtils.MakeString(output, ws));
 					m_dlg.ProgressBar.PerformStep();
 				}
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				MessageBox.Show(string.Format(TransductionSampleStrings.ksErrorMsgWithStackTrace, e.Message, e.StackTrace));
 			}

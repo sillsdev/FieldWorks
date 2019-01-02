@@ -1,9 +1,10 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -27,13 +28,13 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class InflectionFeatureEditor : IBulkEditSpecControl, IDisposable
 	{
-		TreeCombo m_tree;
-		LcmCache m_cache;
+		private TreeCombo m_tree;
+		private LcmCache m_cache;
 		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
-		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
-		int m_selectedHvo;
-		string m_selectedLabel;
+		private InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
+		private int m_selectedHvo;
+		private string m_selectedLabel;
 		private int m_displayWs;
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -58,7 +59,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -111,10 +112,10 @@ namespace LanguageExplorer.LcmUi
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -193,11 +194,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (m_InflectionFeatureTreeManager == null)
 			{
-				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree,
-																					   m_cache, false,
-																					   PropertyTable, m_publisher,
-																					   PropertyTable.GetValue<Form>(FwUtils.window),
-																					   m_displayWs);
+				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree, m_cache, false, PropertyTable, m_publisher, PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_InflectionFeatureTreeManager.LoadPopupTree(0);
@@ -229,9 +226,7 @@ namespace LanguageExplorer.LcmUi
 					m_tree.Text = string.Empty;
 				}
 			}
-
 			ControlActivated?.Invoke(this, new EventArgs());
-
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			ValueChanged?.Invoke(this, new FwObjectSelectionEventArgs(m_selectedHvo));
@@ -242,7 +237,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public IVwStylesheet Stylesheet
 		{
-			set {  }
+			set { }
 		}
 
 		/// <summary>
@@ -278,7 +273,7 @@ namespace LanguageExplorer.LcmUi
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach(var hvoSense in itemsToChange)
+			foreach (var hvoSense in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
@@ -411,7 +406,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Answer true if the selected MSA has an MsFeatures that is the same as the argument.
 		/// </summary>
-		/// <returns></returns>
 		private bool MsaMatchesTarget(IMoStemMsa msm, IFsFeatStruc fsTarget)
 		{
 			if (m_selectedHvo == 0 && msm.MsFeaturesOA == null)
@@ -471,7 +465,7 @@ namespace LanguageExplorer.LcmUi
 			throw new NotSupportedException();
 		}
 
-		public List<int> FieldPath => new List<int>(new []{LexSenseTags.kflidMorphoSyntaxAnalysis, MoStemMsaTags.kflidPartOfSpeech, MoStemMsaTags.kflidMsFeatures});
+		public List<int> FieldPath => new List<int>(new[] { LexSenseTags.kflidMorphoSyntaxAnalysis, MoStemMsaTags.kflidPartOfSpeech, MoStemMsaTags.kflidMsFeatures });
 
 		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
@@ -582,7 +576,9 @@ namespace LanguageExplorer.LcmUi
 					case kMore:
 						// Only launch the dialog by a mouse click (or simulated mouse click).
 						if (e.Action != TreeViewAction.ByMouse)
+						{
 							break;
+						}
 						// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
 						// This will effectively revert the list selection to a previous confirmed state.
 						// Whatever happens below, we don't want to actually leave the "More..." node selected!

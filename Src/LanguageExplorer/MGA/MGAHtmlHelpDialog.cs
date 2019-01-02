@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -21,20 +22,18 @@ namespace LanguageExplorer.MGA
 		private XmlDocument m_xmlShowInfoDoc;
 		private readonly string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public MGAHtmlHelpDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 			: base(cache, helpTopicProvider, sMorphemeForm)
 		{
 			m_browser = new GeckoWebBrowser
-						{
-							Dock = DockStyle.Fill,
-							Location = new Point(0, 0),
-							TabIndex = 1,
-							MinimumSize = new Size(20, 20),
-							NoDefaultContextMenu = true
-						};
+			{
+				Dock = DockStyle.Fill,
+				Location = new Point(0, 0),
+				TabIndex = 1,
+				MinimumSize = new Size(20, 20),
+				NoDefaultContextMenu = true
+			};
 			splitContainerHorizontal.Panel2.Controls.Add(m_browser);
 		}
 
@@ -44,13 +43,10 @@ namespace LanguageExplorer.MGA
 			m_xslShowInfoTransform = new XslCompiledTransform();
 			var sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "MGAShowInfo.xsl");
 			m_xslShowInfoTransform.Load(sXsltFile);
-
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
-
 			ShowInfoPane();
 			buttonInfo.Visible = true;
-
 			if (m_browser.Handle != IntPtr.Zero)
 			{
 				var uri = new Uri(m_sHelpHtm);
@@ -81,6 +77,13 @@ namespace LanguageExplorer.MGA
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				m_browser.Dispose();

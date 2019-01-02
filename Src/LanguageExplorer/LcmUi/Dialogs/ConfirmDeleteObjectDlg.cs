@@ -1,15 +1,16 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
@@ -32,10 +33,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private string s_helpTopic;
 		private HelpProvider helpProvider;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private IContainer components = null;
 
 		private ConfirmDeleteObjectDlg()
 		{
@@ -88,27 +86,26 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable)
 		{
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.MyCmObject != null);
-
 			SetDlgInfo(obj, cache, propertyTable, TsStringUtils.MakeString(" ", cache.DefaultUserWs));
 		}
 
@@ -121,13 +118,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			}
 			m_cache = cache;
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
-
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.MyCmObject != null);
-
 			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass);
-
-			// Set the s_helpTopic based on the window title and rearrange the buttons if neccesary
+			// Set the s_helpTopic based on the window title and rearrange the buttons if necessary
 			switch (obj.ClassName)
 			{
 				case "WfiWordform":
@@ -138,7 +132,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
+				helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -147,7 +141,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_deleteButton.Location = m_cancelButton.Location;
 				m_cancelButton.Location = buttonHelp.Location;
 			}
-
 			//Use an FWTextBox so that strings of different writing systems will
 			//be displayed with the correct stylesheet settings.
 			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
@@ -160,7 +153,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			// Adjust the dialog size if needed to display the message (FWNX-857).
 			var deltaY = GrowTextBox(panel1, m_descriptionBox3);
 			panel2.Top += deltaY;
-
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;
 			m_descriptionBox4.StyleSheet = stylesheet;
@@ -168,7 +160,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);
-
 			m_deleteButton.Enabled = obj.MyCmObject.CanDelete;
 			label2.Visible = m_deleteButton.Enabled;
 		}

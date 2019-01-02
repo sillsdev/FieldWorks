@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			var wsAnal = DefaultWs;
 			var msa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(hvo);
-
 			switch (frag)
 			{
 				case (int)VcFrags.kfragFullMSAInterlinearname:

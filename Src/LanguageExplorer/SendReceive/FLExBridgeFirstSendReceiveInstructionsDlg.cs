@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,15 +18,11 @@ namespace LanguageExplorer.SendReceive
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		public FLExBridgeFirstSendReceiveInstructionsDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
-
 			InitializeComponent();
-
 			var instructionsHtml = WebUtility.HtmlDecode(LanguageExplorerResources.SendReceiveForTheFirstTimeContent);
 			// Strip mailto: links until a proper solution can be implemented for LT-16594.
 			if (MiscUtils.IsUnix && instructionsHtml != null)

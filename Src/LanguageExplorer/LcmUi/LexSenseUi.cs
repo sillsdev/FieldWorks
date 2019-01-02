@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,9 +20,7 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class LexSenseUi : CmObjectUi
 	{
-		/// <summary>
-		/// Create one.
-		/// </summary>
+		/// <summary />
 		public LexSenseUi(ICmObject obj)
 			: base(obj)
 		{
@@ -67,7 +65,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;
 			wp.m_label = LcmUiStrings.ksSenses;
-			var sense = (ILexSense) MyCmObject;
+			var sense = (ILexSense)MyCmObject;
 			var le = sense.Entry;
 			// Exclude subsenses of the chosen sense.  See LT-6107.
 			var rghvoExclude = new List<int>();
@@ -116,8 +114,8 @@ namespace LanguageExplorer.LcmUi
 				obj = obj.Owner;
 				clid = obj.ClassID;
 			}
-			var le = (ILexEntry) obj;
-			le.MoveSenseToCopy((ILexSense) MyCmObject);
+			var le = (ILexEntry)obj;
+			le.MoveSenseToCopy((ILexSense)MyCmObject);
 		}
 
 		/// <summary>
@@ -272,7 +270,6 @@ namespace LanguageExplorer.LcmUi
 				//situation normal, return
 				return sense.MorphoSyntaxAnalysisRA;
 			}
-
 			//Situation not normal.
 			var entryPrimaryMorphType = sense.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
 			var isAffixType = entryPrimaryMorphType?.IsAffixType ?? false;
@@ -293,9 +290,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				return sense.MorphoSyntaxAnalysisRA;
 			}
-			var safeMsa = isAffixType
-				? cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create()
-				: (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			var safeMsa = isAffixType ? cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create() : (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
 			sense.MorphoSyntaxAnalysisRA = safeMsa;
 			return sense.MorphoSyntaxAnalysisRA;

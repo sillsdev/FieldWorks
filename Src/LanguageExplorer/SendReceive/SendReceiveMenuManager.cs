@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,7 +58,6 @@ namespace LanguageExplorer.SendReceive
 			Cache = cache;
 			MainSendReceiveToolStripMenuItem = mainSendReceiveToolStripMenuItem;
 			ToolStripButtonFlexLiftBridge = toolStripButtonFlexLiftBridge;
-
 			_bridges.Add(CommonBridgeServices.FLExBridge, new FlexBridge(Cache, FlexApp));
 			_bridges.Add(CommonBridgeServices.LiftBridge, new LiftBridge(Cache, MainWindow, FlexApp));
 			_bridges.Add(CommonBridgeServices.NoBridgeUsedYet, null);
@@ -98,7 +97,6 @@ namespace LanguageExplorer.SendReceive
 
 			_bridges[CommonBridgeServices.FLExBridge].InitializeFlexComponent(flexComponentParameters);
 			_bridges[CommonBridgeServices.LiftBridge].InitializeFlexComponent(flexComponentParameters);
-
 			Setup();
 		}
 
@@ -126,8 +124,6 @@ namespace LanguageExplorer.SendReceive
 			liftBridge.InstallMenus(BridgeMenuInstallRound.Three, MainSendReceiveToolStripMenuItem);
 			MainSendReceiveToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 			AddCommonMenuItems();
-
-
 			// Add standard toolbar item's event handler and enable/disable it.
 			ToolStripButtonFlexLiftBridge.Enabled = MainSendReceiveToolStripMenuItem.Enabled; // If 'true' it may be reset to false, below.
 			if (ToolStripButtonFlexLiftBridge.Enabled)
@@ -167,12 +163,10 @@ namespace LanguageExplorer.SendReceive
 		private void AddCommonMenuItems()
 		{
 			_helpChorusMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpChorus_Click, SendReceiveResources.HelpChorus, SendReceiveResources.HelpChorusToolTip);
-
 			if (!MiscUtils.IsUnix)
 			{
 				_checkForFlexBridgeUpdatesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, CheckForFlexBridgeUpdates_Click, SendReceiveResources.CheckForFlexBridgeUpdates, SendReceiveResources.CheckForFlexBridgeUpdatesToolTip);
 			}
-
 			_helpAboutFLEXBridgeMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpAboutFLEXBridge_Click, SendReceiveResources.HelpAboutFLEXBridge, SendReceiveResources.HelpAboutFLEXBridgeToolTip);
 		}
 
@@ -180,24 +174,16 @@ namespace LanguageExplorer.SendReceive
 		{
 			bool dummy1;
 			string dummy2;
-			FLExBridgeHelper.LaunchFieldworksBridge(
-				CommonBridgeServices.GetFullProjectFileName(Cache),
-				CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.AboutFLExBridge,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null,
-				out dummy1, out dummy2);
+			FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.AboutFLExBridge,
+				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out dummy1, out dummy2);
 		}
 
 		private void CheckForFlexBridgeUpdates_Click(object sender, EventArgs e)
 		{
 			bool dummy1;
 			string dummy2;
-			FLExBridgeHelper.LaunchFieldworksBridge(
-				CommonBridgeServices.GetFullProjectFileName(Cache),
-				CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.CheckForUpdates,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null,
-				out dummy1, out dummy2);
+			FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.CheckForUpdates,
+				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out dummy1, out dummy2);
 		}
 
 		private void HelpChorus_Click(object sender, EventArgs eventArgs)
@@ -287,6 +273,7 @@ namespace LanguageExplorer.SendReceive
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -307,7 +294,6 @@ namespace LanguageExplorer.SendReceive
 					_helpAboutFLEXBridgeMenu.Click -= HelpAboutFLEXBridge_Click;
 					_helpAboutFLEXBridgeMenu.Dispose();
 				}
-
 				foreach (var bridge in _bridges.Values)
 				{
 					// "NoBridgeUsedYet" key will have  null value in the dictionary, so skip it.

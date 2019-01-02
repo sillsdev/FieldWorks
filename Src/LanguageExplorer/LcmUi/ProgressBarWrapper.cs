@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Constructor which passes in the progressBar to wrap
 		/// </summary>
-		/// <param name="progressBar"></param>
 		public ProgressBarWrapper(ProgressBar progressBar)
 		{
 			ProgressBar = progressBar;
@@ -43,7 +42,6 @@ namespace LanguageExplorer.LcmUi
 			StepSize = amount;
 			ProgressBar.PerformStep();
 			StepSize = stepSizeHold;
-
 			if (Canceling != null)
 			{
 				// don't do anything -- this just shuts up the compiler about the

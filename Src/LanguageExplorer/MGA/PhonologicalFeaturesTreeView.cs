@@ -1,10 +1,10 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
 using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.MGA
@@ -29,6 +29,7 @@ namespace LanguageExplorer.MGA
 			ToggleCheckBoxImage(tn);
 			SetCheckedValueOfAllDaughterNodes(tn);
 		}
+
 		private void ToggleCheckBoxImage(TreeNode tn)
 		{
 			if (tn.Checked)

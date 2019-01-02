@@ -1,9 +1,10 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -14,7 +15,6 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class LexPronunciationUi : CmObjectUi
 	{
-
 		/// <summary>
 		/// Create one. Argument must be a LexPronunciation.
 		/// </summary>
@@ -24,17 +24,14 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		// For MakeLcmModelUiObject method.
-		internal LexPronunciationUi() {}
+		internal LexPronunciationUi() { }
 
 		/// <summary>
 		/// Handle the context menu for inserting a LexPronunciation.
 		/// </summary>
 		public static LexPronunciationUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			if (cache == null)
-			{
-				throw new ArgumentNullException(nameof(cache));
-			}
+			Guard.AgainstNull(cache, nameof(cache));
 
 			LexPronunciationUi result = null;
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ActionHandlerAccessor, () =>

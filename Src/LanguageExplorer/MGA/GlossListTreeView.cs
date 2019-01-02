@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,11 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.MGA
@@ -22,17 +22,16 @@ namespace LanguageExplorer.MGA
 		protected string m_sTermNodeXPath = "term[@ws='en']";
 		protected string m_sAbbrevNodeXPath = "abbrev[@ws='en']";
 		protected TreeNode m_lastSelectedTreeNode;
-		protected LcmCache m_cache;
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -41,7 +40,7 @@ namespace LanguageExplorer.MGA
 				ImageList?.Dispose();
 			}
 			ImageList = null;
-			m_cache = null;
+			Cache = null;
 
 			base.Dispose(disposing);
 		}
@@ -55,10 +54,8 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Sets LCM cache
 		/// </summary>
-		public LcmCache Cache
-		{
-			set { m_cache = value; }
-		}
+		public LcmCache Cache { get; set; }
+
 		/// <summary>
 		/// Gets flag whether the name of the complex item comes first or not.
 		/// </summary>
@@ -97,10 +94,8 @@ namespace LanguageExplorer.MGA
 			{
 				// SECTION 1. Create a DOM Document and load the XML data into it.
 				var dom = CreateDomAndLoadXMLFile(sXmlFile);
-
 				// SECTION 2. Initialize the GlossListTreeView control.
 				var treeTop = InitializeGlossListTreeViewControl(dom, sDefaultAnalysisWritingSystem);
-
 				// SECTION 3. Populate the TreeView with the DOM nodes.
 				PopulateTreeView(dom, treeTop);
 			}
@@ -159,7 +154,6 @@ namespace LanguageExplorer.MGA
 				// checking english?
 				WritingSystemAbbrev = WritingSystemServices.FallbackUserWsId;
 			}
-
 			m_sTermNodeXPath = "term[@ws='" + WritingSystemAbbrev + "']";
 			m_sAbbrevNodeXPath = "abbrev[@ws='" + WritingSystemAbbrev + "']";
 		}
@@ -190,11 +184,6 @@ namespace LanguageExplorer.MGA
 			AfterExpand += OnAfterExpand;
 			MouseUp += OnMouseUp;
 			KeyUp += OnKeyUp;
-
-#if Orig
-			Sorted = true;
-#endif
-
 			// Get images for tree.
 			ImageList = new ImageList();
 			ImageList.Images.Add(new Bitmap(GetType(), "CLSDFOLD.BMP"));      // 0
@@ -268,7 +257,7 @@ namespace LanguageExplorer.MGA
 					if (mif != null)
 					{
 						var sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
-						if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
+						if (Cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 						{
 							// we want to set all other sisters that are in the database
 							var sibling = tn.Parent.FirstNode;
@@ -280,7 +269,7 @@ namespace LanguageExplorer.MGA
 									if (mif != null)
 									{
 										sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
-										if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
+										if (Cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 										{
 											sibling.Checked = true;
 											sibling.ImageIndex = sibling.SelectedImageIndex = (int)MGAImageKind.checkedBox;

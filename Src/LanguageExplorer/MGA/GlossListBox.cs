@@ -1,8 +1,9 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace LanguageExplorer.MGA
@@ -21,7 +22,6 @@ namespace LanguageExplorer.MGA
 				{
 					Detach();
 				}
-
 				m_MGAForm = value;
 				if (m_MGAForm == null)
 				{
@@ -36,7 +36,13 @@ namespace LanguageExplorer.MGA
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			base.Dispose(disposing);
 		}
 
@@ -45,10 +51,12 @@ namespace LanguageExplorer.MGA
 			// Adds the GlossListBoxItem contained within the GlossListEventArgs object
 			Items.Add(glea.GlossListBoxItem);
 		}
+
 		private void OnRemoveItem(object sender, EventArgs e)
 		{
 			Items.Remove(SelectedItem);
 		}
+
 		private void OnMoveDownItem(object sender, EventArgs e)
 		{
 			var tmp = Items[SelectedIndex];
@@ -56,6 +64,7 @@ namespace LanguageExplorer.MGA
 			Items[SelectedIndex + 1] = tmp;
 			SelectedIndex = SelectedIndex + 1;
 		}
+
 		private void OnMoveUpItem(object sender, EventArgs e)
 		{
 			var tmp = Items[SelectedIndex];
@@ -63,6 +72,7 @@ namespace LanguageExplorer.MGA
 			Items[SelectedIndex - 1] = tmp;
 			SelectedIndex = SelectedIndex - 1;
 		}
+
 		public void Detach()
 		{
 			// Detach the events and delete the form

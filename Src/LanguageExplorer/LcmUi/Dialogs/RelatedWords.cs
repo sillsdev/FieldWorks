@@ -1,21 +1,22 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
@@ -26,18 +27,14 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private Button m_btnClose;
 		private Button m_btnLookup;
 		private Button m_btnCopy;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		RelatedWordsView m_view;
-		LcmCache m_cache;
-		IVwSelection m_sel;
-		IVwStylesheet m_styleSheet;
-		int m_hvoEntry;
-		IVwCacheDa m_cdaTemp;
-		XmlView m_detailView;
+		private IContainer components = null;
+		private RelatedWordsView m_view;
+		private LcmCache m_cache;
+		private IVwSelection m_sel;
+		private IVwStylesheet m_styleSheet;
+		private int m_hvoEntry;
+		private IVwCacheDa m_cdaTemp;
+		private XmlView m_detailView;
 
 		/// <summary>
 		/// Shows the "not in dictionary" message.
@@ -79,15 +76,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			// optimize it if possible.
 			var entryRepo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var lexEntry = entryRepo.GetObject(hvoEntry);
-			var domains =
-				(from sense in lexEntry.AllSenses
-				from sd in sense.SemanticDomainsRC
-				where (from incoming in sd.ReferringObjects
-					   where incoming is ILexSense && incoming.OwnerOfClass<ILexEntry>() != lexEntry
-					   select incoming).FirstOrDefault() != null
-				select sd).Distinct().ToArray();
+			var domains = lexEntry.AllSenses
+				.SelectMany(sense => sense.SemanticDomainsRC, (sense, sd) => new { sense, sd })
+				.Where(@t => (@t.sd.ReferringObjects.Where(incoming => incoming is ILexSense && incoming.OwnerOfClass<ILexEntry >() != lexEntry)).FirstOrDefault() != null)
+				.Select(@t => @t.sd).Distinct().ToArray();
 			hvoSemanticDomainsOut = domains.Select(sd => sd.Hvo).ToArray();
-
 			cdaTemp = VwCacheDaClass.Create();
 			cdaTemp.TsStrFactory = TsStringUtils.TsStrFactory;
 			foreach (var sd in domains)
@@ -95,7 +88,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				cdaTemp.CacheStringProp(sd.Hvo, RelatedWordsVc.ktagName, sd.Name.BestVernacularAnalysisAlternative);
 			}
 			cdaTemp.CacheVecProp(hvoEntry, RelatedWordsVc.ktagDomains, hvoSemanticDomainsOut, hvoSemanticDomainsOut.Length);
-
 			return hvoSemanticDomainsOut.Length > 0;
 		}
 
@@ -117,41 +109,32 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			var relatedObjectIds = new List<int>();
 			var entryRepository = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var lexEntry = entryRepository.GetObject(hvoEntry);
-			var targets = new HashSet<ICmObject>(lexEntry.AllSenses.Cast<ICmObject>()) {lexEntry};
-
+			var targets = new HashSet<ICmObject>(lexEntry.AllSenses) { lexEntry };
 			foreach (ILexRefType lexRefType in cache.LanguageProject.LexDbOA.ReferencesOA.ReallyReallyAllPossibilities)
 			{
 				foreach (var lexReference in lexRefType.MembersOC)
 				{
 					// If at least one target is the lex entry or one of its senses.
-					if ((from target in lexReference.TargetsRS where targets.Contains(target) select target).FirstOrDefault() ==
-					    null ||
-					    (from target in lexReference.TargetsRS where !targets.Contains(target) select target).FirstOrDefault() == null)
+					if (lexReference.TargetsRS.FirstOrDefault(target => targets.Contains(target)) == null || lexReference.TargetsRS.FirstOrDefault(target => !targets.Contains(target)) == null)
 					{
 						continue;
 					}
 					// The name we want to use for our lex reference is either the name or the reverse name
 					// (depending on the direction of the relationship, if relevant) of the owning lex ref type.
 					var lexReferenceName = lexRefType.Name.BestVernacularAnalysisAlternative;
-
-					if (lexRefType.MappingType == (int)MappingTypes.kmtEntryAsymmetricPair ||
-					    lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseAsymmetricPair ||
-					    lexRefType.MappingType == (int)MappingTypes.kmtSenseAsymmetricPair ||
-					    lexRefType.MappingType == (int)MappingTypes.kmtEntryTree ||
-					    lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseTree ||
-					    lexRefType.MappingType == (int)MappingTypes.kmtSenseTree)
+					if (lexRefType.MappingType == (int)MappingTypes.kmtEntryAsymmetricPair || lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseAsymmetricPair
+						|| lexRefType.MappingType == (int)MappingTypes.kmtSenseAsymmetricPair || lexRefType.MappingType == (int)MappingTypes.kmtEntryTree
+						|| lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseTree || lexRefType.MappingType == (int)MappingTypes.kmtSenseTree)
 					{
 						if (lexEntry.OwnOrd == 0 && lexRefType.Name != null) // the original code had a check for name length as well.
 						{
 							lexReferenceName = lexRefType.ReverseName.BestVernacularAnalysisAlternative;
 						}
 					}
-
 					cdaTemp.CacheStringProp(lexReference.Hvo, RelatedWordsVc.ktagName, lexReferenceName);
 					relatedObjectIds.Add(lexReference.Hvo);
 				}
 			}
-
 			relsOut = relatedObjectIds.ToArray();
 			return relsOut.Length > 0;
 		}
@@ -212,10 +195,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private void SetupDomainsForEntry(int[] semanticDomainHvos)
 		{
 			m_cdaTemp.CacheVecProp(m_hvoEntry, RelatedWordsVc.ktagDomains, semanticDomainHvos, semanticDomainHvos.Length);
-
 			var entries = new List<int>();
 			var semanticDomainRepository = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-
 			foreach (var semanticDomainhvo in semanticDomainHvos)
 			{
 				var semanticDomain = semanticDomainRepository.GetObject(semanticDomainhvo);
@@ -246,12 +227,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private void SetupLexRelsForEntry(int[] lexicalRelationHvos)
 		{
 			m_cdaTemp.CacheVecProp(m_hvoEntry, RelatedWordsVc.ktagLexRels, lexicalRelationHvos, lexicalRelationHvos.Length);
-
 			var references = new List<int>();
 			var lexRefRepository = m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
 			var lexEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_hvoEntry);
-			var targets = new HashSet<ICmObject>(lexEntry.AllSenses.Cast<ICmObject>()) { lexEntry };
-
+			var targets = new HashSet<ICmObject>(lexEntry.AllSenses) { lexEntry };
 			foreach (var hvoLexRel in lexicalRelationHvos)
 			{
 				var lexReference = lexRefRepository.GetObject(hvoLexRel);
@@ -259,7 +238,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				{
 					// If at least one target is the lex entry or one of its senses.
 					if (lexReference.TargetsRS.FirstOrDefault(t => targets.Contains(t)) == null ||
-					    lexReference.TargetsRS.FirstOrDefault(t => !targets.Contains(t)) == null)
+						lexReference.TargetsRS.FirstOrDefault(t => !targets.Contains(t)) == null)
 					{
 						continue;
 					}
@@ -270,7 +249,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 						m_cdaTemp.CacheStringProp(targetEntry.Hvo, RelatedWordsVc.ktagName, targetEntry.HeadWord);
 					}
 				}
-
 				if (references.Count > 0)
 				{
 					m_cdaTemp.CacheVecProp(hvoLexRel, RelatedWordsVc.ktagWords, references.ToArray(), references.Count);
@@ -282,16 +260,16 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				if (m_view != null && !Controls.Contains(m_view))
@@ -315,7 +293,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_cdaTemp = null;
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -380,7 +358,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				return;
 			}
-
 			string undo;
 			string redo;
 			ResourceHelper.MakeUndoRedoLabels("kstidUndoRedoInsertRelatedWord", out undo, out redo);
@@ -407,13 +384,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			bool fAssocPrev;
 			sel3.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
 			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-
 			var tssWf = (m_cdaTemp as ISilDataAccess).get_StringProp(hvo, tag);
 			if (tssWf == null || tssWf.Length == 0)
 			{
 				return null;
 			}
-
 			// Ignore what part of it is selected...we want the entry whose whole citation form
 			// the selection is part of.
 			//string wf = tssWf.Text.Substring(ichMin, ichLim - ichMin);
@@ -429,7 +404,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 					ShowNotInDictMessage(this);
 					return;
 				}
-
 				int[] domains;
 				int[] lexrels;
 				IVwCacheDa cdaTemp;
@@ -443,7 +417,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				{
 					m_cdaTemp.CacheStringProp(hvoDomain, RelatedWordsVc.ktagName, (cdaTemp as ISilDataAccess).get_StringProp(hvoDomain, RelatedWordsVc.ktagName));
 				}
-
 				foreach (var hvoLexRel in lexrels)
 				{
 					m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, (cdaTemp as ISilDataAccess).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
@@ -468,7 +441,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_btnCopy.Enabled = fEnable;
 				m_btnInsert.Enabled = fEnable;
 				m_btnLookup.Enabled = fEnable;
-
 				if (leui == null)
 				{
 					return;
@@ -509,12 +481,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		private sealed class RelatedWordsView : SimpleRootSite
 		{
-			int m_hvoRoot;
-			ISilDataAccess m_sda;
-			LcmCache m_cache;
-			int m_wsUser;
-			RelatedWordsVc m_vc;
-			bool m_fInSelChange;
+			private int m_hvoRoot;
+			private ISilDataAccess m_sda;
+			private LcmCache m_cache;
+			private int m_wsUser;
+			private RelatedWordsVc m_vc;
+			private bool m_fInSelChange;
 			private ITsString m_headword;
 
 			public event EventHandler SelChanged;
@@ -534,9 +506,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			/// <inheritdoc />
 			protected override void Dispose(bool disposing)
 			{
-				// Must not be run more than once.
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (IsDisposed)
 				{
+					// No need to run it more than once.
 					return;
 				}
 
@@ -560,11 +533,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			public override void MakeRoot()
 			{
 				base.MakeRoot();
-
 				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
-
 				RootBox.DataAccess = m_sda;
-
 				RootBox.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 				m_fRootboxMade = true;
 			}
@@ -609,7 +579,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 						m_fInSelChange = false;
 					}
 				}
-
 				SelChanged?.Invoke(this, new EventArgs());
 			}
 
@@ -631,12 +600,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			public const int ktagWords = 45673;
 			private const int ktagCf = 45674;
 			public const int ktagLexRels = 45675;
-
 			public const int kfragRoot = 333331;
 			private const int kfragEntryList = 3333332;
 			private const int kfragWords = 3333333;
 			private const int kfragName = 3333334;
-
 			private ITsString m_tssColon;
 			private ITsString m_tssComma;
 			private ITsString m_tssSdRelation;
@@ -650,7 +617,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_tssComma = TsStringUtils.MakeString(", ", wsUser);
 				m_tssSdRelation = TsStringUtils.MakeString(LcmUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
 				m_tssLexRelation = TsStringUtils.MakeString(LcmUiStrings.ksLexicallyRelatedWords, wsUser);
-
 				var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 				var index = semanticDomainStrBuilder.Text.IndexOf("{0}");
 				if (index > 0)
@@ -658,7 +624,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 					semanticDomainStrBuilder.ReplaceTsString(index, index + "{0}".Length, headword);
 				}
 				m_tssSdRelation = semanticDomainStrBuilder.GetString();
-
 				var lexStrBuilder = m_tssLexRelation.GetBldr();
 				index = lexStrBuilder.Text.IndexOf("{0}");
 				if (index > 0)

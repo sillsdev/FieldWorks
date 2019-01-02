@@ -1,12 +1,12 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using SIL.LCModel;
+using System.Linq;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.LcmUi
@@ -31,9 +31,8 @@ namespace LanguageExplorer.LcmUi
 			IPartOfSpeech posWanted = null;
 			if (m_selectedHvo > 0)
 			{
-				posWanted = (IPartOfSpeech) m_cache.ServiceLocator.GetObject(m_selectedHvo);
+				posWanted = (IPartOfSpeech)m_cache.ServiceLocator.GetObject(m_selectedHvo);
 			}
-
 			// Make a hashtable from entry to list of modified senses.
 			var sensesByEntry = new Dictionary<ILexEntry, List<ILexSense>>();
 			var i = 0;
@@ -62,8 +61,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				senses.Add(sense);
 			}
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoBulkEditPOS, LcmUiStrings.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor,
-				()=>DoUpdatePos(state, sensesByEntry, posWanted));
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoBulkEditPOS, LcmUiStrings.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
 		}
 
 		private void DoUpdatePos(ProgressState state, Dictionary<ILexEntry, List<ILexSense>> sensesByEntry, IPartOfSpeech posWanted)
@@ -81,8 +79,7 @@ namespace LanguageExplorer.LcmUi
 				var entry = kvp.Key;
 				var sensesToChange = kvp.Value;
 				// Try to find an existing MSA with the right POS.
-				var msmTarget = entry.MorphoSyntaxAnalysesOC
-					.Where(msa => msa.ClassID == (uint)MoStemMsaTags.kClassId && ((IMoStemMsa)msa).PartOfSpeechRA == posWanted)
+				var msmTarget = entry.MorphoSyntaxAnalysesOC.Where(msa => msa.ClassID == (uint)MoStemMsaTags.kClassId && ((IMoStemMsa)msa).PartOfSpeechRA == posWanted)
 					.Select(msa => (IMoStemMsa)msa).FirstOrDefault();
 				if (msmTarget == null)
 				{
@@ -107,7 +104,6 @@ namespace LanguageExplorer.LcmUi
 							fOk = false; // we can't change it, one of the unchanged senses uses it
 							break;
 						}
-
 						if (!fOk)
 						{
 							continue;
@@ -117,7 +113,6 @@ namespace LanguageExplorer.LcmUi
 						msmTarget = (IMoStemMsa)msa;
 						var oldPOS = msmTarget.PartOfSpeechRA;
 						msmTarget.PartOfSpeechRA = posWanted;
-
 						// compare MoStemMsa.ResetInflectionClass: changing POS requires us to clear inflection class,
 						// if it is set.
 						if (oldPOS != null && msmTarget.InflectionClassRA != null)

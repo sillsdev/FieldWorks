@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,8 @@ namespace LanguageExplorer.SfmToXml
 		private Hashtable m_autoFieldsPossible; // key=string[className], value=string[fwid]
 		private Hashtable m_autoFieldsUsed; // key=string["classname_sfmName"], value=AutoFieldInfo
 		private Hashtable m_autoFieldsBySFM; // key=string[sfmName], value=ArrayList of AutoFieldInfo
-		protected string m_topAnalysisWS;   // top analysis ws; ex: "en", ...
+		// top analysis ws; ex: "en", ...
+		protected string m_topAnalysisWS;
 		// This enables us to get hold of encoding converters:
 		private EncConverters m_converters;
 		// Placeholder for the implied root of the hierarchy (we assume there's only one):
@@ -282,12 +283,9 @@ namespace LanguageExplorer.SfmToXml
 			{
 				xmlOutput.Formatting = Formatting.Indented;
 				xmlOutput.Indentation = 2;
-
 				WriteOutputFileComment(sfmFileName, mappingFileName, outputFileName, xmlOutput);
-
 				xmlOutput.WriteComment(" database is the root element for this file ");
 				xmlOutput.WriteStartElement("database");
-
 				var xmlMap = new XmlDocument();
 				try
 				{
@@ -302,9 +300,7 @@ namespace LanguageExplorer.SfmToXml
 					xmlOutput.Close();
 					return;
 				}
-
 				ReadLanguages(xmlMap);
-
 				// === Process the command line args relating to languages ===
 				// National ws
 				if (natWs.ToLowerInvariant() == SfmToXmlServices.Ignore)
@@ -345,15 +341,12 @@ namespace LanguageExplorer.SfmToXml
 				{
 					ReadHierarchy(xmlMap);
 					ReadAndOutputSettings(xmlMap, xmlOutput);
-
 					// read the mapping file and build internal classes / objects and
 					// add field descriptions to output file
 					ReadFieldDescriptions(xmlMap);  //  ReadAndOutputFieldDescriptions(xmlMap, xmlOutput);
 					ReadCustomFieldDescriptions(xmlMap);
-
 					// read the mapping file inline markers
 					ReadInFieldMarkers(xmlMap);
-
 					// Now validate the data read in. This must be done in the following order:
 					// Languages, Field Descriptions, Hierarchy. Infield Markers must be validated
 					// after Languages. This order is needed because the later checks rely on
@@ -368,7 +361,6 @@ namespace LanguageExplorer.SfmToXml
 				{
 					Log.AddError(string.Format(SfmToXmlStrings.UnhandledException0, e.Message));
 				}
-
 				var nl = Environment.NewLine;
 				var comments = nl;
 				comments += " ================================================================" + nl;
@@ -394,7 +386,6 @@ namespace LanguageExplorer.SfmToXml
 				comments += "  XSLT processing for building the phase2 output file." + nl;
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
-
 				xmlOutput.WriteStartElement("fieldDescriptions");
 				foreach (DictionaryEntry fieldEntry in FieldMarkerHashTable)
 				{
@@ -414,14 +405,12 @@ namespace LanguageExplorer.SfmToXml
 					fd.ToXmlLangString(xmlOutput);
 				}
 				xmlOutput.WriteEndElement();
-
 				// put out the field descriptions with the autofield info integrated in: for xslt processing...
 				comments = nl;
 				comments += " ================================================================" + nl;
 				comments += " Element: CustomFieldDescriptions" + nl;
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
-
 				xmlOutput.WriteStartElement("CustomFieldDescriptions");
 				foreach (DictionaryEntry fieldEntry in FieldMarkerHashTable)
 				{
@@ -429,7 +418,6 @@ namespace LanguageExplorer.SfmToXml
 					fd?.ToXmlLangString(xmlOutput);
 				}
 				xmlOutput.WriteEndElement();
-
 				// put out the infield descriptions for xslt processing...
 				comments = nl;
 				comments += " ================================================================" + nl;
@@ -437,9 +425,7 @@ namespace LanguageExplorer.SfmToXml
 				comments += "  This is where the infield / inline markers are put out." + nl;
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
-
 				OutputInFieldMarkers(xmlOutput);
-
 				// put out the warnings and errors
 				Log.FlushTo(xmlOutput);
 				xmlOutput.WriteEndElement(); // Close the Database node
@@ -475,7 +461,6 @@ namespace LanguageExplorer.SfmToXml
 							break;
 					}
 				}
-
 				if (fwSetting && foundAttributes.Count > 0)
 				{
 					numFound++;
@@ -616,11 +601,10 @@ namespace LanguageExplorer.SfmToXml
 				Log.AddError(SfmToXmlStrings.NoValidHierarchyEntriesDefined);
 				success = false;
 			}
-
 			// Now populate the children hashtable: key is parent and value is arraylist of children.
-			foreach (DictionaryEntry dictEentry in HierarchyHashTable)
+			foreach (DictionaryEntry dictionaryEntry in HierarchyHashTable)
 			{
-				var entry = (ClsHierarchyEntry)dictEentry.Value;
+				var entry = (ClsHierarchyEntry)dictionaryEntry.Value;
 				// add this node as a child of all the ancestors of it
 				foreach (var name in entry.Ancestors)
 				{
@@ -679,7 +663,6 @@ namespace LanguageExplorer.SfmToXml
 					myEnumerator = leaf.GetEnumerator();
 				}
 			}
-
 			// if we have more or less than 1 root item, this is an error
 			if (root.Count != 1)
 			{
@@ -711,15 +694,12 @@ namespace LanguageExplorer.SfmToXml
 				// We are confident by now that the root is a unique entry:
 				HierarchyHashTable.Add(m_root.KEY, m_root);
 			}
-
 			// this list will contain all the sfms used in all the hierarchy entries
 			var allHierarchySfms = new Hashtable();
-
 			// Check every Hierarchy Entry:
 			foreach (DictionaryEntry dictionaryEntry in HierarchyHashTable)
 			{
 				var hierarchy = (ClsHierarchyEntry)dictionaryEntry.Value;
-
 				// Check for uniqueness of the beginfields:
 				foreach (var beginSfm in hierarchy.BeginFields)
 				{
@@ -737,7 +717,6 @@ namespace LanguageExplorer.SfmToXml
 								allHierarchySfms.Add(beginSfm, hierarchy);
 							}
 						}
-
 						// Make sure beginfields don't appear in addtionalfields:
 						if (hierarchy.AdditionalFieldsContains(beginSfm))
 						{
@@ -745,7 +724,6 @@ namespace LanguageExplorer.SfmToXml
 						}
 					}
 				}
-
 				// Make sure multifields exist in either beginfields or additionalfields:
 				foreach (var multiSfm in hierarchy.MultiFields)
 				{
@@ -754,7 +732,6 @@ namespace LanguageExplorer.SfmToXml
 						Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasUnexpectedMultiField1, hierarchy.Name, multiSfm));
 					}
 				}
-
 				// Continue to build list of all hierarchy SFMs:
 				foreach (var addtlSfm in hierarchy.AdditionalFields)
 				{
@@ -768,7 +745,6 @@ namespace LanguageExplorer.SfmToXml
 					}
 				}
 			}
-
 			// Test to make sure each of our Hierarchy SFMs is defined in the FieldDescriptions:
 			foreach (DictionaryEntry hierarchySfmPair in allHierarchySfms)
 			{
@@ -782,7 +758,6 @@ namespace LanguageExplorer.SfmToXml
 		protected bool ReadInFieldMarkers(XmlDocument xmlMap)
 		{
 			var success = true;
-
 			// Iterate through all the input "ifm" elements:
 			var inFieldMarkerList = xmlMap.SelectNodes("sfmMapping/inFieldMarkers/ifm");
 			var htMarkers = new Hashtable(inFieldMarkerList.Count);
@@ -837,7 +812,6 @@ namespace LanguageExplorer.SfmToXml
 				{
 					Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0RefersToInvalidLanguage1, inFieldMarker.Begin, inFieldMarker.Language));
 				}
-
 				// Check that the XML element name is unique:
 				if (xmlElementNames.Contains(inFieldMarker.ElementName))
 				{
@@ -897,7 +871,6 @@ namespace LanguageExplorer.SfmToXml
 		{
 			var success = true;
 			xmlOutput?.WriteStartElement("fieldDescriptions");
-
 			// Iterate through all the input "field" elements:
 			var fieldList = xmlMap.SelectNodes("sfmMapping/fieldDescriptions/field");
 			foreach (XmlNode FieldNode in fieldList)
@@ -984,7 +957,6 @@ namespace LanguageExplorer.SfmToXml
 		{
 			var success = true;
 			xmlOutput?.WriteStartElement("CustomFieldDescriptions");
-
 			// Iterate through all the input "CustomField" elements:
 			var fieldList = xmlMap.SelectNodes("sfmMapping/CustomFieldDescriptions/CustomField");
 			foreach (XmlNode fieldNode in fieldList)
@@ -1074,7 +1046,7 @@ namespace LanguageExplorer.SfmToXml
 		public static long FindFirstMatch(byte[] inData, int startPos, byte[] item)
 		{
 			// none
-			long index = -1;// none
+			long index = -1;
 			// if the indata length is to small, just return
 			if (inData.Length - startPos < item.Length)
 			{
@@ -1268,7 +1240,6 @@ namespace LanguageExplorer.SfmToXml
 					foundMarkers.RemoveAt(index);
 					var newFoundMarker = isBeginMarker ? new ClsFoundInFieldMarker(inFieldMarker.Begin, inFieldMarker) : new ClsFoundInFieldMarker(markerData);
 					foundMarkers.Add(foundPos, newFoundMarker);
-
 					// now look for the removed marker ahead in the data
 					foundPos = (int)SearchForInFieldMarker(rawData, foundPos + oldMarker.Length, oldMarker.Marker);
 					if (foundPos >= 0)
@@ -1283,7 +1254,6 @@ namespace LanguageExplorer.SfmToXml
 				// save the found information
 				foundMarkers.Add(foundPos, isBeginMarker ? new ClsFoundInFieldMarker(inFieldMarker.Begin, inFieldMarker) : new ClsFoundInFieldMarker(markerData));
 			}
-
 			return true;
 		}
 
@@ -1305,11 +1275,9 @@ namespace LanguageExplorer.SfmToXml
 			var cLang = (ClsLanguage)LanguagesHashTable[mainFieldDescription.Language];
 			var iDefaultConverter = cLang?.EncCvtr;
 			var currentConverter = iDefaultConverter;
-
 			// It is possible that markers will not be closed in the order they are opened, so we will
 			// provide an ordered list to store open markers, to help with closing them in the right order:
 			var openMarkers = new ArrayList();
-
 			// For efficiency, we will maintain a sorted container which keeps track of the first
 			// instance of each infield marker. Every time we process an infield marker, we remove
 			// it from the container, search for the next instance of that marker, and add this new
@@ -1317,7 +1285,6 @@ namespace LanguageExplorer.SfmToXml
 			// To start with, we will search for the first instance of every possible marker. From then
 			// on, we only search for further instances of ones we've found.
 			var foundMarkers = new SortedList();
-
 			// Find the first instance of each begin and end markers:
 			foreach (DictionaryEntry fieldEntry in InFieldMarkerHashTable)
 			{
@@ -1338,7 +1305,6 @@ namespace LanguageExplorer.SfmToXml
 					}
 				}
 			}
-
 			// Iterate through the sorted list of markers, removing and processing the "first" one each time:
 			var iMarkerDataPos = 0; // current pointer to text after a marker
 			while (foundMarkers.Count > 0)
@@ -1347,7 +1313,6 @@ namespace LanguageExplorer.SfmToXml
 				var currentMarker = (ClsFoundInFieldMarker)foundMarkers.GetByIndex(0);
 				var markerStartPos = (int)(foundMarkers.GetKey(0));
 				foundMarkers.RemoveAt(0);
-
 				if (markerStartPos >= iMarkerDataPos)
 				{
 					// Convert the text between this marker and the previous one and add it to the main output:
@@ -1358,16 +1323,13 @@ namespace LanguageExplorer.SfmToXml
 					{
 						// Stack the new marker:
 						openMarkers.Add(currentMarker);
-
 						// Add the XML equivalent of the current marker to the main output:
 						output += $"<{currentMarker.ClsInFieldMarker.ElementName}>";
-
 						// If the inline marker has its own encoding, use that from now on:
 						if (currentMarker.HasLangEncoding)
 						{
 							currentConverter = ((ClsLanguage)LanguagesHashTable[currentMarker.LanguageEncoding]).EncCvtr;
 						}
-
 						// We can't store "EndWithWord" or "EndWithField" markers ahead of time, so
 						// compute those here and now.
 						if (currentMarker.ClsInFieldMarker.EndWithWord)
@@ -1395,11 +1357,9 @@ namespace LanguageExplorer.SfmToXml
 								affectedBeginMarkers.Push(openMarker);
 							}
 						}
-
 						// If markers are not closed in the order they were opened, we will have to do some
 						// extra closing and re-opening:
 						var markersToBeReopened = new Stack();
-
 						// Now scan back through the open markers (latest towards earliest), closing
 						// them all and storing those that need to be reopened after we close the
 						// earliest of them:
@@ -1409,7 +1369,6 @@ namespace LanguageExplorer.SfmToXml
 							// Close this marker:
 							output += $"</{markerToClose.ElementName}>";
 							openMarkers.RemoveAt(openMarkerIndex);
-
 							// If the marker we just closed is not the top element in our Affected Markers stack, then
 							// we need to re-open it later:
 							var affectedMarker = (ClsFoundInFieldMarker)affectedBeginMarkers.Peek();
@@ -1437,7 +1396,6 @@ namespace LanguageExplorer.SfmToXml
 					var markerAsBytes = new ClsStringToOrFromBytes(currentMarker.Marker);
 					iMarkerDataPos = currentMarker.Length > 0 && currentMarker.Marker != " " ? markerStartPos + markerAsBytes.ByteLength : markerStartPos;
 				}
-
 				// Find next instance of currentMarker in input data: but not if we're handling an
 				// end marker for EndOfWord or EndOfField.
 				if (currentMarker.Marker.Length > 0 && currentMarker.Marker != " ")
@@ -1466,7 +1424,6 @@ namespace LanguageExplorer.SfmToXml
 			// Process last fragment of text outside of last inFieldMarker:
 			// Convert the text between this marker and the previous one and add it to the main output:
 			var convertedDataString = ConvertBytes(mainFieldDescription.SFM, markerData, iMarkerDataPos, markerData.Length, currentConverter, lineNumber);
-
 			if (mainFieldDescription.Type.ToLowerInvariant() == "date")
 			{
 				// handle any date processing here - validating and changing forms
@@ -1497,7 +1454,6 @@ namespace LanguageExplorer.SfmToXml
 				}
 			}
 			output += convertedDataString;
-
 			// Close any markers left open by lazy SFM code:
 			for (var openMarkerIndex = openMarkers.Count - 1; openMarkerIndex >= 0; openMarkerIndex--)
 			{
@@ -1505,7 +1461,6 @@ namespace LanguageExplorer.SfmToXml
 				// Close this marker:
 				output += "</" + markerToClose.ElementName + ">";
 			}
-
 			return output;
 		}
 
@@ -1541,7 +1496,6 @@ namespace LanguageExplorer.SfmToXml
 			var processedText = ProcessSFMData(currentSfm, sfmData, lineNumber);
 			processedText = processedText.Replace(Environment.NewLine, " "); // remove newlines
 			processedText = processedText.Trim();   // remove whitespace
-
 			// make sure the data is only in the following range:
 			// 0x09, 0x0a, 0x0d, 0x20-0xd7ff, 0xe000-0xfffd
 			// not using foreach so chars can be removed during processing w/o messing up the iterator
@@ -1694,11 +1648,9 @@ namespace LanguageExplorer.SfmToXml
 				string currentSfm;
 				var mgr = new ImportObjectManager(m_root.Name, this);
 				xmlOutput.WriteStartElement(m_root.Name);
-
 				while (reader.GetNextSfmMarkerAndData(out currentSfm, out sfmData, out badMarkerBytes))
 				{
 					m_sfmLineNumber = reader.FoundLineNumber;
-
 					// If the currentSfm is empty, then this is a case where there is data before the marker
 					if (currentSfm.Length == 0)
 					{
@@ -1763,7 +1715,6 @@ namespace LanguageExplorer.SfmToXml
 					}
 					// see if this sfm is labeled in the hierarchy as 'unique' - only one unique marker per entry
 					var uniqueSfm = currentLocation.UniqueFieldsContains(currentSfm);
-
 					// See if the current SFM appears in the BeginFields list of any hierarchy entry:
 					var newBeginHierarchyEntry = m_beginMarkerHierarchyEntries[currentSfm] as ClsHierarchyEntry;
 					if (newBeginHierarchyEntry == null)
@@ -2003,9 +1954,8 @@ namespace LanguageExplorer.SfmToXml
 						// if the byte starts with 11110, then this will be the first byte of
 						// a 4-byte sequence
 						sequenceLen = 4;
-						if ((m_byteLength <= i + 1 || (m_data[i + 1] & kLeft2BitsMask) != 0x80) ||
-							(m_byteLength <= i + 2 || (m_data[i + 2] & kLeft2BitsMask) != 0x80) ||
-							(m_byteLength <= i + 3 || (m_data[i + 3] & kLeft2BitsMask) != 0x80))
+						if (m_byteLength <= i + 1 || (m_data[i + 1] & kLeft2BitsMask) != 0x80 || m_byteLength <= i + 2 || (m_data[i + 2] & kLeft2BitsMask) != 0x80
+						    || m_byteLength <= i + 3 || (m_data[i + 3] & kLeft2BitsMask) != 0x80)
 						{
 							badCodePoint = by;
 							bytePosition = i + 1;   // not zero based, but 1 based for user
@@ -2150,7 +2100,6 @@ namespace LanguageExplorer.SfmToXml
 				m_root = new ImportObject(rootName, null);
 				Current = m_root;
 				m_converter = conv;
-
 				m_OpenNodes = new Hashtable();
 				var rootLevel = new ArrayList
 				{
@@ -2164,7 +2113,6 @@ namespace LanguageExplorer.SfmToXml
 			{
 				// make sure there aren't any children nodes of the new entry at the same level as the newEntry
 				RemoveChildrenForNewImportObject(newEntry.Parent, newEntry.Name, m_converter.m_hierarchyChildren, newEntry);
-
 				// make sure there aren't any open like nodes at the same level
 				foreach (ImportObject child in newEntry.Parent.Children)
 				{
@@ -2214,10 +2162,7 @@ namespace LanguageExplorer.SfmToXml
 			private static void RemoveNodeAndChildren(ImportObject node)
 			{
 				// just remove this node from it's parent and it will be gone...
-				if (node.Parent != null)
-				{
-					node.Parent.RemoveChild(node);
-				}
+				node.Parent?.RemoveChild(node);
 			}
 
 			internal void Flush(XmlTextWriter xmlOutput)
@@ -2247,7 +2192,6 @@ namespace LanguageExplorer.SfmToXml
 			{
 				obj.MakeClosed();   // will also close all child obj's
 				RemoveObjFromOpenList(obj);
-
 				foreach (ImportObject child in obj.Children)
 				{
 					CloseImportObject(child);
@@ -2293,7 +2237,6 @@ namespace LanguageExplorer.SfmToXml
 					}
 					nodes = nextLevel;
 				}
-
 				// this is a level one node, or requires one to be created so bump the counter
 				if (bestParent.Depth == 0)
 				{
@@ -2713,10 +2656,7 @@ namespace LanguageExplorer.SfmToXml
 				return false;
 			}
 
-			internal ICollection Children
-			{
-				get { return ChildrenList; }
-			}
+			internal ICollection Children => ChildrenList;
 
 			private List<ImportObject> ChildrenList { get; }
 

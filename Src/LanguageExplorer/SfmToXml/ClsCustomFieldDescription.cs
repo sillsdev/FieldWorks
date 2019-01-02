@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,6 +35,7 @@ namespace LanguageExplorer.SfmToXml
 			m_wsSelector = 0;
 			m_big = false;
 		}
+
 		public ClsCustomFieldDescription(string fdClass, string uiClass, int flid, bool big, int wsSelector, ClsFieldDescription baseFD)
 			: base(baseFD.SFM, baseFD.Name, baseFD.Type, baseFD.Language, baseFD.IsAbbr, baseFD.MeaningID)
 		{
@@ -98,7 +99,6 @@ namespace LanguageExplorer.SfmToXml
 
 				}
 			}
-
 			return true;
 		}
 
@@ -116,9 +116,7 @@ namespace LanguageExplorer.SfmToXml
 			xmlOutput.WriteAttributeString("flid", m_flid.ToString());
 			xmlOutput.WriteAttributeString("class", m_class);
 			xmlOutput.WriteAttributeString("uiclass", ClassNameUI);
-
 			base.ToXmlBaseString(useXMLLang, xmlOutput);
-
 			xmlOutput.WriteEndElement();
 			return string.Empty;
 		}

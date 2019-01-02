@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,7 +45,6 @@ namespace LanguageExplorer.SendReceive
 		private ToolStripMenuItem _viewMessagesMenu;
 		private ToolStripMenuItem _obtainLiftBridgeProjectMenu;
 		private ToolStripMenuItem _sendLiftBridgeFirstTimeProjectMenu;
-
 		/// <summary>
 		/// This is the file that our Message slice is configured to look for in the root project folder.
 		/// The actual Lexicon.fwstub doesn't contain anything.
@@ -74,7 +73,6 @@ namespace LanguageExplorer.SendReceive
 			Cache = cache;
 			ParentForm = (Form)mainWindow;
 			FlexApp = flexApp;
-
 			// Set up for handling antique Lift Bridge systems, if they are still around.
 			var repoMapFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LiftBridge", "LanguageProject_Repository_Map.xml");
 			// look for old liftbridge repo info in path similar to C:\Users\<user>\AppData\Local\LiftBridge\LanguageProject_Repository_Map.xml
@@ -87,7 +85,6 @@ namespace LanguageExplorer.SendReceive
 					_oldLiftBridgeProjects.Add(mappingNode.Attribute("projectguid").Value);
 				}
 			}
-
 			_liftProjectDir = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			_liftPathname = GetLiftPathname();
 			_isInFullBlownDisposeMode = true; // Help the dispose method know what to do.
@@ -105,7 +102,6 @@ namespace LanguageExplorer.SendReceive
 
 			Cache = cache;
 			ParentForm = parentForm;
-
 			_liftProjectDir = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			_liftPathname = liftPath;
 
@@ -120,26 +116,22 @@ namespace LanguageExplorer.SendReceive
 		public void RunBridge()
 		{
 			CommonBridgeServices.PrepareForSR(PropertyTable, Publisher, Cache, this);
-
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
 			{
 				return;
 			}
-
 			// Step 1. If notifier exists, re-try import (brutal or merciful, depending on contents of it).
 			if (RepeatPriorFailedImportIfNeeded())
 			{
 				return;
 			}
-
 			// Step 2. Export lift file. If fails, then call into bridge with undo_export_lift and quit.
 			if (!ExportLiftLexicon())
 			{
 				MessageBox.Show(ParentForm, LanguageExplorerResources.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LanguageExplorerResources.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
-
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
 			var fullProjectFileName = CommonBridgeServices.GetFullProjectFileName(Cache);
@@ -149,18 +141,15 @@ namespace LanguageExplorer.SendReceive
 				// Bail out, since the S/R failed for some reason.
 				return;
 			}
-
 			// Step 4. Import lift file. If fails, then add the notifier file.
 			if (!DoMercilessLiftImport(dataChanged))
 			{
 				return;
 			}
-
 			if (!dataChanged)
 			{
 				return;
 			}
-
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), fullProjectFileName);
 		}
@@ -188,7 +177,6 @@ namespace LanguageExplorer.SendReceive
 		{
 			var hasOldLiftproject = _oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString());
 			var isConfiguredForLiftSR = SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
-
 			_mainSendReceiveMenu.Enabled = hasOldLiftproject || isConfiguredForLiftSR;
 			_viewMessagesMenu.Enabled = CommonBridgeServices.NotesFileIsPresent(Cache, true);
 			_obtainLiftBridgeProjectMenu.Enabled = !Directory.Exists(CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder));
@@ -300,7 +288,6 @@ namespace LanguageExplorer.SendReceive
 		private static void HandlePotentialConflicts(IFieldWorksManager manager, string liftFolder, IReadOnlyDictionary<string, long> savedState, string fullProjectFileName)
 		{
 			var detectedLiftConflicts = false;
-
 			foreach (var file in Directory.GetFiles(liftFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				long oldLength;
@@ -315,7 +302,6 @@ namespace LanguageExplorer.SendReceive
 			{
 				return;
 			}
-
 			CommonBridgeServices.RefreshCacheWindowAndAll(manager, fullProjectFileName, "ViewLiftMessages", true);
 		}
 
@@ -334,13 +320,10 @@ namespace LanguageExplorer.SendReceive
 				MessageBox.Show(ParentForm, LanguageExplorerResources.kProjectAlreadyHasLiftRepo, LanguageExplorerResources.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 				return;
 			}
-
 			CommonBridgeServices.StopParser(Publisher);
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null,
-				null, out dummy, out _liftPathname);
-
+				LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out dummy, out _liftPathname);
 			if (!success || string.IsNullOrEmpty(_liftPathname))
 			{
 				_liftPathname = null;
@@ -367,12 +350,8 @@ namespace LanguageExplorer.SendReceive
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				CommonBridgeServices.GetFullProjectFileName(Cache),
-				CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.LiftConflictViewer,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, () => CommonBridgeServices.BroadcastMasterRefresh(Publisher),
-				out dummy1, out dummy2);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.LiftConflictViewer,
+				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, () => CommonBridgeServices.BroadcastMasterRefresh(Publisher), out dummy1, out dummy2);
 			if (!success)
 			{
 				CommonBridgeServices.ReportDuplicateBridge();
@@ -410,22 +389,16 @@ namespace LanguageExplorer.SendReceive
 			{
 				return true;
 			}
-
 			bool dummyDataChanged;
 			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				CommonBridgeServices.GetFullProjectFileName(Cache),
-				CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null,
-				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.MoveLift,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null, out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
 				CommonBridgeServices.ReportDuplicateBridge();
 				_liftPathname = null;
 				return false;
 			}
-
 			return true;
 		}
 
@@ -439,12 +412,10 @@ namespace LanguageExplorer.SendReceive
 			{
 				return false;
 			}
-
 			if (_liftPathname == null)
 			{
 				return false;
 			}
-
 			var previousImportStatus = LiftImportFailureServices.GetFailureStatus(_liftProjectDir);
 			switch (previousImportStatus)
 			{
@@ -537,7 +508,6 @@ namespace LanguageExplorer.SendReceive
 			progressDialog.Maximum = 100;
 			progressDialog.Position = 0;
 			string sLogFile = null;
-
 			if (File.Exists(LiftNotesPath))
 			{
 
@@ -547,7 +517,6 @@ namespace LanguageExplorer.SendReceive
 					ConvertLiftNotesToFlex(reader, writer);
 				}
 			}
-
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				string sFilename;
@@ -569,10 +538,8 @@ namespace LanguageExplorer.SendReceive
 				parser.SetStepsCompleted += ParserSetStepsCompleted;
 				parser.SetProgressMessage += ParserSetProgressMessage;
 				flexImporter.LiftFile = liftPathname;
-
 				flexImporter.LoadLiftRanges(liftPathname + "-ranges");
 				var cEntries = parser.ReadLiftFile(sFilename);
-
 				if (fMigrationNeeded)
 				{
 					// Try to move the migrated file to the temp directory, even if a copy of it
@@ -716,9 +683,8 @@ namespace LanguageExplorer.SendReceive
 			string dummy;
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
-			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null,
-				out dataChanged, out dummy);
+			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion,
+				CommonBridgeServices.LiftModelVersion, null, null, out dataChanged, out dummy);
 		}
 
 		/// <summary>
@@ -748,7 +714,6 @@ namespace LanguageExplorer.SendReceive
 				progressDialog.Maximum = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count;
 				progressDialog.Position = 0;
 				progressDialog.AllowCancel = false;
-
 				var exporter = new LiftExporter(Cache);
 				exporter.UpdateProgress += OnDumperUpdateProgress;
 				exporter.SetProgressMessage += OnDumperSetProgressMessage;
@@ -758,7 +723,6 @@ namespace LanguageExplorer.SendReceive
 					exporter.ExportLift(textWriter, Path.GetDirectoryName(_liftPathname));
 				}
 				LiftSorter.SortLiftFile(_liftPathname);
-
 				//Output the Ranges file
 				var outPathRanges = Path.ChangeExtension(_liftPathname, "lift-ranges");
 				using (var stringWriter = new StringWriter(new StringBuilder()))
@@ -767,7 +731,6 @@ namespace LanguageExplorer.SendReceive
 					File.WriteAllText(outPathRanges, stringWriter.ToString());
 				}
 				LiftSorter.SortLiftRangesFiles(outPathRanges);
-
 				if (File.Exists(FlexNotesPath))
 				{
 
@@ -777,7 +740,6 @@ namespace LanguageExplorer.SendReceive
 						ConvertFlexNotesToLift(reader, writer, Path.GetFileName(_liftPathname));
 					}
 				}
-
 				return _liftPathname;
 			}
 			catch
@@ -808,7 +770,6 @@ namespace LanguageExplorer.SendReceive
 			{
 				return;
 			}
-
 			var nMax = _progressDlg.Maximum;
 			if (_progressDlg.Position >= nMax)
 			{
@@ -831,13 +792,8 @@ namespace LanguageExplorer.SendReceive
 			{
 				return false;
 			}
-
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
-			HandlePotentialConflicts(FlexApp.FwManager,
-				liftFolder,
-				PrepareToDetectLiftConflicts(liftFolder),
-				CommonBridgeServices.GetFullProjectFileName(Cache));
-
+			HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), CommonBridgeServices.GetFullProjectFileName(Cache));
 			return true;
 		}
 
@@ -855,12 +811,9 @@ namespace LanguageExplorer.SendReceive
 			PrepareToDetectLiftConflicts(_liftPathname);
 			string dummy;
 			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				fullProjectFileName,
-				CommonBridgeServices.SendReceiveUser,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, CommonBridgeServices.SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
-				out dataChanged, out dummy);
+				null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out dummy);
 			if (!success)
 			{
 				CommonBridgeServices.ReportDuplicateBridge();
@@ -868,15 +821,12 @@ namespace LanguageExplorer.SendReceive
 				_liftPathname = null;
 				return false;
 			}
-
 			_liftPathname = GetLiftPathname();
-
 			if (_liftPathname == null)
 			{
 				dataChanged = false; // If there is no lift file, there cannot be any new data.
 				return false;
 			}
-
 			return true;
 		}
 

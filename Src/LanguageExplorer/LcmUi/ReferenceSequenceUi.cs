@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class ReferenceSequenceUi : VectorReferenceUi
 	{
-		readonly LcmRefSeq _lcmRefSeq;
+		private readonly LcmRefSeq _lcmRefSeq;
 
 		public ReferenceSequenceUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 			: base(cache, rootObj, referenceFlid, targetHvo)
@@ -99,12 +99,11 @@ namespace LanguageExplorer.LcmUi
 			// Move currently selected object to the next location
 			var iNew = m_iCurrent + 1;
 			Debug.Assert(iNew < _lcmRefSeq.Count);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move down/right/later in sequence", "Redo move down/right/later in sequence",
-				m_cache.ActionHandlerAccessor, () =>
-				{
-					_lcmRefSeq.RemoveAt(m_iCurrent);
-					_lcmRefSeq.Insert(iNew, m_hvoTarget);
-				});
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move down/right/later in sequence", "Redo move down/right/later in sequence", m_cache.ActionHandlerAccessor, () =>
+			{
+				_lcmRefSeq.RemoveAt(m_iCurrent);
+				_lcmRefSeq.Insert(iNew, m_hvoTarget);
+			});
 		}
 
 		public void OnMoveTargetDownInSequence(object commandObject)
@@ -116,12 +115,11 @@ namespace LanguageExplorer.LcmUi
 			// Move currently selected object to the previous location
 			var iNew = m_iCurrent - 1;
 			Debug.Assert(iNew >= 0);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move up/left/earlier in sequence", "Redo move up/left/earlier in sequence",
-				m_cache.ActionHandlerAccessor, () =>
-				{
-					_lcmRefSeq.RemoveAt(m_iCurrent);
-					_lcmRefSeq.Insert(iNew, m_hvoTarget);
-				});
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move up/left/earlier in sequence", "Redo move up/left/earlier in sequence", m_cache.ActionHandlerAccessor, () =>
+			{
+				_lcmRefSeq.RemoveAt(m_iCurrent);
+				_lcmRefSeq.Insert(iNew, m_hvoTarget);
+			});
 		}
 
 		/// <summary>
@@ -130,9 +128,9 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		private sealed class LcmRefSeq
 		{
-			readonly LcmCache m_cache;
-			readonly int m_hvo;
-			readonly int m_flid;
+			private readonly LcmCache m_cache;
+			private readonly int m_hvo;
+			private readonly int m_flid;
 
 			internal LcmRefSeq(LcmCache cache, int hvo, int flid)
 			{

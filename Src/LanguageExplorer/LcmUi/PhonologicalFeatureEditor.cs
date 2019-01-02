@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,7 +68,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; } = false;
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -118,10 +118,10 @@ namespace LanguageExplorer.LcmUi
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -214,13 +214,9 @@ namespace LanguageExplorer.LcmUi
 						m_closedFeature = featDefns.First() as IFsClosedFeature;
 					}
 				}
-
-				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
-																						   m_cache, false, PropertyTable, m_publisher,
-																						   PropertyTable.GetValue<Form>(FwUtils.window),
+				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree, m_cache, false, PropertyTable, m_publisher, PropertyTable.GetValue<Form>(FwUtils.window),
 																						   m_displayWs, m_closedFeature);
-				m_PhonologicalFeatureTreeManager.AfterSelect += m_PhonFeaturePopupTreeManager_AfterSelect;
-			}
+				m_PhonologicalFeatureTreeManager.AfterSelect += m_PhonFeaturePopupTreeManager_AfterSelect;}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);
 		}
 
@@ -272,7 +268,6 @@ namespace LanguageExplorer.LcmUi
 					}
 				}
 			}
-
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			ValueChanged?.Invoke(this, new FwObjectSelectionEventArgs(SelectedHvo));
@@ -310,7 +305,7 @@ namespace LanguageExplorer.LcmUi
 			var selectedObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(SelectedHvo);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			var interval = Math.Min(100, Math.Max(itemsToChange.Count()/50, 1));
+			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiStrings.ksUndoBEPhonemeFeatures, LcmUiStrings.ksRedoBEPhonemeFeatures);
 			if (SelectedHvo != 0)
 			{
@@ -318,7 +313,7 @@ namespace LanguageExplorer.LcmUi
 				foreach (var hvoPhoneme in itemsToChange)
 				{
 					i++;
-					if (i%interval == 0)
+					if (i % interval == 0)
 					{
 						state.PercentDone = i * 100 / itemsToChange.Count() + 20;
 						state.Breath();
@@ -359,7 +354,7 @@ namespace LanguageExplorer.LcmUi
 				fsTarget = m_PhonologicalFeatureTreeManager.CreateEmptyFeatureStructureInAnnotation(obj);
 				var fsClosedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 				fsTarget.FeatureSpecsOC.Add(fsClosedValue);
-				fsClosedValue.FeatureRA = (IFsFeatDefn) closedValue.Owner;
+				fsClosedValue.FeatureRA = (IFsFeatDefn)closedValue.Owner;
 				fsClosedValue.ValueRA = closedValue;
 			}
 			return fsTarget;
@@ -406,13 +401,13 @@ namespace LanguageExplorer.LcmUi
 			var tss = TsStringUtils.MakeString(labelToShow, m_cache.DefaultAnalWs);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			var interval = Math.Min(100, Math.Max(itemsToChange.Count()/50, 1));
+			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (var hvo in itemsToChange)
 			{
 				i++;
-				if (i%interval == 0)
+				if (i % interval == 0)
 				{
-					state.PercentDone = i*100/itemsToChange.Count();
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				var fEnable = IsItemEligible(m_sda, hvo, selectedObject, labelToShow);
@@ -495,7 +490,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				return true; // phoneme does not have any features yet, so it is eligible
 			}
-
 			var feats = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoFeats);
 			var clsid = feats.ClassID;
 			if (clsid != FsFeatStrucTags.kClassId)
@@ -510,7 +504,7 @@ namespace LanguageExplorer.LcmUi
 					var symFeatVal = selectedObject as IFsSymFeatVal;
 					if (symFeatVal != null)
 					{
-						return !features.FeatureSpecsOC.Any(s => s.ClassID == FsClosedValueTags.kClassId && ((IFsClosedValue) s).ValueRA == symFeatVal);
+						return !features.FeatureSpecsOC.Any(s => s.ClassID == FsClosedValueTags.kClassId && ((IFsClosedValue)s).ValueRA == symFeatVal);
 					}
 					break;
 				case FsFeatStrucTags.kClassId: // user has specified one or more feature/value pairs
@@ -520,7 +514,7 @@ namespace LanguageExplorer.LcmUi
 						return !features.FeatureSpecsOC.Any(s =>
 							s.ClassID == FsClosedValueTags.kClassId &&
 							s.FeatureRA.Abbreviation.BestAnalysisAlternative.Text == FeatDefnAbbr &&
-							((IFsClosedValue) s).ValueRA.Abbreviation.BestAnalysisAlternative.Text == labelToShow);
+							((IFsClosedValue)s).ValueRA.Abbreviation.BestAnalysisAlternative.Text == labelToShow);
 					}
 
 					break;

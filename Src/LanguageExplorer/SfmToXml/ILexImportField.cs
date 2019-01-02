@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2028 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,55 +17,55 @@ namespace LanguageExplorer.SfmToXml
 		/// <summary>
 		/// the FW field id
 		/// </summary>
-		string ID { get;}
+		string ID { get; }
 		/// <summary>
 		/// the user readable name
 		/// </summary>
-		string Property { get;}
+		string Property { get; }
 		/// <summary>
 		/// the UI Name
 		/// </summary>
-		string UIName { get;}
+		string UIName { get; }
 		/// <summary>
 		/// FW data type 'like' property
 		/// </summary>
-		string Signature { get;}
+		string Signature { get; }
 		/// <summary>
 		/// true if it's a list
 		/// </summary>
-		bool IsList { get;}
+		bool IsList { get; }
 		/// <summary>
 		/// true if it's a multi
 		/// </summary>
-		bool IsMulti { get;}
+		bool IsMulti { get; }
 		/// <summary>
 		/// true if it's a ref: 'lxrel' and 'cref'
 		/// </summary>
-		bool IsRef { get;}
+		bool IsRef { get; }
 		/// <summary>
 		/// true if it's an auto
 		/// </summary>
-		bool IsAutoField { get;}
+		bool IsAutoField { get; }
 		/// <summary>
 		/// only can have on unique per object(overrides begin marker logic)
 		/// </summary>
-		bool IsUnique { get;}
+		bool IsUnique { get; }
 		/// <summary>
 		/// original XML
 		/// </summary>
-		XElement Element { get;}
+		XElement Element { get; }
 		/// <summary>
 		/// mdf markers normally associated with this field
 		/// </summary>
-		ICollection Markers { get;}
+		ICollection Markers { get; }
 		/// <summary>
 		/// type of data [integer, date, string, ...]
 		/// </summary>
-		string DataType { get; set;}
+		string DataType { get; set; }
 		/// <summary>
 		/// true if this field allows the abbr field to be edited
 		/// </summary>
-		bool IsAbbrField { get; set;}
+		bool IsAbbrField { get; set; }
 		/// <summary>
 		/// Read a 'Field' node from the controlled xml file that contains the ImportFields
 		/// </summary>
@@ -73,7 +73,7 @@ namespace LanguageExplorer.SfmToXml
 		/// <summary>
 		/// return an equivalent Cls object
 		/// </summary>
-		ClsFieldDescription ClsFieldDescription { get;}
+		ClsFieldDescription ClsFieldDescription { get; }
 		/// <summary />
 		ClsFieldDescription ClsFieldDescriptionWith(ClsFieldDescription fieldIn);
 	}

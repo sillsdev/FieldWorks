@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
@@ -12,7 +12,6 @@ namespace LanguageExplorer.MGA
 {
 	internal class MasterInflectionFeature : MasterItem
 	{
-
 		internal MasterInflectionFeature(XmlNode node, MGAImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
 		{
@@ -67,14 +66,9 @@ namespace LanguageExplorer.MGA
 			{
 				return; // It's already in the database, so nothing more can be done.
 			}
-
-			using (var undoHelper = new UndoableUnitOfWorkHelper(
-				cache.ServiceLocator.GetInstance<IActionHandler>(),
-				MGAStrings.ksUndoCreateInflectionFeature,
-				MGAStrings.ksRedoCreateInflectionFeature))
+			using (var undoHelper = new UndoableUnitOfWorkHelper(cache.ServiceLocator.GetInstance<IActionHandler>(), MGAStrings.ksUndoCreateInflectionFeature, MGAStrings.ksRedoCreateInflectionFeature))
 			{
 				FeatureDefn = cache.LanguageProject.MsFeatureSystemOA.AddFeatureFromXml(Node);
-
 				// Attempt to add feature to category as an inflectable feature
 				var sPosId = XmlUtils.GetOptionalAttributeValue(Node, "posid");
 				var node = Node;

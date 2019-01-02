@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -261,7 +261,6 @@ namespace LanguageExplorer.SfmToXml
 				m_outOfOrderWarningsEntriesOrdered.Add(markers);
 				m_outOfOrderWarningsEntriesKEYS.Add(entryKey);
 			}
-
 			List<int> lines;
 			if (markers.ContainsKey(marker))
 			{
@@ -291,13 +290,11 @@ namespace LanguageExplorer.SfmToXml
 			// put out the root error element
 			xmlOutput.WriteComment(" This element contains error, warning and sfm data related information ");
 			xmlOutput.WriteStartElement("ErrorLog");
-
 			OutputErrorElement(xmlOutput);                  // errors
 			OutputWarningElement(xmlOutput);                // warnings
 			OutputOutOfOrderInfo(xmlOutput);                       // out of order cautions
 			OutputSfmInfo(xmlOutput);                       // general statistics on sfm usage
 			xmlOutput.WriteEndElement();                    // end the "ErrorLog" element
-
 			// remove all the errors and warnings
 			m_errors.Clear();
 			m_warnings.Clear();
@@ -434,7 +431,6 @@ namespace LanguageExplorer.SfmToXml
 				var nameKey = entryName.Substring(startPos);
 				xmlOutput.WriteAttributeString("name", nameKey);
 				xmlOutput.WriteAttributeString("count", markers.Count.ToString());
-
 				foreach (var markerInfoKvp in markers)
 				{
 					var marker = markerInfoKvp.Key;
@@ -442,7 +438,7 @@ namespace LanguageExplorer.SfmToXml
 					xmlOutput.WriteStartElement("Marker");
 					xmlOutput.WriteAttributeString("name", marker);
 					xmlOutput.WriteAttributeString("count", lines.Count.ToString());
-					foreach (int line in lines)
+					foreach (var line in lines)
 					{
 						xmlOutput.WriteStartElement("Line");
 						xmlOutput.WriteAttributeString("value", line.ToString());

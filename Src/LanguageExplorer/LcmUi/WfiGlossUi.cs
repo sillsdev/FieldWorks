@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,9 +15,7 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class WfiGlossUi : CmObjectUi
 	{
-		/// <summary>
-		/// Create one.
-		/// </summary>
+		/// <summary />
 		public WfiGlossUi(ICmObject obj)
 			: base(obj)
 		{
@@ -31,8 +29,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			wp.m_title = LcmUiStrings.ksMergeWordGloss;
 			wp.m_label = LcmUiStrings.ksGlosses;
-
-			var anal = (IWfiAnalysis) MyCmObject.Owner;
+			var anal = (IWfiAnalysis)MyCmObject.Owner;
 			ITsString tss;
 			int nVar;
 			int ws;
@@ -62,7 +59,7 @@ namespace LanguageExplorer.LcmUi
 #endif
 			guiControl = "MergeWordGlossList";
 			helpTopic = "khtpMergeWordGloss";
-			var me = (IWfiGloss) MyCmObject;
+			var me = (IWfiGloss)MyCmObject;
 			tss = me.ShortNameTSS;
 			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			return new DummyCmObject(m_hvo, tss.Text, ws);

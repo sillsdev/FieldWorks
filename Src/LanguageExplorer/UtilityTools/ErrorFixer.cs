@@ -1,15 +1,15 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.LCModel;
-using System.Windows.Forms;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.FixData;
 using SIL.LCModel.Utils;
 
@@ -20,7 +20,9 @@ namespace LanguageExplorer.UtilityTools
 	/// </summary>
 	internal sealed class ErrorFixer : IUtility
 	{
-		private UtilityDlg m_dlg;
+		private UtilityDlg _dlg;
+		private List<string> _errors = new List<string>();
+		private int _errorsFixed;
 
 		/// <summary />
 		internal ErrorFixer(UtilityDlg utilityDlg)
@@ -29,7 +31,7 @@ namespace LanguageExplorer.UtilityTools
 			{
 				throw new ArgumentNullException(nameof(utilityDlg));
 			}
-			m_dlg = utilityDlg;
+			_dlg = utilityDlg;
 		}
 
 		/// <summary>
@@ -52,9 +54,9 @@ namespace LanguageExplorer.UtilityTools
 		/// </summary>
 		public void OnSelection()
 		{
-			m_dlg.WhenDescription = LanguageExplorerResources.ksUseErrorFixerWhen;
-			m_dlg.WhatDescription = LanguageExplorerResources.ksErrorFixerUtilityAttemptsTo;
-			m_dlg.RedoDescription = LanguageExplorerResources.ksGenericUtilityCannotUndo;
+			_dlg.WhenDescription = LanguageExplorerResources.ksUseErrorFixerWhen;
+			_dlg.WhatDescription = LanguageExplorerResources.ksErrorFixerUtilityAttemptsTo;
+			_dlg.RedoDescription = LanguageExplorerResources.ksGenericUtilityCannotUndo;
 		}
 
 		/// <summary>
@@ -66,7 +68,7 @@ namespace LanguageExplorer.UtilityTools
 			{
 				try
 				{
-					if (dlg.ShowDialog(m_dlg) != DialogResult.OK)
+					if (dlg.ShowDialog(_dlg) != DialogResult.OK)
 					{
 						return;
 					}
@@ -75,9 +77,9 @@ namespace LanguageExplorer.UtilityTools
 					{
 						return;
 					}
-					using (new WaitCursor(m_dlg))
+					using (new WaitCursor(_dlg))
 					{
-						using (var progressDlg = new ProgressDialogWithTask(m_dlg))
+						using (var progressDlg = new ProgressDialogWithTask(_dlg))
 						{
 							var fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 							if (fixes.Length <= 0)
@@ -103,7 +105,6 @@ namespace LanguageExplorer.UtilityTools
 			_errorsFixed = 0;
 			_errors.Clear();
 			data.FixErrorsAndSave();
-
 			foreach (var err in _errors)
 			{
 				bldr.AppendLine(err);
@@ -111,8 +112,6 @@ namespace LanguageExplorer.UtilityTools
 			return bldr.ToString();
 		}
 
-		private List<string> _errors = new List<string>();
-		private int _errorsFixed;
 		private void LogErrors(string message, bool errorFixed)
 		{
 			_errors.Add(message);

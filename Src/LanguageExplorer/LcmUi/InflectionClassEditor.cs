@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,13 +26,13 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class InflectionClassEditor : IBulkEditSpecControl, IDisposable
 	{
-		TreeCombo m_tree;
-		LcmCache m_cache;
+		private TreeCombo m_tree;
+		private LcmCache m_cache;
 		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
-		InflectionClassPopupTreeManager m_InflectionClassTreeManager;
-		int m_selectedHvo;
-		string m_selectedLabel;
+		private InflectionClassPopupTreeManager m_InflectionClassTreeManager;
+		private int m_selectedHvo;
+		private string m_selectedLabel;
 		private int m_displayWs;
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -58,7 +58,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -109,9 +109,9 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -221,9 +221,7 @@ namespace LanguageExplorer.LcmUi
 				m_selectedHvo = 0;
 				m_selectedLabel = string.Empty;
 			}
-
 			ControlActivated?.Invoke(this, new EventArgs());
-
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			ValueChanged?.Invoke(this, new FwObjectSelectionEventArgs(m_selectedHvo));
@@ -234,7 +232,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public IVwStylesheet Stylesheet
 		{
-			set {  }
+			set { }
 		}
 
 		/// <summary>
@@ -269,7 +267,7 @@ namespace LanguageExplorer.LcmUi
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach(var hvoSense in itemsToChange)
+			foreach (var hvoSense in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
@@ -277,7 +275,6 @@ namespace LanguageExplorer.LcmUi
 					state.PercentDone = i * 20 / itemsToChange.Count();
 					state.Breath();
 				}
-
 				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS))
 				{
 					continue;
@@ -305,17 +302,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				var entry = kvp.Key.Item1;
 				var sensesToChange = kvp.Value;
-				IMoStemMsa msmTarget = null;
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-				{
-					var msm = msa as IMoStemMsa;
-					if (msm?.InflectionClassRA != null && msm.InflectionClassRA.Hvo == m_selectedHvo)
-					{
-						// Can reuse this one!
-						msmTarget = msm;
-						break;
-					}
-				}
+				var msmTarget = entry.MorphoSyntaxAnalysesOC.Select(msa => msa as IMoStemMsa).FirstOrDefault(msm => msm?.InflectionClassRA != null && msm.InflectionClassRA.Hvo == m_selectedHvo);
 				if (msmTarget == null)
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
@@ -323,13 +310,7 @@ namespace LanguageExplorer.LcmUi
 					var otherSenses = new List<ILexSense>();
 					if (entry.SensesOS.Count != sensesToChange.Count)
 					{
-						foreach (var ls in entry.SensesOS)
-						{
-							if (!sensesToChange.Contains(ls))
-							{
-								otherSenses.Add(ls);
-							}
-						}
+						otherSenses.AddRange(entry.SensesOS.Where(ls => !sensesToChange.Contains(ls)));
 					}
 					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 					{
@@ -422,7 +403,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotSupportedException("The method or operation is not supported.");
 		}
 
 		/// <summary>
@@ -438,7 +419,7 @@ namespace LanguageExplorer.LcmUi
 			throw new NotSupportedException();
 		}
 
-		public List<int> FieldPath => new List<int>(new[]{LexSenseTags.kflidMorphoSyntaxAnalysis, MoStemMsaTags.kflidPartOfSpeech, MoStemMsaTags.kflidInflectionClass});
+		public List<int> FieldPath => new List<int>(new[] { LexSenseTags.kflidMorphoSyntaxAnalysis, MoStemMsaTags.kflidPartOfSpeech, MoStemMsaTags.kflidInflectionClass });
 
 		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
@@ -509,6 +490,7 @@ namespace LanguageExplorer.LcmUi
 			/// Default constructor for persistence.
 			/// </summary>
 			public InflectionClassFilter() { }
+
 			public InflectionClassFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 				: base(cache, mode, targets, colSpec)
 			{

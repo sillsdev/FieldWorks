@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -63,7 +63,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 			if (uniqueFields != null)
 			{
-				SplitString(uniqueFields,  m_uniqueFields);
+				SplitString(uniqueFields, m_uniqueFields);
 			}
 		}
 
@@ -115,12 +115,10 @@ namespace LanguageExplorer.SfmToXml
 			result = result.Replace("&", "&amp;");
 			result = result.Replace("<", "&lt;");
 			result = result.Replace(">", "&gt;");
-
 			// add langDef element
 			result = $"<level {result}/>";
 			return result;
 		}
-
 
 		public string Name { get; private set; }
 
@@ -216,7 +214,6 @@ namespace LanguageExplorer.SfmToXml
 				Converter.Log.AddError(string.Format(SfmToXmlStrings.HierarchyLevel0LacksBeginWithAtLeast1SFM, Name));
 				success = false;
 			}
-
 			return success;
 		}
 
@@ -320,7 +317,7 @@ namespace LanguageExplorer.SfmToXml
 			{
 				var entry = dictionaryEntry.Value as ClsHierarchyEntry;
 				leaf.Add(entry.Name, null);     // in C++ this would be a 'set' type
-				foreach (string name in entry.Ancestors)
+				foreach (var name in entry.Ancestors)
 				{
 					if (!root.ContainsKey(name))
 					{
@@ -340,7 +337,6 @@ namespace LanguageExplorer.SfmToXml
 					myEnumerator = leaf.GetEnumerator();
 				}
 			}
-
 			// if we have more or less than 1 root item, this is an error
 			if (root.Count != 1)
 			{

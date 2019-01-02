@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,6 +14,7 @@ namespace LanguageExplorer.SfmToXml
 	public class LexImportOption : ILexImportOption
 	{
 		public string Id { get; private set; }
+
 		public string Type { get; private set; }
 
 		public bool IsChecked { get; private set; }

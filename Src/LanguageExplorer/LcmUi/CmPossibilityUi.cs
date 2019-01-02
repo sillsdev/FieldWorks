@@ -115,10 +115,9 @@ namespace LanguageExplorer.LcmUi
 
 		public static string GetPossibilityDisplayName(ICmPossibilityList list)
 		{
-			var listName = list.Owner != null ? list.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(list.OwningFlid)
-				: list.Name.BestAnalysisVernacularAlternative.Text;
+			var listName = list.Owner != null ? list.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(list.OwningFlid) : list.Name.BestAnalysisVernacularAlternative.Text;
 			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
-			if (itemsTypeName != "*" + listName + "*")
+			if (itemsTypeName != $"*{listName}*")
 			{
 				return itemsTypeName;
 			}
@@ -137,7 +136,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				var owningFieldName = m_cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
 				var itemsTypeName = GetPossibilityDisplayName(owningList);
-				return itemsTypeName != "*" + owningFieldName + "*" ? itemsTypeName : StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
+				return itemsTypeName != $"*{owningFieldName}*" ? itemsTypeName : StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
 			}
 		}
 
@@ -155,17 +154,14 @@ namespace LanguageExplorer.LcmUi
 			var rootPoss = possItem.MainPossibility;
 			var hvoRootItem = rootPoss.Hvo;
 			var hvoPossList = rootPoss.OwningList.Hvo;
-
 			// If we get here hvoPossList is a possibility list and hvoRootItem is a top level item in that list
 			// and possItem is, or is a subpossibility of, that top level item.
-
 			// 1. Check to see if hvoRootItem is a chart template containing our target.
 			// If so, hvoPossList is owned in the chart templates property.
 			if (CheckAndReportBadDiscourseTemplateAdd(cache, possItem.Hvo, hvoRootItem, hvoPossList))
 			{
 				return true;
 			}
-
 			// 2. Check to see if hvoRootItem is a TextMarkup TagList containing our target (i.e. a Tag type).
 			// If so, hvoPossList is owned in the text markup tags property.
 			return CheckAndReportBadTagListAdd(cache, possItem.Hvo, hvoRootItem, hvoPossList);
@@ -177,7 +173,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false; // some other list we don't care about.
 			}
-
 			// Confirm the two-level rule.
 			if (hvoItem != hvoRootItem)
 			{
@@ -225,7 +220,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false;
 			}
-
 			return CanDeleteTextMarkupTag(out cannotDeleteMsg) && base.CanDelete(out cannotDeleteMsg);
 		}
 
@@ -242,19 +236,18 @@ namespace LanguageExplorer.LcmUi
 
 		private bool CanModifyChartColumn(out string msg)
 		{
-			var poss = (ICmPossibility) MyCmObject;
+			var poss = (ICmPossibility)MyCmObject;
 			if (poss.IsDefaultDiscourseTemplate)
 			{
 				msg = LcmUiStrings.ksCantDeleteDefaultDiscourseTemplate;
 				return false;
 			}
-
 			if (poss.IsThisOrDescendantInUseAsChartColumn)
 			{
-				var rootPossibility = (ICmPossibility) MyCmObject;
+				var rootPossibility = (ICmPossibility)MyCmObject;
 				while (rootPossibility.Owner is ICmPossibility)
 				{
-					rootPossibility = (ICmPossibility) rootPossibility.Owner;
+					rootPossibility = (ICmPossibility)rootPossibility.Owner;
 				}
 				var chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
 				var textName = ((IDsConstChart)chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
@@ -262,39 +255,35 @@ namespace LanguageExplorer.LcmUi
 				msg = string.Format(LcmUiStrings.ksCantModifyTemplateInUse, textName);
 				return false;
 			}
-
 			msg = null;
 			return true;
 		}
 
 		private bool CanDeleteTextMarkupTag(out string msg)
 		{
-			var poss = (ICmPossibility) MyCmObject;
+			var poss = (ICmPossibility)MyCmObject;
 			if (poss.IsOnlyTextMarkupTag)
 			{
 				msg = LcmUiStrings.ksCantDeleteLastTagList;
 				return false;
 			}
-
-			ITextTag usedTag = poss.Services.GetInstance<ITextTagRepository>().GetByTextMarkupTag(poss).FirstOrDefault();
+			var usedTag = poss.Services.GetInstance<ITextTagRepository>().GetByTextMarkupTag(poss).FirstOrDefault();
 			if (usedTag != null)
 			{
 				string textName = null;
 				if (usedTag.BeginSegmentRA != null)
 				{
 					var ws = usedTag.Cache.LangProject.DefaultWsForMagicWs(WritingSystemServices.kwsFirstAnalOrVern);
-					var text = (IStText) usedTag.BeginSegmentRA.Owner.Owner;
+					var text = (IStText)usedTag.BeginSegmentRA.Owner.Owner;
 					textName = text.Title.get_String(ws).Text;
 					if (string.IsNullOrEmpty(textName))
 					{
 						textName = text.ShortName;
 					}
 				}
-				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? LcmUiStrings.ksCantDeleteMarkupTagInUse
-					: LcmUiStrings.ksCantDeleteMarkupTypeInUse, textName);
+				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? LcmUiStrings.ksCantDeleteMarkupTagInUse : LcmUiStrings.ksCantDeleteMarkupTypeInUse, textName);
 				return false;
 			}
-
 			msg = null;
 			return true;
 		}

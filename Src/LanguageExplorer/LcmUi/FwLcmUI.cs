@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,8 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.LcmUi.Dialogs;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Utils;
@@ -126,18 +126,21 @@ namespace LanguageExplorer.LcmUi
 					break;
 			}
 			SynchronizeInvoke.Invoke(() =>
+			{
+				if (MiscUtils.IsMono)
 				{
-					if (MiscUtils.IsMono)
-					{
-						// Mono doesn't support Help
-						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
-					}
-					else if (string.IsNullOrEmpty(helpTopic))
-						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
-					else
-						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
-							0, m_helpTopicProvider.HelpFile, HelpNavigator.Topic, helpTopic);
-				});
+					// Mono doesn't support Help
+					MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
+				}
+				else if (string.IsNullOrEmpty(helpTopic))
+				{
+					MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
+				}
+				else
+				{
+					MessageBox.Show(message, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile, HelpNavigator.Topic, helpTopic);
+				}
+			});
 		}
 
 		/// <summary>
@@ -171,17 +174,14 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
-			return SynchronizeInvoke.Invoke(() => MessageBox.Show(
-				string.Format(LcmUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
-				backupPath, File.GetLastWriteTime(backupPath)),
-				LcmUiStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Error) == DialogResult.Yes);
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+				backupPath, File.GetLastWriteTime(backupPath)), LcmUiStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 
 		/// <summary>
 		/// Present a message to the user and allow the options to Retry or Cancel
 		/// </summary>
-		/// <returns>True to retry.  False otherwise</returns>
+		/// <returns>True to retry. False otherwise.</returns>
 		public bool Retry(string msg, string caption)
 		{
 			return SynchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);

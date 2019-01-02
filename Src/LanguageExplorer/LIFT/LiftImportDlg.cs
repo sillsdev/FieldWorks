@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer.LIFT
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
-		string m_sLogFile;		// name of HTML log file (if successful).
+		private string m_sLogFile;      // name of HTML log file (if successful).
 		private OpenFileDialogAdapter openFileDialog1;
 		private MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
@@ -129,7 +129,6 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
-
 			tbPath.Text = openFileDialog1.FileName;
 			UpdateButtons();
 			if (btnOK.Enabled)
@@ -226,7 +225,6 @@ namespace LanguageExplorer.LIFT
 				{
 					return null;
 				}
-
 				//Import the LIFT file and ranges file.
 				m_progressDlg.Message = LanguageExplorerControls.ksLoadingVariousLists;
 				var flexImporter = new FlexLiftMerger(m_cache, m_msImport, m_chkTrustModTimes.Checked);
@@ -234,16 +232,13 @@ namespace LanguageExplorer.LIFT
 				parser.SetTotalNumberSteps += parser_SetTotalNumberSteps;
 				parser.SetStepsCompleted += parser_SetStepsCompleted;
 				parser.SetProgressMessage += parser_SetProgressMessage;
-
 				flexImporter.LiftFile = sTempOrigFile;
-
 				//Before imporing the LIFT files ensure the LDML (language definition files) have the correct writing system codes.
 				flexImporter.LdmlFilesMigration(sLIFTtempFolder, sFilename, sTempOrigFile + "-ranges");
 				//Import the Ranges file.
-				flexImporter.LoadLiftRanges(sTempOrigFile + "-ranges");	// temporary (?) fix for FWR-3869.
+				flexImporter.LoadLiftRanges(sTempOrigFile + "-ranges");
 				//Import the LIFT data file.
 				var cEntries = parser.ReadLiftFile(sFilename);
-
 				if (fMigrationNeeded)
 				{
 					// Try to move the migrated file to the temp directory, even if a copy of it
@@ -270,7 +265,6 @@ namespace LanguageExplorer.LIFT
 					bldr.AppendLine(error.Message);
 					bldr.AppendLine();
 					bldr.AppendLine(error.StackTrace);
-
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 					{
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
@@ -340,7 +334,7 @@ namespace LanguageExplorer.LIFT
 			return null;
 		}
 
-		void parser_SetProgressMessage(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MessageArgs e)
+		private void parser_SetProgressMessage(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MessageArgs e)
 		{
 			if (m_progressDlg != null)
 			{
@@ -348,7 +342,7 @@ namespace LanguageExplorer.LIFT
 			}
 		}
 
-		void parser_SetTotalNumberSteps(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.StepsArgs e)
+		private void parser_SetTotalNumberSteps(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.StepsArgs e)
 		{
 			if (m_progressDlg != null)
 			{
@@ -357,7 +351,7 @@ namespace LanguageExplorer.LIFT
 			}
 		}
 
-		void parser_SetStepsCompleted(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.ProgressEventArgs e)
+		private void parser_SetStepsCompleted(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.ProgressEventArgs e)
 		{
 			if (m_progressDlg != null)
 			{

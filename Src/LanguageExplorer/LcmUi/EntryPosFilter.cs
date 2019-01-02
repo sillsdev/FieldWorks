@@ -18,10 +18,14 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	internal class EntryPosFilter : ListChoiceFilter
 	{
+		private const int kflidMsas = LexEntryTags.kflidMorphoSyntaxAnalyses;
+		private const int kflidEntrySenses = LexEntryTags.kflidSenses;
+
 		/// <summary>
 		/// Default constructor for persistence.
 		/// </summary>
 		public EntryPosFilter() { }
+
 		internal EntryPosFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 			: base(cache, mode, targets)
 		{
@@ -37,9 +41,6 @@ namespace LanguageExplorer.LcmUi
 			}
 			return DynamicLoader.TypeForLoaderNode(colSpec) == GetType();
 		}
-
-		const int kflidMsas = LexEntryTags.kflidMorphoSyntaxAnalyses;
-		const int kflidEntrySenses = LexEntryTags.kflidSenses;
 
 		/// <summary>
 		/// Get the items to be compared against the filter.

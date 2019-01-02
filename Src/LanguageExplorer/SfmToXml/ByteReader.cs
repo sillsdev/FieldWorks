@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,6 @@ namespace LanguageExplorer.SfmToXml
 		private byte[] m_sfmLookAheadData;
 		private bool m_hasLookAhead;        // true if the GetSfmData return true;
 		private int m_LookAheadLineNumber;  // line number of look ahead sfm
-
 		// BOM related data
 		private Encoding m_BOMEncoding;
 		private int m_BOMLength;
@@ -99,13 +98,10 @@ namespace LanguageExplorer.SfmToXml
 			m_position = 0;
 			m_foundBOM = false;
 			m_LookAheadLineNumber = 0;
-
 			// save the new line and space as byte[] for future testing:
 			m_NL = Converter.WideToMulti(Environment.NewLine, Encoding.ASCII);
 			m_space = Converter.WideToMulti(" ", Encoding.ASCII);
-
 			m_FileData = content;
-
 			// read and process a BOM if present
 			CheckforAndHandleBOM();
 			m_EOL = GetEOLForThisFile();
@@ -139,7 +135,6 @@ namespace LanguageExplorer.SfmToXml
 			var utf16be = new byte[] { 0xfe, 0xff };
 			var utf16le = new byte[] { 0xff, 0xfe };
 			var utf8 = new byte[] { 0xef, 0xbb, 0xbf };
-
 			if (IsCurrentData(utf32le) || IsCurrentData(utf32be))
 			{
 				m_foundBOM = true;
@@ -168,7 +163,6 @@ namespace LanguageExplorer.SfmToXml
 				m_BOMEncoding = Encoding.BigEndianUnicode;
 				m_position = m_BOMLength;
 			}
-
 			if (m_foundBOM) // has one
 			{
 				if (m_BOMEncoding == Encoding.UTF8)
@@ -185,12 +179,10 @@ namespace LanguageExplorer.SfmToXml
 						var charCount = uniDecoder.GetCharCount(m_FileData, 2, m_FileData.Length - 2);
 						var chars = new char[charCount];
 						uniDecoder.GetChars(m_FileData, 2, m_FileData.Length - 2, chars, 0);
-
 						// decode the wide chars to utf8 bytes
 						var newLength = utf8Encoder.GetByteCount(chars);
 						m_FileData = new byte[newLength];
 						utf8Encoder.GetBytes(chars, 0, chars.Length, m_FileData, 0);
-
 						// log msg for user to see
 						m_Log?.AddWarning(string.Format(SfmToXmlStrings.FileConvertedFrom0To1, m_BOMEncoding.WebName, utf8Encoder.WebName));
 					}
@@ -273,7 +265,6 @@ namespace LanguageExplorer.SfmToXml
 				}
 				m_FoundLineNumber = m_LookAheadLineNumber;
 				m_hasLookAhead = ReallyGetNextSfmMarkerAndData(out m_sfmLookAheadMarker, out m_sfmLookAheadData, out m_sfmLookAheadMarkerBadBytes);
-
 				// make sure the line number is correct
 				var saveLineNum = m_FoundLineNumber;
 				m_FoundLineNumber = m_LookAheadLineNumber;
@@ -303,11 +294,12 @@ namespace LanguageExplorer.SfmToXml
 			}
 			var startOfMarker = (int)m_position;
 			// currently positioned at a backslash byte
-			byte[] eol = new byte[] { 0x0a, 0x0d };
+			var eol = new byte[] { 0x0a, 0x0d };
 			if (m_FileData[m_position] == m_backSlash)
 			{
 				// now start to get the marker
-				m_position++;   // move off the backslash
+				// // move off the backslash
+				m_position++;
 				// The current byte is a backslash, use all bytes until white space
 				// as part of the marker
 				var whitespace = new byte[] { 0x20, 0x09 };
@@ -325,7 +317,6 @@ namespace LanguageExplorer.SfmToXml
 				// convert the bytes of the sfm marker to the string for it
 				MultiToWideError mwError;
 				sfmMarker = Converter.MultiToWideWithERROR(m_FileData, startOfMarker + 1, endOfMarker, Encoding.UTF8, out mwError, out badSfmBytes);
-
 				if (m_position < m_FileData.Length)
 				{
 					// eat all the white space after the marker
@@ -346,7 +337,6 @@ namespace LanguageExplorer.SfmToXml
 			}
 			m_FoundLineNumber = LineNumber;   // save the line for the found marker
 			sfmData = GetBytesUptoNextSfmMarker();
-
 			return true;
 		}
 
@@ -467,7 +457,6 @@ namespace LanguageExplorer.SfmToXml
 				returnData[writePos++] = m_FileData[readPos++];
 			}
 			m_position = foundPos + 1;  // update the member position variable
-
 			// If we didn't replace any searched-for strings with spaces, we are good to go:
 			if (returnBufSize == writePos)
 			{
@@ -497,7 +486,7 @@ namespace LanguageExplorer.SfmToXml
 			{
 				return false; // Not enough space to contain searchData
 			}
-			// Iterate over searchData's bytes, checking that each one matches the corrresponding
+			// Iterate over searchData's bytes, checking that each one matches the corresponding
 			// byte in readData:
 			for (long i = 0; i < searchData.LongLength; i++)
 			{
@@ -506,7 +495,6 @@ namespace LanguageExplorer.SfmToXml
 					return false;
 				}
 			}
-
 			// All bytes in searchData match:
 			return true;
 		}
@@ -515,7 +503,7 @@ namespace LanguageExplorer.SfmToXml
 		/// Tests the given data at the given position for a match with given search data.
 		/// If there is no match, or the match is at the end of the given data, the data
 		/// is copied into a separate buffer. Otherwise, a space is copied over.
-		/// This effectivly copies the given data to the output data, replacing matching
+		/// This effectively copies the given data to the output data, replacing matching
 		/// searched-for data with a space, except at the end.
 		/// </summary>
 		/// <param name="readData">The source data</param>
@@ -554,7 +542,6 @@ namespace LanguageExplorer.SfmToXml
 				}
 				return true;
 			}
-
 			// The byte sequence was not found, so return "no work done" value:
 			return false;
 		}

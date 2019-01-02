@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,6 @@ namespace LanguageExplorer.SendReceive
 			{
 				return ImportFailureStatus.NoImportNeeded;
 			}
-
 			var fileContents = File.ReadAllText(failurePathname);
 			return fileContents.Contains(LanguageExplorerResources.kBasicFailureFileContents) ? ImportFailureStatus.BasicImportNeeded : ImportFailureStatus.StandardImportNeeded;
 		}
@@ -44,7 +43,6 @@ namespace LanguageExplorer.SendReceive
 			// using the same LIFT file that had failed, before.
 			// If that re-try attempt also fails, the user will need to continue re-trying the import,
 			// until FLEx is fixed and can do the import.
-
 			// Write out the failure notice.
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);
 			File.WriteAllText(failurePathname, LanguageExplorerResources.kStandardFailureFileContents);
@@ -61,8 +59,7 @@ namespace LanguageExplorer.SendReceive
 				return;
 			}
 			var contents = File.ReadAllText(noticeFilePath);
-			MessageBoxUtils.Show(parentWindow,
-				contents.Contains(LanguageExplorerResources.kStandardFailureFileContents)
+			MessageBoxUtils.Show(parentWindow, contents.Contains(LanguageExplorerResources.kStandardFailureFileContents)
 					? LanguageExplorerResources.kFlexStandardImportFailureMessage
 					: LanguageExplorerResources.kBasicImportFailureMessage, LanguageExplorerResources.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
@@ -78,7 +75,6 @@ namespace LanguageExplorer.SendReceive
 			// using the same LIFT file that had failed, before.
 			// If that re-try attempt also fails, the user will need to continue re-trying the import,
 			// until FLEx is fixed and can do the import.
-
 			// Write out the failure notice.
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);
 			File.WriteAllText(failurePathname, LanguageExplorerResources.kBasicFailureFileContents);

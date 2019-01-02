@@ -1,19 +1,20 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
@@ -36,7 +37,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 	{
 		#region Member variables
 		private List<int> m_rghvo;
-		private int m_hvoSelected;		// object selected in the view.
+		private int m_hvoSelected;      // object selected in the view.
 		private XmlView m_xv;
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
@@ -47,10 +48,13 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private Button btnClose;
 		private Panel panel1;
 		private Button btnHelp;
-
-		private System.ComponentModel.Container components = null;
+		private IContainer components = null;
 		private const string s_helpTopicKey = "khtpFindInDictionary";
 		private HelpProvider helpProvider;
+		/// <summary>
+		/// Protect against recursing into the selection changed handler, as it changes the selection itself.
+		/// </summary>
+		private bool m_fInSelChange;
 		#endregion
 
 		#region Constructor/destructor
@@ -69,7 +73,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			Debug.Assert(rghvo != null && rghvo.Count > 0);
 			m_rghvo = rghvo;
 			m_cache = cache;
@@ -98,7 +101,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			m_xv = CreateSummaryView(m_rghvo, m_cache, styleSheet);
-			m_xv.Dock = DockStyle.Top;	// panel1 is docked to the bottom.
+			m_xv.Dock = DockStyle.Top;  // panel1 is docked to the bottom.
 			m_xv.TabStop = true;
 			m_xv.TabIndex = 0;
 			Controls.Add(m_xv);
@@ -115,13 +118,13 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				m_rghvo?.Clear();
@@ -133,7 +136,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_propertyTable = null;
 			m_helpProvider = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -218,7 +221,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			//TODO: Make this method return a GeckoBrowser control, and generate the content here.
 			// The name of this property must match the property used by the publishFound layout.
 			sda.SetOwningPropInfo(CmObjectTags.kflidClass, "LexDb", "EntriesFound");
-
 			// Make an XmlView which displays that object using the specified layout.
 			var xv = new XmlView(hvoRoot, "publishFound", false, sda)
 			{
@@ -256,10 +258,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		}
 
 		/// <summary>
-		/// Protect against recursing into the selection changed handler, as it changes the selection itself.
-		/// </summary>
-		private bool m_fInSelChange;
-		/// <summary>
 		/// Event handler to grow selection if it's not a range when the selection changes.
 		/// </summary>
 		private void m_xv_VwSelectionChanged(object sender, VwSelectionArgs e)
@@ -283,8 +281,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				bool fAssocPrev;
 				int ihvoEnd;
 				ITsTextProps ttp;
-				var rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli,
-					out ihvoRoot, out tagTextProp, out cpropPrev, out ichAnchor, out ichEnd,
+				var rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli, out ihvoRoot, out tagTextProp, out cpropPrev, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttp);
 				// The selection should cover the outermost object (which should be a LexEntry).
 				var rgvsliOuter = new SelLevInfo[1];

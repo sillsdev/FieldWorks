@@ -1,17 +1,18 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.MGA
 {
@@ -43,7 +44,6 @@ namespace LanguageExplorer.MGA
 		private TextBox textBoxResult;
 		private Label labelAllomorph;
 		private Label labelConstructedGlossForPrompt;
-
 		private const string s_helpTopic = "khtpMGA";
 		private HelpProvider helpProvider;
 		// used by derived class to attach help controls in to its second (lower) panel.
@@ -55,24 +55,28 @@ namespace LanguageExplorer.MGA
 
 		#region event handlers
 		public event GlossListEventHandler InsertMGAGlossListItem;
+
 		protected virtual void OnInsertMGAGlossListItem(GlossListEventArgs glea)
 		{
 			InsertMGAGlossListItem?.Invoke(this, glea);
 		}
 
 		public event EventHandler RemoveMGAGlossListItem;
+
 		protected virtual void OnRemoveMGAGlossListItem(EventArgs e)
 		{
 			RemoveMGAGlossListItem?.Invoke(this, e);
 		}
 
 		public event EventHandler MoveDownMGAGlossListItem;
+
 		protected virtual void OnMoveDownMGAGlossListItem(EventArgs e)
 		{
 			MoveDownMGAGlossListItem?.Invoke(this, e);
 		}
 
 		public event EventHandler MoveUpMGAGlossListItem;
+
 		protected virtual void OnMoveUpMGAGlossListItem(EventArgs e)
 		{
 			MoveUpMGAGlossListItem?.Invoke(this, e);
@@ -86,7 +90,6 @@ namespace LanguageExplorer.MGA
 			m_helpTopicProvider = helpTopicProvider;
 			InitForm();
 			labelAllomorph.Text = sMorphemeForm;
-
 			helpProvider = new HelpProvider
 			{
 				HelpNamespace = m_helpTopicProvider.HelpFile
@@ -133,10 +136,10 @@ namespace LanguageExplorer.MGA
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -229,24 +232,24 @@ namespace LanguageExplorer.MGA
 
 		private void InsertSelectedItem(TreeNode selectedNode)
 		{
-			MasterInflectionFeature mif = (MasterInflectionFeature)selectedNode.Tag;
+			var mif = (MasterInflectionFeature)selectedNode.Tag;
 			if (mif == null)
+			{
 				return; // just to be safe
-			GlossListBoxItem glbiNew = new GlossListBoxItem(m_cache, mif.Node,
-				treeViewGlossListItem.AfterSeparator, treeViewGlossListItem.ComplexNameSeparator,
-				treeViewGlossListItem.ComplexNameFirst);
+			}
+			var glbiNew = new GlossListBoxItem(m_cache, mif.Node, treeViewGlossListItem.AfterSeparator, treeViewGlossListItem.ComplexNameSeparator, treeViewGlossListItem.ComplexNameFirst);
 			GlossListBoxItem glbiConflict;
 			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
-				string sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
-				string sMsg = String.Format(sMsg1, glbiConflict);
-				string sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
+				var sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
+				var sMsg = string.Format(sMsg1, glbiConflict);
+				var sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
 				MessageBox.Show(sMsg, sCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
 			// raise event
-			GlossListEventArgs glea = new GlossListEventArgs(glbiNew);
+			var glea = new GlossListEventArgs(glbiNew);
 			OnInsertMGAGlossListItem(glea);
 			buttonAcceptGloss.Enabled = true;
 			EnableMoveUpDownButtons();
@@ -307,9 +310,6 @@ namespace LanguageExplorer.MGA
 		private void OnGlossListBoxSelectedIndexChanged(object obj, EventArgs ea)
 		{
 			buttonRemove.Enabled = true;
-#if ModifyImplemented
-			buttonModify.Enabled = true;
-#endif
 			EnableMoveUpDownButtons();
 		}
 

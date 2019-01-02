@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,7 +24,6 @@ namespace LanguageExplorer.LcmUi
 			// determine whether this is an atomic or vector relationship.
 			Debug.Assert(cache.IsReferenceProperty(referenceFlid));
 			Debug.Assert(rootObj != null);
-
 			m_cache = cache;
 			m_hvo = rootObj.Hvo;
 			m_cmObject = rootObj;

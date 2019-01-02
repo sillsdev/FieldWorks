@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,9 +30,8 @@ namespace LanguageExplorer.LcmUi
 		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected POSPopupTreeManager m_pOSPopupTreeManager;
-		protected int m_selectedHvo = 0;
+		protected int m_selectedHvo;
 		protected string m_selectedLabel;
-
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
 
@@ -82,7 +81,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -133,9 +132,9 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -187,7 +186,7 @@ namespace LanguageExplorer.LcmUi
 				if (m_cache != null && m_tree != null)
 				{
 					m_tree.WritingSystemFactory = m_cache.WritingSystemFactory;
-					m_tree.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;	// should it be DefaultUserWs?
+					m_tree.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;   // should it be DefaultUserWs?
 				}
 			}
 		}
@@ -245,7 +244,6 @@ namespace LanguageExplorer.LcmUi
 			// Arrange to turn all relevant items blue.
 			SelectNode(e.Node);
 			ControlActivated?.Invoke(this, new EventArgs());
-
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			if (ValueChanged == null)
@@ -314,7 +312,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotSupportedException("The method or operation is not supported.");
 		}
 
 		/// <summary>
@@ -322,7 +320,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public IVwStylesheet Stylesheet
 		{
-			set {}
+			set { }
 		}
 
 		/// <summary>

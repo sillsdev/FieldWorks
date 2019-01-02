@@ -1,8 +1,7 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -14,9 +13,7 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class MoMorphSynAnalysisUi : CmObjectUi
 	{
-		/// <summary>
-		/// Create one.
-		/// </summary>
+		/// <summary />
 		public MoMorphSynAnalysisUi(ICmObject obj)
 			: base(obj)
 		{

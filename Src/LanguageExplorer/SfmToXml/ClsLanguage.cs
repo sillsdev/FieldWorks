@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,7 +41,6 @@ namespace LanguageExplorer.SfmToXml
 			result = result.Replace("&", "&amp;");
 			result = result.Replace("<", "&lt;");
 			result = result.Replace(">", "&gt;");
-
 			// add langDef element
 			result = $"<langDef {result}/>";
 			return result;
@@ -119,7 +118,6 @@ namespace LanguageExplorer.SfmToXml
 						break;
 				}
 			}
-
 			if (KEY == null)
 			{
 				Converter.Log.AddError(SfmToXmlStrings.IdNotDefinedInALanguage);
@@ -130,7 +128,6 @@ namespace LanguageExplorer.SfmToXml
 				Converter.Log.AddError(string.Format(SfmToXmlStrings.Language0LacksXmlLangAttribute + KEY));
 				success = false;
 			}
-
 			return success;
 		}
 	}

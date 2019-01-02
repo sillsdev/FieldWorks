@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,7 +46,6 @@ namespace LanguageExplorer.SendReceive
 		public void RunBridge()
 		{
 			CommonBridgeServices.PrepareForSR(PropertyTable, Publisher, Cache, this);
-
 			if (!LcmFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder).Equals(Cache.LanguageProject.LinkedFilesRootDir))
 			{
 				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation(FlexApp))
@@ -74,7 +73,6 @@ namespace LanguageExplorer.SendReceive
 					return;
 				}
 			}
-
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
@@ -83,10 +81,8 @@ namespace LanguageExplorer.SendReceive
 			using (CopyDictionaryConfigFileToTemp(projectFolder))
 			{
 				string dummy;
-				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.SendReceive,
-					null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion,
-					Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
-					out dataChanged, out dummy);
+				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.SendReceive, null, LcmCache.ModelVersion,
+					CommonBridgeServices.LiftModelVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out dummy);
 				if (!success)
 				{
 					CommonBridgeServices.ReportDuplicateBridge();
@@ -244,9 +240,7 @@ namespace LanguageExplorer.SendReceive
 			{
 				return; // We dealt with it.
 			}
-
 			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			var fieldWorksAssembly = Assembly.Load("FieldWorks.exe");
 			var fieldWorksType = fieldWorksAssembly.GetType("SIL.FieldWorks.FieldWorks");
 			var methodInfo = fieldWorksType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
@@ -264,10 +258,8 @@ namespace LanguageExplorer.SendReceive
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
-				CommonBridgeServices.SendReceiveUser,
-				FLExBridgeHelper.ConflictViewer,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, ()=> CommonBridgeServices.BroadcastMasterRefresh(Publisher),
-				out dummy1, out dummy2);
+				CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.ConflictViewer, null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null,
+				() => CommonBridgeServices.BroadcastMasterRefresh(Publisher), out dummy1, out dummy2);
 			if (!success)
 			{
 				CommonBridgeServices.ReportDuplicateBridge();
@@ -292,7 +284,6 @@ namespace LanguageExplorer.SendReceive
 				{
 					continue; // Skip them, since they are part of some other repository.
 				}
-
 				result[file] = new FileInfo(file).Length;
 			}
 			return result;

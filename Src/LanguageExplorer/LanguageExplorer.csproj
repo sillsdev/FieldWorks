@@ -1243,7 +1243,6 @@
     <Compile Include="LcmUi\CmObjectUi.cs" />
     <Compile Include="LcmUi\CmObjectVc.cs" />
     <Compile Include="LcmUi\CmPossibilityUi.cs" />
-    <Compile Include="LcmUi\CmPossRefVc.cs" />
     <Compile Include="LcmUi\CmVernObjectVc.cs" />
     <Compile Include="LcmUi\EntryPosFilter.cs" />
     <Compile Include="LcmUi\LexEntryVc.cs" />

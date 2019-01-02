@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -141,7 +141,6 @@ namespace LanguageExplorer.LcmUi
 		/// If you KNOW for SURE the right subclass of CmObjectUi, you can just make one
 		/// directly. Most clients should use MakeLcmModelUiObject.
 		/// </summary>
-		/// <param name="obj"></param>
 		protected CmObjectUi(ICmObject obj)
 		{
 			m_cmObject = obj;
@@ -247,15 +246,12 @@ namespace LanguageExplorer.LcmUi
 						break;
 				}
 			}
-
 			if (realClsid != clsid)
 			{
 				m_subclasses[clsid] = realClsid;
 			}
-
 			result.m_hvo = hvo;
 			result.m_cache = cache;
-
 			return result;
 		}
 
@@ -300,7 +296,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -354,9 +350,9 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -535,10 +531,8 @@ namespace LanguageExplorer.LcmUi
 				sMenuId = ContextMenuId;
 			}
 			m_hostControl = hostControl;
-
 			var sHostType = m_hostControl.GetType().Name;
 			var sType = MyCmObject.GetType().Name;
-
 			if (sHostType == "XmlBrowseView" && sType == "CmBaseAnnotation")
 			{
 				// Generally we don't want popups trying to manipulate the annotations as objects in browse views.
@@ -552,7 +546,6 @@ namespace LanguageExplorer.LcmUi
 					return true;
 				}
 			}
-
 			var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
 			if (dataTree != null)
 			{
@@ -580,12 +573,11 @@ namespace LanguageExplorer.LcmUi
 				MessageBox.Show($"Add DataTree to the PropertyTable.", "Implement missing popup menu", MessageBoxButtons.OK);
 				return true;
 			}
-
 			return true;
 		}
-#endregion
+		#endregion
 
-#region Other methods
+		#region Other methods
 
 
 #if RANDYTODO
@@ -621,17 +613,16 @@ namespace LanguageExplorer.LcmUi
 				}
 				var typeName = MyCmObject.GetType().Name;
 				var className = StringTable.Table.GetString(typeName, "ClassNames");
-				if (className == "*" + typeName + "*")
+				if (className == $"*{typeName}*")
 				{
 					className = typeName;
 				}
-
 				string altName;
 				var featsys = MyCmObject.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
 				if (featsys?.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
 				{
-					altName = StringTable.Table.GetString(className + "-Phonological", "AlternativeTypeNames");
-					if (altName != "*" + className + "-Phonological*")
+					altName = StringTable.Table.GetString($"{className}-Phonological", "AlternativeTypeNames");
+					if (altName != $"*{className}-Phonological*")
 					{
 						return altName;
 					}
@@ -639,8 +630,8 @@ namespace LanguageExplorer.LcmUi
 				switch (MyCmObject.OwningFlid)
 				{
 					case MoStemNameTags.kflidRegions:
-						altName = StringTable.Table.GetString(className + "-MoStemName", "AlternativeTypeNames");
-						if (altName != "*" + className + "-MoStemName*")
+						altName = StringTable.Table.GetString($"{className}-MoStemName", "AlternativeTypeNames");
+						if (altName != $"*{className}-MoStemName*")
 						{
 							return altName;
 						}
@@ -657,7 +648,6 @@ namespace LanguageExplorer.LcmUi
 				cannotDeleteMsg = null;
 				return true;
 			}
-
 			cannotDeleteMsg = LcmUiStrings.ksCannotDeleteItem;
 			return false;
 		}
@@ -748,14 +738,12 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false;
 			}
-
 			IFlexApp app;
 			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out app))
 			{
-					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
+				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
 			var fileToDelete = file.AbsoluteInternalPath;
-
 			propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, obj =>
 			{
 				try
@@ -797,20 +785,18 @@ namespace LanguageExplorer.LcmUi
 		{
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
+			using (var dlg = new MergeObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
-				using (var dlg = new MergeObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				var wp = new WindowParams();
+				var mergeCandidates = new List<DummyCmObject>();
+				string guiControl, helpTopic;
+				var dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
+				mergeCandidates.Sort();
+				dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControl, helpTopic);
+				if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 				{
-					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					var wp = new WindowParams();
-					var mergeCandidates = new List<DummyCmObject>();
-					string guiControl, helpTopic;
-					var dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
-					mergeCandidates.Sort();
-					dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControl, helpTopic);
-					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
-					{
-						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
-					}
+					ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
 				}
 			}
 		}
@@ -901,27 +887,27 @@ namespace LanguageExplorer.LcmUi
 			return hvos;
 		}
 
-#endregion Other methods
+		#endregion Other methods
 
-#region Implementation of IPropertyTableProvider
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IPublisherProvider
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of ISubscriberProvider
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.

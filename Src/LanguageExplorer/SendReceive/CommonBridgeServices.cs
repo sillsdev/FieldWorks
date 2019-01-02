@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,14 +52,12 @@ namespace LanguageExplorer.SendReceive
 			//Make sure any last changes are saved. (Process focus lost for controls)
 			Application.DoEvents();
 			StopParser(publisher);
-
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
 			var activeForm = propertyTable.GetValue<Form>(FwUtils.window);
 			activeForm?.ValidateChildren(ValidationConstraints.Enabled);
 			//Commit all the data in the cache and save to disk
 			ProjectLockingService.UnlockCurrentProject(cache);
-
 			propertyTable.SetProperty(LastBridgeUsed, lastBridgeUsed.Name, true, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
@@ -98,7 +96,6 @@ namespace LanguageExplorer.SendReceive
 				{
 					continue; // Skip them, since they are part of some other repository.
 				}
-
 				long oldLength;
 				savedState.TryGetValue(file, out oldLength);
 				if (new FileInfo(file).Length == oldLength)
@@ -160,20 +157,17 @@ namespace LanguageExplorer.SendReceive
 				// Switch to look for note files in the Lift repo.
 				folderToSearchIn = liftFolder;
 			}
-
 			if (!Directory.Exists(Path.Combine(folderToSearchIn, ".hg")))
 			{
 				return false; // No repo, so there can be no notes files.
 			}
-
 			foreach (var notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				if (!NotesFileHasContent(notesPathname) || checkForLiftNotes)
 				{
 					continue; // Skip ones with no content.
 				}
-
-				if (checkForLiftNotes  || !notesPathname.Contains(liftFolder)/* Skip any lift ones down in a nested repo. */)
+				if (checkForLiftNotes || !notesPathname.Contains(liftFolder)/* Skip any lift ones down in a nested repo. */)
 				{
 					return true;
 				}
@@ -201,7 +195,6 @@ namespace LanguageExplorer.SendReceive
 					return extantLiftFolder; // Reuse the old one, no matter what the new project dir name is.
 				}
 			}
-
 			var flexProjName = Path.GetFileName(projectFolder);
 			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}

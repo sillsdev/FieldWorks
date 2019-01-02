@@ -1,9 +1,10 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -38,8 +39,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private BrowseViewer m_bvMergeOptions;
 		private ColumnHeader m_chItems;
 		private Button buttonHelp;
-		private System.ComponentModel.Container components = null;
-
+		private IContainer components = null;
 		private string m_helpTopic;
 		private HelpProvider helpProvider;
 		private Dictionary<int, DummyCmObject> m_candidates;
@@ -69,27 +69,20 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, string guiControl, string helpTopic)
 		{
 			Debug.Assert(cache != null);
-
 			m_cache = cache;
 			m_mainObj = mainObj;
-
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = m_cache.WritingSystemFactory.UserWs;
-
 			InitBrowseView(guiControl, mergeCandidates);
-
 			Text = wp.m_title;
 			label2.Text = wp.m_label;
-
 			m_helpTopic = helpTopic;
-
-			if(m_helpTopic != null && m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
+			if (m_helpTopic != null && m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
+				helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
-
 			MoveWindowToPreviousPosition();
 		}
 
@@ -120,10 +113,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 #endif
 			var configurationParameters = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
-
 			const int kMadeUpFieldIdentifier = 8999958;
 			var sda = new ObjectListPublisher(m_cache.GetManagedSilDataAccess(), kMadeUpFieldIdentifier);
-
 			var hvos = (mergeCandidates.Select(obj => obj.Hvo)).ToArray();
 			foreach (var mergeCandidate in mergeCandidates)
 			{
@@ -147,12 +138,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -166,7 +157,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			Publisher = null;
 			Subscriber = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region	Other methods
@@ -187,7 +178,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				tsb.ReplaceTsString(ich, ich + 3, tssFrom);
 				tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
-				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
+				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);    // in case localization needs more than one.
 			}
 			var cLines = 1;
 			if (m_obj != null && m_obj.Hvo > 0)

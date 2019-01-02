@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,7 +68,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			var duplicates = false;
 			var retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
-
 			if (duplicates)
 			{
 				MessageBox.Show(Form.ActiveForm, string.Format(LcmUiStrings.ksDuplicateWordformsMsg, tssWf.Text), LcmUiStrings.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -86,16 +85,14 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
-			IHelpTopicProvider helpProvider, string helpFileKey)
+		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			var tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
 			if (tssContext == null)
 			{
 				return;
 			}
-
 			var text = tssContext.Text;
 			// If the string is empty, it might be because it's multilingual.  Try that alternative.
 			// (See TE-6374.)
@@ -112,7 +109,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				tssWf = tssContext.GetSubstring(ichMin, ichLim);
 			}
-
 			if (tssWf == null || tssWf.Length == 0)
 			{
 				return;
@@ -152,8 +148,7 @@ namespace LanguageExplorer.LcmUi
 			DisplayEntries(cache, owner, propertyTable, publisher, subscriber, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
-			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
+		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			var tssWf = tssWfIn;
 			LexEntryUi leui = null;
@@ -176,7 +171,6 @@ namespace LanguageExplorer.LcmUi
 					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
-
 				EnsureWindowConfiguration(propertyTable);
 				var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 				if (leui == null)
@@ -196,8 +190,7 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-		public static void DisplayEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
-			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		public static void DisplayEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			var tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
@@ -215,10 +208,8 @@ namespace LanguageExplorer.LcmUi
 			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
 
-		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner,
-			IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
-			IHelpTopicProvider helpProvider, string helpFileKey,
-			List<ILexEntry> entries, ITsString tssWf)
+		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
+			IHelpTopicProvider helpProvider, string helpFileKey, List<ILexEntry> entries, ITsString tssWf)
 		{
 			// Loop showing the SummaryDialogForm as long as the user clicks the Other button
 			// in that dialog.
@@ -301,15 +292,13 @@ namespace LanguageExplorer.LcmUi
 		/// <remarks>
 		/// Currently only called from WCF (11/21/2013 - AP)
 		/// </remarks>
-		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner,
-			IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton, IVwSelection sel = null)
 		{
 			if (tssWf == null || tssWf.Length == 0)
 			{
 				return;
 			}
-
 			using (var leui = FindEntryForWordform(cache, tssWf))
 			{
 				if (leui == null)
@@ -339,9 +328,7 @@ namespace LanguageExplorer.LcmUi
 		/// <remarks>
 		/// Currently only called from WCF (11/21/2013 - AP)
 		/// </remarks>
-		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner,
-			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
-			bool hideInsertButton)
+		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf, bool hideInsertButton)
 		{
 			DisplayRelatedEntries(cache, owner, FwUtils.StyleSheetFromPropertyTable(propertyTable), helpProvider, helpFileKey, tssWf, hideInsertButton);
 		}
@@ -350,8 +337,7 @@ namespace LanguageExplorer.LcmUi
 		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
 		/// be found, show the related words dialog with the words related to the selected one.
 		/// </summary>
-		public static void DisplayRelatedEntries(LcmCache cache, IVwSelection sel, IWin32Window owner,
-			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
+		public static void DisplayRelatedEntries(LcmCache cache, IVwSelection sel, IWin32Window owner, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			var sel2 = sel?.EndPoint(false);
 			var sel3 = sel2?.GrowToWord();
@@ -438,8 +424,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 #if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid,
-			UIItemDisplayProperties display)
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
 		{
 			return LexEntryTags.kClassId == specifiedClsid || base.ShouldDisplayMenuForClass(specifiedClsid, display);
 		}

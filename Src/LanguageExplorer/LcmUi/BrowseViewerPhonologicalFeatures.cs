@@ -1,7 +1,8 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
@@ -13,9 +14,9 @@ using SIL.LCModel.Application;
 namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
-	/// Browse viewer used for assigning phonolgical features to phonemes
+	/// Browse viewer used for assigning phonological features to phonemes
 	/// </summary>
-	internal class BrowseViewerPhonologicalFeatures : BrowseViewer
+	internal sealed class BrowseViewerPhonologicalFeatures : BrowseViewer
 	{
 		/// <summary>
 		/// The sortItemProvider is typically the RecordList that implements sorting and
@@ -119,7 +120,6 @@ namespace LanguageExplorer.LcmUi
 							{
 								continue;
 							}
-
 							var pfe = m_beItems[iColumn].BulkEditControl as PhonologicalFeatureEditor;
 							if (pfe == null)
 							{
@@ -144,8 +144,10 @@ namespace LanguageExplorer.LcmUi
 
 			protected override void Dispose(bool disposing)
 			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (IsDisposed)
 				{
+					// No need to run it more than once.
 					return;
 				}
 

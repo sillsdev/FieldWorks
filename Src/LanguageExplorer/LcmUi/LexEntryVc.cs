@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,10 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class LexEntryVc : CmVernObjectVc
 	{
-		const int kfragFormForm = 9543; // arbitrary.
+		/// <summary>
+		/// arbitrary.
+		/// </summary>
+		private const int kfragFormForm = 9543;
 		/// <summary>
 		/// use with WfiMorphBundle to display the headword with variant info appended.
 		/// </summary>
@@ -28,22 +31,16 @@ namespace LanguageExplorer.LcmUi
 		/// use with EntryRef to display the variant type info
 		/// </summary>
 		public const int kfragVariantTypes = 9545;
-
-		int m_ws;
-		int m_wsActual;
+		private int m_wsActual;
 
 		/// <summary />
 		public LexEntryVc(LcmCache cache)
 			: base(cache)
 		{
-			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
 
-		public int WritingSystemCode
-		{
-			get { return m_ws; }
-			set { m_ws = value; }
-		}
+		public int WritingSystemCode { get; set; }
 
 		/// <summary>
 		/// Display a view of the LexEntry (or fragment thereof).
@@ -81,7 +78,6 @@ namespace LanguageExplorer.LcmUi
 						vwenv.CloseParagraph();
 						break;
 					}
-
 					// build Headword even though we aren't in a variant relationship.
 					vwenv.AddObj(variant.Hvo, this, (int)VcFrags.kfragHeadWord);
 					break;
@@ -95,9 +91,7 @@ namespace LanguageExplorer.LcmUi
 						var tssVariantTypeRevAbbr = let.ReverseAbbr.BestAnalysisAlternative;
 						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
 						{
-							vwenv.AddString(fNeedInitialPlus
-								? TsStringUtils.MakeString("+", m_cache.DefaultUserWs)
-								: TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
+							vwenv.AddString(fNeedInitialPlus ? TsStringUtils.MakeString("+", m_cache.DefaultUserWs) : TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
 							vwenv.AddString(tssVariantTypeRevAbbr);
 							fNeedInitialPlus = false;
 						}
@@ -122,7 +116,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				hvoType = sda.get_ObjectProp(hvoLf, MoFormTags.kflidMorphType);
 			}
-
 			// If we have a type of morpheme, show the appropriate prefix that indicates it.
 			// We want vernacular so it will match the point size of any aligned vernacular text.
 			// (The danger is that the vernacular font doesn't have these characters...not sure what
@@ -133,7 +126,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				sPrefix = sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPrefix);
 			}
-
 			// Show homograph number if non-zero.
 			var defUserWs = m_cache.WritingSystemFactory.UserWs;
 			var nHomograph = sda.get_IntProp(hvo, LexEntryTags.kflidHomographNumber);
@@ -143,7 +135,6 @@ namespace LanguageExplorer.LcmUi
 			{
 				InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
 			}
-
 			// LexEntry.ShortName1; basically tries for form of the lexeme form, then the citation form.
 			var fGotLabel = false;
 			var wsActual = 0;
@@ -175,7 +166,6 @@ namespace LanguageExplorer.LcmUi
 					fGotLabel = true;
 				}
 			}
-
 			if (!fGotLabel)
 			{
 				// If that fails just show two questions marks.
@@ -183,16 +173,14 @@ namespace LanguageExplorer.LcmUi
 				{
 					vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 				}
-				vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
+				vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, defUserWs)); // was "??", not "???"
 			}
-
 			// If we have a lexeme form type show the appropriate postfix.
 			if (hvoType != 0)
 			{
 				vwenv.AddString(TsStringUtils.MakeString(sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 			}
-
-			vwenv.NoteDependency(new[] {hvo}, new[] {LexEntryTags.kflidHomographNumber}, 1);
+			vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryTags.kflidHomographNumber }, 1);
 			//Insert HomographNumber when position is After
 			if (!hc.HomographNumberBefore)
 			{
@@ -206,16 +194,17 @@ namespace LanguageExplorer.LcmUi
 		private void InsertHomographNumber(IVwEnv vwenv, HomographConfiguration hc, int nHomograph, int defUserWs)
 		{
 			if (nHomograph <= 0)
+			{
 				return;
-
+			}
 			// Use a string builder to embed the properties in with the TsString.
 			// this allows our TsStringCollectorEnv to properly encode the superscript.
 			// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 			// since AppendTss treats the given Tss as atomic.
 			var tsBldr = TsStringUtils.MakeIncStrBldr();
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript, (int) FwTextPropVar.ktpvEnum, (int) FwSuperscriptVal.kssvSub);
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvForceOn);
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, defUserWs);
+			tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, (int)FwSuperscriptVal.kssvSub);
+			tsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+			tsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, defUserWs);
 			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
 			vwenv.AddString(tsBldr.GetString());
 		}
@@ -223,7 +212,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		public static ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
 		{
-			var vcEntry = new LexEntryVc(cache) {WritingSystemCode = wsVern};
+			var vcEntry = new LexEntryVc(cache) { WritingSystemCode = wsVern };
 			var collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, hvoEntryToDisplay)
 			{
 				RequestAppendSpaceForFirstWordInNewParagraph = false
@@ -238,7 +227,7 @@ namespace LanguageExplorer.LcmUi
 
 		private bool TryMultiStringAlt(int hvo, int flid, out int wsActual)
 		{
-			return WritingSystemServices.GetMagicStringAlt(m_cache, m_ws, hvo, flid, true, out wsActual) != null;
+			return WritingSystemServices.GetMagicStringAlt(m_cache, WritingSystemCode, hvo, flid, true, out wsActual) != null;
 		}
 	}
 }

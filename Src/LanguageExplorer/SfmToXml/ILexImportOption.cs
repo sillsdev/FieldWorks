@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,9 @@ namespace LanguageExplorer.SfmToXml
 	/// </summary>
 	public interface ILexImportOption
 	{
-		string Id { get; }		// this is the key to a checkbox in the Import Wizard
-		string Type { get; }	// currently supported: "Checkbox"
-		bool IsChecked { get; }	// this is the persistable checkbox state if option is of Type "Checkbox"
+		string Id { get; }      // this is the key to a checkbox in the Import Wizard
+		string Type { get; }    // currently supported: "Checkbox"
+		bool IsChecked { get; } // this is the persistable checkbox state if option is of Type "Checkbox"
 		string ToXmlString();
 		bool ReadXmlNode(XmlNode optDef);
 	}

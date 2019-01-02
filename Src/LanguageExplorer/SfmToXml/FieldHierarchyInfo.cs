@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,7 +46,6 @@ namespace LanguageExplorer.SfmToXml
 		{
 			SFM = marker;
 			Lang = lang;
-
 			IsAuto = true;
 			FwDestID = "Determined by location in Data";
 			IsBegin = false;
@@ -58,9 +57,6 @@ namespace LanguageExplorer.SfmToXml
 			FwDestClass = string.Empty;
 		}
 
-		/// <summary>
-		/// Public properties
-		/// </summary>
 		public string SFM { get; }
 
 		public string FwDestID { get; private set; }

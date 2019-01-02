@@ -1,9 +1,11 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -20,14 +22,9 @@ namespace LanguageExplorer.UtilityTools
 	/// </summary>
 	public class UtilityDlg : Form, IFlexComponent
 	{
-		private CheckedListBox m_clbUtilities;
 		private RichTextBox m_rtbDescription;
-		private ProgressBar m_progressBar;
 		private Label m_lSteps;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private IContainer components = null;
 		private const string s_helpTopic = "khtpProjectUtilities";
 		private HelpProvider m_helpProvider;
 		private Button m_btnRunUtils;
@@ -37,9 +34,7 @@ namespace LanguageExplorer.UtilityTools
 		private Button m_btnClose;
 		private IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public UtilityDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
@@ -103,9 +98,8 @@ namespace LanguageExplorer.UtilityTools
 
 			Text = StringTable.Table.LocalizeAttributeValue("FieldWorks Project Utilities");
 			SuspendLayout();
-			m_clbUtilities.Items.Clear();
-			m_clbUtilities.Sorted = false;
-
+			Utilities.Items.Clear();
+			Utilities.Sorted = false;
 			var utilities = new Dictionary<string, IUtility>(13);
 			var interfaceType = typeof(IUtility);
 			var leAssembly = Assembly.GetExecutingAssembly();
@@ -113,45 +107,43 @@ namespace LanguageExplorer.UtilityTools
 			{
 				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { this }, null, null));
 			}
-
 #if RANDYTODO
 			// TODO: 1. Add new "MachineName" string property to IUtility that returns the strings below, for each tool.
 			// TODO: 2. Remove known utilities from utilities, after adding them to m_clbUtilities.Items, and
 			// TODO: 3. Add any user created utilities (ones still in utilities) to m_clbUtilities.Items.
 			// TODO: 4. Consider using MEF to get them all.
 #endif
-			m_clbUtilities.Items.Add(utilities["HomographResetter"]);
-			m_clbUtilities.Items.Add(utilities["ParserAnalysisRemover"]);
-			m_clbUtilities.Items.Add(utilities["ErrorFixer"]);
-			m_clbUtilities.Items.Add(utilities["WriteAllObjectsUtility"]);
-			m_clbUtilities.Items.Add(utilities["DuplicateWordformFixer"]);
-			m_clbUtilities.Items.Add(utilities["DuplicateAnalysisFixer"]);
-			m_clbUtilities.Items.Add(utilities["ParseIsCurrentFixer"]);
-			m_clbUtilities.Items.Add(utilities["DeleteEntriesSensesWithoutInterlinearization"]);
-			m_clbUtilities.Items.Add(utilities["LexEntryInflTypeConverter"]);
-			m_clbUtilities.Items.Add(utilities["LexEntryTypeConverter"]);
-			m_clbUtilities.Items.Add(utilities["GoldEticGuidFixer"]);
-			m_clbUtilities.Items.Add(utilities["SortReversalSubEntries"]);
-			m_clbUtilities.Items.Add(utilities["CircularRefBreaker"]);
-
+			Utilities.Items.Add(utilities["HomographResetter"]);
+			Utilities.Items.Add(utilities["ParserAnalysisRemover"]);
+			Utilities.Items.Add(utilities["ErrorFixer"]);
+			Utilities.Items.Add(utilities["WriteAllObjectsUtility"]);
+			Utilities.Items.Add(utilities["DuplicateWordformFixer"]);
+			Utilities.Items.Add(utilities["DuplicateAnalysisFixer"]);
+			Utilities.Items.Add(utilities["ParseIsCurrentFixer"]);
+			Utilities.Items.Add(utilities["DeleteEntriesSensesWithoutInterlinearization"]);
+			Utilities.Items.Add(utilities["LexEntryInflTypeConverter"]);
+			Utilities.Items.Add(utilities["LexEntryTypeConverter"]);
+			Utilities.Items.Add(utilities["GoldEticGuidFixer"]);
+			Utilities.Items.Add(utilities["SortReversalSubEntries"]);
+			Utilities.Items.Add(utilities["CircularRefBreaker"]);
 			ResumeLayout();
-			if (m_clbUtilities.Items.Count > 0)
+			if (Utilities.Items.Count > 0)
 			{
-				m_clbUtilities.SelectedIndex = 0;
+				Utilities.SelectedIndex = 0;
 			}
 		}
 
-#endregion
+		#endregion
 
 		/// <summary>
 		/// Get the Utilites list box.
 		/// </summary>
-		public CheckedListBox Utilities => m_clbUtilities;
+		public CheckedListBox Utilities { get; private set; }
 
 		/// <summary>
 		/// Get the progress bar.
 		/// </summary>
-		public ProgressBar ProgressBar => m_progressBar;
+		public ProgressBar ProgressBar { get; private set; }
 
 		/// <summary>
 		/// Set the When Description substring.
@@ -173,7 +165,7 @@ namespace LanguageExplorer.UtilityTools
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run more than once.
@@ -196,7 +188,7 @@ namespace LanguageExplorer.UtilityTools
 			base.Dispose(disposing);
 		}
 
-#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -204,10 +196,10 @@ namespace LanguageExplorer.UtilityTools
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UtilityDlg));
-			this.m_clbUtilities = new System.Windows.Forms.CheckedListBox();
+			this.Utilities = new System.Windows.Forms.CheckedListBox();
 			this.m_rtbDescription = new System.Windows.Forms.RichTextBox();
 			this.m_btnRunUtils = new System.Windows.Forms.Button();
-			this.m_progressBar = new System.Windows.Forms.ProgressBar();
+			this.ProgressBar = new System.Windows.Forms.ProgressBar();
 			this.m_lSteps = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -217,10 +209,10 @@ namespace LanguageExplorer.UtilityTools
 			//
 			// m_clbUtilities
 			//
-			resources.ApplyResources(this.m_clbUtilities, "m_clbUtilities");
-			this.m_clbUtilities.Name = "m_clbUtilities";
-			this.m_clbUtilities.SelectedIndexChanged += new System.EventHandler(this.m_clbUtilities_SelectedIndexChanged);
-			this.m_clbUtilities.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.m_clbUtilities_ItemCheck);
+			resources.ApplyResources(this.Utilities, "m_clbUtilities");
+			this.Utilities.Name = "m_clbUtilities";
+			this.Utilities.SelectedIndexChanged += new System.EventHandler(this.m_clbUtilities_SelectedIndexChanged);
+			this.Utilities.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.m_clbUtilities_ItemCheck);
 			//
 			// m_rtbDescription
 			//
@@ -236,8 +228,8 @@ namespace LanguageExplorer.UtilityTools
 			//
 			// m_progressBar
 			//
-			resources.ApplyResources(this.m_progressBar, "m_progressBar");
-			this.m_progressBar.Name = "m_progressBar";
+			resources.ApplyResources(this.ProgressBar, "m_progressBar");
+			this.ProgressBar.Name = "m_progressBar";
 			//
 			// m_lSteps
 			//
@@ -274,13 +266,13 @@ namespace LanguageExplorer.UtilityTools
 			this.CancelButton = this.m_btnClose;
 			this.ControlBox = false;
 			this.Controls.Add(this.m_lSteps);
-			this.Controls.Add(this.m_progressBar);
+			this.Controls.Add(this.ProgressBar);
 			this.Controls.Add(this.m_btnClose);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnRunUtils);
 			this.Controls.Add(this.m_rtbDescription);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.m_clbUtilities);
+			this.Controls.Add(this.Utilities);
 			this.Controls.Add(this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
@@ -290,14 +282,13 @@ namespace LanguageExplorer.UtilityTools
 			this.ResumeLayout(false);
 
 		}
-#endregion
+		#endregion
 
-#region Events
+		#region Events
 
-		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_clbUtilities_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var currentFont = m_rtbDescription.SelectionFont;
-
 			Font boldFont = null;
 			try
 			{
@@ -305,11 +296,9 @@ namespace LanguageExplorer.UtilityTools
 				// Creating the bold equivalent of the current font doesn't seem to work in Mono,
 				// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
 				// font.
-				boldFont = Platform.IsMono
-					? currentFont
-					: new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
+				boldFont = Platform.IsMono ? currentFont : new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
 				WhatDescription = WhenDescription = RedoDescription = null;
-				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
+				((IUtility)Utilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
 				// What
 				m_rtbDescription.SelectionFont = boldFont;
@@ -318,7 +307,6 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.SelectionFont = currentFont;
 				m_rtbDescription.AppendText(string.IsNullOrEmpty(WhatDescription) ? LanguageExplorerResources.ksQuestions : WhatDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
-
 				// When
 				m_rtbDescription.SelectionFont = boldFont;
 				m_rtbDescription.AppendText(LanguageExplorerResources.ksWhenToUse);
@@ -326,14 +314,12 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.SelectionFont = currentFont;
 				m_rtbDescription.AppendText(string.IsNullOrEmpty(WhenDescription) ? LanguageExplorerResources.ksQuestions : WhenDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
-
 				// Cautions
 				m_rtbDescription.SelectionFont = boldFont;
 				m_rtbDescription.AppendText(LanguageExplorerResources.ksCautions);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
 				m_rtbDescription.AppendText(string.IsNullOrEmpty(RedoDescription) ? LanguageExplorerResources.ksQuestions : RedoDescription);
-
 				if (Platform.IsMono)
 				{
 					// If we don't have a selection explicitly set, we will crash deep in the Mono
@@ -341,13 +327,15 @@ namespace LanguageExplorer.UtilityTools
 					m_rtbDescription.Focus();
 					m_rtbDescription.SelectionStart = 0;
 					m_rtbDescription.SelectionLength = 0;
-					m_clbUtilities.Focus();
+					Utilities.Focus();
 				}
 			}
 			finally
 			{
-				if (!Platform.IsMono && boldFont != null)
-					boldFont.Dispose();
+				if (!Platform.IsMono)
+				{
+					boldFont?.Dispose();
+				}
 			}
 		}
 
@@ -360,17 +348,16 @@ namespace LanguageExplorer.UtilityTools
 				//int totalSteps = m_clbUtilities.CheckedItems.Count;
 				//int currentStep = 0;
 				var checkedItems = new HashSet<IUtility>();
-				foreach (IUtility util in m_clbUtilities.CheckedItems)
+				foreach (IUtility util in Utilities.CheckedItems)
 				{
 					util.Process();
-					m_progressBar.Value = 0;
+					ProgressBar.Value = 0;
 					checkedItems.Add(util);
 				}
-
 				// Uncheck each one that was done.
 				foreach (var checkedUtil in checkedItems)
 				{
-					m_clbUtilities.SetItemChecked(m_clbUtilities.Items.IndexOf(checkedUtil), false);
+					Utilities.SetItemChecked(Utilities.Items.IndexOf(checkedUtil), false);
 				}
 			}
 		}
@@ -382,7 +369,7 @@ namespace LanguageExplorer.UtilityTools
 
 		private void m_clbUtilities_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
-			var cnt = m_clbUtilities.CheckedItems.Count;
+			var cnt = Utilities.CheckedItems.Count;
 			cnt = (e.NewValue == CheckState.Checked) ? cnt + 1 : cnt - 1;
 			m_btnRunUtils.Enabled = cnt > 0;
 		}
@@ -392,6 +379,6 @@ namespace LanguageExplorer.UtilityTools
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 
-#endregion Events
+		#endregion Events
 	}
 }

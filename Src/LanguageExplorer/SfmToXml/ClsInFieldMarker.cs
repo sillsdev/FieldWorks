@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,6 @@ namespace LanguageExplorer.SfmToXml
 		private ArrayList m_endList;
 		private string m_xmlLang;       // actual ws for language
 		private bool m_useXmlLangValue; // true if we should use the xmlLang value for language
-
 		private char[] delim = { ' ' };
 
 		public ClsInFieldMarker()
@@ -151,7 +150,6 @@ namespace LanguageExplorer.SfmToXml
 			// make sure the begin data is valid xml
 			sbOutput.Append(Begin);
 			sbOutput.Append("\"");
-
 			if (m_endList.Count > 0)
 			{
 				// only one end marker, so just put it out
@@ -207,7 +205,6 @@ namespace LanguageExplorer.SfmToXml
 					sbOutput.Append("\"");
 				}
 			}
-
 			// only put out if not empty
 			if (Style.Length > 0)
 			{
@@ -227,7 +224,6 @@ namespace LanguageExplorer.SfmToXml
 		{
 			var sbOutput = new StringBuilder("<");
 			sbOutput.Append(m_xmlElementName);
-
 			// only put out if not empty
 			if (Language.Length > 0)
 			{
@@ -257,7 +253,6 @@ namespace LanguageExplorer.SfmToXml
 			result = result.Replace("&", "&amp;");
 			result = result.Replace("<", "&lt;");
 			result = result.Replace(">", "&gt;");
-
 			// add langDef element
 			result = $"<ifm {result}/>";
 			return result;
@@ -374,7 +369,6 @@ namespace LanguageExplorer.SfmToXml
 				Converter.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0HasNoElementNameAttribute, Begin));
 				success = false;
 			}
-
 			return success;
 		}
 
