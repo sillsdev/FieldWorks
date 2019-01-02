@@ -16,8 +16,8 @@ namespace LanguageExplorerTests.Impls
 	[TestFixture]
 	public class PubSubSystemTests
 	{
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 
 		private static class Publisher
 		{
@@ -314,9 +314,7 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void TestSetup()
 		{
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out _publisher, out _subscriber);
-			propertyTable.Dispose(); // We don't really want it.
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
 		/// <summary>
@@ -325,8 +323,8 @@ namespace LanguageExplorerTests.Impls
 		[TearDown]
 		public void TestTeardown()
 		{
-			_publisher = null;
-			_subscriber = null;
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
 		}
 
 		/// <summary>
@@ -339,18 +337,18 @@ namespace LanguageExplorerTests.Impls
 			var subscriber = new ReentrantSubscriber_SingleCall
 			{
 				One = true,
-				Publisher = _publisher
+				Publisher = _flexComponentParameters.Publisher
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
 			var someRandomSubscriber = new SomeRandomMessageSubscriber();
-			someRandomSubscriber.DoSubscriptions(_subscriber);
+			someRandomSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.Throws<ApplicationException>(() => Publisher.PublishMessageOne(_publisher));
-			subscriber.DoUnsubscriptions(_subscriber);
-			someRandomSubscriber.DoUnsubscriptions(_subscriber);
+			Assert.Throws<ApplicationException>(() => Publisher.PublishMessageOne(_flexComponentParameters.Publisher));
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			someRandomSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
 		/// <summary>
@@ -363,21 +361,21 @@ namespace LanguageExplorerTests.Impls
 			var subscriber = new ReentrantSubscriber_Single_CallsMultiple
 			{
 				One = true,
-				Publisher = _publisher
+				Publisher = _flexComponentParameters.Publisher
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
 			var someRandomSubscriber = new SomeRandomMessageSubscriber();
-			someRandomSubscriber.DoSubscriptions(_subscriber);
+			someRandomSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			var niceGuyMultipleSubscriber = new NiceGuy_MultipleSubscriber();
-			niceGuyMultipleSubscriber.DoSubscriptions(_subscriber);
+			niceGuyMultipleSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.Throws<ApplicationException>(() => _publisher.Publish("BadBoy", false));
-			subscriber.DoUnsubscriptions(_subscriber);
-			someRandomSubscriber.DoUnsubscriptions(_subscriber);
-			niceGuyMultipleSubscriber.DoUnsubscriptions(_subscriber);
+			Assert.Throws<ApplicationException>(() => _flexComponentParameters.Publisher.Publish("BadBoy", false));
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			someRandomSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			niceGuyMultipleSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
 		/// <summary>
@@ -391,17 +389,17 @@ namespace LanguageExplorerTests.Impls
 			{
 				One = true,
 				Two = int.MinValue,
-				Publisher = _publisher
+				Publisher = _flexComponentParameters.Publisher
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(int.MinValue, subscriber.Two);
-			Assert.Throws<ApplicationException>(() => Publisher.PublishBothMessages(_publisher));
-			subscriber.DoUnsubscriptions(_subscriber);
+			Assert.Throws<ApplicationException>(() => Publisher.PublishBothMessages(_flexComponentParameters.Publisher));
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
 		/// <summary>
@@ -416,19 +414,19 @@ namespace LanguageExplorerTests.Impls
 				One = true,
 				Two = int.MinValue
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(int.MinValue, subscriber.Two);
-			Publisher.PublishBothMessages(_publisher);
+			Publisher.PublishBothMessages(_flexComponentParameters.Publisher);
 			Assert.IsFalse(subscriber.One);
 			Assert.AreEqual(int.MaxValue, subscriber.Two);
-			subscriber.DoUnsubscriptions(_subscriber);
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 
 			subscriber.One = true;
 			subscriber.Two = int.MinValue;
-			Publisher.PublishBothMessages(_publisher);
+			Publisher.PublishBothMessages(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(int.MinValue, subscriber.Two);
 		}
@@ -445,19 +443,19 @@ namespace LanguageExplorerTests.Impls
 				One = true,
 				Two = 1
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run tests
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(1, subscriber.Two);
-			Publisher.PublishMessageOne(_publisher);
+			Publisher.PublishMessageOne(_flexComponentParameters.Publisher);
 			Assert.IsFalse(subscriber.One); // Did change.
 			Assert.AreEqual(1, subscriber.Two); // Did not change.
 
 			subscriber.One = true;
 			Assert.IsTrue(subscriber.One);
-			subscriber.DoUnsubscriptions(_subscriber);
-			Publisher.PublishMessageOne(_publisher);
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			Publisher.PublishMessageOne(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One); // Did not change.
 			Assert.AreEqual(1, subscriber.Two); // Did not change.
 		}
@@ -474,20 +472,20 @@ namespace LanguageExplorerTests.Impls
 				One = true,
 				Two = 1
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run tests
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(1, subscriber.Two);
 
-			Publisher.PublishMessageTwo(_publisher);
+			Publisher.PublishMessageTwo(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One); // Did not change.
 			Assert.AreEqual(2, subscriber.Two); // Did change.
 
 			subscriber.Two = 1;
 			Assert.AreEqual(1, subscriber.Two);
-			subscriber.DoUnsubscriptions(_subscriber);
-			Publisher.PublishMessageTwo(_publisher);
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			Publisher.PublishMessageTwo(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One); // Did not change.
 			Assert.AreEqual(1, subscriber.Two); // Did not change.
 		}
@@ -503,26 +501,26 @@ namespace LanguageExplorerTests.Impls
 			{
 				One = true
 			};
-			subscriber.DoSubscriptions(_subscriber);
+			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			var subscriber2 = new DoubleMessageSubscriber
 			{
 				One = true
 			};
-			subscriber2.DoSubscriptions(_subscriber);
+			subscriber2.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run tests
 			Assert.IsTrue(subscriber.One);
 			Assert.IsTrue(subscriber2.One);
 
-			Publisher.PublishMessageOne(_publisher);
+			Publisher.PublishMessageOne(_flexComponentParameters.Publisher);
 			Assert.IsFalse(subscriber.One); // Did change.
 			Assert.IsFalse(subscriber2.One); // Did change.
 
 			subscriber.One = true;
 			subscriber2.One = true;
-			subscriber.DoUnsubscriptions(_subscriber);
-			subscriber2.DoUnsubscriptions(_subscriber);
-			Publisher.PublishMessageOne(_publisher);
+			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			subscriber2.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			Publisher.PublishMessageOne(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One); // Did not change.
 			Assert.IsTrue(subscriber2.One); // Did not change.
 		}

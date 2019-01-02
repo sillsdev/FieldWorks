@@ -19,21 +19,18 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void DoubleClickEmptyItem()
 		{
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (var bv = new XmlBrowseView())
 				{
-					bv.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					bv.InitializeFlexComponent(flexComponentParameters);
 					bv.SimulateDoubleClick(new EventArgs());
 				}
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 
@@ -63,14 +60,11 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				"<column layout=\"CustomGenDateForAllomorph_MorphDate\" label=\"$label\" visibility=\"menu\"/>" +
 				"<column layout=\"CustomPossAtomForExample_ExAtom\" label=\"$label\" visibility=\"menu\"/>" +
 				"</root>";
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				var output =
-					XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, propertyTable,
+					XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable,
 						"myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"),
 					Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
@@ -78,11 +72,11 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				Assert.That(headwordNode, Is.Not.Null);
 				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"),
 					Is.EqualTo("EntryHeadwordForFindEntry"));
-				Assert.That(propertyTable.GetValue("myKey", string.Empty),
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
 					Contains.Substring("EntryHeadwordForFindEntry"));
 				var weatherNode = output.XPathSelectElement("//column[@layout='Weather']");
 				Assert.That(weatherNode, Is.Null);
-				Assert.That(propertyTable.GetValue("myKey", string.Empty),
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
 					Contains.Substring("EntryHeadwordForFindEntry"));
 				// Should not affect other nodes
 				var unknownNode = output.XPathSelectElement("//column[@layout='Unknown Test']");
@@ -150,7 +144,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					"<column layout=\"Unknown Test\"/>" +
 					"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 					"</root>";
-				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, propertyTable,
+				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable,
 					"myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"),
 					Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
@@ -160,12 +154,12 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				publishAsHeadwordNode =
 					output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
-				Assert.That(propertyTable.GetValue("myKey", string.Empty),
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
 					Contains.Substring("PublishAsHeadword"));
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 

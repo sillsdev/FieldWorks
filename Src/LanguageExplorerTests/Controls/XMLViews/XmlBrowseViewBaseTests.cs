@@ -511,20 +511,17 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	public class XmlBrowseViewBaseTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FakeXmlBrowseViewBase m_view;
-
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
-		private IPropertyTable m_propertyTable;
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 		#region Overrides of LcmTestBase
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			var bv = new FakeBrowseViewer();
-			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			bv.InitializeFlexComponent(flexComponentParameters);
+			bv.InitializeFlexComponent(_flexComponentParameters);
 			m_view = bv.BrowseView as FakeXmlBrowseViewBase;
 
 			ConfigureScrollBars();
@@ -535,11 +532,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			try
 			{
 				m_view.m_bv.Dispose();
-				m_propertyTable?.Dispose();
-
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters?.PropertyTable?.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{

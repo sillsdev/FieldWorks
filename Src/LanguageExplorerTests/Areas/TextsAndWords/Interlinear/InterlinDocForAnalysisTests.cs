@@ -37,9 +37,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private TestableFocusBox m_focusBox;
 		private MockInterlinDocForAnalysis m_interlinDoc;
 		private IList<AnalysisTree> m_analysis_para0_0 = new List<AnalysisTree>();
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 
 		/// <summary>
 		///
@@ -81,9 +79,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			m_interlinDoc = new MockInterlinDocForAnalysis(m_stText0);
-			m_interlinDoc.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_interlinDoc.InitializeFlexComponent(_flexComponentParameters);
 			m_focusBox = m_interlinDoc.FocusBox as TestableFocusBox;
 		}
 
@@ -96,11 +94,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Cache.ActionHandlerAccessor.Undo();
 				}
 
-				m_propertyTable?.Dispose();
+				_flexComponentParameters?.PropertyTable?.Dispose();
 				m_interlinDoc.Dispose();
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{

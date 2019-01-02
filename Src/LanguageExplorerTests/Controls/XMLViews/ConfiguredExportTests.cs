@@ -19,9 +19,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 {
 	public class ConfiguredExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
-		private IPropertyTable m_propertyTable;
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 
 		#region Overrides of LcmTestBase
 
@@ -34,7 +33,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -47,10 +46,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			try
 			{
-				m_propertyTable.Dispose();
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters?.PropertyTable?.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -82,7 +79,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -109,7 +106,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -135,7 +132,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -161,7 +158,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -185,7 +182,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -209,7 +206,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -231,7 +228,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -255,7 +252,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -278,7 +275,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -322,7 +319,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -339,7 +336,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 
 					var frag = XDocument.Parse("<p css='some#style' flowType='" + flowType + "'/>");
 

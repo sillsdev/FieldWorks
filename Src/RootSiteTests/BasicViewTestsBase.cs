@@ -27,11 +27,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Fragment for view constructor</summary>
 		protected int m_frag = 1;
 		/// <summary />
-		protected IPropertyTable m_propertyTable;
-		/// <summary />
-		protected IPublisher m_publisher;
-		/// <summary />
-		protected ISubscriber m_subscriber;
+		protected FlexComponentParameters _flexComponentParameters;
 
 		/// <summary />
 		protected virtual DummyBasicView CreateDummyBasicView()
@@ -51,13 +47,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 
 			m_basicView = CreateDummyBasicView();
 			m_basicView.Cache = Cache;
 			m_basicView.Visible = false;
 			m_basicView.StyleSheet = styleSheet;
-			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_basicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 
 		/// <summary>
@@ -75,10 +71,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			m_basicView?.Dispose();
 			m_basicView = null;
-			m_propertyTable?.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters?.PropertyTable?.Dispose();
+			_flexComponentParameters = null;
 		}
 
 		/// <summary>

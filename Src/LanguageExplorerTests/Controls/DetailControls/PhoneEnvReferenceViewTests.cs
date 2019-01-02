@@ -33,15 +33,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var hvos = new [] {-5000, -5001, -5002};
 			sda.CacheVecProp(root, PhoneEnvReferenceView.kMainObjEnvironments, hvos, hvos.Length);
 			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (var view = new PhoneEnvReferenceView())
 				{
-					view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					view.InitializeFlexComponent(flexComponentParameters);
 					view.SetSda(sda);
 					view.SetRoot(form);
 					view.SetCache(Cache);
@@ -51,7 +48,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 	}

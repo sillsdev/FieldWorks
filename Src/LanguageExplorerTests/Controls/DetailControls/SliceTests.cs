@@ -22,9 +22,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	{
 		private DataTree m_DataTree;
 		private Slice m_Slice;
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 		private DummyFwMainWnd _dummyWindow;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
@@ -33,9 +32,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 		}
 		#endregion
 
@@ -47,12 +46,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				_dummyWindow?.Dispose();
 				m_Slice?.Dispose();
 				m_DataTree?.Dispose();
-				m_propertyTable?.Dispose();
+				_flexComponentParameters?.PropertyTable?.Dispose();
 
 				_dummyWindow = null;
 				m_Slice = null;
 				m_DataTree = null;
-				m_propertyTable = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -126,7 +125,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void CreateIndentedNodes_basic()
 		{
 			m_DataTree = new DataTree(new SharedEventHandlers());
-			m_DataTree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 
 			// Data taken from a running Sena 3
@@ -153,13 +152,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree(new SharedEventHandlers());
-			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			m_DataTree.InitializeFlexComponent(flexComponentParameters);
+			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.MyCmObject = obj;
-			m_Slice.InitializeFlexComponent(flexComponentParameters);
-			m_propertyTable.SetProperty("cache", Cache);
+			m_Slice.InitializeFlexComponent(_flexComponentParameters);
+			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 
 			m_Slice.Expand();
 		}
@@ -174,13 +172,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
 			m_DataTree = new DataTree(new SharedEventHandlers());
-			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			m_DataTree.InitializeFlexComponent(flexComponentParameters);
+			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.MyCmObject = obj;
-			m_Slice.InitializeFlexComponent(flexComponentParameters);
-			m_propertyTable.SetProperty("cache", Cache);
+			m_Slice.InitializeFlexComponent(_flexComponentParameters);
+			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 
 			m_Slice.Collapse();
 		}
@@ -195,10 +192,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree(new SharedEventHandlers());
-			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			m_DataTree.InitializeFlexComponent(flexComponentParameters);
+			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
-			m_Slice.InitializeFlexComponent(flexComponentParameters);
+			m_Slice.InitializeFlexComponent(_flexComponentParameters);
 			var node = CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
 			int indent = 0;
 			int insertPosition = 0;

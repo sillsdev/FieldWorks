@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,11 +15,11 @@ namespace LanguageExplorer.TestUtilities
 {
 	public static class TestSetupServices
 	{
-		public static void SetupTestTriumvirate(out IPropertyTable propertyTable, out IPublisher publisher, out ISubscriber subscriber)
+		public static FlexComponentParameters SetupTestTriumvirate()
 		{
-			subscriber = new Subscriber();
-			publisher = new Publisher(subscriber);
-			propertyTable = new PropertyTable(publisher);
+			var subscriber = new Subscriber();
+			var publisher = new Publisher(subscriber);
+			return new FlexComponentParameters(new PropertyTable(publisher), publisher, subscriber);
 		}
 
 		internal static FlexComponentParameters SetupEverything(LcmCache cache, out ISharedEventHandlers sharedEventHandlers, bool includeStylesheet = true)
@@ -40,13 +40,8 @@ namespace LanguageExplorer.TestUtilities
 				}
 			}
 			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorer.TestUtilities", "DictionaryConfiguration", "TestData"), baseDir);
-
-			ISubscriber subscriber;
-			IPublisher publisher;
-			IPropertyTable propertyTable;
-			SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
-			propertyTable.SetProperty("cache", cache);
-			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
+			var flexComponentParameters = SetupTestTriumvirate();
+			flexComponentParameters.PropertyTable.SetProperty("cache", cache);
 			if (includeStylesheet)
 			{
 				var styleSheet = new LcmStyleSheet();

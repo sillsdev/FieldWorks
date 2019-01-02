@@ -26,9 +26,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		private ConstChartBody m_chartBody;
 		private ConstituentChart m_constChart;
 		private List<ICmPossibility> m_allColumns;
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 
 		protected override void CreateTestData()
 		{
@@ -41,8 +39,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_chart = m_helper.SetupAChart();
 
 			m_constChart = new ConstituentChart(Cache, m_logic);
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
-			m_constChart.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			m_constChart.InitializeFlexComponent(_flexComponentParameters);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
 
@@ -53,10 +51,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			m_chartBody.Dispose();
 			m_constChart.Dispose();
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters?.PropertyTable?.Dispose();
+			_flexComponentParameters = null;
 
 			base.TestTearDown();
 		}

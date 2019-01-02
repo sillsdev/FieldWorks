@@ -35,19 +35,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			// result for bt pane
 			rootBox.Expect(r => r.Height).Return(1100);
 			rootBox.Expect(r => r.Width).Return(100);
-
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (DummyBasicView stylePane = new DummyBasicView(), draftPane = new DummyBasicView(), btPane = new DummyBasicView())
 				{
-					var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
-					stylePane.InitializeFlexComponent(flexComponentParameterObject);
-					draftPane.InitializeFlexComponent(flexComponentParameterObject);
-					btPane.InitializeFlexComponent(flexComponentParameterObject);
+					stylePane.InitializeFlexComponent(flexComponentParameters);
+					draftPane.InitializeFlexComponent(flexComponentParameters);
+					btPane.InitializeFlexComponent(flexComponentParameters);
 					using (var group = new RootSiteGroup())
 					{
 						PrepareView(stylePane, 50, 300, rootBox);
@@ -79,7 +74,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 

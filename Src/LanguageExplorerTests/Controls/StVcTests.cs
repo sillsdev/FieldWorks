@@ -285,17 +285,14 @@ namespace LanguageExplorerTests.Controls
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
 				{
 					footnoteView.StyleSheet = styleSheet;
 					footnoteView.Visible = false;
-					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					footnoteView.InitializeFlexComponent(flexComponentParameters);
 
 					// We don't actually want to show it, but we need to force the view to create the root
 					// box and lay it out so that various test stuff can happen properly.
@@ -336,7 +333,7 @@ namespace LanguageExplorerTests.Controls
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 
@@ -362,17 +359,14 @@ namespace LanguageExplorerTests.Controls
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			// Prepare the test by creating a footnote view
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
 				{
 					footnoteView.StyleSheet = styleSheet;
 					footnoteView.Visible = false;
-					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					footnoteView.InitializeFlexComponent(flexComponentParameters);
 
 					// We don't actually want to show it, but we need to force the view to create the root
 					// box and lay it out so that various test stuff can happen properly.
@@ -391,7 +385,7 @@ namespace LanguageExplorerTests.Controls
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 	}

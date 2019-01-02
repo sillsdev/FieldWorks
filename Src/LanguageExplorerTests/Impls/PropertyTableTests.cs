@@ -48,9 +48,8 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void SetUp()
 		{
-			IPublisher publisherDummy;
-			ISubscriber subscriberDummy;
-			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out publisherDummy, out subscriberDummy);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_propertyTable = flexComponentParameters.PropertyTable;
 			_propertyTable.LocalSettingsId = "TestLocal";
 			_propertyTable.UserSettingDirectory = _originalSettingsPath;
 

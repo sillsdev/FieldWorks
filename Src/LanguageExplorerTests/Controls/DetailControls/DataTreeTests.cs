@@ -29,9 +29,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private Inventory m_parts;
 		private Inventory m_layouts;
 		private ILexEntry m_entry; // test object.
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+	   /// <summary />
+	   private FlexComponentParameters _flexComponentParameters;
 		private DataTree m_dtree;
 		private Form m_parent;
 		private DummyFwMainWnd _dummyWindow;
@@ -110,15 +109,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree = new DataTree(new SharedEventHandlers());
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
-			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
 		}
 
 		private void SetupPubSubAndPropertyTable()
 		{
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
 		/// <summary>
@@ -134,12 +133,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 					m_parent.Dispose();
 				}
 				_dummyWindow.Dispose();
-				m_propertyTable?.Dispose();
+				_flexComponentParameters?.PropertyTable?.Dispose();
 
 				_dummyWindow = null;
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -271,7 +268,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -283,13 +280,13 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				LexSenseTags.kflidScientificName,
 				TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
-			m_propertyTable.Dispose();
+			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
-			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -304,20 +301,20 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
 			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOS.Add(etymology);
 
-			m_propertyTable.Dispose();
+			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
-			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -327,20 +324,20 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
 			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("source language", Cache.DefaultAnalWs);
 			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
-			m_propertyTable.Dispose();
+			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
-			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);

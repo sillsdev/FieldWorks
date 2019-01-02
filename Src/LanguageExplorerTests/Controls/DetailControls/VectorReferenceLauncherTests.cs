@@ -21,10 +21,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	{
 		#region Member variables
 
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
-
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 		private ILexEntryFactory m_leFact;
 		private ILexEntryRefFactory m_lerFact;
 		//private IMoStemAllomorphFactory m_moFact;
@@ -43,10 +41,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			try
 			{
 				MockLauncher.Dispose();
-				m_propertyTable.Dispose();
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -62,13 +58,13 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			base.CreateTestData();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
 			MockLauncher = new MockVectorReferenceLauncher();
-			MockLauncher.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			MockLauncher.InitializeFlexComponent(_flexComponentParameters);
 			m_wsAnalysis = Cache.DefaultAnalWs;
 			m_wsVern = Cache.DefaultVernWs;
 			m_wsAnalStr = Cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(Cache.DefaultAnalWs);

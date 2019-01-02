@@ -16,27 +16,24 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	[TestFixture]
 	public class TestColumnConfigureDialog
 	{
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
-		private IPropertyTable m_propertyTable;
+		/// <summary />
+		private FlexComponentParameters _flexComponentParameters;
 		private LcmCache m_cache;
 
 		[SetUp]
 		public void SetUp()
 		{
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
-			m_propertyTable.SetProperty("cache", m_cache);
+			_flexComponentParameters.PropertyTable.SetProperty("cache", m_cache);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters?.PropertyTable?.Dispose();
+			_flexComponentParameters = null;
 			m_cache.Dispose();
 			m_cache = null;
 		}
@@ -110,7 +107,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var possibleColumns_document = XDocument.Parse(possibleColumnsData);
 			var possibleColumns = possibleColumns_document.Root.Elements().ToList();
 
-			var window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_propertyTable);
+			var window = new ColumnConfigureDialog(possibleColumns, currentColumns, _flexComponentParameters.PropertyTable);
 			window.FinishInitialization();
 
 			return window;

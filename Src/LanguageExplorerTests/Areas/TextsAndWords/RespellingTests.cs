@@ -28,9 +28,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 	public class RespellingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const int kObjectListFlid = 89999956;
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 
 	#region Overrides of FdoTestBase
 
@@ -56,8 +54,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
-			m_propertyTable.SetProperty("cache", Cache);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -75,20 +73,15 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 				}
 				Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
 
-				if (m_propertyTable != null)
+				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>("InterestingTexts");
+				if (interestingTextlist != null)
 				{
-					var interestingTextlist = m_propertyTable.GetValue<InterestingTextList>("InterestingTexts");
-					if (interestingTextlist != null)
-					{
-						Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
-						m_propertyTable.RemoveProperty("InterestingTexts");
-					}
-					m_propertyTable.RemoveProperty(LanguageExplorerConstants.cache);
-					m_propertyTable.Dispose();
+					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
+					_flexComponentParameters.PropertyTable.RemoveProperty("InterestingTexts");
 				}
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters.PropertyTable.RemoveProperty(LanguageExplorerConstants.cache);
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -125,7 +118,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -147,7 +140,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -174,7 +167,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
 				"Unexpected morph bundle contents for 'be'");
@@ -209,7 +202,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -237,7 +230,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
@@ -276,7 +269,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			respellUndoaction.DoIt(m_publisher);
+			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
@@ -396,14 +389,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
 			else
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
-			rsda.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			rsda.InitializeFlexComponent(_flexComponentParameters);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
@@ -480,14 +473,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
 			else
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
-			rsda.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			rsda.InitializeFlexComponent(_flexComponentParameters);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());

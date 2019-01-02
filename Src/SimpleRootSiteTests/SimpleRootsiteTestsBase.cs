@@ -26,11 +26,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#region Data members
 
 		/// <summary />
-		protected IPropertyTable m_propertyTable;
-		/// <summary />
-		protected IPublisher m_publisher;
-		/// <summary />
-		protected ISubscriber m_subscriber;
+		protected FlexComponentParameters _flexComponentParameters;
 		/// <summary>The data cache</summary>
 		protected T m_cache;
 		/// <summary>The draft form</summary>
@@ -125,8 +121,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				StyleSheet = styleSheet,
 				WritingSystemFactory = m_wsManager
 			};
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
-			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			m_basicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 
 		/// <summary>
@@ -138,10 +134,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_basicView.Dispose();
 			m_basicView = null;
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
 		}
 
 		/// <summary>

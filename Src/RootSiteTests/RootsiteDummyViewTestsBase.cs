@@ -20,11 +20,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
 		/// <summary />
-		protected IPropertyTable m_propertyTable;
-		/// <summary />
-		protected IPublisher m_publisher;
-		/// <summary />
-		protected ISubscriber m_subscriber;
+		protected FlexComponentParameters _flexComponentParameters;
 
 		/// <summary>
 		/// Set up data that is constant for all tests in fixture
@@ -52,10 +48,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 
 			m_basicView = new DummyBasicView { Cache = Cache, Visible = false, StyleSheet = styleSheet };
-			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_basicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 
 		/// <summary>
@@ -65,10 +61,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			m_basicView.Dispose();
 			m_basicView = null;
-			m_propertyTable?.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters?.PropertyTable?.Dispose();
+			_flexComponentParameters = null;
 
 			base.TestTearDown();
 		}

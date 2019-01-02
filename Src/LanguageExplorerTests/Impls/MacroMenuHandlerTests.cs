@@ -34,9 +34,8 @@ namespace LanguageExplorerTests.Impls
 		{
 			base.TestSetup();
 
-			IPublisher publisherDummy;
-			ISubscriber subscriberDummy;
-			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out publisherDummy, out subscriberDummy);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_propertyTable = flexComponentParameters.PropertyTable;
 			_macroMenuHandler = new MacroMenuHandler();
 			_propertyTable.SetProperty("cache", Cache);
 			_macroMenuHandler.InitializeForTests(Cache);

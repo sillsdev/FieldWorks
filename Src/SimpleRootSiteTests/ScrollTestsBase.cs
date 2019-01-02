@@ -20,20 +20,16 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		internal SimpleRootSite m_site;
 		internal IVwSelection m_selection;
 		/// <summary />
-		internal IPropertyTable m_propertyTable;
-		/// <summary />
-		internal IPublisher m_publisher;
-		/// <summary />
-		internal ISubscriber m_subscriber;
+		protected FlexComponentParameters _flexComponentParameters;
 
 		/// <summary />
 		[SetUp]
 		public void Setup()
 		{
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 
 			m_site = new DummyRootSite();
-			m_site.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_site.InitializeFlexComponent(_flexComponentParameters);
 
 			var rootb = MockRepository.GenerateMock<IVwRootBox>();
 			rootb.Expect(rb => rb.Height).Return(10000);
@@ -53,10 +49,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void TearDown()
 		{
 			m_site.Dispose();
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
 		}
 
 		/// <summary>

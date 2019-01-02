@@ -26,14 +26,11 @@ namespace LanguageExplorerTests.Areas
 			wfiset.CasesRC.Add(wf1);
 			var andFilter = new AndFilter();
 			var wsf = new WordSetFilter(wfiset);
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
-				propertyTable.SetProperty("cache", Cache);
-				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+				flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
+				flp.InitializeFlexComponent(flexComponentParameters);
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);
@@ -41,7 +38,7 @@ namespace LanguageExplorerTests.Areas
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 	}

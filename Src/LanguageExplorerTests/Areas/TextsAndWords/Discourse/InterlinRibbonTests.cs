@@ -27,9 +27,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	public class InterlinRibbonTests : InMemoryDiscourseTestBase
 	{
 		private TestInterlinRibbon _ribbon;
-		private IPropertyTable _propertyTable;
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 
 		#region Test setup
 
@@ -44,8 +42,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				Width = 100,
 				Height = 40
 			};
-			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out _publisher, out _subscriber);
-			_ribbon.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_ribbon.InitializeFlexComponent(_flexComponentParameters);
 			Assert.IsNotNull(_ribbon.Decorator, "Don't have correct access here.");
 			_ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
 		}
@@ -55,11 +53,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			try
 			{
 				_ribbon?.Dispose();
-				_propertyTable?.Dispose();
+				_flexComponentParameters?.PropertyTable?.Dispose();
 				_ribbon = null;
-				_propertyTable = null;
-				_publisher = null;
-				_subscriber = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{

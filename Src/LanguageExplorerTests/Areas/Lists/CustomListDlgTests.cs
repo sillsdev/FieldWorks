@@ -25,9 +25,7 @@ namespace LanguageExplorerTests.Areas.Lists
 	[TestFixture]
 	public class CustomListDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 
 		#region Overrides of LcmTestBase
 
@@ -40,7 +38,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -53,10 +51,8 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			try
 			{
-				m_propertyTable?.Dispose();
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_flexComponentParameters?.PropertyTable?.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -90,7 +86,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void SetGetListName()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
@@ -114,7 +110,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void SetGetListDescription()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
@@ -145,7 +141,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void IsListNameDuplicated_French_Yes()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -175,7 +171,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void IsListNameDuplicated_French_No()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -203,7 +199,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void SetDialogTitle_Add()
 		{
 			// AddList subclass of CustomListDlg
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// Dialog Title should default to "New List"
 				Assert.AreEqual("New List", dlg.Text,
@@ -220,7 +216,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void SetDialogTitle_Configure()
 		{
 			// Configure subclass of CustomListDlg
-			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				// Dialog Title should default to "Configure List"
 				Assert.AreEqual("Configure List", dlg.Text,
@@ -236,7 +232,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
-			using (var dlg = new AddCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new AddCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// SUT; Get default checkbox values
 				var hier = dlg.SupportsHierarchy;
@@ -258,7 +254,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
-			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				// SUT; Set non-default checkbox values
 				dlg.SupportsHierarchy = true;
@@ -281,7 +277,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void GetDefaultWsComboEntries()
 		{
 			// SUT
-			using (var dlg = new AddCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new AddCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// Verify
 				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
@@ -298,7 +294,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void SetWsComboSelectedItem()
 		{
 			// SUT
-			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
@@ -317,7 +313,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void TestGetUiWssAndInstall()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// must set the test cache because this method needs one
 				SetUserWs("es");
@@ -346,7 +342,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void TestGetUiWssAndInstall_dialect()
 		{
 			var testStrings = new List<string> { "en", "es-MX", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// must set the test cache because this method needs one
 				SetUserWs("es-MX");
@@ -376,7 +372,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void TestGetUiWssAndInstall_OnlyEnglish()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
+			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// must set the test cache because this method needs one
 				SetUserWs("en");

@@ -20,19 +20,16 @@ namespace LanguageExplorerTests.Impls
 		public void RecordListRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
 		{
 			// Setup
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (var dummyWindow = new DummyFwMainWnd())
 				using (var statusBar = new StatusBar())
-				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
+				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, flexComponentParameters))
 				{
-					propertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
-					propertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
-					propertyTable.SetProperty(FwUtils.window, dummyWindow);
+					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
+					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
+					flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, dummyWindow);
 
 					// Test 1. Make sure a bogus record list isn't in the repository.
 					Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));
@@ -41,7 +38,7 @@ namespace LanguageExplorerTests.Impls
 
 					// Test 3. New record list is added.
 					var recordList = new RecordList("records", statusBar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, new VectorPropertyParameterObject(Cache.LanguageProject.ResearchNotebookOA, "AllRecords", Cache.MetaDataCacheAccessor.GetFieldId2(RnResearchNbkTags.kClassId, "AllRecords", false)));
-					recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					recordList.InitializeFlexComponent(flexComponentParameters);
 
 					recordListRepository.AddRecordList(recordList);
 					Assert.AreSame(recordList, recordListRepository.GetRecordList("records"));
@@ -59,7 +56,7 @@ namespace LanguageExplorerTests.Impls
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 	}

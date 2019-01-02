@@ -112,17 +112,14 @@ namespace LanguageExplorerTests.Controls
 			XmlNode itemCont = doc.SelectSingleNode("//item[@id='vCont']");
 			msfs.AddFeatureFromXml(itemCont);
 
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (var dlg = new FeatureSystemInflectionFeatureListDlg())
 				{
 					ILexEntryInflType cobj = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
 					lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-					dlg.SetDlgInfo(Cache, propertyTable, cobj, 0);
+					dlg.SetDlgInfo(Cache, flexComponentParameters.PropertyTable, cobj, 0);
 
 					// load some feature system values into treeview
 					FeatureStructureTreeView tv = dlg.TreeView;
@@ -134,7 +131,7 @@ namespace LanguageExplorerTests.Controls
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 
@@ -169,10 +166,7 @@ namespace LanguageExplorerTests.Controls
 
 		private void MakeFeatureStructure(FeatureStructureTreeView tv, IFsFeatStruc featStruct)
 		{
-			IPublisher publisher;
-			ISubscriber subscriber;
-			IPropertyTable propertyTable;
-			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
 				using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
@@ -181,13 +175,13 @@ namespace LanguageExplorerTests.Controls
 					{
 						featStruct.FeatureSpecsOC.Remove(spec);
 					}
-					dlg.SetDlgInfo(Cache, propertyTable, featStruct, MoStemMsaTags.kflidMsFeatures);
+					dlg.SetDlgInfo(Cache, flexComponentParameters.PropertyTable, featStruct, MoStemMsaTags.kflidMsFeatures);
 					dlg.UpdateFeatureStructure(tv.Nodes);
 				}
 			}
 			finally
 			{
-				propertyTable.Dispose();
+				flexComponentParameters.PropertyTable.Dispose();
 			}
 		}
 
