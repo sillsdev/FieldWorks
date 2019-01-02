@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,20 +24,16 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets a help file URL or topic
 		/// </summary>
-		/// <param name="stid"></param>
-		/// <returns>The requested string</returns>
 		string IHelpTopicProvider.GetHelpString(string stid)
 		{
 			if (string.IsNullOrWhiteSpace(stid))
 			{
 				return "NullStringID";
 			}
-
 			if (s_helpResources == null)
 			{
 				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
-
 			// First try to find it in our resource file. If that doesn't work, try the more general one
 			return s_helpResources.GetString(stid) ?? ResourceHelper.GetHelpString(stid);
 		}

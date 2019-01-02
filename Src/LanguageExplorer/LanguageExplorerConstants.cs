@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,11 +9,11 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class LanguageExplorerConstants
 	{
-		/// <summary />
+		/// <summary>Reset on area/tool change. string.Empty</summary>
 		/// <remarks>
 		/// Only used by RecordList's ResetStatusBarMessageForCurrentObject method
 		/// </remarks>
-		internal const string StatusBarPanelMessage = "statusBarPanelMessage"; // Reset on area/tool change. string.Empty
+		internal const string StatusBarPanelMessage = "statusBarPanelMessage";
 		/// <summary />
 		/// <remarks>
 		/// Used only by ParserMenuManager
@@ -24,21 +24,21 @@ namespace LanguageExplorer
 		/// Only used by RecordDocView's ShowRecord method
 		/// </remarks>
 		internal const string StatusBarPanelProgressBar = "statusBarPanelProgressBar";
-		/// <summary />
+		/// <summary>Reset on area/tool change. string.Empty</summary>
 		/// <remarks>
 		/// Only used by RecordList's UpdateSortStatusBarPanel method
 		/// </remarks>
-		internal const string StatusBarPanelSort = "statusBarPanelSort"; // Reset on area/tool change. string.Empty
-		/// <summary />
+		internal const string StatusBarPanelSort = "statusBarPanelSort";
+		/// <summary>Reset on area/tool change. string.Empty</summary>
 		/// <remarks>
 		/// Only used by RecordList's UpdateFilterStatusBarPanel method
 		/// </remarks>
-		internal const string StatusBarPanelFilter = "statusBarPanelFilter"; // Reset on area/tool change. string.Empty
-		/// <summary />
+		internal const string StatusBarPanelFilter = "statusBarPanelFilter";
+		/// <summary>Reset on area/tool change. StringTable.Table.GetString("No Records", "Misc");</summary>
 		/// <remarks>
 		/// Only used by RecordList's UpdateStatusBarRecordNumber method
 		/// </remarks>
-		internal const string StatusPanelRecordNumber = "statusBarPanelRecordNumber"; // Reset on area/tool change. StringTable.Table.GetString("No Records", "Misc");
+		internal const string StatusPanelRecordNumber = "statusBarPanelRecordNumber";
 		/// <summary>
 		/// Name of file tool strip
 		/// </summary>

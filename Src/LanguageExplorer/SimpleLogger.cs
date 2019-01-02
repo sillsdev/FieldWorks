@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,17 @@ using System.IO;
 namespace LanguageExplorer
 {
 	/// <summary>
-	/// An ISimpleLogger can be temporarily passed to a class which is not Dispsable in place of a TextWriter.
+	/// An ISimpleLogger can be temporarily passed to a class which is not Disposable in place of a TextWriter.
 	/// This makes it unambiguous that the class using the logger is not responsible to dispose of it.
 	/// The actual class is disposable and should normally be created in a Using clause.
 	/// The logger can also track an indent.
 	/// </summary>
 	internal sealed class SimpleLogger : ISimpleLogger
 	{
+		private MemoryStream m_stream;
+		private int m_indent;
+		private TextWriter m_writer;
+
 		/// <summary>
 		/// Make one (on a memory stream the logger is responsible for).
 		/// </summary>
@@ -25,9 +29,6 @@ namespace LanguageExplorer
 			m_writer = new StreamWriter(m_stream);
 		}
 
-		private MemoryStream m_stream;
-		private int m_indent;
-		private TextWriter m_writer;
 		/// <summary>
 		/// For logging nested structures, increments the current indent level.
 		/// </summary>
@@ -84,44 +85,39 @@ namespace LanguageExplorer
 			}
 		}
 
-		#if DEBUG
-		/// <summary/>
+		/// <summary />
 		~SimpleLogger()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary>
-		/// As a special case, this class does not HAVE to be disposed if it does not allow pictures.
-		/// </summary>
-		/// <param name="disposing"></param>
+		/// <summary />
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-			IsDisposed = true;
 
 			if (disposing)
 			{
 				m_writer.Dispose();
 				m_stream.Dispose();
 			}
+
+			IsDisposed = true;
 		}
 	}
 }

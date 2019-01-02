@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.ObjectModel;
 
 namespace LanguageExplorer
@@ -23,27 +24,20 @@ namespace LanguageExplorer
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
+		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> menuItems)
 		{
-			if (menuItems == null)
-			{
-				throw new ArgumentNullException(nameof(menuItems));
-			}
+			Guard.AgainstNull(menuItems, nameof(menuItems));
 
 			_menuItems = menuItems;
-
 			var currentTuple = _menuItems[Navigation.First];
 			currentTuple.Item1.Click += First_Click;
 			currentTuple.Item2.Click += First_Click;
-
 			currentTuple = _menuItems[Navigation.Previous];
 			currentTuple.Item1.Click += Previous_Click;
 			currentTuple.Item2.Click += Previous_Click;
-
 			currentTuple = _menuItems[Navigation.Next];
 			currentTuple.Item1.Click += Next_Click;
 			currentTuple.Item2.Click += Next_Click;
-
 			currentTuple = _menuItems[Navigation.Last];
 			currentTuple.Item1.Click += Last_Click;
 			currentTuple.Item2.Click += Last_Click;
@@ -84,7 +78,6 @@ namespace LanguageExplorer
 					// Wire up to new record list.
 					_recordList.RecordChanged += RecordListRecordChanged;
 				}
-
 				SetEnabledStateForWidgets();
 			}
 		}
@@ -124,10 +117,9 @@ namespace LanguageExplorer
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (IsDisposed)
 			{
-				// Only needs to run once.
+				// No need to run it more than once.
 				return;
 			}
 

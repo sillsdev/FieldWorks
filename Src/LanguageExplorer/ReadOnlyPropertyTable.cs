@@ -9,7 +9,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Wrapper around a property table to provide read only access. Exposes all GetValue calls but will do no setting.
 	/// </summary>
-	public class ReadOnlyPropertyTable : IReadonlyPropertyTable
+	internal sealed class ReadOnlyPropertyTable : IReadonlyPropertyTable
 	{
 		private readonly IPropertyTable _propertyTable;
 

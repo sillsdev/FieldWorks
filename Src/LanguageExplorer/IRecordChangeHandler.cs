@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,7 @@ namespace LanguageExplorer
 		/// <summary>Initialize the object with the record and the list to which it belongs.
 		/// </summary>
 		void Setup(object /*"record"*/ o, IRecordListUpdater rlu, LcmCache cache);
+
 		/// <summary>Fix the record for any changes, possibly refreshing the list to which it
 		/// belongs.</summary>
 		void Fixup(bool fRefreshList);

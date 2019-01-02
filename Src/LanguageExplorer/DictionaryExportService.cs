@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,8 +11,8 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -26,7 +26,6 @@ namespace LanguageExplorer
 		private LcmCache Cache { get; }
 		private IRecordList MyRecordList { get; }
 		private StatusBar _statusBar;
-
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
 
@@ -67,7 +66,7 @@ namespace LanguageExplorer
 		/// Produce a table of reversal index ShortNames and the count of the entries in each of them.
 		/// The reversal indexes included will be limited to those ShortNames specified in selectedReversalIndexes.
 		/// </summary>
-		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
+		public SortedDictionary<string, int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
 		{
 			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
 			{
@@ -75,8 +74,7 @@ namespace LanguageExplorer
 					.Select(repo => Cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
 					.Where(ri => ri != null && selectedReversalIndexes.Contains(ri.ShortName))
 					.ToDictionary(ri => ri.ShortName, CountReversalIndexEntries);
-
-				return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
+				return new SortedDictionary<string, int>(relevantReversalIndexesAndTheirCounts);
 			}
 		}
 
@@ -99,8 +97,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
-			IThreadedProgress progress = null)
+		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
 			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, Cache, MyRecordList))
@@ -127,6 +124,7 @@ namespace LanguageExplorer
 			private static IRecordList s_reversalIndexRecordList;
 			private IRecordList m_currentRecordList;
 			private IRecordListRepository _recordListRepository;
+			private bool _isDisposed;
 
 			private RecordListActivator(IRecordListRepository recordListRepository, IRecordList currentRecordList)
 			{
@@ -145,6 +143,11 @@ namespace LanguageExplorer
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
 
 				if (disposing)
 				{
@@ -154,6 +157,8 @@ namespace LanguageExplorer
 				}
 				m_currentRecordList = null;
 				_recordListRepository = null;
+
+				_isDisposed = true;
 			}
 
 			~RecordListActivator()
@@ -189,14 +194,12 @@ namespace LanguageExplorer
 				{
 					return null; // No need to juggle record lists if the one we want is already active
 				}
-
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
 				{
 					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LexiconArea.AllReversalEntries, statusBar, LexiconArea.AllReversalEntriesFactoryMethod);
 					CacheRecordList(exportType, tempRecordList);
 				}
-
 				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
 				tempRecordList.ActivateUI(false);
 				tempRecordList.UpdateList(true, true);
@@ -213,11 +216,13 @@ namespace LanguageExplorer
 				return clerkAttr != null && clerkAttr.Value == recordList.Id;
 			}
 		}
+
 		private sealed class ReversalIndexActivator : IDisposable
 		{
 			private readonly string m_sCurrentRevIdxGuid;
 			private readonly IPropertyTable m_propertyTable;
 			private readonly IRecordList m_recordList;
+			private bool _isDisposed;
 
 			private ReversalIndexActivator(string currentRevIdxGuid, IPropertyTable propertyTable, IRecordList recordList)
 			{
@@ -226,7 +231,7 @@ namespace LanguageExplorer
 				m_recordList = recordList;
 			}
 
-#region disposal
+			#region disposal
 			public void Dispose()
 			{
 				Dispose(true);
@@ -236,18 +241,26 @@ namespace LanguageExplorer
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
 				if (disposing)
 				{
 					string dummy;
 					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_recordList, out dummy);
 				}
+
+				_isDisposed = true;
 			}
 
 			~ReversalIndexActivator()
 			{
 				Dispose(false);
 			}
-#endregion disposal
+			#endregion disposal
 
 			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, IRecordList activeRecordList)
 			{
@@ -263,8 +276,7 @@ namespace LanguageExplorer
 			{
 				string originalReversalIndexGuid;
 				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordList, out originalReversalIndexGuid)
-					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, activeRecordList)
-					: null;
+					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, activeRecordList) : null;
 			}
 
 			/// <returns>true iff activation was needed (the requested Reversal Index was not already active)</returns>

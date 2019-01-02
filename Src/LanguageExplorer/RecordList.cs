@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,12 +12,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -35,22 +35,20 @@ namespace LanguageExplorer
 	/// </summary>
 	internal class RecordList : IRecordList
 	{
-		protected const int RecordListFlid = 89999956;
-
 		#region Data members
-
+		protected const int RecordListFlid = 89999956;
 		/// <summary>
 		/// we want to keep a reference to our window, separate from the PropertyTable
 		/// in case there's a race condition during dispose with the window
 		/// getting removed from the PropertyTable before it's been disposed.
 		/// </summary>
-		Form m_windowPendingOnActivated;
+		private Form m_windowPendingOnActivated;
 		protected LcmCache m_cache;
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the mananaged section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -83,7 +81,7 @@ namespace LanguageExplorer
 		/// Collection of ClassAndPropInfo objects.
 		/// </summary>
 		protected List<ClassAndPropInfo> m_insertableClasses;
-			/// <summary>
+		/// <summary>
 		/// Index of the currently selected item. May be -1 to indicate that no item is selected
 		/// (perhaps because the list is empty).
 		/// Note: MUST always update this through the CurrentIndex setter, so that m_hvoCurrent
@@ -122,7 +120,6 @@ namespace LanguageExplorer
 		/// <summary />
 		protected IRecordChangeHandler _recordChangeHandler;
 		private ListUpdateHelper _bulkEditListUpdateHelper;
-
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
 		private bool _isDefaultSort;
 		private RecordSorter _defaultSorter;
@@ -135,7 +132,10 @@ namespace LanguageExplorer
 		/// the FilterBar.
 		/// </summary>
 		protected RecordFilter _activeMenuBarFilter;
-		private bool _shouldHandleDeletion = true; // false, if the dependent record list is to handle deletion, as for reversals.
+		/// <summary>
+		/// false, if the dependent record list is to handle deletion, as for reversals.
+		/// </summary>
+		private bool _shouldHandleDeletion = true;
 		/// <summary>
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
 		/// this does not include the filters they can get that by using the FilterBar.
@@ -143,7 +143,10 @@ namespace LanguageExplorer
 		protected IRecordFilterListProvider _filterProvider;
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
-		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
+		/// <summary>
+		/// true during delete and insert and ShowRecord calls caused by them.
+		/// </summary>
+		private bool _suppressSaveOnChangeRecord;
 		/// <summary>
 		/// All of the sorters for the record list.
 		/// </summary>
@@ -339,7 +342,6 @@ namespace LanguageExplorer
 			var wsContainer = m_cache.ServiceLocator.WritingSystems;
 			m_fontName = m_usingAnalysisWs ? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName : wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
 			m_typeSize = FontHeightAdjuster.GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
-
 			if (m_owningObject != null)
 			{
 				UpdatePrivateList();
@@ -373,12 +375,10 @@ namespace LanguageExplorer
 					}
 				}
 			}
-
 			if (!setFilterMenu)
 			{
 				OnAdjustFilterSelection();
 			}
-
 #if RANDYTODO
 			//we handled the tree bar only if we are the root record list
 			if (m_recordListProvidingRootObject == null)
@@ -391,7 +391,6 @@ namespace LanguageExplorer
 				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject), "We expected to find recordListProvidingOwner '" + m_recordListProvidingRootObject + "'. Possibly misspelled.");
 			}
 #endif
-
 #if RANDYTODO
 			// TODO: In original, optimized, version, we don't load the data until the record list is used in a newly activated window.
 			SetupDataContext(false);
@@ -524,7 +523,6 @@ namespace LanguageExplorer
 			{
 				return; // we're already in the process of changing our list.
 			}
-
 			// If this list contains WfiWordforms, and the tag indicates a change to the
 			// virtual property of all wordforms, then assume this list also is affected
 			// and pretend that this PropChanged is really for us.  See FWR-3617 for
@@ -540,10 +538,8 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-
 			// Try to catch things that don't obviously affect us, but will cause problems.
 			TryReloadForInvalidPathObjectsOnCurrentObject(tag, cvDel);
-
 			(VirtualListPublisher as IVwNotifyChange)?.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 
@@ -578,12 +574,9 @@ namespace LanguageExplorer
 			IsActiveInGui = true;
 			SetupFilterMenu();
 			ReloadIfNeeded();
-
 			RegisterMessageHandlers();
 			AddNotification();
-
 			ActivateRecordBar();
-
 			if (!updateStatusBar)
 			{
 				return;
@@ -701,7 +694,6 @@ namespace LanguageExplorer
 				{
 					throw new IndexOutOfRangeException();
 				}
-
 				// We don't want multiple log entries for the same record, and it seems this frequently
 				// gets called repeatedly for the same one. We check both the index and the object,
 				// because it's possible with deletions or insertions that the current object changes
@@ -711,12 +703,9 @@ namespace LanguageExplorer
 				{
 					return;
 				}
-
 				m_currentIndex = value;
 				m_hvoCurrent = hvoCurrent;
-
 				ICmObject newFocusedObject = null;
-
 				if (m_currentIndex < 0)
 				{
 					Logger.WriteEvent("No current record");
@@ -740,7 +729,6 @@ namespace LanguageExplorer
 						Logger.WriteEvent("No Current Record");
 					}
 				}
-
 				if (newFocusedObject == RecordedFocusedObject)
 				{
 					return;
@@ -765,7 +753,6 @@ namespace LanguageExplorer
 				{
 					return null;
 				}
-
 				ICmObject currentObject;
 				if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out currentObject))
 				{
@@ -952,7 +939,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Handle adding and/or removing a filter.
 		/// </summary>
-		/// <param name="args"></param>
 		public virtual void OnChangeFilter(FilterChangeEventArgs args)
 		{
 			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtils.window)))
@@ -963,7 +949,6 @@ namespace LanguageExplorer
 				{
 					PropertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", string.Empty, settingsGroup: SettingsGroup.LocalSettings);
 				}
-
 				if (m_filter == null)
 				{
 					// Had no filter to begin with
@@ -1015,7 +1000,6 @@ namespace LanguageExplorer
 				}
 				// Now we have a new filter, we have to recompute what to show.
 				ReloadList();
-
 				// Remember the active filter for this list.
 				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
 				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, true, true, SettingsGroup.LocalSettings);
@@ -1058,7 +1042,6 @@ namespace LanguageExplorer
 				}
 				// Otherwise none of the children need to be kept, get rid of the whole filter.
 			}
-
 			OnChangeFilter(new FilterChangeEventArgs(null, Filter));
 		}
 
@@ -1071,7 +1054,6 @@ namespace LanguageExplorer
 		{
 			// Don't handle this message if you're not the primary record list.  This allows, for
 			// example, XmlBrowseRDEView.cs to handle the message instead.
-
 #if RANDYTODO
 			// Note from RandyR: One of these days we should probably subclass the record list more.
 			// The "reversalEntries" record list wants to handle the message, even though it isn't the primary record list.
@@ -1082,7 +1064,6 @@ namespace LanguageExplorer
 			{
 				return false;
 			}
-
 			// It may be null:
 			// 1. if the objects are being deleted using the keys,
 			// 2. the last one has been deleted, and
@@ -1092,16 +1073,13 @@ namespace LanguageExplorer
 			{
 				return true;
 			}
-
 			// Don't allow an object to be deleted if it shouldn't be deleted.
 			if (!CanDelete())
 			{
 				ReportCannotDelete();
 				return true;
 			}
-
 			var thingToDelete = GetObjectToDelete(CurrentObject);
-
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				using (var uiObj = CmObjectUi.MakeLcmModelUiObject(thingToDelete))
@@ -1163,7 +1141,6 @@ namespace LanguageExplorer
 				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
 			}
 			ActivateUI();
-
 			return true;    // handled
 		}
 
@@ -1179,7 +1156,6 @@ namespace LanguageExplorer
 			{
 				return false;
 			}
-
 			// We will certainly switch records, but we're going to suppress the usual Save after we
 			// switch, so the user can at least Undo one level, the actual insertion. But Undoing
 			// that may not get us back to the current record, so we'd better not allow anything
@@ -1187,7 +1163,6 @@ namespace LanguageExplorer
 			// Enhance JohnT: if a dialog is brought up, the user could cancel, in which case,
 			// we don't really need to throw away the Undo stack.
 			SaveOnChangeRecord();
-
 #if RANDYTODO
 			//if there is a listener who wants to do bring up a dialog box rather than just creating a new item,
 			//give them a chance.
@@ -1201,7 +1176,6 @@ namespace LanguageExplorer
 			{
 				m_suppressSaveOnChangeRecord = false;
 			}
-
 			var command = (Command) argument;
 			string className;
 			try
@@ -1213,11 +1187,11 @@ namespace LanguageExplorer
 				throw new FwConfigurationException("Could not get the necessary parameter information from this command",
 					command.ConfigurationNode, e);
 			}
-
 			if (!m_list.CanInsertClass(className))
+			{
 				return false;
+			}
 #endif
-
 			var result = false;
 #if RANDYTODO
 			m_suppressSaveOnChangeRecord = true;
@@ -1238,9 +1212,7 @@ namespace LanguageExplorer
 				m_suppressSaveOnChangeRecord = false;
 			}
 #endif
-
 			Publisher.Publish("FocusFirstPossibleSlice", null);
-
 			return result;
 		}
 
@@ -1267,7 +1239,6 @@ namespace LanguageExplorer
 			try
 			{
 				var hvoTarget = (int)argument;
-
 				var index = IndexOfObjOrChildOrParent(hvoTarget);
 				if (index == -1)
 				{
@@ -1285,13 +1256,11 @@ namespace LanguageExplorer
 					var mdc = VirtualListPublisher.GetManagedMetaDataCache();
 					var clidList = mdc.FieldExists(m_flid) ? mdc.GetDstClsId(m_flid) : -1;
 					var clidObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
-
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
 					// Enhance JohnT/CurtisH: It would be better to if decorator properties were recorded in the MDC, or
 					// if we could access the decorator MDC.
 					var fSuitableTarget = clidList == -1 || DomainObjectServices.IsSameOrSubclassOf(mdc, clidObj, clidList);
-
 					if (fSuitableTarget)
 					{
 						var dr = MessageBox.Show(LanguageExplorerResources.LinkTargetNotAvailableDueToFilter, LanguageExplorerResources.TargetNotFound, MessageBoxButtons.YesNo);
@@ -1312,7 +1281,6 @@ namespace LanguageExplorer
 						}
 					}
 				}
-
 				if (index == -1)
 				{
 					// May be the item was just created by another program or tool (e.g., LT-8827)
@@ -1366,15 +1334,12 @@ namespace LanguageExplorer
 		public void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort)
 		{
 			_isDefaultSort = isDefaultSort;
-
 			SortName = sortName;
 			PropertyTable.SetProperty(SortNamePropertyTableId, SortName, true, true, SettingsGroup.LocalSettings);
-
 			ChangeSorter(sorter);
 			// Remember how we're sorted.
 			var persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
 			PropertyTable.SetProperty(SorterPropertyTableId, persistSorter, true, true, SettingsGroup.LocalSettings);
-
 			UpdateSortStatusBarPanel();
 		}
 
@@ -1393,7 +1358,6 @@ namespace LanguageExplorer
 				{
 					return; // no need to reload.
 				}
-
 				m_owningObject = value;
 				m_oldLength = 0;
 				ReloadList();
@@ -1512,9 +1476,9 @@ namespace LanguageExplorer
 		public void SaveOnChangeRecord()
 		{
 #if RANDYTODO
-// Work up non static test that can use IFwMainWnd
+			// TODO: Work up non static test that can use IFwMainWnd
 #endif
-			if (_suppressSaveOnChangeRecord || m_cache == null /* || FwXWindow.InUndoRedo*/)
+			if (_suppressSaveOnChangeRecord || m_cache == null)
 			{
 				return;
 			}
@@ -1545,16 +1509,13 @@ namespace LanguageExplorer
 			UpdateStatusBarForRecordBar();
 
 #if RANDYTODO
-// Work up non-static test that can use IFwMainWnd
+			// TODO: Work up non-static test that can use IFwMainWnd
 #endif
-			// This is used by DependantRecordLists
-			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord/* || FwXWindow.InUndoRedo*/, SkipShowRecord, suppressFocusChange);
-
+			// This is used by DependentRecordLists
+			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord, SkipShowRecord, suppressFocusChange);
 			// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 			PropertyTable.SetProperty(PersistedIndexProperty, CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			UpdateSelectionForRecordBar();
-
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
 			// or performing an Undo/Redo.
 			// Note: Broadcasting "OnRecordNavigation" even if a selection doesn't change allows the browse view to
@@ -1662,7 +1623,6 @@ namespace LanguageExplorer
 			{
 				message = noRecordsText;
 			}
-
 			StatusBarPanelServices.SetStatusPanelRecordNumber(_statusBar, message);
 			ResetStatusBarMessageForCurrentObject();
 		}
@@ -1813,15 +1773,10 @@ namespace LanguageExplorer
 
 		private void UpdateSortStatusBarPanel()
 		{
-			if (!IsControllingTheRecordTreeBar)
+			if (!IsControllingTheRecordTreeBar || IgnoreStatusPanel)
 			{
 				return; // none of our business!
 			}
-			if (IgnoreStatusPanel)
-			{
-				return;
-			}
-
 			var newSortMessage = Sorter == null || SortName == null || (_isDefaultSort && _defaultSorter != null) ? string.Empty : string.Format(LanguageExplorerResources.SortedBy0, SortName);
 			StatusBarPanelServices.SetStatusBarPanelSort(_statusBar, newSortMessage);
 		}
@@ -1938,7 +1893,7 @@ namespace LanguageExplorer
 		{
 			for (var i = 0; i < SortedObjects.Count;) // not foreach: we may modify the list
 			{
-				if (IsInvalidItem((ManyOnePathSortItem) SortedObjects[i]))
+				if (IsInvalidItem((ManyOnePathSortItem)SortedObjects[i]))
 				{
 					SortedObjects.RemoveAt(i);
 				}
@@ -1994,8 +1949,6 @@ namespace LanguageExplorer
 				// data, we'll need to refactor so we can determine this, because we don't want to do it twice!
 				m_sorter?.Preload(OwningObject);
 			}
-
-
 			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			using (var progress = (panel == null) ? new NullProgressState() : new ProgressState(panel))
 			{
@@ -2015,7 +1968,6 @@ namespace LanguageExplorer
 					}
 					MakeItemsFor(newSortedObjects, obj);
 				}
-
 				SortList(newSortedObjects, progress);
 			}
 			return newSortedObjects;
@@ -2067,7 +2019,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// LT-12780:  On reloading FLEX there were situations where it reloaded on the first element of a list instead of
 		/// the last item the user was working on before closing Flex. The CurrentIndex was being set to zero. This method
-		/// will access the prersisted index but also make sure it does not use an index which is out of range.
+		/// will access the persisted index but also make sure it does not use an index which is out of range.
 		/// </summary>
 		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
 		{
@@ -2295,13 +2247,11 @@ namespace LanguageExplorer
 				// no need for further changes.
 				return;
 			}
-
 			if (filterName == nof.Name)
 			{
 				OnChangeFilterClearAll(); // get rid of all the ones we're allowed to.
 				return;
 			}
-
 			if (_filterProvider != null)
 			{
 				addf = _filterProvider.GetFilter(filterName);
@@ -2381,7 +2331,6 @@ namespace LanguageExplorer
 			{
 				throw new ArgumentException("We expect the first level to be a vector property.");
 			}
-
 			ISilDataAccess sda = VirtualListPublisher;
 			// assume we need to insert a new object in the vector field following hvoOwner
 			var cpi = cpiPath[0];
@@ -2405,9 +2354,7 @@ namespace LanguageExplorer
 					// Just possible it's some kind of virtual we can't insert a new object into.
 					return null;
 			}
-
 			var hvoNew = sda.MakeNewObject(cpi.signatureClsid, hvoOwner, flid, insertPosition);
-
 			// we may need to insert another new class.
 			if (cpiPath.Count > 1)
 			{
@@ -2443,11 +2390,10 @@ namespace LanguageExplorer
 		{
 			// If the list is made up of fake objects, we can't find one of them owned by our target,
 			// and trying to will crash, so give up.
-			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo)|| !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvoTarget))
+			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo) || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvoTarget))
 			{
 				return -1;
 			}
-
 			var i = 0;
 			foreach (IManyOnePathSortItem item in SortedObjects)
 			{
@@ -2478,7 +2424,6 @@ namespace LanguageExplorer
 			// NOTE: ListPropertyChoice compares its Value to its parent (ChoiceGroup).SinglePropertyValue
 			// to determine whether or not it is the Checked item in the list.
 			// Is there any way we could do this in a less kludgy/backdoor sort of way?
-
 			//If we have a filter selected, make sure "No Filter" is not still selected in the menu or toolbar.
 			if (_activeMenuBarFilter == null && Filter != null)
 			{
@@ -2631,7 +2576,6 @@ namespace LanguageExplorer
 		protected virtual bool TryRestoreSorter()
 		{
 			SortName = PropertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
-
 			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, null, SettingsGroup.LocalSettings);
 			if (Sorter != null)
 			{
@@ -2724,7 +2668,7 @@ namespace LanguageExplorer
 					BroadcastChange(false);
 					break;
 				default:
-					throw new NotImplementedException("An enum choice for ListChangedEventArgs was selected that OnListChanged is not aware of.");
+					throw new NotSupportedException("An enum choice for ListChangedEventArgs was selected that OnListChanged is not aware of.");
 			}
 		}
 
@@ -2797,7 +2741,6 @@ namespace LanguageExplorer
 			{
 				return; // none of our business!
 			}
-
 			var msg = FilterStatusContents(Filter != null && Filter.IsUserVisible);
 			if (IgnoreStatusPanel)
 			{
@@ -2847,7 +2790,6 @@ namespace LanguageExplorer
 				ReloadList();
 				return true;
 			}
-
 			// This may be a change to content we depend upon.
 			// 1) see if the property is the VirtualFlid of the owning record list. If so,
 			// the owning record list has reloaded, so we should also reload.
@@ -2864,7 +2806,6 @@ namespace LanguageExplorer
 			{
 				return false;
 			}
-
 			MarkEntriesForReload();
 			return true;
 		}
@@ -2988,7 +2929,6 @@ namespace LanguageExplorer
 			// have the same properties matching a filter or sorter as the real item. Try to do the best we
 			// can by removing remaining sort items for the dummy object and then adding any additional sort items
 			// for the real object.
-
 			// remove the remaining items.
 			indicesOfSortItemsToRemove.Sort();
 			indicesOfSortItemsToRemove.Reverse();
@@ -3039,7 +2979,6 @@ namespace LanguageExplorer
 					SortedObjects.AddRange(remainingInsertItems);
 				}
 			}
-
 			// update our current selected hvo, if necessary
 			if (m_hvoCurrent == hvoToReplace)
 			{
@@ -3104,12 +3043,11 @@ namespace LanguageExplorer
 			if (m_sorter is IReportsSortProgress)
 			{
 				// Uses the last 80% of the bar (first part used for building the list).
-				((IReportsSortProgress)m_sorter).SetPercentDone =
-					percent =>
-					{
-						progress.PercentDone = 20 + percent * 4 / 5;
-						progress.Breath();
-					};
+				((IReportsSortProgress)m_sorter).SetPercentDone = percent =>
+				{
+					progress.PercentDone = 20 + percent * 4 / 5;
+					progress.Breath();
+				};
 			}
 			m_sorter.Sort( /*ref*/ newSortedObjects); //YiSpeed 1 secs
 			m_sorter.SetPercentDone = DoNothing; // progress about to be disposed.
@@ -3142,7 +3080,6 @@ namespace LanguageExplorer
 					}
 				}
 			}
-
 			return sortedObjects.Count - start;
 		}
 
@@ -3155,7 +3092,6 @@ namespace LanguageExplorer
 			{
 				hvos[i++] = item.RootObjectHvo;
 			}
-
 			// In case we're already displaying it, we must have an accurate old length, or if it gets shorter
 			// the extra ones won't get deleted. But we must check whether the property is already cached...
 			// if it isn't and we try to read it, the code will try to load this fake property from the database,
@@ -3187,14 +3123,11 @@ namespace LanguageExplorer
 			}
 			CurrentIndex = newCurrentIndex;
 			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(m_owningObject.Hvo, hvos);
-
 			m_oldLength = hvos.Length;
-
 			//TODO: try to stay on the same record
 			// Currently Attempts to keep us at the same index as we were.
 			// we should try hard to keep us on the actual record that we were currently on,
 			// since the reload may be a result of changing the sort order, in which case the index is meaningless.
-
 			//make sure the hvo index is in a reasonable spot
 			if (m_currentIndex >= hvos.Length)
 			{
@@ -3205,7 +3138,6 @@ namespace LanguageExplorer
 				CurrentIndex = (hvos.Length > 0) ? 0 : -1;
 			}
 			DoneReload();
-
 			// Notify any delegates that the selection of the main object in the vector has changed.
 			if (m_fEnableSendPropChanged)
 			{
@@ -3347,7 +3279,6 @@ namespace LanguageExplorer
 				{
 					hvoCurrent = CurrentObjectHvo;
 				}
-
 				//this happens when the set is dependent on another one, but no item is selected in the
 				//primary list. For example, if there are no word forms, then the list which holds the analyses
 				//of a selected wordform will not have been owning object from which to pull analyses.
@@ -3368,7 +3299,6 @@ namespace LanguageExplorer
 					OnListChanged();
 					return;
 				}
-
 				try
 				{
 					newSortedObjects = GetFilteredSortedList();
@@ -3388,7 +3318,6 @@ namespace LanguageExplorer
 						throw;
 					}
 				}
-
 				// Try to stay on the same object if possible.
 				if (hvoCurrent != 0 && newSortedObjects.Count > 0)
 				{
@@ -3412,7 +3341,6 @@ namespace LanguageExplorer
 					newCurrentIndex = newCurrentIndex >= newSortedObjects.Count ? newSortedObjects.Count - 1 : GetPersistedCurrentIndex(newSortedObjects.Count);
 					actions = ListChangedActions.Normal; // We definitely changed records
 				}
-
 				SendPropChangedOnListChange(newCurrentIndex, newSortedObjects, actions);
 				//YiSpeed 6.5 secs (mostly filling tree bar)
 				FinishedReloadList();
@@ -3480,7 +3408,6 @@ namespace LanguageExplorer
 			{
 				thingToDelete = CurrentObject;
 			}
-
 			try
 			{
 				// This can happen in some bizarre cases, such as reconciling with another client
@@ -3489,11 +3416,7 @@ namespace LanguageExplorer
 				{
 					return;
 				}
-
 				m_deletingObject = true;
-				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
-				// and the current object may no longer match the current filter, so it may be gone.
-				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
 				using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 				{
 					var updatingListOrig = UpdatingList;
@@ -3570,14 +3493,12 @@ namespace LanguageExplorer
 			{
 				return -1;
 			}
-
 			var target = m_cache.ServiceLocator.ObjectRepository.GetObject(hvoTarget);
 			var owners = new HashSet<int>();
 			for (var owner = target.Owner; owner != null; owner = owner.Owner)
 			{
 				owners.Add(owner.Hvo);
 			}
-
 			var i = 0;
 			foreach (IManyOnePathSortItem item in SortedObjects)
 			{
@@ -3594,11 +3515,9 @@ namespace LanguageExplorer
 		{
 			m_sda = VirtualListPublisher; // needed before ComputeInsertableClasses().
 			m_sda.AddNotification(this);
-
 			ComputeInsertableClasses();
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;
-
 			if (loadList)
 			{
 				ReloadList();
@@ -3665,7 +3584,6 @@ namespace LanguageExplorer
 			{
 				return $"{className}.{fieldName}_{sorterOrFilter}";
 			}
-
 			return $"{className}.{PropertyName}_{sorterOrFilter}";
 		}
 
@@ -3791,8 +3709,10 @@ namespace LanguageExplorer
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (_isDisposed)
 				{
-					return; // No need to do it more than once.
+					// No need to do it more than once.
+					return;
 				}
+
 				if (disposing)
 				{
 					if (_viewFilterMenuItem != null)

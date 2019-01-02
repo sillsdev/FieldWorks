@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,19 +40,12 @@ namespace LanguageExplorer
 				File.Copy(fileInfo.FullName, dstFullName, true);
 				File.SetAttributes(dstFullName, File.GetAttributes(fileInfo.FullName));
 			}
-
 			foreach (var directoryInfo in di.GetDirectories())
 			{
-				if (directoryInfo.Name.Substring(0, 1) == ".")
+				if (directoryInfo.Name.Substring(0, 1) == "." || directoryInfo.Name == dirFilter)
 				{
 					continue;
 				}
-
-				if (directoryInfo.Name == dirFilter)
-				{
-					continue;
-				}
-
 				var dstFullName = Path.Combine(dst, directoryInfo.Name);
 				Copy(directoryInfo.FullName, dstFullName, dirFilter, applicationName);
 				Directory.SetCreationTime(dstFullName, Directory.GetCreationTime(directoryInfo.FullName));

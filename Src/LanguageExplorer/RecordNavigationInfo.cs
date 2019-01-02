@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,13 +12,7 @@ namespace LanguageExplorer
 	/// </summary>
 	internal class RecordNavigationInfo : IComparable
 	{
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		/// <param name="myRecordList">The list.</param>
-		/// <param name="suppressSaveOnChangeRecord"></param>
-		/// <param name="skipShowRecord"></param>
-		/// <param name="suppressFocusChange"></param>
+		/// <summary />
 		public RecordNavigationInfo(IRecordList myRecordList, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
 		{
 			MyRecordList = myRecordList;

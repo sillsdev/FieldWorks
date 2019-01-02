@@ -1,12 +1,13 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SIL.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace LanguageExplorer
@@ -22,9 +23,7 @@ namespace LanguageExplorer
 		private RegistryKey m_registryKey;
 		private string m_supportEmailAddress;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		internal SILErrorReportingAdapter(Form parentForm, IPropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
@@ -44,9 +43,8 @@ namespace LanguageExplorer
 		/// <summary />
 		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label, ErrorResult resultIfAlternateButtonPressed, string message)
 		{
-			return policy.ShouldShowMessage(message) &&
-				ErrorReporter.ReportException(new Exception(message), m_registryKey, m_supportEmailAddress, m_parentForm, false) ?
-				ErrorResult.Abort : ErrorResult.Ignore;
+			return policy.ShouldShowMessage(message) && ErrorReporter.ReportException(new Exception(message), m_registryKey, m_supportEmailAddress, m_parentForm, false)
+				? ErrorResult.Abort : ErrorResult.Ignore;
 		}
 
 		/// <summary />
@@ -79,7 +77,7 @@ namespace LanguageExplorer
 
 		#region IDisposable
 
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -130,9 +128,10 @@ namespace LanguageExplorer
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

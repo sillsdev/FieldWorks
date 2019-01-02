@@ -1,9 +1,10 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -20,7 +21,8 @@ namespace LanguageExplorer
 	/// </summary>
 	internal sealed class LinkHandler : IFlexComponent, IApplicationIdleEventHandler, IDisposable
 	{
-		const int kmaxDepth = 50;       // Limit the stacks to 50 elements (LT-729).
+		// Limit the stacks to 50 elements (LT-729).
+		const int kmaxDepth = 50;
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
 		private IFwMainWnd _mainWindow;
@@ -46,20 +48,15 @@ namespace LanguageExplorer
 
 			_mainWindow = mainWindow;
 			_cache = cache;
-
 			_toolStripButtonHistoryBack = toolStripButtonHistoryBack;
 			_toolStripButtonHistoryBack.Click += HistoryBack_Clicked;
-
 			_toolStripButtonHistoryForward = toolStripButtonHistoryForward;
 			_toolStripButtonHistoryForward.Click += HistoryForward_Clicked;
-
 			_copyLocationAsHyperlinkToolStripMenuItem = copyLocationAsHyperlinkToolStripMenuItem;
 			_copyLocationAsHyperlinkToolStripMenuItem.Click += CopyLocationAsHyperlink_Clicked;
-
 			_backStack = new LinkedList<FwLinkArgs>();
 			_forwardStack = new LinkedList<FwLinkArgs>();
 			CurrentContext = null;
-
 			Application.Idle += Application_Idle;
 		}
 
@@ -98,7 +95,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -151,11 +148,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
-				// No need to run more than once.
+				// No need to run it more than once.
 				return;
 			}
 
@@ -204,7 +200,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				return true; // we can't handle it, but probably no one else can either. Maybe should crash?
 			}
 			var url = args.Link;
-			if(!url.StartsWith(FwLinkArgs.kFwUrlPrefix))
+			if (!url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 			{
 				return true; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
 			}
@@ -226,10 +222,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private static bool SameDatabase(FwAppArgs fwargs, LcmCache cache)
 		{
-			return fwargs.Database == "this$" ||
-				string.Equals(fwargs.Database, cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase)
-				|| string.Equals(fwargs.Database, cache.ProjectId.Path, StringComparison.InvariantCultureIgnoreCase)
-				|| string.Equals(Path.GetFileName(fwargs.Database), cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase);
+			return fwargs.Database == "this$" || string.Equals(fwargs.Database, cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase)
+				|| string.Equals(fwargs.Database, cache.ProjectId.Path, StringComparison.InvariantCultureIgnoreCase) || string.Equals(Path.GetFileName(fwargs.Database), cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase);
 		}
 
 		/// <summary>
@@ -252,7 +246,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			if (_followingLink && newHistoryLink.EssentiallyEquals(_linkActive))
 			{
 				var howManyAdded = _backStack.Count - _backStackOrig;
-				for( ; howManyAdded > 1; --howManyAdded)
+				for (; howManyAdded > 1; --howManyAdded)
 				{
 					_backStack.RemoveLast();
 				}
@@ -298,7 +292,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-			if (CurrentContext!= null)
+			if (CurrentContext != null)
 			{
 				Push(_forwardStack, CurrentContext);
 			}
@@ -465,7 +459,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		private static ICmObject GetObjectToShowInTool(ICmObject start)
 		{
-			for(var current = start;;current = current.Owner)
+			for (var current = start; ; current = current.Owner)
 			{
 				if (current.Owner == null || current.Owner is ICmMajorObject)
 				{

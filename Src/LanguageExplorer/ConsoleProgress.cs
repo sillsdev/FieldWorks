@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,11 +16,11 @@ namespace LanguageExplorer
 	internal sealed class ConsoleProgress : IProgress
 	{
 		private readonly SingleThreadedSynchronizeInvoke m_sychronizeInvoke = new SingleThreadedSynchronizeInvoke();
-		int m_min;
-		int m_max = 100;
-		string m_message;
-		int m_dots;
-		int m_grain = 1;
+		private int m_min;
+		private int m_max = 100;
+		private string m_message;
+		private int m_dots;
+		private int m_grain = 1;
 
 		/// <summary>
 		/// Let the caller know whether we've written any dots out for progress reporting.
@@ -67,13 +67,14 @@ namespace LanguageExplorer
 		{
 			m_grain = ((m_max - m_min) + 79) / 80;
 			if (m_grain <= 0)
+			{
 				m_grain = 1;
+			}
 		}
 
 		/// <summary>
 		/// Get the message within the progress display window.
 		/// </summary>
-		/// <value>The message.</value>
 		public string Message
 		{
 			get { return m_message; }
@@ -130,7 +131,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets or sets the size of the step increment used by Step.
 		/// </summary>
-		/// <value>The size of the step.</value>
 		public int StepSize
 		{
 			get { return 1; }
@@ -147,7 +147,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the opertation executing on the separate thread
+		/// Gets or sets a value indicating whether the operation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
 		public bool AllowCancel

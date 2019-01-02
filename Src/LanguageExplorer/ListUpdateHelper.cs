@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,13 +15,13 @@ namespace LanguageExplorer
 	/// </summary>
 	public class ListUpdateHelper : DisposableBase
 	{
-		IRecordList m_recordList;
-		readonly bool m_fOriginalUpdatingList;
-		readonly bool m_fOriginalListLoadingSuppressedState;
-		readonly bool m_fOriginalSkipRecordNavigationState;
+		private IRecordList m_recordList;
+		private readonly bool m_fOriginalUpdatingList;
+		private readonly bool m_fOriginalListLoadingSuppressedState;
+		private readonly bool m_fOriginalSkipRecordNavigationState;
 		private bool m_fOriginalLoadRequestedWhileSuppressed;
-		readonly bool m_fOriginalSuppressSaveOnChangeRecord;
-		readonly ListUpdateHelper m_originalUpdateHelper;
+		private readonly bool m_fOriginalSuppressSaveOnChangeRecord;
+		private readonly ListUpdateHelper m_originalUpdateHelper;
 
 		internal ListUpdateHelper(ListUpdateHelperParameterObject parameterObject)
 		{
@@ -36,7 +36,6 @@ namespace LanguageExplorer
 			m_fOriginalLoadRequestedWhileSuppressed = m_recordList.RequestedLoadWhileSuppressed;
 			// monitor whether ReloadList was requested during the life of this ListUpdateHelper
 			m_recordList.RequestedLoadWhileSuppressed = false;
-
 			var asRecordList = (RecordList)m_recordList;
 			m_originalUpdateHelper = asRecordList.UpdateHelper;
 			// if we're already suppressing the list, we don't want to auto reload since
@@ -45,11 +44,10 @@ namespace LanguageExplorer
 			var parentList = m_recordList.ParentList;
 			if (m_fOriginalListLoadingSuppressedState || parentList != null && parentList.ListLoadingSuppressed)
 			{
-				m_fTriggerPendingReloadOnDispose = false;
+				TriggerPendingReloadOnDispose = false;
 			}
 			m_recordList.ListLoadingSuppressedNoSideEffects = true;
 			asRecordList.UpdateHelper = this;
-
 			SkipShowRecord = parameterObject.SkipShowRecord;
 			m_recordList.SuppressSaveOnChangeRecord = parameterObject.SuppressSaveOnChangeRecord;
 			ClearBrowseListUntilReload = parameterObject.ClearBrowseListUntilReload;
@@ -84,7 +82,9 @@ namespace LanguageExplorer
 			set
 			{
 				if (m_recordList != null)
+				{
 					m_recordList.SkipShowRecord = value;
+				}
 			}
 		}
 
@@ -92,12 +92,7 @@ namespace LanguageExplorer
 		/// Set to false if you don't want to automatically reload pending reload OnDispose.
 		/// true, by default.
 		/// </summary>
-		private bool m_fTriggerPendingReloadOnDispose = true;
-		internal bool TriggerPendingReloadOnDispose
-		{
-			get { return m_fTriggerPendingReloadOnDispose; }
-			set { m_fTriggerPendingReloadOnDispose = value; }
-		}
+		internal bool TriggerPendingReloadOnDispose { get; set; } = true;
 
 		/// <summary>
 		/// The list was successfully restored (from a persisted sort sequence).
@@ -105,7 +100,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal void ListWasRestored()
 		{
-			m_fTriggerPendingReloadOnDispose = false;
+			TriggerPendingReloadOnDispose = false;
 			m_fOriginalLoadRequestedWhileSuppressed = false;
 		}
 		#region DisposableBase Members
@@ -117,7 +112,7 @@ namespace LanguageExplorer
 				return;
 			}
 			var fHandledReload = false;
-			if (m_fTriggerPendingReloadOnDispose && m_recordList.RequestedLoadWhileSuppressed)
+			if (TriggerPendingReloadOnDispose && m_recordList.RequestedLoadWhileSuppressed)
 			{
 				m_recordList.ListLoadingSuppressed = m_fOriginalListLoadingSuppressedState;
 				// if the requested while suppressed flag was reset, we handled it.
@@ -135,7 +130,6 @@ namespace LanguageExplorer
 			{
 				m_recordList.RequestedLoadWhileSuppressed |= m_fOriginalLoadRequestedWhileSuppressed;
 			}
-
 			m_recordList.UpdatingList = m_fOriginalUpdatingList;
 			// reset this after we possibly reload the list.
 			m_recordList.SkipShowRecord = m_fOriginalSkipRecordNavigationState;

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,8 @@ using System;
 namespace LanguageExplorer
 {
 	/// <summary />
-	public delegate void FwSelectionChangedEventHandler (object sender, FwObjectSelectionEventArgs e);
+	public delegate void FwSelectionChangedEventHandler(object sender, FwObjectSelectionEventArgs e);
 
-	#region FwObjectSelectionEventArgs
 	/// <remarks>
 	/// This event argument class could be used for other user interface lists or trees containing FieldWorks objects
 	/// </remarks>
@@ -18,7 +17,7 @@ namespace LanguageExplorer
 		/// <summary />
 		public FwObjectSelectionEventArgs(int hvo)
 		{
-			Hvo= hvo;
+			Hvo = hvo;
 		}
 
 		/// <summary />
@@ -41,5 +40,4 @@ namespace LanguageExplorer
 		/// <summary />
 		public bool HasSelectedItem => Hvo != 0;
 	}
-	#endregion
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -108,7 +108,6 @@ namespace LanguageExplorer
 					new PreHistoricMigrator(versionProvider.ApplicationVersion, cache, logger, propertyTable).MigrateIfNeeded();
 					new FirstAlphaMigrator(versionProvider.ApplicationVersion, cache, logger).MigrateIfNeeded();
 					new FirstBetaMigrator(versionProvider.ApplicationVersion, cache, logger).MigrateIfNeeded();
-
 					var innerDirectories = new[] { "Dictionary", "ReversalIndex" };
 					foreach (var innerDir in innerDirectories)
 					{
@@ -159,15 +158,15 @@ namespace LanguageExplorer
 			{
 				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
 				case AreaServices.ReversalEditCompleteMachineName:
-				{
-					return LanguageExplorerResources.ReversalIndex;
-				}
+					{
+						return LanguageExplorerResources.ReversalIndex;
+					}
 				case AreaServices.LexiconBrowseMachineName:
 				case AreaServices.LexiconDictionaryMachineName:
 				case AreaServices.LexiconEditMachineName:
-				{
-					return "Dictionary";
-				}
+					{
+						return "Dictionary";
+					}
 				default:
 					return null;
 			}
@@ -179,7 +178,7 @@ namespace LanguageExplorer
 		internal static string GetDictionaryConfigurationType(IPropertyTable propertyTable)
 		{
 			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(propertyTable);
-			switch(nonLocalizedConfigurationType)
+			switch (nonLocalizedConfigurationType)
 			{
 				case "Reversal Index":
 					return LanguageExplorerResources.ReversalIndex;
@@ -196,8 +195,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
-			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), lastDirectoryPart);
+			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
@@ -212,14 +210,13 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetDefaultConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
-			return GetDefaultConfigurationDirectory(lastDirectoryPart);
+			return GetDefaultConfigurationDirectory(GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
 		internal static string GetDefaultConfigurationDirectory(string area)
 		{
-			return area == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, area);
+			return string.IsNullOrWhiteSpace(area) ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, area);
 		}
 
 		/// <summary>
@@ -245,11 +242,7 @@ namespace LanguageExplorer
 			}
 			if (innerConfigDir == null)
 			{
-				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
-				if (innerConfigDir == null)
-				{
-					innerConfigDir = LanguageExplorerConstants.RevIndexDir;
-				}
+				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)) ?? LanguageExplorerConstants.RevIndexDir;
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
@@ -275,7 +268,7 @@ namespace LanguageExplorer
 				}
 				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration
 				currentConfig = Path.Combine(projectConfigDir, selectedPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-				if(!File.Exists(currentConfig))
+				if (!File.Exists(currentConfig))
 				{
 					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				}
@@ -358,7 +351,6 @@ namespace LanguageExplorer
 			{
 				return Guid.Empty;
 			}
-
 			var hrefVal = element.GetAttribute("href");
 			return !hrefVal.StartsWith("#g") ? Guid.Empty : new Guid(hrefVal.Substring(2));
 		}
@@ -409,8 +401,7 @@ namespace LanguageExplorer
 
 		private static void SetConfigureHomographParameters(string currentConfig, LcmCache cache)
 		{
-			var model = new DictionaryConfigurationModel(currentConfig, cache);
-			SetConfigureHomographParameters(model, cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			SetConfigureHomographParameters(new DictionaryConfigurationModel(currentConfig, cache), cache.ServiceLocator.GetInstance<HomographConfiguration>());
 		}
 
 		/// <summary>
@@ -453,7 +444,6 @@ namespace LanguageExplorer
 			{
 				return Guid.Empty;
 			}
-
 			var idVal = element.GetAttribute("id");
 			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));
 		}

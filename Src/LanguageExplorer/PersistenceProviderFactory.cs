@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,10 +64,8 @@ namespace LanguageExplorer
 				{
 					form.WindowState = (FormWindowState)state;
 				}
-
 				var location = Get(id, "windowLocation");
 				var size = Get(id, "windowSize");
-
 				if (location != null)
 				{
 					form.Location = (Point)location;
@@ -76,12 +74,10 @@ namespace LanguageExplorer
 					// changed when it is Show()n.
 					form.StartPosition = FormStartPosition.Manual;
 				}
-
 				if (size != null)
 				{
 					form.Size = (Size)size;
 				}
-
 				// Fix the stored position in case it is off the screen.  This can happen if the
 				// user has removed a second monitor, or changed the screen resolution downward,
 				// since the last time he ran the program.  (See LT-1078.)
@@ -108,12 +104,10 @@ namespace LanguageExplorer
 			void IPersistenceProvider.PersistWindowSettings(string id, Form form)
 			{
 				Set(id, "windowState", form.WindowState);
-
 				if (form.WindowState == FormWindowState.Normal)
 				{
 					Set(id, "windowSize", form.Size);
 				}
-
 				//don't bother storing the location if we are maximized or minimized.
 				//if we did, then when the user exits the application and then runs it again,
 				//	then switches to the normal state, we would be switching to 0,0 or something.

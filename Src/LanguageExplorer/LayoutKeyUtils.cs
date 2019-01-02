@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,13 +32,11 @@ namespace LanguageExplorer
 		/// specific reversal index.
 		/// </summary>
 		internal const char kcMarkReversalIndex = '-';
-
 		/// <summary>
 		/// A defect in some configuration saving code related to either the hideConfig attribute or children of sublayouts
 		/// would use _ as the duplicate identifier on param attributes.
 		/// </summary>
 		internal const char kcMarkNodeCopyBug = '_';
-
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
 		private const string ParamAttr = "param";
@@ -81,8 +79,6 @@ namespace LanguageExplorer
 		/// Will be of the format "(x)" where x is a digit, except there could be more than one
 		/// separated by spaces.
 		/// </summary>
-		/// <param name="partRefNode"></param>
-		/// <returns></returns>
 		internal static string GetPossibleLabelSuffix(XElement partRefNode)
 		{
 			var label = XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty);
@@ -101,8 +97,6 @@ namespace LanguageExplorer
 		/// the new param attribute.
 		/// Will be of the format "%0x" where x is a digit.
 		/// </summary>
-		/// <param name="partRefNode"></param>
-		/// <returns></returns>
 		internal static string GetPossibleParamSuffix(XElement partRefNode)
 		{
 			var param = XmlUtils.GetOptionalAttributeValue(partRefNode, ParamAttr, string.Empty);
@@ -110,12 +104,8 @@ namespace LanguageExplorer
 			{
 				return string.Empty;
 			}
-			var index = param.IndexOfAny(new [] {kcMarkNodeCopy, kcMarkNodeCopyBug});
-			if (index > 0)
-			{
-				return param.Substring(index);
-			}
-			return string.Empty;
+			var index = param.IndexOfAny(new[] { kcMarkNodeCopy, kcMarkNodeCopyBug });
+			return index > 0 ? param.Substring(index) : string.Empty;
 		}
 	}
 }

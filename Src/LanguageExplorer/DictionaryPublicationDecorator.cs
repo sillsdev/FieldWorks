@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,18 +28,14 @@ namespace LanguageExplorer
 	public class DictionaryPublicationDecorator : DomainDataByFlidDecoratorBase
 	{
 		// a set of HVOs of entries, senses, and examples that should not be displayed in the publication.
-		readonly HashSet<int> m_excludedItems = new HashSet<int>();
-		readonly HashSet<int> m_excludeAsMainEntry = new HashSet<int>();
-
+		private readonly HashSet<int> m_excludedItems = new HashSet<int>();
+		private readonly HashSet<int> m_excludeAsMainEntry = new HashSet<int>();
 		private LcmCache Cache { get; }
-
 		private int m_LexDbEntriesFlid; // similar to m_mainFlid in the XmlVc it decorates
-
 		private ILexEntryRepository m_entryRepo;
 		private ILexReferenceRepository m_lexRefRepo;
 		private ILexSenseRepository m_senseRepo;
 		private ILexEntryRefRepository m_lerRepo;
-
 		private int m_headwordFlid;
 		private int m_mlHeadwordFlid;
 		private int m_picsOfSensesFlid;
@@ -49,17 +45,13 @@ namespace LanguageExplorer
 		private int m_headwordRefFlid;
 		private int m_headwordReversalFlid;
 		private int m_reversalNameFlid;
-
 		// Map from HVO (of LexEntry) to homograph number we should publish.
 		private Dictionary<int, int> m_homographNumbers = new Dictionary<int, int>();
-
 		// a set of flids for properties that return LexEntries, LexSenses, or LexExampleSentences
-		HashSet<int> m_fieldsToFilter = new HashSet<int>();
-
-		HashSet<int> m_lexRefFieldsToFilter = new HashSet<int>();
-		HashSet<int> m_lexEntryRefFieldsToFilter = new HashSet<int>();
-		HashSet<int> m_reversalEntryFieldsToFilter = new HashSet<int>();
-
+		private HashSet<int> m_fieldsToFilter = new HashSet<int>();
+		private HashSet<int> m_lexRefFieldsToFilter = new HashSet<int>();
+		private HashSet<int> m_lexEntryRefFieldsToFilter = new HashSet<int>();
+		private HashSet<int> m_reversalEntryFieldsToFilter = new HashSet<int>();
 		private List<IVwNotifyChange> m_notifees = new List<IVwNotifyChange>(); // the things we have to notify of PropChanges.
 
 		/// <summary>
@@ -67,7 +59,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public DictionaryPublicationDecorator(LcmCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
 			: this(cache, domainDataByFlid, mainFlid, cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0])
-		{}
+		{ }
 
 		/// <summary>
 		/// Create one. The SDA passed MAY be the DomainDataByFlid of the cache, but it is usually another
@@ -101,7 +93,6 @@ namespace LanguageExplorer
 		/// We want to intercept notifications. So instead of registering the root box with the wrapped
 		/// SDA, we register ourself.
 		/// </summary>
-		/// <param name="nchng"></param>
 		public override void AddNotification(IVwNotifyChange nchng)
 		{
 			base.AddNotification(this);
@@ -128,15 +119,15 @@ namespace LanguageExplorer
 				foreach (var notifee in m_notifees)
 				{
 					notifee.PropChanged(hvo, tag, 0, get_VecSize(hvo, tag), 0);
-			}
+				}
 			}
 			else
 			{
 				foreach (var notifee in m_notifees)
 				{
 					notifee.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+				}
 			}
-		}
 		}
 
 		private void BuildHomographInfo()
@@ -196,8 +187,8 @@ namespace LanguageExplorer
 				foreach (var item in list.Values)
 				{
 					m_homographNumbers[item.Hvo] = (m_excludeAsMainEntry.Contains(item.Hvo) ? 0 : index++);
+				}
 			}
-		}
 		}
 
 		public override bool get_BooleanProp(int hvo, int tag)
@@ -211,7 +202,7 @@ namespace LanguageExplorer
 			{
 				return base.get_IntProp(hvo, tag);
 			}
-				int result;
+			int result;
 			return m_homographNumbers.TryGetValue(hvo, out result) ? result : base.get_IntProp(hvo, tag);
 		}
 
@@ -324,7 +315,6 @@ namespace LanguageExplorer
 			{
 				return true;
 			}
-
 			if (senseCount == 0)
 			{
 				return false;
@@ -344,12 +334,12 @@ namespace LanguageExplorer
 				//This class currently can not handle filtering atomic values, if we need to do so a refactor is required,
 				// At least override get_ObjectProp, also enhance PropChanged to not assume the property is a vector one.
 				// PropChanged also needs work if for any reason we put non-object properties in any of these field collections
-				if (mdc.GetFieldType(flid) == (int) CellarPropertyType.OwningAtomic ||
-				    mdc.GetFieldType(flid) == (int) CellarPropertyType.ReferenceAtomic)
+				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.OwningAtomic ||
+					mdc.GetFieldType(flid) == (int)CellarPropertyType.ReferenceAtomic)
 				{
 					continue;
 				}
-					var dstCls = mdc.GetDstClsId(flid);
+				var dstCls = mdc.GetDstClsId(flid);
 				switch (dstCls)
 				{
 					case LexEntryTags.kClassId:
@@ -388,33 +378,33 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-				foreach (var obj in Publication.ReferringObjects)
+			foreach (var obj in Publication.ReferringObjects)
+			{
+				var entry = obj as ILexEntry;
+				if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
 				{
-					var entry = obj as ILexEntry;
-					if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
+					m_excludedItems.Add(obj.Hvo);
+					if (obj is ILexEntry)
 					{
-						m_excludedItems.Add(obj.Hvo);
-						if (obj is ILexEntry)
-					{
-						foreach (var sense in ((ILexEntry) obj).SensesOS)
+						foreach (var sense in ((ILexEntry)obj).SensesOS)
 						{
-								ExcludeSense(sense);
+							ExcludeSense(sense);
 						}
 					}
 
-						if (obj is ILexSense)
+					if (obj is ILexSense)
 					{
-							ExcludeSense((ILexSense)obj);
+						ExcludeSense((ILexSense)obj);
 					}
 				}
-					else
-					{
-						// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
-						Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
-						m_excludeAsMainEntry.Add(entry.Hvo);
-					}
+				else
+				{
+					// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
+					Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
+					m_excludeAsMainEntry.Add(entry.Hvo);
 				}
 			}
+		}
 
 		private void ExcludeSense(ILexSense sense)
 		{
@@ -448,18 +438,18 @@ namespace LanguageExplorer
 				case "Dictionary":
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
-				{
-					var reversalIndexGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-					if (reversalIndexGuid != Guid.Empty)
 					{
-						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-						if (currentReversalIndex != null)
+						var reversalIndexGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+						if (reversalIndexGuid != Guid.Empty)
 						{
-							return GetSortedAndFilteredReversalEntries(currentReversalIndex.Hvo, virtualFlid);
+							var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+							if (currentReversalIndex != null)
+							{
+								return GetSortedAndFilteredReversalEntries(currentReversalIndex.Hvo, virtualFlid);
+							}
 						}
+						break;
 					}
-					break;
-				}
 			}
 			return new int[] { };
 		}
@@ -546,7 +536,6 @@ namespace LanguageExplorer
 			{
 				return true; // If filtering didn't change anything don't mess with it.
 			}
-
 			if (publishableItems.Length < 2)
 			{
 				return false;
@@ -554,7 +543,7 @@ namespace LanguageExplorer
 			// If at least two are publishable, it depends on the type.
 			// It can't be published if the first item, which represents the root of the tree, is not publishable.
 			var lexRef = m_lexRefRepo.GetObject(hvoRef);
-			switch(((ILexRefType)lexRef.Owner).MappingType)
+			switch (((ILexRefType)lexRef.Owner).MappingType)
 			{
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
@@ -572,7 +561,6 @@ namespace LanguageExplorer
 			{
 				refOwner = ler.Owner as ILexEntry;
 			}
-
 			if (refOwner == null || refOwner.Hvo == hvoSource)
 			{
 				return VecProp(hvoRef, LexEntryRefTags.kflidComponentLexemes).Length > 0;
@@ -627,10 +615,9 @@ namespace LanguageExplorer
 			{
 				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
 			}
-
 			if (item is ILexEntryRef)
 			{
-				return !IsPublishableReference((ILexEntryRef) item);
+				return !IsPublishableReference((ILexEntryRef)item);
 			}
 			return m_excludedItems.Contains(item.Hvo);
 		}

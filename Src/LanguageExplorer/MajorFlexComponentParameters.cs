@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,8 +41,8 @@ namespace LanguageExplorer
 		internal SidePane SidePane { get; }
 
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusBar,
-			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
-			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
+			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp,
+			IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;

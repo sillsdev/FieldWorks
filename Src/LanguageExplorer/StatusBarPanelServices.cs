@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class StatusBarPanelServices
 	{
-
 		/// <summary />
 		internal static void SetStatusPanelMessage(StatusBar statusBar, string newConent)
 		{
@@ -25,22 +24,6 @@ namespace LanguageExplorer
 		{
 			return (StatusBarProgressPanel)statusBar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar];
 		}
-
-#if RANDYTODO
-		// Theory has it that SetStatusPanelProgress is entirely managed now by ParserMenuManager across all areas/tools.
-		/// <summary />
-		internal static void SetStatusPanelProgress(StatusBar statusBar, string newConent)
-		{
-			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newConent;
-		}
-
-		// Theory has it that SetStatusPanelProgress is entirely managed now by ProgressState (down in FwControls) in RecordDocView's ShowRecord method.
-		/// <summary />
-		internal static void SetStatusPanelProgressBar(StatusBar statusBar, string newConent)
-		{
-			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newConent;
-		}
-#endif
 
 		/// <summary />
 		internal static void SetStatusBarPanelSort(StatusBar statusBar, string newConent)

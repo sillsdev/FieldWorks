@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -204,9 +204,8 @@ namespace LanguageExplorer
 		/// override this to return <c>true</c> for a specific pair of style names.</returns>
 		private bool StyleReplacementAllowed(string styleName, string replStyleName)
 		{
-			return (styleName == "External Link" && replStyleName == "Hyperlink")
-				   || (styleName == "Internal Link" && replStyleName == "Hyperlink")
-				   || (styleName == "Language Code" && replStyleName == "Writing System Abbreviation");
+			return styleName == "External Link" && replStyleName == "Hyperlink" || styleName == "Internal Link" && replStyleName == "Hyperlink"
+			                                                                    || styleName == "Language Code" && replStyleName == "Writing System Abbreviation";
 		}
 
 		/// <summary>
@@ -282,14 +281,12 @@ namespace LanguageExplorer
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
-
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
 				// LT-18267 Character styles put their basedOn in a different place
 				// than paragraph styles.
 				writer.WriteAttributeString("basedOn", GetStyleId(style.InheritsFrom));
 			}
-
 			WriteUsageElement(style.RealStyle.Usage, writer);
 			WriteFontAndParagraphRulesXml(style, writer, style.InheritsFrom, style.NextStyle);
 			writer.WriteEndElement(); // tag
@@ -367,7 +364,6 @@ namespace LanguageExplorer
 				{
 					writer.WriteAttributeString(prop.Item1, prop.Item2);
 				}
-
 				//Bullet/Number FontInfo
 				try
 				{
@@ -506,7 +502,6 @@ namespace LanguageExplorer
 				}
 				paragraphProps.Add(new Tuple<string, string>("alignment", alignValue));
 			}
-
 			if (!styleRules.HasLineSpacing)
 			{
 				return paragraphProps;
@@ -530,7 +525,6 @@ namespace LanguageExplorer
 			var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
 			paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
 			paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
-
 			return paragraphProps;
 		}
 
@@ -727,7 +721,6 @@ namespace LanguageExplorer
 #endif
 				return;
 			}
-
 			resource.Version = newVersion;
 #if DEBUG
 			_versionUpdated = true;
@@ -747,9 +740,7 @@ namespace LanguageExplorer
 			_sourceStyles = (XElement)parameters[1];
 			_deleteMissingStyles = (bool)parameters[2];
 			_progressDlg = progressDlg;
-
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, CreateStyles);
-
 			return null;
 		}
 
@@ -807,10 +798,8 @@ namespace LanguageExplorer
 			_progressDlg.Title = string.Format(ResourceHelper.GetResourceString("kstidCreatingStylesCaption"), label);
 			_progressDlg.Message = string.Format(ResourceHelper.GetResourceString("kstidCreatingStylesStatusMsg"), string.Empty);
 			_progressDlg.Position = 0;
-
 			// Move all styles from Scripture into LangProject if the Scripture object exists
 			MoveStylesFromScriptureToLangProject();
-
 			// Populate hashtable with initial set of styles
 			// these are NOT from the *Styles.xml files or from TeStylesXmlAccessor.InitReservedStyles()
 			// They are from loading scripture styles in TE tests only.
@@ -818,30 +807,23 @@ namespace LanguageExplorer
 			{
 				_originalStyles[sty.Name] = sty;
 			}
-
 			//Select all styles.
 			var markup = GetMarkupElement(_sourceStyles);
 			var tagList = markup.Elements("tag").ToList();
-
 			_progressDlg.Minimum = 0;
-			_progressDlg.Maximum = tagList.Count() * 2;
-
+			_progressDlg.Maximum = tagList.Count * 2;
 			// First pass to create styles and set general properties.
 			CreateAndUpdateStyles(tagList);
-
 			// Second pass to set up "based-on" and "next" styles
 			SetBasedOnAndNextProps(tagList);
-
 			// Third pass to delete (and possibly prepare to rename) any styles that used to be
 			// factory styles but aren't any longer
 			if (_deleteMissingStyles)
 			{
 				DeleteDeprecatedStylesAndDetermineReplacements();
 			}
-
 			// Final step is to walk through the DB and relace any retired styles
 			ReplaceFormerStyles();
-
 			// Finally, update styles version in database.
 			SetNewResourceVersion(GetVersion(_sourceStyles));
 		}
@@ -890,7 +872,6 @@ namespace LanguageExplorer
 				var structure = GetStructure(styleTag, styleName);
 				var function = GetFunction(styleTag, styleName);
 				var atGuid = styleTag.Attribute("guid");
-
 				if (atGuid == null || string.IsNullOrEmpty(atGuid.Value))
 				{
 					ReportInvalidInstallation(string.Format(ResourceHelper.GetResourceString("ksNoGuidOnFactoryStyle"), styleName));
@@ -902,10 +883,8 @@ namespace LanguageExplorer
 					var info = _reservedStyles[styleName];
 					info.created = true;
 				}
-
 				// set the user level
 				style.UserLevel = int.Parse(styleTag.Attribute("userlevel").Value);
-
 				// Set the usage info
 				foreach (var usage in styleTag.Elements("usage"))
 				{
@@ -916,7 +895,6 @@ namespace LanguageExplorer
 						style.Usage.set_String(ws, TsStringUtils.MakeString(usageInfo, ws));
 					}
 				}
-
 				// If the user has modified the style manually, we don't want to overwrite it
 				// with the standard definition.
 				// Enhance JohnT: possibly there should be some marker in the XML to indicate that
@@ -928,16 +906,12 @@ namespace LanguageExplorer
 				{
 					continue;
 				}
-
-				SetFontProperties(styleName, styleTag,
-					(tpt, nVar, nVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal)),
+				SetFontProperties(styleName, styleTag, (tpt, nVar, nVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal)),
 					(tpt, sVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetStrPropValue(tpt, sVal)), option);
-
 				// Get paragraph properties
 				if (style.Type == StyleType.kstParagraph)
 				{
-					SetParagraphProperties(styleName, styleTag,
-						(tpt, nVar, nVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal)),
+					SetParagraphProperties(styleName, styleTag, (tpt, nVar, nVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal)),
 						(tpt, sVal) => _progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetStrPropValue(tpt, sVal)), option);
 				}
 				style.Rules = propsBldr.GetTextProps();
@@ -971,7 +945,6 @@ namespace LanguageExplorer
 					// Don't delete the old one yet, though, because we want to copy things from it (and references to it).
 					var owningCollection = ((ILangProject)oldStyle.Owner).StylesOC;
 					owningCollection.Add(style);
-
 					style.IsBuiltIn = true; // whether or not it was before, it is now.
 					style.IsModified = oldStyle.IsModified;
 					style.Name = oldStyle.Name;
@@ -984,7 +957,6 @@ namespace LanguageExplorer
 					style.IsPublishedTextStyle = oldStyle.IsPublishedTextStyle;
 					style.NextRA = oldStyle.NextRA;
 					style.UserLevel = oldStyle.UserLevel;
-
 					// Anywhere the obsolete style object is used (e.g., in BasedOn or Next of other styles),
 					// switch to refer to the new one. It's important to do this AFTER setting all the properties,
 					// because validation of setting various references to this style depends on some of these properties.
@@ -1010,11 +982,9 @@ namespace LanguageExplorer
 					throw new ApplicationException("StStyle objects must be owned!");
 				}
 				_updatedStyles[styleName] = style; // REVIEW (Hasso) 2017.04: any reason this is shoved in the middle here? Parallel or UOW reasons, perhaps?
-
 				// Set properties not passed in as parameters
 				style.IsBuiltIn = true;
 				style.IsModified = false; // not found in our database, so use everything from the XML
-
 				// Set the style name, type, context, structure, and function
 				style.Name = styleName;
 				style.Type = styleType;
@@ -1056,7 +1026,6 @@ namespace LanguageExplorer
 				ReportInvalidInstallation(string.Format(LanguageExplorerResources.ksInvalidResourceFileVersion, ResourceFileName), e);
 				newVersion = Guid.Empty;
 			}
-
 			// Re-load the factory settings if they are not at current version.
 			if (IsResourceOutdated(newVersion))
 			{
@@ -1208,15 +1177,8 @@ namespace LanguageExplorer
 				return _reservedStyles[styleName].styleType;
 			}
 			var sType = element.Attribute("type").Value;
-			if (context != ContextValues.InternalConfigureView &&
-				context != ContextValues.Internal &&
-				context != ContextValues.General &&
-				context != ContextValues.Book &&
-				context != ContextValues.Text &&
-				context != ContextValues.PsuedoStyle &&
-				context != ContextValues.InternalMappable &&
-				context != ContextValues.Note &&
-				context != ContextValues.Title)
+			if (context != ContextValues.InternalConfigureView && context != ContextValues.Internal && context != ContextValues.General && context != ContextValues.Book
+			    && context != ContextValues.Text && context != ContextValues.PsuedoStyle && context != ContextValues.InternalMappable && context != ContextValues.Note && context != ContextValues.Title)
 			{
 				ReportInvalidInstallation($"Style {styleName} is illegally defined with context '{context}' in {ResourceFileName}.");
 			}
@@ -1266,7 +1228,6 @@ namespace LanguageExplorer
 				}
 				return false;
 			}
-
 			// Update context and function as needed
 			if (style.Context != context)
 			{
@@ -1294,8 +1255,7 @@ namespace LanguageExplorer
 				return true;
 			}
 			// Internal and InternalMappable are mutually compatible
-			if (currContext == ContextValues.InternalMappable && proposedContext == ContextValues.Internal ||
-				proposedContext == ContextValues.InternalMappable && currContext == ContextValues.Internal)
+			if (currContext == ContextValues.InternalMappable && proposedContext == ContextValues.Internal || proposedContext == ContextValues.InternalMappable && currContext == ContextValues.Internal)
 			{
 				return true;
 			}
@@ -1313,7 +1273,6 @@ namespace LanguageExplorer
 		private void DeleteDeprecatedStylesAndDetermineReplacements()
 		{
 			_progressDlg.Maximum += Math.Max(0, _originalStyles.Count - _updatedStyles.Count);
-
 			foreach (var style in _originalStyles.Values)
 			{
 				var styleName = style.Name;
@@ -1323,7 +1282,6 @@ namespace LanguageExplorer
 					_progressDlg.Message = string.Format(ResourceHelper.GetResourceString("kstidDeletingStylesStatusMsg"), styleName);
 					var oldContext = style.Context;
 					var fStyleInUse = StyleIsInUse(style);
-
 					// if the style is in use, set things up to replace/remove it in the data
 					if (fStyleInUse)
 					{
@@ -1356,7 +1314,6 @@ namespace LanguageExplorer
 							_styleReplacements[styleName] = fIsCharStyle ? string.Empty : StyleServices.NormalStyleName;
 						}
 					}
-
 					_databaseStyles.Remove(style);
 				}
 			}
@@ -1411,13 +1368,11 @@ namespace LanguageExplorer
 			{
 				setIntProp((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(fontElement, "italic", styleName, ResourceFileName) ? (int)FwTextToggleVal.kttvInvert : (int)FwTextToggleVal.kttvOff);
 			}
-
 			attr = fontElement.Attribute("bold");
 			if (attr != null)
 			{
 				setIntProp((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(fontElement, "bold", styleName, ResourceFileName) ? (int)FwTextToggleVal.kttvInvert : (int)FwTextToggleVal.kttvOff);
 			}
-
 			// superscript and subscript should be considered mutually exclusive.
 			// Results of setting one to true and the other to false may not be intuitive.
 			attr = fontElement.Attribute("superscript");
@@ -1425,34 +1380,29 @@ namespace LanguageExplorer
 			{
 				setIntProp((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(fontElement, "superscript", styleName, ResourceFileName) ? (int)FwSuperscriptVal.kssvSuper : (int)FwSuperscriptVal.kssvOff);
 			}
-
 			attr = fontElement.Attribute("subscript");
 			if (attr != null)
 			{
 				setIntProp((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(fontElement, "subscript", styleName, ResourceFileName) ? (int)FwSuperscriptVal.kssvSub : (int)FwSuperscriptVal.kssvOff);
 			}
-
 			attr = fontElement.Attribute("size");
 			if (attr != null)
 			{
 				var nSize = InterpretMeasurementAttribute(attr.Value, "size", styleName, ResourceFileName);
 				setIntProp((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, nSize);
 			}
-
 			attr = fontElement.Attribute("color");
 			var sColor = (attr == null ? "default" : attr.Value);
 			if (sColor != "default")
 			{
 				setIntProp((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sColor, styleName));
 			}
-
 			attr = fontElement.Attribute("underlineColor");
 			sColor = (attr == null ? "default" : attr.Value);
 			if (sColor != "default")
 			{
 				setIntProp((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sColor, styleName));
 			}
-
 			attr = fontElement.Attribute("underline");
 			var sUnderline = attr?.Value;
 			if (sUnderline != null)
@@ -1460,7 +1410,6 @@ namespace LanguageExplorer
 				var unt = InterpretUnderlineType(sUnderline);
 				setIntProp((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, unt);
 			}
-
 			var overrides = new Dictionary<int, FontInfo>();
 			foreach (var child in fontElement.Elements())
 			{
@@ -1606,32 +1555,21 @@ namespace LanguageExplorer
 			var attr = paragraphElement.Attribute("keepWithNext");
 			if (attr != null)
 			{
-				setIntProp((int)FwTextPropType.ktptKeepWithNext,
-					(int)FwTextPropVar.ktpvEnum,
-					GetBoolAttribute(paragraphElement, "keepWithNext", styleName, ResourceFileName) ?
-					(int)FwTextToggleVal.kttvForceOn :
-					(int)FwTextToggleVal.kttvOff);
+				setIntProp((int)FwTextPropType.ktptKeepWithNext, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(paragraphElement, "keepWithNext", styleName, ResourceFileName)
+					? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
 			}
 			attr = paragraphElement.Attribute("keepTogether");
 			if (attr != null)
 			{
-				setIntProp((int)FwTextPropType.ktptKeepTogether,
-					(int)FwTextPropVar.ktpvEnum,
-					GetBoolAttribute(paragraphElement, "keepTogether", styleName, ResourceFileName) ?
-					(int)FwTextToggleVal.kttvForceOn :
-					(int)FwTextToggleVal.kttvOff);
+				setIntProp((int)FwTextPropType.ktptKeepTogether, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(paragraphElement, "keepTogether", styleName, ResourceFileName)
+					? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
 			}
-
 			attr = paragraphElement.Attribute("widowOrphan");
 			if (attr != null)
 			{
-				setIntProp((int)FwTextPropType.ktptWidowOrphanControl,
-					(int)FwTextPropVar.ktpvEnum,
-					GetBoolAttribute(paragraphElement, "widowOrphan", styleName, ResourceFileName) ?
-					(int)FwTextToggleVal.kttvForceOn :
-					(int)FwTextToggleVal.kttvOff);
+				setIntProp((int)FwTextPropType.ktptWidowOrphanControl, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(paragraphElement, "widowOrphan", styleName, ResourceFileName)
+					? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
 			}
-
 			if (options == OverwriteOptions.FunctionalPropertiesOnly)
 			{
 				return;
@@ -1659,8 +1597,7 @@ namespace LanguageExplorer
 						ReportInvalidInstallation(string.Format(LanguageExplorerResources.ksUnknownAlignmentValue, styleName, ResourceFileName));
 						break;
 				}
-				setIntProp((int)FwTextPropType.ktptAlign,
-					(int)FwTextPropVar.ktpvEnum, nAlign);
+				setIntProp((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, nAlign);
 			}
 			attr = paragraphElement.Attribute("background");
 			var sColor = (attr == null ? "default" : attr.Value);
@@ -1668,7 +1605,6 @@ namespace LanguageExplorer
 			{
 				setIntProp((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sColor, styleName));
 			}
-
 			// set leading indentation
 			attr = paragraphElement.Attribute("indentLeft");
 			if (attr != null)
@@ -1676,7 +1612,6 @@ namespace LanguageExplorer
 				var nLeftIndent = InterpretMeasurementAttribute(attr.Value, "indentLeft", styleName, ResourceFileName);
 				setIntProp((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, nLeftIndent);
 			}
-
 			// Set trailing indentation
 			attr = paragraphElement.Attribute("indentRight");
 			if (attr != null)
@@ -1684,7 +1619,6 @@ namespace LanguageExplorer
 				var nRightIndent = InterpretMeasurementAttribute(attr.Value, "indentRight", styleName, ResourceFileName);
 				setIntProp((int)FwTextPropType.ktptTrailingIndent, (int)FwTextPropVar.ktpvMilliPoint, nRightIndent);
 			}
-
 			// Set first-line/hanging indentation
 			var nFirstIndent = 0;
 			var fFirstLineOrHangingIndentSpecified = false;
@@ -1701,18 +1635,15 @@ namespace LanguageExplorer
 				nHangingIndent = InterpretMeasurementAttribute(attr.Value, "hanging", styleName, ResourceFileName);
 				fFirstLineOrHangingIndentSpecified = true;
 			}
-
 			if (nFirstIndent != 0 && nHangingIndent != 0)
 			{
 				ReportInvalidInstallation(string.Format(LanguageExplorerResources.ksInvalidFirstLineHanging, styleName, ResourceFileName));
 			}
-
 			nFirstIndent -= nHangingIndent;
 			if (fFirstLineOrHangingIndentSpecified)
 			{
 				setIntProp((int)FwTextPropType.ktptFirstIndent, (int)FwTextPropVar.ktpvMilliPoint, nFirstIndent);
 			}
-
 			// Set space before
 			attr = paragraphElement.Attribute("spaceBefore");
 			if (attr != null)
@@ -1720,7 +1651,6 @@ namespace LanguageExplorer
 				var nSpaceBefore = InterpretMeasurementAttribute(attr.Value, "spaceBefore", styleName, ResourceFileName);
 				setIntProp((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, nSpaceBefore);
 			}
-
 			// Set space after
 			attr = paragraphElement.Attribute("spaceAfter");
 			if (attr != null)
@@ -1728,7 +1658,6 @@ namespace LanguageExplorer
 				var nSpaceAfter = InterpretMeasurementAttribute(attr.Value, "spaceAfter", styleName, ResourceFileName);
 				setIntProp((int)FwTextPropType.ktptSpaceAfter, (int)FwTextPropVar.ktpvMilliPoint, nSpaceAfter);
 			}
-
 			attr = paragraphElement.Attribute("lineSpacing");
 			if (attr != null)
 			{
@@ -1737,7 +1666,6 @@ namespace LanguageExplorer
 				{
 					ReportInvalidInstallation(string.Format(LanguageExplorerResources.ksNegativeLineSpacing, styleName, ResourceFileName));
 				}
-
 				// Set lineSpacing
 				attr = paragraphElement.Attribute("lineSpacingType");
 				if (attr != null)
@@ -1762,7 +1690,6 @@ namespace LanguageExplorer
 					}
 				}
 			}
-
 			// Set borders
 			attr = paragraphElement.Attribute("border");
 			if (attr != null)
@@ -1788,7 +1715,6 @@ namespace LanguageExplorer
 				}
 				setIntProp(nBorder, (int)FwTextPropVar.ktpvDefault, 500);
 			}
-
 			attr = paragraphElement.Attribute("bulNumScheme");
 			if (attr != null)
 			{
@@ -1805,25 +1731,21 @@ namespace LanguageExplorer
 				}
 				setIntProp((int)FwTextPropType.ktptBulNumStartAt, (int)FwTextPropVar.ktpvDefault, nVal);
 			}
-
 			attr = paragraphElement.Attribute("bulNumTxtAft");
 			if (attr?.Value.Length > 0)
 			{
 				setStrProp((int)FwTextPropType.ktptBulNumTxtAft, attr.Value);
 			}
-
 			attr = paragraphElement.Attribute("bulNumTxtBef");
 			if (attr?.Value.Length > 0)
 			{
 				setStrProp((int)FwTextPropType.ktptBulNumTxtBef, attr.Value);
 			}
-
 			attr = paragraphElement.Attribute("bulCusTxt");
 			if (attr?.Value.Length > 0)
 			{
 				setStrProp((int)FwTextPropType.ktptCustomBullet, attr.Value);
 			}
-
 			//Bullet Font Info
 			var bulletFontInfoElement = paragraphElement.Element("BulNumFontInfo");
 			if (bulletFontInfoElement == null || !bulletFontInfoElement.HasElements)
@@ -1851,42 +1773,33 @@ namespace LanguageExplorer
 			var attr = bulletFontInfoElement.Attribute("italic");
 			if (attr != null)
 			{
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum,
-					GetBoolAttribute(bulletFontInfoElement, "italic", styleName, ResourceFileName)
-						? (int)FwTextToggleVal.kttvForceOn
-						: (int)FwTextToggleVal.kttvOff);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(bulletFontInfoElement, "italic", styleName, ResourceFileName)
+						? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
 			}
-
 			attr = bulletFontInfoElement.Attribute("bold");
 			if (attr != null)
 			{
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
-					GetBoolAttribute(bulletFontInfoElement, "bold", styleName, ResourceFileName)
-						? (int)FwTextToggleVal.kttvForceOn
-						: (int)FwTextToggleVal.kttvOff);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, GetBoolAttribute(bulletFontInfoElement, "bold", styleName, ResourceFileName)
+						? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
 			}
-
 			attr = bulletFontInfoElement.Attribute("size");
 			if (attr != null)
 			{
 				var nSize = InterpretMeasurementAttribute(attr.Value, "size", styleName, ResourceFileName);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, nSize);
 			}
-
 			attr = bulletFontInfoElement.Attribute("color");
 			var sbColor = (attr == null ? "default" : attr.Value);
 			if (sbColor != "default")
 			{
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sbColor, styleName));
 			}
-
 			attr = bulletFontInfoElement.Attribute("underlineColor");
 			sbColor = (attr == null ? "default" : attr.Value);
 			if (sbColor != "default")
 			{
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sbColor, styleName));
 			}
-
 			attr = bulletFontInfoElement.Attribute("underline");
 			var sUnderline = attr?.Value;
 			if (sUnderline != null)
@@ -1894,28 +1807,24 @@ namespace LanguageExplorer
 				var unt = InterpretUnderlineType(sUnderline);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, unt);
 			}
-
 			attr = bulletFontInfoElement.Attribute("family");
 			var sfamily = attr?.Value;
 			if (sfamily != null)
 			{
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, sfamily);
 			}
-
 			attr = bulletFontInfoElement.Attribute("forecolor");
 			sbColor = attr == null ? "default" : attr.Value;
 			if (sbColor != "default")
 			{
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sbColor, styleName));
 			}
-
 			attr = bulletFontInfoElement.Attribute("backcolor");
 			sbColor = (attr == null ? "default" : attr.Value);
 			if (sbColor != "default")
 			{
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, ColorVal(sbColor, styleName));
 			}
-
 			// Add the integer properties to the bullet props string
 			var bulletProps = new StringBuilder(propsBldr.IntPropCount * 3 + propsBldr.StrPropCount * 3);
 			for (var i = 0; i < propsBldr.IntPropCount; i++)
@@ -1926,7 +1835,6 @@ namespace LanguageExplorer
 				bulletProps.Append((char)(intValue & 0xFFFF));
 				bulletProps.Append((char)((intValue >> 16) & 0xFFFF));
 			}
-
 			// Add the string properties to the bullet props string
 			for (var i = 0; i < propsBldr.StrPropCount; i++)
 			{
@@ -1935,7 +1843,6 @@ namespace LanguageExplorer
 				bulletProps.Append(strValue);
 				bulletProps.Append('\u0000');
 			}
-
 			if (!string.IsNullOrEmpty(bulletProps.ToString()))
 			{
 				setStrProp((int)FwTextPropType.ktptBulNumFontInfo, bulletProps.ToString());
@@ -1973,7 +1880,6 @@ namespace LanguageExplorer
 				{
 					continue;
 				}
-
 				if (styleName != StyleServices.NormalStyleName)
 				{
 					var sBasedOnStyleName = GetBasedOn(elementForBasedOn, styleName);
@@ -1992,7 +1898,6 @@ namespace LanguageExplorer
 					}
 					style.BasedOnRA = basedOnStyle;
 				}
-
 				string sNextStyleName = null;
 				if (_reservedStyles.ContainsKey(styleName))
 				{
@@ -2030,11 +1935,6 @@ namespace LanguageExplorer
 				if (!info.created)
 				{
 					var style = _updatedStyles[styleName];
-					// No need now to do the assert,
-					// since the Dictionary will throw an exception,
-					// if the key isn't present.
-					//Debug.Assert(style != null);
-
 					if (style.Type == StyleType.kstParagraph)
 					{
 						_progressDlg.Message = string.Format(ResourceHelper.GetResourceString("kstidUpdatingStylesStatusMsg"), styleName);

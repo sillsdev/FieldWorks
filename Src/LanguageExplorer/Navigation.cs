@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Move around the list.
 	/// </summary>
-	public enum Navigation
+	internal enum Navigation
 	{
 		/// <summary>Move to the first item in a list.</summary>
 		First,

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Actions to take on a ListChanged event.
 	/// </summary>
-	public enum ListChangedActions
+	internal enum ListChangedActions
 	{
 		/// <summary>
 		/// Skip broadcasting OnRecordNavigation.
@@ -25,5 +25,5 @@ namespace LanguageExplorer
 		/// Simply reload the record tree bar item for the CurrentObject.
 		/// </summary>
 		UpdateListItemName
-	};
+	}
 }

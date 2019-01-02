@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer
 		bool HasHeaderControl { get; }
 
 		/// <summary>
-		/// 'true' to show the optional header control, otherwsie 'false' to hide it.
+		/// 'true' to show the optional header control, otherwise 'false' to hide it.
 		/// </summary>
 		/// <remarks>Has no affect, if there is no header control.</remarks>
 		bool ShowHeaderControl { set; }
