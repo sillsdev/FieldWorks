@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -24,18 +24,17 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		public void TearDown()
 		{
 			_button.Dispose();
+			_button = null;
 		}
 
 		[Test]
 		public void Constructor()
 		{
-			using (Image image = new Bitmap("./DefaultIcon.ico"))
-			{
 #pragma warning disable 0219
-				using (OutlookBarButton button = new OutlookBarButton("text", image))
-					{}
+			using (Image image = new Bitmap("./DefaultIcon.ico"))
+			using (var button = new OutlookBarButton("text", image))
+			{ }
 #pragma warning restore 0219
-			}
 		}
 
 		[Test]
@@ -50,7 +49,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void Tag()
 		{
-			object someObject = new object();
+			var someObject = new object();
 			_button.Tag = someObject;
 			Assert.AreSame(someObject, _button.Tag);
 		}
@@ -58,10 +57,9 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void Name()
 		{
-			string name = "buttonname";
+			const string name = "buttonname";
 			_button.Name = name;
-			string result = _button.Name;
-			Assert.AreEqual(result, name);
+			Assert.AreEqual(_button.Name, name);
 		}
 
 		[Test]

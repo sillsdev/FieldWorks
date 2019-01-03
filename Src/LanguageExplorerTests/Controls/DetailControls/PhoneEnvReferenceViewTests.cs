@@ -1,11 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Text;
@@ -30,7 +29,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			var root = form.Hvo;
-			var hvos = new [] {-5000, -5001, -5002};
+			var hvos = new[] { -5000, -5001, -5002 };
 			sda.CacheVecProp(root, PhoneEnvReferenceView.kMainObjEnvironments, hvos, hvos.Length);
 			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();

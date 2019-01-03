@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,34 +8,12 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Controls.XMLViews
-
 {
-	/// <summary/>
+	/// <summary />
 	[TestFixture]
 	public class DhListViewTests : MemoryOnlyBackendProviderTestBase
 	{
-		/// <summary/>
-		internal class FakeDhListView : DhListView
-		{
-			/// <summary/>
-			public bool m_hasCheckBoxColumn = true;
-
-			/// <summary/>
-			public override bool HasCheckBoxColumn
-			{
-				get
-				{
-					return m_hasCheckBoxColumn;
-				}
-			}
-
-			/// <summary/>
-			internal FakeDhListView(BrowseViewer bv) : base(bv)
-			{
-			}
-		}
-
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void Basic()
 		{
@@ -45,122 +23,48 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void IsThisColumnChangeAllowable_Callable()
 		{
 			using (var view = new FakeDhListView(null))
 			{
-				ReflectionHelper.GetBoolResult(view, "IsThisColumnChangeAllowable", new object[] {0, 0, 0});
+				ReflectionHelper.GetBoolResult(view, "IsThisColumnChangeAllowable", 0, 0, 0);
 			}
 		}
 
-		/// <summary>
-		/// Helper for unit tests
-		/// </summary>
-		static void IsThisColumnChangeAllowable_Helper(int columnIndex, int currentWidth, int requestedWidth, bool hasCheckMarkColumn, bool expected)
+		/// <summary />
+		[Test]
+		[TestCase(0, 50, 100, true, false)]
+		[TestCase(0, 50, 100, false, true)]
+		[TestCase(1, 50, 10, true, false)]
+		[TestCase(1, 50, 100, true, true)]
+		[TestCase(1, 5, 10, true, true)]
+		[TestCase(1, 5, 5, true, true)]
+		public  void IsThisColumnChangeAllowable(int columnIndex, int currentWidth, int requestedWidth, bool hasCheckMarkColumn, bool expected)
 		{
 			bool actual;
 			using (var view = new FakeDhListView(null))
 			{
 				view.m_hasCheckBoxColumn = hasCheckMarkColumn;
-				actual = ReflectionHelper.GetBoolResult(view, "IsThisColumnChangeAllowable", new object[] { columnIndex, currentWidth, requestedWidth });
+				actual = ReflectionHelper.GetBoolResult(view, "IsThisColumnChangeAllowable", columnIndex, currentWidth, requestedWidth);
 			}
 			Assert.That(actual, Is.EqualTo(expected));
 		}
 
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_HavingCheckMarkColumn_MeansItIsImmutableAndChangeRejected()
+		/// <summary />
+		private sealed class FakeDhListView : DhListView
 		{
-			int column = 0;
-			int currentWidth = 50;
-			int requestedWidth = 100;
-			bool hasCheckMarkColumn = true;
-			bool expected = false;
+			/// <summary/>
+			public bool m_hasCheckBoxColumn = true;
 
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
+			/// <summary/>
+			public override bool HasCheckBoxColumn => m_hasCheckBoxColumn;
 
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_NotHavingCheckMarkColumn_SoColumn0ShouldBeMutable()
-		{
-			int column = 0;
-			int currentWidth = 50;
-			int requestedWidth = 100;
-			bool hasCheckMarkColumn = false;
-			bool expected = true;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
-
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_MutableColumn_Allowed()
-		{
-			int column = 1;
-			int currentWidth = 50;
-			int requestedWidth = 100;
-			bool hasCheckMarkColumn = true;
-			bool expected = true;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
-
-
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_TooSmallWidth_Rejected()
-		{
-			int column = 1;
-			int currentWidth = 50;
-			int requestedWidth = 10;
-			bool hasCheckMarkColumn = true;
-			bool expected = false;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
-
-
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_BigEnoughWidth_Acceptable()
-		{
-			int column = 1;
-			int currentWidth = 50;
-			int requestedWidth = 100;
-			bool hasCheckMarkColumn = true;
-			bool expected = true;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
-
-		/// <summary/>
-		[Test]
-		public void IsThisColumnChangeAllowable_TooSmallWidthButBiggerThanCurrent_Allowed()
-		{
-			int column = 1;
-			int currentWidth = 5;
-			int requestedWidth = 10;
-			bool hasCheckMarkColumn = true;
-			bool expected = true;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
-		}
-
-		/// <summary>Equal to current is okay too. Otherwise the column is difficult to
-		/// grow in size if starts off too small.</summary>
-		[Test]
-		public void IsThisColumnChangeAllowable_TooSmallWidthButEqualToCurrent_Allowed()
-		{
-			int column = 1;
-			int currentWidth = 5;
-			int requestedWidth = 5;
-			bool hasCheckMarkColumn = true;
-			bool expected = true;
-
-			IsThisColumnChangeAllowable_Helper(column, currentWidth, requestedWidth, hasCheckMarkColumn, expected);
+			/// <summary/>
+			internal FakeDhListView(BrowseViewer bv) : base(bv)
+			{
+			}
 		}
 	}
 }

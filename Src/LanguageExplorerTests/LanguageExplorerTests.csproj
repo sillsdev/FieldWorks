@@ -343,7 +343,7 @@
     <Compile Include="LIFT\LiftExportTests.cs" />
     <Compile Include="LIFT\LiftMergerTests.cs" />
     <Compile Include="Controls\MasterCategoryTests.cs" />
-    <Compile Include="Controls\MsaInflectionFeatureListDlgTests.cs" />
+    <Compile Include="Areas\Lists\MsaInflectionFeatureListDlgTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportTests.cs" />
     <Compile Include="Repository\ListsAreaTests.cs" />
     <Compile Include="Repository\MefTestBase.cs" />
@@ -358,7 +358,7 @@
     <Compile Include="Controls\SilSidePane\OutlookBarButtonTests.cs" />
     <Compile Include="Controls\SilSidePane\SidePaneTests.cs" />
     <Compile Include="Controls\SilSidePane\TabTests.cs" />
-    <Compile Include="Controls\SilSidePane\TestUtilities.cs" />
+    <Compile Include="TestUtilities.cs" />
     <Compile Include="SfmToXml\ConverterTests.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="FlexStylesXmlAccessorTests.cs" />
@@ -414,7 +414,6 @@
     <Compile Include="Controls\XMLViews\DhListViewTests.cs" />
     <Compile Include="Controls\XMLViews\LayoutMergerTests.cs" />
     <Compile Include="Controls\XMLViews\SearchEngineTests.cs" />
-    <Compile Include="Controls\XMLViews\SimpleDataParser.cs" />
     <Compile Include="Controls\XMLViews\TestColumnConfigureDialog.cs" />
     <Compile Include="Controls\XMLViews\TestLayoutMerge.cs" />
     <Compile Include="Controls\XMLViews\TestManyOneBrowse.cs" />
@@ -425,9 +424,7 @@
     <Compile Include="Controls\XMLViews\TestXmlViewsDataCache.cs" />
     <Compile Include="Controls\XMLViews\TestXmlViewsUtils.cs" />
     <Compile Include="Controls\XMLViews\XhtmlHelperTests.cs" />
-    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseTests.cs" />
     <Compile Include="Controls\XMLViews\XmlBrowseViewBaseVcTests.cs" />
     <Compile Include="Controls\XMLViews\XmlVcTests.cs" />
   </ItemGroup>

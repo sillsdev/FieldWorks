@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,11 +24,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 		#region Overrides of LcmTestBase
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -36,12 +34,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to end the undoable UOW, Undo everything, and 'commit',
 		/// which will essentially clear out the Redo stack.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			try
@@ -70,8 +66,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromICUSortRules()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b < az << a < c <<< ch" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -91,46 +87,43 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		}
 
 #if RANDYTODO
-		// TODO: Figure out why this is a new failure.
-#endif
+		// TODO: Figure out why it fails, since the long awaited merge.
 		[Test]
-		[Ignore("RANDYTODO: Figure out why it fails, since the long awaited merge.")]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TestSecondaryTertiaryShouldNotGenerateHeader()
 		{
 			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz"};
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			using (var writer = new StreamWriter(stream))
+			{
+				exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
+				Dictionary<string, string> mapChars;
+				ISet<string> ignoreSet;
+				var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+				Assert.AreEqual(data.Count, 0, "Header created for two wedges");
+				Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
+				Assert.AreEqual(mapChars["az"], "b");
+				Assert.AreEqual(mapChars["AZ"], "b");
+				// Rules following the '/' rule should not be skipped LT-18309
+				Assert.AreEqual(mapChars["gz"], "f");
+			}
+		}
+#endif
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = \\" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
-				{
-					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
-					Assert.AreEqual(data.Count, 0, "Header created for two wedges");
-					Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
-					Assert.AreEqual(mapChars["az"], "b");
-					Assert.AreEqual(mapChars["AZ"], "b");
-					// Rules following the '/' rule should not be skipped LT-18309
-					Assert.AreEqual(mapChars["gz"], "f");
-				}
-			}
-		}
-
-		[Test]
-		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
-		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
-
-			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
-			using(var stream = new MemoryStream())
-			{
-				using(var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
@@ -149,14 +142,14 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWorks()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = \\uA78C" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
-			using(var stream = new MemoryStream())
+			using (var stream = new MemoryStream())
 			{
-				using(var writer = new StreamWriter(stream))
+				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
@@ -173,14 +166,14 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_BeforeRuleSecondaryIgnored()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "& [before 2] a < aa <<< Aa <<< AA"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& [before 2] a < aa <<< Aa <<< AA" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
-			using(var stream = new MemoryStream())
+			using (var stream = new MemoryStream())
 			{
-				using(var writer = new StreamWriter(stream))
+				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
@@ -197,14 +190,14 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_BeforeRuleCombinedWithNormalRuleWorks()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "& a < bb & [before 1] a < aa"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& a < bb & [before 1] a < aa" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
-			using(var stream = new MemoryStream())
+			using (var stream = new MemoryStream())
 			{
-				using(var writer = new StreamWriter(stream))
+				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
@@ -219,14 +212,14 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_BeforeRulePrimaryGetsADigraph()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "& [before 1] a < aa <<< Aa <<< AA"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& [before 1] a < aa <<< Aa <<< AA" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
-			using(var stream = new MemoryStream())
+			using (var stream = new MemoryStream())
 			{
-				using(var writer = new StreamWriter(stream))
+				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
@@ -243,8 +236,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromToolboxSortRules()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") {SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -267,7 +260,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromSortRulesWithNoMapping()
 		{
 			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "ñe ñ"};
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "ñe ñ" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -293,9 +286,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out wsEn);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEn);
 			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
-			Dictionary<string, ISet<string>> wsDigraphMap = new Dictionary<string, ISet<string>>();
-			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
-			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
 			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
 		}
@@ -310,8 +303,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new SystemCollationDefinition {LanguageTag = "fr"};
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new SystemCollationDefinition { LanguageTag = "fr" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;

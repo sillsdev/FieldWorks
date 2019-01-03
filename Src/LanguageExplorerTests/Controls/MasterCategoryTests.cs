@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,8 +20,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		[Test]
 		public void MasterCategoryWithGuidNode_MakesPosWithRightGuid()
 		{
-			string input =
-				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+			const string input = @"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
    <item type='category' id='Adjective' guid='30d07580-5052-4d91-bc24-469b8b2d7df9'>
 	  <abbrev ws='en'>adj</abbrev>
 	  <term ws='en'>Adjective</term>
@@ -60,12 +59,12 @@ namespace LanguageExplorerTests.Controls.LexText
 			var adposition = CheckPos("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5", posList);
 
 			var childItem = rootItem.ChildNodes[3];
-			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition}, childItem, Cache);
+			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { adposition }, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, adposition);
 			var postPosition = CheckPos("18f1b2b8-0ce3-4889-90e9-003fed6a969f", adposition);
 
 			var grandChildItem = childItem.ChildNodes[3];
-			var mcGrandChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition, postPosition}, grandChildItem, Cache);
+			var mcGrandChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { adposition, postPosition }, grandChildItem, Cache);
 			mcGrandChild.AddToDatabase(Cache, posList, mcChild, null);
 			CheckPos("82B1250A-E64F-4AD8-8B8C-5ABBC732087A", postPosition);
 		}
@@ -73,8 +72,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		[Test]
 		public void MasterCategoryWithGuidNode_ValidatePosInReversalGuid()
 		{
-			string input =
-				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+			const string input = @"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
 				   <item type='category' id='Adjective' guid='30d07580-5052-4d91-bc24-469b8b2d7df9'>
 					  <abbrev ws='en'>adj</abbrev>
 					  <term ws='en'>Adjective</term>
@@ -112,7 +110,7 @@ namespace LanguageExplorerTests.Controls.LexText
 			mc.AddToDatabase(Cache, posList, null, null);
 
 			var childItem = rootItem.ChildNodes[3];
-			var firstPos = (IPartOfSpeech) posList.PossibilitiesOS[0];
+			var firstPos = (IPartOfSpeech)posList.PossibilitiesOS[0];
 			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { firstPos }, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, firstPos);
 
@@ -124,9 +122,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		private IPartOfSpeech CheckPos(string guid, ICmObject owner)
 		{
 			IPartOfSpeech pos;
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out pos),
-				Is.True,
-				"expected POS should be created with the right guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out pos), Is.True, "expected POS should be created with the right guid");
 			Assert.That(pos.Owner, Is.EqualTo(owner), "POS should be created at the right place in the hierarchy");
 			return pos;
 		}
@@ -134,8 +130,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		private void CheckPosDoesNotExist(string id)
 		{
 			IPartOfSpeech pos;
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out pos), Is.False,
-				"default possibility list should not already contain objects that this test creates");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out pos), Is.False, "default possibility list should not already contain objects that this test creates");
 		}
 	}
 }

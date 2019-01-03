@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,9 +20,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	[TestFixture]
 	public class SliceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private DataTree m_DataTree;
-		private Slice m_Slice;
-		/// <summary />
+		private DataTree _dataTree;
+		private Slice _slice;
 		private FlexComponentParameters _flexComponentParameters;
 		private DummyFwMainWnd _dummyWindow;
 
@@ -44,13 +43,13 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			try
 			{
 				_dummyWindow?.Dispose();
-				m_Slice?.Dispose();
-				m_DataTree?.Dispose();
+				_slice?.Dispose();
+				_dataTree?.Dispose();
 				_flexComponentParameters?.PropertyTable?.Dispose();
 
 				_dummyWindow = null;
-				m_Slice = null;
-				m_DataTree = null;
+				_slice = null;
+				_dataTree = null;
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)
@@ -67,8 +66,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void Basic1()
 		{
-			m_Slice = new Slice();
-			Assert.NotNull(m_Slice);
+			_slice = new Slice();
+			Assert.NotNull(_slice);
 		}
 
 		/// <summary />
@@ -76,22 +75,20 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void Basic2()
 		{
 			using (var control = new Control())
+			using (var slice = new Slice(control))
 			{
-				using (var slice = new Slice(control))
-				{
-					Assert.AreEqual(control, slice.Control);
-					Assert.NotNull(slice);
-				}
+				Assert.AreEqual(control, slice.Control);
+				Assert.NotNull(slice);
 			}
 		}
 
-		/// <summary>Helper</summary>
+		/// <summary />
 		internal static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
 		{
 			return XElement.Parse(outerXml);
 		}
 
-		/// <summary>Helper</summary>
+		/// <summary />
 		private static Slice GenerateSlice(LcmCache cache, DataTree datatree)
 		{
 			var slice = new Slice();
@@ -102,7 +99,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			return slice;
 		}
 
-		/// <summary>Helper</summary>
+		/// <summary />
 		private static ArrayList GeneratePath()
 		{
 			// Data taken from a running Sena 3
@@ -124,9 +121,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
-			m_DataTree = new DataTree(new SharedEventHandlers());
-			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
-			m_Slice = GenerateSlice(Cache, m_DataTree);
+			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree.InitializeFlexComponent(_flexComponentParameters);
+			_slice = GenerateSlice(Cache, _dataTree);
 
 			// Data taken from a running Sena 3
 			var caller = CreateXmlElementFromOuterXmlOf("<part ref=\"AsLexemeForm\" label=\"Lexeme Form\" expansion=\"expanded\"><indent><part ref=\"IsAbstractBasic\" label=\"Is Abstract Form\" visibility=\"never\" /><!-- could use 'ifTrue' if we had it --><part ref=\"MorphTypeBasic\" visibility=\"ifdata\" /><part ref=\"PhoneEnvBasic\" visibility=\"ifdata\" /><part ref=\"StemNameForLexemeForm\" visibility=\"ifdata\" /></indent></part>");
@@ -141,7 +138,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// Data taken from a running Sena 3
 			var node = CreateXmlElementFromOuterXmlOf("<slice field=\"Form\" label=\"Form\" editor=\"multistring\" ws=\"all vernacular\" weight=\"light\" menu=\"mnuDataTree-LexemeForm\" contextMenu=\"mnuDataTree-LexemeFormContext\" spell=\"no\"><properties><bold value=\"on\" /><fontsize value=\"120%\" /></properties></slice>");
 
-			m_Slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
+			_slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
 		}
 
 		/// <remarks>
@@ -151,15 +148,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void Expand()
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_DataTree = new DataTree(new SharedEventHandlers());
-			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
-			m_Slice = GenerateSlice(Cache, m_DataTree);
-			m_Slice.Key = GeneratePath().ToArray();
-			m_Slice.MyCmObject = obj;
-			m_Slice.InitializeFlexComponent(_flexComponentParameters);
+			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree.InitializeFlexComponent(_flexComponentParameters);
+			_slice = GenerateSlice(Cache, _dataTree);
+			_slice.Key = GeneratePath().ToArray();
+			_slice.MyCmObject = obj;
+			_slice.InitializeFlexComponent(_flexComponentParameters);
 			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 
-			m_Slice.Expand();
+			_slice.Expand();
 		}
 
 		/// <remarks>
@@ -171,15 +168,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			m_DataTree = new DataTree(new SharedEventHandlers());
-			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
-			m_Slice = GenerateSlice(Cache, m_DataTree);
-			m_Slice.Key = GeneratePath().ToArray();
-			m_Slice.MyCmObject = obj;
-			m_Slice.InitializeFlexComponent(_flexComponentParameters);
+			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree.InitializeFlexComponent(_flexComponentParameters);
+			_slice = GenerateSlice(Cache, _dataTree);
+			_slice.Key = GeneratePath().ToArray();
+			_slice.MyCmObject = obj;
+			_slice.InitializeFlexComponent(_flexComponentParameters);
 			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 
-			m_Slice.Collapse();
+			_slice.Collapse();
 		}
 
 		/// <summary>
@@ -191,16 +188,16 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_DataTree = new DataTree(new SharedEventHandlers());
-			m_DataTree.InitializeFlexComponent(_flexComponentParameters);
-			m_Slice = GenerateSlice(Cache, m_DataTree);
-			m_Slice.InitializeFlexComponent(_flexComponentParameters);
+			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree.InitializeFlexComponent(_flexComponentParameters);
+			_slice = GenerateSlice(Cache, _dataTree);
+			_slice.InitializeFlexComponent(_flexComponentParameters);
 			var node = CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
-			int indent = 0;
-			int insertPosition = 0;
-			int flidEmptyProp = 5002031;    // runtime flid of ghost field
-			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
-			var ghostSlice = m_DataTree.Slices[0];
+			const int indent = 0;
+			var insertPosition = 0;
+			const int flidEmptyProp = 5002031; // runtime flid of ghost field
+			_dataTree.MakeGhostSlice(path, node, reuseMap, obj, _slice, flidEmptyProp, null, indent, ref insertPosition);
+			var ghostSlice = _dataTree.Slices[0];
 			Assert.NotNull(ghostSlice);
 		}
 	}

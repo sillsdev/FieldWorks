@@ -1,11 +1,10 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorerTests.Areas.Lists;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -34,9 +33,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var configurationNode = SliceTests.CreateXmlElementFromOuterXmlOf("<slice editor=\"autoCustom\" menu=\"mnuDataTree-Help\" helpTopicID=\"khtpCustomFields\" />");
 			ICmObject cmObject = new CmObjectStub();
-			int cmObjectCustomFieldFlid = 5002500;
-			ISilDataAccess mainCacheAccessor = new SILDataAccessStub();
-			IFwMetaDataCache metadataCache=new FwMetaDataCacheStub(Cache.GetManagedMetaDataCache());
+			const int cmObjectCustomFieldFlid = 5002500;
+			ISilDataAccess mainCacheAccessor = new SilDataAccessStub();
+			IFwMetaDataCache metadataCache = new FwMetaDataCacheStub(Cache.GetManagedMetaDataCache());
 
 			CreateTestData();
 			ICmPossibility cmPossibility = CreateCustomItemAddToList(m_testList, "itemname");
@@ -48,46 +47,46 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			AssertThatXmlIn.String(configurationNode.GetOuterXml()).HasSpecifiedNumberOfMatchesForXpath("/slice/deParams[@displayProperty]", 1);
 		}
 
-		class LcmServiceLocatorStub : ILcmServiceLocator
+		private sealed class LcmServiceLocatorStub : ILcmServiceLocator
 		{
 			ICmPossibility m_returnObject;
 			public LcmServiceLocatorStub(ICmPossibility returnObject)
 			{
 				m_returnObject = returnObject;
 			}
-			public IActionHandler ActionHandler { get{throw new NotImplementedException();} }
-			public ICmObjectIdFactory CmObjectIdFactory { get{throw new NotImplementedException();} }
-			public IDataSetup DataSetup { get{throw new NotImplementedException();} }
+			public IActionHandler ActionHandler { get { throw new NotSupportedException(); } }
+			public ICmObjectIdFactory CmObjectIdFactory { get { throw new NotSupportedException(); } }
+			public IDataSetup DataSetup { get { throw new NotSupportedException(); } }
 			public ICmObject GetObject(int hvo)
 			{
 				return m_returnObject;
 			}
-			public bool IsValidObjectId(int hvo) {throw new NotImplementedException();}
-			public ICmObject GetObject(Guid guid) {throw new NotImplementedException();}
-			public ICmObject GetObject(ICmObjectId id) {throw new NotImplementedException();}
-			public WritingSystemManager WritingSystemManager { get { throw new NotImplementedException(); } }
-			public IWritingSystemContainer WritingSystems { get{throw new NotImplementedException();} }
-			public ICmObjectRepository ObjectRepository { get{throw new NotImplementedException();} }
-			public ICmObjectIdFactory ObjectIdFactory { get{throw new NotImplementedException();} }
-			public IFwMetaDataCacheManaged MetaDataCache  { get{throw new NotImplementedException();} }
-			public ILgWritingSystemFactory WritingSystemFactory { get{throw new NotImplementedException();} }
+			public bool IsValidObjectId(int hvo) { throw new NotSupportedException(); }
+			public ICmObject GetObject(Guid guid) { throw new NotSupportedException(); }
+			public ICmObject GetObject(ICmObjectId id) { throw new NotSupportedException(); }
+			public WritingSystemManager WritingSystemManager { get { throw new NotSupportedException(); } }
+			public IWritingSystemContainer WritingSystems { get { throw new NotSupportedException(); } }
+			public ICmObjectRepository ObjectRepository { get { throw new NotSupportedException(); } }
+			public ICmObjectIdFactory ObjectIdFactory { get { throw new NotSupportedException(); } }
+			public IFwMetaDataCacheManaged MetaDataCache { get { throw new NotSupportedException(); } }
+			public ILgWritingSystemFactory WritingSystemFactory { get { throw new NotSupportedException(); } }
 			public IEnumerable<object> GetAllInstances(Type serviceType)
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public IEnumerable<TService> GetAllInstances<TService>()
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public object GetInstance(Type serviceType)
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public object GetInstance(Type serviceType, string key)
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public TService GetInstance<TService>()
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public TService GetInstance<TService>(string key)
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 			public object GetService(Type serviceType)
-			{throw new NotImplementedException();}
+			{ throw new NotSupportedException(); }
 		}
 
-		class SILDataAccessStub : SilDataAccessManagedBase
+		private sealed class SilDataAccessStub : SilDataAccessManagedBase
 		{
 			public override int get_VecSize(int hvo, int tag)
 			{
@@ -101,7 +100,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		}
 
-		class FwMetaDataCacheStub : LcmMetaDataCacheDecoratorBase
+		private sealed class FwMetaDataCacheStub : LcmMetaDataCacheDecoratorBase
 		{
 			public FwMetaDataCacheStub(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 			{
@@ -109,7 +108,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public override int GetFieldType(int flid)
@@ -118,7 +117,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 		}
 
-		internal class CmObjectStub : ICmObject
+		private sealed class CmObjectStub : ICmObject
 		{
 			internal CmObjectStub()
 			{
@@ -128,69 +127,69 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 
 			public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
-			public int Hvo { get; private set;}
-			public ICmObject Owner { get; set;}
+			public int Hvo { get; }
+			public ICmObject Owner { get; set; }
 			public int OwningFlid
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 			public int OwnOrd
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 			public int ClassID
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
-			public Guid Guid { get; private set;}
+			public Guid Guid { get; }
 
 			public ICmObjectId Id
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ICmObject GetObject(ICmObjectRepository repo)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public string ToXmlString()
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public string ClassName
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 			public void Delete()
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public ILcmServiceLocator Services
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ICmObject OwnerOfClass(int clsid)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public T OwnerOfClass<T>() where T : ICmObject
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public ICmObject Self
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public void PostClone(Dictionary<int, ICmObject> copyMap)
@@ -200,109 +199,109 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			public void AllReferencedObjects(List<ICmObject> collector)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public bool IsOwnedBy(ICmObject possibleOwner)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public ICmObject ReferenceTargetOwner(int flid)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public bool IsFieldRequired(int flid)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public int IndexInOwner
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
-			public bool IsValidObject { get; set; }
+			public bool IsValidObject { get; }
 
 			public LcmCache Cache
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public void MergeObject(ICmObject objSrc)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public bool CanDelete
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ITsString ObjectIdName
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public string ShortName
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ITsString ShortNameTSS
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ITsString DeletionTextTSS
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public ITsString ChooserNameTS
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public string SortKey
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public string SortKeyWs
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public int SortKey2
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public string SortKey2Alpha
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public HashSet<ICmObject> ReferringObjects
 			{
-				get { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
 			}
 
 			public IEnumerable<ICmObject> OwnedObjects { get; private set; }

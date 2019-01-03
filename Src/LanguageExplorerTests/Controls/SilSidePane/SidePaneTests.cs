@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -12,95 +12,23 @@ using NUnit.Framework;
 
 namespace LanguageExplorerTests.Controls.SilSidePane
 {
-	/// <summary></summary>
+	/// <summary />
 	[TestFixture]
-	public class SidePaneTests_Buttons : SidePaneTests
-	{
-		protected override SidePaneItemAreaStyle ItemAreaStyle
-		{
-			get { return SidePaneItemAreaStyle.Buttons; }
-		}
-
-		#region ButtonItemArea
-		[Test]
-		public void IsButtonItemArea()
-		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.Buttons);
-
-			var tab = new Tab("tabname");
-			_sidePane.AddTab(tab);
-
-			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
-			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
-		}
-		#endregion ButtonItemArea
-	}
-
-	/// <summary></summary>
-	[TestFixture]
-	public class SidePaneTests_List : SidePaneTests
-	{
-		protected override SidePaneItemAreaStyle ItemAreaStyle
-		{
-			get { return SidePaneItemAreaStyle.List; }
-		}
-
-		#region ListItemArea
-		[Test]
-		public void IsListItemArea()
-		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.List);
-
-			var tab = new Tab("tabname");
-			_sidePane.AddTab(tab);
-
-			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
-			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ListView>(area);
-		}
-		#endregion ListItemArea
-	}
-
-	/// <summary></summary>
-	[TestFixture]
-	public class SidePaneTests_StripList : SidePaneTests
-	{
-		protected override SidePaneItemAreaStyle ItemAreaStyle
-		{
-			get { return SidePaneItemAreaStyle.StripList; }
-		}
-
-		#region StripListItemArea
-		[Test]
-		public void IsStripListItemArea()
-		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.StripList);
-
-			var tab = new Tab("tabname");
-			_sidePane.AddTab(tab);
-
-			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
-			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
-		}
-		#endregion StripListItemArea
-	}
-
-	/// <summary>
-	/// For tests that are item area style independent, or should be run when
-	/// the single-argument SidePane constructor is used.
-	/// </summary>
-	[TestFixture]
-	public class SidePaneTests_UnspecifiedItemAreaStyle
+	public sealed class SidePaneTests
 	{
 		private SidePane _sidePane;
 		private Panel _parent;
+		private bool _tabClickedHappened;
+		private void TabClickedHandler(Tab tabClicked)
+		{
+			_tabClickedHappened = true;
+		}
+		private bool _itemClickedHappened;
+		private void ItemClickedHandler(Item itemClicked)
+		{
+			_itemClickedHappened = true;
+		}
 
-		#region SetUpDown
 		/// <summary>Runs before each test</summary>
 		[SetUp]
 		public void SetUp()
@@ -116,13 +44,34 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		{
 			_sidePane.Dispose();
 			_parent.Dispose();
+
+			_parent = null;
+			_sidePane = null;
 		}
-		#endregion
+
+		private static OutlookBarButton GetUnderlyingButtonCorrespondingToTab(Tab tab)
+		{
+			return TestUtilities.GetPrivatePropertyOfType<OutlookBarButton>(tab, "UnderlyingWidget");
+		}
 
 		[Test]
-		public void IsButtonItemAreaByDefault()
+		[TestCase(SidePaneItemAreaStyle.Buttons, typeof(ToolStrip))]
+		[TestCase(SidePaneItemAreaStyle.List, typeof(ListView))]
+		[TestCase(SidePaneItemAreaStyle.StripList, typeof(ToolStrip))]
+		public void HasCorrectItemArea(SidePaneItemAreaStyle expectedValue, Type expectedType)
 		{
+			// The default for a new SidePane is SidePaneItemAreaStyle.Buttons.
 			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.Buttons);
+
+			_parent.Controls.Remove(_sidePane);
+			_sidePane.Dispose();
+			_sidePane = new SidePane
+			{
+				ItemAreaStyle = expectedValue
+			};
+			_parent.Controls.Add(_sidePane);
+
+			Assert.AreEqual(_sidePane.ItemAreaStyle, expectedValue);
 
 			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
@@ -130,53 +79,19 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.IsNotNull(itemAreas);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
-		}
-	}
-
-	/// <summary>
-	/// To be subclassed by classes that implement the ItemAreaStyle property,
-	/// so that the unit tests run for each style of item area.
-	/// </summary>
-	public abstract class SidePaneTests
-	{
-		protected SidePane _sidePane;
-		protected Panel _parent;
-		protected abstract SidePaneItemAreaStyle ItemAreaStyle { get; }
-
-		#region SetUpDown
-		/// <summary>Runs before each test</summary>
-		[SetUp]
-		public void SetUp()
-		{
-			_parent = new Panel();
-			_sidePane = new SidePane
 			{
-				ItemAreaStyle = ItemAreaStyle
-			};
-			_parent.Controls.Add(_sidePane);
+				Assert.IsInstanceOf(expectedType, area);
+			}
 		}
 
-		/// <summary>Runs after each test</summary>
-		[TearDown]
-		public void TearDown()
-		{
-			_sidePane.Dispose();
-			_parent.Dispose();
-		}
-		#endregion
-
-		#region ContainingControl
 		[Test]
 		public void ContainingControlTest()
 		{
-			Control containingControl = _sidePane.Parent;
+			var containingControl = _sidePane.Parent;
 			Assert.IsNotNull(containingControl);
 			Assert.AreSame(containingControl, _parent);
 		}
-		#endregion ContainingControl
 
-		#region AddTab
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddTab_null()
@@ -187,10 +102,10 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void AddTab_basic()
 		{
-			Tab tab1 = new Tab("first tab");
+			var tab1 = new Tab("first tab");
 			_sidePane.AddTab(tab1);
 
-			Tab tab2 = new Tab("another tab");
+			var tab2 = new Tab("another tab");
 			_sidePane.AddTab(tab2);
 		}
 
@@ -198,7 +113,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameIdentity()
 		{
-			Tab tab = new Tab("mytab");
+			var tab = new Tab("mytab");
 			_sidePane.AddTab(tab);
 			_sidePane.AddTab(tab);
 		}
@@ -207,8 +122,8 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameName()
 		{
-			Tab tab1 = new Tab("mytab");
-			Tab tab2 = new Tab("mytab");
+			var tab1 = new Tab("mytab");
+			var tab2 = new Tab("mytab");
 			_sidePane.AddTab(tab1);
 			_sidePane.AddTab(tab2);
 		}
@@ -221,7 +136,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				Text = "tabtext"
 			};
 			_sidePane.AddTab(tab);
-			using (var button = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
+			using (var button = GetUnderlyingButtonCorrespondingToTab(tab))
 			{
 				Assert.AreEqual(tab.Name, button.Name, "Tab Name and underlying button Name should be the same.");
 				Assert.AreEqual(tab.Text, button.Text, "Tab Text and underlying button Text should be the same.");
@@ -237,14 +152,12 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				Icon = Image.FromFile("./whitepixel.bmp")
 			};
 			_sidePane.AddTab(tab);
-			using (var button = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
+			using (var button = GetUnderlyingButtonCorrespondingToTab(tab))
 			{
 				Assert.AreSame(tab.Icon, button.Image, "Tab Icon and underlying button Image should be the same.");
 			}
 		}
-		#endregion AddTab
 
-		#region AddItem
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null1()
@@ -256,42 +169,37 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null2()
 		{
-			Item item = new Item("itemname");
-			_sidePane.AddItem(null, item);
+			_sidePane.AddItem(null, new Item("itemname"));
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null3()
 		{
-			Tab tab = new Tab("tabname");
-			_sidePane.AddItem(tab, null);
+			_sidePane.AddItem(new Tab("tabname"), null);
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void AddItem_toNonExistentTab()
 		{
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
-			_sidePane.AddItem(tab, item);
+			_sidePane.AddItem(new Tab("tabname"), new Item("itemname"));
 		}
 
 		[Test]
 		public void AddItem_basic()
 		{
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
-			_sidePane.AddItem(tab, item);
+			_sidePane.AddItem(tab, new Item("itemname"));
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameIdentity_onSameTab()
 		{
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
+			var tab = new Tab("tabname");
+			var item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
 			_sidePane.AddItem(tab, item);
@@ -300,9 +208,9 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void AddItem_ofSameIdentity_onDifferentTab()
 		{
-			Tab tab1 = new Tab("tab1");
-			Tab tab2 = new Tab("tab2");
-			Item item = new Item("itemname");
+			var tab1 = new Tab("tab1");
+			var tab2 = new Tab("tab2");
+			var item = new Item("itemname");
 			_sidePane.AddTab(tab1);
 			_sidePane.AddTab(tab2);
 			_sidePane.AddItem(tab1, item);
@@ -313,9 +221,9 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNullName()
 		{
-			Tab tab = new Tab("tab");
-			Item item1 = new Item("itemname");
-			Item item2 = new Item("itemname");
+			var tab = new Tab("tab");
+			var item1 = new Item("itemname");
+			var item2 = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
 			_sidePane.AddItem(tab, item2);
@@ -325,9 +233,9 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNonNullName()
 		{
-			Tab tab = new Tab("tab");
-			Item item1 = new Item("item");
-			Item item2 = new Item("item");
+			var tab = new Tab("tab");
+			var item1 = new Item("item");
+			var item2 = new Item("item");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
 			_sidePane.AddItem(tab, item2);
@@ -336,10 +244,10 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void AddItem_ofSameName_onDifferentTab_forNullName()
 		{
-			Tab tab1 = new Tab("tab1");
-			Tab tab2 = new Tab("tab2");
-			Item item1 = new Item("itemname");
-			Item item2 = new Item("itemname");
+			var tab1 = new Tab("tab1");
+			var tab2 = new Tab("tab2");
+			var item1 = new Item("itemname");
+			var item2 = new Item("itemname");
 			_sidePane.AddTab(tab1);
 			_sidePane.AddTab(tab2);
 			_sidePane.AddItem(tab1, item1);
@@ -349,37 +257,35 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void AddItem_ofSameName_onDifferentTab_forNonNullName()
 		{
-			Tab tab1 = new Tab("tab1");
-			Tab tab2 = new Tab("tab2");
-			Item item1 = new Item("item");
-			Item item2 = new Item("item");
+			var tab1 = new Tab("tab1");
+			var tab2 = new Tab("tab2");
+			var item1 = new Item("item");
+			var item2 = new Item("item");
 			_sidePane.AddTab(tab1);
 			_sidePane.AddTab(tab2);
 			_sidePane.AddItem(tab1, item1);
 			_sidePane.AddItem(tab2, item2);
 		}
-		#endregion AddItem
 
-		#region SelectTab
 		[Test]
 		public void SelectTab_basic()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
-			bool successful1 = _sidePane.SelectTab(tab);
+			var successful1 = _sidePane.SelectTab(tab);
 			Assert.IsTrue(successful1);
 			_sidePane.SelectTab(tab, true);
-			bool successful2 = _sidePane.SelectTab(tab, false);
+			var successful2 = _sidePane.SelectTab(tab, false);
 			Assert.IsTrue(successful2);
 		}
 
 		[Test]
 		public void SelectTab_havingText()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			tab.Text = "tabtext";
 			_sidePane.AddTab(tab);
-			bool successful = _sidePane.SelectTab(tab);
+			var successful = _sidePane.SelectTab(tab);
 			Assert.IsTrue(successful);
 		}
 
@@ -394,12 +300,9 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectTab_thatDoesntExist()
 		{
-			Tab tab = new Tab("tabname");
-			_sidePane.SelectTab(tab);
+			_sidePane.SelectTab(new Tab("tabname"));
 		}
-		#endregion SelectTab
 
-		#region SelectItem
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null1()
@@ -418,82 +321,67 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null3()
 		{
-			Tab tab = new Tab("tabname");
-			_sidePane.SelectItem(tab, null);
+			_sidePane.SelectItem(new Tab("tabname"), null);
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectItem_onNonexistentTab()
 		{
-			Tab tab = new Tab("tabname");
-			string itemName = "itemName";
-			_sidePane.SelectItem(tab, itemName);
+			_sidePane.SelectItem(new Tab("tabname"), "itemName");
 		}
 
 		[Test]
 		public void SelectItem_thatDoesNotExist()
 		{
-			Tab tab = new Tab("tabname");
-			string itemName = "non-existent itemname";
+			var tab = new Tab("tabname");
+			const string itemName = "non-existent itemname";
 			_sidePane.AddTab(tab);
-			var result = _sidePane.SelectItem(tab, itemName);
-			Assert.IsFalse(result);
+			Assert.IsFalse(_sidePane.SelectItem(tab, itemName));
 		}
 
 		[Test]
 		public void SelectItem_basic()
 		{
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
+			var tab = new Tab("tabname");
+			var item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
-			var result = _sidePane.SelectItem(tab, item.Name);
-			Assert.IsTrue(result);
+			Assert.IsTrue(_sidePane.SelectItem(tab, item.Name));
 		}
-		#endregion SelectItem
 
-		#region CurrentTab
 		[Test]
 		public void CurrentTab()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			_sidePane.SelectTab(tab);
-			Tab result = _sidePane.CurrentTab;
-			Assert.AreSame(tab, result);
+			Assert.AreSame(tab, _sidePane.CurrentTab);
 		}
 
 		[Test]
 		public void CurrentTab_whenNoneSelected()
 		{
-			Tab currentTab = _sidePane.CurrentTab;
-			Assert.IsNull(currentTab);
+			Assert.IsNull(_sidePane.CurrentTab);
 		}
-		#endregion
 
-		#region CurrentItem
 		[Test]
 		public void CurrentItem()
 		{
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
+			var tab = new Tab("tabname");
+			var item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
 			_sidePane.SelectItem(tab, item.Name);
-			Item currentItem = _sidePane.CurrentItem;
-			Assert.AreSame(item, currentItem);
+			Assert.AreSame(item, _sidePane.CurrentItem);
 		}
-		#endregion
 
-		#region GetTabByName
 		[Test]
 		public void GetTabByName()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
-			Tab result = _sidePane.GetTabByName(tab.Name);
-			Assert.AreSame(tab, result);
+			Assert.AreSame(tab, _sidePane.GetTabByName(tab.Name));
 		}
 
 		[Test]
@@ -506,69 +394,48 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void GetTabByName_nonexistentTab()
 		{
-			Tab tab = _sidePane.GetTabByName("nonexistentTabName");
-			Assert.IsNull(tab);
-		}
-		#endregion GetTabByName
-
-		#region ItemClickEvent
-		private bool _itemClickedHappened = false;
-		private void ItemClickedHandler(Item itemClicked)
-		{
-			_itemClickedHappened = true;
+			Assert.IsNull(_sidePane.GetTabByName("nonexistentTabName"));
 		}
 
 		[Test]
 		public void ItemClickEvent_basic()
 		{
 			_sidePane.ItemClicked += ItemClickedHandler;
-			Tab tab = new Tab("tabname");
-			Item item = new Item("itemname");
+			var tab = new Tab("tabname");
+			var item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
 			Assert.IsFalse(_itemClickedHappened);
 			_sidePane.SelectItem(tab, item.Name);
 			Assert.IsTrue(_itemClickedHappened);
 		}
-		#endregion ItemClickEvent
-
-		#region TabClickEvent
-		private bool _tabClickedHappened = false;
-		private void TabClickedHandler(Tab tabClicked)
-		{
-			_tabClickedHappened = true;
-		}
 
 		[Test]
 		public void TabClickEvent_basic()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			_sidePane.TabClicked += TabClickedHandler;
 			Assert.IsFalse(_tabClickedHappened);
 			_sidePane.SelectTab(tab);
 			Assert.IsTrue(_tabClickedHappened);
 		}
-		#endregion TabClickEvent
 
-		#region DisableTab
 		[Test]
 		public void CanDisableTab()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			tab.Enabled = false;
-			bool success = _sidePane.SelectTab(tab);
-			Assert.IsFalse(success);
-			Tab currentTab = _sidePane.CurrentTab;
-			Assert.AreNotSame(tab, currentTab);
+			Assert.IsFalse(_sidePane.SelectTab(tab));
+			Assert.AreNotSame(tab, _sidePane.CurrentTab);
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void TrySelectingDisabledTabThatDoesNotExist()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			tab.Enabled = false;
 			_sidePane.SelectTab(tab);
 		}
@@ -576,18 +443,16 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[Test]
 		public void DisablingTabDisablesUnderlyingOutlookBarButton()
 		{
-			Tab tab = new Tab("tabname");
+			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
-			using (var underlyingButton = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
+			using (var underlyingButton = GetUnderlyingButtonCorrespondingToTab(tab))
 			{
 				Assert.IsTrue(underlyingButton.Enabled);
 				tab.Enabled = false;
 				Assert.IsFalse(underlyingButton.Enabled);
 			}
 		}
-		#endregion
 
-		#region SidePaneWithManyItems
 		/// <summary>
 		/// Previously would crash when drawing non-square icons (eg DropDown2003) from a
 		/// stream due to mono bug https://bugzilla.novell.com/show_bug.cgi?id=581400
@@ -596,24 +461,26 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		public void MakeSidePaneWithManyItems()
 		{
 			// Put sidepane on a window
-			using (Form window = new Form())
+			using (var window = new Form())
 			{
 				window.Height = 600;
 				window.Width = 600;
-				SplitContainer container = new SplitContainer();
-				container.Dock = DockStyle.Fill;
-				container.SplitterWidth = 100;
-				window.Controls.Add(container);
-				using (SidePane sidepane = new SidePane())
+				var container = new SplitContainer
 				{
-					sidepane.ItemAreaStyle = ItemAreaStyle;
+					Dock = DockStyle.Fill,
+					SplitterWidth = 100
+				};
+				window.Controls.Add(container);
+				using (var sidepane = new SidePane())
+				{
 					container.Panel1.Controls.Add(sidepane);
 					// Add a tab and a lot of items
-					Tab tab = new Tab("tabname");
+					var tab = new Tab("tabname");
 					sidepane.AddTab(tab);
 					for (int i = 0; i < 50; ++i)
+					{
 						sidepane.AddItem(tab, new Item("item" + i));
-
+					}
 					try
 					{
 						// Display the window and its contents
@@ -629,6 +496,5 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				}
 			}
 		}
-		#endregion SidePaneWithManyItems
 	}
 }

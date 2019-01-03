@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	[TestFixture]
 	public class LayoutMergerTests
 	{
-		Inventory m_inventory;
+		private Inventory m_inventory;
 		private string m_testPathMerge;
 
 		[TestFixtureSetUp]
@@ -67,15 +67,17 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void TestDupKeyOnMigration()
 		{
-			string newMaster = Path.Combine(m_testPathMerge, "NewMaster.xml");
+			var newMaster = Path.Combine(m_testPathMerge, "NewMaster.xml");
 			var newMasterDoc = XDocument.Load(newMaster);
 
-			string user = Path.Combine(m_testPathMerge, "User.xml");
+			var user = Path.Combine(m_testPathMerge, "User.xml");
 			var userDoc = XDocument.Load(user);
-			string sourceFilePath = Path.Combine(m_testPathMerge, "LexSensePartsOutput.xml");
-			string outDirFilePath = Path.Combine(Path.GetTempPath(), "LexSensePartsOutput.xml");
+			var sourceFilePath = Path.Combine(m_testPathMerge, "LexSensePartsOutput.xml");
+			var outDirFilePath = Path.Combine(Path.GetTempPath(), "LexSensePartsOutput.xml");
 			if (File.Exists(outDirFilePath))
+			{
 				File.Delete(outDirFilePath);
+			}
 			File.Copy(sourceFilePath, outDirFilePath);
 			var outputDoc = XDocument.Load(outDirFilePath);
 			var merger = new LayoutMerger();

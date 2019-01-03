@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2010-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2010-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -38,6 +38,11 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 			_tab1.Dispose();
 			_tab2.Dispose();
 			_tab3.Dispose();
+
+			_outlookBar = null;
+			_tab1 = null;
+			_tab2 = null;
+			_tab3 = null;
 		}
 
 		[Test]
@@ -258,16 +263,19 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				dialog.Show();
 
 				// Uncheck all tabs
-				for (int i = 0; i < _tabs.Count; i++)
+				for (var i = 0; i < _tabs.Count; i++)
+				{
 					dialog.tabListBox.SetItemChecked(i, false);
+				}
 
 				// Move a tab down
 				dialog.tabListBox.SetSelected(0, true);
 				dialog.btn_Down.PerformClick();
 
-				for (int i = 0; i < _tabs.Count; i++)
-					Assert.IsFalse(dialog.tabListBox.GetItemChecked(i),
-						"tab at index {0} should have remained unchecked when tabs are reordered", i);
+				for (var i = 0; i < _tabs.Count; i++)
+				{
+					Assert.IsFalse(dialog.tabListBox.GetItemChecked(i), "tab at index {0} should have remained unchecked when tabs are reordered", i);
+				}
 			}
 		}
 	}

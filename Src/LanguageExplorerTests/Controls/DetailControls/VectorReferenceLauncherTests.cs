@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,17 +21,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	{
 		#region Member variables
 
-		/// <summary />
 		private FlexComponentParameters _flexComponentParameters;
 		private ILexEntryFactory m_leFact;
 		private ILexEntryRefFactory m_lerFact;
-		//private IMoStemAllomorphFactory m_moFact;
 		private string m_wsAnalStr;
 		private int m_wsAnalysis;
 		private int m_wsVern;
 		private IPartOfSpeech m_noun;
 		private IMoMorphType m_stem;
-		internal MockVectorReferenceLauncher MockLauncher { get; set; }
+		private MockVectorReferenceLauncher MockLauncher { get; set; }
 
 		#endregion
 		#region Overrides of LcmTestBase
@@ -43,6 +41,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				MockLauncher.Dispose();
 				_flexComponentParameters.PropertyTable.Dispose();
 				_flexComponentParameters = null;
+				MockLauncher = null;
 			}
 			catch (Exception err)
 			{
@@ -59,7 +58,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			base.CreateTestData();
 
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
@@ -75,14 +73,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private IPartOfSpeech GetNounPOS()
 		{
-			return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(
-				pos => pos.Name.AnalysisDefaultWritingSystem.Text == "noun").Cast<IPartOfSpeech>().FirstOrDefault();
+			return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(pos => pos.Name.AnalysisDefaultWritingSystem.Text == "noun").Cast<IPartOfSpeech>().FirstOrDefault();
 		}
 
 		private IMoMorphType GetStemMorphType()
 		{
-			return Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.Where(
-				mt => mt.Name.AnalysisDefaultWritingSystem.Text == "stem").Cast<IMoMorphType>().FirstOrDefault();
+			return Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.Where(mt => mt.Name.AnalysisDefaultWritingSystem.Text == "stem").Cast<IMoMorphType>().FirstOrDefault();
 		}
 
 		private ILexEntry CreateSimpleEntry(string form, string gloss)
@@ -99,26 +95,28 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private ILexEntryRef AddComponentEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.IsNotNull(secondaryEntry.EntryRefsOS, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
 				if (mainEntry != null)
+				{
 					existingLer.ComponentLexemesRS.Add(mainEntry);
+				}
 				return existingLer;
 			}
 			var newLer = m_lerFact.Create();
 			secondaryEntry.EntryRefsOS.Add(newLer);
 			if (mainEntry != null)
+			{
 				newLer.ComponentLexemesRS.Add(mainEntry);
+			}
 			return newLer;
 		}
 
 		private ILexEntryRef AddPrimaryEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.IsNotNull(secondaryEntry.EntryRefsOS, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
@@ -144,8 +142,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var testItem = CreateSimpleEntry("testform", "testgloss");
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// SUT
 			// First close off task, since SUT has own UOW
@@ -153,12 +150,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			MockLauncher.AddItem(testItem);
 
 			// Verify results
-			Assert.AreEqual(2, obj.ComponentLexemesRS.Count,
-				"Wrong number of ComponentLexemes.");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo),
-				"testItem should be in ComponentLexemes property");
-			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count,
-				"Shouldn't ever have any entry refs here.");
+			Assert.AreEqual(2, obj.ComponentLexemesRS.Count, "Wrong number of ComponentLexemes.");
+			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo), "testItem should be in ComponentLexemes property");
+			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count, "Shouldn't ever have any entry refs here.");
 		}
 
 		/// <summary>
@@ -175,8 +169,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var testItem2 = CreateSimpleEntry("test2form", "test2gloss");
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// SUT
 			// First close off task, since SUT has own UOW
@@ -184,12 +177,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			MockLauncher.SetItems(new List<ICmObject> { testItem, testItem2 });
 
 			// Verify results
-			Assert.AreEqual(2, obj.ComponentLexemesRS.Count,
-				"Wrong number of ComponentLexemes.");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo),
-				"testItem should be in ComponentLexemes property");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem2.Hvo),
-				"testItem2 should be in ComponentLexemes property");
+			Assert.AreEqual(2, obj.ComponentLexemesRS.Count, "Wrong number of ComponentLexemes.");
+			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo), "testItem should be in ComponentLexemes property");
+			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem2.Hvo), "testItem2 should be in ComponentLexemes property");
 		}
 
 		/// <summary>
@@ -204,22 +194,17 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddComponentEntryRef(mainEntry, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject>());
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].ComponentLexemesRS.Count,
-				"Shouldn't have any ComponentLexemes left.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count,
-				"Shouldn't have any PrimaryLexemes left.");
-			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count,
-				"Shouldn't ever have any entry refs here.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
+			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].ComponentLexemesRS.Count, "Shouldn't have any ComponentLexemes left.");
+			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count, "Shouldn't have any PrimaryLexemes left.");
+			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count, "Shouldn't ever have any entry refs here.");
 		}
 
 		/// <summary>
@@ -239,23 +224,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddComponentEntryRef(entry3, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var result = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, result.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count,
-				"Shouldn't have any PrimaryLexemes.");
-			Assert.False(result.ToHvoArray().Contains(entry2.Hvo),
-				"The entry2 object should have been removed from ComponentLexemes.");
+			Assert.AreEqual(2, result.Count, "Should have two ComponentLexemes left.");
+			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count, "Shouldn't have any PrimaryLexemes.");
+			Assert.False(result.ToHvoArray().Contains(entry2.Hvo), "The entry2 object should have been removed from ComponentLexemes.");
 		}
 
 		/// <summary>
@@ -276,30 +256,23 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry3, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry3.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count, "There should be one PrimaryLexeme.");
+			Assert.AreEqual(entry3.Hvo, obj.PrimaryLexemesRS[0].Hvo, "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry2 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been removed from ComponentLexemes.");
+			Assert.AreEqual(2, compResult.Count, "Should have two ComponentLexemes left.");
+			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo), "The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(0, primResult.Count,
-				"Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
+			Assert.AreEqual(0, primResult.Count, "Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
 		}
 
 		/// <summary>
@@ -320,30 +293,23 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count, "There should be one PrimaryLexeme.");
+			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo, "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry2 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been removed from ComponentLexemes.");
+			Assert.AreEqual(2, compResult.Count, "Should have two ComponentLexemes left.");
+			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo), "The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
+			Assert.AreEqual(1, primResult.Count, "Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
 		}
 
 		/// <summary>
@@ -363,34 +329,25 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count, "There should be one PrimaryLexeme.");
+			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo, "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry2, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
-				"The entry1 object should have been removed from ComponentLexemes.");
-			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been added to ComponentLexemes.");
+			Assert.AreEqual(2, compResult.Count, "Should have two ComponentLexemes left.");
+			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo), "The entry1 object should have been removed from ComponentLexemes.");
+			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo), "The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Modifications of ComponentLexemes, should not affect PrimaryLexemes.");
-			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo,
-				"Entry2 object should be in PrimaryLexemes.");
+			Assert.AreEqual(1, primResult.Count, "Modifications of ComponentLexemes, should not affect PrimaryLexemes.");
+			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo, "Entry2 object should be in PrimaryLexemes.");
 		}
 
 		/// <summary>
@@ -411,32 +368,24 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count, "There should be one PrimaryLexeme.");
+			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo, "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry2, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
-				"The entry1 object should have been removed from ComponentLexemes.");
+			Assert.AreEqual(2, compResult.Count, "Should have two ComponentLexemes left.");
+			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo), "The entry1 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Deleting entry1 object from ComponentLexemes, should not affect PrimaryLexemes.");
-			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo,
-				"Entry2 object should be in PrimaryLexemes.");
+			Assert.AreEqual(1, primResult.Count, "Deleting entry1 object from ComponentLexemes, should not affect PrimaryLexemes.");
+			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo, "Entry2 object should be in PrimaryLexemes.");
 		}
 
 		/// <summary>
@@ -456,32 +405,24 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count, "There should be one PrimaryLexeme.");
+			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo, "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count, "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(1, compResult.Count,
-				"Should only have one new ComponentLexeme left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry2.Hvo),
-				"The entry2 object should have been removed from ComponentLexemes.");
-			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been added to ComponentLexemes.");
+			Assert.AreEqual(1, compResult.Count, "Should only have one new ComponentLexeme left.");
+			Assert.False(compResult.ToHvoArray().Contains(entry2.Hvo), "The entry2 object should have been removed from ComponentLexemes.");
+			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo), "The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(0, primResult.Count,
-				"Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
+			Assert.AreEqual(0, primResult.Count, "Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
 		}
 
 		/// <summary>
@@ -499,8 +440,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 			obj.Delete();
 
 			// SUT
@@ -510,53 +450,53 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// Verify results
 			CollectionAssert.IsEmpty(targets, "Should return empty array");
 		}
-	}
 
-	internal class MockVectorReferenceLauncher : VectorReferenceLauncher
-	{
-		#region overrides
-
-		protected override VectorReferenceView CreateVectorReferenceView()
+		private sealed class MockVectorReferenceLauncher : VectorReferenceLauncher
 		{
-			return new MockVectorReferenceView();
+			#region overrides
+
+			protected override VectorReferenceView CreateVectorReferenceView()
+			{
+				return new MockVectorReferenceView();
+			}
+
+			protected override int RootBoxHeight => 16;
+
+			protected override void AdjustFormScrollbars(bool displayScrollbars)
+			{
+				base.AdjustFormScrollbars(false);
+			}
+
+			protected override bool CanRaiseEvents => false;
+
+			#endregion
+
+			public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
+			{
+				Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+				Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+				Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
+				Initialize(cache, obj, flid, fieldName, null, string.Empty, analysisWs);
+			}
 		}
 
-		protected override int RootBoxHeight => 16;
-
-		protected override void AdjustFormScrollbars(bool displayScrollbars)
+		/// <summary>
+		/// Functions with MockVectorReferenceLauncher to eliminate views from
+		/// these VectorReferenceLauncher tests.
+		/// </summary>
+		private sealed class MockVectorReferenceView : VectorReferenceView
 		{
-			base.AdjustFormScrollbars(false);
+			#region overrides
+
+			public override void MakeRoot()
+			{
+			}
+
+			public override void ReloadVector()
+			{
+			}
+			#endregion
+
 		}
-
-		protected override bool CanRaiseEvents => false;
-
-		#endregion
-
-		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
-		{
-			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
-			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
-		}
-	}
-
-	/// <summary>
-	/// Functions with MockVectorReferenceLauncher to eliminate views from
-	/// these VectorReferenceLauncher tests.
-	/// </summary>
-	internal class MockVectorReferenceView : VectorReferenceView
-	{
-		#region overrides
-
-		public override void MakeRoot()
-		{
-		}
-
-		public override void ReloadVector()
-		{
-		}
-		#endregion
-
 	}
 }

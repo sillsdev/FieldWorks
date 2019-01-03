@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -9,27 +9,21 @@ using NUnit.Framework;
 
 namespace LanguageExplorerTests.Controls.SilSidePane
 {
-
-
 	[TestFixture]
 	public class ItemTests
 	{
 		[Test]
 		public void ItemTest_basic()
 		{
-#pragma warning disable 0219
-			Item item1 = new Item("");
-			Item item2 = new Item("itemname");
-#pragma warning restore 0219
+			Assert.DoesNotThrow(()=> new Item(string.Empty));
+			Assert.DoesNotThrow(() => new Item("itemname"));
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ItemTest_null()
 		{
-#pragma warning disable 0219
-			Item item = new Item(null);
-#pragma warning restore 0219
+			var item = new Item(null);
 		}
 	}
 }

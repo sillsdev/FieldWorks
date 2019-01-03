@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,11 +12,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class AtomicReferenceLauncherTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -29,7 +25,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private int m_wsVern;
 		private IPartOfSpeech m_noun;
 		private IMoMorphType m_stem;
-		internal MockAtomicReferenceLauncher MockLauncher { get; set; }
+		private MockAtomicReferenceLauncher MockLauncher { get; set; }
 
 		#endregion
 
@@ -52,6 +48,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			try
 			{
 				MockLauncher.Dispose();
+				MockLauncher = null;
 			}
 			catch (Exception err)
 			{
@@ -65,14 +62,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private IPartOfSpeech GetNounPOS()
 		{
-			return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(
-				pos => pos.Name.AnalysisDefaultWritingSystem.Text == "noun").Cast<IPartOfSpeech>().FirstOrDefault();
+			return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(pos => pos.Name.AnalysisDefaultWritingSystem.Text == "noun").Cast<IPartOfSpeech>().FirstOrDefault();
 		}
 
 		private IMoMorphType GetStemMorphType()
 		{
-			return Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.Where(
-				mt => mt.Name.AnalysisDefaultWritingSystem.Text == "stem").Cast<IMoMorphType>().FirstOrDefault();
+			return Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.Where(mt => mt.Name.AnalysisDefaultWritingSystem.Text == "stem").Cast<IMoMorphType>().FirstOrDefault();
 		}
 
 		private ILexEntry CreateSimpleEntry(string form, string gloss)
@@ -89,27 +84,28 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private ILexEntryRef AddComponentEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.IsNotNull(secondaryEntry.EntryRefsOS, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
 				if (mainEntry != null)
+				{
 					existingLer.ComponentLexemesRS.Add(mainEntry);
+				}
 				return existingLer;
 			}
 			var newLer = m_lerFact.Create();
 			secondaryEntry.EntryRefsOS.Add(newLer);
 			if (mainEntry != null)
+			{
 				newLer.ComponentLexemesRS.Add(mainEntry);
+			}
 			return newLer;
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests checking launcher Targets when obj is invalid (hvo less than 1).
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TargetReturnsNullIfObjectIsInvalid()
 		{
@@ -119,8 +115,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var obj = AddComponentEntryRef(mainEntry, secondaryEntry);
 
 			// and initialize launcher
-			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
-				"ComponentLexemesRS", m_wsAnalStr);
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes, "ComponentLexemesRS", m_wsAnalStr);
 			obj.Delete();
 
 			// SUT
@@ -131,52 +126,48 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// Verify results
 			Assert.IsNull(target, "Target should be null.");
 		}
-	}
 
-	internal class MockAtomicReferenceLauncher : AtomicReferenceLauncher
-	{
-		#region overrides
-
-		protected override AtomicReferenceView CreateAtomicReferenceView()
+		private sealed class MockAtomicReferenceLauncher : AtomicReferenceLauncher
 		{
-			return new MockAtomicReferenceView();
+			#region overrides
+
+			protected override AtomicReferenceView CreateAtomicReferenceView()
+			{
+				return new MockAtomicReferenceView();
+			}
+
+			protected override void AdjustFormScrollbars(bool displayScrollbars)
+			{
+				base.AdjustFormScrollbars(false);
+			}
+
+			protected override bool CanRaiseEvents => false;
+			#endregion
+
+			public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
+			{
+				Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+				Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+				Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
+				Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
+			}
 		}
 
-		protected override void AdjustFormScrollbars(bool displayScrollbars)
+		/// <summary>
+		/// Functions with MockAtomicReferenceLauncher to eliminate views from
+		/// these AtomicReferenceLauncher tests.
+		/// </summary>
+		private sealed class MockAtomicReferenceView : AtomicReferenceView
 		{
-			base.AdjustFormScrollbars(false);
+			#region overrides
+
+			public override void MakeRoot()
+			{
+				// Do nothing the base class(es) do.
+			}
+
+			#endregion
+
 		}
-
-		protected override bool CanRaiseEvents
-		{
-			get { return false; }
-		}
-
-		#endregion
-
-		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
-		{
-			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
-			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
-		}
-	}
-
-	/// <summary>
-	/// Functions with MockAtomicReferenceLauncher to eliminate views from
-	/// these AtomicReferenceLauncher tests.
-	/// </summary>
-	internal class MockAtomicReferenceView : AtomicReferenceView
-	{
-		#region overrides
-
-		public override void MakeRoot()
-		{
-			//base.MakeRoot();
-		}
-
-		#endregion
-
 	}
 }

@@ -1,19 +1,19 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -47,7 +47,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void PasteIntoStringFieldDoesNotFlattenWsStyle()
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
-			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
+			// Verify that we are testing  with a field of the correct type (if this fails the model changed)
 			Assert.AreEqual((int)CellarPropertyType.String, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidImportResidue));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidImportResidue);
@@ -59,7 +59,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void PasteIntoMultiStringFieldDoesNotFlattenWsStyle()
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
-			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
+			// Verify that we are testing  with a field of the correct type (if this fails the model changed)
 			Assert.AreEqual((int)CellarPropertyType.MultiString, Cache.MetaDataCacheAccessor.GetFieldType(LexSenseTags.kflidGeneralNote));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexSenseTags.kflidGeneralNote);
@@ -71,7 +71,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void PasteIntoUnicodeFieldFlattensWsStyle()
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
-			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
+			// Verify that we are testing  with a field of the correct type (if this fails the model changed)
 			Assert.AreEqual((int)CellarPropertyType.Unicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidLiftResidue));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
@@ -84,7 +84,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void PasteIntoMultiUnicodeFieldFlattensWsStyle()
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
-			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
+			// Verify that we are testing  with a field of the correct type (if this fails the model changed)
 			Assert.AreEqual((int)CellarPropertyType.MultiUnicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidCitationForm));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
@@ -97,18 +97,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void InnerViewRefreshesWhenRefreshIsPending()
 		{
 			ILexEntry entry = null;
-			int flid = 5035001; // MoForm flid
+			var flid = 5035001; // MoForm flid
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				IMoStemAllomorph morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entry.LexemeFormOA = morph;
 			});
 
-			Form dummyForm = new Form();
-			LabeledMultiStringView view = new LabeledMultiStringView(entry.LexemeFormOA.Hvo, flid, WritingSystemServices.kwsVern, false, true);
+			var dummyForm = new Form();
+			var view = new LabeledMultiStringView(entry.LexemeFormOA.Hvo, flid, WritingSystemServices.kwsVern, false, true);
 			dummyForm.Controls.Add(view);
-			InnerLabeledMultiStringView innerView = view.InnerView;
+			var innerView = view.InnerView;
 			view.FinishInit();
 			innerView.Cache = Cache;
 
@@ -116,8 +116,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var handle = innerView.Handle;
 			Assert.IsFalse(innerView.Visible);
 			Assert.IsFalse(innerView.RefreshPending);
-			view.WritingSystemsToDisplay =
-				WritingSystemServices.GetWritingSystemList(Cache, WritingSystemServices.kwsVern, false);
+			view.WritingSystemsToDisplay = WritingSystemServices.GetWritingSystemList(Cache, WritingSystemServices.kwsVern, false);
 			view.RefreshDisplay();
 			// The flag gets set because the view is not yet visible, so the display cannot refresh.
 			Assert.IsTrue(innerView.RefreshPending);

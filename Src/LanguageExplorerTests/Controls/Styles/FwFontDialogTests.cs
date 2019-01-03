@@ -15,20 +15,6 @@ namespace LanguageExplorerTests.Controls.Styles
 	[TestFixture]
 	public class FwFontDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private sealed class FakeFwFontDialog : FwFontDialog
-		{
-			internal FakeFwFontDialog(IHelpTopicProvider helpTopicProvider) : base(helpTopicProvider)
-			{
-			}
-
-			/// <summary>
-			/// No-op
-			/// </summary>
-			protected override void UpdatePreview()
-			{
-			}
-		}
-
 		/// <summary>
 		/// Object to test
 		/// </summary>
@@ -57,6 +43,7 @@ namespace LanguageExplorerTests.Controls.Styles
 			}
 			finally
 			{
+				m_dialog = null;
 				base.TestTearDown();
 			}
 		}
@@ -330,6 +317,20 @@ namespace LanguageExplorerTests.Controls.Styles
 			m_dialog.OnSelectedFontSizesIndexChanged(null, null);
 			Assert.That(fontSizeTextBox.Text, Is.EqualTo(fifthSize));
 			Assert.That(m_dialog.FontSize.ToString(), Is.EqualTo(fifthSize));
+		}
+
+		private sealed class FakeFwFontDialog : FwFontDialog
+		{
+			internal FakeFwFontDialog(IHelpTopicProvider helpTopicProvider) : base(helpTopicProvider)
+			{
+			}
+
+			/// <summary>
+			/// No-op
+			/// </summary>
+			protected override void UpdatePreview()
+			{
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,9 +28,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	{
 		private Inventory m_parts;
 		private Inventory m_layouts;
-		private ILexEntry m_entry; // test object.
-	   /// <summary />
-	   private FlexComponentParameters _flexComponentParameters;
+		/// <summary>test object.</summary>
+		private ILexEntry m_entry;
+		private FlexComponentParameters _flexComponentParameters;
 		private DataTree m_dtree;
 		private Form m_parent;
 		private DummyFwMainWnd _dummyWindow;
@@ -39,43 +39,33 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		#region Fixture Setup and Teardown
 		internal static Inventory GenerateParts()
 		{
-			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls");
-
-			var keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["part"] = new[] {"id"};
-
-			var parts = new Inventory(new string[] {partDirectory},
-				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
-
-			return parts;
+			var keyAttrs = new Dictionary<string, string[]>
+			{
+				["part"] = new[] { "id" }
+			};
+			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls") }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 		}
 
 		internal static Inventory GenerateLayouts()
 		{
-			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls");
-
-			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new[] {"class", "type", "name" };
-			keyAttrs["group"] = new[] {"label"};
-			keyAttrs["part"] = new[] {"ref"};
-
-			var layouts = new Inventory(new[] {partDirectory},
-				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
-
-			return layouts;
+			var keyAttrs = new Dictionary<string, string[]>
+			{
+				["layout"] = new[] { "class", "type", "name" },
+				["group"] = new[] { "label" },
+				["part"] = new[] { "ref" }
+			};
+			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls") }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 		}
 
 		/// <summary>
-		/// Setups this instance.
+		/// Sets up this instance.
 		/// </summary>
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
 			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId, CellarPropertyType.String, Guid.Empty);
-
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
@@ -91,7 +81,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			// NB: The base call has to be done out of normal order, or the rest throws an exception.
 			base.FixtureTeardown();
-
 			if (Cache?.MainCacheAccessor.MetaDataCache != null)
 			{
 				m_customField.Dispose();
@@ -187,15 +176,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// 1) Test that labels that are not in "LabelAbbreviations" stringTable
 			//		are abbreviated by being truncated to 4 characters.
 			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			string abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
-			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");	// verify it's not in the table.
-			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);		// verify truncation took place.
-			// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
+			var abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
+			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");   // verify it's not in the table.
+			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);       // verify truncation took place.
+																						// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
 			Assert.AreEqual("Citation Form", (m_dtree.Controls[1] as Slice).Label);
-			string abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
+			var abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
 			Assert.IsFalse(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*"); // verify it IS in the table
-			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);		// should be identical
-			// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
+			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);        // should be identical
+																						// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
 			Assert.AreEqual("Citation Form", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual((m_dtree.Controls[2] as Slice).Abbreviation, "!?");
 			Assert.IsFalse(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation);
@@ -205,8 +194,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void IfDataEmpty()
 		{
-			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
-			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			var anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			var vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
 			try
 			{
 				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
@@ -272,13 +261,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
-			ILexSense sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			var sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			m_entry.SensesOS.Add(sense1);
-			ILexSense sense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			var sense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			m_entry.SensesOS.Add(sense2);
-			Cache.MainCacheAccessor.SetString(sense2.Hvo,
-				LexSenseTags.kflidScientificName,
-				TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
+			Cache.MainCacheAccessor.SetString(sense2.Hvo, LexSenseTags.kflidScientificName, TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
 			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();

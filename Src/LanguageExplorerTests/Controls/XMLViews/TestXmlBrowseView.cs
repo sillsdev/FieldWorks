@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.XMLViews
@@ -63,76 +62,53 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
-				var output =
-					XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable,
-						"myKey");
-				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"),
-					Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				var output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.XPathSelectElement("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
-				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"),
-					Is.EqualTo("EntryHeadwordForFindEntry"));
-				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
-					Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
 				var weatherNode = output.XPathSelectElement("//column[@layout='Weather']");
 				Assert.That(weatherNode, Is.Null);
-				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
-					Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
 				// Should not affect other nodes
 				var unknownNode = output.XPathSelectElement("//column[@layout='Unknown Test']");
 				Assert.That(unknownNode, Is.Not.Null);
-				var abstractFormNode =
-					output.XPathSelectElement("//column[@layout='IsAbstractFormForEntry']");
+				var abstractFormNode = output.XPathSelectElement("//column[@layout='IsAbstractFormForEntry']");
 				Assert.That(abstractFormNode, Is.Not.Null);
-				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "bulkEdit"),
-					Is.EqualTo("booleanOnSubfield"));
-				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "visibility"),
-					Is.EqualTo("dialog"));
-				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "bulkDelete"),
-					Is.EqualTo("false"));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "bulkEdit"), Is.EqualTo("booleanOnSubfield"));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "visibility"), Is.EqualTo("dialog"));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "bulkDelete"), Is.EqualTo("false"));
 				VerifyColumn(output, "ExceptionFeatures", "label", "Exception 'Features'");
 				VerifyColumn(output, "PictureCaptionForSense", "ws", "$ws=vernacular analysis");
 				VerifyColumn(output, "PictureCaptionForSense", "visibility", "dialog");
 				VerifyColumn(output, "AcademicDomainsForSense", "displayWs", "best analysis");
 				VerifyColumn(output, "StatusForSense", "list", "LangProject.Status");
-				VerifyColumn(output, "ComplexEntryTypesBrowse", "ghostListField",
-					"LexDb.AllComplexEntryRefPropertyTargets");
-				VerifyColumn(output, "VariantEntryTypesBrowse", "ghostListField",
-					"LexDb.AllVariantEntryRefPropertyTargets");
+				VerifyColumn(output, "ComplexEntryTypesBrowse", "ghostListField", "LexDb.AllComplexEntryRefPropertyTargets");
+				VerifyColumn(output, "VariantEntryTypesBrowse", "ghostListField", "LexDb.AllVariantEntryRefPropertyTargets");
 				VerifyColumn(output, "CustomIntegerForEntry_MyField", "sortType", "integer");
 				VerifyColumn(output, "CustomGenDateForEntry_SomeField", "sortType", "genDate");
 
-				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "bulkEdit",
-					"complexListMultiple");
-				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "field",
-					"LexEntry.$fieldName");
+				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "bulkEdit", "complexListMultiple");
+				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "field", "LexEntry.$fieldName");
 				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "list", "$targetList");
-				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "displayNameProperty",
-					"ShortNameTSS");
+				VerifyColumn(output, "CustomPossVectorForEntry_MyField", "displayNameProperty", "ShortNameTSS");
 
-				VerifyColumn(output, "CustomPossAtomForEntry_AField", "bulkEdit",
-					"atomicFlatListItem");
-				VerifyColumn(output, "CustomPossAtomForEntry_AField", "field",
-					"LexEntry.$fieldName");
+				VerifyColumn(output, "CustomPossAtomForEntry_AField", "bulkEdit", "atomicFlatListItem");
+				VerifyColumn(output, "CustomPossAtomForEntry_AField", "field", "LexEntry.$fieldName");
 				VerifyColumn(output, "CustomPossAtomForEntry_AField", "list", "$targetList");
 
 				VerifyColumn(output, "CustomIntegerForSense_SenseField", "sortType", "integer");
-				VerifyColumn(output, "CustomPossVectorForSense_SenseVec", "field",
-					"LexSense.$fieldName");
-				VerifyColumn(output, "CustomPossAtomForSense_SenseAtom", "field",
-					"LexSense.$fieldName");
+				VerifyColumn(output, "CustomPossVectorForSense_SenseVec", "field", "LexSense.$fieldName");
+				VerifyColumn(output, "CustomPossAtomForSense_SenseAtom", "field", "LexSense.$fieldName");
 
-				VerifyColumn(output, "CustomGenDateForAllomorph_MorphDate", "sortType",
-					"genDate");
-				VerifyColumn(output, "CustomPossAtomForExample_ExAtom", "field",
-					"LexExampleSentence.$fieldName");
+				VerifyColumn(output, "CustomGenDateForAllomorph_MorphDate", "sortType", "genDate");
+				VerifyColumn(output, "CustomPossAtomForExample_ExAtom", "field", "LexExampleSentence.$fieldName");
 
 				// version 15
-				var isAHeadwordNode =
-					output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
+				var isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);
-				var publishAsHeadwordNode =
-					output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
+				var publishAsHeadwordNode = output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
 
 				// version 14
@@ -144,18 +120,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					"<column layout=\"Unknown Test\"/>" +
 					"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 					"</root>";
-				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable,
-					"myKey");
-				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"),
-					Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
-				isAHeadwordNode =
-					output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
+				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);
-				publishAsHeadwordNode =
-					output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
+				publishAsHeadwordNode = output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
-				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty),
-					Contains.Substring("PublishAsHeadword"));
+				Assert.That(flexComponentParameters.PropertyTable.GetValue("myKey", string.Empty), Contains.Substring("PublishAsHeadword"));
 			}
 			finally
 			{
@@ -163,7 +134,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 		}
 
-		static void VerifyColumn(XDocument output, string layoutName, string attrName, string attrVal)
+		private static void VerifyColumn(XDocument output, string layoutName, string attrName, string attrVal)
 		{
 			var node = output.XPathSelectElement("//column[@layout='" + layoutName + "']");
 			Assert.That(node, Is.Not.Null);

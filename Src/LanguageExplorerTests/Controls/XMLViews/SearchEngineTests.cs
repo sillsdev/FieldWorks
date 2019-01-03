@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,15 +24,15 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			using (var searchEngine = new LexEntrySearchEngine(Cache))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+				var form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				var form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				var form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 
 				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
-					Is.EquivalentTo(new[] {form1.Hvo, form2.Hvo, form3.Hvo}));
+					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo }));
 
 				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("form1", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo }));
@@ -48,13 +48,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void SearchFiltersResults()
 		{
-			using(var searchEngine = new LexEntrySearchEngine(Cache))
+			using (var searchEngine = new LexEntrySearchEngine(Cache))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+				var form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				var form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				var form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 				searchEngine.FilterThisHvo = form1.Hvo;
@@ -75,10 +75,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			using (var searchEngine = new LexEntrySearchEngine(Cache))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+				var form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				var form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				var form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 
@@ -88,7 +88,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo }));
 
 				m_actionHandler.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
-				ILexEntry form4 = entryFactory.Create(stem, TsStringUtils.MakeString("form4", Cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
+				var form4 = entryFactory.Create(stem, TsStringUtils.MakeString("form4", Cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
 				m_actionHandler.EndUndoTask();
 
 				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
@@ -117,7 +117,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 		}
 
-		private class LexEntrySearchEngine : SearchEngine
+		private sealed class LexEntrySearchEngine : SearchEngine
 		{
 			public LexEntrySearchEngine(LcmCache cache)
 				: base(cache, SearchType.Prefix)
@@ -126,26 +126,26 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 			{
-				var entry = (ILexEntry) obj;
-
-				int ws = field.String.get_WritingSystemAt(0);
+				var entry = (ILexEntry)obj;
+				var ws = field.String.get_WritingSystemAt(0);
 				switch (field.Flid)
 				{
 					case LexEntryTags.kflidLexemeForm:
-						if (entry.LexemeFormOA != null)
+						var lf = entry.LexemeFormOA?.Form.StringOrNull(ws);
+						if (lf != null && lf.Length > 0)
 						{
-							var lf = entry.LexemeFormOA.Form.StringOrNull(ws);
-							if (lf != null && lf.Length > 0)
-								yield return lf;
+							yield return lf;
 						}
 						break;
 
 					case LexSenseTags.kflidGloss:
-						foreach (ILexSense sense in entry.SensesOS)
+						foreach (var sense in entry.SensesOS)
 						{
 							var gloss = sense.Gloss.StringOrNull(ws);
 							if (gloss != null && gloss.Length > 0)
+							{
 								yield return gloss;
+							}
 						}
 						break;
 				}
@@ -166,8 +166,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			protected override bool IsIndexResetRequired(int hvo, int flid)
 			{
 				if (flid == Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
+				{
 					return true;
-
+				}
 				switch (flid)
 				{
 					case LexEntryTags.kflidLexemeForm:

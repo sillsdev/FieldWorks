@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Reflection;
 using LanguageExplorer.Controls.Styles;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Controls.Styles
@@ -16,49 +15,6 @@ namespace LanguageExplorerTests.Controls.Styles
 	[TestFixture]
 	public class FwStylesDlgTests
 	{
-		#region Dummy FwStylesDlg class
-		private sealed class DummyFwStylesDlg : FwStylesDlg
-		{
-			/// <summary />
-			internal DummyFwStylesDlg()
-				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", MsrSysType.Cm, string.Empty, string.Empty, null, null)
-			{
-				m_generalTab.RenamedStyles = m_renamedStyles;
-			}
-
-			/// <summary>
-			/// Calls the save renamed style.
-			/// </summary>
-			internal void CallSaveRenamedStyle(string oldName, string newName)
-			{
-				var t = typeof(FwGeneralTab);
-				var methodInfo = t.GetMethod("SaveRenamedStyle", BindingFlags.NonPublic | BindingFlags.Instance);
-				if (methodInfo != null)
-				{
-					methodInfo.Invoke(m_generalTab, new object[] { oldName, newName });
-				}
-			}
-
-			/// <summary>
-			/// Calls the save deleted style.
-			/// </summary>
-			internal void CallSaveDeletedStyle(string styleName)
-			{
-				SaveDeletedStyle(styleName);
-			}
-
-			/// <summary>
-			/// Gets the deleted style names.
-			/// </summary>
-			internal ISet<string> DeletedStyleNames => m_deletedStyleNames;
-
-			/// <summary>
-			/// Gets the renamed style names.
-			/// </summary>
-			internal Dictionary<string, string> RenamedStyleNames => m_renamedStyles;
-		}
-		#endregion
-
 		/// <summary>
 		/// Tests renaming and deleting styles.
 		/// </summary>
@@ -114,6 +70,47 @@ namespace LanguageExplorerTests.Controls.Styles
 				Assert.AreEqual("my style", renamedStyles["your style"]);
 				Assert.AreEqual("my funny style", renamedStyles["my recurring style"]);
 			}
+		}
+
+		private sealed class DummyFwStylesDlg : FwStylesDlg
+		{
+			/// <summary />
+			internal DummyFwStylesDlg()
+				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", MsrSysType.Cm, string.Empty, string.Empty, null, null)
+			{
+				m_generalTab.RenamedStyles = m_renamedStyles;
+			}
+
+			/// <summary>
+			/// Calls the save renamed style.
+			/// </summary>
+			internal void CallSaveRenamedStyle(string oldName, string newName)
+			{
+				var t = typeof(FwGeneralTab);
+				var methodInfo = t.GetMethod("SaveRenamedStyle", BindingFlags.NonPublic | BindingFlags.Instance);
+				if (methodInfo != null)
+				{
+					methodInfo.Invoke(m_generalTab, new object[] { oldName, newName });
+				}
+			}
+
+			/// <summary>
+			/// Calls the save deleted style.
+			/// </summary>
+			internal void CallSaveDeletedStyle(string styleName)
+			{
+				SaveDeletedStyle(styleName);
+			}
+
+			/// <summary>
+			/// Gets the deleted style names.
+			/// </summary>
+			internal ISet<string> DeletedStyleNames => m_deletedStyleNames;
+
+			/// <summary>
+			/// Gets the renamed style names.
+			/// </summary>
+			internal Dictionary<string, string> RenamedStyleNames => m_renamedStyles;
 		}
 	}
 }
