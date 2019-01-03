@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// So that tagging tests can see protected methods in IText.InterlinTaggingChild
 	/// </summary>
-	class TestTaggingChild: InterlinTaggingChild
+	internal class TestTaggingChild : InterlinTaggingChild
 	{
 		public TestTaggingChild(LcmCache cache)
 		{
@@ -52,7 +52,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The test version doesn't want anything to do with views (which the superclass version does).
 		/// </summary>
-		/// <param name="ttag"></param>
 		protected override void CacheTagString(ITextTag ttag)
 		{
 			// dummy method
@@ -61,7 +60,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The test version doesn't want anything to do with views (which the superclass version does).
 		/// </summary>
-		/// <param name="ttag"></param>
 		protected override void CacheNullTagString(ITextTag ttag)
 		{
 			// dummy method
@@ -72,7 +70,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The 'real' TaggingChild sets this in MakeVc()
 		/// </summary>
-		/// <param name="txt"></param>
 		internal void SetText(IStText txt)
 		{
 			RootStText = txt;

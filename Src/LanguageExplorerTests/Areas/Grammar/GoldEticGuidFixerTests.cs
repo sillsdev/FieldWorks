@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,18 +13,17 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorerTests.Areas.Grammar
 {
+	[TestFixture]
 	public class GoldEticGuidFixerTests
 	{
-		protected LcmCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		[SetUp]
 		public void TestSetup()
 		{
-			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null),
-				"en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
+			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var loader = new XmlList();
-			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
-				new DummyProgressDlg());
+			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"), new DummyProgressDlg());
 			// This allows tests to do any kind of data changes without worrying about starting a UOW.
 			Cache.ActionHandlerAccessor.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
 		}
@@ -43,7 +42,7 @@ namespace LanguageExplorerTests.Areas.Grammar
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_WrongPosGuidChangedToMatchStandard()
 		{
-			// This test will grab the first part of speach from the project and delete it
+			// This test will grab the first part of speech from the project and delete it
 			// it then sets up a new item which which matches the id of that first part of speech and
 			// makes sure that the guid for the new one is swapped back to the standard.
 			// Note: This test assumes our POS.xml template has correct guids
@@ -51,7 +50,7 @@ namespace LanguageExplorerTests.Areas.Grammar
 			var firstDefaultPos = (IPartOfSpeech)posList.PossibilitiesOS[0];
 			posList.PossibilitiesOS.Remove(firstDefaultPos);
 			var goldGuid = firstDefaultPos.Guid;
-			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
+			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
 			var myNewPos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			posList.PossibilitiesOS.Insert(0, myNewPos);
 			myNewPos.Name.CopyAlternatives(firstDefaultPos.Name);
@@ -121,8 +120,7 @@ namespace LanguageExplorerTests.Areas.Grammar
 			var myNewPosGuid = myNewPos.Guid;
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);
-			Assert.AreEqual(myNewPos, Cache.ServiceLocator.GetObject(myNewPosGuid),
-								"Guid should not have been replaced");
+			Assert.AreEqual(myNewPos, Cache.ServiceLocator.GetObject(myNewPosGuid), "Guid should not have been replaced");
 		}
 
 		[Test]

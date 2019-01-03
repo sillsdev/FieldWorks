@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,11 +27,14 @@ namespace LanguageExplorerTests.Areas.Lexicon
 				// Change the owner to the real entry: this bypasses the check for circular references in LcmList.Add().
 				entry.EntryRefsOS.Add(ler);
 				dummy.Delete();
-
 				if (types == null)
+				{
 					return;
+				}
 				foreach (var type in types)
+				{
 					ler.ComplexEntryTypesRS.Add(type);
+				}
 			});
 		}
 
@@ -43,8 +46,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 				entry = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var form = cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entry.LexemeFormOA = form;
-				form.Form.VernacularDefaultWritingSystem =
-					TsStringUtils.MakeString(lf, cache.DefaultVernWs);
+				form.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(lf, cache.DefaultVernWs);
 				var sense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
 				sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, cache.DefaultAnalWs);

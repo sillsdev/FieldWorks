@@ -1,82 +1,20 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lists;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Areas.Lists
 {
 	/// <summary>
-	/// Some methods and fields refactored out so they can be shared with other unit tests.
-	/// </summary>
-	public class DeleteCustomListTestsBase : MemoryOnlyBackendProviderRestoredForEachTestTestBase
-	{
-		#region Member Variables
-
-		protected ICmPossibilityListRepository m_listRepo;
-		protected ICmPossibilityFactory m_possFact;
-		protected ICmPossibilityList m_testList;
-		internal DeleteListHelper m_helper;
-		protected int m_userWs;
-
-		#endregion
-
-		protected override void CreateTestData()
-		{
-			base.CreateTestData();
-
-			var servLoc = Cache.ServiceLocator;
-			m_listRepo = servLoc.GetInstance<ICmPossibilityListRepository>();
-			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
-			m_userWs = Cache.DefaultUserWs;
-
-			CreateCustomList();
-			m_helper = new DeleteListHelper(Cache);
-		}
-
-		protected void CreateCustomList()
-		{
-			const string name = "Test Custom List";
-			const string description = "Test Custom list description";
-			ITsString listName = TsStringUtils.MakeString(name, m_userWs);
-			ITsString listDesc = TsStringUtils.MakeString(description, m_userWs);
-			m_testList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
-				listName.Text, m_userWs);
-			m_testList.Name.set_String(m_userWs, listName);
-			m_testList.Description.set_String(m_userWs, listDesc);
-
-			// Set various properties of CmPossibilityList
-			m_testList.DisplayOption = (int) PossNameType.kpntNameAndAbbrev;
-			m_testList.PreventDuplicates = true;
-			m_testList.IsSorted = true;
-			m_testList.WsSelector = WritingSystemServices.kwsAnals;
-			m_testList.IsVernacular = false;
-			m_testList.Depth = 127;
-		}
-
-		protected ICmCustomItem CreateCustomItemAddToList(ICmPossibilityList owningList, string itemName)
-		{
-			var item = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create();
-			owningList.PossibilitiesOS.Add(item);
-			item.Name.set_String(m_userWs, TsStringUtils.MakeString(itemName, m_userWs));
-			return item;
-		}
-	}
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
 	/// Tests for the method object DeleteCustomList.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class DeleteCustomListTests : DeleteCustomListTestsBase
 	{
@@ -86,15 +24,15 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			// create new custom field for a LexEntry for testing
 			var fd = new FieldDescription(Cache)
-				{
-					Userlabel = "New Test Custom Field",
-					HelpString = string.Empty,
-					Class = LexEntryTags.kClassId,
-					Type = CellarPropertyType.ReferenceAtomic,
-					WsSelector = 0,
-					DstCls = CmPossibilityTags.kClassId,
-					ListRootId = listGuid
-				};
+			{
+				Userlabel = "New Test Custom Field",
+				HelpString = string.Empty,
+				Class = LexEntryTags.kClassId,
+				Type = CellarPropertyType.ReferenceAtomic,
+				WsSelector = 0,
+				DstCls = CmPossibilityTags.kClassId,
+				ListRootId = listGuid
+			};
 			fd.UpdateCustomField();
 			return fd;
 		}
@@ -140,7 +78,6 @@ namespace LanguageExplorerTests.Areas.Lists
 			{
 				fd.MarkForDeletion = true;
 				AreaServices.UpdateCachedObjects(Cache, fd);
-
 				Cache.ActionHandlerAccessor.BeginUndoTask("UndoUpdateCustomField", "RedoUpdateCustomField");
 				fd.UpdateCustomField();
 				Cache.ActionHandlerAccessor.EndUndoTask();
@@ -161,11 +98,9 @@ namespace LanguageExplorerTests.Areas.Lists
 
 		#endregion
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests deleting a custom list which has no possibilities.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_NoPossibilities()
 		{
@@ -176,15 +111,12 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"List should have been deleted.");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "List should have been deleted.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a regular (non-Custom) list.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_NotCustom()
 		{
@@ -196,8 +128,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(annDefList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"Should not delete an owned list.");
+			Assert.AreEqual(clists, m_listRepo.Count, "Should not delete an owned list.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -218,8 +149,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"Possibility not referenced by anything. Should just delete the list.");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "Possibility not referenced by anything. Should just delete the list.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -476,23 +406,5 @@ namespace LanguageExplorerTests.Areas.Lists
 			Assert.AreEqual(newPossName + "1", m_helper.PossNameInDlg,
 				"Name of possibility found is not the one we put in there!");
 		}
-	}
-
-	internal class DeleteListHelper : DeleteCustomList
-	{
-		internal string PossNameInDlg { get; set; }
-
-		public DeleteListHelper(LcmCache cache) : base(cache)
-		{
-			PossNameInDlg = "";
-		}
-
-		protected override DialogResult CheckWithUser(string name)
-		{
-			PossNameInDlg = name;
-			return ExpectedTestResponse;
-		}
-
-		public DialogResult ExpectedTestResponse { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -76,8 +76,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.True(control.IsHandleCreated, "Handle not created; tests are invalid");
 		}
 
-#region private classes
-		private class TestTextsTriStateTreeView : TextsTriStateTreeView
+		private sealed class TestTextsTriStateTreeView : TextsTriStateTreeView
 		{
 			protected override bool FillInBookChildren(TreeNode bookNode)
 			{
@@ -88,7 +87,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private class DummyBook {} // Didn't feel like implementing or even mocking IScrBook
-#endregion private classes
+		private sealed class DummyBook { } // Didn't feel like implementing or even mocking IScrBook
 	}
 }

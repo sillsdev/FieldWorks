@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -56,19 +56,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void Phrase_BreakIntoMorphs()
 		{
 			// Test word breaks on a standard wordform.
-			var baseWord1 = "xxxpus";
-			var baseWord1_morphs1 = "xxxpus";
+			const string baseWord1 = "xxxpus";
+			const string baseWord1_morphs1 = "xxxpus";
 			var morphs = MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs1, baseWord1);
 			Assert.AreEqual(1, morphs.Count, $"Unexpected number of morphs in string '{baseWord1_morphs1}' compared to baseWord '{baseWord1}'.");
 			Assert.AreEqual("xxxpus", morphs[0]);
 
-			var baseWord1_morphs2 = "xxxpu -s";
+			const string baseWord1_morphs2 = "xxxpu -s";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs2, baseWord1);
 			Assert.AreEqual(2, morphs.Count, $"Unexpected number of morphs in string '{baseWord1_morphs2}' compared to baseWord '{baseWord1}'.");
 			Assert.AreEqual("xxxpu", morphs[0]);
 			Assert.AreEqual("-s", morphs[1]);
 
-			var baseWord1_morphs3 = "xxx pu -s";
+			const string baseWord1_morphs3 = "xxx pu -s";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs3, baseWord1);
 			Assert.AreEqual(3, morphs.Count, $"Unexpected number of morphs in string '{baseWord1_morphs3}' compared to baseWord '{baseWord1}'.");
 			Assert.AreEqual("xxx", morphs[0]);
@@ -76,52 +76,52 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.AreEqual("-s", morphs[2]);
 
 			// Test word breaks on a phrase wordform.
-			var baseWord2 = "xxxpus xxxyalola";
-			var baseWord2_morphs1 = "pus xxxyalola";
+			const string baseWord2 = "xxxpus xxxyalola";
+			const string baseWord2_morphs1 = "pus xxxyalola";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs1, baseWord2);
 			Assert.AreEqual(1, morphs.Count, $"Unexpected number of morphs in string '{baseWord2_morphs1}' compared to baseWord '{baseWord2}'.");
 			Assert.AreEqual("pus xxxyalola", morphs[0]);
 
-			var baseWord2_morphs2 = "xxxpus xxxyalo  -la";
+			const string baseWord2_morphs2 = "xxxpus xxxyalo  -la";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs2, baseWord2);
 			Assert.AreEqual(2, morphs.Count, $"Unexpected number of morphs in string '{baseWord2_morphs2}' compared to baseWord '{baseWord2}'.");
 			Assert.AreEqual("xxxpus xxxyalo", morphs[0]);
 			Assert.AreEqual("-la", morphs[1]);
 
-			var baseWord2_morphs3 = "xxxpus  xxxyalo  -la";
+			const string baseWord2_morphs3 = "xxxpus  xxxyalo  -la";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs3, baseWord2);
 			Assert.AreEqual(3, morphs.Count, $"Unexpected number of morphs in string '{baseWord2_morphs3}' compared to baseWord '{baseWord2}'.");
 			Assert.AreEqual("xxxpus", morphs[0]);
 			Assert.AreEqual("xxxyalo", morphs[1]);
 			Assert.AreEqual("-la", morphs[2]);
 
-			var baseWord3 = "xxxnihimbilira xxxpus xxxyalola";
-			var baseWord3_morphs1 = "xxxnihimbilira xxxpus xxxyalola";
+			const string baseWord3 = "xxxnihimbilira xxxpus xxxyalola";
+			const string baseWord3_morphs1 = "xxxnihimbilira xxxpus xxxyalola";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord3_morphs1, baseWord3);
 			Assert.AreEqual(1, morphs.Count, $"Unexpected number of morphs in string '{baseWord3_morphs1}' compared to baseWord '{baseWord3}'.");
 			Assert.AreEqual("xxxnihimbilira xxxpus xxxyalola", morphs[0]);
 
-			var baseWord3_morphs2 = "xxxnihimbili  -ra  xxxpus xxxyalola";
+			const string baseWord3_morphs2 = "xxxnihimbili  -ra  xxxpus xxxyalola";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord3_morphs2, baseWord3);
 			Assert.AreEqual(3, morphs.Count, $"Unexpected number of morphs in string '{baseWord3_morphs2}' compared to baseWord '{baseWord3}'.");
 			Assert.AreEqual("xxxnihimbili", morphs[0]);
 			Assert.AreEqual("-ra", morphs[1]);
 			Assert.AreEqual("xxxpus xxxyalola", morphs[2]);
 
-			var baseWord4 = "xxxpus xxxyalola xxxnihimbilira";
-			var baseWord4_morphs1 = "xxxpus xxxyalola xxxnihimbilira";
+			const string baseWord4 = "xxxpus xxxyalola xxxnihimbilira";
+			const string baseWord4_morphs1 = "xxxpus xxxyalola xxxnihimbilira";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord4_morphs1, baseWord4);
 			Assert.AreEqual(1, morphs.Count, $"Unexpected number of morphs in string '{baseWord4_morphs1}' compared to baseWord '{baseWord4}'.");
 			Assert.AreEqual("xxxpus xxxyalola xxxnihimbilira", morphs[0]);
 
-			var baseWord4_morphs2 = "xxxpus  xxxyalola xxxnihimbilira";
+			const string baseWord4_morphs2 = "xxxpus  xxxyalola xxxnihimbilira";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord4_morphs2, baseWord4);
 			Assert.AreEqual(2, morphs.Count, $"Unexpected number of morphs in string '{baseWord4_morphs2}' compared to baseWord '{baseWord4}'.");
 			Assert.AreEqual("xxxpus", morphs[0]);
 			Assert.AreEqual("xxxyalola xxxnihimbilira", morphs[1]);
 
-			var baseWord5 = "kicked the bucket";
-			var baseWord5_morphs2 = "kick the bucket  -ed";
+			const string baseWord5 = "kicked the bucket";
+			const string baseWord5_morphs2 = "kick the bucket  -ed";
 			morphs = MorphemeBreaker.BreakIntoMorphs(baseWord5_morphs2, baseWord5);
 			Assert.AreEqual(2, morphs.Count, $"Unexpected number of morphs in string '{baseWord5_morphs2}' compared to baseWord '{baseWord5}'.");
 			Assert.AreEqual("kick the bucket", morphs[0]);

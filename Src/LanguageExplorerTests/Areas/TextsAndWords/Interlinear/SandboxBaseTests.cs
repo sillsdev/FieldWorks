@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,42 +26,31 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable _propertyTable;
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
-			_propertyTable = flexComponentParameters.PropertyTable;
-			_publisher = flexComponentParameters.Publisher;
-			_subscriber = flexComponentParameters.Subscriber;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to end the undoable UOW, Undo everything, and 'commit',
 		/// which will essentially clear out the Redo stack.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			try
 			{
-				_propertyTable?.Dispose();
-				_propertyTable = null;
-				_publisher = null;
-				_subscriber = null;
+				_flexComponentParameters?.PropertyTable?.Dispose();
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -69,8 +58,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 			finally
 			{
-			base.TestTearDown();
-		}
+				base.TestTearDown();
+			}
 		}
 
 		#endregion
@@ -122,7 +111,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				sandbox.HandleTab(false);
 				VerifySelection(sandbox, false, SandboxBase.ktagSbNamedObjName, SandboxBase.ktagSbMorphForm, 0);
 
-			// Now we reverse the sequence using shift-tab.
+				// Now we reverse the sequence using shift-tab.
 				sandbox.HandleTab(true);
 				VerifySelection(sandbox, true, SandboxBase.ktagMorphFormIcon, 0, -1);
 				sandbox.HandleTab(true);
@@ -167,7 +156,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			sda.TsStrFactory = TsStringUtils.TsStrFactory;
 			var wsIds = new List<int>();
 			wsIds.Add(Cache.DefaultAnalWs);
-			int hvoAbc = 123456;
+			var hvoAbc = 123456;
 
 			// Basic check: no glosses, we don't find any.
 			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
@@ -200,7 +189,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
 
 			// We can also find the def one.
-			int hvoDef = 123457;
+			var hvoDef = 123457;
 			sda.CacheStringAlt(hvoDef, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("def"));
 			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoDef), Is.EqualTo(wgDef));
 
@@ -246,18 +235,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void LexEntriesComboHandlerForBundleWithSenseAndMsaButNoMorph()
 		{
 			using (var sandbox = SetupSandbox(() =>
-				{
-					const string ali = "ali";
-					var mockText = MakeText(ali);
-					var wf = MakeWordform(ali);
-					var wa = MakeAnalysis(wf);
-					var bundle = MakeBundle(wa, ali, "something", "N");
-					bundle.MorphRA = null;
-					var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
-					var seg = para.SegmentsOS[0];
-					seg.AnalysesRS.Add(wa);
-					return new AnalysisOccurrence(seg, 0);
-				}))
+			{
+				const string ali = "ali";
+				var mockText = MakeText(ali);
+				var wf = MakeWordform(ali);
+				var wa = MakeAnalysis(wf);
+				var bundle = MakeBundle(wa, ali, "something", "N");
+				bundle.MorphRA = null;
+				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
+				var seg = para.SegmentsOS[0];
+				seg.AnalysesRS.Add(wa);
+				return new AnalysisOccurrence(seg, 0);
+			}))
 			{
 				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
@@ -280,18 +269,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				options.LexEntryForm = wff;
 				options.MakeMorph = (mff) =>
 				{
-					Guid slotType = GetSlotType(mff);
+					var slotType = GetSlotType(mff);
 					IMoMorphSynAnalysis msa;
 					var entry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa);
 					var sense2 = MakeSense(entry, "gloss1", msa);
 					return entry.LexemeFormOA;
 				};
 				options.MakeSense = (entry) =>
-										{
-											var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
-											var sense2 = MakeSense(entry, "gloss2", msa);
-											return sense2;
-										};
+				{
+					var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
+					var sense2 = MakeSense(entry, "gloss2", msa);
+					return sense2;
+				};
 				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 				var wmb = MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
@@ -307,12 +296,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Assert.That(imorphItemCurrentSandboxState, Is.GreaterThan(-1));
 					var items = handler.MorphItems;
 					var miCurrentSandboxState = items[imorphItemCurrentSandboxState];
-					Assert.That(miCurrentSandboxState.m_hvoMorph,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoSense,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoMsa,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MsaRA.Hvo));
+					Assert.That(miCurrentSandboxState.m_hvoMorph, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Hvo));
+					Assert.That(miCurrentSandboxState.m_hvoSense, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Hvo));
+					Assert.That(miCurrentSandboxState.m_hvoMsa, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MsaRA.Hvo));
 					Assert.That(miCurrentSandboxState.m_hvoMainEntryOfVariant, Is.EqualTo(0));
 
 				}
@@ -330,9 +316,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var wa = MakeAnalysis(wf);
 				var options = new MakeBundleOptions();
 				options.LexEntryForm = wff;
-				options.MakeMorph = (mff) =>
+				options.MakeMorph = mff =>
 				{
-					Guid slotType = GetSlotType(mff);
+					var slotType = GetSlotType(mff);
 					IMoMorphSynAnalysis msa1;
 					const string mainEntryForm = "mainEntry";
 					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
@@ -340,18 +326,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 					IMoMorphSynAnalysis msa2;
 					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPluralVar);
+					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
 					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
 					variantEntry.MakeVariantOf(mainSense, letPlural);
 					return variantEntry.LexemeFormOA;
 				};
 				options.MakeSense = (entry) =>
-										{
-											var entryRef = entry.EntryRefsOS.First();
-											return entryRef.ComponentLexemesRS.First() as ILexSense;
-										};
+				{
+					var entryRef = entry.EntryRefsOS.First();
+					return entryRef.ComponentLexemesRS.First() as ILexSense;
+				};
 				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 				var wmb = MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
@@ -366,24 +350,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 
 					Assert.That(imorphItemCurrentSandboxState, Is.EqualTo(-1));
-
-					/*
-					var items = handler.MorphItems;
-					var miCurrentSandboxState = items[imorphItemCurrentSandboxState];
-					// WfiMorphBundle.InflType hasn't been set yet, so we shouldn't return a value;
-					Assert.That(miCurrentSandboxState.m_inflType, Is.Null);
-					Assert.That(miCurrentSandboxState.m_hvoMorph,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoSense,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoMsa,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MsaRA.Hvo));
-
-
-					Assert.That(miCurrentSandboxState.m_hvoMainEntryOfVariant, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Entry.Hvo));
-					var variantEntry = initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Owner as ILexEntry;
-					var variantType = variantEntry.VariantEntryRefs.First().VariantEntryTypesRS.First();
-					 */
 				}
 			}
 		}
@@ -459,9 +425,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var wa = MakeAnalysis(wf);
 				var options = new MakeBundleOptions();
 				options.LexEntryForm = wff;
-				options.MakeMorph = (mff) =>
+				options.MakeMorph = mff =>
 				{
-					Guid slotType = GetSlotType(mff);
+					var slotType = GetSlotType(mff);
 					IMoMorphSynAnalysis msa1;
 					const string mainEntryForm = "mainEntry";
 					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
@@ -469,90 +435,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 					IMoMorphSynAnalysis msa2;
 					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPluralVar);
+					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
 					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
 					variantEntry.MakeVariantOf(mainSense, letPlural);
 					return variantEntry.LexemeFormOA;
 				};
-				options.MakeSense = (entry) =>
-				{
-					var entryRef = entry.EntryRefsOS.First();
-					return entryRef.ComponentLexemesRS.First() as ILexSense;
-				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
-				options.MakeInflType = (mf) =>
-										   {
-											   var entry = mf.Owner as ILexEntry;
-											   var entryRef = entry.EntryRefsOS.First();
-											   var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
-											   return vet;
-										   };
-				var wmb = MakeBundle(wa, options);
-
-				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
-				var seg = para.SegmentsOS[0];
-				seg.AnalysesRS.Add(wa);
-				return new AnalysisOccurrence(seg, 0);
-			}))
-			{
-				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
-				{
-					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
-					var items = handler.MorphItems;
-					var miCurrentSandboxState = items[imorphItemCurrentSandboxState];
-					Assert.That(miCurrentSandboxState.m_hvoMorph,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoSense,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Hvo));
-					Assert.That(miCurrentSandboxState.m_hvoMsa,
-								Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MsaRA.Hvo));
-
-					var variantEntry = initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Owner as ILexEntry;
-					var variantType = variantEntry.VariantEntryRefs.First().VariantEntryTypesRS.First();
-					Assert.That(miCurrentSandboxState.m_inflType, Is.EqualTo(variantType));
-					Assert.That(miCurrentSandboxState.m_hvoMainEntryOfVariant, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Entry.Hvo));
-				}
-			}
-		}
-
-		[Test]
-		public void LexEntriesComboHandler_InflTypeOptions_GlossAppendSenseNames_Ordered_PL_PST()
-		{
-			using (var sandbox = SetupSandbox(() =>
-			{
-				const string wff = "variantEntry";
-				var mockText = MakeText(wff);
-				var wf = MakeWordform(wff);
-				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = (mff) =>
-				{
-					Guid slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa1;
-					const string mainEntryForm = "mainEntry";
-					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
-					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
-
-					IMoMorphSynAnalysis msa2;
-					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPluralVar);
-					// add types to entryRef in the order of "pl" followed by "pst"
-					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					var ler = variantEntry.MakeVariantOf(mainSense, letPlural);
-					var letPst =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPastVar);
-					letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
-					ler.VariantEntryTypesRS.Add(letPst);
-					return variantEntry.LexemeFormOA;
-				};
-				options.MakeSense = (entry) =>
+				options.MakeSense = entry =>
 				{
 					var entryRef = entry.EntryRefsOS.First();
 					return entryRef.ComponentLexemesRS.First() as ILexSense;
@@ -573,14 +461,77 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				return new AnalysisOccurrence(seg, 0);
 			}))
 			{
+				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
+				{
+					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
+					var items = handler.MorphItems;
+					var miCurrentSandboxState = items[imorphItemCurrentSandboxState];
+					Assert.That(miCurrentSandboxState.m_hvoMorph, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Hvo));
+					Assert.That(miCurrentSandboxState.m_hvoSense, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Hvo));
+					Assert.That(miCurrentSandboxState.m_hvoMsa, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MsaRA.Hvo));
 
-				var letPlural =
-					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-						LexEntryTypeTags.kguidLexTypPluralVar);
-				var letPst =
-					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-						LexEntryTypeTags.kguidLexTypPastVar);
+					var variantEntry = initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Owner as ILexEntry;
+					var variantType = variantEntry.VariantEntryRefs.First().VariantEntryTypesRS.First();
+					Assert.That(miCurrentSandboxState.m_inflType, Is.EqualTo(variantType));
+					Assert.That(miCurrentSandboxState.m_hvoMainEntryOfVariant, Is.EqualTo(initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].SenseRA.Entry.Hvo));
+				}
+			}
+		}
 
+		[Test]
+		public void LexEntriesComboHandler_InflTypeOptions_GlossAppendSenseNames_Ordered_PL_PST()
+		{
+			using (var sandbox = SetupSandbox(() =>
+			{
+				const string wff = "variantEntry";
+				var mockText = MakeText(wff);
+				var wf = MakeWordform(wff);
+				var wa = MakeAnalysis(wf);
+				var options = new MakeBundleOptions();
+				options.LexEntryForm = wff;
+				options.MakeMorph = mff =>
+				{
+					var slotType = GetSlotType(mff);
+					IMoMorphSynAnalysis msa1;
+					const string mainEntryForm = "mainEntry";
+					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
+					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
+
+					IMoMorphSynAnalysis msa2;
+					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
+					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+					// add types to entryRef in the order of "pl" followed by "pst"
+					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
+					var ler = variantEntry.MakeVariantOf(mainSense, letPlural);
+					var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+					letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
+					ler.VariantEntryTypesRS.Add(letPst);
+					return variantEntry.LexemeFormOA;
+				};
+				options.MakeSense = entry =>
+				{
+					var entryRef = entry.EntryRefsOS.First();
+					return entryRef.ComponentLexemesRS.First() as ILexSense;
+				};
+				options.MakeMsa = sense => { return sense.MorphoSyntaxAnalysisRA; };
+				options.MakeInflType = mf =>
+				{
+					var entry = mf.Owner as ILexEntry;
+					var entryRef = entry.EntryRefsOS.First();
+					var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
+					return vet;
+				};
+				var wmb = MakeBundle(wa, options);
+
+				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
+				var seg = para.SegmentsOS[0];
+				seg.AnalysesRS.Add(wa);
+				return new AnalysisOccurrence(seg, 0);
+			}))
+			{
+				var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+				var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var sortedMorphItems = handler.MorphItems;
@@ -611,9 +562,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var wa = MakeAnalysis(wf);
 				var options = new MakeBundleOptions();
 				options.LexEntryForm = wff;
-				options.MakeMorph = (mff) =>
+				options.MakeMorph = mff =>
 				{
-					Guid slotType = GetSlotType(mff);
+					var slotType = GetSlotType(mff);
 					IMoMorphSynAnalysis msa1;
 					const string mainEntryForm = "mainEntry";
 					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
@@ -621,26 +572,22 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 					IMoMorphSynAnalysis msa2;
 					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPluralVar);
+					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
 					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					var letPst =
-						Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-							LexEntryTypeTags.kguidLexTypPastVar);
+					var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 					letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
 					// add types to entryRef in the order of "pst" followed by "pl"
 					var ler = variantEntry.MakeVariantOf(mainSense, letPst);
 					ler.VariantEntryTypesRS.Add(letPlural);
 					return variantEntry.LexemeFormOA;
 				};
-				options.MakeSense = (entry) =>
+				options.MakeSense = entry =>
 				{
 					var entryRef = entry.EntryRefsOS.First();
 					return entryRef.ComponentLexemesRS.First() as ILexSense;
 				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
-				options.MakeInflType = (mf) =>
+				options.MakeMsa = sense => { return sense.MorphoSyntaxAnalysisRA; };
+				options.MakeInflType = mf =>
 				{
 					var entry = mf.Owner as ILexEntry;
 					var entryRef = entry.EntryRefsOS.First();
@@ -656,13 +603,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}))
 			{
 
-				var letPlural =
-					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-						LexEntryTypeTags.kguidLexTypPluralVar);
-				var letPst =
-					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
-						LexEntryTypeTags.kguidLexTypPastVar);
-
+				var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+				var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var sortedMorphItems = handler.MorphItems;
@@ -690,8 +632,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
 			morph.Form.SetVernacularDefaultWritingSystem("kick");
-			morph.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
+			morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
 			// Set up first sense
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
@@ -712,20 +653,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			sense2.Gloss.SetAnalysisDefaultWritingSystem("problem");
 
 			// Make a sandbox and sut
-			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
-			using(var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
+			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
+			using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 			{
-				sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+				sandbox.InitializeFlexComponent(_flexComponentParameters);
 				var mockList = new MockComboHandler();
 				sandbox.m_ComboHandler = mockList;
 				// Merge the first sense into the second (invalidating analysis and sandbox cache)
-				using(var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0))
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0))
 				{
 					// wipe out the sense that the morph bundle was based on.
 					sense2.MergeObject(sense, true);
 					Assert.AreEqual(entry.SensesOS[0], sense2);
-					Assert.DoesNotThrow(()=>
+					Assert.DoesNotThrow(() =>
 					{
 						// ReSharper disable once UnusedVariable - Assignment is SUT
 						var i = handler.IndexOfCurrentItem;
@@ -756,29 +696,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			return InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as InterlinComboHandler;
 		}
 
-		public class MockComboHandler : DisposableBase, IComboHandler
-		{
-			public void SetupCombo() { }
-
-			public void Hide() { }
-
-			public bool HandleReturnKey()
-			{
-				return true;
-			}
-
-			public void Activate(Rect loc) { }
-
-			public int SelectedMorphHvo { get; private set; }
-			public void HandleSelectIfActive() { }
-
-			protected override void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-				base.Dispose(disposing);
-			}
-		}
-
 		/// <summary>
 		/// Make all the stuff we need to display Nihimbilira in the standard way.
 		/// </summary>
@@ -792,7 +709,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
 			var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, occurrence.Analysis.Hvo);
-			sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+			sandbox.InitializeFlexComponent(_flexComponentParameters);
 			sandbox.MakeRoot();
 			return sandbox;
 		}
@@ -810,24 +727,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttpBogus;
-			// Main array of information retrived from sel that made combo.
+			// Main array of information retrieved from sel that made combo.
 			SelLevInfo[] rgvsli;
 			bool fIsPictureSel; // icon selected.
 
-			IVwSelection sel = sandbox.RootBox.Selection;
+			var sel = sandbox.RootBox.Selection;
 			fIsPictureSel = sel.SelType == VwSelType.kstPicture;
-			int cvsli = sel.CLevels(false) - 1;
-			rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			var cvsli = sel.CLevels(false) - 1;
+			rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 			Assert.That(fIsPictureSel, Is.EqualTo(fPicture));
 			Assert.That(tagTextProp, Is.EqualTo(tagText));
 			if (tagTextProp == SandboxBase.ktagSbNamedObjName)
 			{
-				int tagObjProp = rgvsli[0].tag;
+				var tagObjProp = rgvsli[0].tag;
 				Assert.That(tagObjProp, Is.EqualTo(tagObj));
 			}
-			//sandbox.InterlinLineChoices.
 		}
 
 		private AnalysisOccurrence MakeDataForNihimbilira()
@@ -840,7 +754,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var him = MakeBundle(wa, "him-", "3SgObj", "V:Object");
 			var bili = MakeBundle(wa, "bili", "to see", "trans (1)");
 			var ra = MakeBundle(wa, "-ra", "Pres", "sta:Tense");
-			var para = (IStTxtPara) greenMat.ContentsOA.ParagraphsOS[0];
+			var para = (IStTxtPara)greenMat.ContentsOA.ParagraphsOS[0];
 			var seg = para.SegmentsOS[0];
 			seg.AnalysesRS.Add(wg);
 			return new AnalysisOccurrence(seg, 0);
@@ -900,19 +814,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var options = new MakeBundleOptions();
 			options.LexEntryForm = form;
-			options.MakeMorph = (mff) =>
-									{
-										Guid slotType = GetSlotType(mff);
-										IMoMorphSynAnalysis msa;
-										var entry = MakeEntry(mff.Replace("-", ""), pos, slotType, out msa);
-										return entry.LexemeFormOA;
-									};
-			options.MakeSense = (entry) =>
-									{
-										var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
-										var sense = MakeSense(entry, gloss, msa);
-										return sense;
-									};
+			options.MakeMorph = mff =>
+			{
+				var slotType = GetSlotType(mff);
+				IMoMorphSynAnalysis msa;
+				var entry = MakeEntry(mff.Replace("-", string.Empty), pos, slotType, out msa);
+				return entry.LexemeFormOA;
+			};
+			options.MakeSense = entry =>
+			{
+				var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
+				var sense = MakeSense(entry, gloss, msa);
+				return sense;
+			};
 			options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 			return MakeBundle(wa, options);
 		}
@@ -921,20 +835,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var slotType = MoMorphTypeTags.kguidMorphStem;
 			if (form.StartsWith("-"))
+			{
 				slotType = MoMorphTypeTags.kguidMorphSuffix;
+			}
 			else if (form.EndsWith("-"))
+			{
 				slotType = MoMorphTypeTags.kguidMorphPrefix;
+			}
 			return slotType;
-		}
-
-
-		class MakeBundleOptions
-		{
-			internal string LexEntryForm;
-			internal Func<string, IMoForm> MakeMorph;
-			internal Func<ILexEntry, ILexSense> MakeSense;
-			internal Func<ILexSense, IMoMorphSynAnalysis> MakeMsa;
-			internal Func<IMoForm, ILexEntryInflType> MakeInflType;
 		}
 
 		private IWfiMorphBundle MakeBundle(IWfiAnalysis wa, MakeBundleOptions mbOptions)
@@ -952,7 +860,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var inflType = mbOptions.MakeInflType(morph);
 				bundle.InflTypeRA = inflType;
 			}
-
 			return bundle;
 		}
 
@@ -974,7 +881,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private ILexEntry MakeEntry(string lf, string pos, Guid slotType, out IMoMorphSynAnalysis msa)
 		{
 			// The entry itself.
-			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			// Lexeme Form and MSA.
 			IMoForm form;
 			msa = GetMsaAndMoForm(entry, slotType, pos, out form);
@@ -1014,6 +921,38 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				affixMsa.PartOfSpeechRA = MakePartOfSpeech(pos);
 			}
 			return msa;
+		}
+
+		private sealed class MakeBundleOptions
+		{
+			internal string LexEntryForm;
+			internal Func<string, IMoForm> MakeMorph;
+			internal Func<ILexEntry, ILexSense> MakeSense;
+			internal Func<ILexSense, IMoMorphSynAnalysis> MakeMsa;
+			internal Func<IMoForm, ILexEntryInflType> MakeInflType;
+		}
+
+		private sealed class MockComboHandler : DisposableBase, IComboHandler
+		{
+			public void SetupCombo() { }
+
+			public void Hide() { }
+
+			public bool HandleReturnKey()
+			{
+				return true;
+			}
+
+			public void Activate(Rect loc) { }
+
+			public int SelectedMorphHvo { get; private set; }
+			public void HandleSelectIfActive() { }
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 	}
 }

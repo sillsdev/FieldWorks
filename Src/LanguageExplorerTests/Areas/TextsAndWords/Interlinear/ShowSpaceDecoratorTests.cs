@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,13 +20,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class ShowSpaceDecoratorTests
 	{
-		private string zws = AnalysisOccurrence.KstrZws;
+		private const string zws = AnalysisOccurrence.KstrZws;
 
 		[Test]
 		public void DecoratorDoesNothingWhenTurnedOff()
 		{
 			var mockDa = new MockDa();
-			var underlyingValue = "hello" + zws + "world";
+			const string underlyingValue = "hello" + zws + "world";
 			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 
@@ -39,7 +39,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void DecoratorGetHandlesEmptyStringWhenTurnedOn()
 		{
 			var mockDa = new MockDa();
-			var underlyingValue = "";
+			const string underlyingValue = "";
 			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
@@ -53,7 +53,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void DecoratorReplacesZwsWithGreySpaceWhenTurnedOn()
 		{
 			var mockDa = new MockDa();
-			var underlyingValue = zws + "hello" + zws + "world" + zws + "today";
+			const string underlyingValue = zws + "hello" + zws + "world" + zws + "today";
 			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
@@ -67,12 +67,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void DecoratorReplacesGreySpaceWithZwsWhenTurnedOn()
 		{
 			var mockDa = new MockDa();
-			var underlyingValue = "hello world today keep these spaces";
+			const string underlyingValue = "hello world today keep these spaces";
 			var bldr = TsStringUtils.MakeString(underlyingValue, 77).GetBldr();
-			bldr.SetIntPropValues("hello world".Length, "hello world".Length + 1, (int) FwTextPropType.ktptBackColor,
-				(int) FwTextPropVar.ktpvDefault, ShowSpaceDecorator.KzwsBackColor);
-			bldr.SetIntPropValues("hello".Length, "hello".Length + 1, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
-					ShowSpaceDecorator.KzwsBackColor);
+			bldr.SetIntPropValues("hello world".Length, "hello world".Length + 1, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, ShowSpaceDecorator.KzwsBackColor);
+			bldr.SetIntPropValues("hello".Length, "hello".Length + 1, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, ShowSpaceDecorator.KzwsBackColor);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
 			decorator.SetString(27, StTxtParaTags.kflidContents, bldr.GetString());
@@ -85,7 +83,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void DecoratorSetHandlesEmptyStringWhenTurnedOn()
 		{
 			var mockDa = new MockDa();
-			var underlyingValue = "";
+			const string underlyingValue = "";
 			var bldr = TsStringUtils.MakeString(underlyingValue, 77).GetBldr();
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
@@ -95,9 +93,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			VerifyNoBackColor(tss);
 		}
 
-		private void VerifyNoBackColor(ITsString tss)
+		private static void VerifyNoBackColor(ITsString tss)
 		{
-			for (int irun = 0; irun < tss.RunCount; irun++)
+			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
 				int nVar;
 				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar), Is.EqualTo(-1));
@@ -105,32 +103,29 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private void VerifyBackColor(ITsString tss, int[] colors)
+		private static void VerifyBackColor(ITsString tss, int[] colors)
 		{
 			Assert.That(tss.RunCount, Is.EqualTo(colors.Length));
-			for (int irun = 0; irun < tss.RunCount; irun++)
+			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
 				int nVar;
 				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar), Is.EqualTo(colors[irun]));
-				if (colors[irun] == -1)
-					Assert.That(nVar, Is.EqualTo(-1));
-				else
-					Assert.That(nVar, Is.EqualTo((int)FwTextPropVar.ktpvDefault));
+				Assert.That(nVar, colors[irun] == -1 ? Is.EqualTo(-1) : Is.EqualTo((int)FwTextPropVar.ktpvDefault));
 			}
 		}
-	}
 
-	class MockDa : SilDataAccessManagedBase
-	{
-		public Dictionary<Tuple<int, int>, ITsString> StringValues = new Dictionary<Tuple<int, int>, ITsString>();
-		public override ITsString get_StringProp(int hvo, int tag)
+		private sealed class MockDa : SilDataAccessManagedBase
 		{
-			return StringValues[new Tuple<int, int>(hvo, tag)];
-		}
+			public readonly Dictionary<Tuple<int, int>, ITsString> StringValues = new Dictionary<Tuple<int, int>, ITsString>();
+			public override ITsString get_StringProp(int hvo, int tag)
+			{
+				return StringValues[new Tuple<int, int>(hvo, tag)];
+			}
 
-		public override void SetString(int hvo, int tag, ITsString tss)
-		{
-			StringValues[new Tuple<int, int>(hvo, tag)] = tss;
+			public override void SetString(int hvo, int tag, ITsString tss)
+			{
+				StringValues[new Tuple<int, int>(hvo, tag)] = tss;
+			}
 		}
 	}
 }

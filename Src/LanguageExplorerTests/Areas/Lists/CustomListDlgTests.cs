@@ -17,11 +17,9 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Areas.Lists
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the CustomList dialog.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class CustomListDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -29,24 +27,19 @@ namespace LanguageExplorerTests.Areas.Lists
 
 		#region Overrides of LcmTestBase
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
-
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to end the undoable UOW, Undo everything, and 'commit',
 		/// which will essentially clear out the Redo stack.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			try
@@ -66,10 +59,9 @@ namespace LanguageExplorerTests.Areas.Lists
 		#endregion
 
 		#region Helper Methods
-
-		void SetUserWs(string wsStr)
+		private void SetUserWs(string wsStr)
 		{
-			WritingSystemManager wsMgr = Cache.ServiceLocator.WritingSystemManager;
+			var wsMgr = Cache.ServiceLocator.WritingSystemManager;
 			CoreWritingSystemDefinition userWs;
 			wsMgr.GetOrSet(wsStr, out userWs);
 			wsMgr.UserWritingSystem = userWs;
@@ -77,11 +69,9 @@ namespace LanguageExplorerTests.Areas.Lists
 
 		#endregion
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the Name of the custom list.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetGetListName()
 		{
@@ -97,15 +87,14 @@ namespace LanguageExplorerTests.Areas.Lists
 				// SUT (actually tests both Set and Get)
 				dlg.SetListNameForWs(nameTss, wsFr);
 
+				// Verify
 				Assert.AreEqual("Gens", dlg.GetListNameForWs(wsFr).Text, "Setting the custom list Name failed.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the Description of the custom list.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetGetListDescription()
 		{
@@ -125,18 +114,15 @@ namespace LanguageExplorerTests.Areas.Lists
 				dlg.SetDescriptionForWs(nameTssFr, wsFr);
 				dlg.SetDescriptionForWs(nameTssSp, wsSp);
 
-				Assert.AreEqual("Une description en français!", dlg.GetDescriptionForWs(wsFr).Text,
-					"Setting the custom list Description in French failed.");
-				Assert.AreEqual("Un descripción en español?", dlg.GetDescriptionForWs(wsSp).Text,
-				"Setting the custom list Description in Spanish failed.");
+				// Verify
+				Assert.AreEqual("Une description en français!", dlg.GetDescriptionForWs(wsFr).Text, "Setting the custom list Description in French failed.");
+				Assert.AreEqual("Un descripción en español?", dlg.GetDescriptionForWs(wsSp).Text, "Setting the custom list Description in Spanish failed.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the routine that checks for duplicate names in Possibility lists repo.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void IsListNameDuplicated_French_Yes()
 		{
@@ -149,24 +135,23 @@ namespace LanguageExplorerTests.Areas.Lists
 				dlg.InitializeMultiString();
 				// setup up multistring controls
 				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
-				var newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
-					"testPeople", Cache.DefaultUserWs);
+				var newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("testPeople", Cache.DefaultUserWs);
 				newList.Name.set_String(wsFr, nameTss);
 				// set French alternative in new list to "Gens-test"
 				dlg.SetListNameForWs(nameTss, wsFr);
 				// set dialog list name French alternative to the same thing
 
 				// SUT
-				bool fdup = dlg.IsNameDuplicated;
+				var fdup = dlg.IsNameDuplicated;
+
+				// Verify
 				Assert.IsTrue(fdup, "Couldn't detect list with duplicate French name?!");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the routine that checks for duplicate names in Possibility lists repo.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void IsListNameDuplicated_French_No()
 		{
@@ -184,51 +169,46 @@ namespace LanguageExplorerTests.Areas.Lists
 				dlg.SetListNameForWs(nameTss, wsFr);
 
 				// SUT
-				bool fdup = dlg.IsNameDuplicated;
+				var fdup = dlg.IsNameDuplicated;
 
+				// Verify
 				Assert.IsFalse(fdup, "Detected a list with duplicate French name?!");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Title of the configure list dialog.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetDialogTitle_Add()
 		{
 			// AddList subclass of CustomListDlg
 			using (var dlg = new TestCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
+				// Verify
 				// Dialog Title should default to "New List"
-				Assert.AreEqual("New List", dlg.Text,
-					"Dialog default title for AddList dialog is wrong.");
+				Assert.AreEqual("New List", dlg.Text, "Dialog default title for AddList dialog is wrong.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Title of the configure list dialog.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetDialogTitle_Configure()
 		{
 			// Configure subclass of CustomListDlg
 			using (var dlg = new ConfigureListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache, Cache.LangProject.LocationsOA))
 			{
+				// Verify
 				// Dialog Title should default to "Configure List"
-				Assert.AreEqual("Configure List", dlg.Text,
-					"Dialog default title for ConfigureList dialog is wrong.");
+				Assert.AreEqual("Configure List", dlg.Text, "Dialog default title for ConfigureList dialog is wrong.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting the default checkbox values.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
@@ -246,11 +226,9 @@ namespace LanguageExplorerTests.Areas.Lists
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting non-default checkbox values.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
@@ -268,11 +246,9 @@ namespace LanguageExplorerTests.Areas.Lists
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the default writing system possibilities.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void GetDefaultWsComboEntries()
 		{
@@ -280,16 +256,13 @@ namespace LanguageExplorerTests.Areas.Lists
 			using (var dlg = new AddCustomListDlg(_flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, Cache))
 			{
 				// Verify
-				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
-					"Wrong default writing system in combo box.");
+				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs, "Wrong default writing system in combo box.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the writing system value.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetWsComboSelectedItem()
 		{
@@ -299,16 +272,13 @@ namespace LanguageExplorerTests.Areas.Lists
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
 				// Verify
-				Assert.AreEqual(WritingSystemServices.kwsVerns, dlg.SelectedWs,
-					"Wrong writing system in combo box.");
+				Assert.AreEqual(WritingSystemServices.kwsVerns, dlg.SelectedWs, "Wrong writing system in combo box.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting the installed UI languages.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestGetUiWssAndInstall()
 		{
@@ -322,22 +292,19 @@ namespace LanguageExplorerTests.Areas.Lists
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(2, wss.Count,
-					"Wrong number of wss found.");
-				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
-				var fspanish = wss.Where(ws => ws.IcuLocale == "es").Any();
-				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
+				Assert.AreEqual(2, wss.Count, "Wrong number of wss found.");
+				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
+				var fspanish = wss.Any(ws => ws.IcuLocale == "es");
+				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
 				Assert.IsTrue(fenglish, "English not found.");
 				Assert.IsTrue(fspanish, "Spanish not found.");
 				Assert.IsFalse(ffrench, "French should not be found.");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting the installed UI languages, included one regional variety.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestGetUiWssAndInstall_dialect()
 		{
@@ -351,8 +318,7 @@ namespace LanguageExplorerTests.Areas.Lists
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(2, wss.Count,
-					"Wrong number of wss found.");
+				Assert.AreEqual(2, wss.Count, "Wrong number of wss found.");
 				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
 				// Interesting! We input the string "es-MX" and get out the string "es_MX"!
 				var fspanish = wss.Any(ws => ws.IcuLocale == "es_MX");
@@ -363,11 +329,9 @@ namespace LanguageExplorerTests.Areas.Lists
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting the installed UI languages, when it's English.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestGetUiWssAndInstall_OnlyEnglish()
 		{
@@ -381,66 +345,61 @@ namespace LanguageExplorerTests.Areas.Lists
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(1, wss.Count,
-					"Wrong number of wss found.");
-				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
-				var fspanish = wss.Where(ws => ws.IcuLocale == "es").Any();
-				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
+				Assert.AreEqual(1, wss.Count, "Wrong number of wss found.");
+				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
+				var fspanish = wss.Any(ws => ws.IcuLocale == "es");
+				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
 				Assert.IsTrue(fenglish, "English not found.");
 				Assert.IsFalse(fspanish, "Spanish should not found.");
 				Assert.IsFalse(ffrench, "French should not be found.");
 			}
 		}
-	}
 
-	/// <summary>
-	/// CustomListDlg for testing
-	/// </summary>
-	public class TestCustomListDlg : CustomListDlg
-	{
-		public TestCustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
-			: base(propertyTable, publisher, cache)
+		/// <summary>
+		/// CustomListDlg for testing
+		/// </summary>
+		private sealed class TestCustomListDlg : CustomListDlg
 		{
+			public TestCustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
+				: base(propertyTable, publisher, cache)
+			{
+			}
+
+			#region Protected methods made Internal
+
+			internal List<CoreWritingSystemDefinition> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
+			{
+				return GetUiWritingSystemAndEnglish();
+			}
+
+			internal void SetListNameForWs(ITsString name, int ws)
+			{
+				SetListName(name, ws);
+			}
+
+			internal ITsString GetListNameForWs(int ws)
+			{
+				return GetListName(ws);
+			}
+
+			internal void InitializeMultiString()
+			{
+				InitializeMultiStringControls();
+			}
+
+			internal void SetDescriptionForWs(ITsString name, int ws)
+			{
+				SetDescription(name, ws);
+			}
+
+			internal ITsString GetDescriptionForWs(int ws)
+			{
+				return GetDescription(ws);
+			}
+
+			internal bool IsNameDuplicated => IsListNameDuplicated;
+			#endregion
+
 		}
-
-		#region Protected methods made Internal
-
-		internal List<CoreWritingSystemDefinition> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
-		{
-			return GetUiWritingSystemAndEnglish();
-		}
-
-		internal void SetListNameForWs(ITsString name, int ws)
-		{
-			SetListName(name, ws);
-		}
-
-		internal ITsString GetListNameForWs(int ws)
-		{
-			return GetListName(ws);
-		}
-
-		internal void InitializeMultiString()
-		{
-			InitializeMultiStringControls();
-		}
-
-		internal void SetDescriptionForWs(ITsString name, int ws)
-		{
-			SetDescription(name, ws);
-		}
-
-		internal ITsString GetDescriptionForWs(int ws)
-		{
-			return GetDescription(ws);
-		}
-
-		internal bool IsNameDuplicated
-		{
-			get { return IsListNameDuplicated; }
-		}
-
-		#endregion
-
 	}
 }

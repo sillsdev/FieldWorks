@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -76,7 +76,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						VerifyItem(word1, "./item[@type='txt']", "qaa-x-kal", "glossedonce");
 						VerifyItem(word1, "./item[@type='gls']", "en", "onlygloss");
 					}
-
 					{
 						var word2 = words[1];
 						var txtItems = word2.XPathSelectElements("item[@type='txt']").ToList();
@@ -87,7 +86,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						VerifyItem(word2, "./item[@type='gls'][1]", "en", "firstgloss");
 						VerifyItem(word2, "./item[@type='gls'][2]", "en", "secondgloss");
 					}
-
 					{
 						var word3 = words[2];
 						var txtItems = word3.XPathSelectElements("item[@type='txt']").ToList();
@@ -155,8 +153,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// NOTE: Copied from LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 		/// </summary>
-		/// <returns></returns>
-		private WritingSystemManager GetWsf()
+		private static WritingSystemManager GetWsf()
 		{
 			var wsf = new WritingSystemManager();
 			CoreWritingSystemDefinition wsObj;
@@ -168,10 +165,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// NOTE: Copied from LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 		/// </summary>
-		/// <param name="wsObj"></param>
-		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
+		private static void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			ValidCharacters validChars = ValidCharacters.Load(wsObj);
+			var validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -186,18 +182,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				fChangedSomething = true;
 			}
 			if (!fChangedSomething)
+			{
 				return;
+			}
 			validChars.SaveTo(wsObj);
 		}
 
 		/// <summary>
 		/// VerifyItem(word, "./item[@type='" + itemType + "']", lang, text);
 		/// </summary>
-		/// <param name="textElt"></param>
-		/// <param name="xpath"></param>
-		/// <param name="expectedLang"></param>
-		/// <param name="expectedValue"></param>
-		private void VerifyItem(XElement textElt, string xpath, string expectedLang, string expectedValue)
+		private static void VerifyItem(XElement textElt, string xpath, string expectedLang, string expectedValue)
 		{
 			var item = textElt.XPathSelectElements(xpath).FirstOrDefault();
 			Assert.That(item, Is.Not.Null);

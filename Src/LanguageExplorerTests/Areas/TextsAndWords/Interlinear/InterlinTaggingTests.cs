@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,11 +16,9 @@ using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Contains tests for building trees of TextTags on top of interlinear text.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class InterlinTaggingTests : InterlinearTestBase
 	{
@@ -31,10 +29,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;
 		private ITextTagRepository m_tagRepo;
-
 		// Store parsed test Occurrences in this array
 		private AnalysisOccurrence[] m_occurrences;
-
 		// Text Markup Tag Possibility Items
 		private ICmPossibility[] m_possTags;
 		private int m_cposs; // count of possibility items loaded
@@ -46,20 +42,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.FixtureSetup();
 
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				DoSetupFixture);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupFixture);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
 			m_textsDefn = null;
 			m_tagRepo = null;
-			if (m_tagChild != null)
-				m_tagChild.Dispose();
+			m_tagChild?.Dispose();
 			m_tagChild = null;
 
 			base.FixtureTeardown();
@@ -100,7 +92,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();
 			m_tagRepo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			string textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Areas", "TextsAndWords", "Interlinear", "ParagraphParserTestTexts.xml");
+			var textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Areas", "TextsAndWords", "Interlinear", "ParagraphParserTestTexts.xml");
 			m_text1 = LoadTestText(textDefinitionsPath, 1, m_textsDefn);
 			m_para1 = m_text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 			ParseTestText();
@@ -120,8 +112,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			m_cposs = m_textMarkupTags.PossibilitiesOS[0].SubPossibilitiesOS.Count;
 			m_possTags = new ICmPossibility[m_cposs];
-			for (int i = 0; i < m_cposs; i++)
+			for (var i = 0; i < m_cposs; i++)
+			{
 				m_possTags[i] = m_textMarkupTags.PossibilitiesOS[0].SubPossibilitiesOS[i];
+			}
 		}
 
 		private void ParseTestText()
@@ -135,8 +129,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 			var coords = new int[8, 2] { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
 			m_occurrences = new AnalysisOccurrence[8];
-			for (int i = 0; i < 8; i++)
+			for (var i = 0; i < 8; i++)
+			{
 				m_occurrences[i] = new AnalysisOccurrence(m_para1.SegmentsOS[coords[i, 0]], coords[i, 1]);
+			}
 		}
 
 		#endregion // Helper methods
@@ -163,7 +159,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			{
 				var tag = m_tagRepo.GetObject(hvoTag);
 				if (tag != null && tag.Hvo == hvoTag)
+				{
 					Assert.Fail(msgFailure); // We didn't want to find this tag! It should be deleted!
+				}
 				// If we get here, the tag is already marked for deletion in the Cache, but still undoable.
 				// We still pass.
 			}
@@ -177,12 +175,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// Verify that the parameter tag points to the right possibility marker
 		/// and that it refers to the correct begin and end points in the text.
 		/// </summary>
-		/// <param name="ttag"></param>
-		/// <param name="poss"></param>
-		/// <param name="point1"></param>
-		/// <param name="point2"></param>
-		private static void VerifyTextTag(ITextTag ttag, ICmPossibility poss,
-										  AnalysisOccurrence point1, AnalysisOccurrence point2)
+		private static void VerifyTextTag(ITextTag ttag, ICmPossibility poss, AnalysisOccurrence point1, AnalysisOccurrence point2)
 		{
 			Assert.IsNotNull(ttag, "There should be a TextTag object.");
 			Assert.AreEqual(poss.Hvo, ttag.TagRA.Hvo, "Text Tag has wrong possibility Hvo.");
@@ -205,12 +198,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <param name="items">Collection of menu items</param>
 		/// <param name="text">Menu item under test</param>
 		/// <param name="cItems">Number of submenu items under the item under test</param>
-		/// <returns></returns>
 		private static ToolStripMenuItem AssertHasMenuWithText(ToolStripItemCollection items, string text, int cItems)
 		{
 			foreach (ToolStripItem item1 in items)
 			{
-				ToolStripMenuItem item = item1 as ToolStripMenuItem;
+				var item = item1 as ToolStripMenuItem;
 				if (item != null && item.Text == text)
 				{
 					Assert.AreEqual(cItems, item.DropDownItems.Count, "item " + text + " has wrong number of items");
@@ -228,28 +220,24 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <param name="menu1">The menu.</param>
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
-			Assert.AreEqual(expectedStates.Length, menu1.Count,
-							"ExpectedStates array size of " + expectedStates.Length + " is equal to the menu size of " + menu1.Count);
-			for (int i = 0; i < expectedStates.Length; i++)
+			Assert.AreEqual(expectedStates.Length, menu1.Count, "ExpectedStates array size of " + expectedStates.Length + " is equal to the menu size of " + menu1.Count);
+			for (var i = 0; i < expectedStates.Length; i++)
 			{
-				ToolStripItem item = menu1[i];
+				var item = menu1[i];
 				VerifyMenuItemCheckStatus(item, expectedStates[i]);
 			}
 		}
 
 		#endregion // Verification helpers
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the contents of a tagging context menu.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void MakeContextMenu_MarkupTags()
 		{
 			// This may eventually fail because there are no occurrences selected.
 			// Should we even make the menu if nothing is selected?
-
 			using (var strip = new ContextMenuStrip())
 			{
 				m_tagChild.CallMakeContextMenuForTags(strip, m_textMarkupTags);
@@ -266,11 +254,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				// Check the tag list item and subitems
 				Assert.AreEqual(2, strip.Items.Count);
-				ToolStripMenuItem itemMDC = AssertHasMenuWithText(strip.Items, kFTO_Syntax, 3);
+				var itemMDC = AssertHasMenuWithText(strip.Items, kFTO_Syntax, 3);
 				AssertHasMenuWithText(itemMDC.DropDownItems, kFTO_Noun_Phrase, 0);
 				AssertHasMenuWithText(itemMDC.DropDownItems, kFTO_Verb_Phrase, 0);
 				AssertHasMenuWithText(itemMDC.DropDownItems, kFTO_Adjective_Phrase, 0);
-				ToolStripMenuItem itemMDC2 = AssertHasMenuWithText(strip.Items, kFTO_RRG_Semantics, 3);
+				var itemMDC2 = AssertHasMenuWithText(strip.Items, kFTO_RRG_Semantics, 3);
 				AssertHasMenuWithText(itemMDC2.DropDownItems, kFTO_Actor, 0);
 				AssertHasMenuWithText(itemMDC2.DropDownItems, kFTO_Undergoer, 0);
 				AssertHasMenuWithText(itemMDC2.DropDownItems, kFTO_Non_Macrorole, 0);
@@ -281,20 +269,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTag_CompleteWith3Wordforms()
 		{
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
-
 			// Setup the SelectedWordforms property
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1], m_occurrences[2]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			// SUT
 			ITextTag ttag = null;
 			var hvoTtag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (ttag != null)
 				{
-					ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (ttag != null)
-						hvoTtag = ttag.Hvo;
-				});
+					hvoTtag = ttag.Hvo;
+				}
+			});
 
 			// Verification
 			AssertTagExists(hvoTtag, "Tag should have been created.");
@@ -305,20 +294,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTag_With2Wordforms()
 		{
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
-
 			// Setup the SelectedWordforms property
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			// SUT
 			ITextTag ttag = null;
 			var hvoTtag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
+				if (ttag != null)
 				{
-					ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
-					if (ttag != null)
-						hvoTtag = ttag.Hvo;
-				});
+					hvoTtag = ttag.Hvo;
+				}
+			});
 
 			// Verification
 			AssertTagExists(hvoTtag, "Tag should have been created.");
@@ -329,9 +319,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTagAnnotation_With1Wordform()
 		{
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
-
 			// Setup the SelectedWordforms property
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[1]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[1] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			// SUT
@@ -339,11 +328,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag ttag = null;
 			var hvoTtag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[m_cposs - 1]);
+				if (ttag != null)
 				{
-					ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[m_cposs - 1]);
-					if (ttag != null)
-						hvoTtag = ttag.Hvo;
-				});
+					hvoTtag = ttag.Hvo;
+				}
+			});
 
 			// Verification
 			AssertTagExists(hvoTtag, "Tag should have been created.");
@@ -361,11 +352,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag ttag = null;
 			var hvoTtag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[m_cposs - 1]);
+				if (ttag != null)
 				{
-					ttag = m_tagChild.CallMakeTextTagInstance(m_possTags[m_cposs - 1]);
-					if (ttag != null)
-						hvoTtag = ttag.Hvo;
-				});
+					hvoTtag = ttag.Hvo;
+				}
+			});
 
 			// Verification
 			AssertTagDoesntExist(hvoTtag, "MakeTextTagInstance must return null if no Wordforms are selected.");
@@ -376,18 +369,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTagAnnot_ExistTag_CompleteOverlap()
 		{
 			// Enhance: This test will need changing when we allow multiple lines of tagging.
-
 			// Setup the SelectedWordforms property for first tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[1], m_occurrences[2]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (initialTag != null)
 				{
-					var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (initialTag != null)
-						hvoTag = initialTag.Hvo;
-				});
+					hvoTag = initialTag.Hvo;
+				}
+			});
 
 			// Make sure SelectedWordforms property is still set to the same Wordforms
 			m_tagChild.SelectedWordforms = tempList;
@@ -397,11 +391,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag SUTTag = null;
 			var hvoSUTTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				SUTTag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
+				if (SUTTag != null)
 				{
-					SUTTag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
-					if (SUTTag != null)
-						hvoSUTTag = SUTTag.Hvo;
-				});
+					hvoSUTTag = SUTTag.Hvo;
+				}
+			});
 
 			// Verification
 			AssertTagExists(hvoSUTTag, "New tag should have been created.");
@@ -416,16 +412,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// This test will need changing when we allow multiple lines of tagging.
 
 			// Setup the SelectedWordforms property for first tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[1], m_occurrences[2]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (initialTag != null)
 				{
-					var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (initialTag != null)
-						hvoTag = initialTag.Hvo;
-				});
+					hvoTag = initialTag.Hvo;
+				}
+			});
 
 			// Setup the SelectedWordforms property for second tag
 			var tempList1 = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1] };
@@ -436,11 +434,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag tagSUT = null;
 			var hvoSUTTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
+				if (tagSUT != null)
 				{
-					tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
-					if (tagSUT != null)
-						hvoSUTTag = tagSUT.Hvo;
-				});
+					hvoSUTTag = tagSUT.Hvo;
+				}
+			});
 
 			// Verification
 			// Verify new tag
@@ -454,18 +454,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTagAnnot_ExistTag_RearOverlap()
 		{
 			// This test will need changing when we allow multiple lines of tagging.
-
 			// Setup the SelectedWordforms property for first tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[1], m_occurrences[2]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (initialTag != null)
 				{
-					var initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (initialTag != null)
-						hvoTag = initialTag.Hvo;
-				});
+					hvoTag = initialTag.Hvo;
+				}
+			});
 
 			// Setup the SelectedWordforms property for second tag
 			var tempList1 = new List<AnalysisOccurrence> { m_occurrences[2], m_occurrences[3], m_occurrences[4] };
@@ -476,11 +477,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag tagSUT = null;
 			var hvoSUTTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
+				if (tagSUT != null)
 				{
-					tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
-					if (tagSUT != null)
-						hvoSUTTag = tagSUT.Hvo;
-				});
+					hvoSUTTag = tagSUT.Hvo;
+				}
+			});
 
 			// Verification
 			// Verify new tag
@@ -494,18 +497,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTagAnnot_MultipleExistTags_Overlap()
 		{
 			// This test will need changing when we allow multiple lines of tagging.
-
 			// Setup the SelectedWordforms property for first (existing) tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[1], m_occurrences[2]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag1 = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var oldTag1 = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (oldTag1 != null)
 				{
-					var oldTag1 = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (oldTag1 != null)
-						hvoTag1 = oldTag1.Hvo;
-				});
+					hvoTag1 = oldTag1.Hvo;
+				}
+			});
 
 			// Setup the SelectedWordforms property for second (existing) tag
 			var tempList1 = new List<AnalysisOccurrence> { m_occurrences[3], m_occurrences[4] };
@@ -513,11 +517,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var hvoTag2 = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var oldTag2 = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
+				if (oldTag2 != null)
 				{
-					var oldTag2 = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
-					if (oldTag2 != null)
-						hvoTag2 = oldTag2.Hvo;
-				});
+					hvoTag2 = oldTag2.Hvo;
+				}
+			});
 
 			// Setup the SelectedWordforms property for SUT tag
 			// These overlap with both existing tags
@@ -529,11 +535,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			ITextTag tagSUT = null;
 			var hvoSUTTag = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
+				if (tagSUT != null)
 				{
-					tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
-					if (tagSUT != null)
-						hvoSUTTag = tagSUT.Hvo;
-				});
+					hvoSUTTag = tagSUT.Hvo;
+				}
+			});
 
 			// Verification
 			// Verify new tag
@@ -548,20 +556,22 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeTagAnnot_ExistTag_NoOverlap()
 		{
 			// Setup the SelectedWordforms property for first tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag = -1;
 			ITextTag initialTag = null;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (initialTag != null)
 				{
-					initialTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (initialTag != null)
-						hvoTag = initialTag.Hvo;
-				});
+					hvoTag = initialTag.Hvo;
+				}
+			});
 
 			// Setup the SelectedWordforms property for second tag
-			var tempList1 = new List<AnalysisOccurrence> {m_occurrences[2], m_occurrences[3], m_occurrences[4]};
+			var tempList1 = new List<AnalysisOccurrence> { m_occurrences[2], m_occurrences[3], m_occurrences[4] };
 			m_tagChild.SelectedWordforms = tempList1;
 
 			// SUT
@@ -569,11 +579,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var hvoTagSUT = -1;
 			ITextTag tagSUT = null;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
+				if (tagSUT != null)
 				{
-					tagSUT = m_tagChild.CallMakeTextTagInstance(m_possTags[2]);
-					if (tagSUT != null)
-						hvoTagSUT = tagSUT.Hvo;
-				});
+					hvoTagSUT = tagSUT.Hvo;
+				}
+			});
 
 			// Verification
 			// Verify new tag
@@ -591,38 +603,37 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var tagsToDelete = new HashSet<ITextTag>();
 
 			// Setup the SelectedWordforms property for first tag
-			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};
+			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag1 = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var firstTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
+				if (firstTag != null)
 				{
-					var firstTag = m_tagChild.CallMakeTextTagInstance(m_possTags[0]);
-					if (firstTag != null)
-					{
-						hvoTag1 = firstTag.Hvo;
-						tagsToDelete.Add(firstTag);
-					}
-				});
+					hvoTag1 = firstTag.Hvo;
+					tagsToDelete.Add(firstTag);
+				}
+			});
 
 			// Setup the SelectedWordforms property for second tag
-			tempList = new List<AnalysisOccurrence> {m_occurrences[2], m_occurrences[3], m_occurrences[4]};
+			tempList = new List<AnalysisOccurrence> { m_occurrences[2], m_occurrences[3], m_occurrences[4] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			var hvoTag2 = -1;
 			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () =>
+			{
+				var secondTag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
+				if (secondTag != null)
 				{
-					var secondTag = m_tagChild.CallMakeTextTagInstance(m_possTags[1]);
-					if (secondTag != null)
-					{
-						hvoTag2 = secondTag.Hvo;
-						tagsToDelete.Add(secondTag);
-					}
-				});
+					hvoTag2 = secondTag.Hvo;
+					tagsToDelete.Add(secondTag);
+				}
+			});
 
 			// SUT
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallDeleteTextTags(tagsToDelete));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallDeleteTextTags(tagsToDelete));
 
 			// Verification
 			// The two tags should no longer exist in the Cache
@@ -643,7 +654,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var subMenu = AssertHasMenuWithText(menu.Items, "Syntax", 3);
 				Assert.IsNotNull(subMenu, "No Syntax menu!?");
 				foreach (ToolStripItem item in subMenu.DropDownItems)
+				{
 					VerifyMenuItemCheckStatus(item, false);
+				}
 			}
 		}
 
@@ -656,8 +669,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			m_tagChild.SelectedWordforms = tempList;
 
 			const int itestItem = 1;
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem]));
 
 			// SUT
 			using (var menu = new ContextMenuStrip())
@@ -678,15 +690,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeContextMenu_CheckedStates_SelFirstOfTag()
 		{
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
-
 			// Setup the SelectedWordforms property
 			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1], m_occurrences[2] };
 			m_tagChild.SelectedWordforms = tempList;
 
 			// Make a tag for selection
 			const int itestItem = 0; // first tag in list
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem]));
 
 			// Reduce selection to first word
 			tempList.Remove(m_occurrences[1]);
@@ -716,7 +726,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeContextMenu_CheckedStates_MultiAnnSelLast()
 		{
 			// This test will need changing when we allow multiple lines of tagging.
-
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
 			// Setup the SelectedWordforms property to include 3 words
 			var tempList = new List<AnalysisOccurrence> { m_occurrences[0], m_occurrences[1], m_occurrences[2] };
@@ -724,8 +733,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a tag for 1st selection
 			const int itestItem1 = 0; // first tag in list
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
 
 			// Setup the SelectedWordforms property to include 2nd & 3rd words
 			tempList.Remove(m_occurrences[0]);
@@ -735,8 +743,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// Enhance GordonM: For the time being, this deletes the first tag. When multiple layers
 			// of tags are allowed, change the expected results.
 			const int itestItem2 = 1; // 2nd tag in list
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
 
 			// Reduce selection to 3rd word
 			tempList.Remove(m_occurrences[1]);
@@ -766,7 +773,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void MakeContextMenu_CheckedStates_MultiAnnSelExtra()
 		{
 			// This test will need changing when we allow multiple lines of tagging.
-
 			// Provide hvoTagPoss and SelectedWordforms, create a markup tag and examine it.
 			// Setup the SelectedWordforms property to include 2 words
 			var tempList = new List<AnalysisOccurrence> { m_occurrences[1], m_occurrences[2] };
@@ -774,8 +780,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a tag for 1st selection
 			const int itestItem1 = 0;
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
 
 			// Setup the SelectedWordforms property to include one more word
 			tempList.Add(m_occurrences[3]);
@@ -785,8 +790,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// Enhance GordonM: For the time being, this deletes the first tag. When multiple layers
 			// of tags are allowed, change the expected results.
 			const int itestItem2 = 1;
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
 
 			// Setup selection to contain previous tags, plus another word
 			tempList.Insert(0, m_occurrences[0]);
@@ -824,8 +828,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a tag for 1st selection
 			const int itestItem1 = 0;
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem1]));
 
 			// Setup the SelectedWordforms property to include one more word
 			tempList.Clear();
@@ -835,8 +838,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a tag for 2nd selection
 			const int itestItem2 = 1;
-			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor,
-				() => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
+			UndoableUnitOfWorkHelper.Do("UndoTagTest", "RedoTagTest", Cache.ActionHandlerAccessor, () => m_tagChild.CallMakeTextTagInstance(m_possTags[itestItem2]));
 
 			// Setup selection to cover part of first tag, and all of second
 			tempList.Insert(0, m_occurrences[1]);

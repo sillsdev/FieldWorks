@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,80 +25,71 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		public void SettingTargetToReplaceWholeInRelationWithOnlyOnePartDoesNotDeleteRelation()
 		{
 			var lrtrl = new TestLrtrl();
-
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
-				() =>
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
+			{
+				// Set up a part-whole type lexical relation and two lexical entries indicating that "nose" is a part of "face".
+				var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				if (Cache.LangProject.LexDbOA.ReferencesOA == null)
 				{
-
-					// Set up a part-whole type lexical relation and two lexical entries indicating that "nose" is a part of "face".
-					var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-					if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-					{
-						// default state of cache may not have the PL we need to own our lexical relation type...if not create it.
-						Cache.LangProject.LexDbOA.ReferencesOA =
-							Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-					}
-					Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-					lrt.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair; // e.g., part/whole
-
-					var face = MakeEntry("face", "front of head");
-					var nose = MakeEntry("nose", "pointy bit on front");
-					var rel = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-					lrt.MembersOC.Add(rel);
-					rel.TargetsRS.Add(face);
-					rel.TargetsRS.Add(nose);
-
-					// Here is an alternative 'whole' to be the root that 'nose' belongs to.
-					var head = MakeEntry("head", "thing on top of body");
-
-					// Now we want to configure the Lrtrl so that setting its target to 'head' will replace 'face' with 'head'.
-					lrtrl.SetObject(rel);
-					lrtrl.Child = nose; // the part for which we are changing the whole
-
-					// This is the operation we want to test
-					lrtrl.SetTarget(head);
-					Assert.That(rel.IsValidObject);
-					Assert.That(rel.TargetsRS, Has.Count.EqualTo(2));
-					Assert.That(rel.TargetsRS[0], Is.EqualTo(head));
-					Assert.That(rel.TargetsRS[1], Is.EqualTo(nose));
-				});
+					// default state of cache may not have the PL we need to own our lexical relation type...if not create it.
+					Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				}
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+				lrt.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair; // e.g., part/whole
+				var face = MakeEntry("face", "front of head");
+				var nose = MakeEntry("nose", "pointy bit on front");
+				var rel = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				lrt.MembersOC.Add(rel);
+				rel.TargetsRS.Add(face);
+				rel.TargetsRS.Add(nose);
+				// Here is an alternative 'whole' to be the root that 'nose' belongs to.
+				var head = MakeEntry("head", "thing on top of body");
+				// Now we want to configure the Lrtrl so that setting its target to 'head' will replace 'face' with 'head'.
+				lrtrl.SetObject(rel);
+				lrtrl.Child = nose; // the part for which we are changing the whole
+				// This is the operation we want to test
+				lrtrl.SetTarget(head);
+				Assert.That(rel.IsValidObject);
+				Assert.That(rel.TargetsRS, Has.Count.EqualTo(2));
+				Assert.That(rel.TargetsRS[0], Is.EqualTo(head));
+				Assert.That(rel.TargetsRS[1], Is.EqualTo(nose));
+			});
 		}
 
 		private ILexEntry MakeEntry(string lf, string gloss)
 		{
-			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
-			form.Form.VernacularDefaultWritingSystem =
-				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
+			form.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
-	}
 
-	/// <summary>
-	/// Subclass to get access to the protected method and variable. This allows us to minimally initialize the instance for testing
-	/// this method, without creating the whole hierarchy of nested controls that this object would normally be part of.
-	/// </summary>
-	class TestLrtrl : LexReferenceTreeRootLauncher
-	{
-		public void SetTarget(ICmObject target)
+		/// <summary>
+		/// Subclass to get access to the protected method and variable. This allows us to minimally initialize the instance for testing
+		/// this method, without creating the whole hierarchy of nested controls that this object would normally be part of.
+		/// </summary>
+		private sealed class TestLrtrl : LexReferenceTreeRootLauncher
 		{
-			Target = target;
-		}
+			public void SetTarget(ICmObject target)
+			{
+				Target = target;
+			}
 
-		public void SetObject(ICmObject obj)
-		{
-			m_obj = obj;
-		}
+			public void SetObject(ICmObject obj)
+			{
+				m_obj = obj;
+			}
 
-		public ICmObject Child { get; set; }
+			public ICmObject Child { get; set; }
 
-		internal override ICmObject GetChildObject()
-		{
-			return Child;
+			internal override ICmObject GetChildObject()
+			{
+				return Child;
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,8 +8,8 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 
@@ -21,42 +21,30 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class ComboHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable _propertyTable;
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
+		private FlexComponentParameters _flexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of LcmTestBase
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
-			_propertyTable = flexComponentParameters.PropertyTable;
-			_publisher = flexComponentParameters.Publisher;
-			_subscriber = flexComponentParameters.Subscriber;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to end the undoable UOW, Undo everything, and 'commit',
 		/// which will essentially clear out the Redo stack.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			try
 			{
-				_propertyTable?.Dispose();
-				_propertyTable = null;
-				_publisher = null;
-				_subscriber = null;
+				_flexComponentParameters.PropertyTable?.Dispose();
 			}
 			catch (Exception err)
 			{
@@ -64,6 +52,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 			finally
 			{
+				_flexComponentParameters = null;
 				base.TestTearDown();
 			}
 		}
@@ -82,8 +71,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
 			morph.Form.SetVernacularDefaultWritingSystem("kick");
-			morph.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
+			morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.SetAnalysisDefaultWritingSystem("strike with foot");
@@ -98,15 +86,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			mb.SenseRA = sense;
 			mb.MorphRA = morph;
 
-			var flexComponentParameterObject = new FlexComponentParameters(_propertyTable, _publisher, _subscriber);
 			// Make a sandbox and sut
-			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
+			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
 			using (var sut = new IhMissingEntry(null))
 			{
 				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 				{
-					sandbox.InitializeFlexComponent(flexComponentParameterObject);
+					sandbox.InitializeFlexComponent(_flexComponentParameters);
 					sut.SetSandboxForTesting(sandbox);
 					var mockList = MockRepository.GenerateMock<IComboList>();
 					sut.SetComboListForTesting(mockList);
@@ -122,7 +108,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				mb.MsaRA = msa;
 				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 				{
-					sandbox.InitializeFlexComponent(flexComponentParameterObject);
+					sandbox.InitializeFlexComponent(_flexComponentParameters);
 					sut.SetSandboxForTesting(sandbox);
 					Assert.That(sut.NeedSelectSame(), Is.False);
 				}

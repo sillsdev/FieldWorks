@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,15 +22,18 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			var ac = LexiconTestUtils.MakeEntry(Cache, "ac", "ac");
 			var abcd = LexiconTestUtils.MakeEntry(Cache, "abcd", "abcd");
 			// Create some reasonable component references
-			LexiconTestUtils.AddComplexFormComponents(Cache, ab, new List<ICmObject> {a, b});
-			LexiconTestUtils.AddComplexFormComponents(Cache, ac, new List<ICmObject> {a.SensesOS[0], c.SensesOS[0]});
-			LexiconTestUtils.AddComplexFormComponents(Cache, abcd, new List<ICmObject> {a, b, c, d.SensesOS[0]});
+			LexiconTestUtils.AddComplexFormComponents(Cache, ab, new List<ICmObject> { a, b });
+			LexiconTestUtils.AddComplexFormComponents(Cache, ac, new List<ICmObject> { a.SensesOS[0], c.SensesOS[0] });
+			LexiconTestUtils.AddComplexFormComponents(Cache, abcd, new List<ICmObject> { a, b, c, d.SensesOS[0] });
 			// Create circular component references
-			LexiconTestUtils.AddComplexFormComponents(Cache, a, new List<ICmObject> {ab.SensesOS[0], ac});
-			LexiconTestUtils.AddComplexFormComponents(Cache, b, new List<ICmObject> {ab});
-			LexiconTestUtils.AddComplexFormComponents(Cache, c, new List<ICmObject> {ac.SensesOS[0]});
+			LexiconTestUtils.AddComplexFormComponents(Cache, a, new List<ICmObject> { ab.SensesOS[0], ac });
+			LexiconTestUtils.AddComplexFormComponents(Cache, b, new List<ICmObject> { ab });
+			LexiconTestUtils.AddComplexFormComponents(Cache, c, new List<ICmObject> { ac.SensesOS[0] });
+
 			// SUT
 			var breaker = new CircularRefBreaker();
+
+			// Verify
 			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method does not throw an exception");
 			Assert.AreEqual(0, a.EntryRefsOS.Count, "Invalid LexEntryRef should be be removed from 'a'");
 			Assert.AreEqual(0, b.EntryRefsOS.Count, "Invalid LexEntryRef should be be removed from 'b'");

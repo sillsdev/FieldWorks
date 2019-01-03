@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,17 +12,17 @@ using System.Xml;
 using System.Xml.Schema;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
-	class BIRDFormatImportTests : MemoryOnlyBackendProviderTestBase
+	public sealed class BIRDFormatImportTests : MemoryOnlyBackendProviderTestBase
 	{
 		#region Overrides of LcmTestBase
 
@@ -53,23 +53,22 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void ValidateBirdDocSchema()
 		{
-			string title = "atrocious";
-			string abbr = "atroc";
-			//an interliner text example xml string
-			string xml = "<document><interlinear-text>" +
-						 "<item type=\"title\" lang=\"en\">" + title + "</item>" +
-						 "<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
-						 "<paragraphs><paragraph><phrases><phrase>" +
-						 "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
-						 "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-						 "<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
-						 "<morphemes><morph><item type=\"txt\" lang=\"en\">supercali-</item><item type=\"gls\" lang=\"pt\">superlative</item></morph></morphemes>" +
-						 "<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string title = "atrocious";
+			const string abbr = "atroc";
+			//an interlinear text example xml string
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">" + title + "</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+							   "<morphemes><morph><item type=\"txt\" lang=\"en\">supercali-</item><item type=\"gls\" lang=\"pt\">superlative</item></morph></morphemes>" +
+							   "<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			var xmlReader = GetXmlReaderForTest(xml);
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
-
-			Assert.DoesNotThrow( ()=> ReadXmlForValidation(xmlReader));
+			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
 		private static void ReadXmlForValidation(XmlReader xmlReader)
@@ -90,14 +89,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		#region ScrElements
 
-		private XmlReader GetXmlReaderForTest(string xml)
+		private static XmlReader GetXmlReaderForTest(string xml)
 		{
-			var settings = new XmlReaderSettings {ValidationType = ValidationType.Schema};
-
-			string p = Path.Combine(FwDirectoryFinder.FlexFolder, @"Export Templates", @"Interlinear");
-			string file = Path.Combine(p, "FlexInterlinear.xsd");
+			var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+			var p = Path.Combine(FwDirectoryFinder.FlexFolder, @"Export Templates", @"Interlinear");
+			var file = Path.Combine(p, "FlexInterlinear.xsd");
 			settings.Schemas.Add("", file);
-			//settings.ValidationEventHandler += ValidationCallBack;
 			return XmlReader.Create(new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), settings);
 		}
 
@@ -106,7 +103,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			const string xml = "<document exportSource='paratext' exportTarget='flex'><interlinear-text/></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -117,7 +114,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<languages><language lang='en' encoding='ISO639-1'/></languages>" +
 						 "</interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -133,7 +130,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				"</interlinear-text>" +
 				"</document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -144,7 +141,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<interlinear-text scrBook='MAT'/>" +
 						 "</document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -157,7 +154,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<interlinear-text scrSectionType='verseText'/>" +
 						 "</document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -168,22 +165,24 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<interlinear-text scrSectionType='invalid'/>" +
 						 "</document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
+			}
 		}
 
 		[Test]
 		public void ValidateScrMilestone()
 		{
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase>" +
 							"<words><scrMilestone chapter='1' verse='1'/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -194,11 +193,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<words><scrMilestone/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
+			}
 		}
 
 		[Test]
@@ -208,11 +209,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<words><scrMilestone chapter='1'/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
+			}
 		}
 
 		[Test]
@@ -222,11 +225,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<words><word/><scrMilestone chapter='1' verse='1'/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
+			}
 		}
 
 		[Test]
@@ -236,11 +241,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<words><scrMilestone chapter='one' verse='1'/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			}
 		}
 
 		[Test]
@@ -250,68 +257,72 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 							"<words><scrMilestone chapter='1' verse='one'/></words>" +
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			}
 		}
 
 		[Test]
 		public void ValidatePhraseWord()
 		{
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
 							"<word type='phrase'/>" +
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
 		[Test]
 		public void ValidateMorphemeAnalysisStatus()
 		{
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
 							"<word><morphemes analysisStatus='guess'/></word>" +
 							"<word><morphemes analysisStatus='humanApproved'/></word>" +
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
 		[Test]
 		public void InvalidMorphemeAnalysisStatus()
 		{
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
 					"<word><morphemes analysisStatus='invalid'/></word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
 			// TODO-Linux: The message on Mono doesn't state the failing attribute
 			if (!MiscUtils.IsMono)
+			{
 				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
+			}
 		}
 
 		[Test]
 		public void ValidateItemGlossAnalysisStatus()
 		{
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
 							"<word><item type='gls' lang='en' analysisStatus='humanApproved'/></word>" +
 							"<word><item type='gls' lang='en' analysisStatus='guessByStatisticalAnalysis'/></word>" +
 							"<word><item type='gls' lang='en' analysisStatus='guessByHumanApproved'/></word>" +
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
+			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
-		bool DummyCheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
+		private static bool DummyCheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			return true;
 		}
@@ -320,10 +331,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ValidateFlexTextFile()
 		{
 			var file = FlexTextPathname;
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.Load(file);
 
-			XmlReader xmlReader = GetXmlReaderForTest(doc.OuterXml);
+			var xmlReader = GetXmlReaderForTest(doc.OuterXml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
@@ -335,13 +346,17 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var file = FlexTextPathname;
 			using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
 			{
-				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+				var li = new LinguaLinksImport(Cache, null, null);
 				IText text = null;
-				var options = new ImportInterlinearOptions{Progress = new DummyProgressDlg(),
-					BirdData = fileStream, AllottedProgress = 0,
-					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
+				var options = new ImportInterlinearOptions
+				{
+					Progress = new DummyProgressDlg(),
+					BirdData = fileStream,
+					AllottedProgress = 0,
+					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal
+				};
 
-				bool result = li.ImportInterlinear(options, ref text);
+				var result = li.ImportInterlinear(options, ref text);
 				Assert.True(result, "ImportInterlinear was not successful.");
 			}
 		}
@@ -400,7 +415,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal
 				};
 				IText importedText = null;
-				var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+				var li = new LLIMergeExtension(Cache, null, null);
 				var result = li.ImportInterlinear(options, ref importedText);
 				Assert.True(result, "ImportInterlinear was not successful.");
 				Assert.That(importedText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
@@ -428,17 +443,17 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void UglyEmptyDataShouldNotCrash()
 		{
 			const string textGuid = "eb0770f4-23aa-4f7b-b45d-fe745a3790a2";
-			//an interliner text example xml string
+			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text guid='" + textGuid + "'>" +
 									 "<paragraphs><paragraph guid='819742f3-3840-479e-9300-51755880680b'/></paragraphs><languages/>" +
 									 "</interlinear-text></document>";
 
 			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
-			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
-				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
-				using(var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				Assert.DoesNotThrow(() => li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -451,8 +466,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestImportMergeFlexTextWithSegnumItem()
 		{
-			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
-			string firstXml = "<document version=\"2\">" +
+			const string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			const string firstXml = "<document version=\"2\">" +
 									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
 									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
 									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
@@ -462,26 +477,25 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
 									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
 									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
 			// The same with one extra word
-			string secondXml = "<document version=\"2\">" +
-									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
-									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
-									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
-									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
-									"<phrases><phrase guid=\"" + phraseGuid + "\">" +
-									"<item type=\"segnum\" lang =\"en\">1.1</item>" +
-									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
-									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item></word>" +
-									"<word guid=\"936b326e-a83d-4c08-94cc-449d0a3380d0\">" +
-									"<item type= \"txt\" lang=\"qaa-x-kal\">yalola</item>" +
-									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string secondXml = "<document version=\"2\">" +
+									 "<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									 "<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									 "<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									 "<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									 "<phrases><phrase guid=\"" + phraseGuid + "\">" +
+									 "<item type=\"segnum\" lang =\"en\">1.1</item>" +
+									 "<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									 "<item type =\"txt\" lang=\"qaa-x-kal\">pus</item></word>" +
+									 "<word guid=\"936b326e-a83d-4c08-94cc-449d0a3380d0\">" +
+									 "<item type= \"txt\" lang=\"qaa-x-kal\">yalola</item>" +
+									 "</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
-				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				var result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
 				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
 				Assert.True(result);
 				var contentGuid = text.ContentsOA.Guid;
@@ -490,7 +504,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
-					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					var mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
 					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
 					Assert.True(mergeResult);
 					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
@@ -511,38 +525,37 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestMergeFlexTextPhraseWithoutGuidMergesIntoParagraphOfSibling()
 		{
-			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
-			string firstXml = "<document version=\"2\">" +
-								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
-								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
-								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
-								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
-								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
-								"<phrase guid=\"" + phraseGuid + "\">" +
-								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
-								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
-								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
+			const string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			const string firstXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+									"<phrase guid=\"" + phraseGuid + "\">" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 			// The same with an additional phrase with no guid
-			string secondXml = "<document version=\"2\">" +
-								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
-								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
-								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
-								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
-								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
-								"<phrase guid=\"" + phraseGuid + "\">" +
-								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
-								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
-								"</word></words></phrase>" +
-								"<phrase><words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
-								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
-								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string secondXml = "<document version=\"2\">" +
+									 "<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									 "<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									 "<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									 "<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									 "<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+									 "<phrase guid=\"" + phraseGuid + "\">" +
+									 "<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									 "<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+									 "</word></words></phrase>" +
+									 "<phrase><words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+									 "<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+									 "</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
-				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				var result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
 				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
 				Assert.True(result);
 				var contentGuid = text.ContentsOA.Guid;
@@ -555,7 +568,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
-					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					var mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
 					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
 					Assert.True(mergeResult);
 					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
@@ -577,34 +590,33 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestMergeFlexTextNewParagraphCreatesNewParagraph_OriginalIsUnchanged()
 		{
-			string firstPhraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
-			string firstXml = "<document version=\"2\">" +
-								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
-								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
-								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
-								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
-								"<phrases><phrase guid=\"" + firstPhraseGuid + "\">" +
-								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
-								"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
-								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
+			const string firstPhraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			const string firstXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase guid=\"" + firstPhraseGuid + "\">" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 			// The same interlinear text, but a brand new paragraph, phrase and word.
-			string secondPhraseGuid = "f1fe4d4a-58e1-4492-8a40-e955774a6911";
-			string secondXml = "<document version=\"2\">" +
-								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
-								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
-								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
-								"<paragraphs><paragraph guid=\"a0734bac-a9fc-489f-9beb-6563fb2f53f6\">" +
-								"<phrases><phrase guid=\"" + secondPhraseGuid + "\">" +
-								"<words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
-								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
-								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string secondPhraseGuid = "f1fe4d4a-58e1-4492-8a40-e955774a6911";
+			const string secondXml = "<document version=\"2\">" +
+									 "<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									 "<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									 "<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									 "<paragraphs><paragraph guid=\"a0734bac-a9fc-489f-9beb-6563fb2f53f6\">" +
+									 "<phrases><phrase guid=\"" + secondPhraseGuid + "\">" +
+									 "<words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+									 "<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+									 "</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
-				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				var result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
 				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
 				Assert.True(result);
 				var contentGuid = text.ContentsOA.Guid;
@@ -613,7 +625,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var originalWordGuid = originalPara.SegmentsOS[0].AnalysesRS[0].Guid;
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
-					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					var mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
 					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
 					Assert.True(mergeResult);
 					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
@@ -653,24 +665,24 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
 								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
 								"</word></words><item type=\"note\" lang=\"en\">" + commonNote + "</item>";
-			string firstXml = commonXml + "<item type=\"note\" lang=\"en\">Note in first xml.</item>" +
-								"<item type=\"note\" lang=\"fr\">Une note pour le premier xml.</item>" +
-								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string firstXml = commonXml + "<item type=\"note\" lang=\"en\">Note in first xml.</item>" +
+									"<item type=\"note\" lang=\"fr\">Une note pour le premier xml.</item>" +
+									"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 			// Missing the second and third note and adds a fourth note."
-			string secondXml = commonXml + "<item type=\"note\" lang=\"fr\">Une note pour les deux xml.</item>" +
-								"<item type=\"note\" lang=\"en\">Note in second xml.</item>" +
-								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string secondXml = commonXml + "<item type=\"note\" lang=\"fr\">Une note pour les deux xml.</item>" +
+									 "<item type=\"note\" lang=\"en\">Note in second xml.</item>" +
+									 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			int wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			int wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
-			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
-				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				var result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
 				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
 				Assert.True(result);
-				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				Assert.AreEqual(3, para.SegmentsOS[0].NotesOS.Count);
 				Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
 				Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text);
@@ -678,13 +690,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				// Put some French content into the first note. Doing it here instead of in the above xml will update
 				// the first note to have both languages, rather than creating a new note with French content.
-				ITsString tss = TsStringUtils.MakeString("Une note pour les deux xml.", wsFr);
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-					() => { para.SegmentsOS[0].NotesOS[0].Content.set_String(wsFr, tss); });
+				var tss = TsStringUtils.MakeString("Une note pour les deux xml.", wsFr);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { para.SegmentsOS[0].NotesOS[0].Content.set_String(wsFr, tss); });
 				Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
-					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					var mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
 					Assert.AreEqual(1, li.NumTimesDlgShown, "User should have been prompted to merge the text.");
 					Assert.True(mergeResult);
 					Assert.AreEqual(4, para.SegmentsOS[0].NotesOS.Count);
@@ -702,20 +713,20 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void OneOfEachElementTypeTest()
 		{
-			string title = "atrocious";
-			string abbr = "atroc";
-			//an interliner text example xml string
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
-			"<paragraphs><paragraph><phrases><phrase>" +
-			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
-			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
-			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
-			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string title = "atrocious";
+			const string abbr = "atroc";
+			//an interlinear text example xml string
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">" + title + "</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+							   "<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -735,30 +746,30 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestSpacesAroundPunct()
 		{
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase>" +
-			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
-			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-			"<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">,</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">.</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">.&quot;</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">&quot;:</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">&quot;</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">,</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">.</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">.&quot;</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">&quot;:</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">&quot;</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 			// ---------------------
 			// 012345678901234567890
 			// a, s. s." s": s "s
 			// ---------------------
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -775,10 +786,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					var spaceFour = para.Contents.Text.Substring(13, 1);
 					var spaceFive = para.Contents.Text.Substring(15, 1);
 					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-					Assert.AreEqual(6, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					//capture correct number of spaces, and no double spaces
+					Assert.AreEqual(6, para.Contents.Text.Split(spaceArray).Length);
 					//test to make sure spaces were inserted in each expected place
-					CollectionAssert.AreEqual(new [] {" ", " ", " ", " ", " "},
-						new [] {spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive});
+					CollectionAssert.AreEqual(new[] { " ", " ", " ", " ", " " }, new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive });
 				}
 			}
 		}
@@ -786,33 +797,33 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestSpacesAroundSpanishPunct()
 		{
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase>" +
-			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
-			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-			"<words>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">.&#xA1;</item></word>" + // spanish begin exclamation
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">!&#xBF;</item></word>" + // spanish begin question
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">?</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">. &#xBF;</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">? &quot;&#xBF;</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"<word><item type=\"punct\" lang=\"en\">&#xBF;</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">s</item></word>" +
-			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">.&#xA1;</item></word>" + // spanish begin exclamation
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">!&#xBF;</item></word>" + // spanish begin question
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">?</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">. &#xBF;</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">? &quot;&#xBF;</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "<word><item type=\"punct\" lang=\"en\">&#xBF;</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">s</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 			// --------------------------
 			// 01234567890123456789012345
 			// s. es! qs? s. qs? "qs qs (e=spanish beg. exclamation, q=spanish beg. question)
 			// --------------------------
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -830,10 +841,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					var spaceFive = para.Contents.Text.Substring(17, 1);
 					var spaceSix = para.Contents.Text.Substring(21, 1);
 					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-					Assert.AreEqual(7, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					//capture correct number of spaces, and no double spaces
+					Assert.AreEqual(7, para.Contents.Text.Split(spaceArray).Length);
 					//test to make sure spaces were inserted in each expected place
-					CollectionAssert.AreEqual(new[] { " ", " ", " ", " ", " ", " " },
-						new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix });
+					CollectionAssert.AreEqual(new[] { " ", " ", " ", " ", " ", " " }, new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix });
 				}
 			}
 		}
@@ -841,18 +852,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestSpacesBetweenWords()
 		{
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase>" +
-			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
-			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-			"<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">space</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">space</item></word>" +
-			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">space</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">space</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -862,9 +873,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
 					var para = imported.ContentsOA[0];
-					var spaceOne = para.Contents.Text.Substring(1, 1); //should be: " "
-					var wordAfter = para.Contents.Text.Substring(2, 5); //should be: "space"
-					var spaceTwo = para.Contents.Text.Substring(7, 1); //should be: " "
+					//should be: " "
+					var spaceOne = para.Contents.Text.Substring(1, 1);
+					//should be: "space"
+					var wordAfter = para.Contents.Text.Substring(2, 5);
+					//should be: " "
+					var spaceTwo = para.Contents.Text.Substring(7, 1);
 					//test to make sure no space was inserted before the first word.
 					Assert.IsFalse(" ".Equals(para.Contents.GetSubstring(0, 1)));
 					//test to make sure spaces were inserted between "a" and "space", and between "space" and "space"
@@ -878,18 +892,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestProvidedTextUsedIfPresent()
 		{
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase>" +
-			"<item type=\"txt\" lang=\"en\">Text not built from words.</item>" +
-			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
-			"<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">space</item></word>" +
-			"<word><item type=\"txt\" lang=\"en\">space</item></word>" +
-			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase>" +
+							   "<item type=\"txt\" lang=\"en\">Text not built from words.</item>" +
+							   "<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+							   "<words><word><item type=\"txt\" lang=\"en\">a</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">space</item></word>" +
+							   "<word><item type=\"txt\" lang=\"en\">space</item></word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -907,12 +921,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void TestEmptyParagraph()
 		{
-			string xml = "<document><interlinear-text>" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph/></paragraphs></interlinear-text></document>";
+			const string xml = "<document><interlinear-text>" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph/></paragraphs></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -940,7 +954,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				"<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -989,8 +1003,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from second import not merged with the first.");
 					VerifyMediaLink(text);
 					var mediaContainerGuid = text.MediaFilesOA.Guid;
-					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
-						"Guid not maintained during import.");
+					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid, "Guid not maintained during import.");
 					Assert.AreEqual(@"file:\\test.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
 					using (var thirdStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.Replace("test.wav", "retest.wav").ToCharArray())))
 					{
@@ -1002,8 +1015,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from third import not merged with the extant.");
 						VerifyMediaLink(text);
 						Assert.AreEqual(mediaContainerGuid, text.MediaFilesOA.Guid, "Merging should not replace the media container.");
-						Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
-							"Guid not maintained during import.");
+						Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid, "Guid not maintained during import.");
 						Assert.AreEqual(@"file:\\retest.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not updated.");
 					}
 				}
@@ -1030,11 +1042,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Text not imported properly.");
 				Assert.AreEqual(1, firstText.ContentsOA.ParagraphsOS.Count, "Text not imported properly.");
 				Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "Text not imported properly.");
-				//Assert.AreEqual("TODO: B", firstText.ContentsOA.ParagraphsOS.);
 				VerifyMediaLink(firstText);
 				var mediaContainerGuid = firstText.MediaFilesOA.Guid;
-				Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
-					"Guid not maintained during import.");
+				Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid, "Guid not maintained during import.");
 				Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.Replace("test.wav", "retest.wav").ToCharArray())))
 				{
@@ -1047,8 +1057,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "First text should remain unchanged.");
 					VerifyMediaLink(firstText);
 					Assert.AreEqual(mediaContainerGuid, firstText.MediaFilesOA.Guid, "First text should remain unchanged.");
-					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
-						"First text should remain unchanged.");
+					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid, "First text should remain unchanged.");
 					Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "First text should remain unchanged.");
 
 					Assert.AreNotEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), secondText.Guid, "Second text should have a unique Guid.");
@@ -1056,89 +1065,48 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Assert.AreEqual(1, secondText.ContentsOA[0].SegmentsOS.Count, "Second text not imported properly.");
 					VerifyMediaLink(secondText);
 					Assert.AreNotEqual(mediaContainerGuid, secondText.MediaFilesOA.Guid, "Second text's media container should have a unique Guid.");
-					Assert.AreNotEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), secondText.MediaFilesOA.MediaURIsOC.First().Guid,
-						"Second text's media URI should have a unique Guid.");
+					Assert.AreNotEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), secondText.MediaFilesOA.MediaURIsOC.First().Guid, "Second text's media URI should have a unique Guid.");
 					Assert.AreEqual(@"file:\\retest.wav", secondText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
 				}
-			}
-		}
-
-		/// <summary>LinguaLinksImport for testing the choice to merge, without actually showing the dialog during unit tests</summary>
-		internal class LLIMergeExtension : LinguaLinksImport
-		{
-			/// <summary/>
-			public int NumTimesDlgShown { get; private set; }
-
-			/// <summary />
-			public LLIMergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
-			{
-				NumTimesDlgShown = 0;
-			}
-
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
-			{
-				NumTimesDlgShown++;
-				return DialogResult.Yes;
-			}
-		}
-
-		/// <summary>LinguaLinksImport for testing the choice NOT to merge, without actually showing the dialog during unit tests</summary>
-		internal class LLINomergeExtension : LinguaLinksImport
-		{
-			/// <summary/>
-			public int NumTimesDlgShown { get; private set; }
-
-			/// <summary/>
-			public LLINomergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
-			{
-				NumTimesDlgShown = 0;
-			}
-
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
-			{
-				NumTimesDlgShown++;
-				return DialogResult.No;
 			}
 		}
 
 		[Test]
 		public void TestImportCreatesPersonForSpeaker()
 		{
-			string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase speaker=\"Jimmy Dorante\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
-			"<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
-			"<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
-			"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
+			const string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase speaker=\"Jimmy Dorante\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
+							   "<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
+							   "<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
+							   "<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
 
-				Assert.AreEqual("Jimmy Dorante",
-					(Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text,
-					"Speaker was not created during the import.");
+				Assert.AreEqual("Jimmy Dorante", (Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text, "Speaker was not created during the import.");
 			}
 		}
 
 		[Test]
 		public void TestImportCreatesReusesExistingSpeaker()
 		{
-			string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase speaker=\"Jimmy Dorante\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
-			"<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
-			"<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
-			"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
+			const string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
+							   "<item type=\"title\" lang=\"en\">wordspace</item>" +
+							   "<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+							   "<paragraphs><paragraph><phrases><phrase speaker=\"Jimmy Dorante\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
+							   "<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
+							   "<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
+							   "<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
 
 			ICmPerson newPerson = null;
 			//Create and add Jimmy to the project.
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				() => {
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
 				Cache.LanguageProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				//person not found create one and add it.
 				newPerson = Cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create();
@@ -1147,7 +1115,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			});
 			Assert.NotNull(newPerson);
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			var li = new LinguaLinksImport(Cache, null, null);
 			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
@@ -1171,6 +1139,25 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.AreEqual("1", seg.BeginTimeOffset, "Begin offset not imported correctly");
 				Assert.AreEqual("2", seg.EndTimeOffset, "End offset not imported correctly");
 				Assert.AreEqual(seg.MediaURIRA, mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
+			}
+		}
+
+		/// <summary>LinguaLinksImport for testing the choice NOT to merge, without actually showing the dialog during unit tests</summary>
+		private sealed class LLINomergeExtension : LinguaLinksImport
+		{
+			/// <summary />
+			public int NumTimesDlgShown { get; private set; }
+
+			/// <summary />
+			public LLINomergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			{
+				NumTimesDlgShown = 0;
+			}
+
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			{
+				NumTimesDlgShown++;
+				return DialogResult.No;
 			}
 		}
 	}

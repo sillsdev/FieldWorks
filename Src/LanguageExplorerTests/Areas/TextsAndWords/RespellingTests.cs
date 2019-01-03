@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,13 +13,13 @@ using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords
@@ -30,7 +30,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		private const int kObjectListFlid = 89999956;
 		private FlexComponentParameters _flexComponentParameters;
 
-	#region Overrides of FdoTestBase
+		#region Overrides of FdoTestBase
 
 		public override void FixtureSetup()
 		{
@@ -44,12 +44,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Done before each test.
 		/// Overriders should call base method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -58,11 +56,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Done after each test.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			try
@@ -72,7 +68,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 				}
 				Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
-
 				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>("InterestingTexts");
 				if (interestingTextlist != null)
 				{
@@ -93,16 +88,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			}
 		}
 
-	#endregion
+		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating multiple spelling changes in a single segment in a paragraph. Should
 		/// be possible to undo this change. This test was written for TE-9243, but then we
 		/// realized that it actually worked fine all along. Still a nice test though, don't you
 		/// think?
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InSingleSegment()
 		{
@@ -110,9 +103,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, false, out para);
+			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
@@ -132,9 +123,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
 			const string ksWordToReplace = "somelongwords";
 			const string ksNewWord = "s";
-
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, false, out para);
+			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
@@ -154,13 +143,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "somelongwords must be multimorphemic. somelongwords multimorphemic are.";
 			const string ksWordToReplace = "multimorphemic";
 			const string ksNewWord = "massivemorphemic";
-			var morphs = new [] { "multi", "morphemic" };
+			var morphs = new[] { "multi", "morphemic" };
+			var respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(ksParaText, ksWordToReplace, ksNewWord, morphs, out para);
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(ksParaText,
-				ksWordToReplace, ksNewWord, morphs, out para);
-
-			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
-				"Should have 2 morph bundles before spelling change.");
+			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, "Should have 2 morph bundles before spelling change.");
 
 			respellUndoaction.AllChanged = true;
 			respellUndoaction.KeepAnalyses = true;
@@ -169,25 +155,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 
 			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
 
-			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
-				"Unexpected morph bundle contents for 'be'");
-			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
-				"Wrong morph bundle count for 'multimorphemic'");
-			Assert.AreEqual(0, para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
-				"Unexpected morph bundle contents for 'are'");
-			Assert.AreEqual(2, para.SegmentsOS[1].AnalysesRS[1].Analysis.MorphBundlesOS.Count,
-				"Wrong morph bundle count for 'multimorphemic'");
+			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count, "Unexpected morph bundle contents for 'be'");
+			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, "Wrong morph bundle count for 'multimorphemic'");
+			Assert.AreEqual(0, para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count, "Unexpected morph bundle contents for 'are'");
+			Assert.AreEqual(2, para.SegmentsOS[1].AnalysesRS[1].Analysis.MorphBundlesOS.Count, "Wrong morph bundle count for 'multimorphemic'");
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating multiple spelling changes in multiple segments in a single
 		/// paragraph. Should be possible to undo this change. TE-9243.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara()
 		{
@@ -195,8 +175,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, false, out para);
+			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
@@ -209,12 +188,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating multiple spelling changes in a single segment in a paragraph. Should
 		/// be possible to undo this change.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InSingleSegment_Glosses()
 		{
@@ -222,9 +199,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, true, out para);
+			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, true, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
@@ -242,12 +217,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating multiple spelling changes in multiple segments in a single
 		/// paragraph. Should be possible to undo this change. FWR-3424.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara_Glosses()
 		{
@@ -255,14 +228,15 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, true, out para);
+			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, true, out para);
 
 			UndoableUnitOfWorkHelper.Do("Undo Added BT", "Redo Added BT", m_actionHandler, () =>
 			{
-				int i = 0;
-				foreach (ISegment seg in para.SegmentsOS)
+				var i = 0;
+				foreach (var seg in para.SegmentsOS)
+				{
 					seg.FreeTranslation.SetAnalysisDefaultWritingSystem("Segment " + (i++) + " FT");
+				}
 			});
 
 			respellUndoaction.AllChanged = false;
@@ -300,12 +274,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		}
 
 #if RANDYTODO
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating single spelling change in a single segment in a paragraph. Should
 		/// be possible to undo this change.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CanUndoChangeSingleOccurrence_InSingleSegment()
 		{
@@ -331,7 +303,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		}
 #endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets up para and respell undo action.
 		/// </summary>
@@ -344,36 +315,28 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <param name="para">The para.</param>
 		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
 		/// occurrences of a word</returns>
-		/// ------------------------------------------------------------------------------------
-		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText,
-			string sWordToReplace, string sNewWord, bool fCreateGlosses, out IStTxtPara para)
+		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText, string sWordToReplace, string sNewWord, bool fCreateGlosses, out IStTxtPara para)
 		{
-			return SetUpParaAndRespellUndoAction(sParaText, sWordToReplace, sNewWord,
-				fCreateGlosses, ScrTxtParaTags.kClassId, out para);
+			return SetUpParaAndRespellUndoAction(sParaText, sWordToReplace, sNewWord, fCreateGlosses, ScrTxtParaTags.kClassId, out para);
 		}
 
-		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText,
-			string sWordToReplace, string sNewWord, bool fCreateGlosses, int clidPara,
-			out IStTxtPara para)
+		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText, string sWordToReplace, string sNewWord, bool fCreateGlosses, int clidPara, out IStTxtPara para)
 		{
-			List<IParaFragment> paraFrags = new List<IParaFragment>();
+			var paraFrags = new List<IParaFragment>();
 			IStTxtPara paraT = null;
 			IStText stText = null;
 			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
 			{
-				var lp = Cache.LanguageProject;
 				if (clidPara == ScrTxtParaTags.kClassId)
 				{
-					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
+					var book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
-						new object[] { book.Guid });
+					var owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic, new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
 				else
 				{
-					var proj = Cache.LangProject;
 					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
@@ -381,7 +344,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					stText.ParagraphsOS.Add(paraT);
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
-				foreach (ISegment seg in paraT.SegmentsOS)
+				foreach (var seg in paraT.SegmentsOS)
 				{
 					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
 					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
@@ -389,17 +352,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
+			{
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+			}
 			else
+			{
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
+			}
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.InitializeFlexComponent(_flexComponentParameters);
 			rsda.SetOccurrences(0, paraFrags);
-			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var publisher = new ObjectListPublisher(rsda, kObjectListFlid);
+			var xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
 			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
@@ -408,14 +375,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
-			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
+			foreach (var hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
+			{
 				respellUndoaction.AddOccurrence(hvoFake);
-
+			}
 			para = paraT;
 			return respellUndoaction;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets up para and respell undo action.
 		/// </summary>
@@ -426,36 +393,28 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <param name="para">The para.</param>
 		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
 		/// occurrences of a word</returns>
-		/// ------------------------------------------------------------------------------------
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
-			string sWordToReplace, string sNewWord, string[] morphs, out IStTxtPara para)
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText, string sWordToReplace, string sNewWord, string[] morphs, out IStTxtPara para)
 		{
-			return SetUpParaAndRespellUndoAction_MultiMorphemic(sParaText, sWordToReplace, sNewWord,
-				morphs, ScrTxtParaTags.kClassId, out para);
+			return SetUpParaAndRespellUndoAction_MultiMorphemic(sParaText, sWordToReplace, sNewWord, morphs, ScrTxtParaTags.kClassId, out para);
 		}
 
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
-			string sWordToReplace, string sNewWord, string[] morphsToCreate, int clidPara,
-			out IStTxtPara para)
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText, string sWordToReplace, string sNewWord, string[] morphsToCreate, int clidPara, out IStTxtPara para)
 		{
-			List<IParaFragment> paraFrags = new List<IParaFragment>();
+			var paraFrags = new List<IParaFragment>();
 			IStTxtPara paraT = null;
 			IStText stText = null;
 			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
 			{
-				var lp = Cache.LanguageProject;
 				if (clidPara == ScrTxtParaTags.kClassId)
 				{
-					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
+					var book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
-						new object[] { book.Guid });
+					var owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic, new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
 				else
 				{
-					var proj = Cache.LangProject;
 					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
@@ -463,7 +422,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					stText.ParagraphsOS.Add(paraT);
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
-				foreach (ISegment seg in paraT.SegmentsOS)
+				foreach (var seg in paraT.SegmentsOS)
 				{
 					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
 					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
@@ -473,17 +432,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
+			{
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+			}
 			else
+			{
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
+			}
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.InitializeFlexComponent(_flexComponentParameters);
 			rsda.SetOccurrences(0, paraFrags);
-			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var publisher = new ObjectListPublisher(rsda, kObjectListFlid);
+			var xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
 			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
@@ -492,9 +455,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
-			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
+			foreach (var hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
+			{
 				respellUndoaction.AddOccurrence(hvoFake);
-
+			}
 			para = paraT;
 			return respellUndoaction;
 		}
@@ -508,7 +472,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			{
 				var analysis = wordform.AnalysesOC.First();
 				if (analysis.MorphBundlesOS.Count != 0)
+				{
 					continue;
+				}
 				foreach (var morpheme in morphsToCreate)
 				{
 					var bundle = morphFact.Create();
@@ -518,18 +484,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enumerates the para fragments for all occurrences of the given word in the given
 		/// segment.
 		/// </summary>
 		/// <param name="seg">The segment.</param>
 		/// <param name="word">The word to find.</param>
-		/// ------------------------------------------------------------------------------------
 		private IEnumerable<IParaFragment> GetParaFragmentsInSegmentForWord(ISegment seg, string word)
 		{
 			IAnalysis analysis = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs, word);
-			int ichStart = 0;
+			var ichStart = 0;
 			int ichWe;
 			while ((ichWe = seg.BaselineText.Text.IndexOf(word, ichStart)) >= 0)
 			{

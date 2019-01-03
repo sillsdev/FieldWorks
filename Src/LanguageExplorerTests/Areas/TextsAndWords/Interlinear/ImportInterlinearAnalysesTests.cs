@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,31 +8,27 @@ using System.Linq;
 using System.Text;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
-		private MemoryStream m_Stream;
+		private MemoryStream m_stream;
 
 		#region Overrides of LcmTestBase
 
 		public override void TestTearDown()
 		{
-			m_Stream?.Dispose();
-			m_Stream = null;
+			m_stream?.Dispose();
+			m_stream = null;
 			base.TestTearDown();
 		}
 
@@ -40,22 +36,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		private ImportInterlinearOptions CreateImportInterlinearOptions(string xml)
 		{
-			m_Stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray()));
+			m_stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray()));
 			return new ImportInterlinearOptions
-				{
-					AnalysesLevel = ImportAnalysesLevel.WordGloss,
+			{
+				AnalysesLevel = ImportAnalysesLevel.WordGloss,
 
-					BirdData = m_Stream,
-					Progress = new DummyProgressDlg(),
-					AllottedProgress = 0
-				};
+				BirdData = m_stream,
+				Progress = new DummyProgressDlg(),
+				AllottedProgress = 0
+			};
 		}
 
 		[Test]
 		public void ImportNewHumanApprovedByDefaultWordGloss()
 		{
 			var wsf = Cache.WritingSystemFactory;
-
 			const string xml = "<document><interlinear-text>" +
 				"<paragraphs><paragraph><phrases><phrase><words>" +
 					"<word>" +
@@ -63,8 +58,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						"<item type='gls' lang='pt'>absurdo</item>" +
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
@@ -125,8 +119,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						"<item type='gls' lang='pt' analysisStatus='humanApproved'>absurdo</item>" +
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
@@ -164,7 +157,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ImportNewHumanApprovedWordGloss_WsAlternatives()
 		{
 			var wsf = Cache.WritingSystemFactory;
-
 			const string xml = "<document><interlinear-text>" +
 				"<paragraphs><paragraph><phrases><phrase><words>" +
 					"<word>" +
@@ -173,8 +165,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						"<item type='gls' lang='fr' analysisStatus='humanApproved'>absierd</item>" +
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
@@ -186,9 +177,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				Assert.IsNotNull(para);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
-				int wsWordform = wsf.get_Engine("en").Handle;
-				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				var wsWordform = wsf.get_Engine("en").Handle;
+				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
@@ -217,8 +207,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						"<item type='gls' lang='pt' analysisStatus='guessByHumanApproved'>absurdo</item>" +
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
@@ -230,8 +219,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				Assert.IsNotNull(para);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
-				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNull(at.Gloss, "Analysis should not be WfiGloss");
 				// assert that nothing else was created
@@ -252,7 +240,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
-			Guid segGuid = new Guid();
+			var segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
@@ -262,10 +250,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
 				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
+				var segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
-					wsf.get_Engine("en").Handle);
+				var wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
@@ -279,8 +266,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						"<item type='gls' lang='pt'>absurdo</item>" +
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -312,8 +298,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
-				Assert.That(importedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(importedWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(importedWord.Guid, Is.EqualTo(word.Guid));
 				// assert that nothing else was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
@@ -343,17 +328,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
 				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
+				var segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
-					wsf.get_Engine("en").Handle);
+				var wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+			var xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
 				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word guid='" + word.Guid + "'>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
@@ -361,7 +345,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -394,8 +378,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
-				Assert.That(importedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(importedWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 
 				// assert that nothing else was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
@@ -422,14 +405,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				var para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
 				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
-				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
+				var segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
-					wsf.get_Engine("en").Handle);
+				var wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				var analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(word);
@@ -438,7 +420,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			});
 
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+			var xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
 				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
@@ -446,7 +428,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -473,8 +455,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
-				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
 				// assert that nothing else was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
@@ -501,13 +482,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				var para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
 				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
+				var segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
-					wsf.get_Engine("en").Handle);
+				var wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				var analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(word);
@@ -516,7 +496,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			});
 
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+			var xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
 				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
@@ -524,7 +504,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -556,8 +536,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
-				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
 			}
 		}
@@ -580,13 +559,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				var para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
 				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
+				var segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
-					wsf.get_Engine("en").Handle);
+				var wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				var newWfiAnalysis = sl.GetInstance<IWfiAnalysisFactory>().Create();
@@ -595,7 +573,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			});
 
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+			var xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
 				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
@@ -603,7 +581,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					"</word>" +
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -633,8 +611,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
-				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
 
 				// make sure nothing else changed
@@ -653,14 +630,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ImportUnknownPhraseWholeSegmentNoVersion_MakesSeparateWords()
 		{
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
-				"<word>" +
-					"<item type='txt' lang='en'>this is not a phrase</item>" +
-				"</word>" +
-				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			const string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+							   "<paragraphs><paragraph><phrases><phrase><words>" +
+							   "<word>" +
+							   "<item type='txt' lang='en'>this is not a phrase</item>" +
+							   "</word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -678,20 +654,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ImportKnownPhraseWholeSegmentNoVersion_MakesPhrase()
 		{
 			// import an analysis with word gloss
-			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-						 "<paragraphs><paragraph><phrases><phrase><words>" +
-						 "<word>" +
-							"<item type='txt' lang='en'>this is a phrase</item>" +
-						 "</word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
-				() =>
+			const string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+							   "<paragraphs><paragraph><phrases><phrase><words>" +
+							   "<word>" +
+							   "<item type='txt' lang='en'>this is a phrase</item>" +
+							   "</word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
 			{
 				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-				int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 				wf.Form.set_String(wsEn, TsStringUtils.MakeString("this is a phrase", wsEn));
 			});
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -705,14 +680,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ImportUnknownPhraseWholeSegmentVersion_MakesPhrase()
 		{
 			// import an analysis with word gloss
-			string xml = "<document version=\"2\"><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-						 "<paragraphs><paragraph><phrases><phrase><words>" +
-						 "<word>" +
-							"<item type='txt' lang='en'>this is not a phrase</item>" +
-						 "</word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			const string xml = "<document version=\"2\"><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+							   "<paragraphs><paragraph><phrases><phrase><words>" +
+							   "<word>" +
+							   "<item type='txt' lang='en'>this is not a phrase</item>" +
+							   "</word>" +
+							   "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			var li = new LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
 			IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
@@ -741,10 +715,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						<item type='gls' lang='en'>phrase gloss</item>
 					  </word>
 				</document>";
-
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			var li = new LLIMergeExtension(Cache, null, null);
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 		}
 
 		[Test]
@@ -762,9 +734,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			var li = new LLIMergeExtension(Cache, null, null);
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedonce");
@@ -793,15 +764,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 
 			// First import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			// Second Import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedonce");
@@ -831,9 +800,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			var li = new LLIMergeExtension(Cache, null, null);
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedtwice");
@@ -865,14 +833,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			// First import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			// Second import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedtwice");
@@ -903,9 +869,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			var li = new LLIMergeExtension(Cache, null, null);
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "support a phrase");
@@ -934,13 +899,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					  </word>
 				</document>";
 
-			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			// First Import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 			// Second Import
-			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "support a phrase");

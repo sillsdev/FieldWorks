@@ -1,14 +1,13 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -36,7 +35,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void AddFields()
 		{
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
+			var choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			choices.Add(InterlinLineChoices.kflidWord);
 			choices.Add(InterlinLineChoices.kflidLexEntries);
 			choices.Add(InterlinLineChoices.kflidWordGloss);
@@ -76,20 +75,20 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.AreEqual(1, choices.FirstMorphemeIndex);
 			Assert.AreEqual(1, choices.FirstLexEntryIndex);
 
-			Assert.IsTrue(choices[1].LexEntryLevel);	// lex entries
-			Assert.IsTrue(choices[2].LexEntryLevel);	// lex pos
-			Assert.IsTrue(choices[3].LexEntryLevel);	// lex gloss
-			Assert.IsTrue(choices[4].LexEntryLevel);	// lex gloss
-			Assert.IsFalse(choices[0].LexEntryLevel);	// word
-			Assert.IsFalse(choices[5].LexEntryLevel);	// word gloss
-			Assert.IsFalse(choices[6].LexEntryLevel);	// word pos
-			Assert.IsFalse(choices[7].LexEntryLevel);	// free trans
+			Assert.IsTrue(choices[1].LexEntryLevel);    // lex entries
+			Assert.IsTrue(choices[2].LexEntryLevel);    // lex pos
+			Assert.IsTrue(choices[3].LexEntryLevel);    // lex gloss
+			Assert.IsTrue(choices[4].LexEntryLevel);    // lex gloss
+			Assert.IsFalse(choices[0].LexEntryLevel);   // word
+			Assert.IsFalse(choices[5].LexEntryLevel);   // word gloss
+			Assert.IsFalse(choices[6].LexEntryLevel);   // word pos
+			Assert.IsFalse(choices[7].LexEntryLevel);   // free trans
 
 			choices.Add(InterlinLineChoices.kflidMorphemes);
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(1, choices.FirstMorphemeIndex);	// morpheme line
-			Assert.AreEqual(2, choices.FirstLexEntryIndex);	// lex entry
-			Assert.IsFalse(choices[1].LexEntryLevel);	// morphemes
+			Assert.AreEqual(1, choices.FirstMorphemeIndex); // morpheme line
+			Assert.AreEqual(2, choices.FirstLexEntryIndex); // lex entry
+			Assert.IsFalse(choices[1].LexEntryLevel);   // morphemes
 		}
 		[Test]
 		public void AddRemoveEditFields()
@@ -159,7 +158,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[Test]
 		public void MoveUp()
 		{
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
+			var choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			// To make it less confusing, here we add them in an order that does not produce
 			// reordering.
 			MakeStandardState(choices);
@@ -228,15 +227,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// To make it less confusing, here we add them in an order that does not produce
 			// reordering.
 			MakeStandardState(choices);
-			//choices.Add(InterlinLineChoices.kflidWord); // 0
-			//choices.Add(InterlinLineChoices.kflidMorphemes); // 1
-			//choices.Add(InterlinLineChoices.kflidLexEntries); //2
-			//choices.Add(InterlinLineChoices.kflidLexGloss); //3
-			//choices.Add(InterlinLineChoices.kflidLexPos); //4
-			//choices.Add(InterlinLineChoices.kflidWordGloss); //5
-			//choices.Add(InterlinLineChoices.kflidWordPos); //6
-			//choices.Add(InterlinLineChoices.kflidFreeTrans); //7
-			//choices.Add(InterlinLineChoices.kflidLitTrans); //8
 
 			Assert.IsFalse(choices.OkToMoveUp(0)); // words line already at top
 			Assert.IsTrue(choices.OkToMoveUp(1)); // morphemes
@@ -382,6 +372,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidWord);
 			Assert.AreEqual(2, wsList.Count);
 		}
+
 		private void MakeStandardState(InterlinLineChoices choices)
 		{
 			choices.Add(InterlinLineChoices.kflidWord); // 0
@@ -394,10 +385,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			choices.Add(InterlinLineChoices.kflidFreeTrans); //7
 			choices.Add(InterlinLineChoices.kflidLitTrans); //8
 		}
+
 		[Test]
 		public void MoveDown()
 		{
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
+			var choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			// To make it less confusing, here we add them in an order that does not produce
 			// reordering.
 			MakeStandardState(choices);
@@ -458,24 +450,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// reordering.
 			MakeStandardState(choices);
 
-			//choices.Add(InterlinLineChoices.kflidWord); // 0
-			//choices.Add(InterlinLineChoices.kflidMorphemes); // 1
-			//choices.Add(InterlinLineChoices.kflidLexEntries); //2
-			//choices.Add(InterlinLineChoices.kflidLexGloss); //3
-			//choices.Add(InterlinLineChoices.kflidLexPos); //4
-			//choices.Add(InterlinLineChoices.kflidWordGloss); //5
-			//choices.Add(InterlinLineChoices.kflidWordPos); //6
-			//choices.Add(InterlinLineChoices.kflidFreeTrans); //7
-			//choices.Add(InterlinLineChoices.kflidLitTrans); //8
-
 			Assert.IsTrue(choices.OkToMoveDown(0)); // word line
 			Assert.IsTrue(choices.OkToMoveDown(1)); // morphemes
 			Assert.IsTrue(choices.OkToMoveDown(2)); // lex entries
 			Assert.IsTrue(choices.OkToMoveDown(3));  // lex gloss
-			Assert.IsTrue(choices.OkToMoveDown(4));	 // lex pos -- whole morph bundle moves down
+			Assert.IsTrue(choices.OkToMoveDown(4));  // lex pos -- whole morph bundle moves down
 			Assert.IsTrue(choices.OkToMoveDown(5));  // Word gloss
 			Assert.IsFalse(choices.OkToMoveDown(6)); // Word pos can't go past free
-			Assert.IsTrue(choices.OkToMoveDown(7));	 // free trans
+			Assert.IsTrue(choices.OkToMoveDown(7));  // free trans
 			Assert.IsFalse(choices.OkToMoveDown(8)); // lit trans -- last can't go down
 
 			choices.MoveDown(3);
@@ -522,19 +504,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var wsManager = new WritingSystemManager();
 			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
-			int wsEng = enWs.Handle;
+			var wsEng = enWs.Handle;
 
 			CoreWritingSystemDefinition frWs;
 			wsManager.GetOrSet("fr", out frWs);
-			int wsFrn = frWs.Handle;
+			var wsFrn = frWs.Handle;
 
 			CoreWritingSystemDefinition deWs;
 			wsManager.GetOrSet("de", out deWs);
-			int wsGer = deWs.Handle;
+			var wsGer = deWs.Handle;
 
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
+			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
 			MakeStandardState(choices);
-			string persist = choices.Persist(wsManager);
+			var persist = choices.Persist(wsManager);
 			choices = InterlinLineChoices.Restore(persist, wsManager, m_lp, wsFrn, wsEng);
 
 			Assert.AreEqual(InterlinLineChoices.kflidWord, choices[0].Flid);
@@ -575,29 +557,29 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var wsManager = new WritingSystemManager();
 			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
-			int wsEng = enWs.Handle;
+			var wsEng = enWs.Handle;
 
 			CoreWritingSystemDefinition frWs;
 			wsManager.GetOrSet("fr", out frWs);
-			int wsFrn = frWs.Handle;
+			var wsFrn = frWs.Handle;
 
 			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
 			MakeStandardState(choices);
-			InterlinLineSpec spec = choices[1];
+			var spec = choices[1];
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, spec.Flid);
 			// The StringFlid for this line spec always corresponds to a MoForm
 			Assert.AreEqual(MoFormTags.kflidForm, spec.StringFlid);
 
 			IWfiWordform wf;
 			IWfiAnalysis wag;
-			ITsString str = TsStringUtils.MakeString("WordForm", spec.WritingSystem);
-			IWfiMorphBundle wmb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+			var str = TsStringUtils.MakeString("WordForm", spec.WritingSystem);
+			var wmb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(str);
 				wag = WordAnalysisOrGlossServices.CreateNewAnalysisWAG(wf);
 				wag.MorphBundlesOS.Add(wmb);
-				ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				IMoForm moForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entry.AlternateFormsOS.Add(moForm);
 				moForm.Form.set_String(spec.WritingSystem, "Morph");
@@ -606,8 +588,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// The line spec for displaying the Morpheme must be able to handle getting the ws from both
 			// MorphBundles or MoForms
 			Assert.True(spec.Flid == InterlinLineChoices.kflidMorphemes);
-			int wmbWs = spec.GetActualWs(Cache, wmb.Hvo, spec.WritingSystem);
-			int mfWs = spec.GetActualWs(Cache, wmb.MorphRA.Hvo, spec.WritingSystem);
+			var wmbWs = spec.GetActualWs(Cache, wmb.Hvo, spec.WritingSystem);
+			var mfWs = spec.GetActualWs(Cache, wmb.MorphRA.Hvo, spec.WritingSystem);
 			Assert.True(wmbWs == spec.WritingSystem);
 			Assert.True(mfWs == spec.WritingSystem);
 		}

@@ -1,33 +1,31 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using LanguageExplorer.Areas;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
-using System.Collections.Generic;
-using LanguageExplorer.Areas;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Areas
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test exporting.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class ExportDialogTests
 	{
-	#region SemanticDomainXml
+		#region SemanticDomainXml
 		/// <summary>
 		/// The XML representation of a (tiny) subset of the Semantic Domains list.
 		/// </summary>
-		public readonly string s_ksSemanticDomainsXml =
+		private readonly string s_ksSemanticDomainsXml =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
 			"<LangProject>" + Environment.NewLine +
 			"  <SemanticDomainList>" + Environment.NewLine +
@@ -451,11 +449,11 @@ namespace LanguageExplorerTests.Areas
 			"    </CmPossibilityList>" + Environment.NewLine +
 			"  </SemanticDomainList>" + Environment.NewLine +
 			"</LangProject>" + Environment.NewLine;
-	#endregion SemanticDomainXml
+		#endregion SemanticDomainXml
 
 		private LcmCache m_cache;
 
-	#region Setup and Helper Methods
+		#region Setup and Helper Methods
 
 		/// <summary>
 		/// Setup method: create a memory-only mock cache and empty language project.
@@ -463,12 +461,12 @@ namespace LanguageExplorerTests.Areas
 		[SetUp]
 		public void CreateMockCache()
 		{
-			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(),
-				FwDirectoryFinder.LcmDirectories, new LcmSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
+			{
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
+			}
 		}
 
 		/// <summary>
@@ -481,7 +479,7 @@ namespace LanguageExplorerTests.Areas
 			m_cache = null;
 		}
 
-	#endregion
+		#endregion
 
 		/// <summary>
 		/// Test the main options of ExportSemanticDomains.
@@ -501,64 +499,62 @@ namespace LanguageExplorerTests.Areas
 				var wss = new List<int> { m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en") };
 				exportDlg.SetTranslationWritingSystems(wss);
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, false });
 
 				string result;
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+				{
 					result = reader.ReadToEnd();
+				}
 				File.Delete(tempPath);
 				Assert.That(result, Is.StringContaining("What words refer to the sun?"));
 				Assert.That(result, Is.Not.StringContaining("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Is.Not.StringContaining("class: english"),
-					"English should not give anything the missing translation style");
+				Assert.That(result, Is.Not.StringContaining("class: english"), "English should not give anything the missing translation style");
 
 				wss.Clear();
 				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("fr"));
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, false });
 
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+				{
 					result = reader.ReadToEnd();
+				}
 				File.Delete(tempPath);
-				Assert.That(result, Is.Not.StringContaining("What words refer to the sun?"),
-					"french export should not have english questions");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
-					"French export should have the French question (not english class)");
+				Assert.That(result, Is.Not.StringContaining("What words refer to the sun?"), "french export should not have english questions");
+				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"), "French export should have the French question (not english class)");
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, true});
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, true });
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+				{
 					result = reader.ReadToEnd();
+				}
 				File.Delete(tempPath);
-				Assert.That(result, Is.StringContaining("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"),
-					"french export with all questions should have english where french is missing (in red)");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
-					"French export should have the French question (not red)");
-				Assert.That(result, Is.Not.StringContaining("What words refer to everything we can see"),
-					"French export should not have English alternative where French is present");
+				Assert.That(result, Is.StringContaining("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"), "french export with all questions should have english where french is missing (in red)");
+				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"), "French export should have the French question (not red)");
+				Assert.That(result, Is.Not.StringContaining("What words refer to everything we can see"), "French export should not have English alternative where French is present");
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void ExportTranslatedLists()
 		{
 			Assert.AreEqual(2, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count, "The number of top-level semantic domains");
-			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+			var repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.AreEqual(11, repoSemDom.Count, "The total number of semantic domains");
-			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
+			var wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
-			List<int> wses = new List<int> { wsFr };
-			TranslatedListsExporter exporter = new TranslatedListsExporter(lists, wses, null);
-			using (StringWriter w = new StringWriter())
+			var lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			var wses = new List<int> { wsFr };
+			var exporter = new TranslatedListsExporter(lists, wses, null);
+			using (var w = new StringWriter())
 			{
 				exporter.ExportTranslatedLists(w);
-				using (StringReader r = new StringReader(w.ToString()))
+				using (var r = new StringReader(w.ToString()))
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
@@ -988,7 +984,7 @@ namespace LanguageExplorerTests.Areas
 					Assert.AreEqual("<AUni ws=\"en\">(2) What words refer to the shape of a person's body?</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
-						Assert.AreEqual("<ExampleWords>", r.ReadLine());
+					Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">build, figure, physique, </AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</ExampleWords>", r.ReadLine());
@@ -1056,34 +1052,32 @@ namespace LanguageExplorerTests.Areas
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void ExportTranslatedLists2()
 		{
 			Assert.AreEqual(2, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count, "The number of top-level semantic domains");
-			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+			var repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.AreEqual(11, repoSemDom.Count, "The total number of semantic domains");
-			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
+			var wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
-			List<int> wses = new List<int> { wsFr };
-			TranslatedListsExporter exporter = new TranslatedListsExporter(lists, wses, null);
+			var lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			var wses = new List<int> { wsFr };
+			var exporter = new TranslatedListsExporter(lists, wses, null);
 
 			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Undo test", "Redo test"))
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
-				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
+				var sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
 				Assert.IsNotNull(sem1);
 				sem1.Name.set_String(wsFr, "L'univers physique");
 				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font référence à tout ce qu'on peut voir?");
 				sem1.QuestionsOS[0].ExampleWords.set_String(wsFr, "univers, ciel, terre");
 				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le rôle du prophète est alors de réveiller le courage et la foi en Dieu.");
-				ICmSemanticDomain sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
+				var sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
 				Assert.IsNotNull(sem11);
 				sem11.Name.set_String(wsFr, "Ciel");
 				sem11.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui signifient le ciel?");
@@ -1217,16 +1211,17 @@ namespace LanguageExplorerTests.Areas
 				// Set data to test.
 				for (var i = 0; i < m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Count; i++)
 				{
-					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i]  as ILexEntryInflType;
+					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i] as ILexEntryInflType;
 					if (possibility == null)
+					{
 						continue;
-
+					}
 					possibility.ReverseName.set_String(wsEn, string.Format("reverse name {0}", i));
 					possibility.ReverseAbbr.set_String(wsEn, string.Format("reverse abbreviation {0}", i));
 					possibility.GlossAppend.set_String(wsEn, string.Format("gloss append {0}", i));
 				}
 
-				var lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
+				var lists = new List<ICmPossibilityList> { m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
 
 				var wses = new List<int> { wsFr };
 				var exporter = new TranslatedListsExporter(lists, wses, null);

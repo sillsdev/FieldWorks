@@ -239,6 +239,20 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsBase.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsForELAN.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\LLIMergeExtension.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MockInterlinDocForAnalysis.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxForTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\TestableFocusBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DeleteListHelper.cs" />
+    <Compile Include="DeleteCustomListTestsBase.cs" />
     <Compile Include="Areas\StandFormatExportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
     <Compile Include="Controls\CollectorEnvTests.cs" />
@@ -297,7 +311,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ComboHandlerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModelTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysisTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxControllerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextRecordClerkTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoicesTests.cs" />
@@ -322,9 +336,6 @@
     <Compile Include="Areas\Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreakerTests.cs" />
-    <Compile Include="Areas\Lexicon\DummyReversalIndexEntrySlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\Lexicon\ReversalEntryViewTests.cs" />
     <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />

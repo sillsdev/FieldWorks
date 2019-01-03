@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,7 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorerTests.Areas.Lexicon
 {
-	public class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public sealed class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
@@ -19,7 +19,6 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		public override void TestSetup()
 		{
 			base.TestSetup();
-
 			m_revIndexRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 		}
@@ -30,7 +29,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		{
 			// verify test conditions
 			Assert.AreEqual(m_revIndexRepo.Count, 0, "Test setup is broken, should be no RIs");
-			Assert.DoesNotThrow(()=>SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache));
+			Assert.DoesNotThrow(() => SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache));
 		}
 
 		[Test]
@@ -41,24 +40,27 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			var subEntryB = CreateReversalIndexSubEntry("b", reversalMainEntry);
 			var subEntryA = CreateReversalIndexSubEntry("a", reversalMainEntry);
 			// Verify initial incorrect order
-			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new [] { subEntryZ, subEntryB, subEntryA});
+			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryZ, subEntryB, subEntryA });
+
 			// SUT
 			SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache);
+
+			// Verify
 			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
 		}
 
-		protected IReversalIndexEntry CreateReversalIndexEntry(string riForm)
+		private IReversalIndexEntry CreateReversalIndexEntry(string riForm)
 		{
 			var revIndexEntry = m_revIndexEntryFactory.Create();
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
-			IReversalIndex revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
-			//Add an entry to the Reveral index
+			var revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
+			//Add an entry to the Reversal index
 			revIndex.EntriesOC.Add(revIndexEntry);
 			revIndexEntry.ReversalForm.set_String(wsObj.Handle, TsStringUtils.MakeString(riForm, wsObj.Handle));
 			return revIndexEntry;
 		}
 
-		protected IReversalIndexEntry CreateReversalIndexSubEntry(string subEntryForm, IReversalIndexEntry indexEntry)
+		private IReversalIndexEntry CreateReversalIndexSubEntry(string subEntryForm, IReversalIndexEntry indexEntry)
 		{
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
 			var revIndexEntry = m_revIndexEntryFactory.Create();
