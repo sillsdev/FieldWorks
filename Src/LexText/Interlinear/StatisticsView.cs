@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -123,36 +124,33 @@ namespace SIL.FieldWorks.IText
 					numberOfSegments += text[index].SegmentsOS.Count;
 					//count all the things analyzed as words
 					var words = new List<IAnalysis>(text[index].Analyses);
-					foreach (var word in words)
+					var wordForms = new List<IWfiWordform>(words.Where(x => x.Wordform != null && x.Wordform.ShortName != "???").Select(y => y.Wordform));
+					foreach (var wordForm in wordForms)
 					{
-						var wordForm = word.Wordform;
-						if (wordForm != null)
+						var valdWSs = wordForm.Form.AvailableWritingSystemIds;
+						foreach (var ws in valdWSs)
 						{
-							var valdWSs = wordForm.Form.AvailableWritingSystemIds;
-							foreach (var ws in valdWSs)
+							// increase the count of words(tokens) for this language
+							int count = 0;
+							if (languageCount.TryGetValue(ws, out count))
 							{
-								// increase the count of words(tokens) for this language
-								int count = 0;
-								if (languageCount.TryGetValue(ws, out count))
-								{
-									languageCount[ws] = count + 1;
-								}
-								else
-								{
-									languageCount.Add(ws, 1);
-								}
-								//increase the count of unique words(types) for this language
-								HashSet<string> pair;
-								if (languageTypeCount.TryGetValue(ws, out pair))
-								{
-									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
-								}
-								else
-								{
-									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									languageTypeCount.Add(ws, new HashSet<string> {word.Wordform.Form.get_String(ws).Text.ToLower()});
-								}
+								languageCount[ws] = count + 1;
+							}
+							else
+							{
+								languageCount.Add(ws, 1);
+							}
+							//increase the count of unique words(types) for this language
+							HashSet<string> pair;
+							if (languageTypeCount.TryGetValue(ws, out pair))
+							{
+								//add the string for this writing system in all lower case to the set, unique count is case insensitive
+								pair.Add(wordForm.Form.get_String(ws).Text.ToLower());
+							}
+							else
+							{
+								//add the string for this writing system in all lower case to the set, unique count is case insensitive
+								languageTypeCount.Add(ws, new HashSet<string> {wordForm.Form.get_String(ws).Text.ToLower()});
 							}
 						}
 					}
