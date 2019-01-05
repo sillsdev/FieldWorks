@@ -1555,11 +1555,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Subscriber = flexComponentParameters.Subscriber;
 
 			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, cache.GetManagedSilDataAccess(), cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			if (_previewEntry == null)
 			{
 				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable), cache);
 			}
-			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, cache.GetManagedSilDataAccess(), cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			_projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable);
 			_defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(PropertyTable);
 			LoadDictionaryConfigurations();

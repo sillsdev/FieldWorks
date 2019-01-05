@@ -1,17 +1,22 @@
-﻿using System.Windows.Forms;
+// Copyright (c) 2014-2019 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using NUnit.Framework;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
+	[TestFixture]
 	public class UnicodeCharacterEditingHelperTests
 	{
 		[Test]
 		public void TextSuffixReturnsSame()
 		{
-			var errorMessage = "should not have changed an input that did not end in numbers";
-			string input = "xyz";
+			const string errorMessage = "should not have changed an input that did not end in numbers";
+			var input = "xyz";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter(input), Is.EqualTo(input), errorMessage);
 			input = "111jabcj2222xyz";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter(input), Is.EqualTo(input), errorMessage);
@@ -20,14 +25,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Ends in space
 			input = "1234 ";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter(input), Is.EqualTo(input), errorMessage);
-			input = "";
+			input = string.Empty;
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter(input), Is.EqualTo(input), errorMessage);
 		}
 
 		[Test]
 		public void EndingInNumberGivesConversion()
 		{
-			var errorMessage = "should have converted ending numbers to unicode character";
+			const string errorMessage = "should have converted ending numbers to unicode character";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("1234"), Is.EqualTo("\u1234"), "should have converted to unicode character");
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("222j333"), Is.EqualTo("222j\u0333"), errorMessage);
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("j333"), Is.EqualTo("j\u0333"), errorMessage);
@@ -35,7 +40,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("222j1234"), Is.EqualTo("222j\u1234"), errorMessage);
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("111jabc"), Is.EqualTo("111j\u0abc"), errorMessage);
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("BbzcCx111jAbC"), Is.EqualTo("BbzcCx111j\u0abc"), "Should have handled mixed-case hex digits");
-			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("11\n1jabc"), Is.EqualTo("11\n1j\u0abc"),"Should have worked even with a newline character in input");
+			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("11\n1jabc"), Is.EqualTo("11\n1j\u0abc"), "Should have worked even with a newline character in input");
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("FFFF"), Is.EqualTo("\uFFFF"), "should have supported high numbers");
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("111jedcb"), Is.EqualTo("111j\uedcb"), "should have supported high numbers");
 		}
@@ -49,7 +54,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void ManyDigitsAtEndOnlyAccountsForLastFour()
 		{
-			var errorMessage = "Only handle last 4 digits";
+			const string errorMessage = "Only handle last 4 digits";
 			// Only supporting 4 digits presently
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("111j12345"), Is.EqualTo("111j1\u2345"), errorMessage);
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("111jaaaaa"), Is.EqualTo("111ja\uaaaa"), errorMessage);
@@ -59,7 +64,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void AllowForUPlusNotation()
 		{
-			var errorMessage = "Handle U+ or u+ notation";
+			const string errorMessage = "Handle U+ or u+ notation";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("111jU+1234"), Is.EqualTo("111j\u1234"), errorMessage);
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalDigitsToCharacter("u+1234"), Is.EqualTo("\u1234"), errorMessage);
 		}
@@ -79,17 +84,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void CharacterToNumbersDoesNotOperateOnSurrogates()
 		{
-			string input;
-			input = "\uD834\uDD1E";
+			var input = "\uD834\uDD1E";
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalCharacterToCodepoint(input), Is.EqualTo(input), "Don't operate on surrogates");
 			input = "\U0001D11E";
-			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalCharacterToCodepoint(input), Is.EqualTo(input),"Don't operate on the resulting surrogates");
+			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalCharacterToCodepoint(input), Is.EqualTo(input), "Don't operate on the resulting surrogates");
 		}
 
 		[Test]
 		public void CharacterToNumbersIsNoopForEmptyOrNullInput()
 		{
-			string input = "";
+			var input = string.Empty;
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalCharacterToCodepoint(input), Is.EqualTo(input), "Don't change if empty string");
 			input = null;
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinalCharacterToCodepoint(input), Is.EqualTo(input), "Don't change if null");
@@ -112,10 +116,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 9;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Some \u1234text here"),
-					"The string should have been converted to include the unicode character");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(6),
-					"SelectionStart should have been moved back");
+				Assert.That(textBox.Text, Is.EqualTo("Some \u1234text here"), "The string should have been converted to include the unicode character");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(6), "SelectionStart should have been moved back");
 			}
 		}
 
@@ -129,10 +131,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 9;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Some \u1234"),
-					"The string should have been converted to include the unicode character");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(6),
-					"SelectionStart should have been moved back");
+				Assert.That(textBox.Text, Is.EqualTo("Some \u1234"), "The string should have been converted to include the unicode character");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(6), "SelectionStart should have been moved back");
 			}
 		}
 
@@ -146,10 +146,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 6;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Some 1234text here"),
-					"The string should have been converted the character back to numbers");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(9),
-					"SelectionStart should have been moved forward");
+				Assert.That(textBox.Text, Is.EqualTo("Some 1234text here"), "The string should have been converted the character back to numbers");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(9), "SelectionStart should have been moved forward");
 			}
 		}
 
@@ -163,10 +161,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 6;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Some 1234"),
-					"The string should have been converted the character back to numbers");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(9),
-					"SelectionStart should have been moved forward");
+				Assert.That(textBox.Text, Is.EqualTo("Some 1234"), "The string should have been converted the character back to numbers");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(9), "SelectionStart should have been moved forward");
 			}
 		}
 
@@ -185,10 +181,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 9;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Some∙[RLM]text∙here"),
-					"The string should have been converted to 'Some∙[RLM]text∙here'");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(10),
-					"SelectionStart should be positioned based on 200F converting to [RLM]");
+				Assert.That(textBox.Text, Is.EqualTo("Some∙[RLM]text∙here"), "The string should have been converted to 'Some∙[RLM]text∙here'");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(10), "SelectionStart should be positioned based on 200F converting to [RLM]");
 			}
 		}
 
@@ -203,10 +197,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textBox.SelectionStart = 9;
 
 				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
-				Assert.That(textBox.Text, Is.EqualTo("Blah∙[RLM]"),
-					"The string should have been converted to include the character and then to visible characters");
-				Assert.That(textBox.SelectionStart, Is.EqualTo(10),
-					"SelectionStart should be positioned based on 200F ultimately converting to [RLM]");
+				Assert.That(textBox.Text, Is.EqualTo("Blah∙[RLM]"), "The string should have been converted to include the character and then to visible characters");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(10), "SelectionStart should be positioned based on 200F ultimately converting to [RLM]");
 			}
 		}
 	}

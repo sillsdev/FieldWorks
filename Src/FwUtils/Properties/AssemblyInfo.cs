@@ -12,3 +12,4 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("FieldWorks")]
 [assembly: InternalsVisibleTo("FwUtilsTests")]
+[assembly: InternalsVisibleTo("LanguageExplorerTests")]

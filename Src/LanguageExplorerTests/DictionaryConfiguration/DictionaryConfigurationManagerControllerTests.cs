@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,14 +14,14 @@ using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.TestUtilities;
 using SIL.LCModel.Utils;
+using SIL.TestUtilities;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
@@ -32,7 +32,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private FlexComponentParameters _flexComponentParameters;
 		private DictionaryConfigurationManagerController _controller;
 		private List<DictionaryConfigurationModel> _configurations;
-
 		private readonly string _projectConfigPath = Path.GetTempPath();
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private IFileOS _mockFilesystem;
@@ -52,7 +51,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			_mockFilesystem = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(_mockFilesystem);
-
 			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
 			NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor, () =>
 			{
@@ -60,20 +58,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				_characterTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
 				_characterTestStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
 				var propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-					(int)ColorUtil.ConvertColorToBGR(Color.Red));
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvDefault,
-					(int)FwUnderlineType.kuntDouble);
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault,
-					(int)ColorUtil.ConvertColorToBGR(Color.Blue));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvDefault, (int)FwUnderlineType.kuntDouble);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Blue));
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "times");
 				_characterTestStyle.Rules = propsBldr.GetTextProps();
 				_paraTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "ParaTestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
 				propsBldr.Clear();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
-					(int)ColorUtil.ConvertColorToBGR(Color.Lime));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Lime));
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, -3000);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptTrailingIndent, (int)FwTextPropVar.ktpvDefault, 4000);
@@ -82,8 +76,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvDefault, 7000);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceAfter, (int)FwTextPropVar.ktpvDefault, 8000);
 				_paraTestStyle.Rules = propsBldr.GetTextProps();
-				_paraChildTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "ParaChildTesttStyle",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 3, false);
+				_paraChildTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "ParaChildTesttStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 3, false);
 				propsBldr.Clear();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalJustify);
 				_paraChildTestStyle.Rules = propsBldr.GetTextProps();
@@ -196,8 +189,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_controller.AssociatePublication("publicationB", _configurations[1]);
 			Assert.That(_configurations[1].Publications, Contains.Item("publicationA"), "failed to associate");
 			Assert.That(_configurations[1].Publications, Contains.Item("publicationB"), "failed to associate");
-			Assert.That(_configurations[0].Publications, Is.Not.Contains("publicationB"),
-				"should not have associated configuration0 with publicationB");
+			Assert.That(_configurations[0].Publications, Is.Not.Contains("publicationB"), "should not have associated configuration0 with publicationB");
 		}
 
 		[Test]
@@ -271,8 +263,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var selectedConfig = _configurations[0];
 			selectedConfig.FilePath = null;
 			// SUT
-			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
-				"Renaming a config to a unique name should complete successfully");
+			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)), "Renaming a config to a unique name should complete successfully");
 			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
 			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
 			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
@@ -304,10 +295,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				},
 				new DictionaryConfigurationModel
 				{
-					Label =
-						"conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
-					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"),
-						"configuration3_2" + LanguageExplorerConstants.DictionaryConfigurationFileExtension),
+					Label = "conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
+					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"), "configuration3_2" + LanguageExplorerConstants.DictionaryConfigurationFileExtension),
 					Publications = new List<string>()
 				}
 			};
@@ -394,7 +383,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(1, _configurations.Count(conf => newConfig.Label.Equals(conf.Label)), "The label should be unique");
 
 			Assert.AreEqual(pubs.Count, newConfig.Publications.Count, "Publications were not copied");
-			for (int i = 0; i < pubs.Count; i++)
+			for (var i = 0; i < pubs.Count; i++)
 			{
 				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
 			}
@@ -437,7 +426,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(configurationToDelete.FilePath, Is.Null, "Unit test not testing what it used to. Perhaps the code is smarter now.");
 
 			// SUT
-			Assert.DoesNotThrow(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
+			Assert.DoesNotThrow(() => _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
 			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 
@@ -447,7 +436,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentNullException>(() => _controller.DeleteConfiguration(null), "Failed to throw");
 		}
 
-	#region Insufficiently Mocked Tests - When DeleteConfiguration resets a config it loads the default config from the real filesystem
+		#region Insufficiently Mocked Tests - When DeleteConfiguration resets a config it loads the default config from the real filesystem
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
@@ -506,7 +495,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
 		}
-	#endregion
+		#endregion
 
 		[Test]
 		public void KnowsWhenNotAShippedDefault()
@@ -687,8 +676,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, expectedZipOutput, Cache);
 
 				Assert.That(File.Exists(expectedZipOutput), "File not exported");
-				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0),
-					"Exported file should have content");
+				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0), "Exported file should have content");
 
 				using (var zip = new ZipFile(expectedZipOutput))
 				{
@@ -698,7 +686,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			finally
 			{
 				if (expectedZipOutput != null)
+				{
 					File.Delete(expectedZipOutput);
+				}
 				FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 			}
 		}
@@ -707,8 +697,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void PrepareCustomFieldsExport_Works()
 		{
 			var customFieldLabel = "TestField";
-			using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
-				CellarPropertyType.OwningAtomic, Guid.Empty))
+			using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1, CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
 				// SUT
 				var customFieldFiles = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
@@ -743,8 +732,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Test that a child style gets the basedOn for paragraph and does not write out inherited values
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _paraChildTestStyle.Name + "']", 1);
-			attributeTests = string.Format("@basedOn='{0}' and @alignment='full' and not(@lineSpacing='3 pt') and not(@indentRight='4 pt')",
-				_paraTestStyle.Name);
+			attributeTests = string.Format("@basedOn='{0}' and @alignment='full' and not(@lineSpacing='3 pt') and not(@indentRight='4 pt')", _paraTestStyle.Name);
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
 
 			// LT-18267 Make sure character styles based on another style have their basedOn

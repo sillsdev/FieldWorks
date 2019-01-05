@@ -12,6 +12,7 @@ using LanguageExplorer.Impls;
 using LanguageExplorer.SfmToXml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
 
 namespace LanguageExplorerTests.Impls
@@ -290,7 +291,7 @@ namespace LanguageExplorerTests.Impls
 			}
 			finally
 			{
-				Directory.Delete(tempDir, true);
+				RobustIO.DeleteDirectoryAndContents(tempDir);
 			}
 		}
 

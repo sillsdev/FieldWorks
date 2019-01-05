@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,13 +12,13 @@ using System.Xml.Schema;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.IO;
-using SIL.TestUtilities;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
+using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -41,7 +41,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				<SharedItems/>" +
 			XmlCloseTagsFromRoot;
 		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
@@ -61,8 +60,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				CreateStyle(fact, "Dictionary-Headword", StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
-				CreateStyle(fact, "bold", StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
+				CreateStyle(fact, "Dictionary-Headword", StyleType.kstCharacter);   // needed by Load_LoadsBasicsAndDetails
+				CreateStyle(fact, "bold", StyleType.kstCharacter);                  // needed by Load_LoadsSenseOptions
 			});
 		}
 
@@ -273,7 +272,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void Load_LoadsPublications()
 		{
 			// "Main Dictionary" was added by base class
-			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+			var addedPublication = AddPublication("Another Dictionary");
 
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
@@ -301,12 +300,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
-					Cache.LangProject.LexDbOA.PublicationTypesOA =
-						Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				{
+					Cache.LangProject.LexDbOA.PublicationTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				}
 				result = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(result);
-				result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(publicationName,
-					Cache.DefaultAnalWs);
+				result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(publicationName, Cache.DefaultAnalWs);
 			});
 			return result;
 		}
@@ -331,7 +330,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void Load_NoPublicationsLoadsNoPublications()
 		{
 			// "Main Dictionary" was added by base class
-			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+			var addedPublication = AddPublication("Another Dictionary");
 
 			// Test three different possibilities of how no publications might present in the xml
 			foreach (string[] noPublicationsXml in m_NoPublicationsList)
@@ -343,7 +342,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 				}
 
-				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("",noPublicationsXml));
+				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("", noPublicationsXml));
 			}
 
 			RemovePublication(addedPublication);
@@ -353,7 +352,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void Load_AllPublicationsFlagCausesAllPublicationsReported()
 		{
 			// "Main Dictionary" was added by base class
-			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+			var addedPublication = AddPublication("Another Dictionary");
 
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
@@ -444,15 +443,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ShippedFilesHaveNoRedundantChildrenOrOrphans([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
+			foreach (var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				var model = new DictionaryConfigurationModel(shippedFile, Cache);
 				VerifyNoRedundantChildren(model.Parts);
 				if (model.SharedItems != null)
 				{
 					VerifyNoRedundantChildren(model.SharedItems);
-					foreach(var si in model.SharedItems)
+					foreach (var si in model.SharedItems)
+					{
 						Assert.NotNull(si.Parent, "Shared item {0} is an orphan", si.Label);
+					}
 				}
 			}
 		}
@@ -462,8 +463,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			foreach (var node in nodes)
 			{
 				Assert.That(string.IsNullOrEmpty(node.ReferenceItem) || node.Children == null || !node.Children.Any());
-				if(node.Children != null)
+				if (node.Children != null)
+				{
 					VerifyNoRedundantChildren(node.Children);
+				}
 			}
 		}
 
@@ -513,7 +516,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ShippedFilesValidateAgainstSchema([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
+			foreach (var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
 			}
@@ -523,7 +526,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ShippedFilesHaveCurrentVersion([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
+			foreach (var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, new DictionaryConfigurationModel(shippedFile, Cache).Version);
 			}
@@ -559,21 +562,21 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var modelFile = Path.GetTempFileName();
 			var firstNode = new ConfigurableDictionaryNode
-				{
-					Label = "Main Entry",
-					IsEnabled = true,
-					Before = "[",
-					FieldDescription = "LexEntry"
-				};
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry"
+			};
 
 			var secondNode = new ConfigurableDictionaryNode
-				{
-					Label = "Minor Entry",
-					Before = "{",
-					After = "}",
-					FieldDescription = "LexEntry",
-					IsEnabled = false
-				};
+			{
+				Label = "Minor Entry",
+				Before = "{",
+				After = "}",
+				FieldDescription = "LexEntry",
+				IsEnabled = false
+			};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -593,19 +596,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var modelFile = Path.GetTempFileName();
 			var headword = new ConfigurableDictionaryNode
-				{
-					Label = "Headword",
-					FieldDescription = "LexEntry, headword",
-					IsEnabled = true
-				};
+			{
+				Label = "Headword",
+				FieldDescription = "LexEntry, headword",
+				IsEnabled = true
+			};
 			var oneConfigNode = new ConfigurableDictionaryNode
-				{
-					Label = "Main Entry",
-					IsEnabled = true,
-					Before = "[",
-					FieldDescription = "LexEntry",
-					Children = new List<ConfigurableDictionaryNode> { headword }
-				};
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { headword }
+			};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -730,9 +733,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchConfigRoot, 1);
 			const string matchPictureOptions = matchConfigRoot + "/PictureOptions";
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchPictureOptions, 1);
-			var matchAllOptions = matchPictureOptions +
-			 String.Format("[@stackPictures='{0}' and @pictureLocation='{1}' and @maximumHeight='{2}' and @minimumHeight='{3}' and @maximumWidth='{4}' and @minimumWidth='{5}']",
-								"true", "left", maxHeight, minHeight, maxWidth, minWidth);
+			var matchAllOptions = $"{matchPictureOptions}[@stackPictures='{"true"}' and @pictureLocation='{"left"}' and @maximumHeight='{maxHeight}' and @minimumHeight='{minHeight}' and @maximumWidth='{maxWidth}' and @minimumWidth='{minWidth}']";
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchAllOptions, 1);
 		}
 
@@ -948,12 +949,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var schemaLocation = Path.Combine(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");
 			var schemas = new XmlSchemaSet();
-			using(var reader = XmlReader.Create(schemaLocation))
+			using (var reader = XmlReader.Create(schemaLocation))
 			{
 				schemas.Add("", reader);
 				var document = XDocument.Load(xmlFile);
-				document.Validate(schemas, (sender, args) =>
-					Assert.Fail("Model saved at {0} did not validate against schema: {1}", xmlFile, args.Message));
+				document.Validate(schemas, (sender, args) => Assert.Fail("Model saved at {0} did not validate against schema: {1}", xmlFile, args.Message));
 			}
 		}
 
@@ -970,10 +970,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var child = new ConfigurableDictionaryNode();
 			var rootNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> {child},
+				Children = new List<ConfigurableDictionaryNode> { child },
 				Parent = null
 			};
-			var parts = new List<ConfigurableDictionaryNode> {rootNode};
+			var parts = new List<ConfigurableDictionaryNode> { rootNode };
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(parts);
 			Assert.That(parts[0].Parent, Is.Null, "Shouldn't have changed parent of a root node");
@@ -1095,7 +1095,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var refdConfigNodeChild = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var refdConfigNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = m_field, Label = m_reference,
+				FieldDescription = m_field,
+				Label = m_reference,
 				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
 			};
 			var model = CreateSimpleSharingModel(configNode, refdConfigNode);
@@ -1150,14 +1151,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			ConfigurableDictionaryNodeTests.VerifyDuplicationList(clone.SharedItems, model.SharedItems, null);
 			Assert.AreNotSame(model.Publications, clone.Publications);
 			Assert.AreEqual(model.Publications.Count, clone.Publications.Count);
-			for (int i = 0; i < model.Publications.Count; i++)
+			for (var i = 0; i < model.Publications.Count; i++)
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
 			Assert.AreEqual(model.HomographConfiguration, clone.HomographConfiguration);
 		}
 
-#if RANDYTODO
 		[Test]
 		public void DeepClone_ConnectsSharedItemsWithinNewModel()
 		{
@@ -1180,7 +1180,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreSame(clonedSubentries, clonedModel.SharedItems[0].Parent, "SharedItems' Parents should connect to their new masters");
 			Assert.AreNotSame(model.SharedItems[0], clonedModel.SharedItems[0], "SharedItems were not deep cloned");
 		}
-#endif
 
 		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
 		{

@@ -11,6 +11,7 @@ using System.Xml;
 using LanguageExplorer.LIFT;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
@@ -524,8 +525,14 @@ namespace LanguageExplorerTests.LIFT
 
 		private void DestroyTestDirectory()
 		{
-			if(Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
+			if (Directory.Exists(LiftFolder))
+			{
+				RobustIO.DeleteDirectoryAndContents(LiftFolder);
+			}
+			if (Directory.Exists(MockLinkedFilesFolder))
+			{
+				RobustIO.DeleteDirectoryAndContents(MockLinkedFilesFolder);
+			}
 		}
 
 		private void CreatePartsOfSpeechPossibilityList()
@@ -1071,7 +1078,7 @@ namespace LanguageExplorerTests.LIFT
 		{
 			try
 			{
-				Directory.Delete(MockLinkedFilesFolder, true);
+				RobustIO.DeleteDirectoryAndContents(MockLinkedFilesFolder);
 				m_cache.Dispose();
 				m_cache = null;
 				DestroyTestDirectory();

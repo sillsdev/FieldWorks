@@ -10,6 +10,7 @@ using LanguageExplorer;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 
 namespace LanguageExplorerTests.Impls
 {
@@ -38,8 +39,9 @@ namespace LanguageExplorerTests.Impls
 			// load a persisted version of the property table.
 			_originalSettingsPath = Path.Combine(TempPath, "SettingsBackup");
 			if (!Directory.Exists(_originalSettingsPath))
+			{
 				Directory.CreateDirectory(_originalSettingsPath);
-
+			}
 			File.WriteAllText(Path.Combine(_originalSettingsPath, "db$TestLocal$Settings.xml"), LanguageExplorerTestsResources.db_TestLocal_Settings_xml);
 			File.WriteAllText(Path.Combine(_originalSettingsPath, "Settings.xml"), LanguageExplorerTestsResources.Settings_xml);
 		}
@@ -72,7 +74,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			if (Directory.Exists(_originalSettingsPath))
 			{
-				Directory.Delete(_originalSettingsPath, true);
+				RobustIO.DeleteDirectoryAndContents(_originalSettingsPath);
 			}
 		}
 

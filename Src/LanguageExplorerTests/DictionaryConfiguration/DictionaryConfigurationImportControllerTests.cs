@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,12 +11,13 @@ using System.Text;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using NUnit.Framework;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -52,13 +53,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public override void FixtureTeardown()
 		{
 			// delete the directory that was created in SetUp
-
 			if (Directory.Exists(_projectConfigPath))
+			{
 				Directory.Delete(_projectConfigPath, true);
-
+			}
 			if (Directory.Exists(_reversalProjectConfigPath))
+			{
 				Directory.Delete(_reversalProjectConfigPath, true);
-
+			}
 			base.FixtureTeardown();
 		}
 
@@ -68,27 +70,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Start out with a clean project configuration directory, and with a non-random name so it's easier to examine during testing.
 			_projectConfigPath = Path.Combine(Path.GetTempPath(), "Dictionary");
 			if (Directory.Exists(_projectConfigPath))
-				Directory.Delete(_projectConfigPath, true);
+			{
+				RobustIO.DeleteDirectoryAndContents(_projectConfigPath);
+			}
 			FileUtils.EnsureDirectoryExists(_projectConfigPath);
-
 			_reversalProjectConfigPath = Path.Combine(Path.GetTempPath(), "ReversalIndex");
 			if (Directory.Exists(_reversalProjectConfigPath))
-				Directory.Delete(_reversalProjectConfigPath, true);
+			{
+				RobustIO.DeleteDirectoryAndContents(_reversalProjectConfigPath);
+			}
 			FileUtils.EnsureDirectoryExists(_reversalProjectConfigPath);
-
-			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
-				new List<DictionaryConfigurationModel>());
-
-			_reversalController = new DictionaryConfigurationImportController(Cache, _reversalProjectConfigPath,
-				new List<DictionaryConfigurationModel>());
-
+			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath, new List<DictionaryConfigurationModel>());
+			_reversalController = new DictionaryConfigurationImportController(Cache, _reversalProjectConfigPath, new List<DictionaryConfigurationModel>());
 			// Set up data for import testing.
-
 			_zipFile = null;
 			_reversalZipFile = null;
-
 			// Prepare configuration to export
-
 			var configurationToExport = new DictionaryConfigurationModel
 			{
 				Label = configLabel,
@@ -97,12 +94,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FilePath = Path.GetTempPath() + configFilename
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(configurationToExport);
-
 			_pathToConfiguration = configurationToExport.FilePath;
-
 			// Create XML file
 			configurationToExport.Save();
-
 			// Prepare configuration to export
 			var configurationReversalToExport = new DictionaryConfigurationModel
 			{
@@ -115,46 +109,35 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(configurationReversalToExport);
 			_reversalPathToConfiguration = configurationReversalToExport.FilePath;
 			configurationReversalToExport.Save();
-
 			// Export a configuration that we know how to import
-
 			_zipFile = Path.GetTempFileName();
 			_reversalZipFile = Path.GetTempFileName() + 1;
-
 			// Add a test style to the cache
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-
-				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
-				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, true, 2, false);
+				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, true);
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
 				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				normalStyle.Rules = propsBldr.GetTextProps();
-				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-					(int)FwTextPropVar.ktpvMilliPoint, 23000);
-				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, "");
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 23000);
+				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, string.Empty);
 				senseStyle.Rules = propsBldr.GetTextProps();
 				senseStyle.BasedOnRA = normalStyle;
-				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
-				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
@@ -166,36 +149,44 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			});
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
 			Assert.That(new FileInfo(_zipFile).Length, Is.GreaterThan(0), "Unit test not set up right");
-
 			// Clear the configuration away so we can see it gets imported
-
 			File.Delete(_pathToConfiguration);
-			Assert.That(!File.Exists(_pathToConfiguration),
-				"Unit test not set up right. Configuration should be out of the way for testing export.");
-			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
-				"Unit test not set up right. A config exists with the same label as the config we will import.");
-			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
-				"Unit test set up unexpectedly. Such a config should not be registered.");
+			Assert.That(!File.Exists(_pathToConfiguration), "Unit test not set up right. Configuration should be out of the way for testing export.");
+			Assert.That(_controller._configurations.All(config => config.Label != configLabel), "Unit test not set up right. A config exists with the same label as the config we will import.");
+			Assert.That(_controller._configurations.All(config => config.Label != configLabel), "Unit test set up unexpectedly. Such a config should not be registered.");
 			File.Delete(_reversalPathToConfiguration);
-			Assert.That(!File.Exists(_reversalPathToConfiguration),
-				"Unit test not set up right. Reversal configuration should be out of the way for testing export.");
-			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel),
-				"Unit test not set up right. A reversal config exists with the same label as the reversal config we will import.");
-			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel),
-				"Unit test set up unexpectedly. Such a reversal config should not be registered.");
+			Assert.That(!File.Exists(_reversalPathToConfiguration), "Unit test not set up right. Reversal configuration should be out of the way for testing export.");
+			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel), "Unit test not set up right. A reversal config exists with the same label as the reversal config we will import.");
+			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel), "Unit test set up unexpectedly. Such a reversal config should not be registered.");
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
 			if (_zipFile != null)
+			{
 				File.Delete(_zipFile);
+			}
 			if (_pathToConfiguration != null)
+			{
 				File.Delete(_pathToConfiguration);
+			}
 			if (_reversalZipFile != null)
+			{
 				File.Delete(_reversalZipFile);
+			}
 			if (_reversalPathToConfiguration != null)
+			{
 				File.Delete(_reversalPathToConfiguration);
+			}
+			if (Directory.Exists(_projectConfigPath))
+			{
+				RobustIO.DeleteDirectoryAndContents(_projectConfigPath);
+			}
+			if (Directory.Exists(_reversalProjectConfigPath))
+			{
+				RobustIO.DeleteDirectoryAndContents(_reversalProjectConfigPath);
+			}
 		}
 
 		[Test]
@@ -206,8 +197,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			Assert.That(_controller.NewConfigToImport, Is.Not.Null, "Failed to create config object");
 			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo(configLabel), "Failed to process data to be imported");
-			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel),
-				"Failed to describe original label from data to import.");
+			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel), "Failed to describe original label from data to import.");
 			Assert.That(_controller.ImportHappened, Is.False, "Import hasn't actually happened yet, so don't claim it has");
 		}
 
@@ -230,9 +220,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// SUT
 			_controller.PrepareImport(_zipFile);
-			Assert.That(_controller._temporaryImportConfigLocation,
-				Is.EqualTo(Path.Combine(Path.GetTempPath(), configFilename)),
-				"extracted temporary location or filename not set as expected");
+			Assert.That(_controller._temporaryImportConfigLocation, Is.EqualTo(Path.Combine(Path.GetTempPath(), configFilename)), "extracted temporary location or filename not set as expected");
 		}
 
 		[Test]
@@ -242,13 +230,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// SUT
 			_controller.DoImport();
-			Assert.That(File.Exists(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")),
-				"Configuration not imported or to the right path.");
-			Assert.That(_controller._configurations.Any(config => config.Label == configLabel),
-				"Imported configuration was not registered.");
-			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")),
-				"FilePath of imported config was not set as expected.");
+			Assert.That(File.Exists(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")), "Configuration not imported or to the right path.");
+			Assert.That(_controller._configurations.Any(config => config.Label == configLabel), "Imported configuration was not registered.");
+			Assert.That(_controller.NewConfigToImport.FilePath, Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")), "FilePath of imported config was not set as expected.");
 			Assert.That(_controller.ImportHappened, Is.True, "Alert that import has happened");
 		}
 
@@ -294,27 +278,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			IStStyle bulletStyle = null;
 			IStStyle numberStyle = null;
 			IStStyle homographStyle = null;
-			IStStyle dictionaryHeadwordStyle = null;
-			IStStyle nominalStyle = null;
+			IStStyle dictionaryHeadwordStyle;
+			IStStyle nominalStyle;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
-				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
 
 				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, true);
 
 				// Create a style that we can link to before the import happens. It's not
 				// important what it's named, just that it also exists in the exported zip
 				// file made by Setup().
-				nominalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
+				nominalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
 
-				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number", ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
 
 				// Style linking to later examine
 				homographStyle.BasedOnRA = dictionaryHeadwordStyle;
@@ -353,17 +333,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			_controller.PrepareImport(_zipFile);
 
-			Assert.That(!File.Exists(Path.Combine(_projectConfigPath, configFilename)),
-				"Configuration should not have been imported if not requested.");
-			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
-				"Configuration should not have been registered.");
+			Assert.That(!File.Exists(Path.Combine(_projectConfigPath, configFilename)), "Configuration should not have been imported if not requested.");
+			Assert.That(_controller._configurations.All(config => config.Label != configLabel), "Configuration should not have been registered.");
 		}
 
 		[Test]
 		public void PrepareImport_SuggestsUniqueLabelIfSameLabelAlreadyExists()
 		{
 			// More test setup
-
 			var alreadyExistingModelWithSameLabel = new DictionaryConfigurationModel
 			{
 				Label = configLabel,
@@ -380,10 +357,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			_controller.PrepareImport(_zipFile);
 
-			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel),
-				"This should have been the original label of the config to import.");
-			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"),
-				"This should be a new and different label since the original label is already taken.");
+			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel), "This should have been the original label of the config to import.");
+			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"), "This should be a new and different label since the original label is already taken.");
 		}
 
 		[Test]
@@ -394,16 +369,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Label = configLabel,
 				Publications = new List<string>(),
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
-				alreadyExistingModelWithSameLabel);
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, alreadyExistingModelWithSameLabel);
 
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
 				Label = "importexportConfiguration-Imported1",
 				Publications = new List<string>(),
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
-				anotherAlreadyExistingModel);
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, anotherAlreadyExistingModel);
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
 			_controller._configurations.Add(anotherAlreadyExistingModel);
@@ -422,8 +395,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				"Configuration not imported or to the right place. Perhaps the existing but not-registered importexportConfiguration-Imported2.fwdictconfig file was not accounted for.");
 			Assert.That(_controller._configurations.Any(config => config.Label == "importexportConfiguration-Imported2"),
 				"Imported configuration was not registered, or with the expected label.");
-			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration-Imported2_1.fwdictconfig")),
+			Assert.That(_controller.NewConfigToImport.FilePath, Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration-Imported2_1.fwdictconfig")),
 				"FilePath of imported config was not set as expected.");
 		}
 
@@ -462,8 +434,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				"old config of same label shouldn't still be there if overwritten");
 			var newConfigInRegisteredSet = _controller._configurations.First(config => config.Label == configLabel);
 			Assert.That(newConfigInRegisteredSet, Is.Not.Null, "Did not find imported configuration with expected label");
-			Assert.That(newConfigInRegisteredSet, Is.EqualTo(_controller.NewConfigToImport),
-				"Imported config was not what was expected");
+			Assert.That(newConfigInRegisteredSet, Is.EqualTo(_controller.NewConfigToImport), "Imported config was not what was expected");
 		}
 
 		private string UserRequestsOverwrite_Helper()
@@ -482,8 +453,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.GetTempPath() + configFilename
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
-				anotherAlreadyExistingModel);
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, anotherAlreadyExistingModel);
 			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
@@ -503,14 +473,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			_controller.UserRequestsNotOverwrite();
 
-			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"),
-				"Should be using non-colliding label.");
+			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"), "Should be using non-colliding label.");
 
 			// SUT 2
 			_controller.DoImport();
 
-			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + LanguageExplorerConstants.DictionaryConfigurationFileExtension)),
+			Assert.That(_controller.NewConfigToImport.FilePath, Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + LanguageExplorerConstants.DictionaryConfigurationFileExtension)),
 				"Use a filename based on the non-colliding label.");
 		}
 
@@ -527,11 +495,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_controller.UserRequestsOverwrite();
 			_controller.UserRequestsNotOverwrite();
 			_controller.UserRequestsOverwrite();
-			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo(configLabel),
-				"Should be using original label in the configuartion to import, not a non-colliding one.");
+			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo(configLabel), "Should be using original label in the configuartion to import, not a non-colliding one.");
 			_controller.UserRequestsNotOverwrite();
-			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"),
-				"Should be using non-colliding label.");
+			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo("importexportConfiguration-Imported2"), "Should be using non-colliding label.");
 		}
 
 		[Test]
@@ -577,7 +543,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void DoImport_AddsNewPublications()
 		{
-			var configFile=FileUtils.GetTempFile("unittest.xml");
+			var configFile = FileUtils.GetTempFile("unittest.xml");
 			const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
 			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
@@ -588,7 +554,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_controller.NewConfigToImport = new DictionaryConfigurationModel()
 			{
 				Label = "blah",
-				Publications = new List<string>() {"pub 1", "pub 2"},
+				Publications = new List<string>() { "pub 1", "pub 2" },
 				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() }
 			};
 			// SUT
@@ -609,13 +575,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var customFieldLabel = "TempCustomField";
 			var customFieldWrongType = "WrongTypeField";
 			var zipFile = Path.GetTempFileName();
-			using (new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
-					CellarPropertyType.OwningAtomic, Guid.Empty))
+			using (new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1, CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
-				using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
-						CellarPropertyType.OwningAtomic, Guid.Empty))
-				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, CmPossibilityTags.kClassId, -1,
-						CellarPropertyType.ReferenceAtom, Cache.LangProject.LexDbOA.ComplexEntryTypesOA.Guid))
+				using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1, CellarPropertyType.OwningAtomic, Guid.Empty))
+				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, CmPossibilityTags.kClassId, -1, CellarPropertyType.ReferenceAtom, Cache.LangProject.LexDbOA.ComplexEntryTypesOA.Guid))
 				{
 					var importExportDCModel = new DictionaryConfigurationModel
 					{
@@ -640,8 +603,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				VerifyCustomFieldAbsent(customFieldLabel, LexEntryTags.kClassId);
 				VerifyCustomFieldAbsent(customFieldWrongType, LexEntryTags.kClassId);
 				// Re-introduce one of the fields that was in the export, but with a different type
-				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId, -1,
-						CellarPropertyType.OwningAtomic, Guid.Empty))
+				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId, -1, CellarPropertyType.OwningAtomic, Guid.Empty))
 				{
 					// SUT
 					_controller.PrepareImport(zipFile);

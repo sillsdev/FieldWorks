@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,10 +10,10 @@ using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
@@ -42,6 +42,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 			finally
 			{
+				_logger = null;
+				_migrator = null;
 				base.TestTearDown();
 			}
 		}
@@ -49,7 +51,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesVersion()
 		{
-			var alphaModel = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode>() };
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionAlpha1,
+				Parts = new List<ConfigurableDictionaryNode>()
+			};
 			_migrator.MigrateFrom83Alpha(alphaModel); // SUT
 			Assert.AreEqual(FirstAlphaMigrator.VersionAlpha3, alphaModel.Version);
 		}
@@ -57,8 +63,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_ConfigWithVerMinus1GetsMigrated()
 		{
-			var configChild = new ConfigurableDictionaryNode { FieldDescription = "Child", ReferenceItem = "LexEntry" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configChild } };
+			var configChild = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Child",
+				ReferenceItem = "LexEntry"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configChild }
+			};
 			var configModel = new DictionaryConfigurationModel
 			{
 				Version = PreHistoricMigrator.VersionPre83, // the original migration code neglected to update the version on completion
@@ -71,7 +85,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesReferencedEntriesToGlossOrSummary()
 		{
-			var configGlossOrSummDefn = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", FieldDescription = "DefinitionOrGloss" };
+			var configGlossOrSummDefn = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss (or Summary Definition)",
+				FieldDescription = "DefinitionOrGloss"
+			};
 			var configReferencedEntries = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Entries",
@@ -85,7 +103,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Label = "Variant Of",
 				Children = new List<ConfigurableDictionaryNode> { configReferencedEntries }
 			};
-			var configDefnOrGloss = new ConfigurableDictionaryNode { Label = "Definition (or Gloss)", FieldDescription = "DefinitionOrGloss" };
+			var configDefnOrGloss = new ConfigurableDictionaryNode
+			{
+				Label = "Definition (or Gloss)",
+				FieldDescription = "DefinitionOrGloss"
+			};
 			var configSenses = new ConfigurableDictionaryNode
 			{
 				Label = "Senses",
@@ -93,25 +115,39 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				CSSClassNameOverride = "senses",
 				Children = new List<ConfigurableDictionaryNode> { configDefnOrGloss }
 			};
-			var main = new ConfigurableDictionaryNode { FieldDescription = "Main", Children = new List<ConfigurableDictionaryNode> { configParent, configSenses } };
+			var main = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Main",
+				Children = new List<ConfigurableDictionaryNode> { configParent, configSenses }
+			};
 			var configModel = new DictionaryConfigurationModel
 			{
 				Version = 3,
 				Parts = new List<ConfigurableDictionaryNode> { main }
 			};
 			_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
-				"'Gloss (or Summary Definition)' Field Description should have been updated");
-			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription,
-				"'Definition (or Gloss)' should not change fields");
+			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription, "'Gloss (or Summary Definition)' Field Description should have been updated");
+			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription, "'Definition (or Gloss)' should not change fields");
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_RemovesDeadReferenceItems()
 		{
-			var configChild = new ConfigurableDictionaryNode { FieldDescription = "TestChild", ReferenceItem = "LexEntry" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configChild = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TestChild",
+				ReferenceItem = "LexEntry"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configChild }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 1,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
 		}
@@ -119,10 +155,27 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesExampleSentenceLabels()
 		{
-			var configExampleChild = new ConfigurableDictionaryNode { Label = "Example", FieldDescription = "Example" };
-			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS", Children = new List<ConfigurableDictionaryNode> { configExampleChild } };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configExampleChild = new ConfigurableDictionaryNode
+			{
+				Label = "Example",
+				FieldDescription = "Example"
+			};
+			var configExampleParent = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { configExampleChild }
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configExampleParent }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("Example Sentence", configExampleChild.Label);
 		}
@@ -130,24 +183,59 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesFreshlySharedNodes()
 		{
-			var examplesOS = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
-			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { examplesOS } };
-			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses } };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { senses } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var examplesOS = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS"
+			};
+			var subsenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { examplesOS }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel); // SUT
 			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
+			{
 				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
+			}
 			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeListAndParaOptions)), "Freshly-shared nodes should be included");
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesExampleOptions()
 		{
-			var configExamplesNode = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
-				Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configExamplesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configExamplesNode }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual(StyleTypes.Character, configExamplesNode.StyleType);
 			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
@@ -158,12 +246,33 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesBibliographyLabels()
 		{
-			var configBiblioEntryNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Owner", SubField = "Bibliography" };
-			var configBiblioSenseNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Bibliography" };
-			var configBiblioParent = new ConfigurableDictionaryNode { Label = "Referenced Senses", FieldDescription = "ReferringSenses", Children = new List<ConfigurableDictionaryNode> { configBiblioSenseNode, configBiblioEntryNode } };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
-				Children = new List<ConfigurableDictionaryNode> { configBiblioParent } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configBiblioEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Bibliography",
+				FieldDescription = "Owner",
+				SubField = "Bibliography"
+			};
+			var configBiblioSenseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Bibliography",
+				FieldDescription = "Bibliography"
+			};
+			var configBiblioParent = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { configBiblioSenseNode, configBiblioEntryNode }
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configBiblioParent }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("Bibliography (Entry)", configBiblioEntryNode.Label);
 			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
@@ -172,11 +281,26 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesHeadWordRefs()
 		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
-				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var cpFormChild = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form",
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord"
+			};
+			var referenceHwChild = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 2,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("HeadWordRef", referenceHwChild.FieldDescription);
 			Assert.AreEqual("HeadWordRef", cpFormChild.SubField);
@@ -185,13 +309,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesReversalHeadwordRefs()
 		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
-				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
+			var cpFormChild = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form",
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord"
+			};
+			var referenceHwChild = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
+			};
 			var configModel = new DictionaryConfigurationModel
 			{
-				Version = 2, WritingSystem = "en",
+				Version = 2,
+				WritingSystem = "en",
 				Parts = new List<ConfigurableDictionaryNode> { configParent },
 				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")
 			};
@@ -203,8 +339,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_NullFieldDescriptionIsLogged()
 		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = null };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var cpFormChild = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form",
+				FieldDescription = null
+			};
+			var referenceHwChild = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord"
+			};
 			var configParent = new ConfigurableDictionaryNode
 			{
 				Label = "Parent",
@@ -212,7 +356,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
 			};
 			cpFormChild.Parent = configParent;
-			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 2,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.That(_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
 		}
@@ -220,13 +368,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesSharedItems()
 		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
-				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
+			var cpFormChild = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form",
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord"
+			};
+			var referenceHwChild = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord"
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
+			};
 			var configModel = new DictionaryConfigurationModel
 			{
-				Version = 2, WritingSystem = "en",
+				Version = 2,
+				WritingSystem = "en",
 				Parts = new List<ConfigurableDictionaryNode>(),
 				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig"),
 				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
@@ -326,18 +486,37 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_SubSubSenseReferenceNodeSharesMainEntrySense()
 		{
-			var subsubsenses = new ConfigurableDictionaryNode { Label = "Subsubsenses", FieldDescription = "SensesOS", ReferenceItem = null };
-			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsubsenses } };
+			var subsubsenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subsubsenses",
+				FieldDescription = "SensesOS",
+				ReferenceItem = null
+			};
+			var subsenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsubsenses }
+			};
 			var subentriesUnderSenses = new ConfigurableDictionaryNode
 			{
-				Label = "Subentries", FieldDescription = "Subentries",
+				Label = "Subentries",
+				FieldDescription = "Subentries",
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = "TestNode", Label = "TestNode"}
 				}
 			};
-			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
-			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses, subentriesUnderSenses } };
+			var mainEntryHeadword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsenses, subentriesUnderSenses }
+			};
 			var subentries = new ConfigurableDictionaryNode
 			{
 				Label = "Subentries",
@@ -355,7 +534,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = 1,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
 			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
@@ -382,9 +560,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-			var subsubsenses = new ConfigurableDictionaryNode { Label = "Subsubsenses", FieldDescription = "SensesOS", ReferenceItem = null };
-			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", DictionaryNodeOptions = DictionaryNodeSubSenseOptions, Children = new List<ConfigurableDictionaryNode> { subsubsenses } };
-			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses } };
+			var subsubsenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subsubsenses",
+				FieldDescription = "SensesOS",
+				ReferenceItem = null
+			};
+			var subsenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { subsubsenses }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
 			var subentries = new ConfigurableDictionaryNode
 			{
 				Label = "Subentries",
@@ -402,7 +596,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = 1,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			var subSenseNode = (DictionaryNodeSenseOptions)subsenses.DictionaryNodeOptions;
 			Assert.That(subSenseNode.ParentSenseNumberingStyle, Is.StringMatching("%."));
@@ -429,8 +622,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
-
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionPre83,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
 			_migrator.MigrateFrom83Alpha(model);
 			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
 			Assert.NotNull(subSenses);
@@ -445,8 +641,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var subCategNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				DictionaryNodeOptions =
-					ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
 				IsEnabled = false
 			};
 			var subGramInfoNode = new ConfigurableDictionaryNode
@@ -505,12 +700,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = PreHistoricMigrator.VersionPre83,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
-			var subSenseGloss =
-				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGlossNode.Label);
-			var subGramInfo =
-				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGramInfoNode.Label);
+			var subSenseGloss = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGlossNode.Label);
+			var subGramInfo = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGramInfoNode.Label);
 			var subEntries = model.SharedItems.Find(node => node.Label == "MainEntrySubentries");
 			Assert.NotNull(subSenseGloss, "Subsenses did not get moved into the shared node");
 			Assert.Null(model.Parts[0].Children[1].Children, "Subsenses children were left in non-shared node");
@@ -545,7 +737,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
@@ -580,7 +771,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
@@ -592,10 +782,27 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesTranslationsCssClass()
 		{
-			var configTranslationsChild = new ConfigurableDictionaryNode { Label = "Translations", FieldDescription = "TranslationsOC" };
-			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS", Children = new List<ConfigurableDictionaryNode> { configTranslationsChild } };
-			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configTranslationsChild = new ConfigurableDictionaryNode
+			{
+				Label = "Translations",
+				FieldDescription = "TranslationsOC"
+			};
+			var configExampleParent = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { configTranslationsChild }
+			};
+			var configParent = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { configExampleParent }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("translationcontents", configTranslationsChild.CSSClassNameOverride);
 		}
@@ -603,48 +810,57 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFromConfigV5toV6_SwapsReverseAbbrAndAbbreviation_Variants()
 		{
-			var revAbbrNode = new ConfigurableDictionaryNode {Label = "Reverse Abbreviation", FieldDescription = "ReverseAbbr"};
-			var abbrNode = new ConfigurableDictionaryNode { Label = "Abbreviation", FieldDescription = "Abbreviation" };
-			var nameNode = new ConfigurableDictionaryNode { Label = "Name", FieldDescription = "Name" };
-			var nameNode2 = new ConfigurableDictionaryNode { Label = "Name", FieldDescription = "Name" };
-
+			var revAbbrNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Abbreviation",
+				FieldDescription = "ReverseAbbr"
+			};
+			var abbrNode = new ConfigurableDictionaryNode
+			{
+				Label = "Abbreviation",
+				FieldDescription = "Abbreviation"
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name"
+			};
+			var nameNode2 = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name"
+			};
 			var varTypeNodeWithRevAbbr = new ConfigurableDictionaryNode
 			{
 				Label = "Variant Type",
 				FieldDescription = "VariantEntryTypesRS",
-				Children = new List<ConfigurableDictionaryNode> {revAbbrNode, nameNode}
+				Children = new List<ConfigurableDictionaryNode> { revAbbrNode, nameNode }
 			};
-
 			var varTypeNodeWithRevAbbr2 = varTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
-
 			var varTypeNodeWithAbbr = new ConfigurableDictionaryNode
 			{
 				Label = "Variant Type",
 				FieldDescription = "VariantEntryTypesRS",
 				Children = new List<ConfigurableDictionaryNode> { abbrNode, nameNode2 }
 			};
-
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variant Forms",
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { varTypeNodeWithRevAbbr }
 			};
-
 			var variantOfSenseNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variants of Sense",
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { varTypeNodeWithRevAbbr2 }
 			};
-
 			var variantOfNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variant Of",
 				FieldDescription = "VisibleVariantEntryRefs",
 				Children = new List<ConfigurableDictionaryNode> { varTypeNodeWithAbbr }
 			};
-
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
@@ -656,104 +872,98 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			var varTypeNode = variantsNode.Children.First();
 			Assert.AreEqual(2, varTypeNode.Children.Count, "'Variant Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			varTypeNode = variantOfSenseNode.Children.First();
-			Assert.AreEqual(2, varTypeNode.Children.Count,
-				"'Variants of Sense' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.AreEqual(2, varTypeNode.Children.Count, "'Variants of Sense' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			Assert.AreEqual("Variant of", variantOfNode.Label, "'Variant Of' should have gotten a lowercase 'o'");
 			varTypeNode = variantOfNode.Children.First();
-			Assert.AreEqual(2, varTypeNode.Children.Count,
-				"'Variant of' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.AreEqual(2, varTypeNode.Children.Count, "'Variant of' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Name"), "Name should be changed to ReverseName");
 		}
 
 		[Test]
 		public void MigrateFromConfigV5toV6_SwapsReverseAbbrAndAbbreviation_ComplexForms()
 		{
-			var revAbbrNode = new ConfigurableDictionaryNode { Label = "Reverse Abbreviation", FieldDescription = "ReverseAbbr" };
-			var abbrNode = new ConfigurableDictionaryNode { Label = "Abbreviation", FieldDescription = "Abbreviation" };
-			var nameNode = new ConfigurableDictionaryNode { Label = "Name", FieldDescription = "Name" };
-			var nameNode2 = new ConfigurableDictionaryNode { Label = "Name", FieldDescription = "Name" };
-
+			var revAbbrNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Abbreviation",
+				FieldDescription = "ReverseAbbr"
+			};
+			var abbrNode = new ConfigurableDictionaryNode
+			{
+				Label = "Abbreviation",
+				FieldDescription = "Abbreviation"
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name"
+			};
+			var nameNode2 = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name"
+			};
 			var cfTypeNodeWithRevAbbr = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Form Type",
 				FieldDescription = "ComplexEntryTypesRS",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrNode, nameNode }
 			};
-
 			var cfTypeNodeWithRevAbbr2 = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
-
 			var cfTypeNodeLookup = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 			cfTypeNodeLookup.FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType;
-
 			var cfTypeNodeLookup2 = cfTypeNodeLookup.DeepCloneUnderSameParent();
-
 			var cfTypeNodeWithAbbr = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Form Type",
 				FieldDescription = "ComplexEntryTypesRS",
 				Children = new List<ConfigurableDictionaryNode> { abbrNode, nameNode2 }
 			};
-
 			var cfTypeNodeWithAbbr2 = cfTypeNodeWithAbbr.DeepCloneUnderSameParent();
-
 			var otherRefCFNode = new ConfigurableDictionaryNode
 			{
 				Label = "Other Referenced Complex Forms",
 				FieldDescription = "ComplexFormsNotSubentries",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithRevAbbr }
 			};
-
 			var refCFNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Complex Forms",
 				FieldDescription = "VisibleComplexFormBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithRevAbbr2 }
 			};
-
 			var mainEntrySubentriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "MainEntrySubentries", // Root and Hybrid only
 				FieldDescription = "mainentrysubentries",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeLookup }
 			};
-
 			var minorSubentriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Minor Subentries", // Hybrid only
 				FieldDescription = "Subentries",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeLookup2 }
 			};
-
 			var componentsCFNode = new ConfigurableDictionaryNode
 			{
 				Label = "Components",
 				FieldDescription = "ComplexFormEntryRefs",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithAbbr }
 			};
-
 			var componentRefsCFNode = new ConfigurableDictionaryNode
 			{
 				Label = "Component References",
 				FieldDescription = "ComplexFormEntryRefs",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithAbbr2 }
 			};
-
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
@@ -773,50 +983,31 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-
 			_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = otherRefCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Other Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "'Other Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			cfTypeNode = refCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "'Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			cfTypeNode = mainEntrySubentriesNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'MainEntrySubentries' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "'MainEntrySubentries' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			cfTypeNode = minorSubentriesNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Minor Subentries' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "'Minor Subentries' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Name should not be changed");
 			cfTypeNode = componentsCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Components' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "'Components' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"), "Name should be changed to ReverseName");
 			cfTypeNode = componentRefsCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Component References' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.AreEqual(2, cfTypeNode.Children.Count, 				"'Component References' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"), "Name should be changed to ReverseName");
 		}
 
 		[Test]
@@ -824,11 +1015,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				Label = "Headword", FieldDescription = "MLOwnerOutlineName", CSSClassNameOverride = "headword"
+				Label = "Headword",
+				FieldDescription = "MLOwnerOutlineName",
+				CSSClassNameOverride = "headword"
 			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
-				Label = "Referenced Senses", FieldDescription = "ReferringSenses",
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
 				Children = new List<ConfigurableDictionaryNode> { headwordNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -887,26 +1081,30 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFromConfigV5toV6_SwapsReverseAbbrAndAbbreviation_ReversalIndexes()
 		{
-			var revAbbrNode = new ConfigurableDictionaryNode { Label = "Reverse Abbreviation", FieldDescription = "ReverseAbbr" };
-			var nameNode = new ConfigurableDictionaryNode { Label = "Reverse Name", FieldDescription = "ReverseName" };
-
+			var revAbbrNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Abbreviation",
+				FieldDescription = "ReverseAbbr"
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Name",
+				FieldDescription = "ReverseName"
+			};
 			var cfTypeNodeWithRevAbbr = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Form Type",
 				FieldDescription = "ComplexEntryTypesRS",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrNode, nameNode }
 			};
-
 			var variantTypeNodeWithRevAbbr = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 			variantTypeNodeWithRevAbbr.SubField = "VariantEntryTypesRS";
-
 			var fakeNodeForMinTest = new ConfigurableDictionaryNode
 			{
 				Label = "FakeParentForMinTest", // Root and Hybrid only
 				FieldDescription = "typeholder",
 				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithRevAbbr, variantTypeNodeWithRevAbbr }
 			};
-
 			var model = new DictionaryConfigurationModel
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
@@ -917,16 +1115,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = fakeNodeForMinTest.Children.First();
 			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Reverse Name should be changed to Name");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Reverse Name should be changed to Name");
 			cfTypeNode = fakeNodeForMinTest.Children[1];
 			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Reverse Name should be changed to Name");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"), "Reverse Name should be changed to Name");
 		}
 
 		[Test]
@@ -1023,14 +1217,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
-				Label = "Referenced Senses", FieldDescription = "ReferringSenses",
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
 				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode}
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -1067,29 +1262,42 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			//    - Gloss
 
 			var captionNode = new ConfigurableDictionaryNode
-				{ Label = "Caption", FieldDescription = "Caption" };
+			{
+				Label = "Caption",
+				FieldDescription = "Caption"
+			};
 			var senseNumberNode = new ConfigurableDictionaryNode
-				{ Label = "Sense Number", FieldDescription = "SenseNumberTSS" };
+			{
+				Label = "Sense Number",
+				FieldDescription = "SenseNumberTSS"
+			};
 			var thumbnailNode = new ConfigurableDictionaryNode
-				{ Label = "Thumbnail", FieldDescription = "PictureFieldRA" };
+			{
+				Label = "Thumbnail",
+				FieldDescription = "PictureFieldRA"
+			};
 			var picturesNode = new ConfigurableDictionaryNode
-				{
-					Label = "Pictures",
-					FieldDescription = "PicturesOfSenses",
-					Children = new List<ConfigurableDictionaryNode>{ thumbnailNode, senseNumberNode, captionNode }
-				};
+			{
+				Label = "Pictures",
+				FieldDescription = "PicturesOfSenses",
+				Children = new List<ConfigurableDictionaryNode> { thumbnailNode, senseNumberNode, captionNode }
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
-				{
-					Label = "Main Entry",
-					FieldDescription = "LexEntry",
-					Children = new List<ConfigurableDictionaryNode> { picturesNode }
-				};
-			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { picturesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionAlpha1,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
 
 			// SUT
 			_migrator.MigrateFrom83Alpha(model);
 
-			var migratedPicturesNode=model.Parts[0].Children[0];
+			var migratedPicturesNode = model.Parts[0].Children[0];
 
 			// Sense Number should be gone
 			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.StringMatching("Sense Number"), "Sense Number should be gone");

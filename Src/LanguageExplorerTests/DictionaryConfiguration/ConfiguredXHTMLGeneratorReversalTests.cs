@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,11 +12,11 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.TestUtilities;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -74,7 +74,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] {"en"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" }),
 				Label = "Reversal Form"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -85,7 +85,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingEnglishReversalEntry();
 			//SUT
-			string result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string frenchLexForm = "/div[@class='reversalindexentry']/span[@class='reversalform']/span[@lang='en' and text()='ReversalForm']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 		}
@@ -99,7 +99,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private const string entryRefTypeXpath = entryRefsXpath + "/" + entryRefTypeBit;
 		private const string primaryLexemeBit = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
 		private const string primaryEntryXpath = entryRefXpath + primaryLexemeBit;
-		//private const string primaryEntryXpath = entryRefXpath + "/span[@class='primarylexemes']/span[@class='primarylexeme']";
 		private const string refHeadwordXpath = primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
 
 		[Test]
@@ -178,7 +177,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
 		{
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
-
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
 			var primaryEntry = reversalEntry.SensesRS.First().Entry;
 			var refer1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "Component Entry", "CompEntry Sense");
@@ -197,18 +195,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(entryRefTypeXpath, 3); // should be one Complex Form Type and two Variant Types.
 				const string headwordBit = "/span[@class='headword']/span[@lang='fr']/a[text()='{1}']";
 				const string entryRefWithSiblingXpath = entryRefsXpath + "/span[@class='mainentryref' and preceding-sibling::";
-				const string typeAndHeadwordXpath = entryRefWithSiblingXpath
-					+ entryRefTypeBit + "/span[@class='abbreviation']/span[@lang='en' and text()='{0}']]" + primaryLexemeBit + headwordBit;
-				var adjacentHeadwordXpath = entryRefWithSiblingXpath
-					+ "span[@class='mainentryref']" + primaryLexemeBit + headwordBit.Replace("{1}", "{0}") + "]" + primaryLexemeBit + headwordBit;
+				const string typeAndHeadwordXpath = entryRefWithSiblingXpath + entryRefTypeBit + "/span[@class='abbreviation']/span[@lang='en' and text()='{0}']]" + primaryLexemeBit + headwordBit;
+				var adjacentHeadwordXpath = entryRefWithSiblingXpath + "span[@class='mainentryref']" + primaryLexemeBit + headwordBit.Replace("{1}", "{0}") + "]" + primaryLexemeBit + headwordBit;
 				// check for proper headings on each referenced headword
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "comp. of", "Component Entry"), 1);
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(adjacentHeadwordXpath, "Component Entry", "CompSense Entry"), 1); // ordered within heading
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "fr. var. of", "Variant Entry"), 1);
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "sp. var. of", "Variante Entrie"), 1);
 				// verify there is no heading on the typeless variant
-				assertIt.HasNoMatchForXpath(string.Format(entryRefWithSiblingXpath + "span]" + primaryLexemeBit + headwordBit, null, "Invariant Entry"),
-					message: "Invariant Entry is the only typeless entry ref; it should not have any preceding siblings (Types or other Entry Refs)");
+				assertIt.HasNoMatchForXpath(string.Format(entryRefWithSiblingXpath + "span]" + primaryLexemeBit + headwordBit, null, "Invariant Entry"), message: "Invariant Entry is the only typeless entry ref; it should not have any preceding siblings (Types or other Entry Refs)");
 			}
 		}
 
@@ -217,37 +212,37 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var abbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Abbreviation",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"})
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
 			};
 			var typeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "EntryTypes",
-				Children = new List<ConfigurableDictionaryNode> {abbrNode},
+				Children = new List<ConfigurableDictionaryNode> { abbrNode },
 			};
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }),
 				Label = "Referenced Headword"
 			};
 			var glossOrSummaryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "GlossOrSummary",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }),
 				Label = "Gloss (or Summary Definition)"
 			};
 			var primaryEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PrimarySensesOrEntries",
 				CSSClassNameOverride = "primarylexemes",
-				Children = new List<ConfigurableDictionaryNode> {refHeadwordNode, glossOrSummaryNode},
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode, glossOrSummaryNode },
 				Label = "Primary Entry(s)"
 			};
 			var primaryEntryRefNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MainEntryRefs",
-				Children = new List<ConfigurableDictionaryNode> {typeNode, primaryEntryNode},
+				Children = new List<ConfigurableDictionaryNode> { typeNode, primaryEntryNode },
 				Label = "Primary Entry References"
 			};
 			var headWordNode = new ConfigurableDictionaryNode
@@ -255,12 +250,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
 				Label = "Referenced Headword",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"})
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" })
 			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesRS",
-				Children = new List<ConfigurableDictionaryNode> {headWordNode, primaryEntryRefNode},
+				Children = new List<ConfigurableDictionaryNode> { headWordNode, primaryEntryRefNode },
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberingStyle = "Dictionary-SenseNumber",
@@ -271,14 +266,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			var mainRevEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode},
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode },
 				FieldDescription = "ReversalIndexEntry",
 				CSSClassNameOverride = "reversalindexentry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainRevEntryNode);
 			return mainRevEntryNode;
 		}
-	#endregion PrimareyEntryReferenceTests
+		#endregion PrimareyEntryReferenceTests
 
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
@@ -364,8 +359,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, DefaultSettings);
-			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']",
-				TsStringUtils.Compose(rie.LongName));
+			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", TsStringUtils.Compose(rie.LongName));
 			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
@@ -382,9 +376,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Vernacular,
 					Options = new List<DictionaryNodeOption>
-						{
+					{
 						new DictionaryNodeOption {Id = "vernacular"}
-						}
+					}
 				}
 			};
 			var glossNode = new ConfigurableDictionaryNode
@@ -394,7 +388,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeOption>
-				{
+					{
 						new DictionaryNodeOption { Id = "reversal" }
 					}
 				}
@@ -447,9 +441,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Vernacular,
 					Options = new List<DictionaryNodeOption>
-						{
+					{
 						new DictionaryNodeOption {Id = "vernacular"}
-						}
+					}
 				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
@@ -527,8 +521,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SubentriesOS",
 				CSSClassNameOverride = "subentries",
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {DisplayEachInAParagraph = true},
-				Children = new List<ConfigurableDictionaryNode> {formNode}
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -536,7 +530,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeOption>
-			{
+					{
 						new DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false
@@ -564,7 +558,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Reversal,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id="reversal" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id = "reversal" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -578,7 +572,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					WsType = WritingSystemType.Reversal,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id="reversal" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id = "reversal" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -702,8 +696,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return riEntry;
 		}
 
-		private IReversalIndexEntry CreateInterestingEnglishReversalEntry(string reversalForm = "ReversalForm",
-			string vernacularHeadword = "Citation", string analysisGloss = "gloss")
+		private IReversalIndexEntry CreateInterestingEnglishReversalEntry(string reversalForm = "ReversalForm", string vernacularHeadword = "Citation", string analysisGloss = "gloss")
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, vernacularHeadword, analysisGloss);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
@@ -772,8 +765,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts
+			};
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
@@ -789,13 +785,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
-
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 		}
 	}

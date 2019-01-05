@@ -32,6 +32,8 @@ namespace LanguageExplorer
 		internal const string DictionaryConfigurationDirectoryName = "Dictionary";
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 
+		internal static string TestDataPath => Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
+
 		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode node, bool includeSharedItems = true)
 		{
 			if (node.Parent == null)

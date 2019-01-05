@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -119,12 +119,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
-		internal static void AssertListWasDeepCloned(List<DictionaryNodeOption> orig,
-			List<DictionaryNodeOption> clone)
+		internal static void AssertListWasDeepCloned(List<DictionaryNodeOption> orig, List<DictionaryNodeOption> clone)
 		{
 			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
 			Assert.AreEqual(orig.Count, clone.Count);
-			for (int i = 0; i < orig.Count; i++)
+			for (var i = 0; i < orig.Count; i++)
 			{
 				Assert.AreNotSame(orig[i], clone[i], "Not deep cloned; shallow cloned");
 				Assert.AreEqual(orig[i].Id, clone[i].Id);

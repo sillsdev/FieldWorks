@@ -87,7 +87,7 @@ namespace LanguageExplorerTests.Impls
 			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
 
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
-			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
+			Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
 			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 

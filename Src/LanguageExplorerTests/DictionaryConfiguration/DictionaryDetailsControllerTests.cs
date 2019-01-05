@@ -1,9 +1,10 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer;
@@ -24,7 +25,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	public class DictionaryDetailsControllerTests : AppTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
-		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_propertyTable
+		private DictionaryDetailsController _staticDDController; // for testing methods that would be static if not for m_propertyTable
 
 		#region Overrides of LcmTestBase
 
@@ -34,121 +35,24 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 			GenerateStyles();
 
-			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			m_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
+			_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
+			_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
 		}
 
 		public override void FixtureTeardown()
 		{
 			_flexComponentParameters.PropertyTable.Dispose();
-			if (m_staticDDController?.View != null && !m_staticDDController.View.IsDisposed)
+			if (_staticDDController?.View != null && !_staticDDController.View.IsDisposed)
 			{
-				m_staticDDController.View.Dispose();
+				_staticDDController.View.Dispose();
 			}
 			_flexComponentParameters = null;
-			m_staticDDController = null;
+			_staticDDController = null;
 
 			base.FixtureTeardown();
 		}
 
 		#endregion
-
-		internal class TestDictionaryDetailsView : IDictionaryDetailsView
-		{
-			private List<StyleComboItem> m_styles;
-
-#pragma warning disable 67
-			public event EventHandler StyleSelectionChanged;
-			public event EventHandler StyleButtonClick;
-			public event EventHandler BeforeTextChanged;
-			public event EventHandler BetweenTextChanged;
-			public event EventHandler AfterTextChanged;
-#pragma warning restore 67
-			public string BeforeText { get; set; }
-			public string BetweenText { get; set; }
-			public string AfterText { get; set; }
-			public string Style { get; private set; }
-			public bool StylesVisible { get; set; }
-			public bool StylesEnabled { get; set; }
-			public bool SurroundingCharsVisible { get; set; }
-			private UserControl m_optionsView;
-			public UserControl OptionsView
-			{
-				get { return m_optionsView; }
-				set
-				{
-					if (IsDisposed)
-						throw new ObjectDisposedException($"{GetType()} in use after being disposed");
-					m_optionsView?.Dispose();
-					m_optionsView = value;
-				}
-			}
-			public bool Visible { get; set; }
-			public Control TopLevelControl { get { return null; } }
-			public bool IsDisposed { get; private set; }
-			public bool Enabled { get; set; }
-
-			public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles)
-			{
-				m_styles = styles;
-				Style = selectedStyle;
-			}
-
-			public void SuspendLayout() { }
-
-			public void ResumeLayout() { }
-
-			#region Methods to support unit tests
-			public IList<StyleComboItem> GetStyles()
-			{
-				return m_styles;
-			}
-
-			public IList<ListViewItem> GetListViewItems()
-			{
-				var listOptionsView = OptionsView as IDictionaryListOptionsView;
-				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
-				return listView.Items.Cast<ListViewItem>().ToList();
-			}
-
-			public string GetTooltipFromOverPanel()
-			{
-				if (OptionsView is ButtonOverPanel)
-					throw new NotImplementedException();
-				var labelOverPanel = OptionsView as LabelOverPanel;
-				if (labelOverPanel == null)
-					return null;
-				var tip = (ToolTip)ReflectionHelper.GetField(labelOverPanel, "m_tt");
-				var label = (Control)ReflectionHelper.GetField(labelOverPanel, "label");
-				return tip.GetToolTip(label);
-			}
-
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			protected virtual void Dispose(bool disposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-				if(disposing && !IsDisposed)
-				{
-					if(OptionsView != null)
-					{
-						OptionsView.Dispose();
-					}
-				}
-				IsDisposed = true;
-			}
-
-			~TestDictionaryDetailsView()
-			{
-				Dispose(false);
-			}
-			#endregion
-
-		}
 
 		protected void GenerateStyles()
 		{
@@ -199,7 +103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.IsNull(styles[0].Style);
 
 			// The rest should be character styles
-			for (int i = 1; i < styles.Count; i++)
+			for (var i = 1; i < styles.Count; i++)
 			{
 				Assert.IsTrue(styles[i].Style.IsCharacterStyle);
 			}
@@ -220,8 +124,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
@@ -237,8 +140,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
@@ -282,8 +184,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
@@ -299,8 +200,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
@@ -315,9 +215,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void NonSenseLoadsCharacterStyles()
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			using(var view = controller.View)
+			using (var view = controller.View)
 			{
-				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
+				controller.LoadNode(null, new ConfigurableDictionaryNode { Parent = new ConfigurableDictionaryNode() });
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -435,7 +335,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, childGramarNode);
-			using(var view = controller.View)
+			using (var view = controller.View)
 			{
 				var optionsView = GetListOptionsView(view);
 				optionsView.DisplayOptionCheckBoxChecked = false;
@@ -461,7 +361,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
+			Assert.DoesNotThrow(() => { using (controller.View) { controller.LoadNode(null, childGramarNode); } });
 		}
 		#endregion Sense tests
 
@@ -490,7 +390,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private List<ListViewItem> VerifyGetListItems(ListIds listId, int expectedCount)
 		{
 			string label;
-			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
+			var result = _staticDDController.GetListItemsAndLabel(listId, out label); // SUT
 			Assert.AreEqual(expectedCount, result.Count, $"Incorrect number of {listId} Types");
 			StringAssert.Contains(listId.ToString(), label);
 			return result;
@@ -500,7 +400,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GetListItems_ThrowsIfUnknown()
 		{
 			string label;
-			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItemsAndLabel(ListIds.None, out label));
+			Assert.Throws<ArgumentException>(() => _staticDDController.GetListItemsAndLabel(ListIds.None, out label));
 		}
 
 		[Test]
@@ -519,8 +419,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				controller.LoadNode(null, node);
 				var listViewItems = GetListViewItems(view);
 
-				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
-					"The saved selection should be first");
+				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag, "The saved selection should be first");
 				Assert.AreEqual(listViewItems.Count, listViewItems.Count(item => item.Checked), "All items should be checked");
 				Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
 
@@ -529,8 +428,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				controller.LoadNode(null, node);
 				listViewItems = GetListViewItems(view);
 
-				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
-					"The saved item should be first");
+				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag, "The saved item should be first");
 				Assert.False(listViewItems[0].Checked, "This item was saved as unchecked");
 				Assert.AreEqual(listViewItems.Count - 1, listViewItems.Count(item => item.Checked), "All new items should be checked");
 			}
@@ -570,7 +468,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
@@ -608,15 +506,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			VerifyCannotUncheckOnlyCheckedItemInList(wsOptions);
 			Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern),
-				wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
+			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern), wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
 
 			string label;
 			var listOptions = new DictionaryNodeListOptions
 			{
 				// For non-WS lists, we must save any unchecked items explicitly.
-				Options = m_staticDDController.GetListItemsAndLabel(ListIds.Variant, out label)
-					.Select(lvi => new DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
+				Options = _staticDDController.GetListItemsAndLabel(ListIds.Variant, out label).Select(lvi => new DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
 				ListId = ListIds.Variant
 			};
 			listOptions.Options.Last().IsEnabled = true;
@@ -640,8 +536,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				checkedItem.Checked = false;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
-					GetListOptionsView(view), options as DictionaryNodeWritingSystemOptions, new ItemCheckedEventArgs(checkedItem));
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), options as DictionaryNodeWritingSystemOptions, new ItemCheckedEventArgs(checkedItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
 				Assert.AreEqual(checkedItem, listViewItems.First(item => item.Checked), "The same item should be checked");
@@ -674,12 +569,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				originalListViewItems.AddRange(listViewItems);
 
 				// SUT
-				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.First(), Direction.Up),
-					"Should not be able to move the top item up");
+				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(listViewItems.First(), Direction.Up), "Should not be able to move the top item up");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for (int i = 0; i < listViewItems.Count; i++)
+				for (var i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
@@ -712,12 +605,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				originalListViewItems.AddRange(listViewItems);
 
 				// SUT
-				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.Last(), Direction.Down),
-					"Should not be able to move the bottom item down");
+				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(listViewItems.Last(), Direction.Down), "Should not be able to move the bottom item down");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for (int i = 0; i < listViewItems.Count; i++)
+				for (var i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
@@ -748,14 +639,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				defaultItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
-					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(defaultItem));
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(defaultItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked");
 				Assert.AreEqual(defaultItem, listViewItems.First(item => item.Checked), "The default WS should be checked");
 				Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-				Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId((int)defaultItem.Tag),
-					wsOptions.Options.First(option => option.IsEnabled).Id, "The default WS should be enabled");
+				Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId((int)defaultItem.Tag), wsOptions.Options.First(option => option.IsEnabled).Id, "The default WS should be enabled");
 			}
 		}
 
@@ -784,8 +673,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				otherNamedItem.Checked = true;
 				//// SUT
 				//// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions,
-					new ItemCheckedEventArgs(otherNamedItem));
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
 
 				Assert.IsTrue(optionsView.DisplayOptionCheckBoxChecked, "DisplayOption checkbox should be checked.");
 				Assert.IsTrue(optionsView.DisplayOptionCheckBoxEnabled, "DisplayOption checkbox should be enabled.");
@@ -796,12 +684,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void LoadSenseOptions_ChecksRightBoxes()
 		{
 			var subSenseConfig = new ConfigurableDictionaryNode
-		{
+			{
 				FieldDescription = "SensesOS",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
-			{
+				{
 					DisplayEachSenseInAParagraph = false,
-					BeforeNumber = "",
+					BeforeNumber = string.Empty,
 					AfterNumber = ") ",
 					NumberingStyle = "%A",
 					NumberEvenASingleSense = true,
@@ -809,13 +697,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 			};
 			var senseConfig = new ConfigurableDictionaryNode
-				{
+			{
 				FieldDescription = "SensesOS",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true,
 					DisplayFirstSenseInline = true,
-					BeforeNumber = "",
+					BeforeNumber = string.Empty,
 					AfterNumber = ") ",
 					NumberingStyle = "%d",
 					NumberEvenASingleSense = true,
@@ -877,8 +765,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 				{
-					Assert.AreEqual(isSubsense ? DictionaryConfigurationStrings.ksSubsenseNumberConfig : "Sense Number Configuration",
-						control.Text, "groupBoxSenseNumber has incorrect Text");
+					Assert.AreEqual(isSubsense ? DictionaryConfigurationStrings.ksSubsenseNumberConfig : "Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text");
 					++controlsChecked;
 				}
 				else if (control is FlowLayoutPanel && control.Name == "senseStructureVerticalFlow")
@@ -899,9 +786,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
 						{
 							if (isSubsense)
+							{
 								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+							}
 							else
+							{
 								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+							}
 							++innerControls;
 						}
 					}
@@ -921,7 +812,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = false,
-					BeforeNumber = "",
+					BeforeNumber = string.Empty,
 					AfterNumber = ") ",
 					NumberingStyle = "%a",
 					NumberEvenASingleSense = true,
@@ -934,7 +825,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = false,
-					BeforeNumber = "",
+					BeforeNumber = string.Empty,
 					AfterNumber = ") ",
 					NumberingStyle = "%A",
 					NumberEvenASingleSense = true,
@@ -949,7 +840,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					DisplayEachSenseInAParagraph = true,
 					DisplayFirstSenseInline = true,
-					BeforeNumber = "",
+					BeforeNumber = string.Empty,
 					AfterNumber = ") ",
 					NumberingStyle = "%d",
 					NumberEvenASingleSense = true,
@@ -1016,15 +907,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked initially");
-				Assert.AreEqual(WritingSystemServices.kwsVern, listViewItems.First(item => item.Checked).Tag,
-					"Default should be checked by default.");
+				Assert.AreEqual(WritingSystemServices.kwsVern, listViewItems.First(item => item.Checked).Tag, "Default should be checked by default.");
 
 				var namedItem = listViewItems.First(item => !(item.Tag is int));
 				namedItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
-					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(namedItem));
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(namedItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
 				Assert.AreEqual(namedItem, listViewItems.First(item => item.Checked), "The named WS should be checked");
@@ -1054,8 +943,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				otherNamedItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
-					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
 
 				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should now be two items checked");
 				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should still be the first checked item");
@@ -1083,15 +971,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				originalListViewItems.AddRange(listViewItems);
 
 				// SUT
-				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems[0], Direction.Down),
-					"Should not be able to reorder default writing systems");
-				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.Last(item => item.Tag is int), Direction.Up),
-					"Should not be able to reorder default writing systems");
+				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(listViewItems[0], Direction.Down), "Should not be able to reorder default writing systems");
+				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(listViewItems.Last(item => item.Tag is int), Direction.Up), "Should not be able to reorder default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for (int i = 0; i < listViewItems.Count; i++)
+				for (var i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
@@ -1115,12 +999,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				originalListViewItems.AddRange(listViewItems);
 
 				// SUT
-				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(
-					listViewItems[listViewItems.Last(item => item.Tag is int).Index + 1], Direction.Up),
-					"Should not be able to move a named writing system above a default writing systems");
+				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(listViewItems[listViewItems.Last(item => item.Tag is int).Index + 1], Direction.Up), "Should not be able to move a named writing system above a default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for (int i = 0; i < listViewItems.Count; i++)
+				for (var i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
@@ -1135,27 +1017,29 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var subEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
 			var sensesUnderSubentries = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
 			var sharedSubentries = new ConfigurableDictionaryNode
 			{
-				Label = "SharedSubentries", FieldDescription = "Subentries",
+				Label = "SharedSubentries",
+				FieldDescription = "Subentries",
 				Children = new List<ConfigurableDictionaryNode> { subEntryHeadword, sensesUnderSubentries, subsubEntries }
 			};
 			var subSenseGloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
 			var subsenses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
 			var sharedSenses = new ConfigurableDictionaryNode
 			{
-				Label = "SharedSenses", FieldDescription = "SensesOS",
+				Label = "SharedSenses",
+				FieldDescription = "SensesOS",
 				Children = new List<ConfigurableDictionaryNode> { subSenseGloss, subsenses, subentriesUnderSenses }
 			};
 			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
 			var senses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
 			var mainEntry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> {  mainEntryHeadword, senses, subentries }
+				Children = new List<ConfigurableDictionaryNode> { mainEntryHeadword, senses, subentries }
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -1213,7 +1097,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var entryConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> {groupConfig}
+				Children = new List<ConfigurableDictionaryNode> { groupConfig }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
@@ -1227,5 +1111,112 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 		#endregion
+
+
+		private sealed class TestDictionaryDetailsView : IDictionaryDetailsView
+		{
+			private List<StyleComboItem> m_styles;
+
+#pragma warning disable 67
+			public event EventHandler StyleSelectionChanged;
+			public event EventHandler StyleButtonClick;
+			public event EventHandler BeforeTextChanged;
+			public event EventHandler BetweenTextChanged;
+			public event EventHandler AfterTextChanged;
+#pragma warning restore 67
+			public string BeforeText { get; set; }
+			public string BetweenText { get; set; }
+			public string AfterText { get; set; }
+			public string Style { get; private set; }
+			public bool StylesVisible { get; set; }
+			public bool StylesEnabled { get; set; }
+			public bool SurroundingCharsVisible { get; set; }
+			private UserControl m_optionsView;
+			public UserControl OptionsView
+			{
+				get { return m_optionsView; }
+				set
+				{
+					if (IsDisposed)
+					{
+						throw new ObjectDisposedException($"{GetType()} in use after being disposed");
+					}
+					m_optionsView?.Dispose();
+					m_optionsView = value;
+				}
+			}
+			public bool Visible { get; set; }
+			public Control TopLevelControl => null;
+			public bool IsDisposed { get; private set; }
+			public bool Enabled { get; set; }
+
+			public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles)
+			{
+				m_styles = styles;
+				Style = selectedStyle;
+			}
+
+			public void SuspendLayout() { }
+
+			public void ResumeLayout() { }
+
+			#region Methods to support unit tests
+			public IList<StyleComboItem> GetStyles()
+			{
+				return m_styles;
+			}
+
+			public IList<ListViewItem> GetListViewItems()
+			{
+				var listOptionsView = OptionsView as IDictionaryListOptionsView;
+				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
+				return listView.Items.Cast<ListViewItem>().ToList();
+			}
+
+			public string GetTooltipFromOverPanel()
+			{
+				if (OptionsView is ButtonOverPanel)
+				{
+					throw new NotSupportedException();
+				}
+				var labelOverPanel = OptionsView as LabelOverPanel;
+				if (labelOverPanel == null)
+				{
+					return null;
+				}
+				var tip = (ToolTip)ReflectionHelper.GetField(labelOverPanel, "m_tt");
+				var label = (Control)ReflectionHelper.GetField(labelOverPanel, "label");
+				return tip.GetToolTip(label);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					OptionsView?.Dispose();
+				}
+				IsDisposed = true;
+			}
+
+			~TestDictionaryDetailsView()
+			{
+				Dispose(false);
+			}
+			#endregion
+
+		}
 	}
 }

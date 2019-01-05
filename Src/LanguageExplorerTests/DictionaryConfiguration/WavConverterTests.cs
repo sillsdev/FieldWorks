@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,9 +14,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	/// <summary>
 	/// Tests for WavConverter Class
 	/// </summary>
-	class WavConverterTests
+	public class WavConverterTests
 	{
-		private string source = Path.Combine(FwDirectoryFinder.SourceDirectory, "FwUtilsTests/TestData/WavFiles/abu2.wav");
+		private string _source = Path.Combine(FwDirectoryFinder.SourceDirectory, "FwUtilsTests/TestData/WavFiles/abu2.wav");
 
 		/// <summary>
 		/// Tests that the ReadWavFile method works as expected
@@ -24,8 +24,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void ReadWavFile_ConvertSingleFile()
 		{
-			byte[] result = WavConverter.ReadWavFile(source);
-			Assert.IsNotEmpty(result, "ReadWavFile did not read the bytes of a file into a byte array.");
+			Assert.IsNotEmpty(WavConverter.ReadWavFile(_source), "ReadWavFile did not read the bytes of a file into a byte array.");
 		}
 
 		/// <summary>
@@ -36,7 +35,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string filePath = tempDirPath.Combine(tempDirPath.Path, "TestData/123.wav");
+				var filePath = tempDirPath.Combine(tempDirPath.Path, "TestData/123.wav");
 				Assert.Throws<DirectoryNotFoundException>(() => WavConverter.ReadWavFile(filePath), "DirectoryNotFoundException was not thrown.");
 			}
 		}
@@ -47,8 +46,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void ReadWavFile_WrongExtension()
 		{
-			Assert.That(() => WavConverter.ReadWavFile(Path.GetTempFileName()),
-				Throws.TypeOf<Exception>().With.Message.EqualTo("SaveFile is not a .wav file."), "ReadWavFile didn't break when the SaveFile was not a .wav file.");
+			Assert.That(() => WavConverter.ReadWavFile(Path.GetTempFileName()), Throws.TypeOf<Exception>().With.Message.EqualTo("SaveFile is not a .wav file."), "ReadWavFile didn't break when the SaveFile was not a .wav file.");
 		}
 
 		/// <summary>
@@ -60,7 +58,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
-				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu3.mp3");
+				var fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu3.mp3");
 				WavConverter.SaveBytes(fakeFile, bytes);
 				Assert.IsTrue(File.Exists(fakeFile), "SaveFile did not successfully save the bytes into a file.");
 			}
@@ -75,7 +73,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
-				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.abc");
+				var fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.abc");
 				WavConverter.SaveBytes(fakeFile, bytes);
 				Assert.IsTrue(File.Exists(Path.ChangeExtension(fakeFile, ".mp3")), "SaveBytes did not change the extension of the SaveFile to .mp3.");
 			}
@@ -89,9 +87,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				WavConverter.WavToMp3(source, destination);
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
+				WavConverter.WavToMp3(_source, destination);
 				Assert.IsTrue(File.Exists(destination), "WavConverter did not successfully convert the wav file and save it as an mp3 file.");
 			}
 		}
@@ -104,9 +102,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string newDestination = tempDirPath.Combine(tempDirPath.Path, "New/new/abu2.mp3");
-				string directory = tempDirPath.Combine(tempDirPath.Path, "New");
-				WavConverter.WavToMp3(source, newDestination);
+				var newDestination = tempDirPath.Combine(tempDirPath.Path, "New/new/abu2.mp3");
+				var directory = tempDirPath.Combine(tempDirPath.Path, "New");
+				WavConverter.WavToMp3(_source, newDestination);
 				Assert.IsTrue(Directory.Exists(directory), "SaveBytes did not create the previously nonexistent folder.");
 			}
 		}
@@ -119,8 +117,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
 				Assert.Throws<ArgumentNullException>(() => WavConverter.WavToMp3(null, destination), "WavToMp3 did not fail when it was given a null SourceFilePath.");
 			}
 		}
@@ -133,8 +131,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
 				Assert.Throws<ArgumentNullException>(() => WavConverter.WavToMp3(destination, null), "WavToMp3 did not fail when it was given a null DestinationFilePath.");
 			}
 		}
@@ -147,9 +145,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				var ex = Assert.Throws<Exception>(() => WavConverter.WavToMp3(Path.Combine(source, "abcde.wav"), destination));
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
+				var ex = Assert.Throws<Exception>(() => WavConverter.WavToMp3(Path.Combine(_source, "abcde.wav"), destination));
 				Assert.IsTrue(ex.Message.Equals("The source file path is invalid."), "WavToMp3 does not fail when it was given a nonexistent source.");
 			}
 		}
@@ -162,9 +160,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				WavConverter.WavToMp3(source, destination);
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
+				WavConverter.WavToMp3(_source, destination);
 				var ex = Assert.Throws<Exception>(() => WavConverter.WavToMp3(destination, destination));
 				Assert.IsTrue(ex.Message.Equals("Source file is not a .wav file."), "WavToMp3 did not fail when the source was not a .wav file.");
 			}
@@ -178,9 +176,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				Assert.IsTrue(WavConverter.AlreadyExists(source, destination) == SaveFile.DoesNotExist, "AlreadyExists did not recognize that the destination does not already exist.");
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
+				Assert.IsTrue(WavConverter.AlreadyExists(_source, destination) == SaveFile.DoesNotExist, "AlreadyExists did not recognize that the destination does not already exist.");
 			}
 		}
 
@@ -193,10 +191,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
-				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
-				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				WavConverter.WavToMp3(source, destination);
-				Assert.IsTrue(WavConverter.AlreadyExists(source, destination) == SaveFile.IdenticalExists, "AlreadyExists did not recognize that the converted file already exists.");
+				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+				var destination = tempDirPath.Combine(tempDirPath.Path, file);
+				WavConverter.WavToMp3(_source, destination);
+				Assert.IsTrue(WavConverter.AlreadyExists(_source, destination) == SaveFile.IdenticalExists, "AlreadyExists did not recognize that the converted file already exists.");
 			}
 		}
 
@@ -210,9 +208,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var tempDirPath = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
-				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.mp3");
+				var fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.mp3");
 				WavConverter.SaveBytes(fakeFile, bytes);
-				Assert.IsTrue(WavConverter.AlreadyExists(source, fakeFile) == SaveFile.NotIdenticalExists, "AlreadyExists did not recognize that the destination exists but is not the converted version of the source.");
+				Assert.IsTrue(WavConverter.AlreadyExists(_source, fakeFile) == SaveFile.NotIdenticalExists, "AlreadyExists did not recognize that the destination exists but is not the converted version of the source.");
 			}
 		}
 	}

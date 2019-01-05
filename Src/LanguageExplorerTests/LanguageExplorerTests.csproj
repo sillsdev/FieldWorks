@@ -271,6 +271,8 @@
       <DependentUpon>XmlViewsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
+    <Compile Include="TestStyle.cs" />
     <Compile Include="Filters\DateTimeMatcherTests.cs" />
     <Compile Include="Filters\FindResultsSorterTests.cs" />
     <Compile Include="Filters\RangeIntMatcherTests.cs" />
@@ -379,7 +381,7 @@
     <Compile Include="DictionaryConfiguration\DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportControllerTests.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigurationListenerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationServicesTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationUtilsTests.cs" />

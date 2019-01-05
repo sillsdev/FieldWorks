@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
@@ -40,10 +41,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
 
 			if (disposing)
+			{
 				SetGuidOn(Item, m_OriginalGuid);
+			}
 		}
 
 		private static void SetGuidOn(ICmObject item, Guid newGuid)

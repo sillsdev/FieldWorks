@@ -1643,7 +1643,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// Return the property info from a given class and node. Will check interface heirarchy for the property
+		/// Return the property info from a given class and node. Will check interface hierarchy for the property
 		/// if <code>lookupType</code> is an interface.
 		/// </summary>
 		private static PropertyInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)

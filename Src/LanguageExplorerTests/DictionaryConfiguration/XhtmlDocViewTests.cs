@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IRecordList _recordList;
 		private StatusBar _statusBar;
 
-		#region Overrides of LcmTestBase
+	#region Overrides of LcmTestBase
 
 		public override void TestSetup()
 		{
@@ -64,7 +64,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if (Directory.Exists(testProjPath))
 			{
-				Directory.Delete(testProjPath, true);
+				RobustIO.DeleteDirectoryAndContents(testProjPath);
 			}
 			Directory.CreateDirectory(testProjPath);
 			Cache.ProjectId.Path = testProjPath;
@@ -76,12 +76,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if (Directory.Exists(testProjPath))
 			{
-				Directory.Delete(testProjPath, true);
+				RobustIO.DeleteDirectoryAndContents(testProjPath);
 			}
 			base.FixtureTeardown();
 		}
 
-		#endregion
+	#endregion
 
 		private const string ConfigurationTemplate = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest'>" +
 		"<Publications></Publications></DictionaryConfiguration>";
@@ -101,7 +101,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
 				using(var filePrintMenu = new ToolStripMenuItem())
 				using(var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
+				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.InitializeFlexComponent(_flexComponentParameters);
 					docView.SetConfigObjectName("Dictionary");
@@ -135,7 +135,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -165,7 +165,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Foo"+DictionaryConfigurationModel.FileExtension)))
+				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Foo"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -190,7 +190,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -220,7 +220,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				testPubItem.Name.set_String(enId, testPubName);
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "NoPubsConf"+DictionaryConfigurationModel.FileExtension)))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "NoPubsConf"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -255,7 +255,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Unremarkable"+DictionaryConfigurationModel.FileExtension)))
+				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Unremarkable"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -286,7 +286,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "baz"+DictionaryConfigurationModel.FileExtension)))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "baz"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -321,16 +321,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
 				{
 					var configPathForTest = Path.Combine(Path.GetTempPath(), "ConfigurationSettings", "Dictionary");
-					Directory.CreateDirectory(configPathForTest);
-					using(var tempConfigFile = TempFile.WithFilename(Path.Combine(configPathForTest, "Squirrel"+DictionaryConfigurationModel.FileExtension)))
+					try
 					{
-						docView.SetConfigObjectName("Dictionary");
-						docView.InitializeFlexComponent(_flexComponentParameters);
-						_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
-						_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
-						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
-						// SUT
-						Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
+						Directory.CreateDirectory(configPathForTest);
+						using(var tempConfigFile = TempFile.WithFilename(Path.Combine(configPathForTest, "Squirrel"+ReversalIndexServices.ConfigFileExtension)))
+						{
+							docView.SetConfigObjectName("Dictionary");
+							docView.InitializeFlexComponent(_flexComponentParameters);
+							_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+							_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
+							File.WriteAllText(tempConfigFile.Path, configWithTestPub);
+							// SUT
+							Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
+						}
+					}
+					finally
+					{
+						RobustIO.DeleteDirectoryAndContents(configPathForTest);
 					}
 				}
 			}
@@ -350,19 +357,26 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
 				var subDir = Path.Combine(Path.GetTempPath(), "Dictionary");
 				Directory.CreateDirectory(subDir); // required by DictionaryConfigurationListener.GetCurrentConfiguration()
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(subDir, "baz"+DictionaryConfigurationModel.FileExtension)))
+				try
 				{
-					docView.SetConfigObjectName("Dictionary");
-					docView.InitializeFlexComponent(_flexComponentParameters);
-					_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
-					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
-					// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
-					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
-					// SUT
-					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
-									Is.StringContaining(tempConfigFile.Path));
+					using (var filePrintMenu = new ToolStripMenuItem())
+					using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
+					using (var tempConfigFile = TempFile.WithFilename(Path.Combine(subDir, "baz"+ReversalIndexServices.ConfigFileExtension)))
+					{
+						docView.SetConfigObjectName("Dictionary");
+						docView.InitializeFlexComponent(_flexComponentParameters);
+						_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+						_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
+						// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
+						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
+						// SUT
+						Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
+										Is.StringContaining(tempConfigFile.Path));
+					}
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(subDir);
 				}
 			}
 		}
@@ -385,34 +399,41 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
 					var projConfigs = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
-					Directory.CreateDirectory(projConfigs);
-					// override every shipped config with a config that does not have the TestPub publication
-					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "*" + DictionaryConfigurationModel.FileExtension);
-					var overrideCount = 0;
-					foreach(var shippedFile in shippedFileList)
+					try
 					{
-						++overrideCount;
-						var tempFileName = Path.Combine(projConfigs, overrideCount + DictionaryConfigurationModel.FileExtension);
-						var tempConfigFile = TempFile.WithFilename(tempFileName);
-						overrideFiles.Add(tempConfigFile);
-						using(var stream = new FileStream(shippedFile, FileMode.Open))
+						Directory.CreateDirectory(projConfigs);
+						// override every shipped config with a config that does not have the TestPub publication
+						var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "*" + ReversalIndexServices.ConfigFileExtension);
+						var overrideCount = 0;
+						foreach(var shippedFile in shippedFileList)
 						{
-							var doc = new XmlDocument();
-							doc.Load(stream);
-							var node = doc.SelectSingleNode("DictionaryConfiguration");
-							var shippedName = node.Attributes["name"].Value;
-							File.WriteAllText(tempConfigFile.Path,
-													configSansTestPub.Replace("name='AConfigPubtest'", "name='"+shippedName+"'"));
+							++overrideCount;
+							var tempFileName = Path.Combine(projConfigs, overrideCount + ReversalIndexServices.ConfigFileExtension);
+							var tempConfigFile = TempFile.WithFilename(tempFileName);
+							overrideFiles.Add(tempConfigFile);
+							using(var stream = new FileStream(shippedFile, FileMode.Open))
+							{
+								var doc = new XmlDocument();
+								doc.Load(stream);
+								var node = doc.SelectSingleNode("DictionaryConfiguration");
+								var shippedName = node.Attributes["name"].Value;
+								File.WriteAllText(tempConfigFile.Path,
+														configSansTestPub.Replace("name='AConfigPubtest'", "name='"+shippedName+"'"));
+							}
 						}
+						// SUT
+						var result = docView.GetValidConfigurationForPublication("TestPub");
+						// Delete all our temp files before asserting so they are sure to go away
+						foreach(var tempFile in overrideFiles)
+						{
+							tempFile.Dispose();
+						}
+						Assert.IsNull(result, "When no configurations have the publication null should be returned.");
 					}
-					// SUT
-					var result = docView.GetValidConfigurationForPublication("TestPub");
-					// Delete all our temp files before asserting so they are sure to go away
-					foreach(var tempFile in overrideFiles)
+					finally
 					{
-						tempFile.Dispose();
+						RobustIO.DeleteDirectoryAndContents(projConfigs);
 					}
-					Assert.IsNull(result, "When no configurations have the publication null should be returned.");
 				}
 			}
 		}
@@ -438,8 +459,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var dictionaryConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 				using (var filePrintMenu = new ToolStripMenuItem())
 				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "NoMatch"+DictionaryConfigurationModel.FileExtension)))
-				using(var matchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "Match"+DictionaryConfigurationModel.FileExtension)))
+				using (var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "NoMatch"+ReversalIndexServices.ConfigFileExtension)))
+				using(var matchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "Match"+ReversalIndexServices.ConfigFileExtension)))
 				{
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);

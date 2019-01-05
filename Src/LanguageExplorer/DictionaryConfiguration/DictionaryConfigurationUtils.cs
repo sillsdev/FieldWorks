@@ -101,7 +101,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					continue;
 				}
-				if (reversalIndexConfiguration.value.EndsWith(DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension))
+				if (reversalIndexConfiguration.value.EndsWith(DictionaryConfigurationModel.AllReversalIndexesFilenameBase + ReversalIndexServices.ConfigFileExtension))
 				{
 					display.List.Remove(reversalIndexConfiguration);
 					break;

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,8 +11,8 @@ using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
@@ -74,16 +74,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
-			Directory.CreateDirectory(configSettingsDir);
-			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
-				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
+			try
+			{
+				Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+				Directory.CreateDirectory(configSettingsDir);
+				File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
+					@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+					@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 
-			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
-			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, updatedConfigModel.Version);
-			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+				DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
+				var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
+				Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, updatedConfigModel.Version);
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+			}
 		}
 
 #if RANDYTODO
@@ -98,19 +104,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
-			Directory.CreateDirectory(configSettingsDir);
-			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
-				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator();
-			migrator.InitializeFlexComponent(_flexComponentParameters);
-			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
-			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
-			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
-			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + ReversalIndexServices.ConfigFileExtension);
+			try
+			{
+				Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+				Directory.CreateDirectory(configSettingsDir);
+				File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
+					@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+					@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
+				Assert.DoesNotThrow(() => DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable), "ArgumentException indicates localized labels."); // SUT
+				var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
+				Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
+				Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+			}
 		}
 #endif
 
@@ -119,29 +129,37 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName, "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
-			Directory.CreateDirectory(configSettingsDir);
-			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
-				@"<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalEntry' /></layoutType>'"});
-			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
-			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			var refdSenseChildren = updatedConfigModel.Parts[0].Children.Find(n => n.Label == "Referenced Senses").Children;
-			var bibCount = 0;
-			for (var i = 0; i < refdSenseChildren.Count; i++)
+			try
 			{
-				var bibNode = refdSenseChildren[i];
-				if (!bibNode.Label.StartsWith("Bibliography"))
-					continue;
-				StringAssert.StartsWith("Bibliography (", bibNode.Label, "Should specify (entry|sense), lest we never know");
-				Assert.False(bibNode.IsCustomField, bibNode.Label + " should not be custom.");
-				// Rough test to ensure Bibliography nodes aren't bumped to the end of the list. In the defaults, the later Bibliography
-				// node is a little more than five nodes from the end
-				Assert.LessOrEqual(i, refdSenseChildren.Count - 5, "Bibliography nodes should not have been bumped to the end of the list");
-				++bibCount;
+				Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+				Directory.CreateDirectory(configSettingsDir);
+				File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
+					@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
+					@"<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalEntry' /></layoutType>'"});
+				DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
+				var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
+				var refdSenseChildren = updatedConfigModel.Parts[0].Children.Find(n => n.Label == "Referenced Senses").Children;
+				var bibCount = 0;
+				for (var i = 0; i < refdSenseChildren.Count; i++)
+				{
+					var bibNode = refdSenseChildren[i];
+					if (!bibNode.Label.StartsWith("Bibliography"))
+					{
+						continue;
+					}
+					StringAssert.StartsWith("Bibliography (", bibNode.Label, "Should specify (entry|sense), lest we never know");
+					Assert.False(bibNode.IsCustomField, bibNode.Label + " should not be custom.");
+					// Rough test to ensure Bibliography nodes aren't bumped to the end of the list. In the defaults, the later Bibliography
+					// node is a little more than five nodes from the end
+					Assert.LessOrEqual(i, refdSenseChildren.Count - 5, "Bibliography nodes should not have been bumped to the end of the list");
+					++bibCount;
+				}
+				Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
 			}
-			Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
-			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(configSettingsDir);
+			}
 		}
 
 		[Test]
@@ -150,12 +168,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
 			var sharedSenses = new ConfigurableDictionaryNode
 			{
-				Label = "SharedSenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses }
+				Label = "SharedSenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
 			};
 			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
 			var mainEntry = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { senses }
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
 			};
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntry, sharedSenses);
 			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
@@ -180,7 +201,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				FieldDescription = "OnlyOld",
 				Children = new List<ConfigurableDictionaryNode> { subsenses }
 			};
-			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS",Children = new List<ConfigurableDictionaryNode> { inOld, inBoth }};
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { inOld, inBoth } };
 			var mainEntry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",

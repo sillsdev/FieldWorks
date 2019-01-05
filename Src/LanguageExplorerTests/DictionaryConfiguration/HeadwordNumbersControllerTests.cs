@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,10 +54,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testConfig = new DictionaryHomographConfiguration
 			{
-				HomographNumberBefore = true, ShowHwNumInCrossRef = false, ShowSenseNumber = false
+				HomographNumberBefore = true,
+				ShowHwNumInCrossRef = false,
+				ShowSenseNumber = false
 			};
-			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true};
-			var model = new DictionaryConfigurationModel {  HomographConfiguration = testConfig };
+			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true };
+			var model = new DictionaryConfigurationModel { HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -139,7 +141,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void Ok_Enabled_WithNoCustomNumbers()
 		{
 			// Test enabled on initial setup
-			var view = new TestHeadwordNumbersView {OkButtonEnabled = false};
+			var view = new TestHeadwordNumbersView { OkButtonEnabled = false };
 			var model = new DictionaryConfigurationModel();
 			var controller = new HeadwordNumbersController(view, model, Cache);
 			// verify ok button enabled on setup with no numbers
@@ -201,7 +203,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ConstructorSetsDescriptionTextInView_Reversal()
 		{
 			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel { WritingSystem = "en", Label = "PrincePauper"};
+			var model = new DictionaryConfigurationModel { WritingSystem = "en", Label = "PrincePauper" };
 			// ReSharper disable once UnusedVariable
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
@@ -214,7 +216,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ConstructorSetsWritingSystemInView()
 		{
 			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "fr"} };
+			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "fr" } };
 			// ReSharper disable once UnusedVariable
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
@@ -231,8 +233,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("English"),
-				"The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
+			Assert.That(view.HomographWritingSystem, Is.StringContaining("English"), "The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
 		}
 
 		[Test]
@@ -252,19 +253,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CollectionAssert.AreEqual(model.HomographConfiguration.CustomHomographNumberList, view.CustomDigits);
 		}
 
-		public class TestHeadwordNumbersView : IHeadwordNumbersView
+		private sealed class TestHeadwordNumbersView : IHeadwordNumbersView
 		{
-			public event EventHandler Shown = delegate(object sender, EventArgs args) {  };
+			public event EventHandler Shown = delegate (object sender, EventArgs args) { };
 			public bool HomographBefore { get; set; }
 			public bool ShowHomograph { get; set; }
 			public bool ShowHomographOnCrossRef { get; set; }
 			public bool ShowSenseNumber { get; set; }
-			public void Show() { Shown.Invoke(this, new EventArgs());}
+			public void Show() { Shown.Invoke(this, new EventArgs()); }
 			public string Description { get; set; }
 			public string HomographWritingSystem { get; set; }
 
 #pragma warning disable 67 // For completeness of the interface, not actually used in the tests
-			public event EventHandler RunStylesDialog = delegate(object sender, EventArgs args) {  };
+			public event EventHandler RunStylesDialog = delegate { };
 #pragma warning restore 67
 			public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { private get; set; }
 			public IEnumerable<string> CustomDigits { get; set; }
