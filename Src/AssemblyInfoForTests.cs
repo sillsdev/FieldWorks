@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,9 +22,6 @@ using SIL.TestUtilities;
 // Initialize registry helper
 [assembly: InitializeFwRegistryHelper]
 
-// Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]
-
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
 
@@ -34,11 +31,15 @@ using SIL.TestUtilities;
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
 
-// Turns the SLDR API into offline mode
-[assembly: OfflineSldr]
-
 // Suppresses error beeps
 [assembly: SuppressErrorBeeps]
 
 // Handles any unhandled exceptions thrown on Windows Forms threads
 [assembly: HandleApplicationThreadException]
+
+// NOTE: it is important that OfflineSldr comes before InitializeIcu!
+// Turns the SLDR API into offline mode
+[assembly: OfflineSldr]
+
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 54)]
