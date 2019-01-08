@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,21 +6,16 @@ using System.Runtime.InteropServices;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Impls;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
 
 namespace LanguageExplorerTests.Impls
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
-	public class FindCollectorEnvTests: ScrInMemoryLcmTestBase
+	public class FindCollectorEnvTests : ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		private IScrSection m_section;
@@ -36,51 +31,32 @@ namespace LanguageExplorerTests.Impls
 
 		#region Setup/Teardown/Initialize
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the up a test.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[SetUp]
 		public override void TestSetup()
 		{
 			base.TestSetup();
-
 			m_vc = new StVc();
 			m_vc.Cache = Cache;
-
 			m_pattern = VwPatternClass.Create();
-
 			m_pattern.Pattern = TsStringUtils.MakeString("a", Cache.DefaultVernWs);
 			m_pattern.MatchOldWritingSystem = false;
 			m_pattern.MatchDiacritics = false;
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-
-			IScrBook genesis = AddBookWithTwoSections(1, "Genesis");
+			var genesis = AddBookWithTwoSections(1, "Genesis");
 			m_section = genesis.SectionsOS[0];
 			// Add paragraphs (because we use an StVc in the test we add them all to the same section)
-			m_para1 = AddParaToMockedSectionContent(m_section,
-				ScrStyleNames.NormalParagraph);
-			AddRunToMockedPara(m_para1,
-				"This is some text so that we can test the find functionality.", null);
-			m_para2 = AddParaToMockedSectionContent(m_section,
-				ScrStyleNames.NormalParagraph);
-			AddRunToMockedPara(m_para2,
-				"Some more text so that we can test the find and replace functionality.", null);
-			m_para3 = AddParaToMockedSectionContent(
-				m_section, ScrStyleNames.NormalParagraph);
-			AddRunToMockedPara(m_para3,
-				"This purugruph doesn't contuin the first letter of the ulphubet.", null);
+			m_para1 = AddParaToMockedSectionContent(m_section, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(m_para1, "This is some text so that we can test the find functionality.", null);
+			m_para2 = AddParaToMockedSectionContent(m_section, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(m_para2, "Some more text so that we can test the find and replace functionality.", null);
+			m_para3 = AddParaToMockedSectionContent(m_section, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(m_para3, "This purugruph doesn't contuin the first letter of the ulphubet.", null);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>This method is called after each test</remarks>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override void TestTearDown()
 		{
 			m_vc = null;
@@ -89,29 +65,26 @@ namespace LanguageExplorerTests.Impls
 			m_para2 = null;
 			m_para3 = null;
 			if (Marshal.IsComObject(m_pattern))
+			{
 				Marshal.ReleaseComObject(m_pattern);
+			}
 			m_pattern = null;
-
 			base.TestTearDown();
 		}
 		#endregion
 
 		#region Find tests
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Tests finding text starting at the top of the "view"
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void Find_FromTop()
 		{
-			using (var collectorEnv = new FindCollectorEnv(m_vc,
-				Cache.MainCacheAccessor, m_para1.Owner.Hvo, (int) StTextFrags.kfrText,
-				m_pattern, null))
+			using (var collectorEnv = new FindCollectorEnv(m_vc, Cache.MainCacheAccessor, m_para1.Owner.Hvo, (int)StTextFrags.kfrText, m_pattern, null))
 			{
-
 				// Start at the top
-				SelLevInfo[] levInfo = new SelLevInfo[1];
+				var levInfo = new SelLevInfo[1];
 				levInfo[0].hvo = m_para1.Hvo;
 				levInfo[0].tag = StTextTags.kflidParagraphs;
 				m_sel = new LocationInfo(levInfo, StTxtParaTags.kflidContents, 0);
@@ -127,30 +100,22 @@ namespace LanguageExplorerTests.Impls
 				Assert.IsNull(collectorEnv.FindNext(m_sel));
 
 				// Make sure nothing got replaced by accident.
-				Assert.AreEqual("This is some text so that we can test the find functionality.",
-					m_para1.Contents.Text);
-				Assert.AreEqual("Some more text so that we can test the find and replace functionality.",
-					m_para2.Contents.Text);
-				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.",
-					m_para3.Contents.Text);
+				Assert.AreEqual("This is some text so that we can test the find functionality.", m_para1.Contents.Text);
+				Assert.AreEqual("Some more text so that we can test the find and replace functionality.", m_para2.Contents.Text);
+				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.", m_para3.Contents.Text);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests finding text starting in the middle of the "view"
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void Find_FromMiddle()
 		{
-			using (var collectorEnv = new FindCollectorEnv(m_vc,
-				Cache.DomainDataByFlid, m_para1.Owner.Hvo, (int) StTextFrags.kfrText,
-				m_pattern, null))
+			using (var collectorEnv = new FindCollectorEnv(m_vc, Cache.DomainDataByFlid, m_para1.Owner.Hvo, (int)StTextFrags.kfrText, m_pattern, null))
 			{
-
 				// Start in the middle
-				SelLevInfo[] levInfo = new SelLevInfo[1];
+				var levInfo = new SelLevInfo[1];
 				levInfo[0].hvo = m_para2.Hvo;
 				levInfo[0].tag = StTextTags.kflidParagraphs;
 				m_sel = new LocationInfo(levInfo, StTxtParaTags.kflidContents, 5);
@@ -163,16 +128,12 @@ namespace LanguageExplorerTests.Impls
 				Assert.IsNull(collectorEnv.FindNext(m_sel));
 
 				// Make sure nothing got replaced by accident.
-				Assert.AreEqual("This is some text so that we can test the find functionality.",
-					m_para1.Contents.Text);
-				Assert.AreEqual("Some more text so that we can test the find and replace functionality.",
-					m_para2.Contents.Text);
-				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.",
-					m_para3.Contents.Text);
+				Assert.AreEqual("This is some text so that we can test the find functionality.", m_para1.Contents.Text);
+				Assert.AreEqual("Some more text so that we can test the find and replace functionality.", m_para2.Contents.Text);
+				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.", m_para3.Contents.Text);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Verifies the find next.
 		/// </summary>
@@ -180,11 +141,9 @@ namespace LanguageExplorerTests.Impls
 		/// <param name="hvoExpected">The hvo expected.</param>
 		/// <param name="ichMinExpected">The ich min expected.</param>
 		/// <param name="ichLimExpected">The ich lim expected.</param>
-		/// ------------------------------------------------------------------------------------
-		private void VerifyFindNext(FindCollectorEnv collectorEnv, int hvoExpected,
-			int ichMinExpected, int ichLimExpected)
+		private void VerifyFindNext(FindCollectorEnv collectorEnv, int hvoExpected, int ichMinExpected, int ichLimExpected)
 		{
-			LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
+			var foundLocation = collectorEnv.FindNext(m_sel);
 			Assert.IsNotNull(foundLocation);
 			Assert.AreEqual(1, foundLocation.m_location.Length);
 			Assert.AreEqual(hvoExpected, foundLocation.TopLevelHvo);

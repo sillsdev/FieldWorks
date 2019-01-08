@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,295 +19,6 @@ namespace LanguageExplorerTests.Impls
 		/// <summary />
 		private FlexComponentParameters _flexComponentParameters;
 
-		private static class Publisher
-		{
-			internal static void PublishMessageOne(IPublisher pubSystem)
-			{
-				pubSystem.Publish("MessageOne", false);
-			}
-
-			internal static void PublishMessageTwo(IPublisher pubSystem)
-			{
-				pubSystem.Publish("MessageTwo", 2);
-			}
-
-			internal static void PublishBothMessages(IPublisher pubSystem)
-			{
-				var commands = new List<string>
-				{
-					"MessageOne",
-					"MessageTwo"
-				};
-				var parms = new List<object>
-				{
-					false,
-					int.MaxValue
-				};
-				pubSystem.Publish(commands, parms);
-			}
-		}
-
-		private class SomeRandomMessageSubscriber
-		{
-			/// <summary>
-			/// This is the subscribed message handler for "SomeRandomMessage" message.
-			/// This is used in testing re-entrant calls.
-			/// </summary>
-			private void SomeRandomMessageOneHandler(object newValue)
-			{
-			}
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
-			}
-		}
-
-		private class SingleMessageSubscriber
-		{
-			internal bool One { get; set; }
-			internal int Two { get; set; }
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void MessageOneHandler(object newValue)
-			{
-				One = (bool)newValue;
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageTwo" message.
-			/// </summary>
-			private void MessageTwoHandler(object newValue)
-			{
-				Two = (int)newValue;
-			}
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", MessageOneHandler);
-				subscriber.Subscribe("MessageTwo", MessageTwoHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", MessageOneHandler);
-				subscriber.Unsubscribe("MessageTwo", MessageTwoHandler);
-			}
-		}
-
-		private class DoubleMessageSubscriber
-		{
-			internal bool One { get; set; }
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void SecondMessageOneHandler(object newValue)
-			{
-				One = (bool)newValue;
-			}
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", SecondMessageOneHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", SecondMessageOneHandler);
-			}
-		}
-
-		private class ReentrantSubscriber_SingleCall
-		{
-			private bool _one;
-			internal IPublisher Publisher { get; set; }
-			internal bool ShouldDoReentrantPublish { get; set; }
-
-			internal bool One
-			{
-				get { return _one; }
-				set
-				{
-					_one = value;
-					if (ShouldDoReentrantPublish)
-					{
-						// Bad boy! Re-entrant test should fail on this.
-						Publisher.Publish("SomeRandomMessage", "Whatever");
-					}
-				}
-			}
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void ReentrantMessageOneHandler(object newValue)
-			{
-				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
-			}
-		}
-
-		private class ReentrantSubscriber_Single_CallsMultiple
-		{
-			private bool _one;
-			internal IPublisher Publisher { get; set; }
-			internal bool ShouldDoReentrantPublish { get; set; }
-
-			internal bool One
-			{
-				get { return _one; }
-				set
-				{
-					_one = value;
-					if (ShouldDoReentrantPublish)
-					{
-						// Bad boy! Re-entrant test should fail on this.
-						var commands = new List<string>
-						{
-							"MessageOne",
-							"SomeRandomMessage"
-						};
-						var parms = new List<object>
-						{
-							false,
-							"Whatever"
-						};
-						Publisher.Publish(commands, parms);
-					}
-				}
-			}
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("BadBoy", ReentrantBadBoyHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("BadBoy", ReentrantBadBoyHandler);
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void ReentrantBadBoyHandler(object newValue)
-			{
-				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
-			}
-		}
-
-		private class ReentrantSubscriber_MultipleCalls
-		{
-			private bool _one;
-			internal IPublisher Publisher { get; set; }
-
-			internal bool One
-			{
-				get { return _one; }
-				set
-				{
-					_one = value;
-					if (ShouldDoReentrantPublish)
-					{
-						// Bad boy! Re-entrant test should fail on this.
-						var commands = new List<string>
-						{
-							"MessageOne",
-							"SomeRandomMessage"
-						};
-						var parms = new List<object>
-						{
-							false,
-							"Whatever"
-						};
-						Publisher.Publish(commands, parms);
-					}
-				}
-			}
-
-			internal int Two { get; set; }
-			internal bool ShouldDoReentrantPublish { get; set; }
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
-				subscriber.Subscribe("MessageTwo", OrdinaryMessageTwoHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
-				subscriber.Unsubscribe("MessageTwo", OrdinaryMessageTwoHandler);
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void ReentrantMessageOneHandler(object newValue)
-			{
-				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void OrdinaryMessageTwoHandler(object newValue)
-			{
-				Two = (int)newValue;
-			}
-		}
-
-		private class NiceGuy_MultipleSubscriber
-		{
-			internal bool One { get; set; }
-			internal int Two { get; set; }
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", MessageOneHandler);
-				subscriber.Subscribe("MessageTwo", MessageTwoHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", MessageOneHandler);
-				subscriber.Unsubscribe("MessageTwo", MessageTwoHandler);
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void MessageOneHandler(object newValue)
-			{
-				One = (bool)newValue;
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void MessageTwoHandler(object newValue)
-			{
-				Two = (int)newValue;
-			}
-		}
-
 		/// <summary>
 		/// Set up for each test.
 		/// </summary>
@@ -323,7 +34,7 @@ namespace LanguageExplorerTests.Impls
 		[TearDown]
 		public void TestTeardown()
 		{
-			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters?.PropertyTable?.Dispose();
 			_flexComponentParameters = null;
 		}
 
@@ -342,13 +53,13 @@ namespace LanguageExplorerTests.Impls
 			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
 			var someRandomSubscriber = new SomeRandomMessageSubscriber();
-			someRandomSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
+			SomeRandomMessageSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
 			Assert.Throws<ApplicationException>(() => Publisher.PublishMessageOne(_flexComponentParameters.Publisher));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
-			someRandomSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			SomeRandomMessageSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
 		/// <summary>
@@ -366,7 +77,7 @@ namespace LanguageExplorerTests.Impls
 			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
 			var someRandomSubscriber = new SomeRandomMessageSubscriber();
-			someRandomSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
+			SomeRandomMessageSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			var niceGuyMultipleSubscriber = new NiceGuy_MultipleSubscriber();
 			niceGuyMultipleSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
@@ -374,7 +85,7 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsTrue(subscriber.One);
 			Assert.Throws<ApplicationException>(() => _flexComponentParameters.Publisher.Publish("BadBoy", false));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
-			someRandomSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
+			SomeRandomMessageSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			niceGuyMultipleSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
@@ -523,6 +234,296 @@ namespace LanguageExplorerTests.Impls
 			Publisher.PublishMessageOne(_flexComponentParameters.Publisher);
 			Assert.IsTrue(subscriber.One); // Did not change.
 			Assert.IsTrue(subscriber2.One); // Did not change.
+		}
+
+
+		private static class Publisher
+		{
+			internal static void PublishMessageOne(IPublisher pubSystem)
+			{
+				pubSystem.Publish("MessageOne", false);
+			}
+
+			internal static void PublishMessageTwo(IPublisher pubSystem)
+			{
+				pubSystem.Publish("MessageTwo", 2);
+			}
+
+			internal static void PublishBothMessages(IPublisher pubSystem)
+			{
+				var commands = new List<string>
+				{
+					"MessageOne",
+					"MessageTwo"
+				};
+				var parms = new List<object>
+				{
+					false,
+					int.MaxValue
+				};
+				pubSystem.Publish(commands, parms);
+			}
+		}
+
+		private sealed class SomeRandomMessageSubscriber
+		{
+			/// <summary>
+			/// This is the subscribed message handler for "SomeRandomMessage" message.
+			/// This is used in testing re-entrant calls.
+			/// </summary>
+			private static void SomeRandomMessageOneHandler(object newValue)
+			{
+			}
+
+			internal static void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
+			}
+
+			internal static void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
+			}
+		}
+
+		private sealed class SingleMessageSubscriber
+		{
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageTwo" message.
+			/// </summary>
+			private void MessageTwoHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", MessageOneHandler);
+				subscriber.Subscribe("MessageTwo", MessageTwoHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", MessageOneHandler);
+				subscriber.Unsubscribe("MessageTwo", MessageTwoHandler);
+			}
+		}
+
+		private sealed class DoubleMessageSubscriber
+		{
+			internal bool One { get; set; }
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void SecondMessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", SecondMessageOneHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", SecondMessageOneHandler);
+			}
+		}
+
+		private sealed class ReentrantSubscriber_SingleCall
+		{
+			private bool _one;
+			internal IPublisher Publisher { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						Publisher.Publish("SomeRandomMessage", "Whatever");
+					}
+				}
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantMessageOneHandler(object newValue)
+			{
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
+			}
+		}
+
+		private sealed class ReentrantSubscriber_Single_CallsMultiple
+		{
+			private bool _one;
+			internal IPublisher Publisher { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						var commands = new List<string>
+						{
+							"MessageOne",
+							"SomeRandomMessage"
+						};
+						var parms = new List<object>
+						{
+							false,
+							"Whatever"
+						};
+						Publisher.Publish(commands, parms);
+					}
+				}
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("BadBoy", ReentrantBadBoyHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("BadBoy", ReentrantBadBoyHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantBadBoyHandler(object newValue)
+			{
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
+			}
+		}
+
+		private sealed class ReentrantSubscriber_MultipleCalls
+		{
+			private bool _one;
+			internal IPublisher Publisher { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						var commands = new List<string>
+						{
+							"MessageOne",
+							"SomeRandomMessage"
+						};
+						var parms = new List<object>
+						{
+							false,
+							"Whatever"
+						};
+						Publisher.Publish(commands, parms);
+					}
+				}
+			}
+
+			internal int Two { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
+				subscriber.Subscribe("MessageTwo", OrdinaryMessageTwoHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
+				subscriber.Unsubscribe("MessageTwo", OrdinaryMessageTwoHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantMessageOneHandler(object newValue)
+			{
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void OrdinaryMessageTwoHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
+		}
+
+		private sealed class NiceGuy_MultipleSubscriber
+		{
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", MessageOneHandler);
+				subscriber.Subscribe("MessageTwo", MessageTwoHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", MessageOneHandler);
+				subscriber.Unsubscribe("MessageTwo", MessageTwoHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageTwoHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
 		}
 	}
 }

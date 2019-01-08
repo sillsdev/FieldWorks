@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ using SIL.LCModel;
 namespace LanguageExplorerTests.Impls
 {
 	/// <summary>
-	/// A barebones implementation of IFwMainWnd.
+	/// A bare bones implementation of IFwMainWnd.
 	/// </summary>
 	/// <remarks>
 	/// Methods are implemented only when needed for some test.
@@ -23,7 +23,7 @@ namespace LanguageExplorerTests.Impls
 		#region Implementation of IDisposable
 		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 		void IDisposable.Dispose()
-		{}
+		{ }
 		#endregion
 
 		#region Implementation of IPropertyTableProvider
@@ -75,133 +75,109 @@ namespace LanguageExplorerTests.Impls
 		#endregion
 
 		#region Implementation of IFwMainWnd
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the active view of the window
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		IRootSite IFwMainWnd.ActiveView
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the focused control of the window
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		Control IFwMainWnd.FocusedControl
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the data objects cache.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		LcmCache IFwMainWnd.Cache
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create the client windows and add corresponding stuff to the sidebar, View menu,  etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void IFwMainWnd.Initialize(bool windowIsCopy, FwLinkArgs linkArgs)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a Rectangle representing the position and size of the window in its
 		/// normal (non-minimized, non-maximized) state.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		Rectangle IFwMainWnd.NormalStateDesktopBounds
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
+		/// Called just before a window synchronizes it's views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
-		/// ------------------------------------------------------------------------------------
+		/// <param name="sync">synchronization message</param>
 		void IFwMainWnd.PreSynchronize(SyncMsg sync)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
-		/// ------------------------------------------------------------------------------------
 		bool IFwMainWnd.Synchronize(SyncMsg sync)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a window is finished being created and completely initialized.
 		/// </summary>
 		/// <returns>True if successful; false otherwise.  False should keep the main window
 		/// from being shown/initialized (maybe even close the window if false is returned)
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		bool IFwMainWnd.OnFinishedInit()
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prepare to refresh the main window and its IAreas and ITools.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void IFwMainWnd.PrepareToRefresh()
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finish refreshing the main window and its IAreas and ITools.
 		/// </summary>
 		/// <remarks>
 		/// This should call Refresh on real window implementations,
 		/// after everything else is done.</remarks>
-		/// ------------------------------------------------------------------------------------
 		void IFwMainWnd.FinishRefresh()
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes all the views that belong to this main window
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void IFwMainWnd.RefreshAllViews()
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Closes this instance.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void IFwMainWnd.Close()
 		{
 			throw new NotImplementedException();
@@ -238,7 +214,7 @@ namespace LanguageExplorerTests.Impls
 		IRecordBar IFwMainWnd.RecordBarControl => null;
 
 		/// <summary>
-		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
+		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showing a tree.
 		/// </summary>
 		TreeView IFwMainWnd.TreeStyleRecordList => null;
 

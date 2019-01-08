@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,11 +8,11 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
@@ -123,106 +123,104 @@ namespace LanguageExplorerTests
 			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false);
+			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor, () =>
+			{
+				m_domainBadWords = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+				m_domainTemperature = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+				Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainBadWords);
+				Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainTemperature);
+				m_mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
+				m_blank = MakeEntry("blank", "swear word", true);
+				m_blank.SensesOS[0].SemanticDomainsRC.Add(m_domainBadWords);
+				m_hot = MakeEntry("hot", "high temperature", false);
+				m_hotTemp = m_hot.SensesOS[0];
+				m_hotTemp.SemanticDomainsRC.Add(m_domainTemperature);
+				m_trouble = MakeSense(m_hot, "trouble");
+				m_trouble.DoNotPublishInRC.Add(m_mainDict);
+				m_trouble.PicturesOS.Add(Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create());
+				m_desirable = MakeSense(m_hot, "desirable");
+				m_fastCar = MakeSense(m_desirable, "fast (car)");
 
-			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor,
-				() =>
-					{
-						m_domainBadWords = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
-						m_domainTemperature = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
-						Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainBadWords);
-						Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainTemperature);
-						m_mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
-						m_blank = MakeEntry("blank", "swear word", true);
-						m_blank.SensesOS[0].SemanticDomainsRC.Add(m_domainBadWords);
-						m_hot = MakeEntry("hot", "high temperature", false);
-						m_hotTemp = m_hot.SensesOS[0];
-						m_hotTemp.SemanticDomainsRC.Add(m_domainTemperature);
-						m_trouble = MakeSense(m_hot, "trouble");
-						m_trouble.DoNotPublishInRC.Add(m_mainDict);
-						m_trouble.PicturesOS.Add(Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create());
-						m_desirable = MakeSense(m_hot, "desirable");
-						m_fastCar = MakeSense(m_desirable, "fast (car)");
+				m_badHot = MakeExample(m_hotTemp, "a hot pile of blank", true);
+				m_goodHot = MakeExample(m_hotTemp, "a hot bath", false);
 
-						m_badHot = MakeExample(m_hotTemp, "a hot pile of blank", true);
-						m_goodHot = MakeExample(m_hotTemp, "a hot bath", false);
+				m_water = MakeEntry("water", "H2O", false);
+				m_waterH2O = m_water.SensesOS[0];
+				m_hotWater = MakeEntry("hot water", "trouble", false);
+				m_hotWaterComponents = MakeEntryRef(m_hotWater, new ICmObject[] { m_trouble, m_waterH2O }, new ICmObject[] { m_trouble, m_waterH2O }, LexEntryRefTags.krtComplexForm);
 
-						m_water = MakeEntry("water", "H2O", false);
-						m_waterH2O = m_water.SensesOS[0];
-						m_hotWater = MakeEntry("hot water", "trouble", false);
-						m_hotWaterComponents = MakeEntryRef(m_hotWater, new ICmObject[] { m_trouble, m_waterH2O }, new ICmObject[] { m_trouble, m_waterH2O }, LexEntryRefTags.krtComplexForm);
+				m_blank2 = MakeEntry("blank", "vacant", false);
+				m_blank3 = MakeEntry("blank", "erase", false);
+				m_water2 = MakeEntry("water", "urinate", true);
+				m_waterPrefix = MakeEntry("water", "aquatic", false);
+				m_waterPrefix.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphPrefix);
 
-						m_blank2 = MakeEntry("blank", "vacant", false);
-						m_blank3 = MakeEntry("blank", "erase", false);
-						m_water2 = MakeEntry("water", "urinate", true);
-						m_waterPrefix = MakeEntry("water", "aquatic", false);
-						m_waterPrefix.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphPrefix);
+				m_synonym = MakeRefType("synonym", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
+				m_blip = MakeEntry("blip", "rude word", true);
+				m_bother = MakeEntry("bother", "I'm annoyed by that", false);
+				m_ouch = MakeEntry("ouch", "that hurt", false);
+				m_blipOuch = MakeSense(m_blip.SensesOS[0], "rude ouch");
+				m_blankSynonyms = MakeLexRef(m_synonym, new ICmObject[] { m_blank, m_ouch.SensesOS[0], m_blip.SensesOS[0], m_blipOuch, m_bother });
 
-						m_synonym = MakeRefType("synonym", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
-						m_blip = MakeEntry("blip", "rude word", true);
-						m_bother = MakeEntry("bother", "I'm annoyed by that", false);
-						m_ouch = MakeEntry("ouch", "that hurt", false);
-						m_blipOuch = MakeSense(m_blip.SensesOS[0], "rude ouch");
-						m_blankSynonyms = MakeLexRef(m_synonym, new ICmObject[] {m_blank, m_ouch.SensesOS[0], m_blip.SensesOS[0], m_blipOuch, m_bother});
+				m_problem = MakeEntry("problem", "difficulty", false);
+				m_problemSynonyms = MakeLexRef(m_synonym, new ICmObject[] { m_problem, m_trouble });
 
-						m_problem = MakeEntry("problem", "difficulty", false);
-						m_problemSynonyms = MakeLexRef(m_synonym, new ICmObject[] { m_problem, m_trouble });
+				m_body = MakeEntry("body", "body", true);
+				m_arm = MakeEntry("arm", "arm", false);
+				m_leg = MakeEntry("leg", "leg", false);
+				m_belly = MakeEntry("belly", "belly", true);
+				m_torso = MakeEntry("torso", "torso", false);
+				m_partWhole = MakeRefType("partWhole", null, (int)LexRefTypeTags.MappingTypes.kmtEntryTree);
+				m_bodyParts = MakeLexRef(m_partWhole, new ICmObject[] { m_body, m_arm, m_leg.SensesOS[0], m_torso, m_belly });
+				m_torsoParts = MakeLexRef(m_partWhole, new ICmObject[] { m_torso, m_arm, m_belly });
 
-						m_body = MakeEntry("body", "body", true);
-						m_arm = MakeEntry("arm", "arm", false);
-						m_leg = MakeEntry("leg", "leg", false);
-						m_belly = MakeEntry("belly", "belly", true);
-						m_torso = MakeEntry("torso", "torso", false);
-						m_partWhole = MakeRefType("partWhole", null, (int)LexRefTypeTags.MappingTypes.kmtEntryTree);
-						m_bodyParts = MakeLexRef(m_partWhole, new ICmObject[] {m_body, m_arm, m_leg.SensesOS[0], m_torso, m_belly});
-						m_torsoParts = MakeLexRef(m_partWhole, new ICmObject[] {m_torso, m_arm, m_belly});
+				m_hotBlank = MakeEntry("hotBlank", "problem rude word", false);
+				MakeEntryRef(m_hotBlank, new ICmObject[] { m_trouble, m_water2 }, new ICmObject[] { m_trouble, m_water2 }, LexEntryRefTags.krtComplexForm);
 
-						m_hotBlank = MakeEntry("hotBlank", "problem rude word", false);
-						MakeEntryRef(m_hotBlank, new ICmObject[] { m_trouble, m_water2 }, new ICmObject[] { m_trouble, m_water2 }, LexEntryRefTags.krtComplexForm);
+				m_blueColor = MakeEntry("blue", "color blue", false);
+				m_blueCold = MakeEntry("blue", "cold", false);
+				m_blueMusic = MakeEntry("blue", "jazzy", false);
+				m_blueSad = MakeEntry("blue", "sad", false);
 
-						m_blueColor = MakeEntry("blue", "color blue", false);
-						m_blueCold = MakeEntry("blue", "cold", false);
-						m_blueMusic = MakeEntry("blue", "jazzy", false);
-						m_blueSad = MakeEntry("blue", "sad", false);
+				m_blueMusic.HomographNumber = 2; // will duplicate blue cold; pathological, but should not crash.
+				m_blueSad.HomographNumber = 3; // will conflict with renumbered blueMusic
 
-						m_blueMusic.HomographNumber = 2; // will duplicate blue cold; pathological, but should not crash.
-						m_blueSad.HomographNumber = 3; // will conflict with renumbered blueMusic
+				m_bluer = m_blueColor.SensesOS[0];
+				m_sky = MakeEntry("sky", "interface between atmosphere and space", false, true); // true excludes as headword
+				m_skyReal = m_sky.SensesOS[0];
+				m_blueSky = MakeEntry("blue sky", "clear, huge potential", false);
+				m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal }, new ICmObject[] { m_bluer, m_skyReal }, LexEntryRefTags.krtComplexForm);
 
-						m_bluer = m_blueColor.SensesOS[0];
-						m_sky = MakeEntry("sky", "interface between atmosphere and space", false, true); // true excludes as headword
-						m_skyReal = m_sky.SensesOS[0];
-						m_blueSky = MakeEntry("blue sky", "clear, huge potential", false);
-						m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal }, new ICmObject[] { m_bluer, m_skyReal }, LexEntryRefTags.krtComplexForm);
+				m_ringBell = MakeEntry("ring", "bell", false);
+				m_ringCircle = MakeEntry("ring", "circle", false, true);
+				m_ringGold = MakeEntry("ring", "gold", false);
 
-						m_ringBell = MakeEntry("ring", "bell", false);
-						m_ringCircle = MakeEntry("ring", "circle", false, true);
-						m_ringGold = MakeEntry("ring", "gold", false);
+				m_blackVerb = MakeEntry("black", "darken", false, true);
+				m_blackColor = MakeEntry("black", "dark", false);
 
-						m_blackVerb = MakeEntry("black", "darken", false, true);
-						m_blackColor = MakeEntry("black", "dark", false);
+				m_hotArm = MakeEntry("hotarm", "pitcher", false);
+				m_hotArmComponents = MakeEntryRef(m_hotArm, new ICmObject[] { m_hot, m_arm }, new ICmObject[] { m_hot, m_arm }, LexEntryRefTags.krtComplexForm);
+				m_hotArm.DoNotPublishInRC.Add(m_mainDict);
+				m_hotArmComponents.ShowComplexFormsInRS.Add(m_hot);
 
-						m_hotArm = MakeEntry("hotarm", "pitcher", false);
-						m_hotArmComponents = MakeEntryRef(m_hotArm, new ICmObject[] { m_hot, m_arm }, new ICmObject[] { m_hot, m_arm }, LexEntryRefTags.krtComplexForm);
-						m_hotArm.DoNotPublishInRC.Add(m_mainDict);
-						m_hotArmComponents.ShowComplexFormsInRS.Add(m_hot);
+				m_nolanryan = MakeEntry("Nolan_Ryan", "pitcher", false);
+				m_nolanryanComponents = MakeEntryRef(m_nolanryan, new ICmObject[] { m_hot }, new ICmObject[] { m_hot }, LexEntryRefTags.krtVariant);
+				m_nolanryanComponents.VariantEntryTypesRS.Add((ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
+				m_nolanryan.DoNotPublishInRC.Add(m_mainDict);
 
-						m_nolanryan = MakeEntry("Nolan_Ryan", "pitcher", false);
-						m_nolanryanComponents = MakeEntryRef(m_nolanryan, new ICmObject[] { m_hot }, new ICmObject[] { m_hot }, LexEntryRefTags.krtVariant);
-						m_nolanryanComponents.VariantEntryTypesRS.Add((ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
-						m_nolanryan.DoNotPublishInRC.Add(m_mainDict);
+				m_edName = MakeEntry("ed", "someone called ed", false);
+				m_edSuffix = MakeEntry("ed", "past", false, false, true);
 
-						m_edName = MakeEntry("ed", "someone called ed", false);
-						m_edSuffix = MakeEntry("ed", "past", false, false, true);
+				m_revIndex = CreateInterestingReversalEntries();
 
-						m_revIndex = CreateInterestingReversalEntries();
+				m_mockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
+				m_mockObjectListPublisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
+				m_decorator = new DictionaryPublicationDecorator(Cache, m_mockObjectListPublisher, ObjectListPublisher.OwningFlid);
 
-						m_mockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
-						m_mockObjectListPublisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
-						m_decorator = new DictionaryPublicationDecorator(Cache, m_mockObjectListPublisher, ObjectListPublisher.OwningFlid);
-
-						m_revMockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
-						m_revMockObjectListPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
-						m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revMockObjectListPublisher, ObjectListPublisher.OwningFlid);
-					});
+				m_revMockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
+				m_revMockObjectListPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
+				m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revMockObjectListPublisher, ObjectListPublisher.OwningFlid);
+			});
 		}
 
 		private IReversalIndex CreateInterestingReversalEntries()
@@ -350,7 +348,7 @@ namespace LanguageExplorerTests
 			Assert.That(m_decorator.get_VecItem(m_hot.Hvo, LexEntryTags.kflidSenses, 1), Is.EqualTo(m_desirable.Hvo));
 
 			// This test is perhaps redundant here: DictionaryPublicationDecorator does not have to do anything to get this behavior.
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(2))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
 				int chvo;
 				m_decorator.VecProp(m_hot.Hvo, LexEntryTags.kflidSenses, 2, out chvo, arrayPtr);
@@ -416,8 +414,8 @@ namespace LanguageExplorerTests
 		{
 			Assert.That(m_decorator.get_IntProp(m_blueColor.Hvo, LexEntryTags.kflidHomographNumber), Is.EqualTo(1));
 			Assert.That(m_decorator.get_IntProp(m_blueSad.Hvo, LexEntryTags.kflidHomographNumber), Is.EqualTo(4));
-			int hnMusic = m_decorator.get_IntProp(m_blueMusic.Hvo, LexEntryTags.kflidHomographNumber);
-			int hnCold = m_decorator.get_IntProp(m_blueCold.Hvo, LexEntryTags.kflidHomographNumber);
+			var hnMusic = m_decorator.get_IntProp(m_blueMusic.Hvo, LexEntryTags.kflidHomographNumber);
+			var hnCold = m_decorator.get_IntProp(m_blueCold.Hvo, LexEntryTags.kflidHomographNumber);
 			// Can't predict which will come out first, but should be different.
 			Assert.That(hnMusic == 2 && hnCold == 3 || hnMusic == 3 && hnCold == 2, Is.True);
 		}
@@ -436,12 +434,12 @@ namespace LanguageExplorerTests
 			// This one is reduced because with the only other homograph not published, it should not appear to be
 			// a homograph at all.
 			Assert.That(m_decorator.get_IntProp(m_water.Hvo, LexEntryTags.kflidHomographNumber), Is.EqualTo(0));
-			int headwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWord", false);
+			var headwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWord", false);
 			Assert.That(m_decorator.get_StringProp(m_blank2.Hvo, headwordFlid).Text, Is.EqualTo("blank1"));
 			Assert.That(m_decorator.get_StringProp(m_water.Hvo, headwordFlid).Text, Is.EqualTo("water"));
 			Assert.That(m_decorator.get_StringProp(m_waterPrefix.Hvo, headwordFlid).Text, Is.EqualTo("water-"));
 
-			int mlHeadwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "MLHeadWord", false);
+			var mlHeadwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "MLHeadWord", false);
 			Assert.That(m_decorator.get_MultiStringAlt(m_blank2.Hvo, mlHeadwordFlid, Cache.DefaultVernWs).Text, Is.EqualTo("blank1"));
 			Assert.That(m_decorator.get_MultiStringAlt(m_water.Hvo, mlHeadwordFlid, Cache.DefaultVernWs).Text, Is.EqualTo("water"));
 			Assert.That(m_decorator.get_MultiStringAlt(m_waterPrefix.Hvo, mlHeadwordFlid, Cache.DefaultVernWs).Text, Is.EqualTo("water-"));
@@ -453,7 +451,7 @@ namespace LanguageExplorerTests
 		[Test]
 		public void IncompleteLexReferences()
 		{
-			int lexEntryRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "LexEntryReferences", false);
+			var lexEntryRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "LexEntryReferences", false);
 			// There are two surviving synonyms so this one should survive.
 			Assert.That(m_decorator.VecProp(m_bother.Hvo, lexEntryRefsFlid).Length, Is.EqualTo(1));
 
@@ -466,7 +464,7 @@ namespace LanguageExplorerTests
 			// and it is the 'whole'.
 			Assert.That(m_decorator.get_VecSize(m_arm.Hvo, lexEntryRefsFlid), Is.EqualTo(1));
 
-			int lexSenseRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseReferences", false);
+			var lexSenseRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseReferences", false);
 			Assert.That(Cache.DomainDataByFlid.get_VecSize(m_leg.SensesOS[0].Hvo, lexSenseRefsFlid), Is.EqualTo(1));
 			Assert.That(m_decorator.get_VecSize(m_leg.SensesOS[0].Hvo, lexSenseRefsFlid), Is.EqualTo(0));
 		}
@@ -500,7 +498,7 @@ namespace LanguageExplorerTests
 		public void IncompleteLexEntryRefs()
 		{
 			Assert.That(m_hotBlank.ComplexFormEntryRefs.Count(), Is.EqualTo(1));
-			int complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ComplexFormEntryRefs", false);
+			var complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ComplexFormEntryRefs", false);
 			Assert.That(m_decorator.get_VecSize(m_hotBlank.Hvo, complexRefsFlid), Is.EqualTo(0));
 		}
 
@@ -513,7 +511,7 @@ namespace LanguageExplorerTests
 
 			// Don't show pictures of unpublished senses.
 			var picsOfSensesFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PicturesOfSenses", false);
-			Assert.That(Cache.DomainDataByFlid.get_VecSize(m_hot.Hvo,picsOfSensesFlid), Is.EqualTo(1));
+			Assert.That(Cache.DomainDataByFlid.get_VecSize(m_hot.Hvo, picsOfSensesFlid), Is.EqualTo(1));
 			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, picsOfSensesFlid), Is.EqualTo(0));
 
 			// Sense.LexSenseOutline: sense 2 of hot is not published.
@@ -529,10 +527,8 @@ namespace LanguageExplorerTests
 			Assert.That(m_decorator.get_MultiStringAlt(m_desirable.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 2"));
 			Assert.That(Cache.DomainDataByFlid.get_MultiStringAlt(m_fastCar.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 3.1"));
 			Assert.That(m_decorator.get_MultiStringAlt(m_fastCar.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 2.1"));
-			Assert.That(Cache.DomainDataByFlid.get_MultiStringAlt(m_blank2.SensesOS[0].Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text,
-				Is.EqualTo("blank2"));
-			Assert.That(m_decorator.get_MultiStringAlt(m_blank2.SensesOS[0].Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text,
-				Is.EqualTo("blank1"));
+			Assert.That(Cache.DomainDataByFlid.get_MultiStringAlt(m_blank2.SensesOS[0].Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("blank2"));
+			Assert.That(m_decorator.get_MultiStringAlt(m_blank2.SensesOS[0].Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("blank1"));
 
 			// Entry.PublishAsMinorEntry
 			var publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
@@ -591,15 +587,14 @@ namespace LanguageExplorerTests
 		[Test]
 		public void Refresh()
 		{
-			UndoableUnitOfWorkHelper.Do("do", "undo", m_actionHandler,
-				() =>
-					{
-						var goodWord = MakeEntry("good", "nice", false);
-						var badSense = MakeSense(goodWord, "bad");
-						badSense.DoNotPublishInRC.Add(m_mainDict);
-						m_decorator.Refresh();
-						Assert.That(m_decorator.get_VecSize(goodWord.Hvo, LexEntryTags.kflidSenses), Is.EqualTo(1));
-					});
+			UndoableUnitOfWorkHelper.Do("do", "undo", m_actionHandler, () =>
+			{
+				var goodWord = MakeEntry("good", "nice", false);
+				var badSense = MakeSense(goodWord, "bad");
+				badSense.DoNotPublishInRC.Add(m_mainDict);
+				m_decorator.Refresh();
+				Assert.That(m_decorator.get_VecSize(goodWord.Hvo, LexEntryTags.kflidSenses), Is.EqualTo(1));
+			});
 			// Get rid of it again: the underlying virtual list publisher is not aware of the new item,
 			// which can mess up later tests.
 			m_actionHandler.Undo();
@@ -615,17 +610,7 @@ namespace LanguageExplorerTests
 			Assert.That(propChangeInfo.cvDel, Is.EqualTo(cvDel));
 		}
 
-		private class MockNotifyChange : IVwNotifyChange
-		{
-			public PropChangeInfo LastPropChanged { get; private set; }
-
-			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-			{
-				LastPropChanged = new PropChangeInfo() { hvo = hvo, tag = tag, ivMin = ivMin, cvIns = cvIns, cvDel = cvDel };
-			}
-		}
-
-		ILexRefType MakeRefType(string name, string reverseName, int mapType)
+		private ILexRefType MakeRefType(string name, string reverseName, int mapType)
 		{
 			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
 			{
@@ -734,39 +719,50 @@ namespace LanguageExplorerTests
 			sense.Gloss.AnalysisDefaultWritingSystem = AnalysisTss(gloss);
 			return sense;
 		}
-	}
 
-	class MockObjectListPublisher : ObjectListPublisher
-	{
-		public MockObjectListPublisher(ISilDataAccessManaged domainDataByFlid, int flid) : base(domainDataByFlid, flid)
+		private sealed class MockNotifyChange : IVwNotifyChange
 		{
+			public PropChangeInfo LastPropChanged { get; private set; }
+
+			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+			{
+				LastPropChanged = new PropChangeInfo() { hvo = hvo, tag = tag, ivMin = ivMin, cvIns = cvIns, cvDel = cvDel };
+			}
 		}
 
-		public IVwNotifyChange AddedNotification { get; set; }
-
-		public override void AddNotification(IVwNotifyChange nchng)
+		private sealed class MockObjectListPublisher : ObjectListPublisher
 		{
-			AddedNotification = nchng;
+			public MockObjectListPublisher(ISilDataAccessManaged domainDataByFlid, int flid) : base(domainDataByFlid, flid)
+			{
+			}
+
+			public IVwNotifyChange AddedNotification { get; set; }
+
+			public override void AddNotification(IVwNotifyChange nchng)
+			{
+				AddedNotification = nchng;
+			}
+
+			public IVwNotifyChange RemovedNotification { get; set; }
+
+			public override void RemoveNotification(IVwNotifyChange nchng)
+			{
+				RemovedNotification = nchng;
+			}
+			// Expose the protected SendPropChanged so we can simulate PropChanged coming up from the domain.
+			public void DoSendPropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+			{
+				SendPropChanged(hvo, tag, ivMin, cvIns, cvDel);
+			}
 		}
 
-		public IVwNotifyChange RemovedNotification { get; set; }
-
-		public override void RemoveNotification(IVwNotifyChange nchng)
+		private struct PropChangeInfo
 		{
-			RemovedNotification = nchng;
+			public int hvo;
+			public int tag;
+			public int ivMin;
+			public int cvIns;
+			public int cvDel;
 		}
-		// Expose the protected SendPropChanged so we can simulate PropChanged coming up from the domain.
-		public void DoSendPropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			SendPropChanged(hvo, tag, ivMin, cvIns, cvDel);
-		}
-	}
-	internal struct PropChangeInfo
-	{
-		public int hvo;
-		public int tag;
-		public int ivMin;
-		public int cvIns;
-		public int cvDel;
 	}
 }

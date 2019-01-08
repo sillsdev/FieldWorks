@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,10 +72,8 @@ namespace LanguageExplorerTests
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Hidden minor entry should not be generated");
+			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Hidden minor entry should not be generated");
+			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Hidden minor entry should not be generated");
 			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
 
@@ -96,13 +94,11 @@ namespace LanguageExplorerTests
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
+			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
+			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
 			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 
-			var compoundGuid = "1f6ae209-141a-40db-983c-bee93af0ca3c";
+			const string compoundGuid = "1f6ae209-141a-40db-983c-bee93af0ca3c";
 			var complexOptions = (DictionaryNodeListOptions)configModel.Parts[0].DictionaryNodeOptions;
 			complexOptions.Options.First(option => option.Id == compoundGuid).IsEnabled = false;// Compound
 			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should not be generated");

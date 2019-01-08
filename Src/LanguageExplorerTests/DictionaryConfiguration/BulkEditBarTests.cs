@@ -24,7 +24,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 #if RANDYTODO
 	// (FLEx) JohnT: I did a first rough cut at updating these tests, but it will take really understanding them
 	// to figure out what needs to be mocked or set up so they can work.
-	public class BulkEditBarTestsBase : XWorksAppTestBase
+	public class BulkEditBarTestsBase : AppTestBase
 	{
 		protected IPropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	#region Setup and Teardown
 
 		/// <summary>
-		/// Run by FixtureInit() in XWorksAppTestBase
+		/// Run by FixtureInit() in AppTestBase
 		/// </summary>
 		protected override void FixtureInit()
 		{
@@ -53,7 +53,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// Run by FixtureCleanup() in XWorksAppTestBase
+		/// Run by FixtureCleanup() in AppTestBase
 		/// </summary>
 		public override void TearDown()
 		{

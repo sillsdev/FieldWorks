@@ -21,7 +21,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 {
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	[TestFixture]
-	public class XhtmlDocViewTests : XWorksAppTestBase
+	public class XhtmlDocViewTests : AppTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private XElement _parametersElement;
@@ -60,7 +60,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		protected override void FixtureInit()
 		{
-			// Init() is called from XWorksAppTestBase's TestFixtureSetup, so we won't call it here.
+			// Init() is called from AppTestBase's TestFixtureSetup, so we won't call it here.
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if (Directory.Exists(testProjPath))
 			{

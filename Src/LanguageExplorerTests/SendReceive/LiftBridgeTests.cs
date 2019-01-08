@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace LanguageExplorerTests.SendReceive
 {
-	/// <summary></summary>
+	/// <summary />
 	[TestFixture]
 	public class LiftBridgeTests
 	{
@@ -45,7 +45,6 @@ namespace LanguageExplorerTests.SendReceive
 			{
 				LiftBridge.ConvertFlexNotesToLift(reader, writer, "Fred.lift");
 			}
-
 			Assert.That(builder.ToString(), Is.EqualTo(_liftNote));
 		}
 
@@ -58,7 +57,6 @@ namespace LanguageExplorerTests.SendReceive
 			{
 				LiftBridge.ConvertLiftNotesToFlex(reader, writer);
 			}
-
 			Assert.That(builder.ToString(), Is.EqualTo(_flexNote));
 		}
 	}

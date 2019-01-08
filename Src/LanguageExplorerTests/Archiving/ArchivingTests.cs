@@ -1,15 +1,14 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
-using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Archiving;
+using NUnit.Framework;
 using SIL.Keyboarding;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests
+namespace LanguageExplorerTests.Archiving
 {
 	/// <summary>
 	/// Test Archiving system
@@ -23,12 +22,12 @@ namespace LanguageExplorerTests
 		[Test]
 		public void StringBuilder_AppendLineFormat()
 		{
-			var A = "A";
-			var B = "B";
-			var C = "C";
-			var format = "{0}{1}{2}";
-			var delimiter = ";;";
-			var expected = "ABC;;CBA;;BCA";
+			const string A = "A";
+			const string B = "B";
+			const string C = "C";
+			const string format = "{0}{1}{2}";
+			const string delimiter = ";;";
+			const string expected = "ABC;;CBA;;BCA";
 
 			var sb = new StringBuilder();
 			sb.AppendLineFormat(format, new object[] { A, B, C }, delimiter);
@@ -45,12 +44,11 @@ namespace LanguageExplorerTests
 		[Test]
 		public void DoesWritingSystemUseKeyman_NonKeymanKeyboardReturnsFalse()
 		{
-			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultAnalysisWritingSystem;
+			var ws = Cache.LangProject.DefaultAnalysisWritingSystem;
 			var testKeyboard = new DefaultKeyboardDefinition("test", "keyboard", "layout", "locale", true);
 			ws.KnownKeyboards.Add(testKeyboard);
 
-			Assert.That(ReapRamp.DoesWritingSystemUseKeyman(ws), Is.False,
-				"Unable to determine if a writing system is keyman, the location or name of the class in Palaso probably changed");
+			Assert.That(ReapRamp.DoesWritingSystemUseKeyman(ws), Is.False, "Unable to determine if a writing system is keyman, the location or name of the class in Palaso probably changed");
 		}
 	}
 }

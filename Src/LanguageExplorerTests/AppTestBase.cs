@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,7 @@ namespace LanguageExplorerTests
 
 		#region Overrides of LcmTestBase
 		/// <summary>
-		/// Instantiate a XWorksAppTestBase object.
+		/// Instantiate a AppTestBase object.
 		/// </summary>
 		public override void FixtureSetup()
 		{
@@ -68,8 +68,6 @@ namespace LanguageExplorerTests
 		/// Will find a morph type (if one exists) with the given (analysis ws) name.
 		/// If not found, will create the morph type in the Lexicon MorphTypes list.
 		/// </summary>
-		/// <param name="morphTypeName"></param>
-		/// <returns></returns>
 		protected IMoMorphType GetMorphTypeOrCreateOne(string morphTypeName)
 		{
 			Assert.IsNotNull(m_possFact, "Fixture Initialization is not complete.");
@@ -90,8 +88,6 @@ namespace LanguageExplorerTests
 		/// Will find a variant entry type (if one exists) with the given (analysis ws) name.
 		/// If not found, will create the variant entry type in the Lexicon VariantEntryTypes list.
 		/// </summary>
-		/// <param name="variantTypeName"></param>
-		/// <returns></returns>
 		protected ILexEntryType GetVariantTypeOrCreateOne(string variantTypeName)
 		{
 			Assert.IsNotNull(m_possFact, "Fixture Initialization is not complete.");
@@ -113,9 +109,6 @@ namespace LanguageExplorerTests
 		/// Will find a grammatical category (if one exists) with the given (analysis ws) name.
 		/// If not found, will create a category as a subpossibility of a grammatical category.
 		/// </summary>
-		/// <param name="catName"></param>
-		/// <param name="owningCategory"></param>
-		/// <returns></returns>
 		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, IPartOfSpeech owningCategory)
 		{
 			return GetGrammaticalCategoryOrCreateOne(catName, null, owningCategory);
@@ -125,9 +118,6 @@ namespace LanguageExplorerTests
 		/// Will find a grammatical category (if one exists) with the given (analysis ws) name.
 		/// If not found, will create the grammatical category in the owning list.
 		/// </summary>
-		/// <param name="catName"></param>
-		/// <param name="owningList"></param>
-		/// <returns></returns>
 		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList)
 		{
 			return GetGrammaticalCategoryOrCreateOne(catName, owningList, null);
@@ -138,12 +128,7 @@ namespace LanguageExplorerTests
 		/// If not found, will create a grammatical category either as a possibility of a list,
 		/// or as a subpossibility of a category.
 		/// </summary>
-		/// <param name="catName"></param>
-		/// <param name="owningList"></param>
-		/// <param name="owningCategory"></param>
-		/// <returns></returns>
-		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList,
-			IPartOfSpeech owningCategory)
+		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList, IPartOfSpeech owningCategory)
 		{
 			Assert.True(m_posFact != null, "Fixture Initialization is not complete.");
 			var category = m_posRepo.AllInstances().FirstOrDefault(someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == catName);
@@ -168,8 +153,7 @@ namespace LanguageExplorerTests
 			return category;
 		}
 
-		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, string citationForm,
-			IMoMorphType morphTypePoss, string gloss, IPartOfSpeech catPoss)
+		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, string citationForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech catPoss)
 		{
 			var ws = Cache.DefaultVernWs;
 			var le = AddLexeme(addList, lexForm, morphTypePoss, gloss, catPoss);
@@ -177,8 +161,7 @@ namespace LanguageExplorerTests
 			return le;
 		}
 
-		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, IMoMorphType morphTypePoss,
-			string gloss, IPartOfSpeech categoryPoss)
+		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech categoryPoss)
 		{
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
@@ -189,9 +172,8 @@ namespace LanguageExplorerTests
 			return entry;
 		}
 
-		protected ILexEntry AddVariantLexeme(IList<ICmObject> addList, IVariantComponentLexeme origLe,
-			string lexForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech categoryPoss,
-			ILexEntryType varType)
+		protected ILexEntry AddVariantLexeme(IList<ICmObject> addList, IVariantComponentLexeme origLe, string lexForm, IMoMorphType morphTypePoss, string gloss,
+			IPartOfSpeech categoryPoss, ILexEntryType varType)
 		{
 			Assert.IsNotNull(varType, "Need a variant entry type!");
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
@@ -205,8 +187,7 @@ namespace LanguageExplorerTests
 			return entry;
 		}
 
-		protected ILexSense AddSenseToEntry(IList<ICmObject> addList, ILexEntry le, string gloss,
-			IPartOfSpeech catPoss)
+		protected ILexSense AddSenseToEntry(IList<ICmObject> addList, ILexEntry le, string gloss, IPartOfSpeech catPoss)
 		{
 			var msa = new SandboxGenericMSA();
 			msa.MainPOS = catPoss;
@@ -215,8 +196,7 @@ namespace LanguageExplorerTests
 			return sense;
 		}
 
-		protected ILexSense AddSubSenseToSense(IList<ICmObject> addList, ILexSense ls, string gloss,
-			IPartOfSpeech catPoss)
+		protected ILexSense AddSubSenseToSense(IList<ICmObject> addList, ILexSense ls, string gloss, IPartOfSpeech catPoss)
 		{
 			var msa = new SandboxGenericMSA();
 			msa.MainPOS = catPoss;
@@ -227,8 +207,7 @@ namespace LanguageExplorerTests
 			return sense;
 		}
 
-		protected void AddStemAllomorphToEntry(IList<ICmObject> addList, ILexEntry le, string alloName,
-			IPhEnvironment env)
+		protected void AddStemAllomorphToEntry(IList<ICmObject> addList, ILexEntry le, string alloName, IPhEnvironment env)
 		{
 			var allomorph = m_stemFact.Create();
 			le.AlternateFormsOS.Add(allomorph);
@@ -240,8 +219,7 @@ namespace LanguageExplorerTests
 			addList.Add(allomorph);
 		}
 
-		protected void AddAffixAllomorphToEntry(IList<ICmObject> addList, ILexEntry le, string alloName,
-			IPhEnvironment env)
+		protected void AddAffixAllomorphToEntry(IList<ICmObject> addList, ILexEntry le, string alloName, IPhEnvironment env)
 		{
 			var allomorph = m_affixFact.Create();
 			le.AlternateFormsOS.Add(allomorph);

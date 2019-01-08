@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace LanguageExplorerTests
 {
 	[TestFixture]
-	class SimpleLoggerTests
+	public class SimpleLoggerTests
 	{
 		[Test]
 		public void HasContent_ReturnsTrueIfAny()

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,7 @@ namespace LanguageExplorerTests
 		public void GetSuffixedPartOfNamedViewOrDuplicateNodeWorks()
 		{
 			string[] keyAttributes = { null, null, "name", null };
-			string[] keyValues = { null, null, "test#1", null};
+			string[] keyValues = { null, null, "test#1", null };
 			string[] stdKeyValues;
 			// SUT
 			var suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);

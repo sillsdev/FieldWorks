@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,182 +32,14 @@ using SIL.Xml;
 
 namespace LanguageExplorerTests.LIFT
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test the LIFT import functionality provided by the FlexLiftMerger class in conjunction
 	/// with the Palaso.Lift library.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class LiftMergerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private static readonly string[] sequenceLiftData = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"  <header>",
-				"    <fields>",
-				"    </fields>",
-				"  </header>",
-				"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:40:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cold</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
-				"<gloss lang='en'><text>cold</text></gloss>",
-				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
-				"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:40:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cool</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
-				"<gloss lang='en'><text>cool</text></gloss>",
-				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
-				"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:44:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cooler</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
-				"<gloss lang='en'><text>cooler</text></gloss>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] sequenceLiftData2 = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"  <header>",
-				"    <fields>",
-				"    </fields>",
-				"  </header>",
-				"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:50:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cold</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
-				"<gloss lang='en'><text>cold</text></gloss>",
-				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
-				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:50:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cool</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
-				"<gloss lang='en'><text>cool</text></gloss>",
-				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
-				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:54:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cooler</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
-				"<gloss lang='en'><text>cooler</text></gloss>",
-				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
-				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] componentData = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"<header>",
-				"<fields></fields>",
-				"</header>",
-				"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:41:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'> <text>cold</text>",
-				"</form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
-				"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
-				"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:41:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cool</text></form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
-				"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
-				"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:51:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cooler</text></form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
-				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
-				"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
-				"</entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] componentData2 = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"<header>",
-				"<fields></fields>",
-				"</header>",
-				"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:45:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'> <text>cold</text>",
-				"</form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
-				"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:45:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cool</text></form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
-				"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
-				"</entry>",
-				"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:55:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>"
-				,
-				"<lexical-unit>",
-				"<form lang='en'><text>cooler</text></form>",
-				"</lexical-unit>",
-				"<trait name='morph-type' value='stem' />",
-				"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
-				"</entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] s_ComponentTest = {
+		private static readonly string[] _componentTest = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -250,104 +82,8 @@ namespace LanguageExplorerTests.LIFT
 				"</lift>"
 			};
 
-		private static readonly string[] s_ComponentTest2 = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"  <header>",
-				"    <fields>",
-				"    </fields>",
-				"  </header>",
-				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>do</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
-				"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>to</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
-				"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>zoo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
-				"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] s_LT12948Test = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"  <header>",
-				"    <fields>",
-				"    </fields>",
-				"  </header>",
-				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>do</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
-				"<trait name=\"is-primary\" value=\"true\"/>",
-				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
-				"</relation>",
-				"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\">",
-				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
-				"<trait name=\"is-primary\" value=\"true\"/>",
-				"</relation>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"</lift>"
-			};
-
-		private static readonly string[] s_LT12948Test2 = {
+		// KEEPERS, below this point.
+		private static readonly string[] _LT12948Test2 = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -396,95 +132,183 @@ namespace LanguageExplorerTests.LIFT
 				"</lift>"
 			};
 
-		private static readonly string[] mergeTestOld = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
-				"  <header>",
-				"    <fields>",
-				"    </fields>",
-				"  </header>",
-				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>do</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:56:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"1\">",
-				"<trait name=\"is-primary\" value=\"true\"/>",
-				"<trait name=\"variant-type\" value=\"Dialectal Variant\"/>",
-				"</relation>",
-				"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" order=\"1\">",
-				"<trait name=\"is-primary\" value=\"true\"/>",
-				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
-				"</relation>",
-				"<relation type=\"_component-lexeme\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"2\">",
-				"<trait name=\"is-primary\" value=\"true\"/>",
-				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
-				"</relation>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
-				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
-				,
-				"    <lexical-unit>",
-				"      <form lang=\"fr\"><text>todo</text></form>",
-				"    </lexical-unit>",
-				"    <trait  name=\"morph-type\" value=\"stem\"/>",
-				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-				"    </sense>",
-				"  </entry>",
+		private static readonly string[] _liftData8 = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.1.0.40722\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"      <field tag=\"Long Text\">",
+			"        <form lang=\"en\"><text>This field contains structured text.</text></form>",
+			"        <form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=OwningAtomic; DstCls=StText</text></form>",
+			"      </field>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"apa_494616cc-2f23-4877-a109-1a6c1db0887e\" guid=\"494616cc-2f23-4877-a109-1a6c1db0887e\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>apa</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span class=\"Bulleted List\"><span lang=\"en\">This is a test of sorts.  This field can contain </span><span lang=\"en\" class=\"Emphasized Text\">multiple</span><span lang=\"en\"> paragraphs.</span></span>\u2029",
+			"<span class=\"Bulleted List\"><span lang=\"en\">For example, this is the second paragraph already.</span></span>\u2029",
+			"<span class=\"Normal\"><span lang=\"en\">This third paragraph is back in the normal (default) paragraph style, and some character </span><span lang=\"en\" class=\"Emphasized Text\">formatting</span><span lang=\"en\"> to produce </span><span lang=\"en\" class=\"Strong\">multiple</span><span lang=\"en\"> spans within the paragraph.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"      <grammatical-info value=\"Pronoun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>this</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"test_241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\" guid=\"241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>test</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span lang=\"en\">This test paragraph does not have a style explicitly assigned.</span>\u2029",
+			"<span lang=\"en\">This test paragraph has </span><span lang=\"en\" class=\"Strong\">some</span><span lang=\"en\"> </span><span lang=\"en\" class=\"Emphasized Text\">character</span><span lang=\"en\"> formatting.</span>\u2029",
+			"<span class=\"Block Quote\"><span lang=\"en\">This paragraph has a paragraph style applied.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"      <grammatical-info value=\"Noun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>test</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		private static readonly string[] _minimalLiftData = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba baba</text></form>",
+			"</lexical-unit>",
+			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static readonly string[] _treeLiftRange = {
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>",
+				"<range id='lexical-relation'>",
+				"<range-element id='Part' guid='b764ce50-ea5e-11de-864f-0013722f8dec'>",
+				"<label>",
+				"<form lang='en'><text>Part</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>pt</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang='en'><text>A part/whole relation establishes a link between the sense for the whole (e.g., room), and senses for the parts (e.g., ceiling, wall, floor).</text></form>",
+				"</description>",
+				"<field type='reverse-label'>",
+				"<form lang='en'><text>Whole</text></form>",
+				"</field>",
+				"<field type='reverse-abbrev'>",
+				"<form lang='en'><text>wh</text></form>",
+				"</field>",
+				"<trait  name='referenceType' value='3'/>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
+			};
+
+		// modified LIFT with same entries 'Bother' and 'me' related using relation type Twain and Twin, expects a lexical-relation range in a ranges file
+		private static readonly string[] _newWithPair = {
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
+				"<header>",
+				"<ranges>",
+				"<range id='lexical-relation' href='???'/>",
+				"</ranges>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:00:14Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>Bother</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
+				"<relation type='Twain' ref='de2fcb48-319a-48cf-bfea-0f25b9f38b31'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:00:14Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>me</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
+				"<relation type='Twin' ref='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'/>",
+				"</sense>",
+				"</entry>",
 				"</lift>"
 			};
 
+		private static readonly string[] _twoEntryWithVariantComplexFormLift = {
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:34:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='a_ac828ef4-9a18-4802-b095-11cca00947db' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:01:59Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		//All custom CmPossibility lists names and Guids
+		private Dictionary<string, Guid> m_customListNamesAndGuids = new Dictionary<string, Guid>();
+		private IFwMetaDataCacheManaged m_mdc;
+		private const string sLiftData3b = "<entry dateCreated=\"2011-03-01T22:27:46Z\" dateModified=\"{0}\" guid=\"67113a7f-e448-43e7-87cf-6d3a46ee10ec\" id=\"greenhouse_67113a7f-e448-43e7-87cf-6d3a46ee10ec\">";
 		private string MockProjectFolder { get; set; }
 		private string MockLinkedFilesFolder { get; set; }
 		private int m_audioWsCode;
-
-
-		private Dictionary<String, int> m_customFieldEntryIds = new Dictionary<String, int>();
-		private Dictionary<String, int> m_customFieldSenseIds = new Dictionary<String, int>();
-		private Dictionary<String, int> m_customFieldAllomorphsIds = new Dictionary<String, int>();
-		private Dictionary<String, int> m_customFieldExampleSentencesIds = new Dictionary<String, int>();
+		private Dictionary<string, int> m_customFieldEntryIds = new Dictionary<string, int>();
+		private Dictionary<string, int> m_customFieldSenseIds = new Dictionary<string, int>();
+		private Dictionary<string, int> m_customFieldAllomorphsIds = new Dictionary<string, int>();
+		private Dictionary<string, int> m_customFieldExampleSentencesIds = new Dictionary<string, int>();
 
 		#region Overrides of LcmTestBase
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			Cache.LangProject.LexDbOA.ReferencesOA =
-				Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().
-					Create();
+			Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 			const string mockProjectName = "xxyyzProjectFolderForLIFTImport";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, LcmFileHelper.ksLinkedFilesDir);
 			if (Directory.Exists(MockLinkedFilesFolder))
+			{
 				Directory.Delete(MockLinkedFilesFolder, true);
+			}
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			Cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder;
-
-			WritingSystemManager writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
-			LanguageSubtag languageSubtag =
-				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
-			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			var writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
+			var languageSubtag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
+			var audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] { WellKnownSubtags.AudioPrivateUse });
 			CoreWritingSystemDefinition existingAudioWs;
 			if (writingSystemManager.TryGet(audioWs.LanguageTag, out existingAudioWs))
 			{
@@ -508,9 +332,11 @@ namespace LanguageExplorerTests.LIFT
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			if (Directory.Exists(LiftFolder))
+			{
 				Directory.Delete(LiftFolder, true);
+			}
 			Directory.CreateDirectory(LiftFolder);
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", TestNameRandomizer.Next(1000)));
+			var path = Path.Combine(LiftFolder, $"LiftTest{TestNameRandomizer.Next(1000)}.lift");
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -519,7 +345,7 @@ namespace LanguageExplorerTests.LIFT
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			Assert.True(Directory.Exists(LiftFolder));
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", TestNameRandomizer.Next(1000)));
+			var path = Path.Combine(LiftFolder, $"LiftTest{TestNameRandomizer.Next(1000)}.lift-ranges");
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -527,11 +353,15 @@ namespace LanguageExplorerTests.LIFT
 		private static void CreateLiftInputFile(string path, IList<string> data)
 		{
 			if (File.Exists(path))
+			{
 				File.Delete(path);
+			}
 			using (var wrtr = File.CreateText(path))
 			{
 				for (var i = 0; i < data.Count; ++i)
+				{
 					wrtr.WriteLine(data[i]);
+				}
 				wrtr.Close();
 			}
 		}
@@ -548,27 +378,27 @@ namespace LanguageExplorerTests.LIFT
 
 		private string TryImport(string sOrigFile, string sOrigRangesFile, MergeStyle mergeStyle, int expectedCount, bool trustModificationTimes = true)
 		{
-			string logfile = null;
-
 			IProgress progressDlg = new DummyProgressDlg();
 			var fMigrationNeeded = Migrator.IsMigrationNeeded(sOrigFile);
-			var sFilename = fMigrationNeeded
-								? Migrator.MigrateToLatestVersion(sOrigFile)
-								: sOrigFile;
+			var sFilename = fMigrationNeeded ? Migrator.MigrateToLatestVersion(sOrigFile) : sOrigFile;
 			var flexImporter = new FlexLiftMerger(Cache, mergeStyle, trustModificationTimes);
 			var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 			flexImporter.LiftFile = sOrigFile;
 
 			//The following are the calls to import the Ranges file and then the Data file.
-			if (!String.IsNullOrEmpty(sOrigRangesFile))
+			if (!string.IsNullOrEmpty(sOrigRangesFile))
+			{
 				flexImporter.LoadLiftRanges(sOrigRangesFile);
+			}
 			var cEntries = parser.ReadLiftFile(sFilename);
 
 			Assert.AreEqual(expectedCount, cEntries);
 			if (fMigrationNeeded)
+			{
 				File.Delete(sFilename);
+			}
 			flexImporter.ProcessPendingRelations(progressDlg);
-			logfile = flexImporter.DisplayNewListItems(sOrigFile, cEntries);
+			var logfile = flexImporter.DisplayNewListItems(sOrigFile, cEntries);
 
 			return logfile;
 		}
@@ -578,7 +408,7 @@ namespace LanguageExplorerTests.LIFT
 			CreateDummyFile(Path.Combine(Path.Combine(LiftFolder, folder), filename));
 		}
 
-		private static string CreateDummyFile(string path)
+		private static void CreateDummyFile(string path)
 		{
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 			File.Delete(path);
@@ -587,11 +417,18 @@ namespace LanguageExplorerTests.LIFT
 				wrtr.WriteLine("This is a dummy file used in testing LIFT import");
 				wrtr.Close();
 			}
-			return path;
 		}
 
-		static private readonly string[] s_LiftData1 =
+		/// <summary>
+		/// First test of LIFT import: four simple entries.
+		/// (This was also a convenient point to check handling of a lexical relation with
+		/// an empty ref attr.)
+		/// </summary>
+		[Test]
+		public void TestLiftImport1()
 		{
+			string[] liftData1 =
+			{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -684,18 +521,7 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// First test of LIFT import: four simple entries.
-		/// (This was also a convenient point to check handling of a lexical relation with
-		/// an empty ref attr.)
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImport1()
-		{
+			};
 			var messageCapture = new MessageCapture();
 			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
 			SetWritingSystems("es");
@@ -705,9 +531,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData1);
+			var sOrigFile = CreateInputFile(liftData1);
 			CreateDummyFile("pictures", "Desert.jpg");
-			var myPicRelativePath = Path.Combine("subfolder","MyPic.jpg");
+			var myPicRelativePath = Path.Combine("subfolder", "MyPic.jpg");
 			CreateDummyFile("pictures", myPicRelativePath);
 			CreateDummyFile("audio", "Sleep Away.mp3");
 			CreateDummyFile("audio", "hombre634407358826681759.wav");
@@ -762,8 +588,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyLinkedFileExists(LcmFileHelper.ksPicturesDir, myPicRelativePath);
 
 			Assert.That(entry.PronunciationsOS.Count, Is.EqualTo(1));
-			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.InternalPath,
-				Is.EqualTo(Path.Combine(LcmFileHelper.ksMediaDir, "Sleep Away.mp3")));
+			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.InternalPath, Is.EqualTo(Path.Combine(LcmFileHelper.ksMediaDir, "Sleep Away.mp3")));
 			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "Sleep Away.mp3");
 			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "hombre634407358826681759.wav");
 			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "male adult634407358826681760.wav");
@@ -865,13 +690,18 @@ namespace LanguageExplorerTests.LIFT
 			Cache.LangProject.CurAnalysisWss = "en";
 		}
 
-		void VerifyLinkedFileExists(string folder, string filename)
+		private void VerifyLinkedFileExists(string folder, string filename)
 		{
 			Assert.That(File.Exists(Path.Combine(Path.Combine(MockLinkedFilesFolder, folder), filename)), Is.True);
 		}
 
-		static private readonly string[] s_LiftData2 = new[]
+		/// <summary>
+		/// Second test of LIFT import: more complex and variant entries.
+		/// </summary>
+		[Test]
+		public void TestLiftImport2()
 		{
+			string[] liftData2 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -935,34 +765,7 @@ namespace LanguageExplorerTests.LIFT
 			"</relation>",
 			"</entry>",
 			"</lift>"
-		};
-
-		class MessageCapture : IMessageBox
-		{
-			public List<string> Messages = new List<string>();
-			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
-			{
-				Messages.Add(text);
-				return DialogResult.OK;
-			}
-
-			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
-				MessageBoxDefaultButton defaultButton, MessageBoxOptions options, string helpFilePath, HelpNavigator navigator,
-				object param)
-			{
-				Messages.Add(text);
-				return DialogResult.OK;
-			}
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Second test of LIFT import: more complex and variant entries.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImport2()
-		{
+			};
 			Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss);
 			Assert.AreEqual("fr", Cache.LangProject.CurVernWss);
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -970,7 +773,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData2);
+			var sOrigFile = CreateInputFile(liftData2);
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
 			Assert.IsNotNull(logFile);
@@ -1003,7 +806,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, allo.PhoneEnvRC.Count);
 			IPhEnvironment env = null;
 			foreach (var x in allo.PhoneEnvRC)
+			{
 				env = x;
+			}
 			Assert.IsNotNull(env);
 			Assert.AreEqual("/[C]_", env.StringRepresentation.Text);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
@@ -1085,40 +890,38 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
 		}
 
-		static private readonly string[] s_outOfOrderRelation = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>house</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
-			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
-			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>house</text></gloss>",
-			"</sense>",
-			"<sense id=\"2e827b5e-1558-48fd-b629-1518f1aabba3\">",
-			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
-			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>shack</text></gloss>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
 		[Test]
 		public void TestImportOutOfOrderRelation()
 		{
+			string[] outOfOrderRelation = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>house</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"></trait>",
+				"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+				"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+				"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>house</text></gloss>",
+				"</sense>",
+				"<sense id=\"2e827b5e-1558-48fd-b629-1518f1aabba3\">",
+				"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+				"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>shack</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var repoLrType = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
@@ -1126,7 +929,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoSense.Count);
 			Assert.AreEqual(0, repoLrType.Count);
 
-			var sOrigFile = CreateInputFile(s_outOfOrderRelation);
+			var sOrigFile = CreateInputFile(outOfOrderRelation);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
 			Assert.IsNotNull(logFile);
@@ -1145,75 +948,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(targets.Skip(1).First(), Is.EqualTo(sense1), "Both senses should be present in targets");
 		}
 
-		static private readonly string[] s_LiftData3a = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>house</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<variant>",
-			"<trait name=\"paradigm\" value=\"sing\"/>",
-			"<form lang=\"fr\"><text>ouse</text></form>",
-			"</variant>",
-			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>house</text></gloss>",
-			"</sense>",
-			"</entry>",
-			"<entry dateCreated=\"2011-03-01T22:27:13Z\" dateModified=\"2011-03-01T22:27:13Z\" guid=\"67940acb-9252-4941-bfb3-3ace4e1bda7a\" id=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>green</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<sense id=\"green_d3ed09c5-8757-41cb-849d-a24e6200caf4\">",
-			"<grammatical-info value=\"Adjective\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>green</text></gloss>",
-			"</sense>",
-			"</entry>"
-		};
-
-		private const string sLiftData3b =
-			"<entry dateCreated=\"2011-03-01T22:27:46Z\" dateModified=\"{0}\" guid=\"67113a7f-e448-43e7-87cf-6d3a46ee10ec\" id=\"greenhouse_67113a7f-e448-43e7-87cf-6d3a46ee10ec\">";
-		static private readonly string[] s_LiftData3c = new[]
-		{
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>greenhouse</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<relation type=\"_component-lexeme\" ref=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\" order=\"0\">",
-			"</relation>",
-			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" order=\"1\">",
-			"</relation>",
-			"<sense id=\"greenhouse_cf2ac6f4-01d8-47ed-9b41-25b6e727097f\">",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"</sense>",
-			"</entry>",
-			"<entry dateCreated=\"2011-03-01T22:28:56Z\" dateModified=\"2011-03-01T22:29:07Z\" guid=\"58f978d2-2cb2-4506-9a47-63c5454f0065\" id=\"hoose_58f978d2-2cb2-4506-9a47-63c5454f0065\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>hoose</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
-			"</relation>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Third test of LIFT import: minimally specified complex and variant entries.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport3()
 		{
@@ -1318,46 +1055,103 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
 		}
 
-		private string[] GetLift3Strings(string date)
+		private static string[] GetLift3Strings(string date)
 		{
+			string[] liftData3A = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>house</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"></trait>",
+				"<variant>",
+				"<trait name=\"paradigm\" value=\"sing\"/>",
+				"<form lang=\"fr\"><text>ouse</text></form>",
+				"</variant>",
+				"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>house</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated=\"2011-03-01T22:27:13Z\" dateModified=\"2011-03-01T22:27:13Z\" guid=\"67940acb-9252-4941-bfb3-3ace4e1bda7a\" id=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>green</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"></trait>",
+				"<sense id=\"green_d3ed09c5-8757-41cb-849d-a24e6200caf4\">",
+				"<grammatical-info value=\"Adjective\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>green</text></gloss>",
+				"</sense>",
+				"</entry>"
+			};
+			string[] liftData3C = {
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>greenhouse</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"></trait>",
+				"<relation type=\"_component-lexeme\" ref=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\" order=\"0\">",
+				"</relation>",
+				"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" order=\"1\">",
+				"</relation>",
+				"<sense id=\"greenhouse_cf2ac6f4-01d8-47ed-9b41-25b6e727097f\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated=\"2011-03-01T22:28:56Z\" dateModified=\"2011-03-01T22:29:07Z\" guid=\"58f978d2-2cb2-4506-9a47-63c5454f0065\" id=\"hoose_58f978d2-2cb2-4506-9a47-63c5454f0065\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>hoose</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"></trait>",
+				"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+				"</relation>",
+				"</entry>",
+				"</lift>"
+			};
 			var modString = string.Format(sLiftData3b, date);
-			return s_LiftData3a.Concat(new[] {modString}).Concat(s_LiftData3c).ToArray();
+			return liftData3A.Concat(new[] { modString }).Concat(liftData3C).ToArray();
 		}
-
-		private string[] tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>\thombre</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"root\"></trait>",
-			"<pronunciation>",
-			"<form lang=\"fr\"><text>ombre\t1</text></form>",
-			"<media href=\"\t\tSleep Away.mp3\">",
-			"</media>",
-			"</pronunciation>",
-			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>\t\tman</text></gloss>",
-			"<definition>",
-			"<form lang=\"en\"><text>",
-			"\tmale adult\thuman\t<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
-			"</definition>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
 
 		[Test]
 		public void LiftDoesNotImportTabs()
 		{
-			string sOrigFile = CreateInputFile(tabInput);
-			string logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 1);
+			string[] tabInput = {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>\thombre</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"root\"></trait>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>ombre\t1</text></form>",
+				"<media href=\"\t\tSleep Away.mp3\">",
+				"</media>",
+				"</pronunciation>",
+				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>\t\tman</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>",
+				"\tmale adult\thuman\t<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
+				"</definition>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+			var sOrigFile = CreateInputFile(tabInput);
+			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 1);
 			Assert.IsNotNull(logFile);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
@@ -1409,50 +1203,46 @@ namespace LanguageExplorerTests.LIFT
 
 		}
 
-		static private readonly string[] s_LiftData4 = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
-			"<lexical-unit>",
-			"<form lang=\"es\"><text>hombre</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"root\"></trait>",
-			"<relation type=\"_component-lexeme\" ref=\"nonsence_object_ID\">",
-			"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
-			"</relation>",
-			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>man</text></gloss>",
-			"<definition>",
-			"<form lang=\"en\"><text>male{0}adult{1}human{2}</text></form>",
-			"</definition>",
-			"<note type=\"encyclopedic\">",
-			"<form lang=\"en\">",
-			"<text>This is <span class=\"underline\">not</span> limited to spans, etc.</text>",
-			"</form>",
-			"</note>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fourth test of LIFT import: test importing multi-paragraph text with various CR/LF
 		/// combinations.
 		/// (This was also a convenient point to test that we get a warning when creating
 		/// a LER with a missing component.)
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport4()
 		{
+			string[] liftData4 = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+				"<lexical-unit>",
+				"<form lang=\"es\"><text>hombre</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"root\"></trait>",
+				"<relation type=\"_component-lexeme\" ref=\"nonsence_object_ID\">",
+				"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
+				"</relation>",
+				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>man</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>male{0}adult{1}human{2}</text></form>",
+				"</definition>",
+				"<note type=\"encyclopedic\">",
+				"<form lang=\"en\">",
+				"<text>This is <span class=\"underline\">not</span> limited to spans, etc.</text>",
+				"</form>",
+				"</note>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			// Setup
 			var messageCapture = new MessageCapture();
 			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
@@ -1462,7 +1252,7 @@ namespace LanguageExplorerTests.LIFT
 			var ccharsNL = s_newLine.Length;
 			const string s_cr = "\r";
 			const string s_lf = "\n";
-// ReSharper restore InconsistentNaming
+			// ReSharper restore InconsistentNaming
 
 			SetWritingSystems("es");
 
@@ -1474,10 +1264,10 @@ namespace LanguageExplorerTests.LIFT
 			// Put data in LIFT string
 			const int idxModifiedLine = 19;
 			// "<form lang=\"en\"><text>male{0}adult{1}human</text></form>",
-			var fmtString = s_LiftData4[idxModifiedLine];
-			s_LiftData4[idxModifiedLine] = String.Format(fmtString, s_newLine, s_cr, s_lf);
+			var fmtString = liftData4[idxModifiedLine];
+			liftData4[idxModifiedLine] = string.Format(fmtString, s_newLine, s_cr, s_lf);
 
-			var sOrigFile = CreateInputFile(s_LiftData4);
+			var sOrigFile = CreateInputFile(liftData4);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
 			Assert.IsNotNull(logFile);
@@ -1496,7 +1286,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			var actualDefn = entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text;
-			var expectedXmlDefn = String.Format(fmtString, LINE_SEPARATOR, LINE_SEPARATOR, LINE_SEPARATOR);
+			var expectedXmlDefn = string.Format(fmtString, LINE_SEPARATOR, LINE_SEPARATOR, LINE_SEPARATOR);
 			var doc = new XmlDocument();
 			doc.LoadXml(expectedXmlDefn);
 			var expectedDefn = doc.SelectSingleNode("form/text");
@@ -1504,8 +1294,13 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(expectedDefn.InnerText, actualDefn, "Mismatched definition.");
 		}
 
-		static private readonly string[] s_LiftData5 = new[]
+		/// <summary>
+		/// LIFT import: Test import of Custom Fields which contain strings
+		/// </summary>
+		[Test]
+		public void TestLiftImport5_CustomFieldsStringsAndMultiUnicode()
 		{
+			string[] liftData5 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1610,16 +1405,7 @@ namespace LanguageExplorerTests.LIFT
 							"</sense>",
 			"</entry>",
 			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// LIFT import: Test import of Custom Fields which contain strings
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImport5_CustomFieldsStringsAndMultiUnicode()
-		{
+			};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1640,7 +1426,7 @@ namespace LanguageExplorerTests.LIFT
 			};
 			fdNew.UpdateCustomField();
 
-			var sOrigFile = CreateInputFile(s_LiftData5);
+			var sOrigFile = CreateInputFile(liftData5);
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
@@ -1655,16 +1441,15 @@ namespace LanguageExplorerTests.LIFT
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("29b7913f-0d28-4ee9-a57e-177f68a96654"));
 			var customData = new CustomFieldData()
-								{
-									CustomFieldname = "CustomFldSense",
-									CustomFieldType = CellarPropertyType.String,
-									StringFieldText = "Sense custom fiield in English",
-									StringFieldWs = "en"
-								};
+			{
+				CustomFieldname = "CustomFldSense",
+				CustomFieldType = CellarPropertyType.String,
+				StringFieldText = "Sense custom fiield in English",
+				StringFieldWs = "en"
+			};
 			m_customFieldSenseIds = GetCustomFlidsOfObject(sense0);
 			VerifyCustomField(sense0, customData, m_customFieldSenseIds["CustomFldSense"]);
 
-			//===================================================================================
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
@@ -1672,16 +1457,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun",
-							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			// ReSharper restore PossibleNullReferenceException
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
-							{
-								CustomFieldname = "UndefinedCustom",
-								CustomFieldType = CellarPropertyType.MultiUnicode,
-							};
+			{
+				CustomFieldname = "UndefinedCustom",
+				CustomFieldType = CellarPropertyType.MultiUnicode,
+			};
 			customData.MultiUnicodeStrings.Add("Undefined custom field");
 			customData.MultiUnicodeWss.Add("en");
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["UndefinedCustom"]);
@@ -1701,10 +1485,10 @@ namespace LanguageExplorerTests.LIFT
 			//        "<form lang=\"en\"><text>Entry Multi Eng</text></form>",
 			//        "</field>",
 			customData = new CustomFieldData()
-							{
-								CustomFieldname = "CustomFldEntryMulti",
-								CustomFieldType = CellarPropertyType.MultiUnicode,
-							};
+			{
+				CustomFieldname = "CustomFldEntryMulti",
+				CustomFieldType = CellarPropertyType.MultiUnicode,
+			};
 			customData.MultiUnicodeStrings.Add("Entry Multi Frn");
 			customData.MultiUnicodeStrings.Add("Entry Multi Spn");
 			customData.MultiUnicodeStrings.Add("Entry Multi Eng");
@@ -1718,12 +1502,12 @@ namespace LanguageExplorerTests.LIFT
 			{
 				m_customFieldExampleSentencesIds = GetCustomFlidsOfObject(example);
 				customData = new CustomFieldData()
-								{
-									CustomFieldname = "CustomFldExample",
-									CustomFieldType = CellarPropertyType.String,
-									StringFieldText = "example sentence custom field",
-									StringFieldWs = "fr"
-								};
+				{
+					CustomFieldname = "CustomFldExample",
+					CustomFieldType = CellarPropertyType.String,
+					StringFieldText = "example sentence custom field",
+					StringFieldWs = "fr"
+				};
 				VerifyCustomField(example, customData, m_customFieldExampleSentencesIds["CustomFldExample"]);
 			}
 
@@ -1732,10 +1516,10 @@ namespace LanguageExplorerTests.LIFT
 
 			m_customFieldAllomorphsIds = GetCustomFlidsOfObject(form);
 			customData = new CustomFieldData()
-							{
-								CustomFieldname = "CustomFldAllomorf",
-								CustomFieldType = CellarPropertyType.MultiUnicode,
-							};
+			{
+				CustomFieldname = "CustomFldAllomorf",
+				CustomFieldType = CellarPropertyType.MultiUnicode,
+			};
 			customData.MultiUnicodeStrings.Add("Allomorph multi French");
 			customData.MultiUnicodeStrings.Add("Allomorph multi Spanish");
 			customData.MultiUnicodeStrings.Add("Allomorph multi English");
@@ -1747,17 +1531,22 @@ namespace LanguageExplorerTests.LIFT
 			//"<form lang=\"fr\"><text>Allomorph single Vernacular</text></form>",
 			//"</field>",
 			customData = new CustomFieldData()
-							{
-								CustomFieldname = "CustomFldAllomorphSingle",
-								CustomFieldType = CellarPropertyType.String,
-								StringFieldText = "Allomorph single Vernacular",
-								StringFieldWs = "fr"
-							};
+			{
+				CustomFieldname = "CustomFldAllomorphSingle",
+				CustomFieldType = CellarPropertyType.String,
+				StringFieldText = "Allomorph single Vernacular",
+				StringFieldWs = "fr"
+			};
 			VerifyCustomField(form, customData, m_customFieldAllomorphsIds["CustomFldAllomorphSingle"]);
 		}
 
-		private static readonly string[] s_LiftData6 = new[]
+		/// <summary>
+		/// LIFT import: Test import of GenDate's and Numbers
+		/// </summary>
+		[Test]
+		public void TestLiftImport6_CustomFieldsNumberGenDate()
 		{
+			string[] liftData6 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1855,16 +1644,7 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// LIFT import: Test import of GenDate's and Numbers
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImport6_CustomFieldsNumberGenDate()
-		{
+			};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1872,7 +1652,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData6);
+			var sOrigFile = CreateInputFile(liftData6);
 
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
@@ -1923,11 +1703,11 @@ namespace LanguageExplorerTests.LIFT
 			m_customFieldEntryIds = GetCustomFlidsOfObject(obj);
 
 			var customData = new CustomFieldData()
-				{
-					CustomFieldname = "CustomFldEntry Number",
-					CustomFieldType = CellarPropertyType.Integer,
-					IntegerValue = 13
-				};
+			{
+				CustomFieldname = "CustomFldEntry Number",
+				CustomFieldType = CellarPropertyType.Integer,
+				IntegerValue = 13
+			};
 			VerifyCustomField(obj, customData, m_customFieldEntryIds["CustomFldEntry Number"]);
 
 			customData = new CustomFieldData()
@@ -1974,9 +1754,9 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(obj, expectedData, m_customFieldExampleSentencesIds[expectedData.CustomFieldname]);
 		}
 
-		private Dictionary<String, int> GetCustomFlidsOfObject(ICmObject obj)
+		private Dictionary<string, int> GetCustomFlidsOfObject(ICmObject obj)
 		{
-			var customFieldIds2 = new Dictionary<String, int>();
+			var customFieldIds2 = new Dictionary<string, int>();
 			var customFieldIds = new List<int>();
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			Assert.IsNotNull(mdc);
@@ -1995,17 +1775,17 @@ namespace LanguageExplorerTests.LIFT
 
 		private void VerifyCustomField(ICmObject obj, CustomFieldData fieldData, int flid)
 		{
-			if(obj is ILexEntry)
+			if (obj is ILexEntry)
 			{
 				var entry = (ILexEntry)obj;
 				Assert.That(entry.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
 			}
-			if(obj is ILexSense)
+			if (obj is ILexSense)
 			{
 				var sense = (ILexSense)obj;
 				Assert.That(sense.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
 			}
-			if(obj is ILexExampleSentence)
+			if (obj is ILexExampleSentence)
 			{
 				var example = (ILexExampleSentence)obj;
 				Assert.That(example.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
@@ -2035,13 +1815,13 @@ namespace LanguageExplorerTests.LIFT
 					Assert.IsNotNull(tssMultiString);
 					//Assert.IsTrue(tssMultiString.StringCount >0);
 
-						for (var i = 0; i < tssMultiString.StringCount; ++i)
-						{
-							tssString = tssMultiString.GetStringFromIndex(i, out ws);
-							Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
-							Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
-						}
-						Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
+					for (var i = 0; i < tssMultiString.StringCount; ++i)
+					{
+						tssString = tssMultiString.GetStringFromIndex(i, out ws);
+						Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
+						Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
+					}
+					Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
 					break;
 				case CellarPropertyType.MultiString:
 					break;
@@ -2054,7 +1834,9 @@ namespace LanguageExplorerTests.LIFT
 					if (possibilityHvo != 0)
 					{
 						if (possibilityHvo == 0)
+						{
 							return;
+						}
 						var tss = GetPossibilityBestAlternative(possibilityHvo, Cache);
 						Assert.AreEqual(fieldData.cmPossibilityNameRA, tss.ToString());
 					}
@@ -2064,7 +1846,7 @@ namespace LanguageExplorerTests.LIFT
 					//"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
 					//"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
 					var hvos = sda.VecProp(obj.Hvo, flid);
-					int count = hvos.Length;
+					var count = hvos.Length;
 					Assert.AreEqual(fieldData.cmPossibilityNamesRS.Count, count);
 					foreach (var hvo in hvos)
 					{
@@ -2092,7 +1874,9 @@ namespace LanguageExplorerTests.LIFT
 					//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 					var intVal = Cache.DomainDataByFlid.get_IntProp(obj.Hvo, flid);
 					if (intVal != 0)
+					{
 						Assert.AreEqual(fieldData.IntegerValue, intVal);
+					}
 					break;
 				default:
 					break;
@@ -2113,8 +1897,74 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(liftGenDate.Day, genDate.Day);
 		}
 
-		private static readonly string[] s_LiftRangeData7 = new[]
+		/// <summary>
+		/// LIFT Import:  test import of Custom Lists from the Ranges file.
+		/// Also test the import of field definitions for custom fields
+		/// which contain CmPossibility list data and verify that the data is correct too.
+		/// </summary>
+		[Test]
+		public void TestLiftImport7_CustomLists_and_CustomFieldsWithListData()
 		{
+			string[] liftData7 = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomList Number2 \" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"status\" href=\"file://C:/junk.lift-ranges\"/>",
+			"</ranges>",
+			"<fields>",
+			@"<field tag=""ExampleStatus"">",
+			@"<form lang=""en""><text></text></form>",
+			@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+			@"</field>",
+			"<field tag=\"import-residue\">",
+			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListSingle\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListMulti\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CmPossibilityCustomList\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CustomList2\">",
+			"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
+			"</field>",
+			"</fields>",
+			"</header>",
+			"<entry dateCreated=\"2011-05-31T21:21:28Z\" dateModified=\"2011-06-06T20:03:42Z\" id=\"Baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>Baba</text></form>",
+			"</lexical-unit>",
+			"<trait  name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
+			"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
+			"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
+			"<sense id=\"5741255b-0563-49e0-8839-98bdb8c73f48\">",
+			"<grammatical-info value=\"NounFamily\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>Papi</text></gloss>",
+			@"<example>",
+			@"<form lang=""fr""><text>a complex example</text></form>",
+			@"<trait name=""do-not-publish-in"" value=""School Dictionary""/>",
+			@"<trait name=""ExampleStatus"" value=""Pending""/>",
+			@"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+			};
+			string[] liftRangeData7 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 			"<lift-ranges>",
@@ -2272,79 +2122,7 @@ namespace LanguageExplorerTests.LIFT
 				"</range-element>",
 			"</range>",
 			"</lift-ranges>"
-		};
-
-		private static readonly string[] s_LiftData7 = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-			"<header>",
-			"<ranges>",
-				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/junk.lift-ranges\"/>",
-				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/junk.lift-ranges\"/>",
-				"<range id=\"CustomList Number2 \" href=\"file://C:/junk.lift-ranges\"/>",
-				"<range id=\"status\" href=\"file://C:/junk.lift-ranges\"/>",
-			"</ranges>",
-			"<fields>",
-			@"<field tag=""ExampleStatus"">",
-			@"<form lang=""en""><text></text></form>",
-			@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
-			@"</field>",
-			"<field tag=\"import-residue\">",
-			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
-			"</field>",
-			"<field tag=\"CustomFld ListSingle\">",
-			"<form lang=\"en\"><text></text></form>",
-			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
-			"</field>",
-			"<field tag=\"CustomFld ListMulti\">",
-			"<form lang=\"en\"><text></text></form>",
-			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
-			"</field>",
-			"<field tag=\"CustomFld CmPossibilityCustomList\">",
-			"<form lang=\"en\"><text></text></form>",
-			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
-			"</field>",
-			"<field tag=\"CustomFld CustomList2\">",
-			"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
-			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
-			"</field>",
-			"</fields>",
-			"</header>",
-			"<entry dateCreated=\"2011-05-31T21:21:28Z\" dateModified=\"2011-06-06T20:03:42Z\" id=\"Baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>Baba</text></form>",
-			"</lexical-unit>",
-			"<trait  name=\"morph-type\" value=\"stem\"/>",
-			"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
-			"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
-			"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
-			"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
-			"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
-			"<sense id=\"5741255b-0563-49e0-8839-98bdb8c73f48\">",
-			"<grammatical-info value=\"NounFamily\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>Papi</text></gloss>",
-			@"<example>",
-			@"<form lang=""fr""><text>a complex example</text></form>",
-			@"<trait name=""do-not-publish-in"" value=""School Dictionary""/>",
-			@"<trait name=""ExampleStatus"" value=""Pending""/>",
-			@"</example>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// LIFT Import:  test import of Custom Lists from the Ranges file.
-		/// Also test the import of field definitions for custom fields
-		/// which contain CmPossibility list data and verify that the data is correct too.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImport7_CustomLists_and_CustomFieldsWithListData()
-		{
+			};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -2354,9 +2132,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoSense.Count);
 
 			//Create the LIFT data file
-			var sOrigFile = CreateInputFile(s_LiftData7);
+			var sOrigFile = CreateInputFile(liftData7);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7);
+			var sOrigRangesFile = CreateInputRangesFile(liftRangeData7);
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -2380,8 +2158,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("NounFamily",
-							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.AreEqual("NounFamily", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			// ReSharper restore PossibleNullReferenceException
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
@@ -2400,13 +2177,11 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomFieldExample(sense0.ExamplesOS[0], customData);
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of Custom Lists from the Ranges file.
 		/// Also test the import of field definitions for custom fields
 		/// which contain CmPossibility list data and verify that the data is correct too.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport_InflectionFieldRangeDoesNotCauseError()
 		{
@@ -2427,7 +2202,6 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
 			var inflectionLiftRangeData = new[]
 			{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -2576,7 +2350,6 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void TestLiftImport_DateAndWesayIdAloneShouldNotChangeDate()
 		{
-
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
@@ -2672,8 +2445,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsNotNull(item);
 			Assert.AreEqual("63403699-07c1-43f3-a47c-069d6e4316e5", item.Guid.ToString());
 
-			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky",
-				Cache.DefaultAnalWs);
+			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky", Cache.DefaultAnalWs);
 			Assert.IsNotNull(item);
 			Assert.AreEqual("999581c4-1611-4acb-ae1b-5e6c1dfe6f0c", item.Guid.ToString());
 
@@ -2694,28 +2466,21 @@ namespace LanguageExplorerTests.LIFT
 					list.Name.BestAnalysisVernacularAlternative.Text == "CustomCmPossibiltyList")
 				{
 					Assert.IsTrue(list.PossibilitiesOS.Count == 3);
-					VerifyListItem(list.PossibilitiesOS[0], "list item 1", "66705e7a-d7db-47c6-964c-973d5830566c",
-						"***", "description of item 1");
-					VerifyListItem(list.PossibilitiesOS[1], "list item 2", "8af65c9d-2e79-4d6a-8164-854aab89d068",
-						"itm2", "Here is a description of item 2.");
-					VerifyListItem(list.PossibilitiesOS[2], "list item 3", "D7BFD944-AD73-4512-B5F2-35EC5DB3BFF3",
-						"itm3", "Range is in twice");
+					VerifyListItem(list.PossibilitiesOS[0], "list item 1", "66705e7a-d7db-47c6-964c-973d5830566c", "***", "description of item 1");
+					VerifyListItem(list.PossibilitiesOS[1], "list item 2", "8af65c9d-2e79-4d6a-8164-854aab89d068", "itm2", "Here is a description of item 2.");
+					VerifyListItem(list.PossibilitiesOS[2], "list item 3", "D7BFD944-AD73-4512-B5F2-35EC5DB3BFF3", "itm3", "Range is in twice");
 
 				}
-				else if (list.OwningFlid == 0 &&
-					list.Name.BestAnalysisVernacularAlternative.Text == "CustomList Number2 ")
+				else if (list.OwningFlid == 0 && list.Name.BestAnalysisVernacularAlternative.Text == "CustomList Number2 ")
 				{
 					Assert.IsTrue(list.PossibilitiesOS.Count == 2);
-					VerifyListItem(list.PossibilitiesOS[0], "cstm list item 1", "aea3e48f-de0c-4315-8a35-f3b844070e94",
-								   "labr1", "***");
-					VerifyListItem(list.PossibilitiesOS[1], "cstm list item 2", "164fc705-c8fd-46af-a3a8-5f0f62565d96",
-								   "***", "Desc list2 item2");
+					VerifyListItem(list.PossibilitiesOS[0], "cstm list item 1", "aea3e48f-de0c-4315-8a35-f3b844070e94", "labr1", "***");
+					VerifyListItem(list.PossibilitiesOS[1], "cstm list item 2", "164fc705-c8fd-46af-a3a8-5f0f62565d96", "***", "Desc list2 item2");
 				}
 			}
 		}
 
-		private void VerifyListItem(ICmPossibility listItem, string itemName, string itemGuid, string itemAbbrev,
-			string itemDesc)
+		private static void VerifyListItem(ICmPossibility listItem, string itemName, string itemGuid, string itemAbbrev, string itemDesc)
 		{
 			Assert.AreEqual(itemName, listItem.Name.BestAnalysisVernacularAlternative.Text);
 			Assert.AreEqual(itemGuid.ToLowerInvariant(), listItem.Guid.ToString().ToLowerInvariant());
@@ -2723,9 +2488,6 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(itemDesc, listItem.Description.BestAnalysisVernacularAlternative.Text);
 		}
 
-		//All custom CmPossibility lists names and Guids
-		private Dictionary<string, Guid> m_customListNamesAndGuids = new Dictionary<string, Guid>();
-		private IFwMetaDataCacheManaged m_mdc;
 
 		private void VerifyCmPossibilityCustomFields(ILexEntry entry)
 		{
@@ -2735,7 +2497,7 @@ namespace LanguageExplorerTests.LIFT
 			//Store mapping between Possibility List names and their guids. This is used to verify that
 			//the custom list has stored the correct guid for the list when imported.
 			m_customListNamesAndGuids.Add(RangeNames.sSemanticDomainListOA, Cache.LanguageProject.SemanticDomainListOA.Guid);
-			foreach (ICmPossibilityList list in repo.AllInstances())
+			foreach (var list in repo.AllInstances())
 			{
 				if (list.OwningFlid == 0) //then it is a custom list
 				{
@@ -2750,24 +2512,25 @@ namespace LanguageExplorerTests.LIFT
 			foreach (var flid in m_mdc.GetFields(entry.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
+				{
 					continue;
+				}
 				var fieldName = m_mdc.GetFieldName(flid);
 
-				if (fieldName == "CustomFld ListSingle")
+				switch (fieldName)
 				{
-					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, RangeNames.sSemanticDomainListOA);
-				}
-				else if (fieldName == "CustomFld ListMulti")
-				{
-					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceCollection, RangeNames.sSemanticDomainListOA);
-				}
-				else if (fieldName == "CustomFld CmPossibilityCustomList")
-				{
-					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomCmPossibiltyList");
-				}
-				else if (fieldName == "CustomFld CustomList2")
-				{
-					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomList Number2 ");
+					case "CustomFld ListSingle":
+						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, RangeNames.sSemanticDomainListOA);
+						break;
+					case "CustomFld ListMulti":
+						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceCollection, RangeNames.sSemanticDomainListOA);
+						break;
+					case "CustomFld CmPossibilityCustomList":
+						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomCmPossibiltyList");
+						break;
+					case "CustomFld CustomList2":
+						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomList Number2 ");
+						break;
 				}
 			}
 		}
@@ -2807,7 +2570,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFld ListMulti"]);
 
 			//<trait name="CustomFld CmPossibilityCustomList" value="list item 1"/>
-			customData = new CustomFieldData()
+			customData = new CustomFieldData
 			{
 				CustomFieldname = "CustomFld CmPossibilityCustomList",
 				CustomFieldType = CellarPropertyType.ReferenceAtomic,
@@ -2816,7 +2579,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFld CmPossibilityCustomList"]);
 
 			//<trait name="CustomFld CustomList2" value="cstm list item 2"/>
-			customData = new CustomFieldData()
+			customData = new CustomFieldData
 			{
 				CustomFieldname = "CustomFld CustomList2",
 				CustomFieldType = CellarPropertyType.ReferenceAtomic,
@@ -2825,10 +2588,9 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFld CustomList2"]);
 		}
 
-		public static String GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
+		public static string GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
-			ITsMultiString tsm =
-				cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
+			var tsm = cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
 			var str = BestAlternative(tsm as IMultiAccessorBase, cache.DefaultUserWs);
 			return str;
 		}
@@ -2836,12 +2598,19 @@ namespace LanguageExplorerTests.LIFT
 		{
 			var tss = multi.BestAnalysisVernacularAlternative;
 			if (tss.Text == "***")
+			{
 				tss = multi.get_String(wsDefault);
+			}
 			return XmlUtils.MakeSafeXmlAttribute(tss.Text);
 		}
 
-		private static readonly string[] s_LiftDataLocations = new[]
+		/// <summary>
+		/// LIFT Import:  test import of Location List from the Ranges file (and that we can link to one).
+		/// </summary>
+		[Test]
+		public void TestLiftImportLocationList()
 		{
+			string[] liftDataLocations = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -2899,61 +2668,50 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-		};
-
-		private static readonly string[] s_LiftRangeDataLocations = new[]
-		{
+			};
+			string[] liftRangeDataLocations = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 				"<lift-ranges>",
 
 				"<range id=\"location\">",
-					"<range-element id=\"Village\" guid=\"63403699-07c1-43f3-a47c-069d6e4316e5\">",
-					"<label>",
-					"<form lang=\"en\"><text>village</text></form>",
-					"</label>",
-					"<abbrev>",
-					"<form lang=\"en\"><text>VIL</text></form>",
-					"</abbrev>",
-					"<description>",
-					"<form lang=\"en\"><text>Located 135 deg east, 3 deg south</text></form>",
-					"</description>",
-					"</range-element>",
+				"<range-element id=\"Village\" guid=\"63403699-07c1-43f3-a47c-069d6e4316e5\">",
+				"<label>",
+				"<form lang=\"en\"><text>village</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang=\"en\"><text>VIL</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang=\"en\"><text>Located 135 deg east, 3 deg south</text></form>",
+				"</description>",
+				"</range-element>",
 
-					"<range-element id=\"river\">",
-					"<label>",
-					"<form lang=\"en\"><text>river</text></form>",
-					"</label>",
-					"<abbrev>",
-					"<form lang=\"en\"><text>RIV</text></form>",
-					"</abbrev>",
-					"<description>",
-					"<form lang=\"en\"><text>large river, somewhat silty</text></form>",
-					"</description>",
-					"</range-element>",
+				"<range-element id=\"river\">",
+				"<label>",
+				"<form lang=\"en\"><text>river</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang=\"en\"><text>RIV</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang=\"en\"><text>large river, somewhat silty</text></form>",
+				"</description>",
+				"</range-element>",
 
-					"<range-element id=\"House\" guid=\"5893e40e-e7bb-4c44-ac06-b6cec06b8470\" parent=\"Village\">",
-					"<label>",
-					"<form lang=\"en\"><text>House</text></form>",
-					"</label>",
-					"</range-element>",
-					"<range-element id=\"Square\" parent=\"Village\">",
-					"<label>",
-					"<form lang=\"en\"><text>Square</text></form>",
-					"</label>",
-					"</range-element>",
+				"<range-element id=\"House\" guid=\"5893e40e-e7bb-4c44-ac06-b6cec06b8470\" parent=\"Village\">",
+				"<label>",
+				"<form lang=\"en\"><text>House</text></form>",
+				"</label>",
+				"</range-element>",
+				"<range-element id=\"Square\" parent=\"Village\">",
+				"<label>",
+				"<form lang=\"en\"><text>Square</text></form>",
+				"</label>",
+				"</range-element>",
 				"</range>",
-			"</lift-ranges>"
-		};
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// LIFT Import:  test import of Location List from the Ranges file (and that we can link to one).
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void TestLiftImportLocationList()
-		{
+				"</lift-ranges>"
+			};
 			SetWritingSystems("fr");
 
 			// One should exist already, to show that we can detect duplicates.
@@ -2968,9 +2726,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoSense.Count);
 
 			//Create the LIFT data file
-			var sOrigFile = CreateInputFile(s_LiftDataLocations);
+			var sOrigFile = CreateInputFile(liftDataLocations);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
+			var sOrigRangesFile = CreateInputRangesFile(liftRangeDataLocations);
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -3004,59 +2762,10 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(location, Is.EqualTo(village));
 		}
 
-		private static readonly string[] s_LiftData8 = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-			"<lift producer=\"SIL.FLEx 7.1.0.40722\" version=\"0.13\">",
-			"  <header>",
-			"    <fields>",
-			"      <field tag=\"Long Text\">",
-			"        <form lang=\"en\"><text>This field contains structured text.</text></form>",
-			"        <form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=OwningAtomic; DstCls=StText</text></form>",
-			"      </field>",
-			"    </fields>",
-			"  </header>",
-			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"apa_494616cc-2f23-4877-a109-1a6c1db0887e\" guid=\"494616cc-2f23-4877-a109-1a6c1db0887e\">",
-			"    <lexical-unit>",
-			"      <form lang=\"fr\"><text>apa</text></form>",
-			"    </lexical-unit>",
-			"    <trait  name=\"morph-type\" value=\"stem\"/>",
-			"    <field type=\"Long Text\">",
-			"      <form lang=\"en\"><text><span class=\"Bulleted List\"><span lang=\"en\">This is a test of sorts.  This field can contain </span><span lang=\"en\" class=\"Emphasized Text\">multiple</span><span lang=\"en\"> paragraphs.</span></span>\u2029",
-			"<span class=\"Bulleted List\"><span lang=\"en\">For example, this is the second paragraph already.</span></span>\u2029",
-			"<span class=\"Normal\"><span lang=\"en\">This third paragraph is back in the normal (default) paragraph style, and some character </span><span lang=\"en\" class=\"Emphasized Text\">formatting</span><span lang=\"en\"> to produce </span><span lang=\"en\" class=\"Strong\">multiple</span><span lang=\"en\"> spans within the paragraph.</span></span></text></form>",
-			"    </field>",
-			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
-			"      <grammatical-info value=\"Pronoun\">",
-			"      </grammatical-info>",
-			"      <gloss lang=\"en\"><text>this</text></gloss>",
-			"    </sense>",
-			"  </entry>",
-			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"test_241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\" guid=\"241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\">",
-			"    <lexical-unit>",
-			"      <form lang=\"fr\"><text>test</text></form>",
-			"    </lexical-unit>",
-			"    <trait  name=\"morph-type\" value=\"stem\"/>",
-			"    <field type=\"Long Text\">",
-			"      <form lang=\"en\"><text><span lang=\"en\">This test paragraph does not have a style explicitly assigned.</span>\u2029",
-			"<span lang=\"en\">This test paragraph has </span><span lang=\"en\" class=\"Strong\">some</span><span lang=\"en\"> </span><span lang=\"en\" class=\"Emphasized Text\">character</span><span lang=\"en\"> formatting.</span>\u2029",
-			"<span class=\"Block Quote\"><span lang=\"en\">This paragraph has a paragraph style applied.</span></span></text></form>",
-			"    </field>",
-			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
-			"      <grammatical-info value=\"Noun\">",
-			"      </grammatical-info>",
-			"      <gloss lang=\"en\"><text>test</text></gloss>",
-			"    </sense>",
-			"  </entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data.
 		/// Also test the import of field definitions for custom fields which contain StText data
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport8CustomStText()
 		{
@@ -3069,7 +2778,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(_liftData8);
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
@@ -3079,7 +2788,7 @@ namespace LanguageExplorerTests.LIFT
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
 			Assert.AreNotEqual(0, flidCustom, "The \"Long Text\" custom field should exist for LexEntry objects.");
 			var type = Cache.MetaDataCacheAccessor.GetFieldType(flidCustom);
-			Assert.AreEqual((int) CellarPropertyType.OwningAtomic, type, "The custom field should be an atomic owning field.");
+			Assert.AreEqual((int)CellarPropertyType.OwningAtomic, type, "The custom field should be an atomic owning field.");
 			var destName = Cache.MetaDataCacheAccessor.GetDstClsName(flidCustom);
 			Assert.AreEqual("StText", destName, "The custom field should own an StText object.");
 
@@ -3101,7 +2810,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
 			Assert.IsNull(text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph does not have a style explicitly assigned.");
@@ -3147,24 +2856,17 @@ namespace LanguageExplorerTests.LIFT
 		private void CreateNeededStyles()
 		{
 			var factory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-			factory.Create(Cache.LangProject.StylesOC, "Bulleted List", ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, false, 0, true);
-			factory.Create(Cache.LangProject.StylesOC, "Block Quote", ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, false, 0, true);
-			factory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, false, 0, true);
-			factory.Create(Cache.LangProject.StylesOC, "Emphasized Text", ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, true, 0, true);
-			factory.Create(Cache.LangProject.StylesOC, "Strong", ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, true, 0, true);
+			factory.Create(Cache.LangProject.StylesOC, "Bulleted List", ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, false, 0, true);
+			factory.Create(Cache.LangProject.StylesOC, "Block Quote", ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, false, 0, true);
+			factory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, false, 0, true);
+			factory.Create(Cache.LangProject.StylesOC, "Emphasized Text", ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, true, 0, true);
+			factory.Create(Cache.LangProject.StylesOC, "Strong", ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, true, 0, true);
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
 		/// using the "Keep Both" option.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport9AMergingStTextKeepBoth()
 		{
@@ -3178,17 +2880,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(_liftData8);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepBoth, 2);
 
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
 		/// using the "Keep Old" option.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport9BMergingStTextKeepOld()
 		{
@@ -3202,17 +2902,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(_liftData8);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOld, 2);
 
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
 		/// using the "Keep New" option.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test, Ignore("This fails if another test runs first, but succeeds by itself!")]
 		public void TestLiftImport9CMergingStTextKeepNew()
 		{
@@ -3226,7 +2924,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(_liftData8);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 2);
 
 			Assert.AreEqual(2, repoEntry.Count);
@@ -3249,12 +2947,10 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(tss.Equals(para.Contents), "The fourth paragraph contents should not have changed.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
 		/// using the "Keep Only New" option.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test, Ignore("This fails if another test runs first, but succeeds by itself!")]
 		public void TestLiftImport9DMergingStTextKeepOnlyNew()
 		{
@@ -3268,7 +2964,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(_liftData8);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 
 			Assert.AreEqual(2, repoEntry.Count);
@@ -3277,46 +2973,42 @@ namespace LanguageExplorerTests.LIFT
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 		}
 
-		static private readonly string[] s_LiftData9 = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2012-02-23T11:53:26Z\" dateModified=\"2012-08-16T08:10:28Z\" id=\"test\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
-			"<lexical-unit>",
-			"<form lang=\"grh\"><text>test</text></form>",
-			"<form lang=\"grh-fonipa\"><text>testipa</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<field type=\"Syllable shape\">",
-			"<form lang=\"en\"><text>CV-CV</text></form>",
-			"</field>",
-			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2012-08-12T12:27:12Z\" dateModified=\"2012-08-12T12:27:12Z\">",
-			"<grammatical-info value=\"Noun\">",
-			"<trait name=\"inflection-feature\" value=\"{Infl}\"/>",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>black.plum</text></gloss>",
-			"<gloss lang=\"fr\"><text>noir</text></gloss>",
-			"<definition>",
-			"<form lang=\"en\"><text>black plum tree</text></form>",
-			"<form lang=\"fr\"><text>noir: noir est un manque de couleur</text></form>",
-			"</definition>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of inflection feature with empty value. Lose it!
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImportEmptyInflectionFeature()
 		{
+			string[] liftData9 = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2012-02-23T11:53:26Z\" dateModified=\"2012-08-16T08:10:28Z\" id=\"test\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+				"<lexical-unit>",
+				"<form lang=\"grh\"><text>test</text></form>",
+				"<form lang=\"grh-fonipa\"><text>testipa</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<field type=\"Syllable shape\">",
+				"<form lang=\"en\"><text>CV-CV</text></form>",
+				"</field>",
+				"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2012-08-12T12:27:12Z\" dateModified=\"2012-08-12T12:27:12Z\">",
+				"<grammatical-info value=\"Noun\">",
+				"<trait name=\"inflection-feature\" value=\"{Infl}\"/>",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>black.plum</text></gloss>",
+				"<gloss lang=\"fr\"><text>noir</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>black plum tree</text></form>",
+				"<form lang=\"fr\"><text>noir: noir est un manque de couleur</text></form>",
+				"</definition>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -3326,13 +3018,12 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			var sOrigFile = CreateInputFile(s_LiftData9);
+			var sOrigFile = CreateInputFile(liftData9);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 1);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 			var todoEntry = repoEntry.GetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"));
-			Assert.AreEqual("Noun", todoEntry.SensesOS[0].MorphoSyntaxAnalysisRA.LongName,
-				"MSA should NOT have any Inflection Feature stuff on it.");
+			Assert.AreEqual("Noun", todoEntry.SensesOS[0].MorphoSyntaxAnalysisRA.LongName, "MSA should NOT have any Inflection Feature stuff on it.");
 		}
 
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)
@@ -3347,10 +3038,9 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.IsNotNull(text);
-			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
-				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
+			Assert.AreEqual(cpara, text.ParagraphsOS.Count, $"The first Long Text field should have {cpara} paragraphs.");
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This is a test of sorts.  This field can contain ");
@@ -3399,16 +3089,13 @@ namespace LanguageExplorerTests.LIFT
 
 		private int CreateFirstEntryWithConflictingData()
 		{
-			var entry0 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
-				new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), Cache.LangProject.LexDbOA);
+			var entry0 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), Cache.LangProject.LexDbOA);
 			entry0.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry0.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, "afa");
-			entry0.LexemeFormOA.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+			entry0.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
 			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			entry0.MorphoSyntaxAnalysesOC.Add(msa);
-			var sense0 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
-				new Guid("3e0ae703-db7f-4687-9cf5-481524095905"), entry0);
+			var sense0 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(new Guid("3e0ae703-db7f-4687-9cf5-481524095905"), entry0);
 			sense0.Gloss.set_String(Cache.DefaultVernWs, "these");
 			sense0.MorphoSyntaxAnalysisRA = msa;
 
@@ -3438,28 +3125,26 @@ namespace LanguageExplorerTests.LIFT
 			return flidCustom;
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
 		/// using the "Keep New" option.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLdmlMigration()
 		{
-			string testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723");
-			string testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723-test");
+			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723");
+			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723-test");
 
-			string sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
-			string sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
-			string sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
-			string enLdml = Path.Combine(sWSfilesPath, "en.ldml");
-			string sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
-			string esLdml = Path.Combine(sWSfilesPath, "es.ldml");
-			string xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
-			string qaaXkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
-			string qaaIpaXkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
-			string qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
+			var sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
+			var sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
+			var sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
+			var enLdml = Path.Combine(sWSfilesPath, "en.ldml");
+			var sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
+			var esLdml = Path.Combine(sWSfilesPath, "es.ldml");
+			var xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
+			var qaaXkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
+			var qaaIpaXkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
+			var qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
 
 			DirectoryHelper.Copy(testLiftDataSource, testLiftDataPath, true);
 
@@ -3529,7 +3214,7 @@ namespace LanguageExplorerTests.LIFT
 			}
 		}
 
-		private void VerifyLiftRangesFile(string sLiftRangesFile)
+		private static void VerifyLiftRangesFile(string sLiftRangesFile)
 		{
 			var xdoc = new XmlDocument();
 			xdoc.Load(sLiftRangesFile);
@@ -3545,20 +3230,22 @@ namespace LanguageExplorerTests.LIFT
 			int i = 0;
 			foreach (var form in label.XPathSelectElements("form"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("en"));
-					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("anatomy"));
+					case 0:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("en"));
+						text = form.XPathSelectElement("text");
+						Assert.IsTrue(text.Value.Equals("anatomy"));
+						break;
+					case 1:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						text = form.XPathSelectElement("text");
+						Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
+						break;
 				}
-				if (i == 1)
-				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
-				}
+
 				i++;
 			}
 
@@ -3566,20 +3253,22 @@ namespace LanguageExplorerTests.LIFT
 			i = 0;
 			foreach (var form in abbrev.XPathSelectElements("form"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("en"));
-					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Anat"));
+					case 0:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("en"));
+						text = form.XPathSelectElement("text");
+						Assert.IsTrue(text.Value.Equals("Anat"));
+						break;
+					case 1:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						text = form.XPathSelectElement("text");
+						Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
+						break;
 				}
-				if (i == 1)
-				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
-				}
+
 				i++;
 			}
 			var description = rangeElement.XPathSelectElement("description");
@@ -3597,7 +3286,7 @@ namespace LanguageExplorerTests.LIFT
 			}
 		}
 
-		private void VerifyLiftDataFile(string sLiftDataFile)
+		private static void VerifyLiftDataFile(string sLiftDataFile)
 		{
 			var xdoc = new XmlDocument();
 			xdoc.Load(sLiftDataFile);
@@ -3606,7 +3295,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifySecondLexEntry(data);
 		}
 
-		private void VerifyFirstLexEntry(XElement data)
+		private static void VerifyFirstLexEntry(XElement data)
 		{
 			var entry = data.XPathSelectElement("//*[name()='entry' and @guid='a9628929-4561-4afc-b097-88c9bb6df5e9']");
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit/form");
@@ -3616,55 +3305,58 @@ namespace LanguageExplorerTests.LIFT
 			var definition = entry.XPathSelectElement("sense/definition");
 			XElement text;
 			XElement span;
-			int i = 0;
+			var i = 0;
 			foreach (var form in definition.XPathSelectElements("form"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("en"));
-					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					case 0:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("en"));
+						span = form.XPathSelectElement("text/span");
+						attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						break;
+					case 1:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						span = form.XPathSelectElement("text/span");
+						attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("en"));
+						break;
+					case 2:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
+						Assert.IsTrue(attr.Value.Equals("es"));
+						break;
 				}
-				else if (i == 1)
-				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("en"));
-				}
-				else if (i == 2)
-				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
-					Assert.IsTrue(attr.Value.Equals("es"));
-				}
+
 				i++;
 			}
 		}
 
-		private void VerifySecondLexEntry(XElement data)
+		private static void VerifySecondLexEntry(XElement data)
 		{
 			var entry = data.XPathSelectElement("//*[name()='entry' and @guid='fa6a7bf7-1007-4e33-95b5-663335a12a98']");
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit");
 			XAttribute attr;
 			XElement text;
 			XElement span;
-			int i = 0;
+			var i = 0;
 			foreach (var form in lexUnitForm.XPathSelectElements("form"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = form.Attribute("lang");
-					Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					case 0:
+						attr = form.Attribute("lang");
+						Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						break;
+					case 1:
+						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
+						break;
 				}
-				if (i == 1)
-				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
-				}
+
 				i++;
 			}
 
@@ -3673,27 +3365,28 @@ namespace LanguageExplorerTests.LIFT
 			i = 0;
 			foreach (var gloss in sense.XPathSelectElements("gloss"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					glossText = gloss.XPathSelectElement("text");Assert.IsNotNull(glossText);
-					Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
+					case 0:
+						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+						Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
+						break;
+					case 1:
+						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+						Assert.IsTrue(attr.Value.Equals("en"));
+						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+						Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
+						break;
+					case 2:
+						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+						Assert.IsTrue(attr.Value.Equals("es"));
+						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+						Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
+						break;
 				}
-				if (i == 1)
-				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
-					Assert.IsTrue(attr.Value.Equals("en"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
-					Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
-				}
-				if (i == 2)
-				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
-					Assert.IsTrue(attr.Value.Equals("es"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
-					Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
-				}
+
 				i++;
 			}
 
@@ -3704,47 +3397,45 @@ namespace LanguageExplorerTests.LIFT
 			i = 0;
 			foreach (var spanInDefn in definitionText.XPathSelectElements("span"))
 			{
-				if (i == 0)
+				switch (i)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
-					Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
+					case 0:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
+						Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
+						break;
+					case 1:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("en"));
+						Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
+						break;
+					case 2:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("es"));
+						Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
+						break;
+					case 3:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
+						Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
+						break;
+					case 4:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
+						Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
+						break;
+					case 5:
+						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+						Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
+						Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
+						break;
 				}
-				else if (i == 1)
-				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("en"));
-					Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
-				}
-				else if (i == 2)
-				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("es"));
-					Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
-				}
-				else if (i == 3)
-				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
-					Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
-				}
-				else if (i == 4)
-				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
-					Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
-				}
-				else if (i == 5)
-				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
-					Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
-				}
+
 				i++;
 			}
 		}
 
-		private void VerifyKalabaLdmlFile(string qaaxkalLdml)
+		private static void VerifyKalabaLdmlFile(string qaaxkalLdml)
 		{
 			var xdoc = new XmlDocument();
 			xdoc.Load(qaaxkalLdml);
@@ -3761,94 +3452,88 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(attr.Value.Equals("x-kal"), "Variante type attribute should be 'x-kal'.");
 		}
 
-		private static readonly string[] s_PublicationLiftRangeData = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
-			"<lift-ranges>",
-
-			"<range id=\"morph-type\">",
-			"<range-element id=\"stem\" guid=\"d7f713e8-e8cf-11d3-9764-00c04f186933\">",
-			"<label>",
-			"<form lang=\"en\"><text>stem</text></form>",
-			"</label>",
-			"<abbrev>",
-			"<form lang=\"en\"><text>u stem</text></form>",
-			"</abbrev>",
-			"<description>",
-			"<form lang=\"en\"><text>A stem is...</text></form>",
-			"</description>",
-			"</range-element>",
-			"</range>",
-
-			"<range id=\"do-not-publish-in\" guid=\"fc769efe-efd8-4e44-981e-9a07e343bb64\">",
-
-			"<range-element id=\"Main Dictionary\" guid=\"70c0a758-5901-4884-b992-94ca31087607\">",
-			"<label>",
-			"<form lang=\"en\"><text>Main Dictionary</text></form>",
-			"</label>",
-			"<abbrev>",
-			"<form lang=\"en\"><text>Main</text></form>",
-			"<form lang=\"fr\"><text>Principal</text></form>",
-			"</abbrev>",
-			"</range-element>",
-			"<range-element id=\"Pocket\" guid=\"9f699508-3773-4889-87ee-ca0dbd9e3736\">",
-			"<label>",
-			"<form lang=\"en\"><text>Pocket</text></form>",
-			"<form lang=\"fr\"><text>Poche</text></form>",
-			"</label>",
-			"</range-element>",
-
-			"</range>",
-
-			"</lift-ranges>"
-		};
-
-		static private readonly string[] s_PublicationTestData = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
-			"<header>",
-			"<ranges>",
-			"<range id=\"do-not-publish-in\" href=\"\"/>",
-			"</ranges>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_f8506500-d17c-4c1b-b05d-ea57f562cb1c\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>baba</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
-			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
-			"<grammatical-info value=\"Noun\">",
-			"</grammatical-info>",
-			"<gloss lang=\"en\"><text>dad</text></gloss>",
-			"<gloss lang=\"fr\"><text>papi</text></gloss>",
-			"<definition>",
-			"<form lang=\"en\"><text>male parent</text></form>",
-			"<form lang=\"fr\"><text>parent masculin</text></form>",
-			"</definition>",
-			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
-			"<example>",
-			"<form lang=\"en\"><text>Example Sentence</text></form>",
-			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
-			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
-			"</example>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of Publish In data in entries, senses and example sentences.
 		/// Also test the import of the Publications list.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImportOfPublicationSettings()
 		{
+			string[] publicationTestData = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<ranges>",
+				"<range id=\"do-not-publish-in\" href=\"\"/>",
+				"</ranges>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_f8506500-d17c-4c1b-b05d-ea57f562cb1c\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+				"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"<gloss lang=\"fr\"><text>papi</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>male parent</text></form>",
+				"<form lang=\"fr\"><text>parent masculin</text></form>",
+				"</definition>",
+				"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+				"<example>",
+				"<form lang=\"en\"><text>Example Sentence</text></form>",
+				"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+				"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+				"</example>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+			string[] publicationLiftRangeData = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+				"<lift-ranges>",
+
+				"<range id=\"morph-type\">",
+				"<range-element id=\"stem\" guid=\"d7f713e8-e8cf-11d3-9764-00c04f186933\">",
+				"<label>",
+				"<form lang=\"en\"><text>stem</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang=\"en\"><text>u stem</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang=\"en\"><text>A stem is...</text></form>",
+				"</description>",
+				"</range-element>",
+				"</range>",
+
+				"<range id=\"do-not-publish-in\" guid=\"fc769efe-efd8-4e44-981e-9a07e343bb64\">",
+
+				"<range-element id=\"Main Dictionary\" guid=\"70c0a758-5901-4884-b992-94ca31087607\">",
+				"<label>",
+				"<form lang=\"en\"><text>Main Dictionary</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang=\"en\"><text>Main</text></form>",
+				"<form lang=\"fr\"><text>Principal</text></form>",
+				"</abbrev>",
+				"</range-element>",
+				"<range-element id=\"Pocket\" guid=\"9f699508-3773-4889-87ee-ca0dbd9e3736\">",
+				"<label>",
+				"<form lang=\"en\"><text>Pocket</text></form>",
+				"<form lang=\"fr\"><text>Poche</text></form>",
+				"</label>",
+				"</range-element>",
+
+				"</range>",
+
+				"</lift-ranges>"
+			};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -3861,9 +3546,9 @@ namespace LanguageExplorerTests.LIFT
 			var importedPocketPubGuid = new Guid("9f699508-3773-4889-87ee-ca0dbd9e3736");
 
 			//Create the LIFT data file
-			var sOrigFile = CreateInputFile(s_PublicationTestData);
+			var sOrigFile = CreateInputFile(publicationTestData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(publicationLiftRangeData);
 
 			// SUT
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
@@ -3890,34 +3575,24 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual("baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 
 			// Verify specific Publication stuff
-			Assert.AreEqual(1, entry.DoNotPublishInRC.Count,
-				"Entry has wrong number of Publication settings");
+			Assert.AreEqual(1, entry.DoNotPublishInRC.Count, "Entry has wrong number of Publication settings");
 			var mainDictPub = entry.DoNotPublishInRC.First();
-			Assert.AreEqual("Main Dictionary", mainDictPub.Name.AnalysisDefaultWritingSystem.Text,
-				"Entry has wrong Publish In setting");
-			Assert.AreEqual(originalMainDictPubGuid, mainDictPub.Guid,
-				"Entry has Main Dictionary, but not the one we started out with (different Guid)!");
-			Assert.AreEqual(1, sense0.DoNotPublishInRC.Count,
-				"Sense has wrong number of Publication settings");
+			Assert.AreEqual("Main Dictionary", mainDictPub.Name.AnalysisDefaultWritingSystem.Text, "Entry has wrong Publish In setting");
+			Assert.AreEqual(originalMainDictPubGuid, mainDictPub.Guid, "Entry has Main Dictionary, but not the one we started out with (different Guid)!");
+			Assert.AreEqual(1, sense0.DoNotPublishInRC.Count, "Sense has wrong number of Publication settings");
 			var sensePub = sense0.DoNotPublishInRC.First();
-			Assert.AreEqual("Pocket", sensePub.Name.AnalysisDefaultWritingSystem.Text,
-				"Sense has wrong Publish In setting");
-			Assert.AreEqual(importedPocketPubGuid, sensePub.Guid,
-				"Sense Publish In setting has wrong guid");
-			Assert.AreEqual(2, example0.DoNotPublishInRC.Count,
-				"Example has wrong number of Publication settings");
-			var examplePublications = (from pub in example0.DoNotPublishInRC
-										  select pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
+			Assert.AreEqual("Pocket", sensePub.Name.AnalysisDefaultWritingSystem.Text, "Sense has wrong Publish In setting");
+			Assert.AreEqual(importedPocketPubGuid, sensePub.Guid, "Sense Publish In setting has wrong guid");
+			Assert.AreEqual(2, example0.DoNotPublishInRC.Count, "Example has wrong number of Publication settings");
+			var examplePublications = example0.DoNotPublishInRC.Select(pub => pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
 			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
 			Assert.IsTrue(examplePublications.Contains("Pocket"));
 			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prove that a custom list with custom list items imports correctly.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImportOfCustomList()
 		{
@@ -3962,7 +3637,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
 
 			// prove that our setup is good and we are importing these objects
-			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
+			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid)));
 
 			// SUT
@@ -3981,33 +3656,6 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(customListItem is ICmCustomItem);
 		}
 
-		static private readonly string[] s_BadMorphTypeTestData = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
-			"<header>",
-			"<ranges>",
-			"</ranges>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_$guid1\" guid=\"$guid1\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>baba baba</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"phrase\"/>",
-			"<variant>",
-				"<form lang=\"fr\"><text>baba baba</text></form>",
-				"<trait name=\"nonsence\" value=\"look for this\" />",
-				"<trait name=\"morph-type\" value=\"phrase\" />",
-			"</variant>",
-			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
-			"<gloss lang=\"en\"><text>dad</text></gloss>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test importing data where a phrase has a variant that is also a phrase,
 		/// but where there is existing data claiming the allomorph is an affix phrase.
@@ -4015,10 +3663,33 @@ namespace LanguageExplorerTests.LIFT
 		/// a trait that produces residue and comes before the trait that changes the morph type.
 		/// (LT-14372)
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImportChangingAffixToStem()
 		{
+			string[] badMorphTypeTestData = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<ranges>",
+				"</ranges>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_$guid1\" guid=\"$guid1\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"phrase\"/>",
+				"<variant>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"<trait name=\"nonsence\" value=\"look for this\" />",
+				"<trait name=\"morph-type\" value=\"phrase\" />",
+				"</variant>",
+				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -4042,9 +3713,9 @@ namespace LanguageExplorerTests.LIFT
 			allo.MorphTypeRA = phrase;
 
 			//Create the LIFT data file
-			s_BadMorphTypeTestData[7] = s_BadMorphTypeTestData[7].Replace("$guid1", entry.Guid.ToString());
-			s_BadMorphTypeTestData[16] = s_BadMorphTypeTestData[16].Replace("$guid2", sense.Guid.ToString());
-			var sOrigFile = CreateInputFile(s_BadMorphTypeTestData);
+			badMorphTypeTestData[7] = badMorphTypeTestData[7].Replace("$guid1", entry.Guid.ToString());
+			badMorphTypeTestData[16] = badMorphTypeTestData[16].Replace("$guid2", sense.Guid.ToString());
+			var sOrigFile = CreateInputFile(badMorphTypeTestData);
 
 			// SUT
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 1);
@@ -4061,66 +3732,44 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Is.StringContaining("look for this"));
 		}
 
-		static private readonly string[] s_LiftPronunciations = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>test</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<pronunciation>",
-			"<form lang=\"fr\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"<pronunciation>",
-			"<form lang=\"es\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"</entry>",
-			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>testb</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<pronunciation>",
-			"<form lang=\"es\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"</entry>",
-			"</lift>"
-		};
-
-		private string[] _minimalLiftData  = new[]
-			{
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
-				"<header>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>baba baba</text></form>",
-				"</lexical-unit>",
-				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
-				"<gloss lang=\"en\"><text>dad</text></gloss>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test LIFT merger for problems merging pronunciations.
 		/// To produce the problem that led to this test, an entry with one or formless pronunciation
 		/// gets merged with a LIFT file that has the same entry with other pronunciations. (LT-14725)
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftMergeOfPronunciations()
 		{
+			string[] liftPronunciations = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>test</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>pronunciation</text></form>",
+				"</pronunciation>",
+				"<pronunciation>",
+				"<form lang=\"es\"><text>pronunciation</text></form>",
+				"</pronunciation>",
+				"</entry>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>testb</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"es\"><text>pronunciation</text></form>",
+				"</pronunciation>",
+				"</entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr es");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -4135,7 +3784,7 @@ namespace LanguageExplorerTests.LIFT
 			var entry2 = CreateSimpleStemEntry("8d735e34-c555-4390-a0af-21a12e1dd6ff", "testb");
 			AddPronunciation(entry2, "pronunciation", Cache.DefaultVernWs); // add 'fr' pronunciation
 
-			var sOrigFile = CreateInputFile(s_LiftPronunciations);
+			var sOrigFile = CreateInputFile(liftPronunciations);
 
 			// Try to merge in two LIFT file entries that match our two existing entries
 			TryImport(sOrigFile, null, MergeStyle.MsKeepBoth, 2);
@@ -4151,8 +3800,7 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void LiftImport_UnknownExampleTraitCreatesResidue()
 		{
-
-			var lifDataWithExampleWithUnnkownTrait = new []
+			var liftDataWithExampleWithUnnkownTrait = new[]
 			{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
@@ -4172,7 +3820,7 @@ namespace LanguageExplorerTests.LIFT
 			};
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoSense.Count);
-			var file = CreateInputFile(lifDataWithExampleWithUnnkownTrait);
+			var file = CreateInputFile(liftDataWithExampleWithUnnkownTrait);
 			// SUT
 			TryImport(file, null, MergeStyle.MsKeepBoth, 1);
 			Assert.AreEqual(1, repoSense.Count);
@@ -4210,7 +3858,7 @@ namespace LanguageExplorerTests.LIFT
 				@"</range>",
 				@"</lift-ranges>"
 			};
-			var lifDataWithExampleWithPendingStatus = new[]
+			var liftDataWithExampleWithPendingStatus = new[]
 			{
 				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
 				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
@@ -4250,7 +3898,7 @@ namespace LanguageExplorerTests.LIFT
 				@"</entry>",
 				@"</lift>"
 			};
-			var lifDataWithExampleWithConfirmedStatus = new[]
+			var liftDataWithExampleWithConfirmedStatus = new[]
 			{
 				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
 				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
@@ -4316,7 +3964,7 @@ namespace LanguageExplorerTests.LIFT
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoEntry.Count);
 			var rangeFile = CreateInputFile(rangesWithStatusList);
-			var pendingLiftFile = CreateInputFile(lifDataWithExampleWithPendingStatus);
+			var pendingLiftFile = CreateInputFile(liftDataWithExampleWithPendingStatus);
 			// Verify basic import of custom field data matching existing custom list and items
 			TryImport(pendingLiftFile, rangeFile, MergeStyle.MsKeepBoth, 1);
 			Assert.AreEqual(1, repoEntry.Count);
@@ -4340,7 +3988,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(entry, entryCustomData, entryNew.Id);
 			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
 			// SUT - Verify merging of changes to custom field data
-			var confirmedLiftFile = CreateInputFile(lifDataWithExampleWithConfirmedStatus);
+			var confirmedLiftFile = CreateInputFile(liftDataWithExampleWithConfirmedStatus);
 			TryImport(confirmedLiftFile, rangeFile, MergeStyle.MsKeepBoth, 1);
 			entry = repoEntry.AllInstances().First();
 			sense = repoSense.AllInstances().First();
@@ -4356,8 +4004,7 @@ namespace LanguageExplorerTests.LIFT
 
 		private ILexEntry CreateSimpleStemEntry(string entryGuid, string form)
 		{
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
-				new Guid(entryGuid), Cache.LangProject.LexDbOA);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(new Guid(entryGuid), Cache.LangProject.LexDbOA);
 			var lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = lf;
 			lf.Form.SetVernacularDefaultWritingSystem(form);
@@ -4371,7 +4018,9 @@ namespace LanguageExplorerTests.LIFT
 			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
+			{
 				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
+			}
 		}
 
 		[Test]
@@ -4386,7 +4035,7 @@ namespace LanguageExplorerTests.LIFT
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift-ranges>",
 			"<range id='lexical-relation'>",
-			string.Format(@"<range-element id=""***"" guid=""{0}"">", lrt.Guid.ToString()),
+			$@"<range-element id=""***"" guid=""{lrt.Guid.ToString()}"">",
 			"<trait  name='referenceType' value=''/>",
 			"<label>",
 			"<form lang='en'><text>Antonym</text></form>",
@@ -4437,7 +4086,7 @@ namespace LanguageExplorerTests.LIFT
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift-ranges>",
 			"<range id='anthro-code'>",
-			string.Format(@"<range-element id=""***"" guid=""{0}"">", antItem.Guid.ToString()),
+			$@"<range-element id=""***"" guid=""{antItem.Guid.ToString()}"">",
 			"<trait  name='referenceType' value=''/>",
 			"<description>",
 			"<form lang='en'><text>Test for Duplicate Anthropology Guid</text></form>",
@@ -4474,7 +4123,7 @@ namespace LanguageExplorerTests.LIFT
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift-ranges>",
 			"<range id='lexical-relation'>",
-			string.Format(@"<range-element id=""***"" guid=""{0}"">", lrt.Guid.ToString()),
+			$@"<range-element id=""***"" guid=""{lrt.Guid.ToString()}"">",
 			"<trait  name='referenceType' value=''/>",
 			"<label>",
 			"<form lang='en'><text>AntonymRubbish</text></form>",
@@ -4525,6 +4174,94 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void TestImportDoesNotDuplicateSequenceRelations()
 		{
+			string[] sequenceLiftData = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:40:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cold</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
+				"<gloss lang='en'><text>cold</text></gloss>",
+				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+				"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:40:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cool</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
+				"<gloss lang='en'><text>cool</text></gloss>",
+				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+				"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:44:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cooler</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
+				"<gloss lang='en'><text>cooler</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+			string[] sequenceLiftData2 = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:50:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cold</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
+				"<gloss lang='en'><text>cold</text></gloss>",
+				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:50:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cool</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
+				"<gloss lang='en'><text>cool</text></gloss>",
+				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:54:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cooler</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
+				"<gloss lang='en'><text>cooler</text></gloss>",
+				"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+				"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			//This test is for the issue documented in LT-13747
 			SetWritingSystems("fr");
 
@@ -4532,33 +4269,103 @@ namespace LanguageExplorerTests.LIFT
 
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(sequenceLiftData);
+			var sOrigFile = CreateInputFile(sequenceLiftData);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
 			var coldSense = senseRepo.GetObject(new Guid("57f884c0-0df2-43bf-8ba7-c70b2a208cf1"));
 
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(coldSense.LexSenseReferences), "Too many LexSenseReferences, import has issues.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(coldSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, import has issues.");
+			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(sequenceLiftData2);
+			var sNewFile = CreateInputFile(sequenceLiftData2);
 			TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 3);
 			const string coolerGuid = "42510a32-787c-4162-80b1-0f94ef2eb3bf";
 			var coolerSense = senseRepo.GetObject(new Guid(coolerGuid));
 
 			//There should be 1 LexSenseReference representing the new cool, cooler order.
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(coldSense.LexSenseReferences), "Too many LexSenseReferences, the relation was not merged.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(coldSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(coolerGuid, Enumerable.First<ILexReference>(coldSense.LexSenseReferences).TargetsRS[1].Guid.ToString(),
-								 "Sequence incorrectly modified.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(coolerSense.LexSenseReferences), "Incorrect number of references in the leg sense.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(coolerSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of targets in the leg sense.");
+			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the relation was not merged.");
+			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(coolerGuid, coldSense.LexSenseReferences.First().TargetsRS[1].Guid.ToString(), "Sequence incorrectly modified.");
+			Assert.AreEqual(1, coolerSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
+			Assert.AreEqual(2, coolerSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
 		}
 
 		[Test]
 		public void TestImportRemovesItemFromComponentRelation()
 		{
+			string[] componentData = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"<header>",
+				"<fields></fields>",
+				"</header>",
+				"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:41:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'> <text>cold</text>",
+				"</form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+				"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
+				"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:41:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cool</text></form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+				"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
+				"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:51:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cooler</text></form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+				"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
+				"</entry>",
+				"</lift>"
+			};
+			string[] componentData2 = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"<header>",
+				"<fields></fields>",
+				"</header>",
+				"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:45:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'> <text>cold</text>",
+				"</form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+				"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:45:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cool</text></form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+				"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
+				"</entry>",
+				"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:55:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>"
+				,
+				"<lexical-unit>",
+				"<form lang='en'><text>cooler</text></form>",
+				"</lexical-unit>",
+				"<trait name='morph-type' value='stem' />",
+				"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
+				"</entry>",
+				"</lift>"
+			};
 			//This test is for the issue documented in LT-13764
 			SetWritingSystems("fr");
 
@@ -4566,20 +4373,18 @@ namespace LanguageExplorerTests.LIFT
 
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(componentData);
+			var sOrigFile = CreateInputFile(componentData);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
 			var coldEntry = entryRepo.GetObject(new Guid("d76f4068-833e-40a8-b4d5-5f4ba785bf6e"));
 			var ler = coldEntry.LexEntryReferences;
-			Assert.AreEqual(3, Enumerable.ElementAt<ILexReference>(coldEntry.LexEntryReferences, 0).TargetsRS.Count,
-								 "Incorrect number of component references.");
+			Assert.AreEqual(3, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, "Incorrect number of component references.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(componentData2);
+			var sNewFile = CreateInputFile(componentData2);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 3);
 			const string coolerGuid = "03237d6e-a327-436b-8ae3-b84eed3549fd";
-			Assert.AreEqual(2, Enumerable.ElementAt<ILexReference>(coldEntry.LexEntryReferences, 0).TargetsRS.Count,
-								 "Incorrect number of component references.");
+			Assert.AreEqual(2, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, "Incorrect number of component references.");
 			var coolerEntry = entryRepo.GetObject(new Guid(coolerGuid));
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(coolerEntry.LexEntryReferences));
+			Assert.AreEqual(0, coolerEntry.LexEntryReferences.Count());
 		}
 
 
@@ -4592,32 +4397,83 @@ namespace LanguageExplorerTests.LIFT
 
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(s_ComponentTest);
+			var sOrigFile = CreateInputFile(_componentTest);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(todoEntry.LexEntryReferences));
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(todoEntry.LexEntryReferences).TargetsRS.Count);
+			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
+			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
 		}
 
 		[Test]
 		public void TestImportWarnsOnNonSubsetCollectionMerge()
 		{
+			string[] componentTest2 = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>do</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+				"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>to</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
+				"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>zoo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
+				"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
 
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(s_ComponentTest);
+			var sOrigFile = CreateInputFile(_componentTest);
 			TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
-			var sMergeFile = LiftMergerTests.CreateInputFile(s_ComponentTest2);
+			var sMergeFile = CreateInputFile(componentTest2);
 			var logFile = TryImport(sMergeFile, null, MergeStyle.MsKeepNew, 4);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(todoEntry.LexEntryReferences));
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(todoEntry.LexEntryReferences).TargetsRS.Count);
+			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
+			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
 			using (var stream = new StreamReader(logFile))
 			{
-				string data = stream.ReadToEnd();
+				var data = stream.ReadToEnd();
 				stream.Close();
 				Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
 			}
@@ -4626,19 +4482,63 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void TestImportDoesNotSplitComplexForms_LT12948()
 		{
+			string[] lt12948Test = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>do</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+				"<trait name=\"is-primary\" value=\"true\"/>",
+				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+				"</relation>",
+				"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\">",
+				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+				"<trait name=\"is-primary\" value=\"true\"/>",
+				"</relation>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
 
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(s_LT12948Test);
+			var sOrigFile = CreateInputFile(lt12948Test);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(todoEntry.ComplexFormEntryRefs));
-			Assert.AreEqual(2, Enumerable.First<ILexEntryRef>(todoEntry.ComplexFormEntryRefs).ComponentLexemesRS.Count);
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count());
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count);
 		}
 
 
@@ -4651,49 +4551,105 @@ namespace LanguageExplorerTests.LIFT
 
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(s_LT12948Test2);
+			var sOrigFile = CreateInputFile(_LT12948Test2);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 3);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(todoEntry.ComplexFormEntryRefs),
-								 "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
-			Assert.AreEqual(2, Enumerable.First<ILexEntryRef>(todoEntry.ComplexFormEntryRefs).ComponentLexemesRS.Count, "Wrong number of Components.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(todoEntry.VariantEntryRefs), "Wrong number of VariantEntryRefs.");
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Wrong number of Components.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  Test that two component lists which share an entry are considered the same
 		/// list and merged rather than put in two different lists of components.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestMergeWithDiffComponentListKeepOld()
 		{
+			string[] mergeTestOld = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>do</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:56:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"1\">",
+				"<trait name=\"is-primary\" value=\"true\"/>",
+				"<trait name=\"variant-type\" value=\"Dialectal Variant\"/>",
+				"</relation>",
+				"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" order=\"1\">",
+				"<trait name=\"is-primary\" value=\"true\"/>",
+				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+				"</relation>",
+				"<relation type=\"_component-lexeme\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"2\">",
+				"<trait name=\"is-primary\" value=\"true\"/>",
+				"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+				"</relation>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">"
+				,
+				"    <lexical-unit>",
+				"      <form lang=\"fr\"><text>todo</text></form>",
+				"    </lexical-unit>",
+				"    <trait  name=\"morph-type\" value=\"stem\"/>",
+				"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+				"    </sense>",
+				"  </entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
 
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(mergeTestOld);
+			var sOrigFile = CreateInputFile(mergeTestOld);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 4);
 
-			var sNewFile = LiftMergerTests.CreateInputFile(s_LT12948Test2);
+			var sNewFile = CreateInputFile(_LT12948Test2);
 			TryImport(sNewFile, null, MergeStyle.MsKeepNew, 3);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(todoEntry.ComplexFormEntryRefs), "Too many ComplexForms, they were incorrectly split.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(todoEntry.VariantEntryRefs), "Wrong number of VariantEntryRefs.");
-			Assert.AreEqual(1, Enumerable.First<ILexEntryRef>(todoEntry.VariantEntryRefs).ComponentLexemesRS.Count, "Incorrect number of Variants.");
-			Assert.AreEqual(2, Enumerable.First<ILexEntryRef>(todoEntry.ComplexFormEntryRefs).ComponentLexemesRS.Count, "Incorrect number of components.");
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexForms, they were incorrectly split.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of Variants.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of components.");
 		}
 
-		private static readonly string[] s_LT12948Test3 = new[]
-			{
+		[Test]
+		public void TestImportDoesNotSplitSynonyms_LT12948()
+		{
+			string[] lt12948Test3 = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -4774,10 +4730,6 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestImportDoesNotSplitSynonyms_LT12948()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -4785,21 +4737,23 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepository = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(s_LT12948Test3);
+			var sOrigFile = CreateInputFile(lt12948Test3);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 5);
 			var bungaloSense = senseRepository.GetObject(new Guid("4bb72859-623b-4616-aa10-a6b0005a2f4b"));
 			var bobEntry = entryRepository.GetObject(new Guid("7e6e4aed-0b2e-4e2b-9c84-4466b8e73ea4"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bungaloSense.LexSenseReferences));
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(bungaloSense.LexSenseReferences).TargetsRS.Count);
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bobEntry.LexEntryReferences));
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(bobEntry.LexEntryReferences).TargetsRS.Count);
+			Assert.AreEqual(1, bungaloSense.LexSenseReferences.Count());
+			Assert.AreEqual(3, bungaloSense.LexSenseReferences.First().TargetsRS.Count);
+			Assert.AreEqual(1, bobEntry.LexEntryReferences.Count());
+			Assert.AreEqual(2, bobEntry.LexEntryReferences.First().TargetsRS.Count);
 		}
 
-		// This data represents a lift file with 3 entries of form 'arm', 'leg', and 'body' with a whole/part relationship between 'arm' and 'body'
-		private static string[] treeLiftData = new[]
-			{
+		[Test]
+		public void TestImportDoesNotDuplicateTreeRelations()
+		{
+			// This data represents a lift file with 3 entries of form 'arm', 'leg', and 'body' with a whole/part relationship between 'arm' and 'body'
+			string[] treeLiftData = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -4849,37 +4803,8 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		private static string[] treeLiftRange = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8'?>",
-				"<lift-ranges>",
-				"<range id='lexical-relation'>",
-				"<range-element id='Part' guid='b764ce50-ea5e-11de-864f-0013722f8dec'>",
-				"<label>",
-				"<form lang='en'><text>Part</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang='en'><text>pt</text></form>",
-				"</abbrev>",
-				"<description>",
-				"<form lang='en'><text>A part/whole relation establishes a link between the sense for the whole (e.g., room), and senses for the parts (e.g., ceiling, wall, floor).</text></form>",
-				"</description>",
-				"<field type='reverse-label'>",
-				"<form lang='en'><text>Whole</text></form>",
-				"</field>",
-				"<field type='reverse-abbrev'>",
-				"<form lang='en'><text>wh</text></form>",
-				"</field>",
-				"<trait  name='referenceType' value='3'/>",
-				"</range-element>",
-				"</range>",
-				"</lift-ranges>"
-			};
-
-		// This lift data is a modified version of treeLiftData preserving 'arm', 'leg', and 'body' but adding 'leg' to the whole/part relation.
-		private static string[] treeLiftData2 = new[]
-			{
+			// This lift data is a modified version of treeLiftData preserving 'arm', 'leg', and 'body' but adding 'leg' to the whole/part relation.
+			string[] treeLiftData2 = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -4933,44 +4858,39 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestImportDoesNotDuplicateTreeRelations()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
 
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(treeLiftData);
-			var logFile = TryImport(sOrigFile, LiftMergerTests.CreateInputRangesFile(treeLiftRange), MergeStyle.MsKeepNew, 4);
+			var sOrigFile = CreateInputFile(treeLiftData);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(_treeLiftRange), MergeStyle.MsKeepNew, 4);
 			var bodySense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bodySense.LexSenseReferences), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(bodySense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(2, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(treeLiftData2);
-			TryImport(sNewFile, LiftMergerTests.CreateInputRangesFile(treeLiftRange), MergeStyle.MsKeepOnlyNew, 4);
+			var sNewFile = CreateInputFile(treeLiftData2);
+			TryImport(sNewFile, CreateInputRangesFile(_treeLiftRange), MergeStyle.MsKeepOnlyNew, 4);
 			var legSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
 			var armSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bodySense.LexSenseReferences), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(bodySense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(legSense.LexSenseReferences), "Incorrect number of references in the leg sense.");
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(legSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of targets in the leg sense.");
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(3, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, legSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
+			Assert.AreEqual(3, legSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
 			// body and leg both have only one LexReference
-			Assert.AreEqual(Enumerable.First<ILexReference>(bodySense.LexSenseReferences), Enumerable.First<ILexReference>(legSense.LexSenseReferences), "LexReferences of Body and Leg should match.");
+			Assert.AreEqual(bodySense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Body and Leg should match.");
 			// arm has two LexReferences and leg has one LexReference
-			CollectionAssert.Contains(armSense.LexSenseReferences, Enumerable.First<ILexReference>(legSense.LexSenseReferences), "Arm LexReferences should include the single Leg LexReference");
+			CollectionAssert.Contains(armSense.LexSenseReferences, legSense.LexSenseReferences.First(), "Arm LexReferences should include the single Leg LexReference");
 		}
 
-		// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)
-		private static string[] treeLiftDataBase = new[]
-			{
+		[Test]
+		public void TestImportDoesNotConfuseModifiedTreeRelations()
+		{
+			// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)
+			string[] treeLiftDataBase = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -5010,10 +4930,8 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		// This lift data modifies treeLiftDataBase adding a 'd' entry and changing 'c' to have 'd' as a parent while 'b' still has 'a'
-		private static string[] treeLiftDataReparented = new[]
-			{
+			// This lift data modifies treeLiftDataBase adding a 'd' entry and changing 'c' to have 'd' as a parent while 'b' still has 'a'
+			string[] treeLiftDataReparented = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
 				"  <header>",
@@ -5062,101 +4980,38 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestImportDoesNotConfuseModifiedTreeRelations()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
 
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(treeLiftDataBase);
-			var logFile = TryImport(sOrigFile, LiftMergerTests.CreateInputRangesFile(treeLiftRange), MergeStyle.MsKeepNew, 3);
+			var sOrigFile = CreateInputFile(treeLiftDataBase);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(_treeLiftRange), MergeStyle.MsKeepNew, 3);
 			var aSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
 			var bSense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 			var cSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
 
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(3, Enumerable.First<ILexReference>(aSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(3, aSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(treeLiftDataReparented);
-			TryImport(sNewFile, LiftMergerTests.CreateInputRangesFile(treeLiftRange), MergeStyle.MsKeepOnlyNew, 4);
+			var sNewFile = CreateInputFile(treeLiftDataReparented);
+			TryImport(sNewFile, CreateInputRangesFile(_treeLiftRange), MergeStyle.MsKeepOnlyNew, 4);
 			var dSense = senseRepo.GetObject(new Guid("3b3632c2-98ad-4f97-b130-2a32992254e3"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(aSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(cSense.LexSenseReferences), "Incorrect number of references in the c sense.");
-			Assert.AreEqual(2, Enumerable.First<ILexReference>(cSense.LexSenseReferences).TargetsRS.Count,
-								 "Incorrect number of targets in the c senses reference.");
-			Assert.AreEqual(Enumerable.First<ILexReference>(cSense.LexSenseReferences), Enumerable.First<ILexReference>(dSense.LexSenseReferences), "c and d should be in the same relation");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(dSense.LexSenseReferences), "dSense picked up a phantom reference.");
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(2, aSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of references in the c sense.");
+			Assert.AreEqual(2, cSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the c senses reference.");
+			Assert.AreEqual(cSense.LexSenseReferences.First(), dSense.LexSenseReferences.First(), "c and d should be in the same relation");
+			Assert.AreEqual(1, dSense.LexSenseReferences.Count(), "dSense picked up a phantom reference.");
 		}
 
-		// Defines a lift file with two entries 'Bother' and 'me'.
-		private static string[] origNoPair = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8' ?>",
-				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:01:10Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>Bother</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:01:10Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>me</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-		// modified LIFT with same entries 'Bother' and 'me' related using relation type Twain and Twin, expects a lexical-relation range in a ranges file
-		private static string[] newWithPair = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8' ?>",
-				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
-				"<header>",
-				"<ranges>",
-				"<range id='lexical-relation' href='???'/>",
-				"</ranges>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:00:14Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>Bother</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
-				"<relation type='Twain' ref='de2fcb48-319a-48cf-bfea-0f25b9f38b31'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:00:14Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>me</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
-				"<relation type='Twin' ref='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'/>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-		//ranges file with defining an Antonym and a Twin relation
-		private static string[] newWithPairRange = new[]
-			{
+		[Test]
+		public void TestImportCustomPairReferenceTypeWorks()
+		{
+			//ranges file with defining an Antonym and a Twin relation
+			string[] newWithPairRange = {
 				"<?xml version='1.0' encoding='UTF-8'?>",
 				"<lift-ranges>",
 				"<range id='lexical-relation'>",
@@ -5190,10 +5045,32 @@ namespace LanguageExplorerTests.LIFT
 				"</range>",
 				"</lift-ranges>"
 			};
-
-		[Test]
-		public void TestImportCustomPairReferenceTypeWorks()
-		{
+			// Defines a lift file with two entries 'Bother' and 'me'.
+			string[] origNoPair = {
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:01:10Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>Bother</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:01:10Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>me</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5201,27 +5078,29 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(origNoPair);
+			var sOrigFile = CreateInputFile(origNoPair);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
+			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(newWithPair);
-			logFile = TryImport(sNewFile, LiftMergerTests.CreateInputRangesFile(newWithPairRange), MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.That(Enumerable.First<ILexReference>(aSense.LexSenseReferences).TargetsRS.Contains(bSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
-			Assert.That(Enumerable.First<ILexReference>(bSense.LexSenseReferences).TargetsRS.Contains(aSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
-			Assert.AreEqual(Enumerable.First<ILexReference>(aSense.LexSenseReferences), Enumerable.First<ILexReference>(bSense.LexSenseReferences), "aSense and bSense should share the same LexSenseReference.");
-			Assert.That(Enumerable.First<ILexReference>(aSense.LexSenseReferences).TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
-			Assert.That(Enumerable.First<ILexReference>(bSense.LexSenseReferences).TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
+			var sNewFile = CreateInputFile(_newWithPair);
+			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithPairRange), MergeStyle.MsKeepOnlyNew, 2);
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.First().TargetsRS.Contains(bSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
+			Assert.That(bSense.LexSenseReferences.First().TargetsRS.Contains(aSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
+			Assert.AreEqual(aSense.LexSenseReferences.First(), bSense.LexSenseReferences.First(), "aSense and bSense should share the same LexSenseReference.");
+			Assert.That(aSense.LexSenseReferences.First().TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
+			Assert.That(bSense.LexSenseReferences.First().TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
 		}
 
-		//ranges file with defining an Antonym as a default relation (no guid) and a Twin relation
-		private static string[] rangeWithOneCustomAndOneDefault = new[]
-			{
+		[Test]
+		public void TestImportCustomRangesIgnoresNonCustomRanges()
+		{
+			//ranges file with defining an Antonym as a default relation (no guid) and a Twin relation
+			string[] rangeWithOneCustomAndOneDefault = {
 				"<?xml version='1.0' encoding='UTF-8'?>",
 				"<lift-ranges>",
 				"<range id='lexical-relation'>",
@@ -5255,10 +5134,6 @@ namespace LanguageExplorerTests.LIFT
 				"</range>",
 				"</lift-ranges>"
 			};
-
-		[Test]
-		public void TestImportCustomRangesIgnoresNonCustomRanges()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5267,47 +5142,44 @@ namespace LanguageExplorerTests.LIFT
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var typeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(newWithPair);
-			Assert.AreEqual((int)0, (int)typeRepo.Count, "Too many types exist before import, bootstrapping has changed?");
-			var logFile = TryImport(sOrigFile, LiftMergerTests.CreateInputRangesFile(rangeWithOneCustomAndOneDefault), MergeStyle.MsKeepOnlyNew, 2);
+			var sOrigFile = CreateInputFile(_newWithPair);
+			Assert.AreEqual(0, typeRepo.Count, "Too many types exist before import, bootstrapping has changed?");
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(rangeWithOneCustomAndOneDefault), MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual((int)1, (int)typeRepo.Count, "Too many types created during import.");
-
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, typeRepo.Count, "Too many types created during import.");
 		}
 
-		// Defines a lift file with two entries 'Bother' and 'me'.
-		private static string[] origNoRelation = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8' ?>",
-				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:01:10Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>Bother</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:01:10Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
-				"<lexical-unit>",
-				"<form lang='fr'><text>me</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
+		[Test]
+		public void TestImportCustomReferenceTypeWithMultipleWsWorks()
+		{
+			//ranges file with defining a custom queue SenseSequence type, which is called enqueue in french
+			string[] newWithRelationRange = {
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>",
+				"<range id='lexical-relation'>",
+				"<range-element id='Queue' guid='b7862f14-ea5e-11de-8d47-0013722f8dec'>",
+				"<label>",
+				"<form lang='en'><text>queue</text></form>",
+				"<form lang='fr'><text>enqueue</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>q</text></form>",
+				"<form lang='fr'><text>eq</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang='en'><text>Get in line.</text></form>",
+				"<form lang='fr'><text>Git le line.</text></form>",
+				"</description>",
+				"<trait name='referenceType' value='" + (int)LexRefTypeTags.MappingTypes.kmtSenseSequence + "'/>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
 			};
-		// modified LIFT with same entries 'Bother' and 'me' related using relation type queue (alternatively named enqueue)
-		private static string[] newWithRelation = new[]
-			{
+			// modified LIFT with same entries 'Bother' and 'me' related using relation type queue (alternatively named enqueue)
+			string[] newWithRelation = {
 				"<?xml version='1.0' encoding='UTF-8' ?>",
 				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
 				"<header>",
@@ -5338,35 +5210,32 @@ namespace LanguageExplorerTests.LIFT
 				"</entry>",
 				"</lift>"
 			};
-
-		//ranges file with defining a custom queue SenseSequence type, which is called enqueue in french
-		private static string[] newWithRelationRange = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8'?>",
-				"<lift-ranges>",
-				"<range id='lexical-relation'>",
-				"<range-element id='Queue' guid='b7862f14-ea5e-11de-8d47-0013722f8dec'>",
-				"<label>",
-				"<form lang='en'><text>queue</text></form>",
-				"<form lang='fr'><text>enqueue</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang='en'><text>q</text></form>",
-				"<form lang='fr'><text>eq</text></form>",
-				"</abbrev>",
-				"<description>",
-				"<form lang='en'><text>Get in line.</text></form>",
-				"<form lang='fr'><text>Git le line.</text></form>",
-				"</description>",
-				"<trait name='referenceType' value='" + (int)LexRefTypeTags.MappingTypes.kmtSenseSequence + "'/>",
-				"</range-element>",
-				"</range>",
-				"</lift-ranges>"
+			// Defines a lift file with two entries 'Bother' and 'me'.
+			string[] origNoRelation = {
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated='2013-09-24T18:57:02Z' dateModified='2013-09-24T19:01:10Z' id='Bug_84338803-89e0-4d74-b175-fcbb2eb23ea5' guid='84338803-89e0-4d74-b175-fcbb2eb23ea5'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>Bother</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='c2b4fe44-a3d9-4a42-a87c-8e174593fb30'>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-09-24T18:57:11Z' dateModified='2013-09-24T19:01:10Z' id='me_1bbaccee-d640-4cae-9f80-0563225b93ca' guid='1bbaccee-d640-4cae-9f80-0563225b93ca'>",
+				"<lexical-unit>",
+				"<form lang='fr'><text>me</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='de2fcb48-319a-48cf-bfea-0f25b9f38b31'>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
 			};
-
-		[Test]
-		public void TestImportCustomReferenceTypeWithMultipleWsWorks()
-		{
 			Cache.LangProject.AnalysisWss = "en fr";
 			Cache.LangProject.CurAnalysisWss = "en";
 			Cache.LangProject.VernWss = "sen arb";
@@ -5380,19 +5249,19 @@ namespace LanguageExplorerTests.LIFT
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(origNoRelation);
+			var sOrigFile = CreateInputFile(origNoRelation);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
+			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(newWithRelation);
-			logFile = TryImport(sNewFile, LiftMergerTests.CreateInputRangesFile(newWithRelationRange), MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
-			var queueType = Enumerable.FirstOrDefault<ILexRefType>(refTypeRepo.AllInstances(), refType => refType.Name.BestAnalysisAlternative.Text.Equals("queue"));
-			Assert.That(queueType != null && queueType.MembersOC.Contains(Enumerable.First<ILexReference>(bSense.LexSenseReferences)), "Queue incorrectly imported.");
+			var sNewFile = CreateInputFile(newWithRelation);
+			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithRelationRange), MergeStyle.MsKeepOnlyNew, 2);
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			var queueType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("queue"));
+			Assert.That(queueType != null && queueType.MembersOC.Contains(bSense.LexSenseReferences.First()), "Queue incorrectly imported.");
 			Assert.That(queueType.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseSequence, "Queue imported with wrong type.");
 			Assert.That(queueType.Description.StringCount == 2, "One writing system didn't import");
 			Assert.That(queueType.Name.StringCount == 2, "One writing system didn't import");
@@ -5402,50 +5271,10 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(queueType.Description.get_String(Cache.WritingSystemFactory.GetWsFromStr("en")).Text.Equals("Get in line."));
 		}
 
-		// lift data with the entries a, b, and c where a and c are in a Synonym relationship and b is in none.
-		private static string[] origAntReplaceSyn = new[]
-			{
-				"<?xml version='1.0' encoding='UTF-8' ?>",
-				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
-				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated='2013-09-20T16:25:38Z' dateModified='2013-09-20T16:26:04Z' id='c_497ee5d1-7459-48cc-b142-48605c77be80' guid='497ee5d1-7459-48cc-b142-48605c77be80'>"
-				,
-				"<lexical-unit>",
-				"<form lang='fr'><text>c</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='a2096aa3-6076-47c0-b243-e50d00afaeb5'>",
-				"<relation type='Synonyms' ref='91eb7dc2-4057-4e7c-88c3-a81536a38c3e'/>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2013-09-20T16:25:28Z' dateModified='2013-09-20T16:34:26Z' id='b_5709b6df-ab08-4f62-bd2e-4d3685000c68' guid='5709b6df-ab08-4f62-bd2e-4d3685000c68'>"
-				,
-				"<lexical-unit>",
-				"<form lang='fr'><text>b</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='70a6973b-787e-4ddc-942f-3a2b2d0c6863'>",
-				"</sense>",
-				"</entry>",
-				"<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T16:25:56Z' id='a_ac828ef4-9a18-4802-b095-11cca00947db' guid='ac828ef4-9a18-4802-b095-11cca00947db'>"
-				,
-				"<lexical-unit>",
-				"<form lang='fr'><text>a</text></form>",
-				"</lexical-unit>",
-				"<trait  name='morph-type' value='stem'/>",
-				"<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e'>",
-				"<relation type='Synonyms' ref='a2096aa3-6076-47c0-b243-e50d00afaeb5'/>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
-		// replacment lift data where b and c entries are in an Antonym relationship and a isn't in any.
-		private static string[] nextAntReplaceSyn = new[]
-			{
+		[Test]
+		public void TestReplaceSynonymWithAntonymWorks()
+		{
+			string[] nextAntReplaceSyn = {
 				"<?xml version='1.0' encoding='utf-8'?>",
 				"<lift producer='SIL.FLEx 8.0.4.41523' version='0.13'>",
 				" <header>",
@@ -5485,10 +5314,46 @@ namespace LanguageExplorerTests.LIFT
 				" </entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestReplaceSynonymWithAntonymWorks()
-		{
+			// lift data with the entries a, b, and c where a and c are in a Synonym relationship and b is in none.
+			string[] origAntReplaceSyn = {
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+				"<lift producer='SIL.FLEx 8.0.5.41540' version='0.13'>",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated='2013-09-20T16:25:38Z' dateModified='2013-09-20T16:26:04Z' id='c_497ee5d1-7459-48cc-b142-48605c77be80' guid='497ee5d1-7459-48cc-b142-48605c77be80'>"
+				,
+				"<lexical-unit>",
+				"<form lang='fr'><text>c</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='a2096aa3-6076-47c0-b243-e50d00afaeb5'>",
+				"<relation type='Synonyms' ref='91eb7dc2-4057-4e7c-88c3-a81536a38c3e'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-09-20T16:25:28Z' dateModified='2013-09-20T16:34:26Z' id='b_5709b6df-ab08-4f62-bd2e-4d3685000c68' guid='5709b6df-ab08-4f62-bd2e-4d3685000c68'>"
+				,
+				"<lexical-unit>",
+				"<form lang='fr'><text>b</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='70a6973b-787e-4ddc-942f-3a2b2d0c6863'>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T16:25:56Z' id='a_ac828ef4-9a18-4802-b095-11cca00947db' guid='ac828ef4-9a18-4802-b095-11cca00947db'>"
+				,
+				"<lexical-unit>",
+				"<form lang='fr'><text>a</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e'>",
+				"<relation type='Synonyms' ref='a2096aa3-6076-47c0-b243-e50d00afaeb5'/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5497,56 +5362,30 @@ namespace LanguageExplorerTests.LIFT
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(origAntReplaceSyn);
+			var sOrigFile = CreateInputFile(origAntReplaceSyn);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 3);
 			var aSense = senseRepo.GetObject(new Guid("a2096aa3-6076-47c0-b243-e50d00afaeb5"));
 			var bSense = senseRepo.GetObject(new Guid("70a6973b-787e-4ddc-942f-3a2b2d0c6863"));
 			var cSense = senseRepo.GetObject(new Guid("91eb7dc2-4057-4e7c-88c3-a81536a38c3e"));
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(cSense.LexSenseReferences), "Incorrect number of component references.");
-			var synType = Enumerable.FirstOrDefault<ILexRefType>(refTypeRepo.AllInstances(), refType => refType.Name.BestAnalysisAlternative.Text.Equals("Synonyms"));
-			Assert.That(synType != null && synType.MembersOC.Contains(Enumerable.First<ILexReference>(aSense.LexSenseReferences)), "Synonym incorrectly imported.");
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			var synType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("Synonyms"));
+			Assert.That(synType != null && synType.MembersOC.Contains(aSense.LexSenseReferences.First()), "Synonym incorrectly imported.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(nextAntReplaceSyn);
+			var sNewFile = CreateInputFile(nextAntReplaceSyn);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 3);
-			Assert.AreEqual(0, Enumerable.Count<ILexReference>(aSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(bSense.LexSenseReferences), "Incorrect number of component references.");
-			Assert.AreEqual(1, Enumerable.Count<ILexReference>(cSense.LexSenseReferences), "Incorrect number of component references.");
-			var antType = Enumerable.FirstOrDefault<ILexRefType>(refTypeRepo.AllInstances(), refType => refType.Name.BestAnalysisAlternative.Text.Equals("Antonym"));
-			Assert.That(antType != null && antType.MembersOC.Contains(Enumerable.First<ILexReference>(bSense.LexSenseReferences)), "Antonym incorrectly imported.");
+			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			var antType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("Antonym"));
+			Assert.That(antType != null && antType.MembersOC.Contains(bSense.LexSenseReferences.First()), "Antonym incorrectly imported.");
 		}
 
-		private static string[] twoEntryWithVariantComplexFormLift = new[]
-			{
-				"<?xml version='1.0' encoding='utf-8'?>",
-				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
-				"	<header></header>",
-				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:34:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
-				"		<lexical-unit>",
-				"			<form lang='fr'>",
-				"				<text>e</text>",
-				"			</form>",
-				"		</lexical-unit>",
-				"		<relation order='0' ref='a_ac828ef4-9a18-4802-b095-11cca00947db' type='_component-lexeme'>",
-				"			<trait name='variant-type' value='' />",
-				"		</relation>",
-				"		<trait name='morph-type' value='stem' />",
-				"	</entry>",
-				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:01:59Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
-				"		<lexical-unit>",
-				"			<form lang='fr'>",
-				"				<text>a</text>",
-				"			</form>",
-				"		</lexical-unit>",
-				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
-				"		<trait name='morph-type' value='stem' />",
-				"	</entry>",
-				"</lift>"
-			};
-
-		private static string[] twoEntryWithVariantRefRemovedLift = new[]
-			{
+		[Test]
+		public void TestDeleteRelationRefOnVariantComplexFormWorks()
+		{
+			string[] twoEntryWithVariantRefRemovedLift = {
 				"<?xml version='1.0' encoding='utf-8'?>",
 				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
 				"	<header></header>",
@@ -5572,10 +5411,6 @@ namespace LanguageExplorerTests.LIFT
 				"	</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestDeleteRelationRefOnVariantComplexFormWorks()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5583,25 +5418,27 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var sOrigFile = CreateInputFile(_twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantRefRemovedLift);
+			var sNewFile = CreateInputFile(twoEntryWithVariantRefRemovedLift);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			// An empty VariantEntryRef can not be unambiguously identified, so a new empty one is
 			// created. This results in stable lift (doesn't change on round trip), but the fwdata
 			// will change on round trip without real changes. This is not what we prefer, but think
 			// it is OK for now. Nov 2013
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "VariantEntryRef should remain after lift import.");
-			Assert.AreEqual(0, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "VariantForm Entry was not deleted during lift import."); // The reference was removed so the Entries collection should be empty
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef should remain after lift import.");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import."); // The reference was removed so the Entries collection should be empty
 		}
 
-		private static string[] twoEntryWithVariantRemovedLift = new[]
-			{
+		[Test]
+		public void TestDeleteVariantComplexFormWorks()
+		{
+			string[] twoEntryWithVariantRemovedLift = {
 				"<?xml version='1.0' encoding='utf-8'?>",
 				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
 				"	<header></header>",
@@ -5624,10 +5461,6 @@ namespace LanguageExplorerTests.LIFT
 				"	</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestDeleteVariantComplexFormWorks()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5635,21 +5468,23 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var sOrigFile = CreateInputFile(_twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantRemovedLift);
+			var sNewFile = CreateInputFile(twoEntryWithVariantRemovedLift);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(0, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "VariantEntryRef was not deleted during lift import.");
-			Assert.AreEqual(0, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "VariantForm Entry was not deleted during lift import.");
+			Assert.AreEqual(0, eEntry.VariantEntryRefs.Count(), "VariantEntryRef was not deleted during lift import.");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import.");
 		}
 
-		private static string[] twoEntryWithVariantComplexFormAndNewItemLift = new[]
-			{
+		[Test]
+		public void TestVariantComplexFormNotDeletedWhenUnTouchedWorks()
+		{
+			string[] twoEntryWithVariantComplexFormAndNewItemLift = {
 				"<?xml version='1.0' encoding='utf-8'?>",
 				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
 				"	<header></header>",
@@ -5683,10 +5518,6 @@ namespace LanguageExplorerTests.LIFT
 				"	</entry>",
 				"</lift>"
 			};
-
-		[Test]
-		public void TestVariantComplexFormNotDeletedWhenUnTouchedWorks()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5694,21 +5525,49 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var sOrigFile = CreateInputFile(_twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(twoEntryWithVariantComplexFormAndNewItemLift);
+			var sNewFile = CreateInputFile(twoEntryWithVariantComplexFormAndNewItemLift);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 3);
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "VariantEntryRef mistakenly deleted during lift import.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "VariantForm Entry was mistakenly deleted during lift import.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef mistakenly deleted during lift import.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "VariantForm Entry was mistakenly deleted during lift import.");
 		}
 
-		private static string[] twoEntryWithDerivativeComplexFormLift = new[]
-			{
+		[Test]
+		public void TestDeleteDerivativeComplexFormWorks()
+		{
+			string[] twoEntryWithDerivativeComplexFormRemovedLift = {
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:35:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:35:26Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+			string[] twoEntryWithDerivativeComplexFormLift = {
 				"<?xml version='1.0' encoding='utf-8'?>",
 				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
 				"	<header></header>",
@@ -5735,38 +5594,6 @@ namespace LanguageExplorerTests.LIFT
 				"	</entry>",
 				"</lift>"
 			};
-
-		private static string[] twoEntryWithDerivativeComplexFormRemovedLift = new[]
-			{
-				"<?xml version='1.0' encoding='utf-8'?>",
-				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
-				"	<header></header>",
-				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:35:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
-				"		<lexical-unit>",
-				"			<form lang='fr'>",
-				"				<text>e</text>",
-				"			</form>",
-				"		</lexical-unit>",
-				"		<relation order='0' ref='' type='_component-lexeme'>",
-				"			<trait name='variant-type' value='' />",
-				"		</relation>",
-				"		<trait name='morph-type' value='stem' />",
-				"	</entry>",
-				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:35:26Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
-				"		<lexical-unit>",
-				"			<form lang='fr'>",
-				"				<text>a</text>",
-				"			</form>",
-				"		</lexical-unit>",
-				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
-				"		<trait name='morph-type' value='stem' />",
-				"	</entry>",
-				"</lift>"
-			};
-
-		[Test]
-		public void TestDeleteDerivativeComplexFormWorks()
-		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5774,26 +5601,26 @@ namespace LanguageExplorerTests.LIFT
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
-			var sOrigFile = LiftMergerTests.CreateInputFile(twoEntryWithDerivativeComplexFormLift);
+			var sOrigFile = CreateInputFile(twoEntryWithDerivativeComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.ComplexFormEntryRefs), "No ComplexFormEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntry>(aEntry.ComplexFormEntries), "No ComplexEntries found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, Enumerable.Count(eEntry.ComplexFormEntryRefs), "No ComplexFormEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, Enumerable.Count(aEntry.ComplexFormEntries), "No ComplexEntries found when expected, import of lift data during test setup failed.");
 
-			var sNewFile = LiftMergerTests.CreateInputFile(twoEntryWithDerivativeComplexFormRemovedLift);
+			var sNewFile = CreateInputFile(twoEntryWithDerivativeComplexFormRemovedLift);
 			logFile = TryImport(sNewFile, null, MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(0, Enumerable.Count<ILexEntryRef>(eEntry.ComplexFormEntryRefs), "ComplexFormEntryRefs was not deleted during lift import.");
-			Assert.AreEqual(0, Enumerable.Count<ILexEntry>(aEntry.ComplexFormEntries), "ComplexFormEntry was not deleted during lift import.");
-			Assert.AreEqual(1, Enumerable.Count<ILexEntryRef>(eEntry.VariantEntryRefs), "An empty VariantEntryRef should have resulted from the import");
-			Assert.AreEqual(0, Enumerable.Count<ILexEntry>(aEntry.VariantFormEntries), "An empty VariantEntryRef should have resulted from the import");
+			Assert.AreEqual(0, eEntry.ComplexFormEntryRefs.Count(), "ComplexFormEntryRefs was not deleted during lift import.");
+			Assert.AreEqual(0, aEntry.ComplexFormEntries.Count(), "ComplexFormEntry was not deleted during lift import.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "An empty VariantEntryRef should have resulted from the import");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "An empty VariantEntryRef should have resulted from the import");
 		}
 
 		[Test]
 		public void TestImportLexRefType_NonAsciiCharactersDoNotCauseDuplication()
 		{
-			var unNormalizedOmega = '\u2126';
-			var normalizedOmega = '\u03A9';
+			const char unNormalizedOmega = '\u2126';
+			const char normalizedOmega = '\u03A9';
 			//ranges file with defining a custom EntryCollection type using a non-normalized unicode character in the name
 			var liftRangeWithNonAsciiRelation = new[]
 			{
@@ -5814,7 +5641,6 @@ namespace LanguageExplorerTests.LIFT
 				"</range>",
 				"</lift-ranges>"
 			};
-
 			var liftWithSenseUsingNonAsciiRelation = new[]
 			{
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
@@ -5842,59 +5668,62 @@ namespace LanguageExplorerTests.LIFT
 			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 			var refTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
 			var testType = refTypeFactory.Create(new Guid("b7862f14-ea5e-11de-8d47-0013722f8dec"), null);
-			testType.Name.set_String(wsEn, TsStringUtils.MakeString("Test" + normalizedOmega, (int)wsEn));
-			testType.Abbreviation.set_String(wsEn, TsStringUtils.MakeString((string)"test", (int)wsEn));
+			testType.Name.set_String(wsEn, TsStringUtils.MakeString("Test" + normalizedOmega, wsEn));
+			testType.Abbreviation.set_String(wsEn, TsStringUtils.MakeString("test", wsEn));
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(testType);
 			var refTypeCountBeforeImport = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count;
-			var liftFile = LiftMergerTests.CreateInputFile(liftWithSenseUsingNonAsciiRelation);
-			var rangeFile = LiftMergerTests.CreateInputRangesFile(liftRangeWithNonAsciiRelation);
+			var liftFile = CreateInputFile(liftWithSenseUsingNonAsciiRelation);
+			var rangeFile = CreateInputRangesFile(liftRangeWithNonAsciiRelation);
 			// SUT
 			var logFile = TryImport(liftFile, rangeFile, MergeStyle.MsKeepOnlyNew, 1);
-			Assert.AreEqual((int)refTypeCountBeforeImport, (int)Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, "Relation duplicated on import");
+			Assert.AreEqual(refTypeCountBeforeImport, Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, "Relation duplicated on import");
 		}
-	}
 
-	class CustomFieldData
-	{
-		/// <summary>
-		///
-		/// </summary>
-		internal String CustomFieldname;
+		private sealed class MessageCapture : IMessageBox
+		{
+			public List<string> Messages = new List<string>();
+			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+			{
+				Messages.Add(text);
+				return DialogResult.OK;
+			}
 
-		/// <summary>
-		///
-		/// </summary>
-		internal String StringFieldText;
+			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+				MessageBoxDefaultButton defaultButton, MessageBoxOptions options, string helpFilePath, HelpNavigator navigator, object param)
+			{
+				Messages.Add(text);
+				return DialogResult.OK;
+			}
+		}
 
-		/// <summary>
-		///
-		/// </summary>
-		internal String StringFieldWs;
+		private sealed class CustomFieldData
+		{
+			/// <summary />
+			internal string CustomFieldname;
 
-		/// <summary>
-		///
-		/// </summary>
-		internal CellarPropertyType CustomFieldType;
+			/// <summary />
+			internal string StringFieldText;
 
-		/// <summary>
-		///
-		/// </summary>
-		internal List<String> MultiUnicodeStrings = new List<string>();
+			/// <summary />
+			internal string StringFieldWs;
 
-		/// <summary>
-		///
-		/// </summary>
-		internal List<String> MultiUnicodeWss	= new List<string>();
+			/// <summary />
+			internal CellarPropertyType CustomFieldType;
 
-		/// <summary>
-		///
-		/// </summary>
-		internal int IntegerValue;
+			/// <summary />
+			internal List<string> MultiUnicodeStrings = new List<string>();
 
-		internal String GenDateLiftFormat;
+			/// <summary />
+			internal List<string> MultiUnicodeWss = new List<string>();
 
-		internal String cmPossibilityNameRA;
+			/// <summary />
+			internal int IntegerValue;
 
-		internal List<String> cmPossibilityNamesRS = new List<String>();
+			internal string GenDateLiftFormat;
+
+			internal string cmPossibilityNameRA;
+
+			internal List<string> cmPossibilityNamesRS = new List<string>();
+		}
 	}
 }

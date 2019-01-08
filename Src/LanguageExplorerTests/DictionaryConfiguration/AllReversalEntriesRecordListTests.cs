@@ -11,7 +11,7 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 #if RANDYTODO
-	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
+	public class AllReversalEntriesRecordListTestBase : AppTestBase, IDisposable
 	{
 		protected IPropertyTable m_propertyTable;
 		protected IPublisher m_publisher;
@@ -81,7 +81,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 	#region Setup and Teardown
 		/// <summary>
-		/// Run by FixtureInit() in XWorksAppTestBase
+		/// Run by FixtureInit() in AppTestBase
 		/// </summary>
 		protected override void Init()
 		{

@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -23,8 +22,10 @@ namespace LanguageExplorerTests.Impls
 	[TestFixture]
 	public class LexImportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private string allNumbered_OutOfOrder =
-@"\lx aha
+		[Test]
+		public void ImportHomographs_AllNumbered_OutOfOrder()
+		{
+			const string allNumbered_OutOfOrder = @"\lx aha
 \hm 2
 \de two
 \lx aha
@@ -39,9 +40,6 @@ namespace LanguageExplorerTests.Impls
 \mn aha1
 \lx bahaaaa
 \mn aha2";
-		[Test]
-		public void ImportHomographs_AllNumbered_OutOfOrder()
-		{
 			DoImport(allNumbered_OutOfOrder, MakeDefaultFields(), 6);
 
 			VerifyHomographNumber("one", 1);
@@ -52,8 +50,10 @@ namespace LanguageExplorerTests.Impls
 			VerifyHomographXRef("bahaaaa", 2);
 		}
 
-		private string someNumbered_OutOfOrder_Subentry =
-@"\lx baha
+		[Test]
+		public void ImportHomographs_SomeNumbered_OutOfOrder_Subentry()
+		{
+			const string someNumbered_OutOfOrder_Subentry = @"\lx baha
 \hm 3
 \de threeB
 \lx bahh
@@ -62,9 +62,6 @@ namespace LanguageExplorerTests.Impls
 \lx ha
 \se baha
 \de twoB ";
-		[Test]
-		public void ImportHomographs_SomeNumbered_OutOfOrder_Subentry()
-		{
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			DoImport(someNumbered_OutOfOrder_Subentry, MakeDefaultFields(), 5);
 
@@ -73,8 +70,10 @@ namespace LanguageExplorerTests.Impls
 			VerifyHomographNumber("threeB", 3);
 		}
 
-		private string noneNumberedTwoSubentries =
-@"\lx bahaC
+		[Test]
+		public void ImportHomographs_NoneNumberedTwoSubentries()
+		{
+			const string noneNumberedTwoSubentries = @"\lx bahaC
 \de oneC
 \lx bahhC
 \se bahaC
@@ -82,9 +81,6 @@ namespace LanguageExplorerTests.Impls
 \lx haC
 \se bahaC
 \de threeC ";
-		[Test]
-		public void ImportHomographs_NoneNumberedTwoSubentries()
-		{
 			DoImport(noneNumberedTwoSubentries, MakeDefaultFields(), 5);
 
 			VerifyHomographNumber("oneC", 1);
@@ -92,8 +88,10 @@ namespace LanguageExplorerTests.Impls
 			VerifyHomographNumber("threeC", 3);
 		}
 
-		private string refsToSubentry =
-@"\lx zahu
+		[Test]
+		public void ImportHomographs_RefsToSubentry()
+		{
+			const string refsToSubentry = @"\lx zahu
 \se zahuwa
 \de oneD
 \lx huwa
@@ -108,9 +106,6 @@ namespace LanguageExplorerTests.Impls
 \lx zahuwua
 \mn zahuwa1
 \de one ";
-		[Test]
-		public void ImportHomographs_RefsToSubentry()
-		{
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			DoImport(refsToSubentry, MakeDefaultFields(), 7);
 
@@ -120,8 +115,10 @@ namespace LanguageExplorerTests.Impls
 			VerifyHomographXRef("zahuwua", 1);
 		}
 
-		private string refsToHomograph1OrBlankBothWork =
-@"\lx aba
+		[Test]
+		public void ImportHomographs_RefsToHomograph1OrBlankBothWork()
+		{
+			const string refsToHomograph1OrBlankBothWork = @"\lx aba
 \de test a
 
 \lx aba
@@ -147,9 +144,6 @@ namespace LanguageExplorerTests.Impls
 
 \lx testD
 \mn baba1";
-		[Test]
-		public void ImportHomographs_RefsToHomograph1OrBlankBothWork()
-		{
 			DoImport(refsToHomograph1OrBlankBothWork, MakeDefaultFields(), 8);
 
 			VerifyHomographNumber("test a", 1);
@@ -162,8 +156,10 @@ namespace LanguageExplorerTests.Impls
 			VerifyHomographXRef("testD", 1);
 		}
 
-		private string sfmDataWithVariantsAndMainEntryLinks =
-@"\lx axle
+		[Test]
+		public void ImportVariantsAndMainEntryRefs_DoesNotDuplicateEntries()
+		{
+			const string sfmDataWithVariantsAndMainEntryLinks = @"\lx axle
 \va aa
 \ps v
 \ge axle
@@ -178,37 +174,32 @@ namespace LanguageExplorerTests.Impls
 \mn axle
 \ps v
 \ge ab";
-		[Test]
-		public void ImportVariantsAndMainEntryRefs_DoesNotDuplicateEntries()
-		{
 			DoImport(sfmDataWithVariantsAndMainEntryLinks, MakeDefaultFields(), 3);
 		}
 
-		private string sfmDataWithMinorBeforeMainEntryLinks =
-@"\lx ab
+		[Test]
+		public void ImportMinorBeforeMain_DoesNotDuplicateEntries()
+		{
+			const string sfmDataWithMinorBeforeMainEntryLinks = @"\lx ab
 \mn a
 \ps n
 
 \lx a
 \va ab
 \ps v";
-		[Test]
-		public void ImportMinorBeforeMain_DoesNotDuplicateEntries()
-		{
 			DoImport(sfmDataWithMinorBeforeMainEntryLinks, MakeDefaultFields(), 2);
 		}
 
-		private string sfmDataWithBlankPosFollowingRealPos =
-@"\lx a
+		[Test]
+		public void ImportBlankPsAfterNonBlank_DoesNotDropBlankPosAndDupPrevious()
+		{
+			const string sfmDataWithBlankPosFollowingRealPos = @"\lx a
 \ps n
 \sn
 \de thing one
 \ps
 \sn
 \de non-thing one ";
-		[Test]
-		public void ImportBlankPsAfterNonBlank_DoesNotDropBlankPosAndDupPrevious()
-		{
 			DoImport(sfmDataWithBlankPosFollowingRealPos, MakeDefaultFields(), 1);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
 			Assert.AreEqual(2, entry.SensesOS.Count(), "Import should have resulted in two senses");
@@ -220,9 +211,6 @@ namespace LanguageExplorerTests.Impls
 		/// This messy process simulates what the real import wizard does to import a string like input,
 		/// with the given field mappings, and verifies that it produces the expected number of new lexEntries.
 		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="sfmInfo"></param>
-		/// <param name="expectedCreations"></param>
 		private void DoImport(string input, List<FieldHierarchyInfo> sfmInfo, int expectedCreations)
 		{
 			var tempLocation = Path.GetTempFileName();
@@ -231,25 +219,26 @@ namespace LanguageExplorerTests.Impls
 			Directory.CreateDirectory(tempDir);
 			try
 			{
-				string sTransformDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
-					String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
+				var sTransformDir = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
 				var sut = LexImportWizard.CreateLexImportForTesting(Cache, tempDir, sTransformDir);
 
-				string databaseFileName = Path.GetTempFileName();
+				var databaseFileName = Path.GetTempFileName();
 				File.WriteAllText(databaseFileName, input, Encoding.UTF8);
 
 				var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				// JohnT: I don't know why this is needed, the base class is supposed to Undo anything we create.
 				// But somehow things are getting left over from one test and messing up another.
 				foreach (var entry in entryRepo.AllInstances())
+				{
 					entry.Delete();
+				}
 				Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(0));
 
 				// Create the map file that controls the import
 
 				var uiLangsNew = new Hashtable();
 				var infoEn = new LanguageInfoUI("English", "English", "", "en");
-				string vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
+				var vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
 				var infoV = new LanguageInfoUI("Vernacular", "Vern", "", vernId);
 				uiLangsNew[infoEn.Key] = infoEn;
 				uiLangsNew["Vernacular"] = infoV;
@@ -259,7 +248,7 @@ namespace LanguageExplorerTests.Impls
 				var customFields = new LexImportFields();
 
 				var ifMarker = new List<ClsInFieldMarker>();
-				string mapFile = Path.GetTempFileName();
+				var mapFile = Path.GetTempFileName();
 
 				SfmToXmlServices.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
 
@@ -282,7 +271,7 @@ namespace LanguageExplorerTests.Impls
 					phase1Output,
 					3, // lex entries in file
 					false, // don't want to display import report
-					"", // phase 1 html report, only used in generating messages, I think.
+					string.Empty, // phase 1 html report, only used in generating messages, I think.
 					sut.Phase1FileName, // required always
 					true // create entries for missing link targets
 				});
@@ -298,7 +287,6 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Make the set of field info objects needed to parse the sample inputs here.
 		/// </summary>
-		/// <returns></returns>
 		private static List<FieldHierarchyInfo> MakeDefaultFields()
 		{
 			var sfmInfo = new List<FieldHierarchyInfo>();
@@ -323,15 +311,11 @@ namespace LanguageExplorerTests.Impls
 		/// Verify that the entry whose lexeme form is lf has a cross-ref (LexEntryRef with first component) with the
 		/// expected homograph number.
 		/// </summary>
-		/// <param name="lf"></param>
-		/// <param name="hn"></param>
 		void VerifyHomographXRef(string lf, int hn)
 		{
 			var morphRepo = Cache.ServiceLocator.GetInstance<IMoFormRepository>();
 			//var morphs = (from m in morphRepo.AllInstances() select m.Form.VernacularDefaultWritingSystem.Text).ToArray();
-			var morph =
-				(from m in morphRepo.AllInstances() where m.Form.VernacularDefaultWritingSystem.Text == lf select m)
-					.FirstOrDefault();
+			var morph = morphRepo.AllInstances().FirstOrDefault(m => m.Form.VernacularDefaultWritingSystem.Text == lf);
 			Assert.That(morph, Is.Not.Null);
 			var entry = (ILexEntry)morph.Owner;
 			var entryRef = entry.EntryRefsOS.FirstOrDefault();
@@ -345,9 +329,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			//var senses = (from s in senseRepo.AllInstances() select s.Definition.AnalysisDefaultWritingSystem.Text).ToArray();
-			var sense =
-				(from s in senseRepo.AllInstances() where s.Definition.AnalysisDefaultWritingSystem.Text == defn select s)
-					.FirstOrDefault();
+			var sense = senseRepo.AllInstances().FirstOrDefault(s => s.Definition.AnalysisDefaultWritingSystem.Text == defn);
 			Assert.That(sense, Is.Not.Null);
 			var entry = sense.Entry;
 			Assert.That(entry.HomographNumber, Is.EqualTo(hn));

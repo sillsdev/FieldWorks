@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,17 +28,14 @@ using SIL.Xml;
 
 namespace LanguageExplorerTests.LIFT
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test LIFT export from FieldWorks.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class LiftExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string kbasePictureOfTestFileName = "Picture of Test";
 		private const string kpictureOfTestFileName = kbasePictureOfTestFileName + ".jpg"; // contents won't really be jpg
-
 		private static readonly string s_sSemanticDomainsXml =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
 			"<LangProject>" + Environment.NewLine +
@@ -450,27 +447,43 @@ namespace LanguageExplorerTests.LIFT
 			"</LexDb>" + Environment.NewLine;
 
 		private LcmCache m_cache;
-		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
-			new Dictionary<string, ICmSemanticDomain>();
-		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
-			new Dictionary<string, IPartOfSpeech>();
-		private readonly Dictionary<string, ICmPossibility> m_mapAcademicDomains =
-			new Dictionary<string, ICmPossibility>();
-		private readonly Dictionary<string, ICmPossibility> m_mapPublications =
-			new Dictionary<string, ICmPossibility>();
-
+		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains = new Dictionary<string, ICmSemanticDomain>();
+		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech = new Dictionary<string, IPartOfSpeech>();
+		private readonly Dictionary<string, ICmPossibility> m_mapAcademicDomains = new Dictionary<string, ICmPossibility>();
+		private readonly Dictionary<string, ICmPossibility> m_mapPublications = new Dictionary<string, ICmPossibility>();
 		private string MockProjectFolder { get; set; }
 		private string MockLinkedFilesFolder { get; set; }
 		private int m_audioWsCode;
-
 		private ISilDataAccessManaged m_sda;
+		private ILexEntry m_entryTest;
+		private ILexEntry m_entryThis;
+		private ILexEntry m_entryIs;
+		private ILexEntry m_entryUnbelieving;
+		private const string ksubFolderName = "sub";
+		private const string kotherPicOfTestFileName = "Another picture of test.jpg";
+		private const string kaudioFileName = "Sound of test.wav";
+		private const string kpronunciationFileName = "Pronunciation of test.wav";
+		private const string klexemeFormFileName = "Form of test.wav";
+		private const string kotherLinkedFileName = "File linked to in defn of test.doc";
+		private const string kcitationFormFileName = "Citation form test.wav";
+		private const string kcustomMultiFileName = "Custom multilingual file.wav";
+		private const string m_CustomPossListReferenced = "CustomCmPossibiltyListReferenced";
+		private const string m_CustomPossListUnreferenced = "CustomCmPossibiltyListNoRef";
+		private List<int> m_customFieldEntryIds = new List<int>();
+		private List<int> m_customFieldSenseIds = new List<int>();
+		private List<int> m_customFieldAllomorphsIds = new List<int>();
+		private List<int> m_customFieldExampleSentencesIds = new List<int>();
+		private List<Guid> m_customListsGuids = new List<Guid>();
+		private ICmPossibilityList m_customPossibilityList;
+		private bool DontExpectNewlinesCorrected;
+		private string m_tempPictureFilePath;
+		private int m_flidLongText;
 
-	#region Setup and Helper Methods
+		#region Setup and Helper Methods
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
-
 			CreateMockCache();
 		}
 
@@ -486,33 +499,29 @@ namespace LanguageExplorerTests.LIFT
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(BackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyLcmUI(),
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyLcmUI(),
 				FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, LcmFileHelper.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
-			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
-
-			WritingSystemManager writingSystemManager = m_cache.ServiceLocator.WritingSystemManager;
-			LanguageSubtag languageSubtag = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
-			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag,
-				WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			var writingSystemManager = m_cache.ServiceLocator.WritingSystemManager;
+			var languageSubtag = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
+			var audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] { WellKnownSubtags.AudioPrivateUse });
 			audioWs.IsVoice = true; // should already be so? Make sure.
 			writingSystemManager.Set(audioWs); // gives it a handle
 			m_audioWsCode = audioWs.Handle;
-
 			var semList = new XmlList();
 			using (var reader = new StringReader(s_sSemanticDomainsXml))
+			{
 				semList.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
+			}
 			var repoSem = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			foreach (var sem in repoSem.AllInstances())
+			{
 				m_mapSemanticDomains.Add(sem.ShortName, sem);
-
+			}
 			CreatePartsOfSpeechPossibilityList();
 			CreateAcademicDomainsPossibilityList();
 			CreatePublicationsList();
-
 			AddLexEntries();
 			CreateDirectoryForTest();
 		}
@@ -539,37 +548,45 @@ namespace LanguageExplorerTests.LIFT
 		{
 			var posList = new XmlList();
 			using (var reader = new StringReader(s_sPartsOfSpeech))
+			{
 				posList.ImportList(m_cache.LangProject, "PartsOfSpeech", reader, null);
+			}
 			var repoPos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
 			foreach (var pos in repoPos.AllInstances())
+			{
 				m_mapPartsOfSpeech.Add(pos.ShortName.ToLowerInvariant(), pos);
+			}
 		}
 
 		private void CreatePublicationsList()
 		{
 			var publicationList = new XmlList();
 			using (var reader = new StringReader(s_sPublications))
+			{
 				publicationList.ImportList(m_cache.LangProject.LexDbOA, "PublicationTypes", reader, null);
+			}
 			var repoPub = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 			foreach (var publication in m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS)
+			{
 				m_mapPublications.Add(publication.Name.AnalysisDefaultWritingSystem.Text, publication);
+			}
 		}
 
 		private void CreateAcademicDomainsPossibilityList()
 		{
 			var academicDomainsList = new XmlList();
 			using (var reader = new StringReader(s_sAcademicDomains))
+			{
 				academicDomainsList.ImportList(m_cache.LangProject.LexDbOA, "DomainTypes", reader, null);
+			}
 			foreach (var pos in m_cache.LangProject.LexDbOA.DomainTypesOA.ReallyReallyAllPossibilities)
+			{
 				m_mapAcademicDomains.Add(pos.ShortName.ToLowerInvariant(), pos);
+			}
 		}
 
-		private ILexEntry m_entryTest;
-		private ILexEntry m_entryThis;
-		private ILexEntry m_entryIs;
-		private ILexEntry m_entryUnbelieving;
 
-		private static string CreateDummyFile(string path)
+		private static void CreateDummyFile(string path)
 		{
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 			File.Delete(path);
@@ -578,19 +595,7 @@ namespace LanguageExplorerTests.LIFT
 				wrtr.WriteLine("This is a dummy file used in testing LIFT export");
 				wrtr.Close();
 			}
-			return path;
 		}
-
-		private const string ksubFolderName = "sub";
-		private const string kotherPicOfTestFileName = "Another picture of test.jpg";
-		private const string kaudioFileName = "Sound of test.wav";
-		private const string kpronunciationFileName = "Pronunciation of test.wav";
-		private const string klexemeFormFileName = "Form of test.wav";
-		private const string kotherLinkedFileName = "File linked to in defn of test.doc";
-		private const string kcitationFormFileName = "Citation form test.wav";
-		private const string kcustomMultiFileName = "Custom multilingual file.wav";
-		private const string m_CustomPossListReferenced = "CustomCmPossibiltyListReferenced";
-		private const string m_CustomPossListUnreferenced = "CustomCmPossibiltyListNoRef";
 
 		private void AddLexEntries()
 		{
@@ -599,142 +604,110 @@ namespace LanguageExplorerTests.LIFT
 			var msaPronoun = new SandboxGenericMSA { MsaType = MsaType.kRoot, MainPOS = m_mapPartsOfSpeech["pronoun"] };
 			var msaVerb = new SandboxGenericMSA { MsaType = MsaType.kRoot, MainPOS = m_mapPartsOfSpeech["verb"] };
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				{
-					m_entryTest = entryFact.Create("test & trouble", "trials & tribulations", msaNoun);
-					m_entryTest.CitationForm.VernacularDefaultWritingSystem =
-						TsStringUtils.MakeString("citation", m_cache.DefaultVernWs);
-					m_entryTest.Bibliography.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("bibliography entry", m_cache.DefaultAnalWs);
-
-					var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
-					var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
-					dialectLabel.Name.set_String(Cache.DefaultAnalWs, "east");
-					dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, "e");
-					m_entryTest.DialectLabelsRS.Add(dialectLabel);
-
-					m_entryTest.Comment.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("I like this comment.", m_cache.DefaultAnalWs);
-					m_entryTest.LiteralMeaning.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("Literally we need this.", m_cache.DefaultAnalWs);
-					m_entryTest.Restrictions.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("There are some restrictions on where this can be used.",
-														m_cache.DefaultAnalWs);
-					m_entryTest.SummaryDefinition.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
-					m_entryTest.DoNotPublishInRC.Add(m_mapPublications["Main Dictionary"]);
-
-					var tssDefn = TsStringUtils.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
-					var bldr = tssDefn.GetBldr();
-					int len = bldr.Length;
-					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksOtherLinkedFilesDir);
-					var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
-					CreateDummyFile(otherFilePath);
-					var mockStyle = new MockStyle() { Name = "hyperlink" };
-					StringServices.MarkTextInBldrAsHyperlink(bldr, len - 4, len, otherFilePath, mockStyle, MockLinkedFilesFolder);
-
-					var ls = m_entryTest.SensesOS[0];
-					ls.Definition.AnalysisDefaultWritingSystem = bldr.GetString();
-					ls.AnthroNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("Anthro Note.", m_cache.DefaultAnalWs);
-					ls.Bibliography.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense Bibliography", m_cache.DefaultAnalWs);
-					ls.DiscourseNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense Discoursing away...", m_cache.DefaultAnalWs);
-					ls.EncyclopedicInfo.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense EncyclopedicInfo", m_cache.DefaultAnalWs);
-					ls.GeneralNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense GeneralNote", m_cache.DefaultAnalWs);
-					ls.GrammarNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense GrammarNote", m_cache.DefaultAnalWs);
-					ls.PhonologyNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense PhonologyNote", m_cache.DefaultAnalWs);
-					ls.Restrictions.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense Restrictions", m_cache.DefaultAnalWs);
-					ls.SemanticsNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
-					ls.SocioLinguisticsNote.AnalysisDefaultWritingSystem =
-						TsStringUtils.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
-					ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
-					m_entryTest.LiftResidue =
-						"<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
-
-					//Add an academic domain to the sense.
-					ICmPossibility possibility;
-					AddAcademicDomain(ls, "rhetoric");
-					AddAcademicDomain(ls, "computer science");
-					AddAcademicDomain(ls, "medicine");
-
-					m_entryThis = entryFact.Create("this", "this", msaPronoun);
-					m_entryIs = entryFact.Create("is", "to.be", msaVerb);
-
-					var picFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-					m_cache.LangProject.PicturesOC.Add(picFolder);
-
-					// Verify that picture files get copied to the right places, and how we handle various
-					// kinds of source location.
-					var picturesFolderPath = Path.Combine(MockLinkedFilesFolder, "Pictures");
-					Directory.CreateDirectory(picturesFolderPath);
-					var subfolder = Path.Combine(picturesFolderPath, ksubFolderName);
-
-					MakePicture(picFolder, Path.Combine(picturesFolderPath, kpictureOfTestFileName));
-					MakePicture(picFolder, Path.Combine(MockLinkedFilesFolder, kpictureOfTestFileName));
-					MakePicture(picFolder, Path.Combine(subfolder, kotherPicOfTestFileName));
-					m_tempPictureFilePath = Path.GetTempFileName();
-					MakePicture(picFolder, m_tempPictureFilePath);
-
-					// See if we can export audio writing system stuff.
-					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksMediaDir);
-					CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
-					m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
-
-					// Lexeme form is a special case
-					CreateDummyFile(Path.Combine(audioFolderPath, klexemeFormFileName));
-					m_entryTest.LexemeFormOA.Form.set_String(m_audioWsCode, klexemeFormFileName);
-					// Citation form is written in a different way. Test it too.
-					CreateDummyFile(Path.Combine(audioFolderPath, kcitationFormFileName));
-					m_entryTest.CitationForm.set_String(m_audioWsCode, kcitationFormFileName);
-					// Set this as a value later, when we create custom fields.
-					CreateDummyFile(Path.Combine(audioFolderPath, kcustomMultiFileName));
-
-					// Try a pronunciation media file.
-					var pronunciationPath = Path.Combine(audioFolderPath, kpronunciationFileName);
-					CreateDummyFile(pronunciationPath);
-					var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
-					m_entryTest.PronunciationsOS.Add(pronunciation);
-					var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
-					pronunciation.MediaFilesOS.Add(media);
-					var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-					picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
-					media.MediaFileRA = pronunFile;
-					pronunFile.InternalPath = Path.Combine(LcmFileHelper.ksMediaDir, kpronunciationFileName);
-
-					// We should be able to export LexEntryRefs. BaseForm is a special case.
-					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
-					var entryBelieve = entryFact.Create("believe", "believe", msaVerb);
-					var entryIng = entryFact.Create("ing", "with property", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
-					m_entryUnbelieving = entryFact.Create("unbelieving", "not believing", msaNoun); // not really a noun, I know
-					var ler1 = MakeComplexFormEntryRef(m_entryUnbelieving, new[] { entryUn, entryBelieve, entryIng },
-						"Compound");
-					ler1.PrimaryLexemesRS.Add(entryBelieve);
-					var ler2 = MakeComplexFormEntryRef(m_entryUnbelieving, new[] { entryBelieve }, "BaseForm");
-					ler2.PrimaryLexemesRS.Add(entryBelieve);
-
-					var otherFolderPath = Path.Combine(MockLinkedFilesFolder, "Others");
-
-					// one of these is an example and won't be published in either Publication
-					AddCustomFields();
-					// Add a custom list that has no custom field associated with it.
-					AddCustomList(m_CustomPossListUnreferenced);
-				});
+			{
+				m_entryTest = entryFact.Create("test & trouble", "trials & tribulations", msaNoun);
+				m_entryTest.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("citation", m_cache.DefaultVernWs);
+				m_entryTest.Bibliography.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("bibliography entry", m_cache.DefaultAnalWs);
+				var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+				var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+				dialectLabel.Name.set_String(Cache.DefaultAnalWs, "east");
+				dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, "e");
+				m_entryTest.DialectLabelsRS.Add(dialectLabel);
+				m_entryTest.Comment.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("I like this comment.", m_cache.DefaultAnalWs);
+				m_entryTest.LiteralMeaning.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Literally we need this.", m_cache.DefaultAnalWs);
+				m_entryTest.Restrictions.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("There are some restrictions on where this can be used.", m_cache.DefaultAnalWs);
+				m_entryTest.SummaryDefinition.AnalysisDefaultWritingSystem = 					TsStringUtils.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
+				m_entryTest.DoNotPublishInRC.Add(m_mapPublications["Main Dictionary"]);
+				var tssDefn = TsStringUtils.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
+				var bldr = tssDefn.GetBldr();
+				var len = bldr.Length;
+				var otherFileFolder = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksOtherLinkedFilesDir);
+				var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
+				CreateDummyFile(otherFilePath);
+				var mockStyle = new MockStyle() { Name = "hyperlink" };
+				StringServices.MarkTextInBldrAsHyperlink(bldr, len - 4, len, otherFilePath, mockStyle, MockLinkedFilesFolder);
+				var ls = m_entryTest.SensesOS[0];
+				ls.Definition.AnalysisDefaultWritingSystem = bldr.GetString();
+				ls.AnthroNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Anthro Note.", m_cache.DefaultAnalWs);
+				ls.Bibliography.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense Bibliography", m_cache.DefaultAnalWs);
+				ls.DiscourseNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense Discoursing away...", m_cache.DefaultAnalWs);
+				ls.EncyclopedicInfo.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense EncyclopedicInfo", m_cache.DefaultAnalWs);
+				ls.GeneralNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense GeneralNote", m_cache.DefaultAnalWs);
+				ls.GrammarNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense GrammarNote", m_cache.DefaultAnalWs);
+				ls.PhonologyNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense PhonologyNote", m_cache.DefaultAnalWs);
+				ls.Restrictions.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense Restrictions", m_cache.DefaultAnalWs);
+				ls.SemanticsNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
+				ls.SocioLinguisticsNote.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
+				ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
+				m_entryTest.LiftResidue = "<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
+				//Add an academic domain to the sense.
+				ICmPossibility possibility;
+				AddAcademicDomain(ls, "rhetoric");
+				AddAcademicDomain(ls, "computer science");
+				AddAcademicDomain(ls, "medicine");
+				m_entryThis = entryFact.Create("this", "this", msaPronoun);
+				m_entryIs = entryFact.Create("is", "to.be", msaVerb);
+				var picFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+				m_cache.LangProject.PicturesOC.Add(picFolder);
+				// Verify that picture files get copied to the right places, and how we handle various
+				// kinds of source location.
+				var picturesFolderPath = Path.Combine(MockLinkedFilesFolder, "Pictures");
+				Directory.CreateDirectory(picturesFolderPath);
+				var subfolder = Path.Combine(picturesFolderPath, ksubFolderName);
+				MakePicture(picFolder, Path.Combine(picturesFolderPath, kpictureOfTestFileName));
+				MakePicture(picFolder, Path.Combine(MockLinkedFilesFolder, kpictureOfTestFileName));
+				MakePicture(picFolder, Path.Combine(subfolder, kotherPicOfTestFileName));
+				m_tempPictureFilePath = Path.GetTempFileName();
+				MakePicture(picFolder, m_tempPictureFilePath);
+				// See if we can export audio writing system stuff.
+				var audioFolderPath = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksMediaDir);
+				CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
+				m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
+				// Lexeme form is a special case
+				CreateDummyFile(Path.Combine(audioFolderPath, klexemeFormFileName));
+				m_entryTest.LexemeFormOA.Form.set_String(m_audioWsCode, klexemeFormFileName);
+				// Citation form is written in a different way. Test it too.
+				CreateDummyFile(Path.Combine(audioFolderPath, kcitationFormFileName));
+				m_entryTest.CitationForm.set_String(m_audioWsCode, kcitationFormFileName);
+				// Set this as a value later, when we create custom fields.
+				CreateDummyFile(Path.Combine(audioFolderPath, kcustomMultiFileName));
+				// Try a pronunciation media file.
+				var pronunciationPath = Path.Combine(audioFolderPath, kpronunciationFileName);
+				CreateDummyFile(pronunciationPath);
+				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				m_entryTest.PronunciationsOS.Add(pronunciation);
+				var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+				pronunciation.MediaFilesOS.Add(media);
+				var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+				picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
+				media.MediaFileRA = pronunFile;
+				pronunFile.InternalPath = Path.Combine(LcmFileHelper.ksMediaDir, kpronunciationFileName);
+				// We should be able to export LexEntryRefs. BaseForm is a special case.
+				var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
+				var entryBelieve = entryFact.Create("believe", "believe", msaVerb);
+				var entryIng = entryFact.Create("ing", "with property", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
+				m_entryUnbelieving = entryFact.Create("unbelieving", "not believing", msaNoun); // not really a noun, I know
+				var ler1 = MakeComplexFormEntryRef(m_entryUnbelieving, new[] { entryUn, entryBelieve, entryIng }, "Compound");
+				ler1.PrimaryLexemesRS.Add(entryBelieve);
+				var ler2 = MakeComplexFormEntryRef(m_entryUnbelieving, new[] { entryBelieve }, "BaseForm");
+				ler2.PrimaryLexemesRS.Add(entryBelieve);
+				var otherFolderPath = Path.Combine(MockLinkedFilesFolder, "Others");
+				// one of these is an example and won't be published in either Publication
+				AddCustomFields();
+				// Add a custom list that has no custom field associated with it.
+				AddCustomList(m_CustomPossListUnreferenced);
+			});
 		}
 
-		private void AddAcademicDomain(ILexSense ls, String domain)
+		private void AddAcademicDomain(ILexSense ls, string domain)
 		{
 			ICmPossibility possibility;
 			if (m_mapAcademicDomains.TryGetValue(domain, out possibility))
 			{
 				if (!ls.DomainTypesRC.Contains(possibility))
+				{
 					ls.DomainTypesRC.Add(possibility);
+				}
 			}
 		}
 
@@ -744,12 +717,14 @@ namespace LanguageExplorerTests.LIFT
 			entryUnbelieving.EntryRefsOS.Add(ler);
 			ler.RefType = LexEntryRefTags.krtComplexForm;
 			foreach (var entry in components)
+			{
 				ler.ComponentLexemesRS.Add(entry);
+			}
 			if (m_cache.LangProject.LexDbOA.ComplexEntryTypesOA == null)
+			{
 				m_cache.LangProject.LexDbOA.ComplexEntryTypesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var entryType = (from et in m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-							 where et.Name.AnalysisDefaultWritingSystem.Text == complexFormType
-							 select et).FirstOrDefault() as ILexEntryType;
+			}
+			var entryType = m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.FirstOrDefault(et => et.Name.AnalysisDefaultWritingSystem.Text == complexFormType) as ILexEntryType;
 			if (entryType == null)
 			{
 				entryType = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
@@ -771,89 +746,59 @@ namespace LanguageExplorerTests.LIFT
 			pictureFile1.InternalPath = testPicturePath;
 		}
 
-		private List<int> m_customFieldEntryIds = new List<int>();
-		private List<int> m_customFieldSenseIds = new List<int>();
-		private List<int> m_customFieldAllomorphsIds = new List<int>();
-		private List<int> m_customFieldExampleSentencesIds = new List<int>();
-		private List<Guid> m_customListsGuids = new List<Guid>();
-		private ICmPossibilityList m_customPossibilityList;
-
 		private void AddCustomFields()
 		{
 			m_sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 			Assert.IsNotNull(m_sda);
-			//---------------------------------------------------------------------------------------------------
 			AddCustomFieldsInLexEntry();
-			//---------------------------------------------------------------------------------------------------
 			AddCustomFieldsInLexSense();
-			//---------------------------------------------------------------------------------------------------
 			AddCustomFieldsInExampleSentence();
-			//---------------------------------------------------------------------------------------------------
 			AddCustomFieldInAllomorph();
-			//---------------------------------------------------------------------------------------------------
 		}
 
 		private void AddCustomFieldsInLexEntry()
 		{
-			var fd = MakeCustomField("CustomField1-LexEntry", LexEntryTags.kClassId,
-									 WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
+			var fd = MakeCustomField("CustomField1-LexEntry", LexEntryTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldSimpleString(fd, m_cache.DefaultAnalWs, m_entryTest.Hvo);
-
-			fd = MakeCustomField("CustomField2-LexEntry", LexEntryTags.kClassId,
-								 WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineText, Guid.Empty);
+			fd = MakeCustomField("CustomField2-LexEntry", LexEntryTags.kClassId, WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
-			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
-				TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
-
-			//---------------------------------------------------------------------------------------------------
-			fd = MakeCustomField("CustomField3-LexEntry Date", LexEntryTags.kClassId,
-								 WritingSystemServices.kwsAnal, CustomFieldType.Date, Guid.Empty);
+			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode, TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
+			fd = MakeCustomField("CustomField3-LexEntry Date", LexEntryTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.Date, Guid.Empty);
 			m_customFieldEntryIds.Add(fd.Id);
 			var date = DateTime.Now;
 			var genDate = new GenDate(GenDate.PrecisionType.Approximate, date.Month, date.Day, date.Year, true);
 			m_sda.SetGenDate(m_entryTest.Hvo, fd.Id, genDate);
-
-			//---------------------------------------------------------------------------------------------------
-			fd = MakeCustomField("CustomField3-LexEntry CmPossibilitySemanticDomain", LexEntryTags.kClassId, WritingSystemServices.kwsAnal,
-				CustomFieldType.ListRefAtomic, m_cache.LangProject.SemanticDomainListOA.Guid);
+			fd = MakeCustomField("CustomField3-LexEntry CmPossibilitySemanticDomain", LexEntryTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.ListRefAtomic, m_cache.LangProject.SemanticDomainListOA.Guid);
 			m_customFieldEntryIds.Add(fd.Id);
 			var repoSem = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			var firstSemEntry = repoSem.AllInstances().First();
 			m_sda.SetObjProp(m_entryTest.Hvo, fd.Id, firstSemEntry.Hvo);
-
-			//---------------------------------------------------------------------------------------------------
-			fd = MakeCustomField("CustomField4-LexEntry ListRefCollection", LexEntryTags.kClassId, WritingSystemServices.kwsAnal,
-				CustomFieldType.ListRefCollection, m_cache.LangProject.SemanticDomainListOA.Guid);
+			fd = MakeCustomField("CustomField4-LexEntry ListRefCollection", LexEntryTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.ListRefCollection, m_cache.LangProject.SemanticDomainListOA.Guid);
 			m_customFieldEntryIds.Add(fd.Id);
 			//Collect a few items from the semantic domains list and add them to the entry
-			int i = 0;
+			var i = 0;
 			var listRefCollectionItems = new int[3];
 			foreach (var listItem in repoSem.AllInstances())
 			{
 				listRefCollectionItems[i] = listItem.Hvo;
 				i++;
 				if (i == 3)
+				{
 					break;
+				}
 			}
 			m_sda.Replace(m_entryTest.Hvo, fd.Id, 0, 0, listRefCollectionItems, 3);
-
-			//------------------------------------------------------------------------------------------------------------
 			m_customPossibilityList = AddCustomList(m_CustomPossListReferenced);
-			//---------------------------------------------------------------------------------------------------
-			fd = MakeCustomField("CustomField5-LexEntry CmPossibilityCustomList", LexEntryTags.kClassId, WritingSystemServices.kwsAnal,
-				CustomFieldType.ListRefAtomic, m_customPossibilityList.Guid);
+			fd = MakeCustomField("CustomField5-LexEntry CmPossibilityCustomList", LexEntryTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.ListRefAtomic, m_customPossibilityList.Guid);
 			m_customFieldEntryIds.Add(fd.Id);
 			var firstCustomListEntry = m_customPossibilityList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
 			m_sda.SetObjProp(m_entryTest.Hvo, fd.Id, firstCustomListEntry.Hvo);
-
-			fd = MakeCustomField("CustomField6-LexEntry", LexEntryTags.kClassId,
-					 WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineString, Guid.Empty);
+			fd = MakeCustomField("CustomField6-LexEntry", LexEntryTags.kClassId, WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineString, Guid.Empty);
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
-			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
-				TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
+			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode, TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
 		}
 
 		private void AddCustomFieldSimpleString(FieldDescription fd, int ws, int hvo)
@@ -867,14 +812,10 @@ namespace LanguageExplorerTests.LIFT
 		private void AddCustomFieldsInLexSense()
 		{
 			// create new custom field in LexSense
-			var fd = MakeCustomField("CustomField1-LexSense", LexSenseTags.kClassId,
-									 WritingSystemServices.kwsVern, CustomFieldType.SingleLineText, Guid.Empty);
+			var fd = MakeCustomField("CustomField1-LexSense", LexSenseTags.kClassId, WritingSystemServices.kwsVern, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldSenseIds.Add(fd.Id);
 			AddCustomFieldSimpleString(fd, m_cache.DefaultVernWs, m_entryTest.SensesOS[0].Hvo);
-
-			//---------------------------------------------------------------------------------------------------
-			fd = MakeCustomField("CustomField2-LexSense Integer", LexSenseTags.kClassId,
-								 WritingSystemServices.kwsAnal, CustomFieldType.Number, Guid.Empty);
+			fd = MakeCustomField("CustomField2-LexSense Integer", LexSenseTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.Number, Guid.Empty);
 			m_customFieldSenseIds.Add(fd.Id);
 			//Now put some data in the Integer custom field.
 			m_cache.DomainDataByFlid.SetInt(m_entryTest.SensesOS[0].Hvo, fd.Id, 5);
@@ -883,10 +824,8 @@ namespace LanguageExplorerTests.LIFT
 		private ICmPossibilityList AddCustomList(string listName)
 		{
 			var ws = m_cache.DefaultUserWs; // get default ws
-			var customPossibilityList = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
-				listName, ws);
+			var customPossibilityList = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName, ws);
 			customPossibilityList.Name.set_String(m_cache.DefaultAnalWs, listName);
-
 			// Set various properties of CmPossibilityList
 			customPossibilityList.DisplayOption = (int)PossNameType.kpntName;
 			customPossibilityList.PreventDuplicates = true;
@@ -894,12 +833,15 @@ namespace LanguageExplorerTests.LIFT
 			var wss = WritingSystemServices.kwsAnals;
 			customPossibilityList.WsSelector = wss;
 			if (wss == WritingSystemServices.kwsVerns || wss == WritingSystemServices.kwsVernAnals)
+			{
 				customPossibilityList.IsVernacular = true;
+			}
 			else
+			{
 				customPossibilityList.IsVernacular = false;
+			}
 			customPossibilityList.Depth = 1;
 			customPossibilityList.Description.set_String(m_cache.DefaultAnalWs, "Description of CustomCmPossibiltyList");
-
 			customPossibilityList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
 			customPossibilityList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
 			m_customListsGuids.Add(customPossibilityList.Guid);
@@ -926,15 +868,14 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(customList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
 		}
 
-		private FieldDescription MakeCustomField(string customFieldName, int classId, int ws, CustomFieldType fieldType,
-			Guid listGuid)
+		private FieldDescription MakeCustomField(string customFieldName, int classId, int ws, CustomFieldType fieldType, Guid listGuid)
 		{
 			var fd = new FieldDescription(m_cache)
-					{
-						Userlabel = customFieldName,
-						HelpString = string.Empty,
-						Class = classId
-					};
+			{
+				Userlabel = customFieldName,
+				HelpString = string.Empty,
+				Class = classId
+			};
 			SetFieldType(fd, ws, fieldType);
 			if (fieldType == CustomFieldType.ListRefAtomic || fieldType == CustomFieldType.ListRefCollection)
 			{
@@ -951,22 +892,16 @@ namespace LanguageExplorerTests.LIFT
 			var exampleFact = m_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var exampleSentence = exampleFact.Create();
 			m_entryTest.SensesOS[0].ExamplesOS.Add(exampleSentence);
-			exampleSentence.Example.VernacularDefaultWritingSystem =
-				TsStringUtils.MakeString("sense ExampleSentence", m_cache.DefaultVernWs);
-
+			exampleSentence.Example.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sense ExampleSentence", m_cache.DefaultVernWs);
 			// Use this opportunity to also test LexExampleSentence Publish settings export
 			exampleSentence.DoNotPublishInRC.Add(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0]);
 			exampleSentence.DoNotPublishInRC.Add(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[1]);
-
 			// create new custom field LexExampleSentence in LexSense
-			var fd = MakeCustomField("CustomField1-Example", LexExampleSentenceTags.kClassId,
-				WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
+			var fd = MakeCustomField("CustomField1-Example", LexExampleSentenceTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldExampleSentencesIds.Add(fd.Id);
 			AddCustomFieldSimpleString(fd, m_cache.DefaultAnalWs, exampleSentence.Hvo);
-
 			//Add a second Custom field.
-			fd = MakeCustomField("CustomField2-Example Multi", LexExampleSentenceTags.kClassId,
-				WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineText, Guid.Empty);
+			fd = MakeCustomField("CustomField2-Example Multi", LexExampleSentenceTags.kClassId, WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldExampleSentencesIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, exampleSentence.Hvo);
 		}
@@ -979,11 +914,10 @@ namespace LanguageExplorerTests.LIFT
 			{
 				// A decent test of a multi-string property (as opposed to Multi-Unicode) requires more than one run.
 				var bldr = tss.GetBldr();
-				bldr.SetIntPropValues(5, 10, (int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, m_cache.DefaultVernWs);
+				bldr.SetIntPropValues(5, 10, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultVernWs);
 				tss = bldr.GetString();
 			}
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultAnalWs, tss);
-
 			tss = TsStringUtils.MakeString("MultiString Vernacular ws string", m_cache.DefaultVernWs);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultVernWs, tss);
 		}
@@ -996,8 +930,7 @@ namespace LanguageExplorerTests.LIFT
 			text.ContentsOA = stText;
 			var para = stText.AddNewTextPara("normal");
 			var seg = m_cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
-			para.Contents =
-				TsStringUtils.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
+			para.Contents = TsStringUtils.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
 			m_cache.DomainDataByFlid.SetObjProp(hvo, fd.Id, stText.Hvo);
 		}
 
@@ -1009,23 +942,10 @@ namespace LanguageExplorerTests.LIFT
 			var hvo = m_entryTest.AlternateFormsOS[0].Hvo;
 			var tss = TsStringUtils.MakeString("Allomorph of LexEntry", m_cache.DefaultVernWs);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, MoFormTags.kflidForm, m_cache.DefaultVernWs, tss);
-
 			//Add String custom field to Allomorph
-			var fd = MakeCustomField("CustomField1-Allomorph", MoFormTags.kClassId,
-									 WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
+			var fd = MakeCustomField("CustomField1-Allomorph", MoFormTags.kClassId, WritingSystemServices.kwsAnal, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldAllomorphsIds.Add(fd.Id);
 			AddCustomFieldSimpleString(fd, m_cache.DefaultAnalWs, allomorph.Hvo);
-		}
-
-		private enum CustomFieldType
-		{
-			SingleLineText,
-			SingleLineString,
-			MultiparagraphText,
-			Number,
-			Date,
-			ListRefAtomic,
-			ListRefCollection
 		}
 
 		private static void SetFieldType(FieldDescription fd, int ws, CustomFieldType fieldType)
@@ -1036,33 +956,27 @@ namespace LanguageExplorerTests.LIFT
 			switch (fieldType)
 			{
 				case CustomFieldType.SingleLineText:
-					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ?
-						CellarPropertyType.String : CellarPropertyType.MultiUnicode;
+					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ? CellarPropertyType.String : CellarPropertyType.MultiUnicode;
 					fd.WsSelector = ws;
 					break;
 				case CustomFieldType.SingleLineString:
-					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ?
-						CellarPropertyType.String : CellarPropertyType.MultiString;
+					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ? CellarPropertyType.String : CellarPropertyType.MultiString;
 					fd.WsSelector = ws;
 					break;
 				case CustomFieldType.MultiparagraphText:
 					fd.Type = CellarPropertyType.OwningAtomic;
 					fd.DstCls = StTextTags.kClassId;
 					break;
-
 				case CustomFieldType.Number:
 					fd.Type = CellarPropertyType.Integer;
 					break;
-
 				case CustomFieldType.Date:
 					fd.Type = CellarPropertyType.GenDate;
 					break;
-
 				case CustomFieldType.ListRefAtomic:
 					fd.Type = CellarPropertyType.ReferenceAtomic;
 					fd.DstCls = CmPossibilityTags.kClassId;
 					break;
-
 				case CustomFieldType.ListRefCollection:
 					fd.Type = CellarPropertyType.ReferenceCollection;
 					fd.DstCls = CmPossibilityTags.kClassId;
@@ -1093,15 +1007,13 @@ namespace LanguageExplorerTests.LIFT
 			}
 		}
 
-	#endregion
+		#endregion
 
 		private string LiftFolder { get; set; }
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Lift export using the LiftExporter class.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void LiftExport()
 		{
@@ -1131,7 +1043,7 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void LiftExport_MultipleReferencesToSameMediaFileCausesNoDuplication()
 		{
-			using(var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
 			{
 				var senseFactory = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
@@ -1145,7 +1057,7 @@ namespace LanguageExplorerTests.LIFT
 				pronunFile.InternalPath = internalPath;
 				var exporter = new LiftExporter(m_cache);
 				var xdoc = new XmlDocument();
-				using(TextWriter w = new StringWriter())
+				using (TextWriter w = new StringWriter())
 				{
 					exporter.ExportPicturesAndMedia = true;
 					exporter.ExportLift(w, LiftFolder);
@@ -1159,17 +1071,16 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void LiftExport_MultiParagraphWithAmpersandExports()
 		{
-			using(var uowhelper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
+			using (var uowhelper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
 			{
-				var fd = MakeCustomField("MultiParaOnLexEntry", LexEntryTags.kClassId,
-									 WritingSystemServices.kwsVernAnals, CustomFieldType.MultiparagraphText, Guid.Empty);
+				var fd = MakeCustomField("MultiParaOnLexEntry", LexEntryTags.kClassId, WritingSystemServices.kwsVernAnals, CustomFieldType.MultiparagraphText, Guid.Empty);
 				m_customFieldEntryIds.Add(fd.Id);
 				AddCustomFieldMultiParaText(fd, m_entryTest.Hvo);
 				var exporter = new LiftExporter(m_cache);
 				var xdoc = new XmlDocument();
 				var liftFilePath = Path.Combine(LiftFolder, "test.lift");
-				using(var liftFile = File.Create(liftFilePath))
-				using(TextWriter w = new StreamWriter(liftFile))
+				using (var liftFile = File.Create(liftFilePath))
+				using (TextWriter w = new StreamWriter(liftFile))
 				{
 					exporter.ExportPicturesAndMedia = false;
 					exporter.ExportLift(w, LiftFolder);
@@ -1187,7 +1098,6 @@ namespace LanguageExplorerTests.LIFT
 			var unreferencedCustomList = repo.GetObject(m_customListsGuids[1]);
 			var unRefeditem1 = unreferencedCustomList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
 			var unrefedItem2 = unreferencedCustomList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
-
 			var ranges = xdoc.SelectNodes("//range");
 			Assert.IsNotNull(ranges);
 			Assert.AreEqual(14, ranges.Count);
@@ -1287,7 +1197,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyExportRangeElement(rangeElements[1], publicItem1);
 		}
 
-		private void VerifyExportRangeElement(XmlNode rangeElement1, ICmPossibility item1)
+		private static void VerifyExportRangeElement(XmlNode rangeElement1, ICmPossibility item1)
 		{
 			var id = XmlUtils.GetOptionalAttributeValue(rangeElement1, "id");
 			var guid = XmlUtils.GetOptionalAttributeValue(rangeElement1, "guid");
@@ -1314,14 +1224,12 @@ namespace LanguageExplorerTests.LIFT
 			{
 				var sCreated = XmlUtils.GetOptionalAttributeValue(xentry, "dateCreated");
 				Assert.IsNotNull(sCreated, "an LIFT <entry> should have a dateCreated attribute");
-				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(),
-													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(), DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				var delta = DateTime.UtcNow - dtCreated;
 				Assert.Greater(300, delta.TotalSeconds);
-				Assert.LessOrEqual(0, delta.TotalSeconds);	// allow time for breakpoints in debugging...
+				Assert.LessOrEqual(0, delta.TotalSeconds);  // allow time for breakpoints in debugging...
 				var sModified = XmlUtils.GetOptionalAttributeValue(xentry, "dateModified");
-				var dtModified = DateTime.ParseExact(sModified, formats, new DateTimeFormatInfo(),
-													 DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+				var dtModified = DateTime.ParseExact(sModified, formats, new DateTimeFormatInfo(), DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				delta = DateTime.UtcNow - dtModified;
 				Assert.Greater(300, delta.TotalSeconds);
 				Assert.LessOrEqual(0, delta.TotalSeconds);
@@ -1356,20 +1264,14 @@ namespace LanguageExplorerTests.LIFT
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
 				Assert.AreEqual("morph-type", sName);
 				var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-				if (entry == m_entryTest)
-					Assert.AreEqual("phrase", sValue);
-				else
-					Assert.AreEqual("stem", sValue);
+				Assert.AreEqual(entry == m_entryTest ? "phrase" : "stem", sValue);
 				var senselist = xentry.SelectNodes("sense");
 				Assert.IsNotNull(senselist);
 				Assert.AreEqual(1, senselist.Count);
 				var xsense = senselist[0];
 				sId = XmlUtils.GetOptionalAttributeValue(xsense, "id");
 				Assert.IsNotNull(sId);
-				if (sId.Contains("_"))
-					guid = new Guid(sId.Substring(sId.LastIndexOf('_')+1));
-				else
-					guid = new Guid(sId);
+				guid = sId.Contains("_") ? new Guid(sId.Substring(sId.LastIndexOf('_') + 1)) : new Guid(sId);
 				ILexSense sense;
 				Assert.IsTrue(repoSense.TryGetObject(guid, out sense));
 				Assert.AreEqual(entry.SensesOS[0], sense);
@@ -1378,7 +1280,9 @@ namespace LanguageExplorerTests.LIFT
 				sValue = XmlUtils.GetOptionalAttributeValue(xgram, "value");
 				var msa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 				if (msa != null)
+				{
 					Assert.AreEqual(msa.PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, sValue);
+				}
 				var xgloss = xsense.SelectSingleNode("gloss");
 				Assert.IsNotNull(xgloss);
 				sLang = XmlUtils.GetOptionalAttributeValue(xgloss, "lang");
@@ -1387,13 +1291,17 @@ namespace LanguageExplorerTests.LIFT
 				Assert.AreEqual(m_cache.DefaultAnalWs, glossWs.Handle);
 				Assert.AreEqual(sense.Gloss.AnalysisDefaultWritingSystem.Text, xgloss.FirstChild.InnerText);
 				if (entry == m_entryTest)
+				{
 					VerifyEntryExtraStuff(entry, xentry);
+				}
 				if (entry == m_entryUnbelieving)
+				{
 					VerifyLexEntryRefs(entry, xentry);
+				}
 			}
 		}
 
-		private void VerifyEmptyPublishIn(XmlNode xentry)
+		private static void VerifyEmptyPublishIn(XmlNode xentry)
 		{
 			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
 			var dnpiNodes = xentry.SelectNodes(dnpiXpath);
@@ -1404,7 +1312,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any sense-level 'do-not-publish-in' nodes!");
 		}
 
-		private void VerifyPublishInExport(XmlNode xentry)
+		private static void VerifyPublishInExport(XmlNode xentry)
 		{
 			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
 
@@ -1494,13 +1402,21 @@ namespace LanguageExplorerTests.LIFT
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
 				if (sType == null)
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, entry.Comment.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "bibliography")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, entry.Bibliography.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "restrictions")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, entry.Restrictions.AnalysisDefaultWritingSystem);
+				}
 				else
+				{
 					Assert.IsNull(sType, "Unrecognized type attribute");
+				}
 			}
 			VerifyEntryCustomFields(xentry, entry);
 			VerifyAllomorphCustomFields(xentry, entry);
@@ -1540,9 +1456,13 @@ namespace LanguageExplorerTests.LIFT
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
 				Assert.IsNotNull(sType);
 				if (sType == "literal-meaning")
+				{
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, entry.LiteralMeaning.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "summary-definition")
+				{
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, entry.SummaryDefinition.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "CustomField1-LexEntry")
 				{
 					var tssString = m_cache.DomainDataByFlid.get_StringProp(entry.Hvo, m_customFieldEntryIds[0]);
@@ -1555,53 +1475,62 @@ namespace LanguageExplorerTests.LIFT
 					VerifyAudio(kcustomMultiFileName);
 				}
 				else
+				{
 					Assert.IsNull(sType, "Unrecognized type attribute");
+				}
 			}
 
 			var xtraits = xentry.SelectNodes("trait");
 			Assert.IsNotNull(xtraits);
 			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 			Assert.IsNotNull(sda);
-			int listIndex = 0;
+			var listIndex = 0;
 			foreach (XmlNode xtrait in xtraits)
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
 				Assert.IsNotNull(sName);
-				if (sName == "CustomField3-LexEntry Date")
+				switch (sName)
 				{
-					var genDate = sda.get_GenDateProp(m_entryTest.Hvo, m_customFieldEntryIds[2]);
-					VerifyGenDate(xtrait, genDate);
-				}
-				else if (sName == "CustomField3-LexEntry CmPossibilitySemanticDomain")
-				{
-					var repoSem = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-					var firstSemEntry = repoSem.AllInstances().First();
-					var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[3]);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
-				}
-				else if (sName == "CustomField4-LexEntry ListRefCollection")
-				{
-					//we added 3 items to this RefCollection. Make sure each once was correctly saved to LIFT.
-					var possHvo = sda.get_VecItem(m_entryTest.Hvo, m_customFieldEntryIds[4], listIndex);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					listIndex++;
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
-				}
-				else if (sName == "CustomField5-LexEntry CmPossibilityCustomList")
-				{
-					//This one is referencing a custom possibility list.
-					var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[5]);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
+					case "CustomField3-LexEntry Date":
+					{
+						var genDate = sda.get_GenDateProp(m_entryTest.Hvo, m_customFieldEntryIds[2]);
+						VerifyGenDate(xtrait, genDate);
+						break;
+					}
+					case "CustomField3-LexEntry CmPossibilitySemanticDomain":
+					{
+						var repoSem = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+						var firstSemEntry = repoSem.AllInstances().First();
+						var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[3]);
+						var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
+						var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
+						Assert.AreEqual(strPoss, sValue);
+						break;
+					}
+					case "CustomField4-LexEntry ListRefCollection":
+					{
+						//we added 3 items to this RefCollection. Make sure each once was correctly saved to LIFT.
+						var possHvo = sda.get_VecItem(m_entryTest.Hvo, m_customFieldEntryIds[4], listIndex);
+						var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
+						listIndex++;
+						var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
+						Assert.AreEqual(strPoss, sValue);
+						break;
+					}
+					case "CustomField5-LexEntry CmPossibilityCustomList":
+					{
+						//This one is referencing a custom possibility list.
+						var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[5]);
+						var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
+						var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
+						Assert.AreEqual(strPoss, sValue);
+						break;
+					}
 				}
 			}
 		}
 
-		private void VerifyGenDate(XmlNode xtrait, GenDate genDate)
+		private static void VerifyGenDate(XmlNode xtrait, GenDate genDate)
 		{
 			//<trait name="CustomField2-LexSense Integer" value="201105112"></trait>
 			//   '-'(BC and ''AD) 2011 05(May) 11(Day) 2(GenDate.PrecisionType (Before, Exact, Approximate, After)
@@ -1638,8 +1567,9 @@ namespace LanguageExplorerTests.LIFT
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
 				}
 				else
+				{
 					Assert.IsNull(sType, "Unrecognized type attribute");
-
+				}
 			}
 		}
 
@@ -1665,27 +1595,49 @@ namespace LanguageExplorerTests.LIFT
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
 				if (sType == null)
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GeneralNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "anthropology")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.AnthroNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "bibliography")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Bibliography.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "discourse")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.DiscourseNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "encyclopedic")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.EncyclopedicInfo.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "grammar")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GrammarNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "phonology")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.PhonologyNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "restrictions")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Restrictions.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "semantics")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SemanticsNote.AnalysisDefaultWritingSystem);
+				}
 				else if (sType == "sociolinguistics")
+				{
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
+				}
 				else
+				{
 					Assert.IsNull(sType, "Unrecognized type attribute");
+				}
 			}
 			VerifySenseCustomFields(xsense, sense);
 			VerifyExampleSentenceCustomFields(xsense, sense);
@@ -1697,8 +1649,7 @@ namespace LanguageExplorerTests.LIFT
 		{
 			var liftAudioFolder = Path.Combine(LiftFolder, "audio");
 			var filePath = Path.Combine(liftAudioFolder, audioFileName);
-			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
-													 exists ? "" : "not ");
+			var failureMsg = $"{filePath} should {(exists ? "" : "not ")}have been found after export";
 			Assert.AreEqual(exists, File.Exists(filePath), failureMsg);
 		}
 
@@ -1707,33 +1658,21 @@ namespace LanguageExplorerTests.LIFT
 			var pictureNodes = xsense.SelectNodes("illustration");
 			var pictures = sense.PicturesOS.ToArray();
 			Assert.That(pictureNodes.Count, Is.EqualTo(pictures.Length));
-			var firstPic =
-				(from XmlNode node in pictureNodes
-				 where XmlUtils.GetOptionalAttributeValue(node, "href") == kpictureOfTestFileName
-				 select node).First();
+			var firstPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == kpictureOfTestFileName);
 			// If that got one, we're good on the XmlNode.
 			var liftPicsFolder = Path.Combine(LiftFolder, "pictures");
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, kpictureOfTestFileName)));
 
-			var secondPicName = kbasePictureOfTestFileName + "_1" + ".jpg";
-			var secondPic =
-				(from XmlNode node in pictureNodes
-				 where XmlUtils.GetOptionalAttributeValue(node, "href") == secondPicName
-				 select node).First();
+			const string secondPicName = kbasePictureOfTestFileName + "_1" + ".jpg";
+			var secondPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == secondPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, secondPicName)));
 
 			var thirdPicName = Path.Combine(ksubFolderName, kotherPicOfTestFileName);
-			var thirdPic =
-				(from XmlNode node in pictureNodes
-				 where XmlUtils.GetOptionalAttributeValue(node, "href") == thirdPicName
-				 select node).First();
+			var thirdPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == thirdPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, thirdPicName)));
 
 			var fourthPicName = Path.GetFileName(m_tempPictureFilePath);
-			var fourthPic =
-				(from XmlNode node in pictureNodes
-				 where XmlUtils.GetOptionalAttributeValue(node, "href") == fourthPicName
-				 select node).First();
+			var fourthPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == fourthPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, fourthPicName)));
 		}
 
@@ -1752,14 +1691,16 @@ namespace LanguageExplorerTests.LIFT
 					VerifyTsString(xfield, m_cache.DefaultVernWs, tssString);
 				}
 				else
+				{
 					Assert.IsNull(sType, "Unrecognized type attribute");
+				}
 			}
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var xtraits = xsense.SelectNodes("trait");
 			Assert.IsNotNull(xtraits);
 			Assert.AreEqual(5, xtraits.Count); // 4 custom field traits + 1 DoNotPublishIn trait
 
-			int listIndex = 0;
+			var listIndex = 0;
 			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
 			var flidOfDomainTypes = mdc.GetFieldId("LexSense", "DomainTypes", true); //should be 5016006
 
@@ -1767,25 +1708,29 @@ namespace LanguageExplorerTests.LIFT
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
 				Assert.IsNotNull(sName);
-				if (sName == "CustomField2-LexSense Integer")
+				switch (sName)
 				{
-					var intVal = m_cache.DomainDataByFlid.get_IntProp(sense.Hvo, m_customFieldSenseIds[1]);
-					VerifyInteger(xtrait, intVal);
+					case "CustomField2-LexSense Integer":
+					{
+						var intVal = m_cache.DomainDataByFlid.get_IntProp(sense.Hvo, m_customFieldSenseIds[1]);
+						VerifyInteger(xtrait, intVal);
+						break;
+					}
+					case "do-not-publish-in":
+						continue; // already verified elsewhere
+					case "domain-type":
+					{
+						var possHvo = m_sda.get_VecItem(sense.Hvo, flidOfDomainTypes, listIndex);
+						var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
+						listIndex++;
+						var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
+						Assert.AreEqual(strPoss, sValue);
+						break;
+					}
+					default:
+						Assert.IsNull(sName, "Unrecognized type attribute");
+						break;
 				}
-				else if (sName == "do-not-publish-in")
-				{
-					continue; // already verified elsewhere
-				}
-				else if (sName == "domain-type")
-				{
-					var possHvo = m_sda.get_VecItem(sense.Hvo, flidOfDomainTypes, listIndex);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					listIndex++;
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
-				}
-				else
-					Assert.IsNull(sName, "Unrecognized type attribute");
 			}
 		}
 
@@ -1821,24 +1766,27 @@ namespace LanguageExplorerTests.LIFT
 				{
 					var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
 					Assert.IsNotNull(sType);
-					if (sType == "CustomField1-Example")
+					switch (sType)
 					{
-						var tssString = m_cache.DomainDataByFlid.get_StringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[0]);
-						VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
+						case "CustomField1-Example":
+						{
+							var tssString = m_cache.DomainDataByFlid.get_StringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[0]);
+							VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
+							break;
+						}
+						case "CustomField2-Example Multi":
+						{
+							var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[1]);
+							VerifyMultiStringAnalVern(xfield, tssMultiString, false);
+							break;
+						}
+						default:
+							Assert.IsNull(sType, "Unrecognized type attribute");
+							break;
 					}
-					else if (sType == "CustomField2-Example Multi")
-					{
-						var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[1]);
-						VerifyMultiStringAnalVern(xfield, tssMultiString, false);
-					}
-					else
-						Assert.IsNull(sType, "Unrecognized type attribute");
 				}
 			}
 		}
-
-		private bool DontExpectNewlinesCorrected;
-		private string m_tempPictureFilePath;
 
 		private void VerifyTsString(XmlNode xitem, int wsItem, ITsString tssText)
 		{
@@ -1873,17 +1821,21 @@ namespace LanguageExplorerTests.LIFT
 			var sText = form.FirstChild.InnerText;
 			var expected = tssText.Text;
 			if (!DontExpectNewlinesCorrected)
+			{
 				expected = expected.Replace("\x2028", Environment.NewLine);
+			}
 			Assert.AreEqual(expected, sText);
 			var runs = form.FirstChild.ChildNodes;
 			Assert.That(runs, Has.Count.EqualTo(tssText.RunCount), "form should have correct run count");
-			for (int i = 0; i < tssText.RunCount; i++)
+			for (var i = 0; i < tssText.RunCount; i++)
 			{
 				var content = tssText.get_RunText(i);
 				if (!DontExpectNewlinesCorrected)
+				{
 					content = content.Replace("\x2028", Environment.NewLine);
+				}
 				int val;
-				var lang = tssText.get_Properties(i).GetIntPropValues((int) FwTextPropType.ktptWs, out val);
+				var lang = tssText.get_Properties(i).GetIntPropValues((int)FwTextPropType.ktptWs, out val);
 				var wsCode = m_cache.WritingSystemFactory.GetStrFromWs(lang);
 				var run = runs[i];
 				Assert.That(run.InnerText, Is.EqualTo(content));
@@ -1892,9 +1844,13 @@ namespace LanguageExplorerTests.LIFT
 					Assert.That(run.Name, Is.EqualTo("span"), "element embedded in form text must be span");
 					var runLang = XmlUtils.GetOptionalAttributeValue(run, "lang");
 					if (string.IsNullOrEmpty(runLang))
+					{
 						Assert.That(wsCode, Is.EqualTo(baseLang)); // could be some other reason for a span, in which case it will have the default ws.
+					}
 					else
+					{
 						Assert.That(runLang, Is.EqualTo(wsCode));
+					}
 				}
 				else
 				{
@@ -1928,11 +1884,9 @@ namespace LanguageExplorerTests.LIFT
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Lift export of a custom StText field using the LiftExporter class.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void LiftExportCustomStText()
 		{
@@ -1950,21 +1904,18 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomStText(xdoc);
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Lift export of a custom StText field using the LiftExporter class.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void LiftExportRanges_PartOfSpeechCatalogIdIsExported()
 		{
 			var loader = new XmlList();
-			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
-									new DummyProgressDlg());
+			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"), new DummyProgressDlg());
 			var servLoc = Cache.ServiceLocator;
 			var exporter = new LiftExporter(Cache);
 			var xdocRangeFile = new XmlDocument();
-			using(var w = new StringWriter())
+			using (var w = new StringWriter())
 			{
 				// SUT
 				exporter.ExportLiftRanges(w);
@@ -1972,8 +1923,6 @@ namespace LanguageExplorerTests.LIFT
 			}
 			AssertThatXmlIn.Dom(xdocRangeFile).HasAtLeastOneMatchForXpath("//range[@id='grammatical-info']/range-element/trait[@name='catalog-source-id']");
 		}
-
-		private int m_flidLongText;
 
 		private void AddStTextCustomFieldAndData()
 		{
@@ -1987,10 +1936,10 @@ namespace LanguageExplorerTests.LIFT
 			var paraFact = m_cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
 			var para1 = paraFact.Create();
 			text.ParagraphsOS.Add(para1);
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
-			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+			var tisb = TsStringUtils.MakeIncStrBldr();
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			tisb.Append("This is a ");
-			tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, "Emphasized Text");
+			tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Emphasized Text");
 			tisb.Append("test");
 			tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
 			tisb.Append(".  This is only a test!");
@@ -2187,120 +2136,131 @@ namespace LanguageExplorerTests.LIFT
 			}
 			Assert.AreEqual(1, i, "There should be exactly 1 child node of the third paragraph.");
 		}
-	}
 
-	class MockStyle : IStStyle
-	{
-		public ICmObjectId Id { get; private set; }
-		public ICmObject GetObject(ICmObjectRepository repo)
+		private enum CustomFieldType
 		{
-			throw new NotImplementedException();
+			SingleLineText,
+			SingleLineString,
+			MultiparagraphText,
+			Number,
+			Date,
+			ListRefAtomic,
+			ListRefCollection
 		}
 
-		public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
-		public int Hvo { get; private set; }
-		public ICmObject Owner { get; private set; }
-		public int OwningFlid { get; private set; }
-		public int OwnOrd { get; private set; }
-		public int ClassID { get; private set; }
-		public Guid Guid { get; private set; }
-		public string ClassName { get; private set; }
-		public void Delete()
+		private sealed class MockStyle : IStStyle
 		{
-			throw new NotImplementedException();
-		}
+			public ICmObjectId Id { get; private set; }
+			public ICmObject GetObject(ICmObjectRepository repo)
+			{
+				throw new NotSupportedException();
+			}
 
-		public ILcmServiceLocator Services { get; private set; }
-		public ICmObject OwnerOfClass(int clsid)
-		{
-			throw new NotImplementedException();
-		}
+			public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
+			public int Hvo { get; private set; }
+			public ICmObject Owner { get; private set; }
+			public int OwningFlid { get; private set; }
+			public int OwnOrd { get; private set; }
+			public int ClassID { get; private set; }
+			public Guid Guid { get; private set; }
+			public string ClassName { get; private set; }
+			public void Delete()
+			{
+				throw new NotSupportedException();
+			}
 
-		public T OwnerOfClass<T>() where T : ICmObject
-		{
-			throw new NotImplementedException();
-		}
+			public ILcmServiceLocator Services { get; private set; }
+			public ICmObject OwnerOfClass(int clsid)
+			{
+				throw new NotSupportedException();
+			}
 
-		public ICmObject Self { get; private set; }
-		public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
-		{
-			throw new NotImplementedException();
-		}
+			public T OwnerOfClass<T>() where T : ICmObject
+			{
+				throw new NotSupportedException();
+			}
 
-		public void PostClone(Dictionary<int, ICmObject> copyMap)
-		{
-			throw new NotImplementedException();
-		}
+			public ICmObject Self { get; private set; }
+			public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
+			{
+				throw new NotSupportedException();
+			}
 
-		public void AllReferencedObjects(List<ICmObject> collector)
-		{
-			throw new NotImplementedException();
-		}
+			public void PostClone(Dictionary<int, ICmObject> copyMap)
+			{
+				throw new NotSupportedException();
+			}
 
-		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
-		{
-			throw new NotImplementedException();
-		}
+			public void AllReferencedObjects(List<ICmObject> collector)
+			{
+				throw new NotSupportedException();
+			}
 
-		public bool IsOwnedBy(ICmObject possibleOwner)
-		{
-			throw new NotImplementedException();
-		}
+			public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
+			{
+				throw new NotSupportedException();
+			}
 
-		public ICmObject ReferenceTargetOwner(int flid)
-		{
-			throw new NotImplementedException();
-		}
+			public bool IsOwnedBy(ICmObject possibleOwner)
+			{
+				throw new NotSupportedException();
+			}
 
-		public bool IsFieldRequired(int flid)
-		{
-			throw new NotImplementedException();
-		}
+			public ICmObject ReferenceTargetOwner(int flid)
+			{
+				throw new NotSupportedException();
+			}
 
-		public int IndexInOwner { get; private set; }
-		public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
-		{
-			throw new NotImplementedException();
-		}
+			public bool IsFieldRequired(int flid)
+			{
+				throw new NotSupportedException();
+			}
 
-		public bool IsValidObject { get; private set; }
-		public LcmCache Cache { get; private set; }
-		public void MergeObject(ICmObject objSrc)
-		{
-			throw new NotImplementedException();
-		}
+			public int IndexInOwner { get; private set; }
+			public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+			{
+				throw new NotSupportedException();
+			}
 
-		public void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
-		{
-			throw new NotImplementedException();
-		}
+			public bool IsValidObject { get; private set; }
+			public LcmCache Cache { get; private set; }
+			public void MergeObject(ICmObject objSrc)
+			{
+				throw new NotSupportedException();
+			}
 
-		public bool CanDelete { get; private set; }
-		public string ShortName { get; private set; }
-		public ITsString ObjectIdName { get; private set; }
-		public ITsString ShortNameTSS { get; private set; }
-		public ITsString DeletionTextTSS { get; private set; }
-		public ITsString ChooserNameTS { get; private set; }
-		public string SortKey { get; private set; }
-		public string SortKeyWs { get; private set; }
-		public int SortKey2 { get; private set; }
-		public string SortKey2Alpha { get; private set; }
-		public HashSet<ICmObject> ReferringObjects { get; private set; }
-		public IEnumerable<ICmObject> OwnedObjects { get; private set; }
-		public string Name { get; set; }
-		public IStStyle BasedOnRA { get; set; }
-		public IStStyle NextRA { get; set; }
-		public StyleType Type { get; set; }
-		public ITsTextProps Rules { get; set; }
-		public bool IsPublishedTextStyle { get; set; }
-		public bool IsBuiltIn { get; set; }
-		public bool IsModified { get; set; }
-		public int UserLevel { get; set; }
-		public ContextValues Context { get; set; }
-		public StructureValues Structure { get; set; }
-		public FunctionValues Function { get; set; }
-		public IMultiUnicode Usage { get; private set; }
-		public bool IsFootnoteStyle { get; private set; }
-		public bool InUse { get; private set; }
+			public void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
+			{
+				throw new NotSupportedException();
+			}
+
+			public bool CanDelete { get; private set; }
+			public string ShortName { get; private set; }
+			public ITsString ObjectIdName { get; private set; }
+			public ITsString ShortNameTSS { get; private set; }
+			public ITsString DeletionTextTSS { get; private set; }
+			public ITsString ChooserNameTS { get; private set; }
+			public string SortKey { get; private set; }
+			public string SortKeyWs { get; private set; }
+			public int SortKey2 { get; private set; }
+			public string SortKey2Alpha { get; private set; }
+			public HashSet<ICmObject> ReferringObjects { get; private set; }
+			public IEnumerable<ICmObject> OwnedObjects { get; private set; }
+			public string Name { get; set; }
+			public IStStyle BasedOnRA { get; set; }
+			public IStStyle NextRA { get; set; }
+			public StyleType Type { get; set; }
+			public ITsTextProps Rules { get; set; }
+			public bool IsPublishedTextStyle { get; set; }
+			public bool IsBuiltIn { get; set; }
+			public bool IsModified { get; set; }
+			public int UserLevel { get; set; }
+			public ContextValues Context { get; set; }
+			public StructureValues Structure { get; set; }
+			public FunctionValues Function { get; set; }
+			public IMultiUnicode Usage { get; private set; }
+			public bool IsFootnoteStyle { get; private set; }
+			public bool InUse { get; private set; }
+		}
 	}
 }

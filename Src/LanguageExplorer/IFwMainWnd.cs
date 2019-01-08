@@ -110,7 +110,7 @@ namespace LanguageExplorer
 		IRecordBar RecordBarControl { get; }
 
 		/// <summary>
-		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
+		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showing a tree.
 		/// </summary>
 		TreeView TreeStyleRecordList { get; }
 

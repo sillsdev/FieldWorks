@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -155,9 +155,7 @@ namespace LanguageExplorerTests
 			Assert.That(newStyle2.BasedOnRA, Is.EqualTo(newStyle1), "should have transferred the base style ref to the replacement");
 		}
 
-		/// <summary>
-		/// When an
-		/// </summary>
+		/// <summary />
 		[Test]
 		public void FindOrCreateStyle_HandlesConflictingUserStyles()
 		{

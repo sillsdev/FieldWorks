@@ -37,7 +37,7 @@ namespace LanguageExplorerTests
 			return obj.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj);
 		}
 
-		/// <see cref="GetPrivateField"/>
+		/// <summary />
 		internal static object GetPrivateProperty(object obj, string fieldName)
 		{
 			return obj.GetType().GetProperty(fieldName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj, null);
