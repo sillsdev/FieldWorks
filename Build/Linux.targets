@@ -66,40 +66,31 @@
 	</Target>
 
 	<Target Name="linuxLibs">
+		<ItemGroup>
+			<LinuxReleaseLibs Include="$(dir-fwoutputlibPlatform)/Release/*.*" />
+			<LinuxECPlugins Include="/usr/lib/fieldworks/EC/Plugins/*.xml" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/*EC.dll;/usr/lib/fieldworks/*EC.dll.config" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/ECInterfaces.dll" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/SilEncConverters*.dll;/usr/lib/fieldworks/SilEncConverters*.dll.config" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/libIcu*.so" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/libPyScriptEncConverter*.so" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/libTECkit*.so" />
+			<LinuxECLibs Include="/usr/lib/fieldworks/libecdriver*.so" />
+		</ItemGroup>
+
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)"
 			IgnoreStandardErrorWarningFormat="true" Condition="'$(action)'=='test'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
-			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
-		</CreateItem>
+
 		<Copy SourceFiles="@(LinuxReleaseLibs)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="/usr/lib/fieldworks/*.so">
-			<Output TaskParameter="Include" ItemName="LinuxECShlibs"/>
-		</CreateItem>
-		<Copy SourceFiles="@(LinuxECShlibs)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="/usr/lib/fieldworks/*.dll">
-			<Output TaskParameter="Include" ItemName="LinuxECLibs"/>
-		</CreateItem>
+		<Message Text="Copying EC files from /usr/lib/fieldworks" />
 		<Copy SourceFiles="@(LinuxECLibs)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="/usr/lib/fieldworks/*.dll.config">
-			<Output TaskParameter="Include" ItemName="LinuxECConfigs"/>
-		</CreateItem>
-		<Copy SourceFiles="@(LinuxECConfigs)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="/usr/lib/fieldworks/EC/Plugins/*.xml">
-			<Output TaskParameter="Include" ItemName="LinuxECPlugins"/>
-		</CreateItem>
 		<Copy SourceFiles="@(LinuxECPlugins)"
 			  DestinationFolder="$(dir-outputBase)/EC/Plugins"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
