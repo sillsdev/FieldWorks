@@ -13,9 +13,6 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
-#if RANDYTODO
-	// TODO: ReversalListener still claims to use it....
-#endif
 	/// <summary>
 	/// List used in tools: "Reversal Indexes" & "Bulk Edit Reversal Entries".
 	/// </summary>
@@ -112,7 +109,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)
 			{
-				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
+				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistent Reversal Index
 			}
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
 			// Dependent lists do not have owner/property set. Rather they have class/field.

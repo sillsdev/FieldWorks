@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Areas.Lexicon.Reversals;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -14,7 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	internal sealed class ReversalEditCompleteToolMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private XhtmlDocView _docView;
 
@@ -28,14 +29,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, recordList);
+			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(majorFlexComponentParameters, recordList);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		internal void Initialize()
 		{
-			_lexiconAreaMenuHelper.Initialize();
+			_commonReversalIndexMenuHelper.Initialize();
 		}
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
@@ -113,10 +114,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			if (disposing)
 			{
 				_editFindMenu.Click -= EditFindMenu_Click;
-				_lexiconAreaMenuHelper.Dispose();
+				_commonReversalIndexMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			_lexiconAreaMenuHelper = null;
+			_commonReversalIndexMenuHelper = null;
 			_editFindMenu = null;
 			_docView = null;
 

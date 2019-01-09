@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -73,6 +74,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
+			ReversalServices.EnsureReversalIndicesExist(_cache, _propertyTable);
 			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -80,7 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;

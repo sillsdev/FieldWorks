@@ -428,7 +428,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						var guid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
-							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true);
+							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 						}
 					}
 					messages.Add("JumpToRecord");

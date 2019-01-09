@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			Dispose(false);
 		}
 
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -97,14 +97,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				// No need to run it more than once.
 				return;
 			}
-
 			if (disposing)
 			{
 				MyBrowseViewContextMenuFactory?.Dispose();
+				_lexiconAreaMenuHelper?.Dispose();
 			}
 			MyBrowseViewContextMenuFactory = null;
+			_lexiconAreaMenuHelper = null;
 			_majorFlexComponentParameters = null;
-
 			_isDisposed = true;
 		}
 		#endregion

@@ -20,6 +20,8 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class RuleFormulaSlice : ViewSlice
 	{
+		private static uint s_counter;
+
 		public override RootSite RootSite => RuleFormulaControl.RootSite;
 
 		protected ISharedEventHandlers _sharedEventHandlers;
@@ -29,7 +31,10 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
 			_sharedEventHandlers = sharedEventHandlers;
-			_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
+			if (s_counter++ == 0)
+			{
+				_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
+			}
 		}
 
 		public RuleFormulaControl RuleFormulaControl
@@ -57,12 +62,16 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				RuleFormulaControl.InsertionControl.SizeChanged -= InsertionControl_SizeChanged;
+				if (--s_counter == 0)
+				{
+					_sharedEventHandlers.Remove(AreaServices.ContextSetFeatures);
+				}
 			}
 
 			base.Dispose(disposing);
 		}
 
-		void InsertionControl_SizeChanged(object sender, EventArgs e)
+		private void InsertionControl_SizeChanged(object sender, EventArgs e)
 		{
 			// resize entire slice when the insertion control changes size
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
@@ -99,7 +108,7 @@ namespace LanguageExplorer.Areas
 		/// Control.Height, but I'm reluctant to do so, partly because even then the behavior
 		/// would not really match that of the Windows .Net implementation.
 		/// </remarks>
-		private void SetSubcontrolHeights(Control ctrl, int oldHeight, int newHeight)
+		private static void SetSubcontrolHeights(Control ctrl, int oldHeight, int newHeight)
 		{
 			if (ctrl.Height == oldHeight)
 			{
@@ -133,7 +142,7 @@ namespace LanguageExplorer.Areas
 				rs.AllowLayout = true; // Fixes LT-13603 where sometimes the slice was constructed by not laid out by now.
 			}
 			var height = base.DesiredHeight(rs);
-			// only include the height of the insertion contorl when it is visible
+			// only include the height of the insertion control when it is visible
 			if (RuleFormulaControl.InsertionControl.Visible)
 			{
 				height += RuleFormulaControl.InsertionControl.Height;

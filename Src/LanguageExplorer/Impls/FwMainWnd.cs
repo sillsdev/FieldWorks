@@ -1623,13 +1623,13 @@ namespace LanguageExplorer.Impls
 			var deleteTextBase = FwUtils.ReplaceUnderlineWithAmpersand(LanguageExplorerResources.DeleteMenu);
 			string deleteText;
 			var tooltipText = string.Empty;
-			if (activeRecordList?.CurrentObject == null)
+			if (activeRecordList == null)
 			{
 				// Changing tool, so disable them.
 				enableDelete = false;
 				deleteText = "Delete Something";
 			}
-			else
+			else if (activeRecordList.CurrentObject != null)
 			{
 				var userFriendlyClassName = StringTable.Table.GetString(activeRecordList.CurrentObject.ClassName, "ClassNames");
 				tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
@@ -1647,6 +1647,25 @@ namespace LanguageExplorer.Impls
 				{
 					// Let record list handle it (maybe).
 					enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
+				}
+			}
+			else
+			{
+				// Changing tool, so disable them.
+				enableDelete = false;
+				// Dig out the class the hard way.
+				var managedMetaDataCache = Cache.GetManagedMetaDataCache();
+				if (managedMetaDataCache.FieldExists(activeRecordList.OwningFlid))
+				{
+					deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.OwningFlid));
+				}
+				else if (managedMetaDataCache.FieldExists(activeRecordList.VirtualFlid))
+				{
+					deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.VirtualFlid));
+				}
+				else
+				{
+					deleteText = "Delete Something";
 				}
 			}
 			deleteToolStripButton.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;

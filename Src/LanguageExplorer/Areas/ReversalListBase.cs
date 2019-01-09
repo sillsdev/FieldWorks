@@ -326,7 +326,7 @@ namespace LanguageExplorer.Areas
 			{
 				// We need to find another reversal index. Any will do.
 				newGuid = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
-				PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true);
+				PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true, SettingsGroup.LocalSettings);
 			}
 			var ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if (ri == null)

@@ -211,7 +211,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor((Form)_mainWindow))
 				{
-					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
+					UowHelpers.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
 					{
 						switch (toClsid)
 						{
@@ -360,7 +360,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void SwapAllomorphWithLexeme(ILexEntry entry, IMoForm allomorph, string uowBase)
 		{
-			AreaServices.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
 			{
 				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
 				entry.LexemeFormOA = allomorph;
@@ -495,7 +495,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{
-					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Allomorph, _cache.ActionHandlerAccessor, () =>
+					UowHelpers.UndoExtension(LexiconResources.Convert_to_Affix_Allomorph, _cache.ActionHandlerAccessor, () =>
 					{
 						newForm = entry.Services.GetInstance<IMoAffixAllomorphFactory>().Create();
 						entry.ReplaceMoForm(allomorph, newForm);
@@ -664,7 +664,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{
-					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
+					UowHelpers.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
 					{
 						var entry = (ILexEntry)MyRecordList.CurrentObject;
 						newForm = entry.Services.GetInstance<IMoAffixProcessFactory>().Create();
@@ -679,7 +679,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void SwapAllomorphWithLexeme_Clicked(object sender, EventArgs e)
 		{
 			var entry = (ILexEntry)MyDataTree.Root;
-			AreaServices.UndoExtension(LexiconResources.Swap_Allomorph_with_Lexeme_Form, _cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(LexiconResources.Swap_Allomorph_with_Lexeme_Form, _cache.ActionHandlerAccessor, () =>
 			{
 				var allomorph = (IMoForm)MyDataTree.CurrentSlice.MyCmObject;
 				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);

@@ -115,7 +115,7 @@ namespace LanguageExplorer.Impls
 			var commandName = macro.CommandName;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			AreaServices.UndoExtension(commandName, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
+			UowHelpers.UndoExtension(commandName, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
 		}
 
 		/// <summary>

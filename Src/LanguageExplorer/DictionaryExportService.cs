@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.FwUtils;
@@ -197,7 +198,7 @@ namespace LanguageExplorer
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
 				{
-					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LexiconArea.AllReversalEntries, statusBar, LexiconArea.AllReversalEntriesFactoryMethod);
+					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LexiconArea.AllReversalEntries, statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 					CacheRecordList(exportType, tempRecordList);
 				}
 				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
@@ -295,7 +296,7 @@ namespace LanguageExplorer
 				//		1. why is it not getting that broadcast? and
 				//		2. What needs to change, so 'recordList' is able to get the message?
 				// In short, this code is programming to some other bug.
-				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true, true);
+				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true, true, SettingsGroup.LocalSettings);
 				recordList?.OnPropertyChanged("ReversalIndexGuid");
 				return true;
 			}

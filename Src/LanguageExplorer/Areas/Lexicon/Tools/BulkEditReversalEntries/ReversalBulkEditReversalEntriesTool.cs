@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -25,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -58,7 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_lexiconAreaMenuHelper.Dispose();
+			_commonReversalIndexMenuHelper.Dispose();
 			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 
 			_reversalIndexRepository = null;
@@ -66,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			_recordBrowseView = null;
 			_cache = null;
 			_mainPanelMenuContextMenuFactory = null;
-			_lexiconAreaMenuHelper = null;
+			_commonReversalIndexMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -80,6 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			_mainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory(); // Make our own, since the tool has no data tree.
 			_cache = majorFlexComponentParameters.LcmCache;
+			ReversalServices.EnsureReversalIndicesExist(_cache, _propertyTable);
 			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -87,9 +89,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(majorFlexComponentParameters, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -108,9 +110,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			};
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				_recordBrowseView, browseViewPaneBar);
-			_lexiconAreaMenuHelper.Initialize();
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView, browseViewPaneBar);
+			_commonReversalIndexMenuHelper.Initialize();
 		}
 
 		/// <summary>

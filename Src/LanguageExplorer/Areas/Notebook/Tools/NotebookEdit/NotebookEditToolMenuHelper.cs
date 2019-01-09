@@ -274,7 +274,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				throw new InvalidOperationException("RnGenericRec cannot own itself!");
 			}
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 			{
 				newOwner.SubRecordsOS.Insert(0, record);
 			});
@@ -416,7 +416,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				// Just give up.
 				return;
 			}
-			AreaServices.UndoExtension(NotebookResources.Delete_Participants, roledPartic.Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(NotebookResources.Delete_Participants, roledPartic.Cache.ActionHandlerAccessor, () =>
 			{
 				roledPartic.Delete();
 			});
@@ -521,7 +521,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
 			var recordOwner = (IRnGenericRec)record.Owner;
 			var idxOrig = record.OwnOrd;
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveUp, record.Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveUp, record.Cache.ActionHandlerAccessor, () =>
 			{
 				recordOwner.SubRecordsOS.MoveTo(idxOrig, idxOrig, recordOwner.SubRecordsOS, idxOrig - 1);
 			});
@@ -545,7 +545,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
 			var recordOwner = (IRnGenericRec)record.Owner;
 			var idxOrig = record.OwnOrd;
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveDown, record.Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveDown, record.Cache.ActionHandlerAccessor, () =>
 			{
 				// idxOrig + 2 looks strange, but it's the correct value to make this work.
 				recordOwner.SubRecordsOS.MoveTo(idxOrig, idxOrig, recordOwner.SubRecordsOS, idxOrig + 2);
@@ -566,7 +566,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
 			var recordOwner = record.Owner as IRnGenericRec;
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(AreaResources.Promote, record.Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(AreaResources.Promote, record.Cache.ActionHandlerAccessor, () =>
 			{
 				if (recordOwner.Owner is IRnGenericRec)
 				{
@@ -623,7 +623,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				throw new InvalidOperationException("RnGenericRec cannot own itself!");
 			}
 
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 			{
 				newOwner.SubRecordsOS.Insert(0, record);
 			});

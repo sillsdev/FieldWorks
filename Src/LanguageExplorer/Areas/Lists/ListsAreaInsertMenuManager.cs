@@ -385,14 +385,14 @@ namespace LanguageExplorer.Areas.Lists
 			}
 		}
 
-		private void AddNewPossibilityListItem_Clicked(object sender, EventArgs e)
+		private static void AddNewPossibilityListItem_Clicked(object sender, EventArgs e)
 		{
 			var tag = (List<object>)((ToolStripItem)sender).Tag;
 			var possibilityList = (ICmPossibilityList)tag[0];
 			var otherOptions = (Dictionary<string, string>)tag[4];
 			var cache = possibilityList.Cache;
 			ICmPossibility newPossibility = null;
-			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
 			{
 				switch (otherOptions[AreaServices.ClassName])
 				{
@@ -448,7 +448,7 @@ namespace LanguageExplorer.Areas.Lists
 			var otherOptions = (Dictionary<string, string>)tag[4];
 			var cache = owningPossibility.Cache;
 			ICmPossibility newPossibility = null;
-			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
 			{
 				switch (otherOptions[AreaServices.ClassName])
 				{

@@ -379,7 +379,7 @@ namespace LanguageExplorer.Areas.Lists
 			var recordList = (IRecordList)tag[2];
 			var otherOptions = (Dictionary<string, string>)tag[4];
 			var currentPossibility = (ICmPossibility)recordList.CurrentObject;
-			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], possibilityList.Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(otherOptions[AreaServices.BaseUowMessage], possibilityList.Cache.ActionHandlerAccessor, () =>
 			{
 				if (currentPossibility is ICmCustomItem)
 				{

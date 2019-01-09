@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			var currentSemanticDomain = (ICmSemanticDomain)MyRecordList.CurrentObject;
 			var cache = currentSemanticDomain.Cache;
-			AreaServices.UndoExtension(ListResources.Insert_Question, cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(ListResources.Insert_Question, cache.ActionHandlerAccessor, () =>
 			{
 				currentSemanticDomain.QuestionsOS.Add(cache.ServiceLocator.GetInstance<ICmDomainQFactory>().Create());
 			});
@@ -548,7 +548,7 @@ namespace LanguageExplorer.Areas.Lists
 				{
 					var currentPOS = currentPartOfSpeech;
 					var newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
-					AreaServices.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, () =>
+					UowHelpers.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, () =>
 					{
 						newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
 						if (!newOwner.SubPossibilitiesOS.Contains(currentPOS)) //this is also prevented in the interface, but I'm paranoid
@@ -584,7 +584,7 @@ namespace LanguageExplorer.Areas.Lists
 					var currentPOS = currentPartOfSpeech;
 					var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
 					// Pass false to MergeObject, since we really don't want to merge the string info.
-					AreaServices.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, () => survivor.MergeObject(currentPOS, false));
+					UowHelpers.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, () => survivor.MergeObject(currentPOS, false));
 #if RANDYTODO
 					// TODO: Does the Jump broadcast still need to be done?
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
@@ -610,10 +610,10 @@ namespace LanguageExplorer.Areas.Lists
 				default:
 					throw new ArgumentException("Illegal class.");
 				case PartOfSpeechTags.kClassId:
-					AreaServices.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((IPartOfSpeech)newOwner).SubPossibilitiesOS.Add(currentPartOfSpeech));
+					UowHelpers.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((IPartOfSpeech)newOwner).SubPossibilitiesOS.Add(currentPartOfSpeech));
 					break;
 				case CmPossibilityListTags.kClassId:
-					AreaServices.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((ICmPossibilityList)newOwner).PossibilitiesOS.Add(currentPartOfSpeech));
+					UowHelpers.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((ICmPossibilityList)newOwner).PossibilitiesOS.Add(currentPartOfSpeech));
 					break;
 			}
 		}

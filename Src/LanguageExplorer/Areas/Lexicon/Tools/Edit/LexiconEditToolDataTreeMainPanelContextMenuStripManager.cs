@@ -183,7 +183,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void AddNewLexEntryRef(int flidTypes, string uowBase)
 		{
-			AreaServices.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
 			{
 				var entry = (ILexEntry)MyRecordList.CurrentObject;
 				var ler = _cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();

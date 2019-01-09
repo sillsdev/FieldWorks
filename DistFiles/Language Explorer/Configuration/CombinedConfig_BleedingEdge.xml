@@ -61,12 +61,6 @@ so I can look at that in the develop branch.
     <command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
       <parameters className="CmMedia" />
     </command>
-    <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
-      <parameters className="ReversalIndexEntry" />
-    </command>
-    <command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area">
-      <parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
-    </command>
     <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary" />
     <!-- END include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include: "Words/areaConfiguration.xml" query="root/commands/*" -->
@@ -309,9 +303,6 @@ so I can look at that in the develop branch.
   <!-- ************************ menus *********************** -->
   <menubar>
     <menu id="Edit" label="_Edit" b4InsertMenu="true" >
-      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-      <item command="CmdGoToReversalEntry" defaultVisible="false" />
-      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
       <item command="CmdGoToWfiWordform" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
@@ -352,9 +343,6 @@ so I can look at that in the develop branch.
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
     </menu>
     <menu id="Insert" label="_Insert" >
-      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <item command="CmdInsertReversalEntry" defaultVisible="false" />
-      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <item command="CmdInsertText" defaultVisible="false" />
       <item label="-" translate="do not translate" />
@@ -860,10 +848,6 @@ so I can look at that in the develop branch.
   <!-- ************************ toolbars *********************** -->
   <toolbars>
     <toolbar id="Insert" >
-      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <item command="CmdInsertReversalEntry" defaultVisible="false" />
-      <item command="CmdGoToReversalEntry" defaultVisible="false" />
-      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <item command="CmdInsertText" defaultVisible="false" />
       <item label="-" translate="do not translate" />
@@ -914,11 +898,6 @@ so I can look at that in the develop branch.
       <!-- Words items -->
       <item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
       <item id="CmdGoToWfiWordform">Find a wordform.</item>
-      <!--
-		  Reversal items
-		  -->
-      <item id="CmdInsertReversalEntry">Create a new reversal entry.</item>
-      <item id="CmdGoToReversalEntry">Find a reversal entry.</item>
       <!-- File menu -->
       <item id="CmdImport">Import an existing lexicon.</item>
       <!-- Edit menu -->

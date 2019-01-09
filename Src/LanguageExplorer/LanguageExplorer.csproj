@@ -327,6 +327,7 @@
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IdAndString.cs" />
+    <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
@@ -1297,6 +1298,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ToolbarServices.cs" />
+    <Compile Include="UowHelpers.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2773,7 +2775,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\SortReversalSubEntries.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryMenuHandler.cs" />
+    <Compile Include="Areas\Lexicon\Reversals\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\AffixRuleFormulaVc.cs" />
     <Compile Include="Areas\MetaRuleFormulaVc.cs" />
@@ -3080,7 +3082,6 @@
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />
     <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordList.cs" />
-    <Compile Include="Dumpster\ReversalListener.cs" />
     <Compile Include="Areas\TextsAndWords\WordformApplicationServices.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\WordsEditToolMenuHandler.cs" />
     <Compile Include="FlexHelpTopicProvider.cs" />
@@ -3110,7 +3111,7 @@
     <Compile Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.Designer.cs">
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEntryGoDlg.cs">
+    <Compile Include="Areas\Lexicon\Reversals\ReversalEntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySlice.cs">
@@ -3541,7 +3542,7 @@
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEntryGoDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Reversals\ReversalEntryGoDlg.resx">
       <DependentUpon>ReversalEntryGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

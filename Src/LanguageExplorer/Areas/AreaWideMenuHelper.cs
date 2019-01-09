@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
-	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areaas/tools,
+	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areas/tools,
 	/// which events are handled by the main window.
 	/// </summary>
 	internal sealed class AreaWideMenuHelper : IFlexComponent, IDisposable
@@ -373,27 +373,27 @@ namespace LanguageExplorer.Areas
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
+			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
 		}
 
 		private void Insert_Underscore_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
+			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
 		}
 
 		private void Insert_NaturalClass_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
+			UowHelpers.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
 		}
 
 		private void Insert_OptionalItem_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
+			UowHelpers.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
 		}
 
 		private void Insert_HashMark_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
+			UowHelpers.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
 		}
 
 		private void ShowEnvironmentError_Clicked(object sender, EventArgs e)

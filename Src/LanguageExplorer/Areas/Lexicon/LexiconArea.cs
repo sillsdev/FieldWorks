@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -204,31 +203,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
 				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable), new RecordFilterParameterObject(allowDeletions: false));
-		}
-
-		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{AllReversalEntries}'.");
-			/*
-			<clerk id="AllReversalEntries">
-				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk" />
-				<recordList owner="ReversalIndex" property="AllEntries">
-				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList" />
-				</recordList>
-				<filters />
-				<sortMethods>
-				<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-				</sortMethods>
-				<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
-			</clerk>
-			*/
-			var currentGuid = RecordListServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
-			IReversalIndex revIdx = null;
-			if (currentGuid != Guid.Empty)
-			{
-				revIdx = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
-			}
-			return new AllReversalEntriesRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
 		}
 	}
 }

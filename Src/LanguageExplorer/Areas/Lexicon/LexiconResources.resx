@@ -591,4 +591,16 @@
   <data name="Set_Natural_Class" xml:space="preserve">
     <value>Set Natural Class...</value>
   </data>
+  <data name="CreateNewReversalEntryTooltip" xml:space="preserve">
+    <value>Create a new reversal entry.</value>
+  </data>
+  <data name="FindReversalEntry" xml:space="preserve">
+    <value>_Find reversal entry...</value>
+  </data>
+  <data name="FindReversalEntryTooltip" xml:space="preserve">
+    <value>Find a reversal entry.</value>
+  </data>
+  <data name="ReversalEntry" xml:space="preserve">
+    <value>Reversal Entry</value>
+  </data>
 </root>

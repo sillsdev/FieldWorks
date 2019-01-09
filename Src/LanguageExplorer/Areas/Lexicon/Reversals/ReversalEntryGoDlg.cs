@@ -16,7 +16,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
+namespace LanguageExplorer.Areas.Lexicon.Reversals
 {
 	/// <summary />
 	internal sealed class ReversalEntryGoDlg : BaseGoDlg

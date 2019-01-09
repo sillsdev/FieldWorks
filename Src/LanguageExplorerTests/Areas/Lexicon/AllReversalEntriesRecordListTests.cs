@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests.DictionaryConfiguration
+namespace LanguageExplorerTests.Areas.Lexicon
 {
 #if RANDYTODO
 	public class AllReversalEntriesRecordListTestBase : AppTestBase, IDisposable

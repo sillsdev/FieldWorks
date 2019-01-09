@@ -171,6 +171,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a new reversal entry..
+        /// </summary>
+        internal static string CreateNewReversalEntryTooltip {
+            get {
+                return ResourceManager.GetString("CreateNewReversalEntryTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Allomorph.
         /// </summary>
         internal static string Delete_Allomorph {
@@ -381,6 +390,24 @@ namespace LanguageExplorer.Areas.Lexicon {
             get {
                 object obj = ResourceManager.GetObject("Find_Lexical_Entry", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Find reversal entry....
+        /// </summary>
+        internal static string FindReversalEntry {
+            get {
+                return ResourceManager.GetString("FindReversalEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find a reversal entry..
+        /// </summary>
+        internal static string FindReversalEntryTooltip {
+            get {
+                return ResourceManager.GetString("FindReversalEntryTooltip", resourceCulture);
             }
         }
         
@@ -1364,6 +1391,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ReversalEditCompleteToolParameters {
             get {
                 return ResourceManager.GetString("ReversalEditCompleteToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Entry.
+        /// </summary>
+        internal static string ReversalEntry {
+            get {
+                return ResourceManager.GetString("ReversalEntry", resourceCulture);
             }
         }
         

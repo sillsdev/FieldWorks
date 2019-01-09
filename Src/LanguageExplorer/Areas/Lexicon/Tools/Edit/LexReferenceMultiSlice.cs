@@ -552,7 +552,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 			}
 
-			AreaServices.UndoExtension(tsItem.Text, Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(tsItem.Text, Cache.ActionHandlerAccessor, () =>
 			{
 				if (newRef != null)
 				{

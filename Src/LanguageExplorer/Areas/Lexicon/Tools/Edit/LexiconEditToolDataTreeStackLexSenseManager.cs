@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Example_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(LexiconResources.Insert_Example, _cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(LexiconResources.Insert_Example, _cache.ActionHandlerAccessor, () =>
 			{
 				var sense = (ILexSense)MyDataTree.CurrentSlice.MyCmObject;
 				sense.ExamplesOS.Add(_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create());
@@ -565,7 +565,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Promote_Sense_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.Promote, _cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(AreaResources.Promote, _cache.ActionHandlerAccessor, () =>
 			{
 				var slice = MyDataTree.CurrentSlice;
 				var oldOwner = slice.MyCmObject.Owner;

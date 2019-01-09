@@ -1112,7 +1112,7 @@ namespace LanguageExplorer
 						try
 						{
 							RemoveItemsFor(thingToDelete.Hvo);
-							AreaServices.UndoExtension(uowBaseText, m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+							UowHelpers.UndoExtension(uowBaseText, m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
 							UpdateRecordTreeBar();
 						}
 						finally

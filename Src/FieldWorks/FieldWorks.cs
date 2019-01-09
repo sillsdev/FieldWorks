@@ -2633,6 +2633,10 @@ namespace SIL.FieldWorks
 			// Remember the settings, so that, if we end up saving some changes
 			// related to it, we can record the last saved project.
 			s_settingsForLastClosedWindow = s_flexApp.RegistrySettings;
+			// Unwire event handlers we added.
+			var fwMainWindowAsForm = (Form)s_activeMainWnd;
+			fwMainWindowAsForm.Activated -= FwMainWindowActivated;
+			fwMainWindowAsForm.Closing -= FwMainWindowClosing;
 			// Make sure the closing main window is not considered the active main window
 			s_activeMainWnd = null;
 		}
@@ -2678,7 +2682,7 @@ namespace SIL.FieldWorks
 
 			CloseSplashScreen();
 
-			if (!fwMainWindowAsIFwMainWnd.OnFinishedInit())
+			if (fwMainWindowAsForm.IsDisposed || !fwMainWindowAsIFwMainWnd.OnFinishedInit())
 			{
 				return false;   // did not initialize properly!
 			}
@@ -3504,7 +3508,7 @@ namespace SIL.FieldWorks
 		/// disposed of. Thus, any exceptions that are thrown are ignored by this method as
 		/// there is no guarantee that the application is in a valid state.
 		/// </summary>
-		/// <remarks>Any exeptions that are thrown are logged to the log file.</remarks>
+		/// <remarks>Any exceptions that are thrown are logged to the log file.</remarks>
 		internal static void GracefullyShutDown()
 		{
 			// Give any open main windows a chance to close normally before being forcibly

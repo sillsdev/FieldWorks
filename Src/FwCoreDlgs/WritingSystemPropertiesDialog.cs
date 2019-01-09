@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1783,20 +1783,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					var origWS = kvp.Value;
 					if (IsNew(tempWS))
 					{
-						m_wsManager.Replace(tempWS);
+						m_wsManager.Replace(tempWS); // REVIEW (Hasso) 2018.10: "Replace" seems like a strange thing to do with a new WS
 						IsChanged = true;
 					}
 					else if (tempWS.IsChanged)
 					{
 						var oldId = origWS.Id;
-						origWS.Copy(tempWS);
+						var oldHandle = origWS.Handle;
+						origWS.Copy(tempWS); // REVIEW (Hasso) 2018.10: We already have tempWS, and after this copy, origWS is an inacurate name. So why do we copy?
 						if (oldId != tempWS.LanguageTag)
 						{
 							// update the ID
 							m_wsManager.Set(origWS);
 							if (uowHelper != null)
 							{
-								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
+								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldHandle, oldId);
 							}
 						}
 						IsChanged = true;
