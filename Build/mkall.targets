@@ -601,7 +601,7 @@
 			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.64.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Newtonsoft.Json.11.0.1/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
-			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.5.2/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.5.4/lib/net451/icu.net.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.8.1.7\lib\net461\Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.8.1.7\lib\net461\ParatextData.dll"/>
