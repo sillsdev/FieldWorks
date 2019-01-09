@@ -272,7 +272,7 @@
     <Compile Include="FwProjPropertiesDlgTests.cs" />
     <Compile Include="WritingSystemPropertiesDialogTests.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfo.cs</Link>
+      <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

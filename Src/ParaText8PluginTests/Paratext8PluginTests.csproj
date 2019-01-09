@@ -67,6 +67,10 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Paratext8Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Paratext8Plugin.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextData">
       <HintPath>..\..\Output\Debug\ParatextData.dll</HintPath>
     </Reference>
@@ -95,7 +99,7 @@
   <ItemGroup>
     <Compile Include="ParatextDataIntegrationTests.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInforForTests.cs</Link>
+      <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

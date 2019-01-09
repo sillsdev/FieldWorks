@@ -88,6 +88,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FieldWorks.TestUtilities, Version=10.0.0.13272, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
@@ -108,6 +112,14 @@
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -121,6 +133,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="ChapterVerseTests.cs" />
     <Compile Include="CharactersCheckUnitTest.cs" />
     <Compile Include="QuotationCheckSilUnitTest.cs" />
