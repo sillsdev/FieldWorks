@@ -2098,7 +2098,12 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public bool OnFinishedInit()
 		{
-			CheckDisposed();
+			if (IsDisposed)
+			{
+				// This can happen if the user closes the app before all child windows are finished
+				// with the creation
+				return false;
+			}
 
 			if (m_startupLink != null)
 				m_mediator.SendMessage("FollowLink", m_startupLink);
