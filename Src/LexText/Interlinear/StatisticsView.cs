@@ -124,10 +124,8 @@ namespace SIL.FieldWorks.IText
 					numberOfSegments += text[index].SegmentsOS.Count;
 					//count all the things analyzed as words
 					var words = new List<IAnalysis>(text[index].Analyses);
-					foreach (var word in words.Where(x => x.Wordform.ShortName != "???"))
-					{
-						var wordForm = word.Wordform;
-						if (wordForm != null)
+					var wordForms = new List<IWfiWordform>(words.Where(x => x.Wordform != null && x.Wordform.ShortName != "???").Select(y => y.Wordform));
+					foreach (var wordForm in wordForms)
 						{
 							var valdWSs = wordForm.Form.AvailableWritingSystemIds;
 							foreach (var ws in valdWSs)
@@ -147,13 +145,12 @@ namespace SIL.FieldWorks.IText
 								if (languageTypeCount.TryGetValue(ws, out pair))
 								{
 									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
+								pair.Add(wordForm.Form.get_String(ws).Text.ToLower());
 								}
 								else
 								{
 									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									languageTypeCount.Add(ws, new HashSet<string> {word.Wordform.Form.get_String(ws).Text.ToLower()});
-								}
+								languageTypeCount.Add(ws, new HashSet<string> {wordForm.Form.get_String(ws).Text.ToLower()});
 							}
 						}
 					}

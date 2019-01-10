@@ -13,15 +13,15 @@ This software is licensed under the LGPL, version 2.1 or later
 		<DownloadsPath>$(FwrtPath)/Downloads</DownloadsPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.Core.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.Core.Desktop.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.Core.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.Utils.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.Machine.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.WritingSystems.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.HermitCrab.dll"/>
-		<RepackAssemblies Include="$(DownloadsPath)/SIL.Lexicon.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.Core.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.Core.Desktop.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.LCModel.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.LCModel.Core.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.LCModel.Utils.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.Machine.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.WritingSystems.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.HermitCrab.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.Lexicon.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/ParserCore.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/FwUtils.dll"/>
 	</ItemGroup>
