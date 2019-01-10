@@ -35,8 +35,8 @@
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 
-  <Import Project="../packages/MSBuild.Extension.Pack.1.9.0/build/net40/MSBuild.Extension.Pack.targets" Condition="Exists('../packages/MSBuild.Extension.Pack.1.9.0/build/net40/MSBuild.Extension.Pack.targets')"/>
-  <Import Project="LibraryDevelopment.targets" Condition="Exists('../packages/MSBuild.Extension.Pack.1.9.0/build/net40/MSBuild.Extension.Pack.targets')"/>
+  <Import Project="../packages/MSBuild.Extension.Pack.1.9.1/build/net40/MSBuild.Extension.Pack.targets" Condition="Exists('../packages/MSBuild.Extension.Pack.1.9.1/build/net40/MSBuild.Extension.Pack.targets')"/>
+  <Import Project="LibraryDevelopment.targets" Condition="Exists('../packages/MSBuild.Extension.Pack.1.9.1/build/net40/MSBuild.Extension.Pack.targets')"/>
   <Import Project="GlobalInclude.properties" Condition="Exists('GlobalInclude.properties')"/>
   <Import Project="SetupInclude.targets"/>
 
