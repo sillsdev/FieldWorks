@@ -54,17 +54,17 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
+		/// Called just before a window synchronizes it's views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		void PreSynchronize(SyncMsg sync);
 
 		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
 		bool Synchronize(SyncMsg sync);
 

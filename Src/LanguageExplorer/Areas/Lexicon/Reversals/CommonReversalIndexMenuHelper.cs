@@ -270,6 +270,28 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			return true; //we've handled this
 		}
 
+		/// <summary>
+		/// handle the message to see if the menu item should be enabled
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public virtual bool OnDisplayMoveReversalindexEntry(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			Slice slice = m_dataTree.CurrentSlice;
+			if (slice == null || slice.Object == null)
+			{
+				display.Enabled = false;
+			}
+			else
+			{
+				display.Enabled = CanMergeOrMove;
+				display.Visible = InFriendlyArea;
+			}
+			return true; //we've handled this
+		}
+
 		/// <summary />
 		public bool OnMoveReversalindexEntry(object cmd)
 		{
@@ -310,28 +332,6 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		{
 			hvos.Add(entry.Hvo);
 			entry.AllOwnedObjects.Where(obj => obj is IReversalIndexEntry).ForEach(subentry => hvos.Add(subentry.Hvo));
-		}
-
-		/// <summary>
-		/// handle the message to see if the menu item should be enabled
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayMoveReversalindexEntry(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			Slice slice = m_dataTree.CurrentSlice;
-			if (slice == null || slice.Object == null)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				display.Enabled = CanMergeOrMove;
-				display.Visible = InFriendlyArea;
-			}
-			return true; //we've handled this
 		}
 
 		private bool CanMergeOrMove

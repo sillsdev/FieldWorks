@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetSandboxSize();
 		}
 
-		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
+		protected virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
 			var sandbox = new Sandbox(_sharedEventHandlers, selected.Analysis.Cache, m_stylesheet, m_lineChoices, selected, this)
 			{
@@ -503,11 +503,41 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void btnMenu_Click(object sender, EventArgs e)
 		{
-			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 
 #if RANDYTODO
+// The original code sent it to the window, who then passed it on as in:
+// ((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
+// The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			window.ShowContextMenu("mnuFocusBox", btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)), null, null);
 #endif
+			/*
+			 The menus items are also on the main Data menu. The event handlers can be set in ISharedEventHandlers by someone and used by both.
+			    <menu id="mnuFocusBox">
+			      <item command="CmdApproveAndMoveNext" />
+			      <item command="CmdApproveForWholeTextAndMoveNext" />
+			      <item command="CmdNextIncompleteBundle" />
+			      <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
+			      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
+			        <item command="CmdApproveAndMoveNextSameLine" />
+			        <item command="CmdMoveFocusBoxRight" />
+			        <item command="CmdMoveFocusBoxLeft" />
+			      </menu>
+			      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
+			        <item command="CmdBrowseMoveNext" />
+			        <item command="CmdNextIncompleteBundleNc" />
+			        <item command="CmdBrowseMoveNextSameLine" />
+			        <item command="CmdMoveFocusBoxRightNc" />
+			        <item command="CmdMoveFocusBoxLeftNc" />
+			      </menu>
+			      <item command="CmdMakePhrase" defaultVisible="false" />
+			      <item command="CmdBreakPhrase" defaultVisible="false" />
+			      <item label="-" translate="do not translate" />
+			      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
+			      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
+			      <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
+			    </menu>
+			*/
 		}
 
 		private string ShortcutText(Keys shortcut)
@@ -1266,59 +1296,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			display.Visible = display.Enabled;
 			return true;
 		}
-
-		/// <summary>
-		/// handle the message to see if the menu item should be enabled
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayLastBundle(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = CanNavigateBundles;
-			display.Visible = display.Enabled;
-			return true; //we've handled this
-		}
 #endif
-
-		/// <summary>
-		/// Move to the last bundle
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		public bool OnLastBundle(object arg)
-		{
-			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			var options = navigator.GetWordformOccurrencesAdvancingIncludingStartingOccurrence();
-			InterlinDoc.TriggerAnalysisSelected(options.Last(), true, true);
-			return true;
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// handle the message to see if the menu item should be enabled
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayFirstBundle(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = CanNavigateBundles;
-			display.Visible = display.Enabled;
-			return true; //we've handled this
-		}
-#endif
-
-		/// <summary>
-		/// Move to the first bundle
-		/// </summary>
-		public bool OnFirstBundle(object arg)
-		{
-			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			var options = navigator.GetWordformOccurrencesBackwardsIncludingStartingOccurrence();
-			InterlinDoc.TriggerAnalysisSelected(options.Last(), true, true);
-			return true;
-		}
 
 		private sealed class UndoRedoApproveAndMoveHelper : DisposableBase
 		{

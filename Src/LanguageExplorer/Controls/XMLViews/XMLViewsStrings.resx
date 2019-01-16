@@ -551,4 +551,10 @@ Do you want to proceed?</value>
   <data name="SimpleChooserParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\SimpleChooserParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Sorted_By_Length" xml:space="preserve">
+    <value>Sorted By Length</value>
+  </data>
+  <data name="Sorted_From_End" xml:space="preserve">
+    <value>Sorted From End</value>
+  </data>
 </root>

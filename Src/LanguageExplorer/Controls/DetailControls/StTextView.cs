@@ -129,8 +129,21 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;
 			}
 #if RANDYTODO
+// The original code sent it to the window, who then passed it on as in:
+// ((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
+// The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
 			mainWind.ShowContextMenu("mnuStTextChoices", new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
 #endif
+			/*
+			    <menu id="mnuStTextChoices">
+			      <item command="CmdCut" />
+			      <item command="CmdCopy" />
+			      <item command="CmdPaste" />
+			      <item label="-" translate="do not translate" />
+			      <item command="CmdLexiconLookup" />
+			      <item command="CmdAddToLexicon" />
+			    </menu>
+			*/
 			return true;
 		}
 	}

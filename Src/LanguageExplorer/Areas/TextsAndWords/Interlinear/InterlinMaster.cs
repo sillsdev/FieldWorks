@@ -492,11 +492,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// nothing else.  We leave the button visible so that the user doesn't get nauseated
 		/// from the buttons appearing and disappearing rapidly.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true</returns>
-		public bool OnDisplayLexiconLookup(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayLexiconLookup(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Visible = true;
 			if (m_tabCtrl.SelectedIndex != ktpsRawText)
@@ -504,7 +500,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				//LT-6904 : exposed this case where the m_rtPane was null
-				// (another case of toolbar processing being done at an unepxected time)
+				// (another case of toolbar processing being done at an unexpected time)
 				if (m_rtPane == null)
 					display.Enabled = false;
 				else
@@ -1253,13 +1249,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
+			if (CurrentInterlinearTabControl is InterlinDocRootSiteBase)
 			{
-				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+				((InterlinDocRootSiteBase)CurrentInterlinearTabControl).OnConfigureInterlinear(argument);
 			}
-			else if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocChart)
+			else if (CurrentInterlinearTabControl is InterlinDocChart)
 			{
-				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
+				((InterlinDocChart)CurrentInterlinearTabControl).OnConfigureInterlinear(argument);
 			}
 			return true; // We handled this
 		}

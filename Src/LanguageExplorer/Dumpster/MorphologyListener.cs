@@ -70,28 +70,6 @@ namespace LanguageExplorer.Dumpster
 
 		#region XCore Message handlers
 
-#if RANDYTODO
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayMergeWordform(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-#endif
-
-		public bool OnMergeWordform(object argument)
-		{
-			// Do something meaningful,
-			// whenever the definition of merging wordforms gets developed.
-			MessageBox.Show(LanguageExplorerResources.ksCannotMergeWordformsYet);
-			return true;
-		}
-
 		private LcmCache Cache { get; set; }
 
 		/// <summary>

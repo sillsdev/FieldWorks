@@ -478,47 +478,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			return false;
 		}
-
-		public virtual bool OnDisplayWordformEditForm(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
 #endif
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnWordformEditForm(object argument)
-		{
-			MessageBox.Show(LanguageExplorerResources.ksTodo_WordformEditing);
-
-			return true;
-		}
-
-#if RANDYTODO
-		public virtual bool OnDisplayWordformChangeCase(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-#endif
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnWordformChangeCase(object argument)
-		{
-			MessageBox.Show("TODO: Case changing editing happens here.");
-
-			return true;
-		}
 
 	#endregion Wordform edit Message handlers
 

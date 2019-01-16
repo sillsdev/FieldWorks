@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByRecordList;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		protected BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _browseViewContextMenuTuple;
 		private readonly System.ComponentModel.Container components;
 

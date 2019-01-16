@@ -38,6 +38,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
+		private ContextMenuStrip _browseViewContextMenu;
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
 		private XElement m_configParamsElement;
 		/// <summary />
@@ -63,6 +64,32 @@ namespace LanguageExplorer.Controls.XMLViews
 		// This flag is used to minimize redoing the filtering and sorting when
 		// changing the list of columns shown.
 		private bool m_fUpdatingColumnList;
+		private bool m_fSavedSelectionsDuringFilterChange;
+		private bool m_fInFilterChangedHandler;
+		/// <summary>
+		/// keep track of the selection state of the items provided by IMultiListSortItemProvider
+		/// so we can maintain consistency when switching lists (LT-8986)
+		/// </summary>
+		private IDictionary<int, object> m_selectedItems = new Dictionary<int, object>();
+		private IDictionary<int, object> m_unselectedItems = new Dictionary<int, object>();
+		/// <summary>
+		/// indicates the last class of items that the user selected something.
+		/// </summary>
+		protected int m_lastChangedSelectionListItemsClass;
+		private XElement m_modifiedColumn;
+		private bool m_fIsInitialized;
+		/// <summary />
+		protected bool m_fInUpdateCheckedItems;
+		private List<int> m_orderForColumnsDisplay = new List<int>();
+		/// <summary>
+		/// This caches selected states for objects in bulk edit views.
+		/// We want to allow a second copy of such a bulk edit to have different selections.
+		/// So we only store something here when we dispose of an old view. The next one opened
+		/// with the same parameters will have the same selections as the last one closed.
+		/// The key is the nodeSpec passed to the constructor surrogate and the hvoRoot.
+		/// The value is the
+		/// </summary>
+		private static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache = new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
 
 		/// <summary />
 		public event FilterChangeHandler FilterChanged;
@@ -568,21 +595,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
 		public BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-		{
-			ContructorSurrogate(configParamsElement, hvoRoot, cache, sortItemProvider, sda);
-		}
-
-		/// <summary>
-		/// This caches selected states for objects in bulk edit views.
-		/// We want to allow a second copy of such a bulk edit to have different selections.
-		/// So we only store something here when we dispose of an old view. The next one opened
-		/// with the same parameters will have the same selections as the last one closed.
-		/// The key is the nodeSpec passed to the constructor surrogate and the hvoRoot.
-		/// The value is the
-		/// </summary>
-		private static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache = new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
-
-		private void ContructorSurrogate(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: this()
 		{
 			m_configParamsElement = configParamsElement;
 			Cache = cache;
@@ -614,6 +627,50 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			SortItemProvider = sortItemProvider;
+		}
+
+		private ContextMenuStrip CreateBrowseViewContextMenu()
+		{
+			// Start: <menu id="mnuBrowseHeader" >
+			/*
+			    <menu id="mnuBrowseHeader">
+			      <item label="Sorted From End" boolProperty="SortedFromEnd" />
+			      <item label="Sorted By Length" boolProperty="SortedByLength" />
+			    </menu>
+			 */
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = "mnuBrowseHeader"
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
+
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Sorted_From_End_Clicked, XMLViewsStrings.Sorted_From_End);
+			menu.Checked = CurrentColumnSortedFromEnd;
+
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Sorted_By_Length_Clicked, XMLViewsStrings.Sorted_By_Length);
+			menu.Checked = CurrentColumnSortedByLength;
+
+			// End: <menu id="mnuBrowseHeader" >
+
+			return contextMenuStrip;
+		}
+
+		private void Sorted_From_End_Clicked(object sender, EventArgs e)
+		{
+			var menu = (ToolStripMenuItem)sender;
+			var currentlyChecked = menu.Checked;
+			menu.Checked = !currentlyChecked;
+			CurrentColumnSortedFromEnd = !currentlyChecked;
+			SetAndRaiseSorter(Sorter, true);
+		}
+
+		private void Sorted_By_Length_Clicked(object sender, EventArgs e)
+		{
+			var menu = (ToolStripMenuItem)sender;
+			var currentlyChecked = menu.Checked;
+			menu.Checked = !currentlyChecked;
+			CurrentColumnSortedByLength = !currentlyChecked;
+			SetAndRaiseSorter(Sorter, true);
 		}
 
 		/// <summary>
@@ -677,12 +734,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_lvHeader.Columns.Add(ch);
 				}
 			}
-			// set default property, IFF it does not exist, so it doesn't accidentally get set
-			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetDefault("SortedFromEnd", false, true);
-			// set default property, IFF it does not exist, so it doesn't accidentally get set
-			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetDefault("SortedByLength", false, true);
 			//
 			// FilterBar
 			//
@@ -770,13 +821,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			Scroller.ResumeLayout(false);
 			ResumeLayout(false);
 		}
-
-		/// <summary>
-		/// indicates the last class of items that the user selected something.
-		/// </summary>
-		protected int m_lastChangedSelectionListItemsClass;
-
-		private XElement m_modifiedColumn;
 
 		/// <summary>
 		/// This is called just before the TargetComboSelecctedIndexChanged event.
@@ -999,8 +1043,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return ch;
 		}
 
-		bool m_fSavedSelectionsDuringFilterChange;
-		bool m_fInFilterChangedHandler;
 		private void FilterChangedHandler(object sender, FilterChangeEventArgs args)
 		{
 			// This shouldn't reenter itself!  See FWR-2335.
@@ -1025,13 +1067,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_fInFilterChangedHandler = false;
 			}
 		}
-
-		/// <summary>
-		/// keep track of the selection state of the items provided by IMultiListSortItemProvider
-		/// so we can maintain consistency when switching lists (LT-8986)
-		/// </summary>
-		private IDictionary<int, object> m_selectedItems = new Dictionary<int, object>();
-		private IDictionary<int, object> m_unselectedItems = new Dictionary<int, object>();
 
 		/// <summary>
 		/// TODO: Performance: only keep track of non-default selections
@@ -1069,7 +1104,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private void UpdateMutuallyExclusiveDictionaries<TKey, TValue>(TKey key, TValue value, ref IDictionary<TKey, TValue> dictionaryToRemove, ref IDictionary<TKey, TValue> dictionaryToAdd)
+		private static void UpdateMutuallyExclusiveDictionaries<TKey, TValue>(TKey key, TValue value, ref IDictionary<TKey, TValue> dictionaryToRemove, ref IDictionary<TKey, TValue> dictionaryToAdd)
 		{
 			dictionaryToRemove.Remove(key);
 			if (!dictionaryToAdd.ContainsKey(key))
@@ -1171,9 +1206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -1321,16 +1354,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			SelectionMade?.Invoke(this, e);
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			AdjustControls();
 			base.OnLayout(levent); // doesn't do much, now we're not docking
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -1567,162 +1598,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return true;
 		}
 
-		private sealed class OneColumnXmlBrowseView : XmlBrowseViewBase
-		{
-			private OneColumnXmlBrowseView()
-			{
-			}
-
-			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv, icolLvHeaderToAdd)
-			{
-				// add only the specified column to this browseview.
-				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
-			}
-
-			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
-			{
-#if RANDYTODO
-				base.Init(mediator, propertyTable, nodeSpec);
-				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
-#endif
-				m_styleSheet = styleSheet;
-				// add only the specified column to this browseview.
-				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
-				MakeRoot();
-				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
-				m_bv = null;
-			}
-
-			public override void MakeRoot()
-			{
-				base.MakeRoot();
-				ReadOnlyView = ReadOnlySelect;
-				Vc.Cache = Cache;
-				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
-				RootBox.DataAccess = m_cache.MainCacheAccessor;
-				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			}
-
-			/// <summary>
-			/// No resources need to be cleaned up specific to the OneColumnBrowseView and we need to override
-			/// so we don't try to dispose content owned by the BrowseViewer that we are constructed with.
-			/// </summary>
-			protected override void Dispose(bool disposing)
-			{
-			}
-
-			public override Point ScrollPosition
-			{
-				get
-				{
-					return base.ScrollPosition;
-				}
-				set { }
-			}
-
-			/// <summary>
-			/// override with our own simple constructor
-			/// </summary>
-			internal override XmlBrowseViewBaseVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, MainTag, this));
-
-			/// <summary>
-			/// effectively simulate infinite length so we do not wrap cell contents.
-			/// </summary>
-			public override int GetAvailWidth(IVwRootBox prootb)
-			{
-				return 1000000;
-			}
-
-			/// <summary>
-			/// Return column width information for one column that takes up 100%
-			/// of the available width.
-			/// </summary>
-			public override VwLength[] GetColWidthInfo()
-			{
-				Debug.Assert(Vc.ColumnSpecs.Count == 1, "Only support one column in this browse view");
-				var rglength = new VwLength[1];
-				rglength[0].unit = VwUnit.kunPercent100;
-				rglength[0].nVal = 10000;
-				return rglength;
-			}
-
-			/// <summary>
-			/// we don't care about the sort order in this browseview
-			/// </summary>
-			public override bool ColumnSortedFromEnd(int icol)
-			{
-				return false;
-			}
-
-			/// <summary>
-			/// measures the width of the strings built by the display of a column and
-			/// returns the maximumn width found.
-			/// NOTE: you may need to add a small (e.g. under 10-pixel) margin to prevent wrapping in most cases.
-			/// </summary>
-			/// <returns>width in pixels</returns>
-			public int GetMaxCellContentsWidth()
-			{
-				int maxWidth;
-				using (var g = Graphics.FromHwnd(Handle))
-				{
-					// get a best  estimate to determine row needing the greatest column width.
-					var env = new MaxStringWidthForColumnEnv(StyleSheet, SpecialCache, RootObjectHvo, g, 0);
-					Vc.Display(env, RootObjectHvo, XmlBrowseViewBaseVc.kfragRoot);
-					maxWidth = env.MaxStringWidth;
-				}
-				return maxWidth;
-			}
-
-		}
-
-		private sealed class OneColumnXmlBrowseViewVc : XmlBrowseViewVc
-		{
-			/// <summary>
-			/// for comparing to the "active" (i.e. preview column)
-			/// </summary>
-			private int m_icolAdded = -1;
-
-			/// <summary>
-			/// we only setup for regular columns, and only one at a time.
-			/// </summary>
-			protected override void SetupSelectColumn()
-			{
-				HasSelectColumn = false;
-			}
-
-			internal void SetupOneColumnSpec(BrowseViewer bv, int icolToAdd)
-			{
-				ColumnSpecs = new List<XElement>(new[] { bv.ColumnSpecs[icolToAdd - bv.ColumnIndexOffset()] });
-				m_icolAdded = icolToAdd;
-				// if we have a bulk edit bar, we need to process strings added for Preview
-				if (bv.BulkEditBar != null)
-				{
-					PreviewArrow = bv.BulkEditBar.PreviewArrow;
-				}
-			}
-
-			/// <summary>
-			/// in a OneColumn browse view, the column will be "Active"
-			/// if we are based upon a column being previewed in the original browse view.
-			/// </summary>
-			/// <returns>1 if we're based on a column with "Preview" enabled, -1 otherwise.</returns>
-			protected override int GetActiveColumn(IVwEnv vwenv, int hvoRoot)
-			{
-				var iActiveColumn = base.GetActiveColumn(vwenv, hvoRoot);
-				if (iActiveColumn == m_icolAdded)
-				{
-					return 1;
-				}
-				return -1;
-			}
-
-			public OneColumnXmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
-				: base(xnSpec, madeUpFieldIdentifier, xbv)
-			{
-			}
-		}
-
 		/// <summary>
 		/// Adjust column width to the content width
 		/// References are in display order.
@@ -1816,8 +1691,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Get the widths of the columns, both as VwLengths (for the view tables) and as actual
 		/// widths (used for the filter bar).
 		/// </summary>
-		/// <param name="rglength"></param>
-		/// <param name="widths"></param>
 		public void GetColWidthInfo(out VwLength[] rglength, out int[] widths)
 		{
 			int dpiX;
@@ -1910,7 +1783,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (newSorter.CompatibleSorter(Sorter))
 			{
 				// Choosing the same one again...reverse direction.
-				newSorter = reverseNewSorter(newSorter, Sorter);
+				newSorter = ReverseNewSorter(newSorter, Sorter);
 			}
 			else if ((ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
@@ -1923,7 +1796,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Same one, just reversing the direction
 						var i = asorter.CompatibleSorterIndex(newSorter);
-						asorter.Sorters[i] = reverseNewSorter(newSorter, (RecordSorter)asorter.Sorters[i]);
+						asorter.Sorters[i] = ReverseNewSorter(newSorter, (RecordSorter)asorter.Sorters[i]);
 					}
 					else
 					{
@@ -1942,7 +1815,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetAndRaiseSorter(newSorter, true);
 		}
 
-		private RecordSorter reverseNewSorter(RecordSorter newSorter, RecordSorter oldSorter)
+		private static RecordSorter ReverseNewSorter(RecordSorter newSorter, RecordSorter oldSorter)
 		{
 			var origNewSorter = newSorter; // In case of complete failure
 			var grs = oldSorter as GenRecordSorter;
@@ -1994,7 +1867,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Gets the "sorted from end" flag for the specified column.  This is implemented seperately from
+		/// Gets the "sorted from end" flag for the specified column.  This is implemented separately from
 		/// the CurrentColumnSortedFromEnd property because the XmlBrowseViewBase needs to know for columns
 		/// other than the current one.
 		/// </summary>
@@ -2079,6 +1952,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void m_lvHeader_ColumnRightClick(object sender, ColumnRightClickEventArgs e)
 		{
+			if (_browseViewContextMenu != null)
+			{
+				_browseViewContextMenu.Items[0].Click -= Sorted_From_End_Clicked;
+				_browseViewContextMenu.Items[1].Click -= Sorted_By_Length_Clicked;
+				_browseViewContextMenu.Items[1].Dispose();
+				_browseViewContextMenu.Items[0].Dispose();
+				_browseViewContextMenu.Dispose();
+				_browseViewContextMenu = null;
+			}
 			if (FilterBar == null)
 			{
 				return;         // for now we can't sort without a filter bar.
@@ -2094,13 +1976,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;         // Can't sort by this column.
 			}
 			m_icolCurrent = e.Column;
-#if RANDYTODO
-			IFwMainWnd window = PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window);
-			window.ShowContextMenu("mnuBrowseHeader",
-				new Point(Cursor.Position.X, Cursor.Position.Y),
-				new TemporaryColleagueParameter(m_xbv.Mediator, this, false),
-				null); // No MessageSequencer
-#endif
+			_browseViewContextMenu = CreateBrowseViewContextMenu();
+			_browseViewContextMenu.Show(this, e.Location);
 		}
 
 		/// <summary>
@@ -2465,7 +2342,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
 						}
-						var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, int.MaxValue));
+						var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, Int32.MaxValue));
 						var andFilter = new AndFilter();
 						andFilter.Add(spellFilter);
 						andFilter.Add(occurrenceFilter);
@@ -2477,7 +2354,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						var hvoOfAnthroItemProperty = linkProperties.FirstOrDefault(prop => prop.Name == "HvoOfAnthroItem");
 						var itemHvo = hvoOfAnthroItemProperty?.Value as string;
-						if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
+						if (String.IsNullOrWhiteSpace(linkSetupInfoValue))
 						{
 							return null;
 						}
@@ -2596,13 +2473,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			using (new ReconstructPreservingBVScrollPosition(this))
 			{
-				//m_xbv.UpdateColumnList(); // Only did RootBox.Reconstruct()
 				if (FilterBar != null)
 				{
 					FilterBar.UpdateColumnList();
-					// see if we can re-enstate our column filters
+					// see if we can re-instate our column filters
 					FilterBar.UpdateActiveItems(m_currentFilter);
-					// see if we need to re-enstate our column header sort arrow.
+					// see if we need to re-instate our column header sort arrow.
 					InitSorter(Sorter);
 				}
 				BulkEditBar?.UpdateColumnList();
@@ -2821,32 +2697,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return fsi?.Sorter;
 		}
 
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged".  This message results from left clicking
-		/// in the context menu generated by a right mouse button click in the column headers.
-		/// </summary>
-		public virtual void OnPropertyChanged(string name)
-		{
-			if (FilterBar == null || Sorter == null)
-			{
-				return;
-			}
-			// TODO: REVISIT: If more than one BrowseViewer gets this message, how do
-			// we know which one should handle it?  Can't we handle this some other way?
-			switch (name)
-			{
-				default:
-					return;
-				case "SortedFromEnd":
-					CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
-					break;
-				case "SortedByLength":
-					CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
-					break;
-			}
-			SetAndRaiseSorter(Sorter, true);
-		}
-
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
 		{
 			CheckIconClick(this, new ConfigIconClickEventArgs(RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
@@ -2950,9 +2800,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return GetCheckState(hvoItem) == 1;
 		}
 
-		private bool m_fIsInitialized;
-		/// <summary />
-		protected bool m_fInUpdateCheckedItems;
 		/// <summary>
 		/// this is somewhat of a kludge, since there is kind of a circular dependency
 		/// between checked items in a browse viewer (e.g. when in bulk edit Delete tab)
@@ -3180,7 +3027,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This is called on a MasterRefresh
 		/// </summary>
-		/// <returns></returns>
 		public bool PrepareToGoAway()
 		{
 			BulkEditBar?.SaveSettings();
@@ -3229,7 +3075,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This is used to keep track of the positions of columns after they have been dragged and dropped.
 		/// OrderForColumnsDisplay[i] is the index of the position where the column at
-		/// position i in the orginal Columns collection is actually displayed.
+		/// position i in the original Columns collection is actually displayed.
 		/// </summary>
 		public List<int> OrderForColumnsDisplay
 		{
@@ -3251,8 +3097,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			set { m_orderForColumnsDisplay = value; }
 		}
-
-		private List<int> m_orderForColumnsDisplay = new List<int>();
 
 		// In your AllItems list, the specified objects have been replaced (typically dummy to real).
 		internal void FixReplacedItems(Dictionary<int, int> replacedObjects)
@@ -3349,5 +3193,158 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		#endregion
+
+		private sealed class OneColumnXmlBrowseView : XmlBrowseViewBase
+		{
+			private OneColumnXmlBrowseView()
+			{
+			}
+
+			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
+				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv, icolLvHeaderToAdd)
+			{
+				// add only the specified column to this browseview.
+				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+			}
+
+			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
+			{
+#if RANDYTODO
+				base.Init(mediator, propertyTable, nodeSpec);
+				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
+#endif
+				m_styleSheet = styleSheet;
+				// add only the specified column to this browseview.
+				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+				MakeRoot();
+				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
+				m_bv = null;
+			}
+
+			public override void MakeRoot()
+			{
+				base.MakeRoot();
+				ReadOnlyView = ReadOnlySelect;
+				Vc.Cache = Cache;
+				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
+				RootBox.DataAccess = m_cache.MainCacheAccessor;
+				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+			}
+
+			public override Point ScrollPosition
+			{
+				get
+				{
+					return base.ScrollPosition;
+				}
+				set { }
+			}
+
+			/// <summary>
+			/// override with our own simple constructor
+			/// </summary>
+			internal override XmlBrowseViewBaseVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, MainTag, this));
+
+			/// <summary>
+			/// effectively simulate infinite length so we do not wrap cell contents.
+			/// </summary>
+			public override int GetAvailWidth(IVwRootBox prootb)
+			{
+				return 1000000;
+			}
+
+			/// <summary>
+			/// Return column width information for one column that takes up 100%
+			/// of the available width.
+			/// </summary>
+			public override VwLength[] GetColWidthInfo()
+			{
+				Debug.Assert(Vc.ColumnSpecs.Count == 1, "Only support one column in this browse view");
+				var rglength = new VwLength[1];
+				rglength[0].unit = VwUnit.kunPercent100;
+				rglength[0].nVal = 10000;
+				return rglength;
+			}
+
+			/// <summary>
+			/// we don't care about the sort order in this browseview
+			/// </summary>
+			public override bool ColumnSortedFromEnd(int icol)
+			{
+				return false;
+			}
+
+			/// <summary>
+			/// measures the width of the strings built by the display of a column and
+			/// returns the maximumn width found.
+			/// NOTE: you may need to add a small (e.g. under 10-pixel) margin to prevent wrapping in most cases.
+			/// </summary>
+			/// <returns>width in pixels</returns>
+			public int GetMaxCellContentsWidth()
+			{
+				int maxWidth;
+				using (var g = Graphics.FromHwnd(Handle))
+				{
+					// get a best  estimate to determine row needing the greatest column width.
+					var env = new MaxStringWidthForColumnEnv(StyleSheet, SpecialCache, RootObjectHvo, g, 0);
+					Vc.Display(env, RootObjectHvo, XmlBrowseViewBaseVc.kfragRoot);
+					maxWidth = env.MaxStringWidth;
+				}
+				return maxWidth;
+			}
+
+		}
+
+		private sealed class OneColumnXmlBrowseViewVc : XmlBrowseViewVc
+		{
+			/// <summary>
+			/// for comparing to the "active" (i.e. preview column)
+			/// </summary>
+			private int m_icolAdded = -1;
+
+			/// <summary>
+			/// we only setup for regular columns, and only one at a time.
+			/// </summary>
+			protected override void SetupSelectColumn()
+			{
+				HasSelectColumn = false;
+			}
+
+			internal void SetupOneColumnSpec(BrowseViewer bv, int icolToAdd)
+			{
+				ColumnSpecs = new List<XElement>(new[] { bv.ColumnSpecs[icolToAdd - bv.ColumnIndexOffset()] });
+				m_icolAdded = icolToAdd;
+				// if we have a bulk edit bar, we need to process strings added for Preview
+				if (bv.BulkEditBar != null)
+				{
+					PreviewArrow = bv.BulkEditBar.PreviewArrow;
+				}
+			}
+
+			/// <summary>
+			/// in a OneColumn browse view, the column will be "Active"
+			/// if we are based upon a column being previewed in the original browse view.
+			/// </summary>
+			/// <returns>1 if we're based on a column with "Preview" enabled, -1 otherwise.</returns>
+			protected override int GetActiveColumn(IVwEnv vwenv, int hvoRoot)
+			{
+				var iActiveColumn = base.GetActiveColumn(vwenv, hvoRoot);
+				if (iActiveColumn == m_icolAdded)
+				{
+					return 1;
+				}
+				return -1;
+			}
+
+			public OneColumnXmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+				: base(xnSpec, madeUpFieldIdentifier, xbv)
+			{
+			}
+		}
 	}
 }

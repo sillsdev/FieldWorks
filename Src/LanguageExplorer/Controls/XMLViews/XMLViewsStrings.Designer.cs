@@ -1312,5 +1312,23 @@ namespace LanguageExplorer.Controls.XMLViews {
                 return ResourceManager.GetString("SimpleChooserParameters", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorted By Length.
+        /// </summary>
+        internal static string Sorted_By_Length {
+            get {
+                return ResourceManager.GetString("Sorted_By_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorted From End.
+        /// </summary>
+        internal static string Sorted_From_End {
+            get {
+                return ResourceManager.GetString("Sorted_From_End", resourceCulture);
+            }
+        }
     }
 }

@@ -83,18 +83,11 @@ so I can look at that in the develop branch.
     <command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left" />
     <command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right" />
     <command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left" />
-    <command id="CmdLastBundle" label="Last Word" message="LastBundle" shortcut="Ctrl+End" />
-    <command id="CmdFirstBundle" label="First Word" message="FirstBundle" shortcut="Ctrl+Home" />
-    <command id="CmdOpenCombo" label="Open Combo" message="OpenCombo" shortcut="Alt+Down" />
     <command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J" />
     <command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J" />
     <command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle" />
-    <command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M" />
     <command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W" />
     <command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M" />
-    <command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform" />
-    <command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform" />
-    <command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform" />
     <command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear" />
     <command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left" />
     <command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right" />
@@ -102,10 +95,6 @@ so I can look at that in the develop branch.
       <parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
     </command>
     <command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc" />
-    <command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform" />
-    <command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete" />
-    <command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm" />
-    <command id="CmdWordformChangeCase" label="Change Case..." message="WordformChangeCase" />
     <command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc" />
     <command id="CmdDataTree-Delete-HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
       <parameters field="Analyses" className="WfiAnalysis" />
@@ -318,6 +307,7 @@ so I can look at that in the develop branch.
     <menu id="Data" label="_Data" >
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
       <item label="-" translate="do not translate" />
+      <!-- From here to the CmdApproveAll command, the menu items are the same as the popup menu "mnuFocusBox" -->
       <item command="CmdApproveAndMoveNext" defaultVisible="false" />
       <item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false" />
       <item command="CmdNextIncompleteBundle" defaultVisible="false" />
@@ -423,10 +413,6 @@ so I can look at that in the develop branch.
       <item label="-" translate="do not translate" />
       <!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
     </menu>
-    <menu id="mnuBrowseHeader">
-      <item label="Sorted From End" boolProperty="SortedFromEnd" />
-      <item label="Sorted By Length" boolProperty="SortedByLength" />
-    </menu>
     <menu id="PaneBar-ReversalIndicesMenu">
       <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
         <item command="CmdShowAllPublications" />
@@ -439,14 +425,6 @@ so I can look at that in the develop branch.
         <item label="-" translate="do not translate" />
         <item command="CmdConfigureDictionary" />
       </menu>
-    </menu>
-    <menu id="mnuStTextChoices">
-      <item command="CmdCut" />
-      <item command="CmdCopy" />
-      <item command="CmdPaste" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdLexiconLookup" />
-      <item command="CmdAddToLexicon" />
     </menu>
     <!-- START include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
     <menu id="PaneBar-ShowHiddenFields-posEdit" label="">
@@ -642,48 +620,6 @@ so I can look at that in the develop branch.
     <menu id="PaneBar-ITextContent" label="">
       <item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local" />
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local" />
-    </menu>
-    <menu id="mnuIText-FreeTrans">
-      <item command="CmdDeleteFreeTrans" />
-    </menu>
-    <menu id="mnuIText-LitTrans">
-      <item command="CmdDeleteLitTrans" />
-    </menu>
-    <menu id="mnuIText-Note">
-      <item command="CmdDeleteNote" />
-    </menu>
-    <menu id="mnuIText-RawText">
-      <item command="CmdCut" />
-      <item command="CmdCopy" />
-      <item command="CmdPaste" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdLexiconLookup" />
-      <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
-      <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
-    </menu>
-    <menu id="mnuFocusBox">
-      <item command="CmdApproveAndMoveNext" />
-      <item command="CmdApproveForWholeTextAndMoveNext" />
-      <item command="CmdNextIncompleteBundle" />
-      <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
-      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-        <item command="CmdApproveAndMoveNextSameLine" />
-        <item command="CmdMoveFocusBoxRight" />
-        <item command="CmdMoveFocusBoxLeft" />
-      </menu>
-      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-        <item command="CmdBrowseMoveNext" />
-        <item command="CmdNextIncompleteBundleNc" />
-        <item command="CmdBrowseMoveNextSameLine" />
-        <item command="CmdMoveFocusBoxRightNc" />
-        <item command="CmdMoveFocusBoxLeftNc" />
-      </menu>
-      <item command="CmdMakePhrase" defaultVisible="false" />
-      <item command="CmdBreakPhrase" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-      <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
     </menu>
     <menu id="mnuDataTree-MainWordform">
       <item command="CmdShowWordformConc" />

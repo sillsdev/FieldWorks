@@ -1986,7 +1986,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		public void OnOpenCombo()
+		private void OnOpenCombo()
 		{
 			var selOrig = RootBox.Selection;
 			if (selOrig == null)

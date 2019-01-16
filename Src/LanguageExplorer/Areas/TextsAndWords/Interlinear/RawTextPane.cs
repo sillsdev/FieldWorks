@@ -541,8 +541,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				}
 #if RANDYTODO
+// The original code sent it to the window, who then passed it on as in:
+// ((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
+// The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
+// In this case "ui" was the temp colleague:
+// tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y), tempColleague, null);
 #endif
+				/*
+				    <menu id="mnuIText-RawText">
+				      <item command="CmdCut" />
+				      <item command="CmdCopy" />
+				      <item command="CmdPaste" />
+				      <item label="-" translate="do not translate" />
+				      <item command="CmdLexiconLookup" />
+				      <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
+				      <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
+				    </menu>
+				*/
 				return true;
 			}
 			finally

@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			base.Dispose(disposing);
 		}
 
-		internal override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
+		protected override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
 			var sandbox = new MockSandbox
 			{

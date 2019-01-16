@@ -409,9 +409,6 @@ namespace LanguageExplorer.Impls
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault("RecordListWidthGlobal", 200, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
-			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
-			PropertyTable.SetDefault("SortedFromEnd", false, true);
-			PropertyTable.SetDefault("SortedByLength", false, true);
 			PropertyTable.SetDefault("CurrentToolbarVersion", 1, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
@@ -443,6 +440,8 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("ShowMorphBundles");
 			PropertyTable.RemoveProperty("ActiveClerk");
 			PropertyTable.RemoveProperty("SelectedWritingSystemHvosForCurrentContextMenu");
+			PropertyTable.RemoveProperty("SortedFromEnd");
+			PropertyTable.RemoveProperty("SortedByLength");
 		}
 
 		private void SetTemporaryProperties()
