@@ -1010,8 +1010,8 @@ namespace LanguageExplorer.Impls
 
 		private void SafelyEnsureStyleSheetPostTERemoval(IThreadedProgress progressDlg)
 		{
-			// Ensure that we have up-to-date versification information so that projects with old scripture styles
-			// will migrate the styles into the FlexStyles successfully
+			// Ensure that we have up-to-date versification information so that projects with old TE styles
+			// will be able to migrate them from the Scripture area to the LanguageProject model
 			ScrReference.InitializeVersification(FwDirectoryFinder.EditorialChecksDirectory, false);
 			// Make sure this DB uses the current stylesheet version
 			// Suppress adjusting scripture sections since isn't safe to do so at this point

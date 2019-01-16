@@ -238,13 +238,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 					numberOfSegments += interestingText[index].SegmentsOS.Count;
 					//count all the things analyzed as words
 					var words = new List<IAnalysis>(interestingText[index].Analyses);
-					foreach (var word in words.Where(x => x.Wordform.ShortName != "???"))
+					foreach (var wordForm in words.Where(x => x.Wordform != null && x.Wordform.ShortName != "???").Select(y => y.Wordform))
 					{
-						var wordForm = word.Wordform;
-						if (wordForm == null)
-						{
-							continue;
-						}
 						var valdWSs = wordForm.Form.AvailableWritingSystemIds;
 						foreach (var ws in valdWSs)
 						{
@@ -263,12 +258,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 							if (languageTypeCount.TryGetValue(ws, out pair))
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
-								pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
+								pair.Add(wordForm.Form.get_String(ws).Text.ToLower());
 							}
 							else
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
-								languageTypeCount.Add(ws, new HashSet<string> { word.Wordform.Form.get_String(ws).Text.ToLower() });
+								languageTypeCount.Add(ws, new HashSet<string> {wordForm.Form.get_String(ws).Text.ToLower()});
 							}
 						}
 					}

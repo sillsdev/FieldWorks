@@ -673,7 +673,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <summary/>
 		StudyBible,
 		/// <summary/>
-		GlobalConsultantNotes
+		GlobalConsultantNotes,
+		/// <summary/>
+		Auxiliary,
+		/// <summary/>
+		AuxiliaryResource,
+		/// <summary/>
+		MarbleResource,
 	}
 
 	/// <summary/>

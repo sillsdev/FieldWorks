@@ -32,9 +32,7 @@ using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary>
-	/// The writing system properties dialog.
-	/// </summary>
+	/// <inheritdoc />
 	public class WritingSystemPropertiesDialog : Form
 	{
 		private enum CollationRulesType
@@ -837,18 +835,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// Allows us temporarily to override the normal behavior of CurrentWritingSystem.
 		private CoreWritingSystemDefinition m_overrideCurrentWritingSystem;
 
-		/// <summary>
-		/// Gets the current writing system.
-		/// </summary>
+		/// <summary />
 		protected CoreWritingSystemDefinition CurrentWritingSystem => m_overrideCurrentWritingSystem ?? (CoreWritingSystemDefinition)m_listBoxRelatedWSs.SelectedItem;
 
-		/// <summary>
-		/// Gets the new writing systems.
-		/// </summary>
+		/// <summary />
 		public IEnumerable<CoreWritingSystemDefinition> NewWritingSystems => m_tempWritingSystems.Keys.Where(IsNew);
 
 		/// <summary>
-		/// Returns <c>true</c> if writing system was changed.
+		/// Returns <c>true</c> if a writing system was changed.
 		/// </summary>
 		public bool IsChanged { get; private set; }
 

@@ -847,6 +847,18 @@ namespace LanguageExplorerTests.Impls
 			Assert.AreEqual(roPropTable.GetValue(noSuchPropName, myDefault), notDefault, "Default was used instead of value from property table.");
 		}
 
+		[Test]
+		public void ReadOnlyPropertyTable_ReplaceDefaultInitialArea()
+		{
+			const string initialAreaKey = "db$Testlocal$InitialArea";
+			_propertyTable.SetProperty(initialAreaKey, "lexicon", false);
+			string initialAreaValue = _propertyTable.GetValue<string>(initialAreaKey);
+			Assert.AreEqual("lexicon", initialAreaValue, "Default value not set.");
+			LoadOriginalSettings();
+			initialAreaValue = _propertyTable.GetValue<string>(initialAreaKey);
+			Assert.AreEqual("grammar", initialAreaValue, "Default value not replaced.");
+		}
+
 		/// <summary>
 		/// Make sure assimilated projects have xml updated
 		/// </summary>

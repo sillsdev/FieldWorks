@@ -36,23 +36,29 @@
 		<name>db$TestLocal$BestStringPropertyB</name>
 		<value xsi:type="xsd:string">local_BestStringPropertyB_value</value>
 	</Property>
-  <Property>
-    <name>db$TestLocal$LotsOfAssimilatedAssemblies</name>
-    <value xsi:type="xsd:string">&lt;root version="18"&gt;
-      &lt;dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.Inventory" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="xCoreInterfaces.dll" class="XCore.PropertyTable" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="SilSidePane.dll" class="SIL.SilSidePane.Banner" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="FlexUIAdapter.dll" class="XCore.PaneBar" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="Discourse.dll" class="SIL.FieldWorks.Discourse.AdvancedMTDialog" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ClosedFeatureValue" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.CircularRefBreaker" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.AddAllomorphDlg" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.RestoreDefaultsDlg" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicLauncher" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetDlg" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.AtomicReferenceLauncher" /&gt;
-      &lt;dynamicloaderinfo assemblyPath="XMLViews.dll" class="SIL.FieldWorks.Common.Controls.BrowseViewer" /&gt;
-      &lt;/root&gt;</value>
-  </Property>
+	<Property>
+		<name>db$TestLocal$LotsOfAssimilatedAssemblies</name>
+		<value xsi:type="xsd:string">&lt;root version="18"&gt;
+			&lt;dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.Inventory" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="xCoreInterfaces.dll" class="XCore.PropertyTable" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="SilSidePane.dll" class="SIL.SilSidePane.Banner" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="FlexUIAdapter.dll" class="XCore.PaneBar" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="Discourse.dll" class="SIL.FieldWorks.Discourse.AdvancedMTDialog" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ClosedFeatureValue" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.CircularRefBreaker" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.AddAllomorphDlg" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.RestoreDefaultsDlg" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicLauncher" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetDlg" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.AtomicReferenceLauncher" /&gt;
+			&lt;dynamicloaderinfo assemblyPath="XMLViews.dll" class="SIL.FieldWorks.Common.Controls.BrowseViewer" /&gt;
+			&lt;/root&gt;</value>
+	</Property>
+	<Property>
+		<name>db$Testlocal$InitialArea</name>
+		<value xsi:type="xsd:string">grammar</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
 </ArrayOfProperty>

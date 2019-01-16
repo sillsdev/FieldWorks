@@ -646,9 +646,7 @@ namespace LanguageExplorer.Impls
 				// This is only called once, and no code should ever putting duplicates when saving.
 				// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
 				// that was thrown by it already being there.
-				Property goner;
-				m_properties.TryRemove(property.name, out goner); // In case it is there.
-				m_properties[property.name] = property;
+				m_properties.AddOrUpdate(property.name, property, (name, prop) => property);
 			}
 		}
 
