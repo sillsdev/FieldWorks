@@ -1,11 +1,11 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Test framework for migration from version 7000068 to 7000069.
 	/// </summary>
 	[TestFixture]
-	public class FdoBackendProviderTests
+	public class FdoBackendProviderTests : MemoryOnlyBackendProviderTestBase
 	{
 		/// <summary>
 		/// Test the CustomField usage note with multi unicode.
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			FDOBackendProvider.PreLoadCustomFields(cfiList);
 
 			Assert.AreEqual(6, cfiList.Count);
-			foreach(var cfi in cfiList)
+			foreach (var cfi in cfiList)
 				Assert.AreEqual("LexSense", cfi.m_classname, "Classname should not have changed");
 
 			// uses first available number to rename old UsageNote, which in this case is UsageNote1.
@@ -98,6 +98,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual("Exemplar2", cfiList[3].m_fieldname);
 			Assert.AreEqual("Exemplar0", cfiList[4].m_fieldname);
 			Assert.AreEqual("Exemplar1", cfiList[5].m_fieldname);
+		}
+
+		/// <summary/>
+		[Test]
+		public void StartupExtantLanguageProject_NullProjectID_ThrowsStartupException()
+		{
+			using(var provider = new MockXMLBackendProvider(Cache, "project"))
+			{
+				Assert.Throws<StartupException>(()=>provider.StartupExtantLanguageProject(null, true, new DummyProgressDlg()));
+			}
 		}
 	}
 }

@@ -4,9 +4,17 @@ then
 else
 	GECKOFX="${BASE}/Output_${ARCH}/${BUILD}"
 fi
-XULRUNNER="${GECKOFX}/Firefox"
+
+BITS=64
+if [ "$(arch)" != "x86_64" ]; then
+  BITS=32
+fi
+
+XULRUNNER="${GECKOFX}/Firefox-Linux${BITS}"
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
 if [ "$RUNMODE" != "PACKAGE" ]
 then
 	LD_PRELOAD=libgeckofix.so
 fi
+
+export XULRUNNER

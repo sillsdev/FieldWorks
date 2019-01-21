@@ -54,7 +54,7 @@ LDLIBS := \
 	-luuid -lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror -std=c++11
 LDFLAGS = -g -z muldefs
 
 RCFILE = $(KERNEL_SRC)/FwKernel.rc

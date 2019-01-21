@@ -80,6 +80,8 @@
 		<ForceDelete Files="$(NuGetExePath)"/>
 		<ForceDelete Files="$(fwrt)/packages/"/>
 		<ForceDelete Files="$(dir-outputBase)/Firefox/"/>
+		<ForceDelete Files="$(dir-outputBase)/Firefox-Linux64/"/>
+		<ForceDelete Files="$(dir-outputBase)/Firefox-Linux32/"/>
 		<ForceDelete Files="$(dir-outputBase)/Geckofx-*.*"/>
 		<Message Text="cleaned $(NuGetExePath) et al."/>
 	</Target>

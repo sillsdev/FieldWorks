@@ -1365,7 +1365,7 @@ namespace SIL.FieldWorks.XWorks
 				var configNode = existingNodes[i];
 				if (!configNode.IsCustomField)
 					continue;
-				if (!customFieldNodes.Contains(configNode))
+				if (!customFieldNodes.Any(k => k.Label == configNode.Label))
 				{
 					existingNodes.Remove(configNode); // field no longer exists
 				}

@@ -68,7 +68,7 @@ namespace SIL.Ethnologue
 			Ethnologue eth = new Ethnologue();
 			List<Ethnologue.Names> res = eth.GetLanguageNamesLike("Amha", 'x');
 			Assert.GreaterOrEqual(res.Count, 8);
-			Assert.AreEqual("Amharic", res[0].LangName);
+			Assert.AreEqual("Amhara", res[0].LangName);
 			Assert.AreEqual("amh", res[0].EthnologueCode);
 
 			List<Ethnologue.Names> res2 = eth.GetLanguageNamesLike("Amha", 'L');
@@ -113,14 +113,13 @@ namespace SIL.Ethnologue
 		{
 			Ethnologue eth = new Ethnologue();
 			List<Ethnologue.Names> res = eth.GetLanguagesInCountry("United States", true);
-			Assert.GreaterOrEqual(res.Count, 200);
+			Assert.GreaterOrEqual(res.Count, 190); // This number is not as stable as the test seems to expect it may fail after an Ethnologue update
 			Assert.LessOrEqual(res.Count, 250);
 			Assert.AreEqual("aaq", res[0].EthnologueCode);
 
 			List<Ethnologue.Names> res2 = eth.GetLanguagesInCountry("United States", false);
-			Assert.GreaterOrEqual(res2.Count, 1000);
-			Assert.AreEqual("eng", res2[0].EthnologueCode);
-			Assert.AreEqual("AAVE", res2[0].LangName);
+			Assert.GreaterOrEqual(res2.Count, 900); // This number is not as stable as the test seems to expect it may fail after an Ethnologue update
+			Assert.NotNull(res2.Find(name => name.EthnologueCode == "eng"), "English is no longer spoken in the US?");
 		}
 
 		/// <summary>

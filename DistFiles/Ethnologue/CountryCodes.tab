@@ -6,13 +6,13 @@ AG	Antigua and Barbuda	Americas
 AI	Anguilla	Americas
 AL	Albania	Europe
 AM	Armenia	Asia
-AN	Netherlands Antilles	Americas
 AO	Angola	Africa
 AR	Argentina	Americas
 AS	American Samoa	Pacific
 AT	Austria	Europe
 AU	Australia	Pacific
 AW	Aruba	Americas
+AX	Aland Islands	Europe
 AZ	Azerbaijan	Asia
 BA	Bosnia and Herzegovina	Europe
 BB	Barbados	Americas
@@ -23,9 +23,11 @@ BG	Bulgaria	Europe
 BH	Bahrain	Asia
 BI	Burundi	Africa
 BJ	Benin	Africa
+BL	Saint Barthélemy	Americas
 BM	Bermuda	Americas
 BN	Brunei	Asia
 BO	Bolivia	Americas
+BQ	Caribbean Netherlands	Americas
 BR	Brazil	Americas
 BS	Bahamas	Americas
 BT	Bhutan	Asia
@@ -33,11 +35,12 @@ BW	Botswana	Africa
 BY	Belarus	Europe
 BZ	Belize	Americas
 CA	Canada	Americas
+CC	Cocos (Keeling) Islands	Pacific
 CD	Democratic Republic of the Congo	Africa
 CF	Central African Republic	Africa
 CG	Congo	Africa
 CH	Switzerland	Europe
-CI	C�te d'Ivoire	Africa
+CI	Côte d’Ivoire	Africa
 CK	Cook Islands	Pacific
 CL	Chile	Americas
 CM	Cameroon	Africa
@@ -46,8 +49,10 @@ CO	Colombia	Americas
 CR	Costa Rica	Americas
 CU	Cuba	Americas
 CV	Cape Verde Islands	Africa
+CW	Curacao	Americas
+CX	Christmas Island	Asia
 CY	Cyprus	Asia
-CZ	Czech Republic	Europe
+CZ	Czechia	Europe
 DE	Germany	Europe
 DJ	Djibouti	Africa
 DK	Denmark	Europe
@@ -65,12 +70,14 @@ FI	Finland	Europe
 FJ	Fiji	Pacific
 FK	Falkland Islands	Americas
 FM	Micronesia	Pacific
+FO	Faroe Islands	Europe
 FR	France	Europe
 GA	Gabon	Africa
 GB	United Kingdom	Europe
 GD	Grenada	Americas
 GE	Georgia	Asia
 GF	French Guiana	Americas
+GG	Guernsey	Europe
 GH	Ghana	Africa
 GI	Gibraltar	Europe
 GL	Greenland	Americas
@@ -83,26 +90,22 @@ GT	Guatemala	Americas
 GU	Guam	Pacific
 GW	Guinea-Bissau	Africa
 GY	Guyana	Americas
+HK	China–Hong Kong	Asia
 HN	Honduras	Americas
 HR	Croatia	Europe
 HT	Haiti	Americas
 HU	Hungary	Europe
 ID	Indonesia	Asia
-ID	Indonesia (Java and Bali)	Asia
-ID	Indonesia (Kalimantan)	Asia
-ID	Indonesia (Nusa Tenggara)	Asia
-ID	Indonesia (Sumatra)	Asia
-ID	Indonesia (Sulawesi)	Asia
-ID	Indonesia (Maluku)	Asia
-ID	Indonesia (Papua)	Asia
 IE	Ireland	Europe
 IL	Israel	Asia
+IM	Isle of Man	Europe
 IN	India	Asia
-IO	British Indian Ocean Territory	Africa
+IO	British Indian Ocean Territory	Asia
 IQ	Iraq	Asia
 IR	Iran	Asia
 IS	Iceland	Europe
 IT	Italy	Europe
+JE	Jersey	Europe
 JM	Jamaica	Americas
 JO	Jordan	Asia
 JP	Japan	Asia
@@ -112,8 +115,8 @@ KH	Cambodia	Asia
 KI	Kiribati	Pacific
 KM	Comoros	Africa
 KN	Saint Kitts and Nevis	Americas
-KP	Korea, North	Asia
-KR	Korea, South	Asia
+KP	North Korea	Asia
+KR	South Korea	Asia
 KW	Kuwait	Asia
 KY	Cayman Islands	Americas
 KZ	Kazakhstan	Asia
@@ -132,12 +135,14 @@ MA	Morocco	Africa
 MC	Monaco	Europe
 MD	Moldova	Europe
 ME	Montenegro	Europe
+MF	Saint Martin	Americas
 MG	Madagascar	Africa
 MH	Marshall Islands	Pacific
 MK	Macedonia	Europe
 ML	Mali	Africa
 MM	Myanmar	Asia
 MN	Mongolia	Asia
+MO	China–Macao	Asia
 MP	Northern Mariana Islands	Pacific
 MQ	Martinique	Americas
 MR	Mauritania	Africa
@@ -148,9 +153,6 @@ MV	Maldives	Asia
 MW	Malawi	Africa
 MX	Mexico	Americas
 MY	Malaysia	Asia
-MY	Malaysia (Sabah)	Asia
-MY	Malaysia (Sarawak)	Asia
-MY	Malaysia (Peninsular)	Asia
 MZ	Mozambique	Africa
 NA	Namibia	Africa
 NC	New Caledonia	Pacific
@@ -175,17 +177,15 @@ PL	Poland	Europe
 PM	Saint Pierre and Miquelon	Americas
 PN	Pitcairn	Pacific
 PR	Puerto Rico	Americas
-PS	Palestinian West Bank and Gaza	Asia
+PS	Palestine	Asia
 PT	Portugal	Europe
 PW	Palau	Pacific
 PY	Paraguay	Americas
 QA	Qatar	Asia
-RE	R�union	Africa
+RE	Réunion	Africa
 RO	Romania	Europe
 RS	Serbia	Europe
 RU	Russian Federation	Europe
-RU	Russian Federation (Europe)	Europe
-RU	Russian Federation (Asia)	Asia
 RW	Rwanda	Africa
 SA	Saudi Arabia	Asia
 SB	Solomon Islands	Pacific
@@ -193,7 +193,7 @@ SC	Seychelles	Africa
 SD	Sudan	Africa
 SE	Sweden	Europe
 SG	Singapore	Asia
-SH	Saint Helena	Africa
+SH	Saint Helena, Ascension, and Tristan da Cunha	Africa
 SI	Slovenia	Europe
 SK	Slovakia	Europe
 SL	Sierra Leone	Africa
@@ -201,8 +201,10 @@ SM	San Marino	Europe
 SN	Senegal	Africa
 SO	Somalia	Africa
 SR	Suriname	Americas
-ST	S�o Tom� e Pr�ncipe	Africa
+SS	South Sudan	Africa
+ST	São Tomé e Príncipe	Africa
 SV	El Salvador	Americas
+SX	Sint Maarten	Americas
 SY	Syria	Asia
 SZ	Swaziland	Africa
 TC	Turks and Caicos Islands	Americas
@@ -216,11 +218,9 @@ TM	Turkmenistan	Asia
 TN	Tunisia	Africa
 TO	Tonga	Pacific
 TR	Turkey	Asia
-TR	Turkey (Europe)	Europe
-TR	Turkey (Asia)	Asia
 TT	Trinidad and Tobago	Americas
 TV	Tuvalu	Pacific
-TW	Taiwan	Asia
+TW	China–Taiwan	Asia
 TZ	Tanzania	Africa
 UA	Ukraine	Europe
 UG	Uganda	Africa
