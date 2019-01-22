@@ -1,0 +1,4 @@
+Verified-Linux-1: Jenkins CI <jenkins@sil.org>
+Reviewed-on: https://gerrit.lsdev.sil.org/6124
+Project: FieldWorks
+Branch: refs/heads/feature/lfmerge
