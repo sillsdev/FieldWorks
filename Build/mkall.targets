@@ -277,7 +277,6 @@
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(IcuDataFiles)"/>
-		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
 		<ForceDelete Files="@(GeneratedFiles)"/>
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion).zip"/>
 
@@ -286,18 +285,18 @@
 
 	<PropertyGroup>
 		<!-- lfmerge branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32LfmergeStrongnameCont/lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/ChorusWin32LfmergeStrongnameCont/lfmerge-8.3.10.tcbuildtag</ChorusDownloadUrl>
 		<!-- lfmerge branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64lfmergeCont/lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">https://build.palaso.org/guestAuth/repository/download/ChorusLinux64lfmergeCont/lfmerge-8.3.10.tcbuildtag</ChorusDownloadUrl>
 		<!-- lfmerge branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeStrongnameContinuous/lfmerge-8.3.2.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeStrongnameContinuous/lfmerge-8.3.2.tcbuildtag</PalasoDownloadUrl>
 		<!-- lfmerge branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64lfmergeContinuous/lfmerge-8.3.2.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/lfmerge-8.3.2.tcbuildtag</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">https://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
@@ -307,9 +306,15 @@
 		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
 		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/.lastSuccessful</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://www.nuget.org/api/v2/package/protobuf-net/2.0.0.668</ProtoBufNetDownloadUrl>
+		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/bt393/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
+		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">https://build.palaso.org/guestAuth/repository/download/bt395/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
-		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
+		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Unix'">https://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoLinux64masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>

@@ -99,11 +99,11 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BasicUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Chorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Chorus">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\..\Downloads\Chorus.exe</HintPath>
@@ -113,7 +113,7 @@
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.1.18549, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreImpl">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -129,12 +129,12 @@
       <Name>FdoUi</Name>
       <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
     </Reference>
-    <Reference Include="FieldWorks, Version=7.3.2.30113, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FieldWorks">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\..\Output\Debug\FieldWorks.exe</HintPath>
     </Reference>
-    <Reference Include="Filters, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Filters">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
     </Reference>
@@ -160,7 +160,7 @@
       <Name>FwUtils</Name>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FxtDll, Version=6.9.2.21635, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FxtDll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
     </Reference>
@@ -168,11 +168,11 @@
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
     </Reference>
-    <Reference Include="LibChorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="LibChorus">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\LibChorus.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedLgIcuCollator, Version=8.2.0.13232, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ManagedLgIcuCollator">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
@@ -184,19 +184,19 @@
       <Name>MGA</Name>
       <HintPath>..\..\..\Output\Debug\MGA.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="MorphologyEditorDll, Version=5.5.0.19750, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MorphologyEditorDll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\MorphologyEditorDll.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Palaso">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Palaso.Lift">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.Lift.dll</HintPath>
     </Reference>
@@ -225,7 +225,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
