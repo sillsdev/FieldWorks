@@ -103,14 +103,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							&& XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
 						string optionalWsSpec = XmlUtils.GetOptionalAttributeValue(node, "optionalWs");
 						int wsMagicOptional = WritingSystemServices.GetMagicWsIdFromName(optionalWsSpec);
-						MultiStringSlice msSlice = reuseMap.GetSliceToReuse("MultiStringSlice") as MultiStringSlice;
-						if (msSlice == null)
-							slice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
-						else
-						{
-							slice = msSlice;
-							msSlice.Reuse(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
-						}
+						// Create a new slice everytime for the MultiStringSlice - There are display glitches with height when reused
+						slice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						break;
 					}
 				case "defaultvectorreference": // second most common.
