@@ -736,6 +736,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return anal;
 		}
 
+		private static void Swap(ref int first, ref int second)
+		{
+			var temp = first;
+			first = second;
+			second = temp;
+		}
+
 #if RANDYTODO
 		public bool OnDisplayGuessWordBreaks(object commandObject, ref UIItemDisplayProperties display)
 		{
@@ -756,13 +763,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 #endif
-
-		private static void Swap(ref int first, ref int second)
-		{
-			var temp = first;
-			first = second;
-			second = temp;
-		}
 
 		/// <summary>
 		/// Guess where we can break words.

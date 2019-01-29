@@ -326,8 +326,12 @@
     </Compile>
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
+    <Compile Include="Areas\IAreaUiWidgetManager.cs" />
     <Compile Include="Areas\IdAndString.cs" />
+    <Compile Include="Areas\IPartialToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxMenuManager.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearConstants.cs" />
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
@@ -346,7 +350,7 @@
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconDictionaryToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconClassifiedDictionaryToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolConstants.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolEditMenuManager.cs" />
@@ -1021,7 +1025,6 @@
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\DataTreeStackContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />
-    <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">

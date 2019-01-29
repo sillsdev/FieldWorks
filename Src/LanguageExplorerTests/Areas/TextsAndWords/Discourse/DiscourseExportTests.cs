@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -38,8 +39,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
 
-			m_constChart = new ConstituentChart(Cache, m_logic);
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			m_constChart = new ConstituentChart(Cache, new SharedEventHandlers(), m_logic);
 			m_constChart.InitializeFlexComponent(_flexComponentParameters);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
@@ -58,7 +59,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		}
 
 		// Verify some basics about a child node (and return it)
-		static XmlNode VerifyNode(string message, XmlNode parent, int index, string name, int childCount, int attrCount)
+		private static XmlNode VerifyNode(string message, XmlNode parent, int index, string name, int childCount, int attrCount)
 		{
 			var child = parent.ChildNodes[index];
 			Assert.IsNotNull(child, message);
@@ -69,12 +70,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		}
 
 		// Verify attribute presence (and value, if attval is not null)
-		static void AssertAttr(XmlNode node, string attname, string attval)
+		private static void AssertAttr(XmlNode node, string attname, string attval)
 		{
 			var attr = node.Attributes[attname];
 			Assert.IsNotNull(attr, "Expected node " + node.Name + " to have attribute " + attname);
 			if (attval != null)
+			{
 				Assert.AreEqual(attval, attr.Value, "Expected attr " + attname + " of " + node.Name + " to have value " + attval);
+			}
 		}
 
 		#region tests
@@ -130,43 +133,41 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				m_helper.MakeRow(m_chart, "4");
 
 				using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
+				using (var vc = new ConstChartVc(m_chartBody))
 				{
-					using (var vc = new ConstChartVc(m_chartBody))
+					vc.LineChoices = m_chartBody.LineChoices;
+					using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 					{
-						vc.LineChoices = m_chartBody.LineChoices;
-						using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
+						writer.WriteStartDocument();
+						writer.WriteStartElement("document");
+						exporter.ExportDisplay();
+						writer.WriteEndElement();
+						writer.WriteEndDocument();
+						writer.Flush();
+						// Close makes it unusable
+						stream.Position = 0;
+						using (var reader = new StreamReader(stream, Encoding.UTF8))
 						{
-							writer.WriteStartDocument();
-							writer.WriteStartElement("document");
-							exporter.ExportDisplay();
-							writer.WriteEndElement();
-							writer.WriteEndDocument();
-							writer.Flush();
-							// Close makes it unuseable
-							stream.Position = 0;
-							using (var reader = new StreamReader(stream, Encoding.UTF8))
-							{
-								var result = reader.ReadToEnd();
-								var doc = new XmlDocument();
-								doc.LoadXml(result);
-								var docNode = doc.DocumentElement;
-								Assert.AreEqual("document", docNode.Name);
-								var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
-								VerifyTitleRow(chartNode);
-								VerifyTitle2Row(chartNode);
-								VerifyFirstDataRow(chartNode);
-								VerifySecondDataRow(chartNode);
-								var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
-								AssertAttr(thirdRow, "endSent", "true");
-								var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
-								AssertAttr(fourthRow, "endPara", "true");
+							var result = reader.ReadToEnd();
+							var doc = new XmlDocument();
+							doc.LoadXml(result);
+							var docNode = doc.DocumentElement;
+							Assert.AreEqual("document", docNode.Name);
+							var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
+							VerifyTitleRow(chartNode);
+							VerifyTitle2Row(chartNode);
+							VerifyFirstDataRow(chartNode);
+							VerifySecondDataRow(chartNode);
+							var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
+							AssertAttr(thirdRow, "endSent", "true");
+							var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
+							AssertAttr(fourthRow, "endPara", "true");
 
 							var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
-								var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
-								AssertAttr(enNode, "lang", "en");
-								AssertAttr(enNode, "font", null);
-								// don't verify exact font, may depend on installation.
-							}
+							var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
+							AssertAttr(enNode, "lang", "en");
+							AssertAttr(enNode, "font", null);
+							// don't verify exact font, may depend on installation.
 						}
 					}
 				}
@@ -200,9 +201,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			VerifyNode("main in 2/1", cell1, 0, "main", 3, 0);
 			AssertAttr(cell1, "reversed", "true");
 			AssertAttr(cell1, "cols", "2");
-			AssertMainChild(cell1, 0, "lit", new string[] { "noSpaceAfter", "lang" }, new string[] { "true", "en" }, "[");
-			AssertMainChild(cell1, 1, "word", new string[] { "lang" }, new string[] { "fr" }, "paragraph");
-			AssertMainChild(cell1, 2, "word", new string[] { "lang" }, new string[] { "fr" }, "one");
+			AssertMainChild(cell1, 0, "lit", new[] { "noSpaceAfter", "lang" }, new[] { "true", "en" }, "[");
+			AssertMainChild(cell1, 1, "word", new[] { "lang" }, new[] { "fr" }, "paragraph");
+			AssertMainChild(cell1, 2, "word", new[] { "lang" }, new[] { "fr" }, "one");
 			var glosses1 = VerifyNode("glosses cell 1/2", cell1, 1, "glosses", 2, 0);
 			var gloss1_1 = VerifyNode("second gloss in 1/2", glosses1, 1, "gloss", 1, 1);
 			AssertAttr(gloss1_1, "lang", "en");
@@ -217,7 +218,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			//    </cell>
 			var cell2 = VerifyNode("third node in row 2", row, 2, "cell", 2, 1);
 			VerifyNode("main in 2/2", cell2, 0, "main", 1, 0);
-			AssertMainChild(cell2, 0, "word", new string[] { "moved", "lang" }, new string[] { "true", "fr" }, "It");
+			AssertMainChild(cell2, 0, "word", new[] { "moved", "lang" }, new[] { "true", "fr" }, "It");
 			var glosses2 = VerifyNode("glosses cell 2/2", cell2, 1, "glosses", 1, 0);
 			var gloss2_0 = VerifyNode("gloss in 2/2", glosses2, 0, "gloss", 1, 1);
 			AssertAttr(gloss2_0, "lang", "en");
@@ -229,7 +230,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			//        </main>
 			//    </cell>
 			var cell3 = AssertCellMainChild(row, 3, 1, null, 2, "moveMkr", "Preposed", "en");
-			AssertMainChild(cell3, 1, "lit", new string[] { "noSpaceBefore", "lang" }, new string[] { "true", "en" }, "]");
+			AssertMainChild(cell3, 1, "lit", new[] { "noSpaceBefore", "lang" }, new[] { "true", "en" }, "]");
 			//    <cell cols="1">
 			//        <main />
 			//    </cell>
@@ -306,9 +307,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			//    </cell>
 			var cell4 = VerifyNode("fourth node in row 0", row, 5, "cell", 1, 1);
 			VerifyNode("main in 4/1", cell4, 0, "main", 3, 0);
-			AssertMainChild(cell4, 0, "lit", new string[] { "noSpaceAfter", "lang" }, new string[] { "true", "en" }, "[");
-			AssertMainChild(cell4, 1, "clauseMkr", new string[] { "target", "lang" }, new string[] { "1b", "en" }, "1b");
-			AssertMainChild(cell4, 2, "lit", new string[] { "noSpaceBefore", "lang" }, new string[] { "true", "en" }, "]");
+			AssertMainChild(cell4, 0, "lit", new[] { "noSpaceAfter", "lang" }, new[] { "true", "en" }, "[");
+			AssertMainChild(cell4, 1, "clauseMkr", new[] { "target", "lang" }, new[] { "1b", "en" }, "1b");
+			AssertMainChild(cell4, 2, "lit", new[] { "noSpaceBefore", "lang" }, new[] { "true", "en" }, "]");
 			//    <cell cols="1">
 			//        <main />
 			//    </cell>
@@ -326,18 +327,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Assert that the root node "cell" has a child "main" at index zero, which has a child
 		/// at "index" with the given name, list of attributes, and inner text.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="index"></param>
-		/// <param name="name"></param>
-		/// <param name="attrs"></param>
-		/// <param name="vals"></param>
-		/// <param name="inner"></param>
 		private static void AssertMainChild(XmlNode cell, int index, string name, string[] attrs, string[] vals, string inner)
 		{
 			var main = cell.ChildNodes[0];
 			var child = VerifyNode("cell main child", main, index, name, 1, attrs.Length);
 			for (var i = 0; i < attrs.Length; i++)
+			{
 				AssertAttr(child, attrs[i], vals[i]);
+			}
 			Assert.AreEqual(inner, child.InnerText);
 		}
 
@@ -367,23 +364,23 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			AssertCellMainLit(titleRow, 3, 1, "Subject", "en");
 		}
 
-		// Assert that parent has a "cell" child at index index, occupying ccols columns,
-		// which has a child called "main" with one child called "lit" with innerText inner
-		// in language lang
+		/// <summary>
+		/// Assert that parent has a "cell" child at index index, occupying ccols columns,
+		/// which has a child called "main" with one child called "lit" with innerText inner
+		/// in language lang
+		/// </summary>
 		private void AssertCellMainLit(XmlNode parent, int index, int ccols, string inner, string lang)
-		// Assert that parent has a "cell" child at index index, occupying ccols columns,
-		// which has a child called "main" with one child called "lit" with innerText inner
-		// in language lang
 		{
 			AssertCellMainChild(parent, index, ccols, null, 1, "lit", inner, lang);
 		}
 
-		// Assert that parent has a 'cell' child at position index with a 'cols' attribute indicating ccols columns.
-		// Furthermore, the cell has a child 'main', and if cglosses is >0 a second child 'glosses' with the specified number of children.
-		// Also, the 'main' child has cchild children, the first of which has the indicated name, inner text, and lang
-		// attribute.
-		private static XmlNode AssertCellMainChild(XmlNode parent, int index, int ccols, string[] glosses, int cchild, string firstChildName,
-			string inner, string lang)
+		/// <summary>
+		/// Assert that parent has a 'cell' child at position index with a 'cols' attribute indicating ccols columns.
+		/// Furthermore, the cell has a child 'main', and if cglosses is >0 a second child 'glosses' with the specified number of children.
+		/// Also, the 'main' child has cchild children, the first of which has the indicated name, inner text, and lang
+		/// attribute.
+		/// </summary>
+		private static XmlNode AssertCellMainChild(XmlNode parent, int index, int ccols, string[] glosses, int cchild, string firstChildName, string inner, string lang)
 		{
 			var cell = VerifyNode("cell in title", parent, index, "cell", (glosses != null ? 2 : 1), 1);
 			AssertAttr(cell, "cols", ccols.ToString());
@@ -430,8 +427,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			var titleRow = VerifyNode("title1", chartNode, 0, "row", 5, 1);
 			AssertAttr(titleRow, "type", "title1");
-			//XmlNode cell1 = VerifyNode("title1cell1", titleRow, 0, "cell", 1, 1);
-			//Assert.AreEqual("#", cell1.InnerText);
 			AssertCellMainLit(titleRow, 0, 1, "#", "en");
 			AssertCellMainLit(titleRow, 1, 2, "prenuclear", "en");
 			AssertCellMainLit(titleRow, 4, 1, "Notes", "en");

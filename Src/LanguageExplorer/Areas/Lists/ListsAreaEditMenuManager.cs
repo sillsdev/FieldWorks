@@ -16,30 +16,29 @@ namespace LanguageExplorer.Areas.Lists
 	/// <summary>
 	/// Implementation that supports the addition(s) to FLEx's main Edit menu for the List area tools.
 	/// </summary>
-	internal sealed class ListsAreaEditMenuManager : IToolUiWidgetManager
+	internal sealed class ListsAreaEditMenuManager : IPartialToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList MyRecordList { get; set; }
-		private IListArea _listArea;
+		private IListArea _area;
 		private ToolStripMenuItem _editMenu;
 		private ToolStripMenuItem _deleteCustomListToolMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
 
-		internal ListsAreaEditMenuManager(IListArea listArea)
+		internal ListsAreaEditMenuManager()
 		{
-			Guard.AgainstNull(listArea, nameof(listArea));
-
-			_listArea = listArea;
 			_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(toolUiWidgetManager, nameof(toolUiWidgetManager));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
+			_area = (IListArea)toolUiWidgetManager.ActiveTool.Area;
 			MyRecordList = recordList;
 
 			_editMenu = MenuServices.GetEditMenu(majorFlexComponentParameters.MenuStrip);
@@ -50,7 +49,7 @@ namespace LanguageExplorer.Areas.Lists
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 		#endregion
@@ -100,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists
 			_editMenu = null;
 			_newEditMenusAndHandlers = null;
 			_deleteCustomListToolMenu = null;
-			_listArea = null;
+			_area = null;
 
 			_isDisposed = true;
 		}
@@ -129,7 +128,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private void DeleteCustomList_Click(object sender, EventArgs e)
 		{
 			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run(ListsAreaMenuHelper.GetPossibilityList(MyRecordList)));
-			_listArea.RemoveCustomListTool(_listArea.ActiveTool);
+			_area.RemoveCustomListTool(_area.ActiveTool);
 		}
 	}
 }

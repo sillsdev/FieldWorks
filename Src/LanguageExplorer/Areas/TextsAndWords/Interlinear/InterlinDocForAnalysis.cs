@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		internal ISharedEventHandlers SharedEventHandlers { get; set; }
+		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
 		private void PropertyAddWordsToLexicon_Changed(object newValue)
 		{
@@ -1920,7 +1920,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxController(SharedEventHandlers, m_styleSheet, LineChoices, Vc.RightToLeft);
+			return new FocusBoxController(MyMajorFlexComponentParameters, m_styleSheet, LineChoices, Vc.RightToLeft);
 		}
 
 		/// <summary>

@@ -340,7 +340,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>LanguageExplorer.Works.DictionaryConfigurationTreeControl, xWorks, Version=8.3.5.32664, Culture=neutral, PublicKeyToken=null</value>
+    <value>LanguageExplorer.DictionaryConfiguration.DictionaryConfigurationTreeControl, LanguageExplorer, Version=8.3.5.32664, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>

@@ -1,9 +1,10 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
@@ -14,6 +15,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	public sealed class NotifyChangeSpy : IVwNotifyChange, IDisposable
 	{
 		private ISilDataAccess m_sda;
+		private List<NotifyChangeInfo> m_calls = new List<NotifyChangeInfo>();
+
 		public NotifyChangeSpy(ISilDataAccess sda)
 		{
 			m_sda = sda;
@@ -28,19 +31,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		}
 
 		#endregion
-
-		List<NotifyChangeInfo> m_calls = new List<NotifyChangeInfo>();
-
-		//public void AssertHasNotification(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		//{
-		//    Assert.IsTrue(m_calls.Contains(new NotifyChangeInfo(hvo, tag, ivMin, cvIns, cvDel)));
-		//}
-
-		//public void AssertHasExactlyOneNotification(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		//{
-		//    Assert.AreEqual(1, m_calls.Count);
-		//    AssertHasNotification(hvo, tag, ivMin, cvIns, cvDel);
-		//}
 
 		#region IDisposable Members
 
@@ -57,56 +47,45 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			if (disposing)
+			{
 				m_sda.RemoveNotification(this);
+			}
 		}
 		#endregion
 
-		//public void AssertHasNoNotification(int p)
-		//{
-		//    throw new Exception("The method or operation is not implemented.");
-		//}
-
-		//internal void AssertHasNotification(int hvo1, int tag1)
-		//{
-		//    foreach (NotifyChangeInfo info in m_calls)
-		//    {
-		//        if (info.hvo == hvo1 && info.tag == tag1)
-		//            return;
-		//    }
-		//    Assert.Fail("no notification found for " + hvo1 + " and prop " + tag1);
-		//}
-	}
-
-	public struct NotifyChangeInfo
-	{
-		public NotifyChangeInfo(int hvo1, int tag1, int ivMin1, int cvIns1, int cvDel1)
+		private struct NotifyChangeInfo
 		{
-			this.hvo = hvo1;
-			this.tag = tag1;
-			this.ivMin = ivMin1;
-			this.cvIns = cvIns1;
-			this.cvDel = cvDel1;
-		}
-		internal int hvo;
-		internal int tag;
-		int ivMin;
-		int cvIns;
-		int cvDel;
+			internal NotifyChangeInfo(int hvo1, int tag1, int ivMin1, int cvIns1, int cvDel1)
+			{
+				hvo = hvo1;
+				tag = tag1;
+				ivMin = ivMin1;
+				cvIns = cvIns1;
+				cvDel = cvDel1;
+			}
 
-		public override bool Equals(object obj)
-		{
-			if (!(obj is NotifyChangeInfo))
-				return false;
-			NotifyChangeInfo other = (NotifyChangeInfo)obj;
-			return hvo == other.hvo && tag == other.tag && ivMin == other.ivMin
-				&& cvIns == other.cvIns && cvDel == other.cvDel;
-		}
+			private readonly int hvo;
+			private readonly int tag;
+			private readonly int ivMin;
+			private readonly int cvIns;
+			private readonly int cvDel;
 
-		public override int GetHashCode()
-		{
-			return hvo + tag + ivMin + cvIns + cvDel;
+			public override bool Equals(object obj)
+			{
+				if (!(obj is NotifyChangeInfo))
+				{
+					return false;
+				}
+				var other = (NotifyChangeInfo)obj;
+				return hvo == other.hvo && tag == other.tag && ivMin == other.ivMin && cvIns == other.cvIns && cvDel == other.cvDel;
+			}
+
+			public override int GetHashCode()
+			{
+				return hvo + tag + ivMin + cvIns + cvDel;
+			}
 		}
 	}
 }

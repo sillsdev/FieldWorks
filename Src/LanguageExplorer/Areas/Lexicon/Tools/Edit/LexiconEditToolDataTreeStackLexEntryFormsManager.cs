@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for the various MoForms owned by a LexEntry,
 	/// and objects they own, in the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolDataTreeStackLexEntryFormsManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolDataTreeStackLexEntryFormsManager : IPartialToolUiWidgetManager
 	{
 		private const string mnuDataTree_LexemeFormContext = "mnuDataTree-LexemeFormContext";
 		private const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
@@ -43,10 +43,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTree = dataTree;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 

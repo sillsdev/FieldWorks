@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,11 +10,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class AdvancedMTDialogLogicTests : InMemoryDiscourseTestBase
 	{
@@ -85,8 +81,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
 		/// </summary>
-		/// <param name="group"></param>
-		void SetupParameterObject(IConstChartWordGroup group)
+		private void SetupParameterObject(IConstChartWordGroup group)
 		{
 			SetupParamObjBase();
 			Assert.IsNotNull(group, "Invalid CCWordGroup.");
@@ -96,8 +91,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
 		/// </summary>
-		/// <param name="affectedGroupsArray"></param>
-		void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
+		private void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
 		{
 			SetupParamObjBase();
 			Assert.IsNotNull(affectedGroupsArray, "Empty parameter array.");
@@ -112,9 +106,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Sets the member variable for the clicked cell's RowColMenuItem.
 		/// Call SetupParameterObject() to install it.
 		/// </summary>
-		/// <param name="row"></param>
-		/// <param name="icolSrc"></param>
-		void SetClickedCell(IConstChartRow row, int icolSrc)
+		private void SetClickedCell(IConstChartRow row, int icolSrc)
 		{
 			m_origCell = new ChartLocation(row, icolSrc);
 		}
@@ -123,19 +115,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Sets the member variable for the eligible list of rows for the dialog.
 		/// Call SetupParameterObject() to install it.
 		/// </summary>
-		/// <param name="rows"></param>
-		void SetEligibleRows(List<IConstChartRow> rows)
+		private void SetEligibleRows(List<IConstChartRow> rows)
 		{
 			m_eligRows = rows.ToArray();
 		}
 
 		#endregion
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method GetColumnChoices().
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void GetColumnChoices_SameRowCol0()
 		{
@@ -143,13 +132,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var rowClicked = m_helper.MakeRow(null);
 			const int icolClicked = 0;
 			var eligibleRows = new List<IConstChartRow> {rowClicked};
-
-			//var cellPart = m_helper.MakeMissingMarker(rowClicked, icolClicked);
-
 			SetClickedCell(rowClicked, icolClicked);
 			SetEligibleRows(eligibleRows);
 			SetupParamObjBase();
-			//SetupParameterObject(cellPart);
 
 			// SUT
 			var result1 = m_dlgLogicPrepose.GetColumnChoices(rowClicked);
@@ -159,7 +144,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cnewArray = m_eligCols.Length - 1;
 			var expected = new ICmPossibility[cnewArray];
 			for (var i = 0; i < cnewArray; i++)
+			{
 				expected[i] = m_eligCols[i + 1];
+			}
 			Assert.AreEqual(expected, result1, "Prepose within same row should give all following columns.");
 			Assert.AreEqual(new ICmPossibility[0], result2, "Postpose within same row should give empty list of columns.");
 		}
@@ -169,7 +156,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			// Setup test here; modify as needed
 			var rowClicked = m_helper.MakeRow(null);
-			int icolClicked = m_eligCols.Length - 1; // Index of the last column
+			var icolClicked = m_eligCols.Length - 1; // Index of the last column
 			var eligibleRows = new List<IConstChartRow> {rowClicked};
 
 			SetClickedCell(rowClicked, icolClicked);
@@ -184,7 +171,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cnewArray = m_eligCols.Length - 1;
 			var expected = new ICmPossibility[cnewArray];
 			for (var i = 0; i < cnewArray; i++)
+			{
 				expected[i] = m_eligCols[i];
+			}
 			Assert.AreEqual(expected, result2, "Postpose within same row should give all preceding columns.");
 			Assert.AreEqual(new ICmPossibility[0], result1, "Prepose within same row should give empty list of columns.");
 		}
@@ -204,20 +193,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// SUT
 			var result1 = m_dlgLogicPrepose.GetColumnChoices(row1);
-			// Can't mark something as postposed from later in the chart!
-			//result2 = m_dlgLogicPostpose.GetColumnChoices(row1);
 
 			// Verify changes
 			Assert.AreEqual(m_eligCols, result1, "All columns should be eligible if we choose a different row.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method SetAffectedWordGroups(). This method takes an array of wordform hvos that
 		/// the user selected and updates the parameter object AffectedWordGroups property
 		/// (itself also an array of hvos).
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void SetAffectedWordGroups_1stOnly()
 		{
@@ -243,8 +228,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0 };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the first WordGroup.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should only affect the first WordGroup.");
 		}
 
 		[Test]
@@ -273,8 +257,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the first 2 WordGroups.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should only affect the first 2 WordGroups.");
 		}
 
 		[Test]
@@ -303,8 +286,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b, cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the 2nd and 3rd WordGroups.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should only affect the 2nd and 3rd WordGroups.");
 		}
 
 		[Test]
@@ -333,8 +315,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the last WordGroup.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should only affect the last WordGroup.");
 		}
 
 		[Test]
@@ -363,8 +344,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the second WordGroup.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should only affect the second WordGroup.");
 		}
 
 		[Test]
@@ -394,8 +374,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b, cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should affect all of the WordGroups.");
+			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups, "Should affect all of the WordGroups.");
 		}
 	}
 }

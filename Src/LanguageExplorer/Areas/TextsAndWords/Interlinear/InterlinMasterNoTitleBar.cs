@@ -21,8 +21,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
-			: base(configurationParametersElement, sharedEventHandlers, cache, recordList, fileMenu, printMenu, false)
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+			: base(configurationParametersElement, majorFlexComponentParameters, recordList, false)
 		{
 			InitializeComponent();
 			Dock = DockStyle.Fill;

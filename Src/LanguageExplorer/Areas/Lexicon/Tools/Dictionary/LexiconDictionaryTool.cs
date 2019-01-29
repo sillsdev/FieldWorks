@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
-		private LexiconDictionaryToolMenuHelper _dictionaryToolMenuHelper;
+		private IToolUiWidgetManager _dictionaryToolMenuHelper;
 		private string _configureObjectName;
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
@@ -59,6 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
+			_dictionaryToolMenuHelper.UnwireSharedEventHandlers();
 			_dictionaryToolMenuHelper.Dispose();
 			_dataTreeStackContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 
@@ -88,7 +89,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, _xhtmlDocView, _recordList);
+			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(_xhtmlDocView);
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -120,7 +121,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
-			_dictionaryToolMenuHelper.Initialize();
+			_dictionaryToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
 		}

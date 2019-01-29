@@ -57,6 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private int[] m_columnWidths;
 		// width of each table cell in millipoints
 		private float m_dxpInch;
+		private bool m_fInColWidthChanged;
 		// DPI when m_columnWidths was computed.
 		// left of each column in pixels. First is zero. Count is one MORE than number
 		// of columns, so last position is width of window (right of last column).
@@ -65,39 +66,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private InterAreaBookmark m_bookmark;
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripMenuItem _fileMenu;
 		protected ToolStripMenuItem _exportMenu;
+		private ToolStripMenuItem _dataMenu;
 
 		#endregion
 
 		/// <summary />
-		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
+		internal ConstituentChart(LcmCache cache, ISharedEventHandlers sharedEventHandlers, ConstituentChartLogic logic = null)
 		{
-		}
-
-		/// <summary />
-		/// <remarks>This variant is used in testing (to plug in a known logic class).</remarks>
-		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
-		{
+			if (logic == null)
+			{
+				// Tests will supply one, but normal use is to use this version.
+				logic = new ConstituentChartLogic(cache);
+			}
+			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers.Add("CmdRepeatLastMoveLeft", RepeatLastMoveLeft_Clicked);
+			_sharedEventHandlers.AddStatusChecker("CmdRepeatLastMoveLeft", () => CanRepeatLastMoveLeft());
+			_sharedEventHandlers.Add("CmdRepeatLastMoveRight", RepeatLastMoveRight_Clicked);
+			_sharedEventHandlers.AddStatusChecker("CmdRepeatLastMoveRight", () => CanRepeatLastMoveRight());
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
 			ForEditing = true;
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
-
 			BuildUIComponents();
-		}
-
-		internal ToolStripMenuItem FileMenu
-		{
-			get { return _fileMenu; }
-			set
-			{
-				_fileMenu = value;
-				// Add ExportInterlinear menu to File menu
-				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, insertIndex: _fileMenu.DropDownItems.Count - 3);
-			}
 		}
 
 		internal bool ShowExportMenu
@@ -238,6 +233,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			ResumeLayout();
 		}
 
+		internal void SetupMenus(MenuStrip menuStrip)
+		{
+			// Add ExportInterlinear menu to File menu
+			_fileMenu = MenuServices.GetFileMenu(menuStrip);
+			_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, insertIndex: _fileMenu.DropDownItems.Count - 3);
+			// Set up Data menu items.
+			_dataMenu = MenuServices.GetDataMenu(menuStrip);
+		}
+
 		private void SplitLayout(object sender, LayoutEventArgs e)
 		{
 			var container = sender as SplitContainer;
@@ -351,54 +355,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal int[] ColumnPositions { get; private set; }
 
-		bool m_fInColWidthChanged = false;
-
-#if RANDYTODO
-		/// <summary>
-		/// Enable the command and make visible when relevant
-		/// </summary>
-		public virtual bool OnDisplayRepeatLastMoveLeft(object commandObject, ref UIItemDisplayProperties display)
+		internal Tuple<bool, bool> CanRepeatLastMoveLeft()
 		{
-			if (m_logic.CanRepeatLastMove)
-			{
-				display.Visible = true;
-				display.Enabled = true;
-			}
+			return new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
+		}
 
-			else
-			{
-				display.Visible = true;
-				display.Enabled = false;
-			}
-			return true;
-			//we handled this, no need to ask anyone else.
+		internal Tuple<bool, bool> CanRepeatLastMoveRight()
+		{
+			return new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
 		}
 
 		/// <summary>
-		/// Enable the command and make visible when relevant
+		/// Repeat move left handler.
 		/// </summary>
-		public virtual bool OnDisplayRepeatLastMoveRight(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_logic.CanRepeatLastMove)
-			{
-				display.Visible = true;
-				display.Enabled = true;
-			}
-
-			else
-			{
-				display.Visible = true;
-				display.Enabled = false;
-			}
-			return true;
-			//we handled this, no need to ask anyone else.
-		}
-#endif
-
-		/// <summary>
-		/// Implements repeat move left.
-		/// </summary>
-		public virtual bool OnRepeatLastMoveLeft(object args)
+		private void RepeatLastMoveLeft_Clicked(object sender, EventArgs e)
 		{
 			if (ChartIsRtL)
 			{
@@ -408,13 +378,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_logic.RepeatLastMoveBack();
 			}
-			return true;
 		}
 
 		/// <summary>
-		/// Implements repeat move right.
+		/// Repeat move right handler.
 		/// </summary>
-		public virtual bool OnRepeatLastMoveRight(object args)
+		private void RepeatLastMoveRight_Clicked(object sender, EventArgs e)
 		{
 			if (ChartIsRtL)
 			{
@@ -424,7 +393,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_logic.RepeatLastMoveForward();
 			}
-			return true;
 		}
 
 		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)

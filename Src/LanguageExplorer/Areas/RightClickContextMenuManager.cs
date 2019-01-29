@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// Implementation that supports the addition(s) to FLEx's right-click context menus for use by any tool.
 	/// </summary>
-	internal sealed class RightClickContextMenuManager : IToolUiWidgetManager
+	internal sealed class RightClickContextMenuManager : IPartialToolUiWidgetManager
 	{
 		private ITool _currentTool;
 		private DataTree MyDataTree { get; set; }
@@ -42,10 +42,10 @@ namespace LanguageExplorer.Areas
 			MyDataTree = dataTree;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 

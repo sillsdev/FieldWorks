@@ -22,8 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ComplexConcordanceTool : ITool
 	{
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
-		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
+		private IToolUiWidgetManager _partiallySharedMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
@@ -48,13 +47,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_partiallySharedMenuHelper.UnwireSharedEventHandlers();
 			_partiallySharedMenuHelper.Dispose();
-			_textAndWordsAreaMenuHelper.Dispose();
 
 			_complexConcControl = null;
 			_recordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
-			_textAndWordsAreaMenuHelper = null;
 			_partiallySharedMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
@@ -71,8 +69,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -92,9 +88,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var root = XDocument.Parse(TextAndWordsResources.ComplexConcordanceToolParameters).Root;
 			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
-			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordList);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(_interlinMasterNoTitleBar);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -120,6 +116,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
 			_interlinMasterNoTitleBar.FinishInitialization();
+			_partiallySharedMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>

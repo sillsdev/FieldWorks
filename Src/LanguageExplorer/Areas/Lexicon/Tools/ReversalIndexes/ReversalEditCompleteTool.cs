@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
-		private ReversalEditCompleteToolMenuHelper _reversalEditCompleteToolMenuHelper;
+		private IToolUiWidgetManager _reversalEditCompleteToolMenuHelper;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
@@ -55,6 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
+			_reversalEditCompleteToolMenuHelper.UnwireSharedEventHandlers();
 			_reversalEditCompleteToolMenuHelper.Dispose();
 
 			_cache = null;
@@ -87,7 +88,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, _xhtmlDocView, _recordList);
+			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(_xhtmlDocView);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -126,7 +127,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_reversalEditCompleteToolMenuHelper.Initialize();
+			_reversalEditCompleteToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <parameters altTitleId="LexSense-Classified" persistContext="ClassDict" backColor="White" layout="classifiedDict" layoutProperty="ClassifiedDictionaryPublicationLayout" editable="false" allowInsertDeleteRecord="false" msgBoxTrigger="ClassifiedDictionary-Intro" configureObjectName="Classified Dictionary">
 	<elementDisplayCondition field="ReferringSenses" lengthatleast="1"/>
 	<configureLayouts>
@@ -6,5 +6,5 @@
 			<configure class="CmSemanticDomain" label="Domain" layout="classifiedDict"/>
 		</layoutType>
 	</configureLayouts>
-	<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryPublicationDecorator"/>
+	<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.DictionaryPublicationDecorator"/>
 </parameters>

@@ -239,13 +239,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			private List<int> m_openObjects = new List<int>();
 
 			/// <summary />
-			public void AddObjProp(int tag, IVwViewConstructor _vwvc, int frag)
+			public void AddObjProp(int tag, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddObjVec(int tag, IVwViewConstructor _vwvc, int frag)
+			public void AddObjVec(int tag, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
@@ -276,48 +276,48 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void AddReversedObjVecItems(int tag, IVwViewConstructor _vwvc, int frag)
+			public void AddReversedObjVecItems(int tag, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddObj(int hvo, IVwViewConstructor _vwvc, int frag)
+			public void AddObj(int hvo, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddLazyVecItems(int tag, IVwViewConstructor _vwvc, int frag)
+			public void AddLazyVecItems(int tag, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddLazyItems(int[] _rghvo, int chvo, IVwViewConstructor _vwvc, int frag)
+			public void AddLazyItems(int[] rghvo, int chvo, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddProp(int tag, IVwViewConstructor _vwvc, int frag)
+			public void AddProp(int tag, IVwViewConstructor vc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddDerivedProp(int[] _rgtag, int ctag, IVwViewConstructor _vwvc, int frag)
+			public void AddDerivedProp(int[] rgtag, int ctag, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void NoteDependency(int[] _rghvo, int[] _rgtag, int chvo)
+			public void NoteDependency(int[] rghvo, int[] rgtag, int chvo)
 			{
 			}
 
 			/// <summary />
-			public void NoteStringValDependency(int hvo, int tag, int ws, ITsString _tssVal)
+			public void NoteStringValDependency(int hvo, int tag, int ws, ITsString tssVal)
 			{
 				throw new NotSupportedException();
 			}
@@ -329,7 +329,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void AddUnicodeProp(int tag, int ws, IVwViewConstructor _vwvc)
+			public void AddUnicodeProp(int tag, int ws, IVwViewConstructor vwvc)
 			{
 				throw new NotSupportedException();
 			}
@@ -341,7 +341,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void AddIntPropPic(int tag, IVwViewConstructor _vc, int frag, int nMin, int nMax)
+			public void AddIntPropPic(int tag, IVwViewConstructor vc, int frag, int nMin, int nMax)
 			{
 				throw new NotSupportedException();
 			}
@@ -359,7 +359,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void AddStringAltSeq(int tag, int[] _rgenc, int cws)
+			public void AddStringAltSeq(int tag, int[] rgenc, int cws)
 			{
 				throw new NotSupportedException();
 			}
@@ -368,9 +368,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// Add literal text that is not a property and not editable.
 			/// </summary>
 			/// <param name="_ss"/>
-			public void AddString(ITsString _ss)
+			public void AddString(ITsString ss)
 			{
-				EventHistory.Add(new StringAdded { Content = _ss });
+				EventHistory.Add(new StringAdded { Content = ss });
 			}
 
 			/// <summary />
@@ -390,13 +390,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void GetOuterObject(int ichvoLevel, out int _hvo, out int _tag, out int _ihvo)
+			public void GetOuterObject(int ichvoLevel, out int hvo, out int tag, out int ihvo)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddWindow(IVwEmbeddedWindow _ew, int dmpAscent, bool fJustifyRight, bool fAutoShow)
+			public void AddWindow(IVwEmbeddedWindow ew, int dmpAscent, bool fJustifyRight, bool fAutoShow)
 			{
 				throw new NotSupportedException();
 			}
@@ -465,7 +465,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void OpenOverridePara(int cOverrideProperties, DispPropOverride[] _rgOverrideProperties)
+			public void OpenOverridePara(int cOverrideProperties, DispPropOverride[] rgOverrideProperties)
 			{
 				throw new NotSupportedException();
 			}
@@ -609,19 +609,19 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void get_StringWidth(ITsString _tss, ITsTextProps _ttp, out int dmpx, out int dmpy)
+			public void get_StringWidth(ITsString tss, ITsTextProps ttp, out int dmpx, out int dmpy)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddPictureWithCaption(IPicture _pict, int tag, ITsTextProps _ttpCaption, int hvoCmFile, int ws, int dxmpWidth, int dympHeight, IVwViewConstructor _vwvc)
+			public void AddPictureWithCaption(IPicture pict, int tag, ITsTextProps ttpCaption, int hvoCmFile, int ws, int dxmpWidth, int dympHeight, IVwViewConstructor vwvc)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void AddPicture(IPicture _pict, int tag, int dxmpWidth, int dympHeight)
+			public void AddPicture(IPicture pict, int tag, int dxmpWidth, int dympHeight)
 			{
 				throw new NotSupportedException();
 			}

@@ -7,42 +7,61 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
 	/// <summary>
 	/// This menu helper is shared between these tools: ConcordanceTool, ComplexConcordanceTool, and WordListConcordanceTool.
 	/// </summary>
-	internal sealed class PartiallySharedMenuHelper : IFlexComponent, IDisposable
+	internal sealed class PartiallySharedMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private ToolStripMenuItem _editFindAndReplaceMenu;
 		private ToolStripMenuItem _replaceToolStripMenuItem;
 		private ToolStripItem _insertFindAndReplaceButton;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 
-		internal PartiallySharedMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, InterlinMasterNoTitleBar interlinMasterNoTitleBar, IRecordList recordList)
+		internal PartiallySharedMenuHelper(InterlinMasterNoTitleBar interlinMasterNoTitleBar)
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(interlinMasterNoTitleBar, nameof(interlinMasterNoTitleBar));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_interlinMasterNoTitleBar = interlinMasterNoTitleBar;
+		}
 
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			var textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
+			_textAndWordsAreaMenuHelper = textAndWordsAreaMenuHelper;
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
 			_insertFindAndReplaceButton = ToolbarServices.GetInsertFindAndReplaceToolStripItem(_majorFlexComponentParameters.ToolStripContainer);
 			_insertFindAndReplaceButton.Click += EditFindMenu_Click;
-
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Click += EditFindMenu_Click;
-
 			_replaceToolStripMenuItem = MenuServices.GetEditFindAndReplaceMenu(_majorFlexComponentParameters.MenuStrip);
 			_replaceToolStripMenuItem.Click += EditFindMenu_Click;
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			Application.Idle += Application_Idle;
+			textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 		}
+
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
+		}
+		#endregion
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
@@ -78,43 +97,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			_interlinMasterNoTitleBar.HandleFindAndReplace(sender == _insertFindAndReplaceButton || sender == _replaceToolStripMenuItem);
 		}
-
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-		#endregion
 
 		#region Implementation of IDisposable
 		private bool _isDisposed;

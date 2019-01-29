@@ -13,78 +13,47 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 {
-	internal sealed class NotebookDocumentToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class NotebookDocumentToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripMenuItem _editFindMenu;
 		private ToolStripMenuItem _toolsConfigureMenu;
 		private ToolStripMenuItem _toolsConfigureDocumentMenu;
-		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		private IAreaUiWidgetManager _notebookAreaMenuHelper;
 		private XmlDocView _docView;
 		private ToolStripButton _insertRecordToolStripButton;
 		private ToolStripButton _insertFindRecordToolStripButton;
 		private ToolStripItem _insertFindAndReplaceButton;
 
-		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, XmlDocView docView)
+		internal NotebookDocumentToolMenuHelper(ITool currentNotebookTool, XmlDocView docView)
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 			Guard.AgainstNull(docView, nameof(docView));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			_docView = docView;
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(currentNotebookTool);
+		}
+
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList);
 			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 
 			AddTool_ConfigureItem();
-		}
-
-		private void EditFindMenu_Click(object sender, EventArgs e)
-		{
-			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
-		}
-
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			_notebookAreaMenuHelper.InitializeFlexComponent(flexComponentParameters);
-			_notebookAreaMenuHelper.AddInsertMenuItems(false);
+			((NotebookAreaMenuHelper)_notebookAreaMenuHelper).AddInsertMenuItems(false);
 
 			// The find/Replace button is always on the toolbar, but not always visible/enabled.
 			_insertFindAndReplaceButton = ToolbarServices.GetInsertFindAndReplaceToolStripItem(_majorFlexComponentParameters.ToolStripContainer);
@@ -92,6 +61,17 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			_insertFindAndReplaceButton.Enabled = _insertFindAndReplaceButton.Visible = true;
 
 			AddInsertToolbarItems();
+		}
+
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
+			_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+			_notebookAreaMenuHelper.UnwireSharedEventHandlers();
 		}
 		#endregion
 
@@ -127,8 +107,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 			if (disposing)
 			{
-				_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
-				_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
 				_editFindMenu.Click -= EditFindMenu_Click;
 				_insertFindAndReplaceButton.Click -= EditFindMenu_Click;
 				_insertFindAndReplaceButton.Enabled = _insertFindAndReplaceButton.Visible = false;
@@ -154,11 +132,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		}
 		#endregion
 
+		private void EditFindMenu_Click(object sender, EventArgs e)
+		{
+			_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+		}
+
 		private void AddInsertToolbarItems()
 		{
 			var newToolbarItems = new List<ToolStripItem>(2);
 
-			_notebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
+			((NotebookAreaMenuHelper)_notebookAreaMenuHelper).AddCommonInsertToolbarItems(newToolbarItems);
 			/*
 			  <item command="CmdInsertRecord" defaultVisible="false" />
 				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
@@ -173,7 +156,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			*/
 			_insertFindRecordToolStripButton = (ToolStripButton)newToolbarItems[1]; ;
 
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
+			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
 		}
 
 		private void AddTool_ConfigureItem()

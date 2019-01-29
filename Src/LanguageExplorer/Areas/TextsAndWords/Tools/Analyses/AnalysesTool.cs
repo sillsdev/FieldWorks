@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	internal sealed class AnalysesTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -48,6 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_areaWideMenuHelper.Dispose();
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
 			_textAndWordsAreaMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -70,8 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			_areaWideMenuHelper.SetupFileExportMenu();
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -112,6 +112,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
 			}
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
+			((TextAndWordsAreaMenuHelper)_textAndWordsAreaMenuHelper).AddMenusForAllButConcordanceTool();
 		}
 
 		/// <summary>

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	internal sealed class ConcordanceTool : ITool
 	{
 		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
-		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
+		private IToolUiWidgetManager _partiallySharedMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
@@ -47,6 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_partiallySharedMenuHelper.UnwireSharedEventHandlers();
 			_partiallySharedMenuHelper.Dispose();
 
 			_concordanceControl = null;
@@ -83,9 +84,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var root = XDocument.Parse(TextAndWordsResources.ConcordanceToolParameters).Root;
 			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
-			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordList);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(_interlinMasterNoTitleBar);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -111,6 +112,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
+			_partiallySharedMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_interlinMasterNoTitleBar.FinishInitialization();
 		}
 

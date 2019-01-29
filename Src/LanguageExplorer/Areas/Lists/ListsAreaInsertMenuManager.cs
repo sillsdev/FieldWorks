@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lists
 	/// <summary>
 	/// Implementation that supports the addition(s) to FLEx's main Insert menu for the Lists Area.
 	/// </summary>
-	internal sealed class ListsAreaInsertMenuManager : IToolUiWidgetManager
+	internal sealed class ListsAreaInsertMenuManager : IPartialToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -28,29 +28,29 @@ namespace LanguageExplorer.Areas.Lists
 		private ToolStripSeparator _toolStripSeparator;
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
-		private IListArea _listArea;
+		private IListArea _area;
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 
-		internal ListsAreaInsertMenuManager(DataTree dataTree, IListArea listArea)
+		internal ListsAreaInsertMenuManager(DataTree dataTree)
 		{
 			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(listArea, nameof(listArea));
 
 			MyDataTree = dataTree;
-			_listArea = listArea;
 			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(toolUiWidgetManager, nameof(toolUiWidgetManager));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = (IListArea)toolUiWidgetManager.ActiveTool.Area;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
@@ -65,8 +65,14 @@ namespace LanguageExplorer.Areas.Lists
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
+			foreach (var tuple in _newInsertMenusAndHandlers)
+			{
+				// They are a mix of shared and not shared, but unwire them all here,
+				// since we don't remember which is which.
+				tuple.Item1.Click -= tuple.Item2;
+			}
 		}
 
 		#endregion
@@ -125,7 +131,7 @@ namespace LanguageExplorer.Areas.Lists
 			_newInsertMenusAndHandlers = null;
 			_insertMenu = null;
 			_toolStripSeparator = null;
-			_listArea = null;
+			_area = null;
 			MyDataTree = null;
 			MyRecordList = null;
 
@@ -141,7 +147,7 @@ namespace LanguageExplorer.Areas.Lists
 			/*
 			These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 			*/
-			var activeListTool = _listArea.ActiveTool;
+			var activeListTool = _area.ActiveTool;
 			var currentPossibilityList = MyRecordList.OwningObject as ICmPossibilityList; // Will be null for AreaServices.FeatureTypesAdvancedEditMachineName tool.
 			if (currentPossibilityList != null && currentPossibilityList.IsClosed)
 			{
@@ -502,7 +508,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
 				{
-					_listArea.AddCustomList(dlg.NewList);
+					_area.AddCustomList(dlg.NewList);
 				}
 			}
 		}

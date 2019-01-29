@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -65,7 +65,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			{
 				var item = item1 as ToolStripMenuItem;
 				if (item == null || item.Text != text)
+				{
 					continue;
+				}
 				Assert.AreEqual(cSubMenuItems, item.DropDownItems.Count, "item " + text + " has wrong number of items");
 				return item;
 			}
@@ -76,9 +78,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Assert that the strip has no menu item with the specified text.
 		/// </summary>
-		/// <param name="items"></param>
-		/// <param name="text"></param>
-		/// <returns></returns>
 		private static void AssertHasNoMenuWithText(ToolStripItemCollection items, string text)
 		{
 			if (items.Cast<ToolStripItem>().Any(item => item is ToolStripMenuItem && (item as ToolStripMenuItem).Text == text))
@@ -95,10 +94,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			Assert.AreEqual(LanguageExplorerResources.ksPreviousClauseMenuItem, itemMDC.DropDownItems[0].Text, "first subitem should be previous clause");
 			Assert.AreEqual(LanguageExplorerResources.ksNextClauseMenuItem, itemMDC.DropDownItems[1].Text, "2nd subitem should be next clause");
 			Assert.AreEqual(LanguageExplorerResources.ksNextTwoClausesMenuItem, itemMDC.DropDownItems[2].Text, "3nd subitem should be next 2 clauses");
-			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "3"),
-				itemMDC.DropDownItems[3].Text, "4th subitem should be next 3 clauses");
-			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "4"),
-				itemMDC.DropDownItems[4].Text, "5th subitem should be next 4 clauses");
+			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "3"), itemMDC.DropDownItems[3].Text, "4th subitem should be next 3 clauses");
+			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "4"), itemMDC.DropDownItems[4].Text, "5th subitem should be next 4 clauses");
 			Assert.AreEqual(LanguageExplorerResources.ksOtherMenuItem, itemMDC.DropDownItems[5].Text, "5th subitem should be next 4 clauses");
 		}
 
@@ -119,7 +116,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		public void CreateDefTemplate()
 		{
 			Assert.IsNotNull(Cache.LangProject.GetDefaultChartTemplate()); // minimally exercises the method
-			// Howerver, the guts of the method is a call to CreateTemplate, so we should get
+			// However, the guts of the method is a call to CreateTemplate, so we should get
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
 			Assert.IsNotNull(m_template);
@@ -177,7 +174,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				Assert.AreEqual(2, strip.Items.Count);
 
 				// Check the moved text item and subitems
-				ToolStripMenuItem itemMT = strip.Items[1] as ToolStripMenuItem;
+				var itemMT = (ToolStripMenuItem)strip.Items[1];
 				Assert.AreEqual(LanguageExplorerResources.ksMovedFromMenuItem, itemMT.Text);
 				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
 				// can't move from itself
@@ -299,7 +296,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
+				{
 					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
+				}
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move missing marker
 			}
@@ -317,7 +316,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
+				{
 					Assert.IsFalse(itemMissing.Checked, "Missing item in cell with other marker should not be checked.");
+				}
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move possibility markers
 			}
@@ -338,10 +339,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// SUT
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
-
 				// Verify
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
+				{
 					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
+				}
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move possibility markers
 			}
@@ -353,7 +355,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			const int icol = 2; // Subject (special) column
 			var row0 = m_helper.MakeRow1a();
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, icol)))
+			{
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem); // can't toggle in subject column
+			}
 		}
 
 		[Test]
@@ -383,7 +387,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, icol)))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
+				{
 					Assert.IsFalse(itemMissing.Checked, "missing item in empty cell should not be checked");
+				}
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move empty cell
 			}
@@ -445,7 +451,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, ccols - 1, allParaOccurrences[2], allParaOccurrences[2]);
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 2)))
+			{
 				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveWordMenuItem);
+			}
 
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
@@ -478,7 +486,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
+			{
 				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItemAbove, 0);
+			}
 		}
 
 		[Test]
@@ -489,7 +499,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
+			{
 				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItemBelow, 0);
+			}
 		}
 
 		/// <summary>

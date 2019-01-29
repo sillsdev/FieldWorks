@@ -203,7 +203,6 @@ namespace LanguageExplorer.Areas
 				{
 					_sharedEventHandlers.Remove(key);
 				}
-
 				if (_fileExportMenu != null)
 				{
 					if (_usingLocalFileExportEventHandler)
@@ -254,6 +253,23 @@ namespace LanguageExplorer.Areas
 		/// <param name="handler">The handler to use, or null to use the more global one.</param>
 		internal void SetupFileExportMenu(EventHandler handler = null)
 		{
+			if (_foreignFileExportHandler != null)
+			{
+				if (_foreignFileExportHandler == handler)
+				{
+					// Nothing to do, since it is already set to the same one.
+					return;
+				}
+				// Changing to another one.
+				if (_usingLocalFileExportEventHandler)
+				{
+					_fileExportMenu.Click -= CommonFileExportMenu_Click;
+				}
+				else
+				{
+					_fileExportMenu.Click -= _foreignFileExportHandler;
+				}
+			}
 			_foreignFileExportHandler = handler;
 			// File->Export menu is visible and enabled in this tool.
 			// Add File->Export event handler.

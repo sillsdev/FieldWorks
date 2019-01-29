@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
-		private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
+		private IToolUiWidgetManager _commonReversalIndexMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -59,6 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_commonReversalIndexMenuHelper.UnwireSharedEventHandlers();
 			_commonReversalIndexMenuHelper.Dispose();
 			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 
@@ -91,7 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
-			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(majorFlexComponentParameters, _recordList);
+			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -111,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView, browseViewPaneBar);
-			_commonReversalIndexMenuHelper.Initialize();
+			_commonReversalIndexMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>

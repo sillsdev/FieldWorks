@@ -11,81 +11,56 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 {
-	internal sealed class LexiconClassifiedDictionaryToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class LexiconClassifiedDictionaryToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
 		private XmlDocView _xmlDocView;
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private ToolStripMenuItem _replaceToolStripMenuItem;
 
-		internal LexiconClassifiedDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, XmlDocView xmlDocView, IRecordList recordList)
+		internal LexiconClassifiedDictionaryToolMenuHelper(XmlDocView xmlDocView)
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(xmlDocView, nameof(xmlDocView));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_xmlDocView = xmlDocView;
+		}
+
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-
 			_replaceToolStripMenuItem = MenuServices.GetEditFindAndReplaceMenu(_majorFlexComponentParameters.MenuStrip);
 			_replaceToolStripMenuItem.Click += EditFindMenu_Click;
 			_replaceToolStripMenuItem.Visible = true;
 			_replaceToolStripMenuItem.Enabled = _xmlDocView.CanUseReplaceText();
-
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, recordList);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
 		}
 
-		internal void Initialize()
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
 		}
+		#endregion
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
 		{
-			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(sender == _editFindMenu, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+			_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(sender == _editFindMenu, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 		}
-
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-		#endregion
 
 		#region Implementation of IDisposable
 		private bool _isDisposed;

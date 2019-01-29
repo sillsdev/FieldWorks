@@ -1724,7 +1724,7 @@ very simple minor adjustments. ;)"
 		protected override void OnLoad(EventArgs e)
 		{
 			// Tools make it visible as needed.
-			InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+			ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 			base.OnLoad(e);
 			var currentArea = _areaRepository.PersistedOrDefaultArea;
 			var currentTool = currentArea.PersistedOrDefaultTool;

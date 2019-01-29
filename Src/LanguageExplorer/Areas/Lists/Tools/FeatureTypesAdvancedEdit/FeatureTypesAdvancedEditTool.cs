@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
-		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
@@ -47,6 +47,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_listsAreaMenuHelper.UnwireSharedEventHandlers();
 			_listsAreaMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -74,7 +75,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(dataTree);
 			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -98,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize();
+			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
@@ -15,13 +14,14 @@ namespace LanguageExplorer.Areas.Lists
 	/// <summary>
 	/// This class handles all interaction for the Lists Area common menus.
 	/// </summary>
-	internal sealed class ListsAreaMenuHelper : IFlexComponent, IDisposable
+	internal sealed class ListsAreaMenuHelper : IAreaUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private Dictionary<string, IToolUiWidgetManager> _listAreaUiWidgetManagers;
+		private Dictionary<string, IPartialToolUiWidgetManager> _listAreaUiWidgetManagers;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private IListArea _listArea;
+		private IListArea _area;
 		private IRecordList MyRecordList { get; set; }
+		private IToolUiWidgetManager _activeToolUiManager;
 		private DataTree MyDataTree { get; }
 		private const string editMenu = "editMenu";
 		private const string insertMenu = "insertMenu";
@@ -33,85 +33,64 @@ namespace LanguageExplorer.Areas.Lists
 		internal const string InsertFeatureType = "InsertFeatureType";
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IListArea listArea, IRecordList recordList)
+		internal ListsAreaMenuHelper(DataTree dataTree)
+		{
+			Guard.AgainstNull(dataTree, nameof(dataTree));
+
+			MyDataTree = dataTree;
+		}
+
+		#region Implementation of IAreaUiWidgetManager
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(listArea, nameof(listArea));
+			Guard.AgainstNull(area, nameof(area));
+			Require.That(area.MachineName == AreaServices.ListsAreaMachineName);
+			Require.That(area is IListArea);
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_listArea = listArea;
+			_area = (IListArea)area;
+			_activeToolUiManager = toolUiWidgetManager; // May be null;
 			MyRecordList = recordList;
-			MyDataTree = dataTree;
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
-		}
-
-		internal void Initialize()
-		{
 			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
 			MyAreaWideMenuHelper.SetupFileExportMenu();
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
-			_listAreaUiWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
+			_listAreaUiWidgetManagers = new Dictionary<string, IPartialToolUiWidgetManager>
 			{
-				{ editMenu, new ListsAreaEditMenuManager(_listArea) },
-				{ insertMenu, new ListsAreaInsertMenuManager(MyDataTree, _listArea) },
-				{ toolsMenu, new ListsAreaToolsMenuManager(_listArea) },
+				{ editMenu, new ListsAreaEditMenuManager() },
+				{ insertMenu, new ListsAreaInsertMenuManager(MyDataTree) },
+				{ toolsMenu, new ListsAreaToolsMenuManager() },
 				// The ListsAreaInsertMenuManager instance adds shared event handlers that ListsAreaToolbarManager needs to use.
-				{ insertToolbar, new ListsAreaToolbarManager(MyDataTree, _listArea) },
-				{ dataTreeStack, new ListsAreaDataTreeStackManager(MyDataTree, _listArea) }
+				{ insertToolbar, new ListsAreaToolbarManager(MyDataTree) },
+				{ dataTreeStack, new ListsAreaDataTreeStackManager(MyDataTree) }
 			};
 
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _listAreaUiWidgetManagers.Values)
 			{
-				manager.Initialize(_majorFlexComponentParameters, MyRecordList);
+				manager.Initialize(_majorFlexComponentParameters, _activeToolUiManager, MyRecordList);
 			}
 		}
 
-		#region Implementation of IPropertyTableProvider
+		/// <inheritdoc />
+		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
 
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
+		/// <inheritdoc />
+		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			// If ActiveToolUiManager is null, then the tool should call this method.
+			// Otherwise, ActiveToolUiManager will call it.
+			foreach (var manager in _listAreaUiWidgetManagers.Values)
+			{
+				manager.UnwireSharedEventHandlers();
+			}
 		}
-
 		#endregion
 
 		#region IDisposable
@@ -148,10 +127,6 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				foreach (var manager in _listAreaUiWidgetManagers.Values)
 				{
-					manager.UnwireSharedEventHandlers();
-				}
-				foreach (var manager in _listAreaUiWidgetManagers.Values)
-				{
 					manager.Dispose();
 				}
 				_listAreaUiWidgetManagers.Clear();
@@ -159,7 +134,7 @@ namespace LanguageExplorer.Areas.Lists
 			}
 			_majorFlexComponentParameters = null;
 			MyAreaWideMenuHelper = null;
-			_listArea = null;
+			_area = null;
 			MyRecordList = null;
 			_sharedEventHandlers = null;
 			_listAreaUiWidgetManagers = null;

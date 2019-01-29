@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Implementation that supports the addition(s) to the DataTree's top panel's context menus for the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolDataTreeMainPanelContextMenuStripManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolDataTreeMainPanelContextMenuStripManager : IPartialToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -35,10 +35,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTreeStackContextMenuFactory = dataTreeStackContextMenuFactory;
 		}
 
-		#region IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 		#endregion

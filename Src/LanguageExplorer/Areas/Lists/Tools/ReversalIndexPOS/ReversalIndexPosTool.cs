@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : ITool
 	{
-		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
@@ -54,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_listsAreaMenuHelper.UnwireSharedEventHandlers();
 			_listsAreaMenuHelper.Dispose();
 
 			_cache = null;
@@ -90,7 +91,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(dataTree);
 			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -125,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_listsAreaMenuHelper.Initialize();
+			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

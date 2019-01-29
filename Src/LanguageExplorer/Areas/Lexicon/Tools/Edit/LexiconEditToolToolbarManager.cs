@@ -11,7 +11,7 @@ using SIL.Code;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	internal sealed class LexiconEditToolToolbarManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolToolbarManager : IPartialToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
@@ -19,10 +19,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
 
-		#region IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -36,11 +36,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item command="CmdGoToEntry" defaultVisible="false" />
 			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry), "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
 
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
+			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 			_insertEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry);
 			_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry);
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 				_insertGoToEntryToolStripButton.Dispose();
 			}

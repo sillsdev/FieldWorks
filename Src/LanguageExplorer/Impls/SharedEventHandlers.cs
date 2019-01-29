@@ -17,7 +17,8 @@ namespace LanguageExplorer.Impls
 	/// </remarks>
 	internal sealed class SharedEventHandlers : ISharedEventHandlers
 	{
-		readonly Dictionary<string, EventHandler> _sharedEventHandlers = new Dictionary<string, EventHandler>();
+		private readonly Dictionary<string, EventHandler> _sharedEventHandlers = new Dictionary<string, EventHandler>();
+		private readonly Dictionary<string, Func<Tuple<bool, bool>>> _sharedStatusCheckers = new Dictionary<string, Func<Tuple<bool, bool>>>();
 
 		#region Implementation of ISharedEventHandlers
 
@@ -55,6 +56,36 @@ namespace LanguageExplorer.Impls
 			return _sharedEventHandlers.TryGetValue(key, out eventHandler);
 		}
 
+		/// <inheritdoc />
+		public void AddStatusChecker(string key, Func<Tuple<bool, bool>> visibilityStatus)
+		{
+			Guard.AgainstNullOrEmptyString(key, nameof(key));
+			Require.That(!_sharedStatusCheckers.ContainsKey(key), $"'{key}' already present.");
+			Guard.AgainstNull(visibilityStatus, nameof(visibilityStatus));
+			_sharedStatusCheckers.Add(key, visibilityStatus);
+		}
+
+		/// <inheritdoc />
+		public Func<Tuple<bool, bool>> GetStatusChecker(string key)
+		{
+			Guard.AgainstNullOrEmptyString(key, nameof(key));
+
+			return _sharedStatusCheckers.ContainsKey(key) ? _sharedStatusCheckers[key] : DefaultStatusChecker;
+		}
+
+		/// <inheritdoc />
+		public void RemoveStatusChecker(string key)
+		{
+			Guard.AgainstNullOrEmptyString(key, nameof(key));
+			Require.That(_sharedStatusCheckers.ContainsKey(key), $"'{key}' not present.");
+
+			_sharedStatusCheckers.Remove(key);
+		}
 		#endregion
+
+		private static Tuple<bool, bool> DefaultStatusChecker()
+		{
+			return new Tuple<bool, bool>(false, false);
+		}
 	}
 }

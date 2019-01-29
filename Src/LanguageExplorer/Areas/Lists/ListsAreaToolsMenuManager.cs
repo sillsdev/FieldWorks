@@ -10,30 +10,29 @@ using SIL.Code;
 
 namespace LanguageExplorer.Areas.Lists
 {
-	internal sealed class ListsAreaToolsMenuManager : IToolUiWidgetManager
+	internal sealed class ListsAreaToolsMenuManager : IPartialToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList MyRecordList { get; set; }
-		private IListArea _listArea;
+		private IListArea _area;
 		private ToolStripMenuItem _toolConfigureMenu;
 		private ToolStripMenuItem _configureListMenu;
 
-		internal ListsAreaToolsMenuManager(IListArea listArea)
+		internal ListsAreaToolsMenuManager()
 		{
-			Guard.AgainstNull(listArea, nameof(listArea));
-
-			_listArea = listArea;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(toolUiWidgetManager, nameof(toolUiWidgetManager));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = (IListArea)toolUiWidgetManager.ActiveTool.Area;
 			MyRecordList = recordList;
 
 			/*
@@ -44,12 +43,11 @@ namespace LanguageExplorer.Areas.Lists
 		}
 
 		/// <inheritdoc />
-		public void UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 
 		#endregion
-
 
 		#region Implementation of IDisposable
 
@@ -92,7 +90,7 @@ namespace LanguageExplorer.Areas.Lists
 				}
 			}
 			_majorFlexComponentParameters = null;
-			_listArea = null;
+			_area = null;
 			MyRecordList = null;
 			_toolConfigureMenu = null;
 			_configureListMenu = null;
@@ -110,7 +108,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != list.Name.BestAnalysisAlternative.Text)
 				{
-					_listArea.ModifiedCustomList(_listArea.ActiveTool);
+					_area.ModifiedCustomList(_area.ActiveTool);
 				}
 			}
 		}

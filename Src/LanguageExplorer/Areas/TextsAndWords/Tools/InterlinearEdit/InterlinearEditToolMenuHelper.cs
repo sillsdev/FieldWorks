@@ -5,79 +5,49 @@
 using System;
 using System.Diagnostics;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 {
 	/// <summary>
 	/// This class handles all interaction for the InterlinearEditTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
 	/// </summary>
-	internal sealed class InterlinearEditToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class InterlinearEditToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private IArea _area;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private AreaWideMenuHelper _areaWideMenuHelper;
 
-		internal InterlinearEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal InterlinearEditToolMenuHelper()
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(_majorFlexComponentParameters);
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
-		internal void Initialize()
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
-			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus();
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			var textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
+			_textAndWordsAreaMenuHelper = textAndWordsAreaMenuHelper;
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters);
+
+			textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			_areaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
-		#region Implementation of IPropertyTableProvider
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
 
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
 		}
-
 		#endregion
 
 		#region Implementation of IDisposable

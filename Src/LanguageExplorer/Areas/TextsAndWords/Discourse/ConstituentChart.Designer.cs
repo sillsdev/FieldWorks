@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using L10NSharp.UI;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -25,10 +26,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				components?.Dispose();
 				m_toolTip?.Dispose();
+				_sharedEventHandlers.Remove("CmdRepeatLastMoveLeft");
+				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveLeft");
+				_sharedEventHandlers.Remove("CmdRepeatLastMoveRight");
+				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveRight");
+				if (_fileMenu != null)
+				{
+					_fileMenu.DropDownItems.Remove(_exportMenu);
+					_exportMenu.Click -= ExportDiscourseChart_Click;
+					_exportMenu.Dispose();
+				}
+				// TODO: _dataMenu
 			}
 
 			components = null;
+			_sharedEventHandlers = null;
 			m_toolTip = null;
+			_fileMenu = null;
+			_exportMenu = null;
+			_dataMenu = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

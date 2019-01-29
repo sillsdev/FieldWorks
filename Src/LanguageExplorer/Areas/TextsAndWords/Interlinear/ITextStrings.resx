@@ -927,4 +927,10 @@ Click "Cancel" to abort this import.</value>
   <data name="UndoInsertText" xml:space="preserve">
     <value>Undo insert text</value>
   </data>
+  <data name="Break_phrase_into_words" xml:space="preserve">
+    <value>_Break phrase into words</value>
+  </data>
+  <data name="Break_selected_phrase_into_words" xml:space="preserve">
+    <value>Break selected phrase into words.</value>
+  </data>
 </root>

@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
-		private NotebookDocumentToolMenuHelper _notebookDocumentToolMenuHelper;
+		private IToolUiWidgetManager _notebookDocumentToolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
@@ -36,6 +36,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
+			_notebookDocumentToolMenuHelper.UnwireSharedEventHandlers();
 			_notebookDocumentToolMenuHelper.Dispose();
 
 			_notebookDocumentToolMenuHelper = null;
@@ -54,10 +55,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
 			var docView = new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
-			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList, docView);
+			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(this, docView);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, docView);
 
-			_notebookDocumentToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_notebookDocumentToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>

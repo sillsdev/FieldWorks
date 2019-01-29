@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class PosEditTool : ITool
 	{
-		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
 		private const string Categories_withTreeBarHandler = "categories_withTreeBarHandler";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -44,6 +44,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 			_grammarAreaWideMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 			_grammarAreaWideMenuHelper = null;
@@ -65,7 +66,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Categories_withTreeBarHandler, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			// Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
+			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
+			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 #if RANDYTODO

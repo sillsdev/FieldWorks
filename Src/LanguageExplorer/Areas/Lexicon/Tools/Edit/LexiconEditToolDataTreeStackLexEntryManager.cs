@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for a LexEntry, and objects it owns, in the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolDataTreeStackLexEntryManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolDataTreeStackLexEntryManager : IPartialToolUiWidgetManager
 	{
 		private const string LexSenseManager = "LexSenseManager";
 		private const string LexEntryFormsManager = "LexEntryFormsManager";
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private DataTree MyDataTree { get; set; }
 		private IPublisher _publisher;
 		private LcmCache _cache;
-		private Dictionary<string, IToolUiWidgetManager> _dataTreeWidgetManagers;
+		private Dictionary<string, IPartialToolUiWidgetManager> _dataTreeWidgetManagers;
 
 		internal LexiconEditToolDataTreeStackLexEntryManager(DataTree dataTree)
 		{
@@ -40,17 +40,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			MyDataTree = dataTree;
 
-			_dataTreeWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
+			_dataTreeWidgetManagers = new Dictionary<string, IPartialToolUiWidgetManager>
 			{
 				{ LexSenseManager, new LexiconEditToolDataTreeStackLexSenseManager(dataTree) },
 				{ LexEntryFormsManager, new LexiconEditToolDataTreeStackLexEntryFormsManager(dataTree) }
 			};
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -81,12 +81,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
-				manager.Initialize(majorFlexComponentParameters, recordList);
+				manager.Initialize(majorFlexComponentParameters, toolUiWidgetManager, recordList);
 			}
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
@@ -134,10 +134,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdAlphabeticalOrder);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveUpObjectInOwningSequence);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveDownObjectInOwningSequence);
-				foreach (var manager in _dataTreeWidgetManagers.Values)
-				{
-					manager.UnwireSharedEventHandlers();
-				}
 				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
 					manager.Dispose();

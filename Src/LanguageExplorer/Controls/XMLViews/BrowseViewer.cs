@@ -676,7 +676,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Finish initializing the class.
 		/// </summary>
-		public void FinishInitialization(int hvoRoot, int madeUpFieldIdentifier)
+		public virtual void FinishInitialization(int hvoRoot, int madeUpFieldIdentifier)
 		{
 			BrowseView.Init(m_configParamsElement, hvoRoot, madeUpFieldIdentifier, Cache, this);
 			BrowseView.SelectionChangedEvent += OnSelectionChanged;

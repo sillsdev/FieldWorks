@@ -5,66 +5,45 @@
 using System;
 using System.Diagnostics;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 {
 	/// <summary>
 	/// This class handles all interaction for the NotebookBrowseTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
 	/// </summary>
-	internal sealed class LexiconBrowseToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class LexiconBrowseToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private IArea _area;
+		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
-		private ISharedEventHandlers _sharedEventHandlers;
 
-		internal LexiconBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal LexiconBrowseToolMenuHelper()
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, recordList);
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 		}
 
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
 
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+		}
 
-			_lexiconAreaMenuHelper.Initialize();
-			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
 		}
 		#endregion
 
@@ -102,9 +81,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				MyBrowseViewContextMenuFactory?.Dispose();
 				_lexiconAreaMenuHelper?.Dispose();
 			}
-			MyBrowseViewContextMenuFactory = null;
-			_lexiconAreaMenuHelper = null;
 			_majorFlexComponentParameters = null;
+			_area = null;
+			_lexiconAreaMenuHelper = null;
+			MyBrowseViewContextMenuFactory = null;
 			_isDisposed = true;
 		}
 		#endregion

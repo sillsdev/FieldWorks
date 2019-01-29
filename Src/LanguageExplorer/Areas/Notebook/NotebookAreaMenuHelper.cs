@@ -17,12 +17,14 @@ namespace LanguageExplorer.Areas.Notebook
 	/// <summary>
 	/// Handle creation and use of Notebook area menus.
 	/// </summary>
-	internal sealed class NotebookAreaMenuHelper : IFlexComponent, IDisposable
+	internal sealed class NotebookAreaMenuHelper : IAreaUiWidgetManager
 	{
 		internal const string CmdGoToRecord = "CmdGoToRecord";
 		internal const string CmdInsertRecord = "CmdInsertRecord";
 		internal const string CmdInsertSubRecord = "CmdInsertSubRecord";
 		internal const string CmdInsertSubSubRecord = "CmdInsertSubSubRecord";
+		private IToolUiWidgetManager _toolUiWidgetManager;
+		private IArea _area;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private DataTree MyDataTree { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -38,65 +40,32 @@ namespace LanguageExplorer.Areas.Notebook
 		private ToolStripMenuItem _insertEntryMenu;
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, DataTree dataTree = null)
+		internal NotebookAreaMenuHelper(ITool currentNotebookTool, DataTree dataTree = null)
+		{
+			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
+
+			_currentNotebookTool = currentNotebookTool;
+			MyDataTree = dataTree; // May be null.
+		}
+
+		#region Implementation of IAreaUiWidgetManager
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
-			Guard.AgainstNull(recordList, nameof(recordList));
+			Guard.AgainstNull(area, nameof(area));
+			Require.That(area.MachineName == AreaServices.NotebookAreaMachineName);
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_currentNotebookTool = currentNotebookTool;
-			_recordList = recordList;
-			MyDataTree = dataTree; // May be null.
-			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
-
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			_sharedEventHandlers.Add(CmdGoToRecord, GotoRecord_Clicked);
 			_sharedEventHandlers.Add(CmdInsertRecord, Insert_Record_Clicked);
 			_sharedEventHandlers.Add(CmdInsertSubRecord, Insert_Subrecord_Clicked);
 			_sharedEventHandlers.Add(CmdInsertSubSubRecord, Insert_Subsubrecord_Clicked);
-		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			_area = area;
+			_toolUiWidgetManager = toolUiWidgetManager; // May be null;
+			_recordList = recordList;
+			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
 			// Add Edit menu item that is available in all Notebook tools.
 			AddEditMenuItems();
@@ -111,6 +80,18 @@ namespace LanguageExplorer.Areas.Notebook
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, insertIndex: 1);
 		}
 
+		/// <inheritdoc />
+		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _toolUiWidgetManager;
+
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			// If ActiveToolUiManager is null, then the tool should call this method.
+			// Otherwise, ActiveToolUiManager will call it.
+		}
 		#endregion
 
 		#region IDisposable
@@ -314,7 +295,7 @@ namespace LanguageExplorer.Areas.Notebook
 			using (var dlg = new InsertRecordDlg())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				ICmObject owner;
 				var currentRecord = _recordList.CurrentObject;
 				var researchNbk = (IRnResearchNbk)_recordList.OwningObject;
@@ -331,7 +312,7 @@ namespace LanguageExplorer.Areas.Notebook
 				dlg.SetDlgInfo(cache, owner);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
-					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.NewRecord.Guid));
+					LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.NewRecord.Guid));
 				}
 			}
 		}
@@ -354,16 +335,16 @@ namespace LanguageExplorer.Areas.Notebook
 			using (var dlg = new RecordGoDlg())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				dlg.SetDlgInfo(cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.SelectedObject.Guid));
+					LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.SelectedObject.Guid));
 				}
 			}
 		}
 
-		void FileExportMenu_Click(object sender, EventArgs e)
+		private void FileExportMenu_Click(object sender, EventArgs e)
 		{
 			if (_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }))
 			{

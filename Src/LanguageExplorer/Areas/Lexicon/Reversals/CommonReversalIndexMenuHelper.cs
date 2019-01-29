@@ -15,13 +15,14 @@ using SIL.LCModel;
 namespace LanguageExplorer.Areas.Lexicon.Reversals
 {
 	/// <summary />
-	internal sealed class CommonReversalIndexMenuHelper : IDisposable
+	internal sealed class CommonReversalIndexMenuHelper : IToolUiWidgetManager
 	{
 		private const int InsertReversalEntryImageIndex = 2;
 		private const int FindReversalEntryImageIndex = 3;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
 		private IRecordList _recordList;
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private ToolStripButton _insertReversalEntryToolStripButton;
 		private ToolStripButton _insertGoToReversalEntryToolStripButton;
 		private ToolStripMenuItem _editMenu;
@@ -30,24 +31,38 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		/// <summary />
-		public CommonReversalIndexMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		public CommonReversalIndexMenuHelper()
+		{
+			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
+		}
+
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
 			// It is really an instance of AllReversalEntriesRecordList.
 			_recordList = recordList;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, recordList);
-		}
-
-		internal void Initialize()
-		{
-			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
 			SetupInsertToolbar();
 			SetupEditMenu();
 			SetupInsertMenu();
 		}
+
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
+		#endregion
 
 		private void SetupEditMenu()
 		{
@@ -96,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 				 */
 				_insertGoToReversalEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(GotoReversalEntryClicked, "insertGoToReversalEntryToolStripButton", lexEntryImages.buttonImages.Images[FindReversalEntryImageIndex], LexiconResources.FindReversalEntryTooltip);
 
-				InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertReversalEntryToolStripButton, _insertGoToReversalEntryToolStripButton });
+				ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertReversalEntryToolStripButton, _insertGoToReversalEntryToolStripButton });
 
 				Application.Idle += Application_Idle;
 			}
@@ -404,7 +419,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			{
 				Application.Idle -= Application_Idle;
 				_lexiconAreaMenuHelper?.Dispose();
-				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertReversalEntryToolStripButton.Click -= InsertReversalEntryClicked;
 				_insertReversalEntryToolStripButton.Dispose();
 				_insertGoToReversalEntryToolStripButton.Click -= GotoReversalEntryClicked;

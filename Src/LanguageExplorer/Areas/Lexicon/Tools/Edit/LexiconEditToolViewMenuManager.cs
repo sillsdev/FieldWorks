@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Implementation that supports the addition(s) to FLEx's main View menu for the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolViewMenuManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolViewMenuManager : IPartialToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -38,10 +38,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_innerMultiPane = innerMultiPane;
 		}
 
-		#region IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 

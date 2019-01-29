@@ -15,36 +15,36 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
 {
-	internal sealed class ListsAreaDataTreeStackManager : IToolUiWidgetManager
+	internal sealed class ListsAreaDataTreeStackManager : IPartialToolUiWidgetManager
 	{
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
-		private IListArea _listArea;
+		private IListArea _area;
 		private IPropertyTable _propertyTable;
 
-		internal ListsAreaDataTreeStackManager(DataTree dataTree, IListArea listArea)
+		internal ListsAreaDataTreeStackManager(DataTree dataTree)
 		{
 			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(listArea, nameof(listArea));
 
 			MyDataTree = dataTree;
-			_listArea = listArea;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(toolUiWidgetManager, nameof(toolUiWidgetManager));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
+			_area = (IListArea)toolUiWidgetManager.ActiveTool.Area;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
-			if (_listArea.ActiveTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName && !ListsAreaMenuHelper.GetPossibilityList(MyRecordList).IsClosed)
+			if (_area.ActiveTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName && !ListsAreaMenuHelper.GetPossibilityList(MyRecordList).IsClosed)
 			{
 				// These all deal with insertion/deletion, so are not used in a closed list.
 				// Nor are they used in the AreaServices.FeatureTypesAdvancedEditMachineName tool, which isn't a possibility list at all.
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lists
 		}
 
 		/// <inheritdoc />
-		public void UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lists
 			MyDataTree = null;
 			MyRecordList = null;
 			_sharedEventHandlers = null;
-			_listArea = null;
+			_area = null;
 
 			_isDisposed = true;
 		}

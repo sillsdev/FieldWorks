@@ -9,13 +9,14 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	internal sealed class TextAndWordsAreaMenuHelper : IFlexComponent, IDisposable
+	internal sealed class TextAndWordsAreaMenuHelper : IAreaUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
+		private IToolUiWidgetManager _toolUiWidgetManager;
 		#region Area-wide
 		private ToolStripMenuItem _insertMenuItem;
 		private ToolStripSeparator _separator2ToolStripMenuItem;
@@ -27,17 +28,40 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _importMenuItems;
 		#endregion Tool-specific
 
-		internal TextAndWordsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal TextAndWordsAreaMenuHelper()
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-
-			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_importMenuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
-		internal void InitializeAreaWideMenus()
+		#region Implementation of IAreaUiWidgetManager
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+			Require.That(area.MachineName == AreaServices.TextAndWordsAreaMachineName);
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_toolUiWidgetManager = toolUiWidgetManager; // May be null;
+			InitializeAreaWideMenus();
+		}
+
+		/// <inheritdoc />
+		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _toolUiWidgetManager;
+
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			// If ActiveToolUiManager is null, then the tool should call this method.
+			// Otherwise, ActiveToolUiManager will call it.
+		}
+		#endregion
+
+		private void InitializeAreaWideMenus()
 		{
 			/*
 			These are all possible menu items (Insert menu) for the Text & Words area.
@@ -115,50 +139,6 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 				AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 			}
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
 
 		#region IDisposable
 		private bool _isDisposed;

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
@@ -44,6 +44,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
 			_lexiconAreaMenuHelper.Dispose();
 
 			_lexiconAreaMenuHelper = null;
@@ -65,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -79,8 +80,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			_lexiconAreaMenuHelper.Initialize();
-			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 		}
 
 		/// <summary>

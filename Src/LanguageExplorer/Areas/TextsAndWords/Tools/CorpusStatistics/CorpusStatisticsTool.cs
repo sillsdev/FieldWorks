@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class CorpusStatisticsTool : ITool
 	{
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private StatisticsView _statisticsView;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -34,6 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 
 			// Dispose after the main UI stuff.
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
 			_textAndWordsAreaMenuHelper.Dispose();
 
 			_statisticsView = null;
@@ -48,11 +49,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			var textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
+			_textAndWordsAreaMenuHelper = textAndWordsAreaMenuHelper;
 
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView(majorFlexComponentParameters);
+
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area);
+			textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 		}
 
 		/// <summary>

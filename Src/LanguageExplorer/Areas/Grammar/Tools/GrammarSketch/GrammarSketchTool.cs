@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	internal sealed class GrammarSketchTool : ITool
 	{
 		private GrammarSketchHtmlViewer _grammarSketchHtmlViewer;
-		private GrammarSketchToolMenuHelper _grammarSketchToolMenuHelper;
+		private IToolUiWidgetManager _grammarSketchToolMenuHelper;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -30,6 +30,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarSketchToolMenuHelper.UnwireSharedEventHandlers();
 			_grammarSketchToolMenuHelper.Dispose();
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 			_grammarSketchHtmlViewer = null;
@@ -44,7 +45,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_grammarSketchToolMenuHelper = new GrammarSketchToolMenuHelper(majorFlexComponentParameters);
+			_grammarSketchToolMenuHelper = new GrammarSketchToolMenuHelper();
 			_grammarSketchHtmlViewer = new GrammarSketchHtmlViewer
 			{
 				Dock = DockStyle.Fill
@@ -53,7 +54,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			_grammarSketchHtmlViewer.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _grammarSketchHtmlViewer;
 
-			_grammarSketchToolMenuHelper.Initialize();
+			_grammarSketchToolMenuHelper.Initialize(majorFlexComponentParameters, Area);
 		}
 
 		/// <summary>

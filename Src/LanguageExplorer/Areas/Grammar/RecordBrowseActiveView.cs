@@ -198,13 +198,9 @@ namespace LanguageExplorer.Areas.Grammar
 
 			#region Overrides of BrowseViewer
 
-			/// <summary>
-			/// Initialize a FLEx component with the basic interfaces.
-			/// </summary>
-			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			public override void FinishInitialization(int hvoRoot, int madeUpFieldIdentifier)
 			{
-				base.InitializeFlexComponent(flexComponentParameters);
+				base.FinishInitialization(hvoRoot, madeUpFieldIdentifier);
 
 				// Set the initial value
 				var chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);

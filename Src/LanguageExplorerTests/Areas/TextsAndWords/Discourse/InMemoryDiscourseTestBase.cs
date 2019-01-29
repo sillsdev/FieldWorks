@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,11 +21,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		#region Overrides of LcmTestBase
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create minimal test data required for every test.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
@@ -54,7 +52,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Make and parse a new unique paragraph and append it to the current text.
 		/// </summary>
-		/// <returns></returns>
 		internal IStTxtPara MakeParagraph()
 		{
 			return m_helper.MakeParagraph();
@@ -66,18 +63,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		protected void EndSetupTask()
 		{
 			if (m_actionHandler.CurrentDepth > 0)
+			{
 				m_actionHandler.EndUndoTask();
+			}
 		}
 
 		protected static ChartLocation MakeLocObj(IConstChartRow row, int icol)
 		{
 			return new ChartLocation(row, icol);
 		}
-
-		#region test data creation
-
-
-		#endregion
-
 	}
 }

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
@@ -74,6 +74,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
 			_lexiconAreaMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -98,7 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -159,8 +160,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 			recordEditView.FinishInitialization();
-			_lexiconAreaMenuHelper.Initialize();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

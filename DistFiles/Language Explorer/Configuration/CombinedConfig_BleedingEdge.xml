@@ -72,25 +72,7 @@ so I can look at that in the develop branch.
     <command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote" />
     <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />
     <command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks" />
-    <command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll" />
-    <command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S" />
-    <command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext" />
-    <command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter" />
-    <command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter" />
-    <command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext" />
-    <command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter" />
-    <command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right" />
-    <command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left" />
-    <command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right" />
-    <command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left" />
-    <command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J" />
-    <command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J" />
-    <command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle" />
-    <command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W" />
-    <command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M" />
     <command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear" />
-    <command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left" />
-    <command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right" />
     <command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
       <parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
     </command>
@@ -303,34 +285,6 @@ so I can look at that in the develop branch.
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
       <item command="CmdChooseTexts" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-    </menu>
-    <menu id="Data" label="_Data" >
-      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-      <item label="-" translate="do not translate" />
-      <!-- From here to the CmdApproveAll command, the menu items are the same as the popup menu "mnuFocusBox" -->
-      <item command="CmdApproveAndMoveNext" defaultVisible="false" />
-      <item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false" />
-      <item command="CmdNextIncompleteBundle" defaultVisible="false" />
-      <item command="CmdApprove" defaultVisible="false" />
-      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-        <item command="CmdApproveAndMoveNextSameLine" />
-        <item command="CmdMoveFocusBoxRight" />
-        <item command="CmdMoveFocusBoxLeft" />
-      </menu>
-      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-        <item command="CmdBrowseMoveNext" />
-        <item command="CmdNextIncompleteBundleNc" />
-        <item command="CmdBrowseMoveNextSameLine" />
-        <item command="CmdMoveFocusBoxRightNc" />
-        <item command="CmdMoveFocusBoxLeftNc" />
-      </menu>
-      <item command="CmdMakePhrase" defaultVisible="false" />
-      <item command="CmdBreakPhrase" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-      <item command="CmdApproveAll" defaultVisible="false" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
     </menu>
     <menu id="Insert" label="_Insert" >
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
@@ -788,10 +742,8 @@ so I can look at that in the develop branch.
       <item command="CmdInsertText" defaultVisible="false" />
       <item label="-" translate="do not translate" />
       <item command="CmdAddNote" defaultVisible="false" />
-      <item command="CmdApproveAll" defaultVisible="false" />
       <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
       <item command="CmdGoToWfiWordform" defaultVisible="false" />
-      <item command="CmdBreakPhrase" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <item command="CmdInsertPOS" defaultVisible="false" />
@@ -836,8 +788,6 @@ so I can look at that in the develop branch.
       <item id="CmdGoToWfiWordform">Find a wordform.</item>
       <!-- File menu -->
       <item id="CmdImport">Import an existing lexicon.</item>
-      <!-- Edit menu -->
-      <item id="CmdBreakPhrase">Break selected phrase into words.</item>
       <!-- View menu -->
       <item id="CmdHistoryBack">Back</item>
       <item id="CmdHistoryForward">Forward</item>
@@ -847,22 +797,6 @@ so I can look at that in the develop branch.
       <item id="Record List">Show the list of records.</item>
       <item id="ShowHiddenFields">Display all possible fields.</item>
       <item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
-      <!-- Data menu -->
-      <item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
-      <item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
-      <item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
-      <item id="CmdApprove">Approve the suggested analysis and stay on this word</item>
-      <!-- Approve submenu items -->
-      <item id="CmdApproveAndMoveNextSameLine">Approve the suggested analysis and move to the next word, to the same interlinear line.</item>
-      <item id="CmdMoveFocusBoxRight">Approve the suggested analysis and move to the word on the right.</item>
-      <item id="CmdMoveFocusBoxLeft">Approve the suggested analysis and move to the word on the left,</item>
-      <!-- Leave submenu items -->
-      <item id="CmdBrowseMoveNext">Leave the suggested analysis as a suggestion, and move to the next word.</item>
-      <item id="CmdNextIncompleteBundleNc">Leave the suggested analysis as a suggestion, and jump to the next word with a suggested or incomplete analysis.</item>
-      <item id="CmdBrowseMoveNextSameLine">Leave the suggested analysis and move to the next word, to the same interlinear line.</item>
-      <item id="CmdMoveFocusBoxRightNc">Leave the suggested analysis as a suggestion, and move to the word on the right.</item>
-      <item id="CmdMoveFocusBoxLeftNc">Leave the suggested analysis as a suggestion, and move to the word on the left.</item>
-      <item id="CmdApproveAll">Approve all the suggested analyses in this text.</item>
       <!-- Insert menu -->
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>

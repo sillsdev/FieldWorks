@@ -16,44 +16,43 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
 {
-	internal sealed class ListsAreaToolbarManager : IToolUiWidgetManager
+	internal sealed class ListsAreaToolbarManager : IPartialToolUiWidgetManager
 	{
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private IListArea _listArea;
+		private IListArea _area;
 		private ToolStripButton _insertItemToolStripButton;
 		private ToolStripButton _insertSubItemToolStripButton;
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _duplicateItemToolStripButton;
 
-		internal ListsAreaToolbarManager(DataTree dataTree, IListArea listArea)
+		internal ListsAreaToolbarManager(DataTree dataTree)
 		{
 			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(listArea, nameof(listArea));
 
 			MyDataTree = dataTree;
-			_listArea = listArea;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(toolUiWidgetManager, nameof(toolUiWidgetManager));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = (IListArea)toolUiWidgetManager.ActiveTool.Area;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
-
 			AddInsertToolbarItems();
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 			if (_insertItemToolStripButton != null)
 			{
@@ -101,7 +100,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				Application.Idle -= ApplicationOnIdle;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
-				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertItemToolStripButton?.Dispose();
 				_insertSubItemToolStripButton?.Dispose();
 				_duplicateItemToolStripButton?.Dispose();
@@ -110,7 +109,7 @@ namespace LanguageExplorer.Areas.Lists
 			MyDataTree = null;
 			_majorFlexComponentParameters = null;
 			_sharedEventHandlers = null;
-			_listArea = null;
+			_area = null;
 			_insertItemToolStripButton = null;
 			_insertSubItemToolStripButton = null;
 			_duplicateItemToolStripButton = null;
@@ -128,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists
 			/*
 			These all go on the "Insert" toolbar, but they are tool-specific.
 			*/
-			var activeListTool = _listArea.ActiveTool;
+			var activeListTool = _area.ActiveTool;
 			var currentPossibilityList = MyRecordList.OwningObject as ICmPossibilityList; // Will be null for AreaServices.FeatureTypesAdvancedEditMachineName tool.
 			if (currentPossibilityList != null && currentPossibilityList.IsClosed)
 			{
@@ -171,7 +170,7 @@ namespace LanguageExplorer.Areas.Lists
 								</command>
 					*/
 					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertFeatureType), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), ListResources.Feature_Type);
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
+					ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
 					// No duplication.
 					break;
 				case AreaServices.LexRefEditMachineName:
@@ -254,7 +253,7 @@ namespace LanguageExplorer.Areas.Lists
 					*/
 					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), AreaResources.Add_a_new_category);
 					_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
+					ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
 					/*
 						<item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
 						<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
@@ -263,7 +262,7 @@ namespace LanguageExplorer.Areas.Lists
 					*/
 					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), AreaResources.Subcategory);
 					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertSubItemToolStripButton });
+					ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertSubItemToolStripButton });
 					// No duplication.
 					break;
 				case AreaServices.DomainTypeEditMachineName: // Fall through to default.
@@ -364,7 +363,7 @@ namespace LanguageExplorer.Areas.Lists
 				{
 					itemsToAdd.Add(_duplicateItemToolStripButton);
 				}
-				InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, itemsToAdd);
+				ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, itemsToAdd);
 
 				Application.Idle += ApplicationOnIdle;
 				MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;

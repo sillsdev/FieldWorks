@@ -23,8 +23,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconEditTool : ITool
 	{
-		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
+		private IToolUiWidgetManager _lexiconEditToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_lexiconEditToolMenuHelper.UnwireSharedEventHandlers();
 			_lexiconEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -60,6 +62,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconEditToolMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 			MyDataTree = null;
+			_sharedEventHandlers = null;
 		}
 
 		/// <summary>
@@ -71,6 +74,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
@@ -93,8 +97,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
+			MyDataTree = new DataTree(_sharedEventHandlers);
+			var lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(this, MyDataTree, _recordBrowseView, showHiddenFieldsPropertyName);
+			_lexiconEditToolMenuHelper = lexiconEditToolMenuHelper;
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -127,7 +132,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
 
-			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
+			var panelMenu = new PanelMenu(lexiconEditToolMenuHelper.MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -142,11 +147,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
-			_lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
+			lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
-			_lexiconEditToolMenuHelper.Initialize();
+			_lexiconEditToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
@@ -221,13 +226,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			// <item command="CmdEntryJumpToConcordance"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
 			menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, recordList.CurrentObject.Guid };
 
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
 			var currentSlice = MyDataTree.CurrentSlice;
 			if (currentSlice == null)
 			{

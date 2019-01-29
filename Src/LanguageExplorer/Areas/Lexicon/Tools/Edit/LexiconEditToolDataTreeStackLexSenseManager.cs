@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for a LexSense, and objects it owns, in the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolDataTreeStackLexSenseManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolDataTreeStackLexSenseManager : IPartialToolUiWidgetManager
 	{
 		private const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
 		private const string mnuDataTree_ExtendedNote_Hotlinks = "mnuDataTree-ExtendedNote-Hotlinks";
@@ -40,10 +40,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTreeStackContextMenuFactory = MyDataTree.DataTreeStackContextMenuFactory;
 		}
 
-		#region Implementation of IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 		}
 		#endregion

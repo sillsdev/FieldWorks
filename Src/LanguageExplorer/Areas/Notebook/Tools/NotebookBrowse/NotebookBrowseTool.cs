@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
-		private NotebookBrowseToolMenuHelper _browseToolMenuHelper;
+		private IToolUiWidgetManager _browseToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -44,6 +44,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_browseToolMenuHelper.UnwireSharedEventHandlers();
 			_browseToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -71,10 +72,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordList, _recordBrowseView);
+			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(this, _recordBrowseView);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 
-			_browseToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>

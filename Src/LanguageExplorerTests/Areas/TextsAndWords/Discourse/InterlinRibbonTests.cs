@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -158,9 +158,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			_ribbon.RootBox.MouseUp(labelOffset, 1, rcSrc, rcDst);
 			Assert.AreEqual(new[] { glosses[0] }, _ribbon.SelectedOccurrences);
 
-			Rectangle location = _ribbon.GetSelLocation();
+			var location = _ribbon.GetSelLocation();
 			Assert.IsTrue(_ribbon.RootBox.Selection.IsRange, "single click selection should expand to range");
-			int offset = location.Width + labelOffset;
+			var offset = location.Width + labelOffset;
 
 			// SUT #3?!
 			// Clicking just right of that should add the second one. We need to allow for the gap between
@@ -175,66 +175,58 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
 			Assert.AreEqual(new[] { glosses[0] }, _ribbon.SelectedOccurrences);
 		}
-	#endregion
-	}
+		#endregion
 
-	/// <summary>
-	/// Makes some protected methods available for testing.
-	/// </summary>
-	internal class TestInterlinRibbon : InterlinRibbon
-	{
-		public TestInterlinRibbon(LcmCache cache, int hvoStText)
-			: base(cache, hvoStText)
-		{
-		}
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Call the OnLayout methods (test-only)
+		/// Makes some protected methods available for testing.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CallLayout()
+		private class TestInterlinRibbon : InterlinRibbon
 		{
-			OnLayout(new LayoutEventArgs(this, string.Empty));
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Make method available for testing
-		/// </summary>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		internal void CallGetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
-		{
-			GetCoordRects(out rcSrcRoot, out rcDstRoot);
-		}
-
-		internal Rectangle GetSelLocation()
-		{
-			using (new HoldGraphics(this))
+			public TestInterlinRibbon(LcmCache cache, int hvoStText)
+				: base(cache, hvoStText)
 			{
-				Rectangle rcSrcRoot, rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				Rect rcPrimary, rcSec, rcPrimary2;
-				bool fSplit, fEndBeforeAnchor;
-				var anchor = RootBox.Selection.EndPoint(false);
-				var end = RootBox.Selection.EndPoint(true);
-				anchor.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-								out rcSec, out fSplit, out fEndBeforeAnchor);
-				end.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary2,
-							 out rcSec, out fSplit, out fEndBeforeAnchor);
-				int left = Math.Min(rcPrimary.left, rcPrimary2.left);
-				int top = Math.Min(rcPrimary.top, rcPrimary2.top);
-				int width = Math.Max(rcPrimary.right, rcPrimary2.right) - left;
-				int height = Math.Max(rcPrimary.bottom, rcPrimary2.bottom) - top;
-
-				return new Rectangle(left, top, width, height);
 			}
-		}
 
-		internal void CallOnLoad(EventArgs eventArgs)
-		{
-			base.OnLoad(eventArgs);
+			/// <summary>
+			/// Call the OnLayout methods (test-only)
+			/// </summary>
+			public void CallLayout()
+			{
+				OnLayout(new LayoutEventArgs(this, string.Empty));
+			}
+
+			/// <summary>
+			/// Make method available for testing
+			/// </summary>
+			internal void CallGetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
+			{
+				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+			}
+
+			internal Rectangle GetSelLocation()
+			{
+				using (new HoldGraphics(this))
+				{
+					Rectangle rcSrcRoot, rcDstRoot;
+					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					Rect rcPrimary, rcSec, rcPrimary2;
+					bool fSplit, fEndBeforeAnchor;
+					var anchor = RootBox.Selection.EndPoint(false);
+					var end = RootBox.Selection.EndPoint(true);
+					anchor.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+					end.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary2, out rcSec, out fSplit, out fEndBeforeAnchor);
+					var left = Math.Min(rcPrimary.left, rcPrimary2.left);
+					var top = Math.Min(rcPrimary.top, rcPrimary2.top);
+					var width = Math.Max(rcPrimary.right, rcPrimary2.right) - left;
+					var height = Math.Max(rcPrimary.bottom, rcPrimary2.bottom) - top;
+					return new Rectangle(left, top, width, height);
+				}
+			}
+
+			internal void CallOnLoad(EventArgs eventArgs)
+			{
+				base.OnLoad(eventArgs);
+			}
 		}
 	}
 }

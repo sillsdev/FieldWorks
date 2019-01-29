@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -41,8 +40,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Call MakeAnalyses, then cache all but the first nUsedAnalyses of them as
 		/// the value of the OccurrenceList.
 		/// </summary>
-		/// <param name="nUsedAnalyses"></param>
-		/// <returns></returns>
 		private AnalysisOccurrence[] MakeAnalysesUsedN(int nUsedAnalyses)
 		{
 			return m_helper.MakeAnalysesUsedN(nUsedAnalyses);
@@ -55,15 +52,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		// Make a CCWordGroup for the specified column that groups the specified words
 		// and append to the specified row.
-		private IConstChartWordGroup MakeWordGroup(IConstChartRow row, int icol,
-			AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
+		private IConstChartWordGroup MakeWordGroup(IConstChartRow row, int icol, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
 		{
 			return m_helper.MakeWordGroup(row, icol, begPoint, endPoint);
 		}
 
-		private IConstChartMovedTextMarker MakeMovedTextMarker(IConstChartRow row, int icol, IConstChartWordGroup target, bool fPreposed)
+		private void MakeMovedTextMarker(IConstChartRow row, int icol, IConstChartWordGroup target, bool fPreposed)
 		{
-			return m_helper.MakeMovedTextMarker(row, icol, target, fPreposed);
+			m_helper.MakeMovedTextMarker(row, icol, target, fPreposed);
 		}
 
 		#endregion Test setup
@@ -73,10 +69,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verify that the specified row of the chart exists and has the expected row-number comment and number of rows.
 		/// Also that it is a ChartRow.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="rowNumber"></param>
-		/// <param name="cAppliesTo"></param>
-		void VerifyRow(int index, string rowNumber, int cAppliesTo)
+		private void VerifyRow(int index, string rowNumber, int cAppliesTo)
 		{
 			m_helper.VerifyRow(index, rowNumber, cAppliesTo);
 		}
@@ -86,11 +79,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// index which belongs to the specified column possibility and contains cells
 		/// with the specified words.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="words"></param>
-		void VerifyWordGroup(int irow, int icellPart, ICmPossibility column, List<AnalysisOccurrence> words)
+		private void VerifyWordGroup(int irow, int icellPart, ICmPossibility column, List<AnalysisOccurrence> words)
 		{
 			m_helper.VerifyWordGroup(irow, icellPart, column, words);
 		}
@@ -100,12 +89,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// (subclass ConstChartMovedTextMarker) with the specified index which belongs to the
 		/// specified column and points to the specified WordGroup object in the right direction.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="wordGrp"></param>
-		/// <param name="fPrepose"></param>
-		void VerifyMovedText(int irow, int icellPart, ICmPossibility column, IConstChartWordGroup wordGrp, bool fPrepose)
+		private void VerifyMovedText(int irow, int icellPart, ICmPossibility column, IConstChartWordGroup wordGrp, bool fPrepose)
 		{
 			m_helper.VerifyMovedTextMarker(irow, icellPart, column, wordGrp, fPrepose);
 		}
@@ -115,11 +99,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// (subclass ConstChartClauseMarker) with the specified index which belongs to the
 		/// specified column and points to the specified array of ConstChartRows.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="depClauses"></param>
-		void VerifyDependentClause(int irow, int icellPart, ICmPossibility column, IConstChartRow[] depClauses)
+		private void VerifyDependentClause(int irow, int icellPart, ICmPossibility column, IConstChartRow[] depClauses)
 		{
 			m_helper.VerifyDependentClauseMarker(irow, icellPart, column, depClauses);
 		}
@@ -129,11 +109,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// index which belongs to the specified column and has a ConstChartTag
 		/// of the specified possibility.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="tagPoss"></param>
-		void VerifyTag(int irow, int icellPart, ICmPossibility column, ICmPossibility tagPoss)
+		private void VerifyTag(int irow, int icellPart, ICmPossibility column, ICmPossibility tagPoss)
 		{
 			m_helper.VerifyMarkerCellPart(irow, icellPart, column, tagPoss);
 		}
@@ -142,9 +118,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verifies that the specified number of analyses have been removed from
 		/// the start of the original list.
 		/// </summary>
-		/// <param name="allParaOccurrences"></param>
-		/// <param name="removedAnalyses"></param>
-		/// <returns></returns>
 		private void AssertUsedAnalyses(AnalysisOccurrence[] allParaOccurrences, int removedAnalyses)
 		{
 			m_helper.AssertUsedAnalyses(m_mockRibbon, allParaOccurrences, removedAnalyses);
@@ -167,15 +140,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			// Should have: added allParaOccurrences[1] to cellPart0_1 (and not have added rows or WordGroups)
 			VerifyRow(0, "1a", 1); // still 1 WordGroup, shouldn't make a new one.
-			VerifyWordGroup(0, 0, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
+			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
 			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 2);
 			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add a row");
 		}
 
-		private void VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(AnalysisOccurrence[] allParaOccurrences,
-			IConstChartWordGroup wGrp01, int cExpectCSelect)
+		private void VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(AnalysisOccurrence[] allParaOccurrences, IConstChartWordGroup wGrp01, int cExpectCSelect)
 		{
 			// Should have: added allParaOccurrences[1] to a new WordGroup in column 3 of row 0
 			// (before moved text marker in col 4).
@@ -215,8 +186,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// SUT
 			IConstChartRow dummy;
-			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor,
-				() => m_logic.MoveToColumn(1, out dummy));
+			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(1, out dummy));
 			VerifyMoveFirstOccurrenceToCol1(allParaOccurrences, 1);
 
 			// Now test Undo
@@ -225,11 +195,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			Assert.AreEqual(0, m_chart.RowsOS.Count, "no rows after undo MoveFirstToCol1");
 			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 0);
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 0, 1);
-			// Todo Gordon: With the new architecture, the whole NotifyChangeSpy system is in question
-			// since PropChanged() is no longer used.
-			//undoSpy.AssertHasNotification(m_chart.Hvo, DsConstChartTags.kflidRows, 0, 0, 1);
 
 			// And now Redo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
@@ -261,9 +226,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
 			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
-			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
@@ -288,8 +250,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			EndSetupTask(); // SUT needs own UOW in order to test Undo/Redo
 			IConstChartRow dummy;
 
-			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor,
-				() => m_logic.MoveToColumn(3, out dummy));
+			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(3, out dummy));
 			VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(allParaOccurrences, cellPart0_1, 1);
 			// Now test Undo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
@@ -299,9 +260,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			VerifyMovedText(0, 1, m_allColumns[4], cellPart0_1, true);
 			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
-			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
@@ -393,8 +351,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 2);
 			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add more than one row");
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, spy, 2, 1);
 		}
 
 		/// <summary>
@@ -420,9 +376,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			Assert.AreEqual(1, m_chart.RowsOS.Count, "return to one row");
 			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
-			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
@@ -440,8 +393,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
 			AssertUsedAnalyses(allParaOccurrences, 2);
 			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add rows");
-			// Verify various PropChanged calls.
-			//VerifyOccurrenceListChange(allParaOccurrences, spy, 2, 1);
 		}
 
 		/// <summary>
@@ -552,7 +503,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				m_logic.ToggleMergedCellFlag(cell, false);
 				AssertMergeBefore(true, cellPart0_1, "turning on merge left should work");
 				AssertMergeAfter(false, cellPart0_1, "turning on merge left should not turn on merge right");
-				//spy.AssertHasNotification(m_chart.Hvo, DsConstChartTags.kflidRows, 0, 1, 1);
 			}
 			// Now test Undo
 			using (new NotifyChangeSpy(m_mockRibbon.Decorator))
@@ -561,14 +511,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				Cache.ActionHandlerAccessor.Undo();
 				AssertMergeBefore(false, cellPart0_1, "Undo turning on merge left should work");
 				AssertMergeAfter(false, cellPart0_1, "Undo merge left should not affect merge right");
-				//undoSpy.AssertHasNotification(m_chart.Hvo, DsConstChartTags.kflidRows, 0, 1, 1);
 			}
 			using (new NotifyChangeSpy(m_mockRibbon.Decorator))
 			{
 				m_logic.ToggleMergedCellFlag(cell, false);
 				AssertMergeBefore(true, cellPart0_1, "Redo turning on merge left should work");
 				AssertMergeAfter(false, cellPart0_1, "Redo turning on merge left should not turn on merge right");
-				//redoSpy.AssertHasNotification(m_chart.Hvo, DsConstChartTags.kflidRows, 0, 1, 1);
 			}
 
 			m_logic.ToggleMergedCellFlag(cell, false);
@@ -674,8 +622,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var hvoNewCol = newColumn.Hvo;
 			EndSetupTask(); // SUT needs its own UOW to test Undo/Redo
 
-			UndoableUnitOfWorkHelper.Do("TestChangeColumn", "TestChangeColumn", Cache.ActionHandlerAccessor,
-				() => m_logic.ChangeColumn(cellPartsToMove, newColumn, row0));
+			UndoableUnitOfWorkHelper.Do("TestChangeColumn", "TestChangeColumn", Cache.ActionHandlerAccessor, () => m_logic.ChangeColumn(cellPartsToMove, newColumn, row0));
 			VerifyChangeColumn(cellPartsToMove, newColumn, "cellPart should have been moved to new column");
 
 			// Now test Undo
@@ -692,7 +639,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		private static void VerifyChangeColumn(IEnumerable<IConstituentChartCellPart> cellPartsToMove, ICmPossibility column, string message)
 		{
 			foreach (var cellPart in cellPartsToMove)
+			{
 				Assert.AreEqual(column, cellPart.ColumnRA, message);
+			}
 		}
 
 		[Test]
@@ -709,15 +658,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			EndSetupTask(); // SUT needs its own UOW to test Undo/Redo
 
 			// SUT
-			UndoableUnitOfWorkHelper.Do("TestChangeRow", "TestChangeRow", Cache.ActionHandlerAccessor,
-				() => m_logic.ChangeRow(cellPartsToMove, row0, row1, 0, 1));
+			UndoableUnitOfWorkHelper.Do("TestChangeRow", "TestChangeRow", Cache.ActionHandlerAccessor, () => m_logic.ChangeRow(cellPartsToMove, row0, row1, 0, 1));
 			VerifyChangeRow(row0, cellPartsToMove, row1, "cellParts should have been moved to new row", 1);
 
 			// Now test Undo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
 			Cache.ActionHandlerAccessor.Undo();
-			VerifyChangeRow(row1, cellPartsToMove, row0,
-				"cellParts should have been moved back to original row by Undo", 0);
+			VerifyChangeRow(row1, cellPartsToMove, row0, "cellParts should have been moved back to original row by Undo", 0);
 
 			// And now Redo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
@@ -725,8 +672,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			VerifyChangeRow(row0, cellPartsToMove, row1, "cellParts should have been moved again to new row by redo", 1);
 		}
 
-		private static void VerifyChangeRow(IConstChartRow rowSrc, IEnumerable<IConstituentChartCellPart> cellPartsToMove,
-			IConstChartRow rowDst, string message, int ihvoDest)
+		private static void VerifyChangeRow(IConstChartRow rowSrc, IEnumerable<IConstituentChartCellPart> cellPartsToMove, IConstChartRow rowDst, string message, int ihvoDest)
 		{
 			foreach (var cellPart in cellPartsToMove)
 			{
@@ -744,8 +690,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			EndSetupTask(); // SUT needs its own UOW to test Undo/Redo
 
-			UndoableUnitOfWorkHelper.Do("TestDeleteCellParts", "TestDeleteCellParts", Cache.ActionHandlerAccessor,
-				() => m_logic.DeleteCellParts(row0, 0, 1));
+			UndoableUnitOfWorkHelper.Do("TestDeleteCellParts", "TestDeleteCellParts", Cache.ActionHandlerAccessor, () => m_logic.DeleteCellParts(row0, 0, 1));
 			// The above deletes the row too!
 			m_helper.VerifyDeletedHvos(new [] {row0.Hvo}, "Deleting last CellPart should delete row too.");
 
@@ -764,105 +709,5 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.VerifyDeletedHvos(new [] { row0.Hvo }, "Deleting last CellPart should delete row too.");
 		}
 		#endregion tests
-	}
-
-	class MockRibbon : IInterlinRibbon
-	{
-		readonly LcmCache m_cache;
-		readonly int m_hvoStText;
-		const int m_occurenceListId = -2011; // flid for charting ribbon
-		int m_cSelected = 1;
-		int m_cSelectFirstCalls;
-		int m_iEndSelLim;
-		AnalysisOccurrence m_endSelLimPoint;
-		private readonly IAnalysisRepository m_analysisRepo;
-
-		private readonly InterlinRibbonDecorator m_sda;
-
-		public MockRibbon(LcmCache cache, int hvoStText)
-		{
-			m_cache = cache;
-			m_hvoStText = hvoStText;
-			m_iEndSelLim = -1;
-			m_endSelLimPoint = null;
-			m_sda = new InterlinRibbonDecorator(m_cache, m_occurenceListId);
-			m_analysisRepo = cache.ServiceLocator.GetInstance<IAnalysisRepository>();
-		}
-
-		public ISilDataAccessManaged Decorator
-		{
-			get { return m_sda; }
-		}
-
-		public int CSelected
-		{
-			get { return m_cSelected; }
-			set { m_cSelected = value; }
-		}
-
-		public int CSelectFirstCalls
-		{
-			get { return m_cSelectFirstCalls; }
-			set { m_cSelectFirstCalls = value; }
-		}
-
-		#region IInterlinRibbon Members
-
-		public int OccurenceListId
-		{
-			get { return m_occurenceListId; }
-		}
-
-		public void CacheRibbonItems(List<AnalysisOccurrence> wordForms)
-		{
-			var cwords = wordForms.Count;
-			var laoArray = new LocatedAnalysisOccurrence[cwords];
-			for (var i = 0; i < cwords; i++)
-			{
-				var word = wordForms[i];
-				var begOffset = word.GetMyBeginOffsetInPara();
-				laoArray[i] = new LocatedAnalysisOccurrence(word.Segment, word.Index, begOffset);
-			}
-			(m_sda).CacheRibbonItems(laoArray);
-		}
-
-		public void MakeInitialSelection()
-		{
-			SelectFirstOccurence();
-		}
-
-		public void SelectFirstOccurence()
-		{
-			m_cSelectFirstCalls++;
-		}
-
-		public AnalysisOccurrence[] SelectedOccurrences
-		{
-			get
-			{
-				var possibleAnalyses = m_sda.VecProp(m_hvoStText, OccurenceListId);
-				Assert.IsTrue(m_cSelected <= possibleAnalyses.Length);
-				var result = new AnalysisOccurrence[m_cSelected];
-
-				for (var i = 0; i < m_cSelected; i++)
-					result[i] = m_sda.OccurrenceFromHvo(possibleAnalyses[i]).BestOccurrence;
-
-				return result;
-			}
-		}
-
-		public AnalysisOccurrence SelLimOccurrence
-		{
-			get { return m_endSelLimPoint; }
-			set { m_endSelLimPoint = value; }
-		}
-
-		public int EndSelLimitIndex
-		{
-			get { return m_iEndSelLim; }
-			set { m_iEndSelLim = value; }
-		}
-
-		#endregion IInterlinRibbon members
 	}
 }

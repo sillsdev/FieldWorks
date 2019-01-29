@@ -24,8 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
-		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
+		private IToolUiWidgetManager _partiallySharedMenuHelper;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
 		private MultiPane _outerMultiPane;
 		private RecordBrowseView _mainRecordBrowseView;
@@ -51,16 +50,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_partiallySharedMenuHelper.UnwireSharedEventHandlers();
 			_partiallySharedMenuHelper.Dispose();
 			_areaWideMenuHelper.Dispose();
-			_textAndWordsAreaMenuHelper.Dispose();
 
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
 			_areaWideMenuHelper = null;
-			_textAndWordsAreaMenuHelper = null;
 			_partiallySharedMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
@@ -80,8 +78,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			}
 			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
 			_areaWideMenuHelper.SetupFileExportMenu();
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -106,11 +102,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
 			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.LcmCache, _subservientRecordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
 			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
-			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordListProvidingOwner);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(_interlinMasterNoTitleBar);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -125,6 +121,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;
+
+			_partiallySharedMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordListProvidingOwner);
 		}
 
 		/// <summary>

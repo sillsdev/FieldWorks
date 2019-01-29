@@ -33,6 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal partial class InterlinMaster : InterlinMasterBase, IFocusablePanePortion
 	{
+		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		// Controls
 		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
@@ -65,23 +66,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
-			: base(configurationParametersElement, cache, recordList)
+		internal InterlinMaster(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, bool showTitlePane = true)
+			: base(configurationParametersElement, majorFlexComponentParameters.LcmCache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			Dock = DockStyle.Top;
 			m_tcPane.Visible = showTitlePane;
 			m_rtPane.MyRecordList = recordList;
-			m_printMenu = printMenu;
-			m_taggingPane.FileMenu = fileMenu;
-			m_printViewPane.FileMenu = fileMenu;
-			m_idcGloss.FileMenu = fileMenu;
-			m_idcAnalyze.FileMenu = fileMenu;
-			_sharedEventHandlers = sharedEventHandlers;
-			m_idcGloss.SharedEventHandlers = sharedEventHandlers;
-			m_idcAnalyze.SharedEventHandlers = sharedEventHandlers;
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			m_printMenu = MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip);
+			m_taggingPane.FileMenu = MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip);
+			m_printViewPane.FileMenu = m_taggingPane.FileMenu;
+			m_idcGloss.FileMenu = m_taggingPane.FileMenu;
+			m_idcAnalyze.FileMenu = m_taggingPane.FileMenu;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			m_idcGloss.MyMajorFlexComponentParameters = majorFlexComponentParameters;
+			m_idcAnalyze.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 		}
+
+		/// <summary>
+		/// if the XML configuration does not specify the availability of the treebar
+		/// (e.g. treeBarAvailability="Required"), then use this.
+		/// </summary>
+		protected override TreebarAvailability DefaultTreeBarAvailability => TreebarAvailability.NotAllowed;
 
 		internal string BookmarkId => MyRecordList.Id ?? string.Empty;
 
@@ -622,10 +630,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void CreateCChart()
 		{
-			var constituentChart = new ConstituentChart(Cache);
+			var constituentChart = new ConstituentChart(_majorFlexComponentParameters.LcmCache, _sharedEventHandlers);
 			m_constChartPane = constituentChart;
-			((IFlexComponent)m_constChartPane).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			constituentChart.FileMenu = m_printViewPane.FileMenu;
+			((IFlexComponent)m_constChartPane).InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+			constituentChart.SetupMenus(_majorFlexComponentParameters.MenuStrip);
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;

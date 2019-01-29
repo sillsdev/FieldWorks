@@ -217,11 +217,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_numOfCalls++;
 		}
 
-		public virtual void AddProp(int tag, IVwViewConstructor vwvc, int frag)
+		public virtual void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddProp(tag, vwvc, frag);
+				m_vwEnv.AddProp(tag, vc, frag);
 				return;
 			}
 			throw new NotSupportedException();

@@ -7,74 +7,58 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 {
 	/// <summary>
 	/// This class handles all interaction for the NotebookBrowseTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
 	/// </summary>
-	internal sealed class NotebookBrowseToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class NotebookBrowseToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		private IAreaUiWidgetManager _notebookAreaMenuHelper;
 		private RecordBrowseView _browseView;
 		private ToolStripButton _insertRecordToolStripButton;
 		private ToolStripButton _insertFindRecordToolStripButton;
 
-		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, RecordBrowseView browseView)
+		internal NotebookBrowseToolMenuHelper(ITool currentNotebookTool, RecordBrowseView browseView)
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 			Guard.AgainstNull(browseView, nameof(browseView));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(currentNotebookTool);
 			_browseView = browseView;
 		}
 
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
 
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
-			_notebookAreaMenuHelper.AddInsertMenuItems(false);
-
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			var asImplClass = (NotebookAreaMenuHelper)_notebookAreaMenuHelper;
+			asImplClass.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
+			asImplClass.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			asImplClass.AddInsertMenuItems(false);
 			AddInsertToolbarItems();
+		}
+
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
+			_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+			_notebookAreaMenuHelper.UnwireSharedEventHandlers();
 		}
 		#endregion
 
@@ -110,8 +94,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			if (disposing)
 			{
-				_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
-				_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
 				_notebookAreaMenuHelper?.Dispose();
@@ -131,7 +113,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		{
 			var newToolbarItems = new List<ToolStripItem>(2);
 
-			_notebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
+			((NotebookAreaMenuHelper)_notebookAreaMenuHelper).AddCommonInsertToolbarItems(newToolbarItems);
 			/*
 			  <item command="CmdInsertRecord" defaultVisible="false" />
 				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
@@ -144,9 +126,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			/*
 			  <item command="CmdGoToRecord" defaultVisible="false" />
 			*/
-			_insertFindRecordToolStripButton = (ToolStripButton)newToolbarItems[1]; ;
+			_insertFindRecordToolStripButton = (ToolStripButton)newToolbarItems[1];
 
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
+			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
 		}
 	}
 }

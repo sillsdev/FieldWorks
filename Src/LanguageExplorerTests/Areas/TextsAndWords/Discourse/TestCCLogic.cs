@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	/// It functions as a test spy allowing us to do in-memory tests of operations that normally
 	/// work on the database.
 	/// </summary>
-	class TestCCLogic : ConstituentChartLogic
+	internal sealed class TestCCLogic : ConstituentChartLogic
 	{
 		internal List<object[]> m_events = new List<object[]>();
 		internal bool m_fRecordMergeCellContents; // set true to log MergeCellContents.
@@ -27,27 +27,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			: base(cache, chart, stText.Hvo)
 		{
 		}
-		/// <summary>
-		/// Make one and set the other stuff later.
-		/// </summary>
-		/// <param name="cache"></param>
-		internal TestCCLogic(LcmCache cache) : base(cache)
-		{
-			m_isRtL = false;
-		}
 
 		internal void SetScriptRtL()
 		{
 			m_isRtL = true;
 		}
 
-		protected internal override bool ChartIsRtL
-		{
-			get
-			{
-				return m_isRtL;
-			}
-		}
+		protected internal override bool ChartIsRtL => m_isRtL;
 
 		/// <summary>
 		/// Override to NOT display warning for tests.
@@ -64,15 +50,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			return CollectEligibleRows(cell, fPrepose);
 		}
 
-		internal void CallMakeMovedFrom(int icolActual, int icolMovedFrom, IConstChartRow rowActual,
-			IConstChartRow rowMovedFrom, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
+		internal void CallMakeMovedFrom(int icolActual, int icolMovedFrom, IConstChartRow rowActual, IConstChartRow rowMovedFrom, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
 		{
-			MakeMovedFrom(new ChartLocation(rowActual, icolActual), new ChartLocation(rowMovedFrom, icolMovedFrom),
-				begPoint, endPoint);
+			MakeMovedFrom(new ChartLocation(rowActual, icolActual), new ChartLocation(rowMovedFrom, icolMovedFrom), begPoint, endPoint);
 		}
 
-		internal bool[] CallHighlightChOrphPossibles(int icolPrec, int irowPrec,
-			int icolFoll, int irowFoll)
+		internal bool[] CallHighlightChOrphPossibles(int icolPrec, int irowPrec, int icolFoll, int irowFoll)
 		{
 			return HighlightChOrphPossibles(icolPrec, irowPrec, icolFoll, irowFoll);
 		}
@@ -105,7 +88,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// This calls a method that assumes it is already inside of a valid UOW.
 		/// </summary>
-		/// <returns></returns>
 		internal IConstChartRow CallMakeNewRow()
 		{
 			return MakeNewRow();
@@ -144,11 +126,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Verify that there is an event with the specified name, and return it.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="cargs"></param>
 		internal object[] VerifyEventExists(string name, int cargs)
 		{
-			foreach (object[] item in m_events)
+			foreach (var item in m_events)
 			{
 				if (item.Length > 0 && (item[0] is string) && name == (string)(item[0]))
 				{
@@ -162,8 +142,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		internal void VerifyMergeCellsEvent(ChartLocation srcCell, ChartLocation dstCell, bool forward)
 		{
-			//m_events.Add(new object[] { "merge cell contents", srcCell, dstCell, forward });
-			object[] event1 = VerifyEventExists("merge cell contents", 3);
+			var event1 = VerifyEventExists("merge cell contents", 3);
 			Assert.IsTrue(srcCell.IsSameLocation(event1[1]));
 			Assert.IsTrue(dstCell.IsSameLocation(event1[2]));
 			Assert.AreEqual(forward, event1[3]);
@@ -184,65 +163,49 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		public override void ChangeColumn(IConstituentChartCellPart[] partsToMove, ICmPossibility newCol, IConstChartRow row)
 		{
 			if (m_fRecordBasicEdits)
+			{
 				m_events.Add(new object[] { "change column", partsToMove, newCol, row });
+			}
 			else
+			{
 				base.ChangeColumn(partsToMove, newCol, row);
+			}
 		}
 
 		protected internal override void ChangeColumnInternal(IConstituentChartCellPart[] partsToMove, ICmPossibility newCol)
 		{
 			if (m_fRecordBasicEdits)
+			{
 				m_events.Add(new object[] { "change column internal", partsToMove, newCol });
+			}
 			else
+			{
 				base.ChangeColumnInternal(partsToMove, newCol);
+			}
 		}
 
 		public override void DeleteCellParts(IConstChartRow row, int ihvo, int chvo)
 		{
 			if (m_fRecordBasicEdits)
+			{
 				m_events.Add(new object[] { "delete cellParts", row, ihvo, chvo });
+			}
 			else
+			{
 				base.DeleteCellParts(row, ihvo, chvo);
+			}
 		}
 
 		protected override void MergeCellContents(ChartLocation srcCell, ChartLocation dstCell,	bool forward)
 		{
 			if (m_fRecordMergeCellContents)
+			{
 				m_events.Add(new object[] { "merge cell contents", srcCell, dstCell, forward });
+			}
 			else
+			{
 				base.MergeCellContents(srcCell, dstCell, forward);
+			}
 		}
 	}
-
-	// TODO: what to do here!??
-	//class UndoRedoHelperSpy : IUndoRedoTaskHelper
-	//{
-	//    internal List<object[]> m_events;
-
-	//    public UndoRedoHelperSpy(List<object[]> events, string undoText, string redoText)
-	//    {
-	//        m_events = events;
-	//        m_events.Add(new object[] { "start undo sequence", undoText });
-	//    }
-
-	//    #region IUndoRedoTaskHelper Members
-
-	//    public void AddAction(Common.ViewsInterfaces.IUndoAction action)
-	//    {
-	//        m_events.Add(new object[] { "add Undo Action", action });
-	//    }
-
-	//    #endregion
-
-	//    #region IDisposable Members
-
-	//    public void Dispose()
-	//    {
-	//        m_events.Add(new object[] { "end undo sequence" });
-	//        GC.SuppressFinalize(this);
-	//    }
-
-	//    #endregion
-
-	//}
 }

@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string InterlinearTexts = "interlinearTexts";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
 		[Import]
 		private IPropertyTable _propertyTable;
@@ -42,6 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
 			_textAndWordsAreaMenuHelper.Dispose();
 			ActiveTool?.Deactivate(majorFlexComponentParameters);
 
@@ -71,8 +72,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
 			}
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus();
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, this);
 		}
 
 		/// <summary>

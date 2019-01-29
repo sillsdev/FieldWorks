@@ -44,5 +44,24 @@ namespace LanguageExplorer
 		/// <param name="eventHandler">The handler, or null if <paramref name="key"/> has not been registered.</param>
 		/// <returns>'true', if the  <paramref name="key"/> has been registered, otherwise 'false'.</returns>
 		bool TryGetEventHandler(string key, out EventHandler eventHandler);
+
+		/// <summary>
+		/// Adds a function that allows a client to ask about making a menu be visible and/or enabled.
+		/// </summary>
+		/// <param name="key">A unique name for the checker. [NB: This is expected to match the key for the event handler.]</param>
+		/// <param name="visibilityStatus">Returns whether UI widget should be visible and enabled.</param>
+		void AddStatusChecker(string key, Func<Tuple<bool, bool>> visibilityStatus);
+
+		/// <summary>
+		/// Get the status checker
+		/// </summary>
+		/// <param name="key">Get the status checker function with the given key, or a default one that return false in both parts of the tuple.</param>
+		Func<Tuple<bool, bool>> GetStatusChecker(string key);
+
+		/// <summary>
+		/// Remove the status checker for the given key.
+		/// </summary>
+		/// <param name="key">The checker to remove.</param>
+		void RemoveStatusChecker(string key);
 	}
 }

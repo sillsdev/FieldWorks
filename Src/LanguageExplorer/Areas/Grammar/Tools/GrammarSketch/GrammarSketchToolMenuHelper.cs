@@ -13,26 +13,39 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	/// <summary>
 	/// Handle creation and use of the grammar sketch tool menus.
 	/// </summary>
-	internal sealed class GrammarSketchToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class GrammarSketchToolMenuHelper : IToolUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private IArea _area;
+		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
 		private bool _refreshOriginalValue;
 		private ToolStripItem _refreshMenu;
 		private ToolStripItem _refreshToolBarBtn;
 
-		internal GrammarSketchToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal GrammarSketchToolMenuHelper()
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(_majorFlexComponentParameters, null, FileExportMenu_Click);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
-		internal void Initialize()
+		void FileExportMenu_Click(object sender, EventArgs e)
 		{
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
+			}
+		}
+
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(FileExportMenu_Click);
+			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
 			// F5 refresh is disabled in this tool.
 			_refreshMenu = MenuServices.GetViewRefreshMenu(_majorFlexComponentParameters.MenuStrip);
 			_refreshOriginalValue = _refreshMenu.Enabled;
@@ -41,57 +54,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			_refreshToolBarBtn.Enabled = false;
 		}
 
-		void FileExportMenu_Click(object sender, EventArgs e)
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
-			}
+			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
 		#endregion
 
 		#region IDisposable

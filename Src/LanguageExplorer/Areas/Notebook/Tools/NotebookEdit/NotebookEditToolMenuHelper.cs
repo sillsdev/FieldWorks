@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	/// <summary>
 	/// This class handles all interaction for the NotebookEditTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
 	/// </summary>
-	internal sealed class NotebookEditToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class NotebookEditToolMenuHelper : IToolUiWidgetManager
 	{
 		internal const string mnuDataTree_Subrecord_Hotlinks = "mnuDataTree-Subrecord-Hotlinks";
 		internal const string mnuDataTree_Participants = "mnuDataTree-Participants";
@@ -29,11 +29,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		internal const string mnuDataTree_SubRecordSummary = "mnuDataTree-SubRecordSummary";
 
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
 		private ITool _notebookEditTool;
-		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
-		private IToolUiWidgetManager _rightClickContextMenuManager;
+		private IAreaUiWidgetManager _notebookAreaMenuHelper;
+		private IPartialToolUiWidgetManager _rightClickContextMenuManager;
 		private DataTree MyDataTree { get; set; }
-		private RecordBrowseView RecordBrowseView { get; set; }
+		private RecordBrowseView RecordBrowseView { get; }
 		private IRecordList MyRecordList { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripButton _insertRecordToolStripButton;
@@ -45,78 +46,53 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private ToolStripSeparator _toolsFindInDictionarySeparator;
 		private ToolStripMenuItem _toolsFindInDictionaryMenu;
 
+		private NotebookAreaMenuHelper AreaMenuHelperAsNotebookAreaMenuHelper => (NotebookAreaMenuHelper)_notebookAreaMenuHelper;
+
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
 
-		internal NotebookEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView)
+		internal NotebookEditToolMenuHelper(ITool currentNotebookTool, DataTree dataTree, RecordBrowseView recordBrowseView)
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(recordList, nameof(recordList));
 			Require.That(currentNotebookTool.MachineName == AreaServices.NotebookEditToolMachineName);
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			_notebookEditTool = currentNotebookTool;
 			MyDataTree = dataTree;
 			RecordBrowseView = recordBrowseView;
-			MyRecordList = recordList;
 
+		}
+
+		#region Implementation of IToolUiWidgetManager
+		/// <inheritdoc />
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+			Guard.AgainstNull(recordList, nameof(recordList));
+
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+			MyRecordList = recordList;
 			var insertIndex = -1;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList, dataTree);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(_notebookEditTool, MyDataTree);
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, MyRecordList);
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 			MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 			_rightClickContextMenuManager = new RightClickContextMenuManager(_notebookEditTool, MyDataTree);
 			// <item command="CmdConfigureColumns" defaultVisible="false" />
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(RecordBrowseView.BrowseViewer, ++insertIndex);
-		}
-
-		#region Implementation of IPropertyTableProvider
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-		#endregion
-
-		#region Implementation of IPublisherProvider
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-		#endregion
-
-		#region Implementation of IFlexComponent
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(RecordBrowseView.BrowseViewer, ++insertIndex);
+			AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 			MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
-			_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, MyRecordList);
+			_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, this, MyRecordList);
 
 			// Add Insert menus, & Insert toolbar buttons.
-			_notebookAreaMenuHelper.AddInsertMenuItems();
+			AreaMenuHelperAsNotebookAreaMenuHelper.AddInsertMenuItems();
 			AddInsertToolbarItems();
 			SetupSliceMenus();
 
 			_toolsMenu = MenuServices.GetToolsMenu(_majorFlexComponentParameters.MenuStrip);
-			var insertIndex = 1;
+			insertIndex = 1;
 			_toolsFindInDictionarySeparator = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsMenu, insertIndex++);
 			/*
 			  <item command="CmdLexiconLookup" defaultVisible="false" />
@@ -129,12 +105,26 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
 		}
 
+		/// <inheritdoc />
+		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_rightClickContextMenuManager?.UnwireSharedEventHandlers();
+			_notebookAreaMenuHelper.UnwireSharedEventHandlers();
+			_toolsFindInDictionaryMenu.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
+			_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
+			_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+			_insertAddToDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon);
+			_insertFindInDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
+		}
+		#endregion
+
 		private void ToolsMenu_DropDownOpening(object sender, EventArgs e)
 		{
 			_toolsFindInDictionaryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 		}
-
-		#endregion
 
 		#region Implementation of IDisposable
 		private bool _isDisposed;
@@ -172,18 +162,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_toolsFindInDictionarySeparator.Dispose();
 				_toolsMenu.DropDownOpening -= ToolsMenu_DropDownOpening;
 				_toolsMenu.DropDownItems.Remove(_toolsFindInDictionaryMenu);
-				_toolsFindInDictionaryMenu.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
 				_toolsFindInDictionaryMenu.Dispose();
 
 				Application.Idle -= Application_Idle;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
-				_rightClickContextMenuManager?.UnwireSharedEventHandlers();
-				_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
-				_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
-				_insertAddToDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon);
-				_insertFindInDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
 
-				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_rightClickContextMenuManager?.Dispose();
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
@@ -297,7 +281,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			if (_insertFindInDictionaryToolStripButton != null && currentSliceAsStTextSlice != null)
 			{
 				currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-				_insertFindInDictionaryToolStripButton.Enabled = _notebookAreaMenuHelper.MyAreaWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
+				_insertFindInDictionaryToolStripButton.Enabled = AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
 			}
 			else
 			{
@@ -318,7 +302,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var newToolbarItems = new List<ToolStripItem>(5);
 
-			_notebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
+			AreaMenuHelperAsNotebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
 			/*
 			  <item command="CmdInsertRecord" defaultVisible="false" />
 				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
@@ -357,7 +341,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			newToolbarItems.Add(_insertFindInDictionaryToolStripButton);
 			_insertFindInDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
+			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
 		}
 
 		private void SetupSliceMenus()
@@ -584,7 +568,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			if (recordOwner.Owner is IRnResearchNbk)
 			{
 				// If possible, jump to the newly promoted record.
-				Publisher.Publish("JumpToRecord", record.Hvo);
+				_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("JumpToRecord", record.Hvo);
 			}
 		}
 
@@ -632,8 +616,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private IRnGenericRec ChooseNewOwner(IRnGenericRec[] records, string sTitle)
 		{
 			var cache = _majorFlexComponentParameters.LcmCache;
-			using (var dlg = new ReallySimpleListChooser(PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable), ObjectLabel.CreateObjectLabels(cache, records, "ShortName", cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs)),
-				string.Empty, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var dlg = new ReallySimpleListChooser(PersistenceProviderFactory.CreatePersistenceProvider(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable), ObjectLabel.CreateObjectLabels(cache, records, "ShortName", cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs)),
+				string.Empty, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.Text = sTitle;
 				dlg.SetHelpTopic("khtpDataNotebook-ChooseOwnerOfDemotedRecord");

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,14 +44,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// In this version the test specifies the text (so it can know how many
 		/// words it has.
 		/// </summary>
-		/// <returns></returns>
 		internal IStTxtPara MakeParagraphSpecificContent(string contents)
 		{
 			return m_helper.MakeParagraphSpecificContent(contents);
 		}
 
-		internal void CallGetWordGroupCellsBorderingChOrph(AnalysisOccurrence occurrence,
-			out ChartLocation precCell, out ChartLocation follCell)
+		internal void CallGetWordGroupCellsBorderingChOrph(AnalysisOccurrence occurrence, out ChartLocation precCell, out ChartLocation follCell)
 		{
 			var iPara = m_ccl.CallGetParaIndexForOccurrence(occurrence);
 			Assert.Greater(iPara, -1, "Can't get ChOrph paragraph index.");
@@ -88,13 +86,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// The LCM factory now inserts the item in a particular spot in the row.
 		/// This method assumes you want to put it at the end of the row.
 		/// </summary>
-		/// <param name="row"></param>
-		/// <param name="icol"></param>
-		/// <param name="begPoint"></param>
-		/// <param name="endPoint"></param>
-		/// <returns></returns>
-		IConstChartWordGroup MakeWordGroup(IConstChartRow row, int icol,
-			AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
+		private IConstChartWordGroup MakeWordGroup(IConstChartRow row, int icol, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
 		{
 			return m_helper.MakeWordGroup(row, icol, begPoint, endPoint);
 		}
@@ -103,9 +95,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// The LCM factory now inserts the row in a particular spot in the chart.
 		/// This method assumes you want to put it at the end.
 		/// </summary>
-		/// <param name="rowNum"></param>
-		/// <returns></returns>
-		IConstChartRow MakeRow(string rowNum)
+		private IConstChartRow MakeRow(string rowNum)
 		{
 			return m_helper.MakeRow(m_chart, rowNum);
 		}
@@ -128,7 +118,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		[Test]
 		public void NextUnusedInUnannotatedText()
 		{
-			MakeParagraphSpecificContent("");
+			MakeParagraphSpecificContent(string.Empty);
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 			Assert.AreEqual(0, result.Length);
 		}
@@ -169,11 +159,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var para = MakeParagraphSpecificContent("three words here");
 			var seg = para.SegmentsOS[0];
 			var expected = new[]
-							{
-								new AnalysisOccurrence(seg, 0),
-								new AnalysisOccurrence(seg, 1),
-								new AnalysisOccurrence(seg, 2)
-							};
+			{
+				new AnalysisOccurrence(seg, 0),
+				new AnalysisOccurrence(seg, 1),
+				new AnalysisOccurrence(seg, 2)
+			};
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 			Assert.AreEqual(expected, result);
 		}
@@ -190,10 +180,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var wg1 = MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 0), new AnalysisOccurrence(seg, 1));
 			var wg2 = MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 2), new AnalysisOccurrence(seg, 2));
 			var expected = new[]
-							{
-								new AnalysisOccurrence(seg, 3),
-								new AnalysisOccurrence(seg, 4)
-							};
+			{
+				new AnalysisOccurrence(seg, 3),
+				new AnalysisOccurrence(seg, 4)
+			};
 			// SUT
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 			Assert.AreEqual(expected, result);
@@ -232,17 +222,17 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var seg4 = para3.SegmentsOS[0];
 
 			var expected = new List<AnalysisOccurrence>(9)
-							{
-								new AnalysisOccurrence(seg1, 0), // Two
-								new AnalysisOccurrence(seg1, 1), // segments
-								new AnalysisOccurrence(seg2, 0), // Here
-								new AnalysisOccurrence(seg3, 0), // Two
-								new AnalysisOccurrence(seg3, 1), // words
-								new AnalysisOccurrence(seg4, 0), // We
-								new AnalysisOccurrence(seg4, 1), // want
-								new AnalysisOccurrence(seg4, 2), // four
-								new AnalysisOccurrence(seg4, 3)  // words
-							};
+			{
+				new AnalysisOccurrence(seg1, 0), // Two
+				new AnalysisOccurrence(seg1, 1), // segments
+				new AnalysisOccurrence(seg2, 0), // Here
+				new AnalysisOccurrence(seg3, 0), // Two
+				new AnalysisOccurrence(seg3, 1), // words
+				new AnalysisOccurrence(seg4, 0), // We
+				new AnalysisOccurrence(seg4, 1), // want
+				new AnalysisOccurrence(seg4, 2), // four
+				new AnalysisOccurrence(seg4, 3)  // words
+			};
 			// SUT
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 			Assert.AreEqual(expected.ToArray(), result);
@@ -279,13 +269,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row, 2, w3, w3);
 
 			var expected = new List<AnalysisOccurrence>(5)
-							{
-								new AnalysisOccurrence(seg3, 1), // words
-								new AnalysisOccurrence(seg4, 0), // We
-								new AnalysisOccurrence(seg4, 1), // want
-								new AnalysisOccurrence(seg4, 2), // four
-								new AnalysisOccurrence(seg4, 3)  // words
-							};
+			{
+				new AnalysisOccurrence(seg3, 1), // words
+				new AnalysisOccurrence(seg4, 0), // We
+				new AnalysisOccurrence(seg4, 1), // want
+				new AnalysisOccurrence(seg4, 2), // four
+				new AnalysisOccurrence(seg4, 3)  // words
+			};
 
 			// SUT
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
@@ -397,10 +387,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w1);
 
 			// Verification
-			Assert.IsNotNull(result,
-				"We should return a valid location.");
-			Assert.IsTrue(result.IsValidLocation,
-				"We should return a valid location.");
+			Assert.IsNotNull(result, "We should return a valid location.");
+			Assert.IsTrue(result.IsValidLocation, "We should return a valid location.");
 			Assert.IsTrue(result.IsSameLocation(new ChartLocation(row1, 0)));
 		}
 
@@ -434,12 +422,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w0);
 
 			// Verification
-			Assert.IsNotNull(result,
-				"We should return a valid location (i.e. chart beginning).");
-			Assert.AreEqual(row.Hvo, result.HvoRow,
-				"We should return chart beginning (i.e. the first row).");
-			Assert.AreEqual(0, result.ColIndex,
-				"We should return chart beginning (i.e. column zero).");
+			Assert.IsNotNull(result, "We should return a valid location (i.e. chart beginning).");
+			Assert.AreEqual(row.Hvo, result.HvoRow, "We should return chart beginning (i.e. the first row).");
+			Assert.AreEqual(0, result.ColIndex, "We should return chart beginning (i.e. column zero).");
 		}
 
 		/// <summary>
@@ -474,12 +459,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w2);
 
 			// Verification (s/b Row2, iCol==1)
-			Assert.IsNotNull(result,
-				"We should return a valid location (i.e. Row2, iCol==1).");
-			Assert.AreEqual(row2.Hvo, result.HvoRow,
-				"We should return a valid location (i.e. Row2).");
-			Assert.AreEqual(1, result.ColIndex,
-				"We should return a valid location (i.e. 2nd column).");
+			Assert.IsNotNull(result, "We should return a valid location (i.e. Row2, iCol==1).");
+			Assert.AreEqual(row2.Hvo, result.HvoRow, "We should return a valid location (i.e. Row2).");
+			Assert.AreEqual(1, result.ColIndex, "We should return a valid location (i.e. 2nd column).");
 		}
 
 		/// <summary>
@@ -850,8 +832,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 2, iPara of ChOrph = 1
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w4.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w4.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
@@ -889,8 +870,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 2, iPara of ChOrph = 1
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w3.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w3.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result, "Wrong enum result.");
@@ -932,8 +912,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 0, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w4.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w4.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);
@@ -968,8 +947,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 3, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
@@ -1007,8 +985,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
@@ -1044,8 +1021,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w3.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w3.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
@@ -1081,8 +1057,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w0.GetMyBeginOffsetInPara(),
-				out whereToInsertActual, out existingWordGroupActual);
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w0.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);

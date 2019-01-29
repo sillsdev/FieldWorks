@@ -10,86 +10,61 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LIFT;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
 	/// This class handles all interaction for the Lexicon Area common menus.
 	/// </summary>
-	internal sealed class LexiconAreaMenuHelper : IFlexComponent, IDisposable
+	internal sealed class LexiconAreaMenuHelper : IAreaUiWidgetManager
 	{
+		private IArea _area;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal LexiconAreaMenuHelper()
+		{
+		}
+
+		#region Implementation of IAreaUiWidgetManager
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+			Require.That(area.MachineName == AreaServices.LexiconAreaMachineName);
 
+			_area = area;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_activeToolUiManager = toolUiWidgetManager; // May be null;
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-		}
-
-		internal void Initialize()
-		{
 			// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
 			MyAreaWideMenuHelper.SetupFileExportMenu();
-
 			// Add two lexicon area-wide import options.
 			AddFileImportMenuItems();
+			MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
-		#region Implementation of IPropertyTableProvider
+		/// <inheritdoc />
+		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
 
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
+		/// <inheritdoc />
+		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			// If ActiveToolUiManager is null, then the tool should call this method.
+			// Otherwise, ActiveToolUiManager will call it.
 		}
-
 		#endregion
 
 		#region IDisposable
 		private bool _isDisposed;
+		private IToolUiWidgetManager _activeToolUiManager;
 
 		~LexiconAreaMenuHelper()
 		{

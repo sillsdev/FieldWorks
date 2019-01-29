@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconBrowseTool : ITool
 	{
-		private LexiconBrowseToolMenuHelper _browseToolMenuHelper;
+		private IToolUiWidgetManager _browseToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -39,6 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_browseToolMenuHelper.UnwireSharedEventHandlers();
 			_browseToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -58,7 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-			_browseToolMenuHelper = new LexiconBrowseToolMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseToolMenuHelper = new LexiconBrowseToolMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -71,7 +72,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			_browseToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>

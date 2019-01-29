@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
-		private InterlinearEditToolMenuHelper _interlinearEditToolMenuHelper;
+		private IToolUiWidgetManager _interlinearEditToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -42,6 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_interlinearEditToolMenuHelper.UnwireSharedEventHandlers();
 			_interlinearEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -59,7 +60,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
-			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper(majorFlexComponentParameters);
+			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -80,13 +81,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, "Texts", new PaneBar(), _interlinMaster, "Text", new PaneBar());
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
-			_interlinearEditToolMenuHelper.Initialize();
+			_interlinearEditToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 		}

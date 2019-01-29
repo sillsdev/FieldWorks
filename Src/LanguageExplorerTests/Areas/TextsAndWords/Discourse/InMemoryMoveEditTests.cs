@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,9 +43,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Verify that the specified row of the chart exists and has the expected cell parts.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="cellParts"></param>
-		void VerifyRowContents(int index, IConstituentChartCellPart[] cellParts)
+		private void VerifyRowContents(int index, IConstituentChartCellPart[] cellParts)
 		{
 			m_helper.VerifyRowCells(index, cellParts);
 		}
@@ -59,7 +57,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <param name="es">EndSentence</param>
 		/// <param name="sdcg">StartDependentClauseGroup</param>
 		/// <param name="edcg">EndDependentClauseGroup</param>
-		void VerifyRowDetails(int index, ClauseTypes ct, bool ep, bool es, bool sdcg, bool edcg)
+		private void VerifyRowDetails(int index, ClauseTypes ct, bool ep, bool es, bool sdcg, bool edcg)
 		{
 			m_helper.VerifyRowDetails(index, ct, ep, es, sdcg, edcg);
 		}
@@ -68,11 +66,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verify that there is a row with the specified index that has a cell with the specified
 		/// index which belongs to the specified column and covers the specified words.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="words"></param>
-		void VerifyWordGroup(int irow, int icellPart, ICmPossibility column, List<AnalysisOccurrence> words)
+		private void VerifyWordGroup(int irow, int icellPart, ICmPossibility column, List<AnalysisOccurrence> words)
 		{
 			m_helper.VerifyWordGroup(irow, icellPart, column, words);
 		}
@@ -81,11 +75,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verify that there is a row with the specified index that has a cell with the specified
 		/// index which belongs to the specified column and covers the specified words.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="marker"></param>
-		void VerifyTag(int irow, int icellPart, ICmPossibility column, ICmPossibility marker)
+		private void VerifyTag(int irow, int icellPart, ICmPossibility column, ICmPossibility marker)
 		{
 			m_helper.VerifyMarkerCellPart(irow, icellPart, column, marker);
 		}
@@ -94,10 +84,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verify that there is a row with the specified index that has a ConstChartTag
 		/// with the specified index which belongs to the specified column and has a null Tag.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		void VerifyMissingMarker(int irow, int icellPart, ICmPossibility column)
+		private void VerifyMissingMarker(int irow, int icellPart, ICmPossibility column)
 		{
 			m_helper.VerifyMissingMarker(irow, icellPart, column);
 		}
@@ -107,12 +94,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// with the specified index which belongs to the specified column and points to the
 		/// specified array of ConstChartRows.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icellPart"></param>
-		/// <param name="column"></param>
-		/// <param name="depClauses"></param>
-		void VerifyDependentClauseMarker(int irow, int icellPart, ICmPossibility column,
-			IConstChartRow[] depClauses)
+		private void VerifyDependentClauseMarker(int irow, int icellPart, ICmPossibility column, IConstChartRow[] depClauses)
 		{
 			m_helper.VerifyDependentClauseMarker(irow, icellPart, column, depClauses);
 		}
@@ -121,11 +103,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verify that FindFirstWordGroup() finds the given 'testCellPart' as the first
 		/// CellPart in 'list'.
 		/// </summary>
-		/// <param name="testWordGrp"></param>
-		/// <param name="list"></param>
-		/// <param name="message"></param>
-		private void VerifyFirstWordGroup(IConstChartWordGroup testWordGrp,
-			List<IConstituentChartCellPart> list, string message)
+		private void VerifyFirstWordGroup(IConstChartWordGroup testWordGrp, List<IConstituentChartCellPart> list, string message)
 		{
 			var wordGrp = m_logic.CallFindWordGroup(list);
 			Assert.IsNotNull(wordGrp, message);
@@ -135,9 +113,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Checks that the row number on the chart row is as expected.
 		/// </summary>
-		/// <param name="label"></param>
-		/// <param name="row"></param>
-		/// <param name="msg"></param>
 		private void VerifyRowNumber(string label, IConstChartRow row, string msg)
 		{
 			m_helper.VerifyRowNumber(label, row, msg);
@@ -146,8 +121,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Checks that the chart contains the rows specified.
 		/// </summary>
-		/// <param name="chart"></param>
-		/// <param name="rows"></param>
 		private void VerifyChartRows(IDsConstChart chart, IConstChartRow[] rows)
 		{
 			m_helper.VerifyChartRows(chart, rows);
@@ -166,8 +139,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Checks that the specified hvo has been created as some form of ConstituentCellPart.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="message"></param>
 		private IConstituentChartCellPart VerifyCreatedCellPart(int hvo, string message)
 		{
 			return m_helper.VerifyCreatedCellPart(hvo, message);
@@ -176,8 +147,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Checks that the specified hvo has been created as some form of ConstChartRow.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="message"></param>
 		private IConstChartRow VerifyCreatedRow(int hvo, string message)
 		{
 			return m_helper.VerifyCreatedRow(hvo, message);
@@ -187,9 +156,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// Verifies that the specified number of Analyses have been removed from
 		/// the start of the original list.
 		/// </summary>
-		/// <param name="allParaOccurrences"></param>
-		/// <param name="removedWords"></param>
-		/// <returns></returns>
 		private void AssertUsedAnalyses(AnalysisOccurrence[] allParaOccurrences, int removedWords)
 		{
 			m_helper.AssertUsedAnalyses(m_mockRibbon, allParaOccurrences, removedWords);
@@ -288,8 +254,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// Should have removed one item from row1
 			VerifyRowContents(1, new IConstituentChartCellPart[] { cellPart1_2b, cellPart1_3 });
 			// Should have moved two items into cell 1, row 0
-			VerifyWordGroup(0, 1, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2], allParaOccurrences[3] });
+			VerifyWordGroup(0, 1, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2], allParaOccurrences[3] });
 		}
 
 		/// <summary>
@@ -317,8 +282,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify
 			// All the same things still in row0
-			VerifyRowContents(0,
-				new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_1, cellPart0_1b, cellPart0_2, cellPart0_2b, cellPart0_3a, cellPart0_3b });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_1, cellPart0_1b, cellPart0_2, cellPart0_2b, cellPart0_3a, cellPart0_3b });
 			// Should have moved cellPart0_1 to col 2
 			VerifyWordGroup(0, 2, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2] });
 			// Should have moved cellPart0_1b to col 2
@@ -352,12 +316,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify
 			// All the same things still in row0
-			VerifyRowContents(0,
-				new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_2x, cellPart0_1,
-					cellPart0_1b, cellPart0_2, cellPart0_2b, cellPart0_3a, cellPart0_3b });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_2x, cellPart0_1, cellPart0_1b, cellPart0_2, cellPart0_2b, cellPart0_3a, cellPart0_3b });
 			// Should have moved cellPart0_1 to col 2
-			VerifyWordGroup(0, 3, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[1],
-				allParaOccurrences[2] });
+			VerifyWordGroup(0, 3, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2] });
 			// Should have moved cellPart0_1b to col 2
 			VerifyWordGroup(0, 4, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[3] });
 		}
@@ -392,15 +353,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallMergeCellContents(row0, 1, row0, 2, true);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_1b.Hvo, cellPart0_2a.Hvo, cellPart0_1.Hvo },
-				"Should delete 3 WordGroups as data is merged; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { cellPart0_1b.Hvo, cellPart0_2a.Hvo, cellPart0_1.Hvo }, "Should delete 3 WordGroups as data is merged; Hvo {0} still exists!");
 			// two 'from' WordGroups and one MT marker deleted in row0
-			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_2,
-				cellPart0_2b, cellPart0_3 });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_2, cellPart0_2b, cellPart0_3 });
 			// Should have merged 2 WordGroups into this one in cell 2, row 0
-			VerifyWordGroup(0, 2, m_allColumns[2],
-				new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2],
-					allParaOccurrences[3], allParaOccurrences[4] });
+			VerifyWordGroup(0, 2, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2], allParaOccurrences[3], allParaOccurrences[4] });
 		}
 
 		/// <summary>
@@ -429,16 +386,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_actionHandler.EndUndoTask();
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_2.Hvo },
-				"Should delete redundant WordGroup; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { cellPart0_2.Hvo }, "Should delete redundant WordGroup; Hvo {0} still exists!");
 			// one 'from' WordGroup deleted in row0, one moved
-			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_1,
-				cellPart0_1b, cellPart0_2b, cellPart0_2a, cellPart0_3 });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_0b, cellPart0_1, cellPart0_1b, cellPart0_2b, cellPart0_2a, cellPart0_3 });
 			// Should have merged 1 WordGroup into cellPart0_1b in cell 1, row 0
-			VerifyWordGroup(0, 3, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
-			VerifyWordGroup(0, 4, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[5], allParaOccurrences[6] });
+			VerifyWordGroup(0, 3, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
+			VerifyWordGroup(0, 4, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[5], allParaOccurrences[6] });
 		}
 
 		/// <summary>
@@ -463,17 +416,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallMergeCellContents(row0, 1, row0, 2, true);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_1b.Hvo },
-				"One 'from' WordGroup should be deleted in row0; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { cellPart0_1b.Hvo }, "One 'from' WordGroup should be deleted in row0; Hvo {0} still exists!");
 			// one 'from' WordGroup deleted in row0
-			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1c,
-				cellPart0_1d, cellPart0_1, cellPart0_2, cellPart0_3, cellPart0_3b });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1c, cellPart0_1d, cellPart0_1, cellPart0_2, cellPart0_3, cellPart0_3b });
 			// Should have merged 2 WordGroups into this one in cell 2, row 0
-			VerifyWordGroup(0, 4, m_allColumns[2],
-				new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
+			VerifyWordGroup(0, 4, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
 			// Should have moved cellPart0_1 to col 2
-			VerifyWordGroup(0, 3, m_allColumns[2],
-				new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2] });
+			VerifyWordGroup(0, 3, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[1], allParaOccurrences[2] });
 		}
 
 		/// <summary>
@@ -498,13 +447,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallMergeCellContents(row0, 2, row0, 1, false);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_2.Hvo },
-				"One 'from' WordGroup deleted in row0; Hvo {0} still exists!");
-			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1,
-				cellPart0_1b, cellPart0_1c, cellPart0_1d, cellPart0_3, cellPart0_3b });
+			VerifyDeletedHvos(new[] { cellPart0_2.Hvo }, "One 'from' WordGroup deleted in row0; Hvo {0} still exists!");
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1, cellPart0_1b, cellPart0_1c, cellPart0_1d, cellPart0_3, cellPart0_3b });
 			// Should have merged 2 WordGroups into this one in cell 1, row 0
-			VerifyWordGroup(0, 2, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
+			VerifyWordGroup(0, 2, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[3], allParaOccurrences[4] });
 		}
 
 		/// <summary>
@@ -532,10 +478,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallMergeCellContents(row0, 2, row0, 1, false);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_2.Hvo },
-				"One 'from' WordGroup deleted in row0; Hvo {0} still exists!");
-			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1, cellPart0_1b,
-				cellPart0_2b, cellPart0_1c, cellPart0_2c, cellPart0_3, cellPart0_3b, cellPart0_3c });
+			VerifyDeletedHvos(new[] { cellPart0_2.Hvo }, "One 'from' WordGroup deleted in row0; Hvo {0} still exists!");
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_0, cellPart0_1, cellPart0_1b, cellPart0_2b, cellPart0_1c, cellPart0_2c, cellPart0_3, cellPart0_3b, cellPart0_3c });
 			// Should have moved cellPart0_2b to col 1
 			VerifyWordGroup(0, 3, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[5] });
 			// Should have merged 2 WordGroups into this one in cell 1, row 0
@@ -563,21 +507,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallMergeCellContents(row0, 2, row0, 1, false);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart0_2.Hvo },
-				"Should have removed one item from row0; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { cellPart0_2.Hvo }, "Should have removed one item from row0; Hvo {0} still exists!");
 			VerifyRowContents(0,
 				new IConstituentChartCellPart[] { cellPart0_1, cellPart0_1b, cellPart0_2b, cellPart0_2c });
 			// Should have merged two WordGroups
-			VerifyWordGroup(0, 0, m_allColumns[1],
-				new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
+			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
 		}
 
 		[Test]
 		public void FirstWordGroup()
 		{
 			// Should not crash with empty list.
-			Assert.IsNull(m_logic.CallFindWordGroup(new List<IConstituentChartCellPart>()),
-				"FindFirstWordGroup should find nothing in empty list");
+			Assert.IsNull(m_logic.CallFindWordGroup(new List<IConstituentChartCellPart>()), "FindFirstWordGroup should find nothing in empty list");
 
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(5);
 			var row0 = m_helper.MakeFirstRow();
@@ -588,8 +529,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			var list = new List<IConstituentChartCellPart> {cellPart0_1b};
 
-			Assert.IsNull(m_logic.CallFindWordGroup(list),
-				"FindFirstWordGroup should find nothing in marker-only list");
+			Assert.IsNull(m_logic.CallFindWordGroup(list), "FindFirstWordGroup should find nothing in marker-only list");
 
 			list.Add(cellPart0_1);
 			VerifyFirstWordGroup(cellPart0_1, list, "FindFirstWordGroup should find item not at start");
@@ -737,8 +677,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1b, cellPart0_1, cellPart0_3 }); // Row not left in correct order/state.
 			// First word should move to next column.
 			VerifyWordGroup(0, 1, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[0] });
-			Assert.AreEqual(m_allColumns[1].Hvo, cellPart0_1b.ColumnRA.Hvo,
-				"Postposed marker should still be in original column.");
+			Assert.AreEqual(m_allColumns[1].Hvo, cellPart0_1b.ColumnRA.Hvo, "Postposed marker should still be in original column.");
 		}
 
 		[Test]
@@ -793,7 +732,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
 			var row0 = m_helper.MakeRow1a();
 			var row1 = m_helper.MakeSecondRow();
-			int icolLast = m_logic.AllMyColumns.Length - 1;
+			var icolLast = m_logic.AllMyColumns.Length - 1;
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
 			m_helper.MakeWordGroup(row1, 3, allParaOccurrences[2], allParaOccurrences[2]);
@@ -843,8 +782,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.MoveWordForward(cell);
 
 			// Verify
-			var newWordGrp = VerifyCreatedCellPart(nextHvo,
-				"Should have made new WordGroup at end of row 0") as IConstChartWordGroup;
+			var newWordGrp = VerifyCreatedCellPart(nextHvo, "Should have made new WordGroup at end of row 0") as IConstChartWordGroup;
 			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1, newWordGrp });
 			// should have moved word out of cell 1
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
@@ -915,8 +853,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.MoveWordForward(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] { row0.Hvo, cellPart0_last.Hvo },
-				"Should delete empty row0 and redundant WordGroup; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { row0.Hvo, cellPart0_last.Hvo }, "Should delete empty row0 and redundant WordGroup; Hvo {0} still exists!");
 			VerifyChartRows(m_chart, new[] { row1 }); // Should have deleted the empty row0 from the chart
 			// With smarter row numbering update row1's comment too! (1b ->1)
 			VerifyRowNumber("1", row1, "Should have modified row number");
@@ -937,8 +874,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ToggleMissingMarker(cell, false);
 
 			// Verify
-			var newTag = VerifyCreatedCellPart(nextHvo,
-				"Should have made a missing marker") as IConstChartTag;
+			var newTag = VerifyCreatedCellPart(nextHvo, "Should have made a missing marker") as IConstChartTag;
 			VerifyRowContents(0, new [] { newTag }); // Should have made a missing marker in row 0
 			VerifyMissingMarker(0, 0, m_allColumns[icol]);
 		}
@@ -958,8 +894,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ToggleMissingMarker(cell, false);
 
 			// Verify
-			var newTag = VerifyCreatedCellPart(nextHvo,
-				"Should have made a missing marker") as IConstChartTag;
+			var newTag = VerifyCreatedCellPart(nextHvo, "Should have made a missing marker") as IConstChartTag;
 			// Should have added a missing marker to row 0
 			VerifyRowContents(0, new IConstituentChartCellPart[] { newTag, possMarker });
 			VerifyMissingMarker(0, 0, m_allColumns[icol]);
@@ -1046,10 +981,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				EndSetupTask();
 				// SUT has its own UOW
 
-			// SUT
+				// SUT
 				m_logic.AddOrRemoveMarker(rcpmi);
 
-			// Verify
+				// Verify
 				var newTag = VerifyCreatedCellPart(nextHvo,
 				"Should have made a marker CellPart") as IConstChartTag;
 				// Should not have removed missing marker in row and added other marker.
@@ -1109,8 +1044,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.MoveWordBack(cell);
 
 			// Verify
-			var newWordGrp = VerifyCreatedCellPart(nextHvo,
-				"Should create one new WordGroup") as IConstChartWordGroup;
+			var newWordGrp = VerifyCreatedCellPart(nextHvo, "Should create one new WordGroup") as IConstChartWordGroup;
 			VerifyRowContents(0, new[] { newWordGrp, cellPart0_1 }); // Should have made new WordGroup at start of row 0
 			// New WordGroup should contain moved word
 			VerifyWordGroup(0, 0, m_allColumns[0], new List<AnalysisOccurrence> { allParaOccurrences[0] });
@@ -1274,8 +1208,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ClearChartFromHereOn(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] { cellPart1_2.Hvo, cellPart2_1.Hvo, row2.Hvo },
-				"Should have removed 2 WordGroups and a row; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] { cellPart1_2.Hvo, cellPart2_1.Hvo, row2.Hvo }, "Should have removed 2 WordGroups and a row; Hvo {0} still exists!");
 			VerifyChartRows(m_chart, new [] { row0, row1 }); // Should have only deleted row2
 			VerifyRowContents(1, new[] { cellPart1_1 }); // Should have only deleted chart from cell 2 in row1
 
@@ -1296,8 +1229,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[1], allParaOccurrences[1]);
 			var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[3]);
 			var cellPart2_1 = m_helper.MakeWordGroup(row2, 1, allParaOccurrences[4], allParaOccurrences[4]);
-			var cellPart0_2 = m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2 },
-				ClauseTypes.Dependent);
+			var cellPart0_2 = m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2 }, ClauseTypes.Dependent);
 			var cellPart0_3 = m_helper.MakeDependentClauseMarker(row0, 3, new [] { row3 }, ClauseTypes.Speech);
 			var cell = MakeLocObj(row1, 2);
 			EndSetupTask(); // SUT has its own UOW
@@ -1307,8 +1239,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ClearChartFromHereOn(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, row2.Hvo, row3.Hvo, cellPart0_3.Hvo},
-				"Should have removed rows 2 & 3; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, row2.Hvo, row3.Hvo, cellPart0_3.Hvo}, "Should have removed rows 2 & 3; Hvo {0} still exists!");
 			VerifyChartRows(m_chart, new[] { row0, row1 }); // Should have deleted rows 2 & 3
 			// Should have deleted empty clause marker from row0
 			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1, cellPart0_2 });
@@ -1345,8 +1276,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ClearChartFromHereOn(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, cellPart3_2.Hvo, row2.Hvo, row3.Hvo},
-				"Should have removed rows 2 & 3; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, cellPart3_2.Hvo, row2.Hvo, row3.Hvo}, "Should have removed rows 2 & 3; Hvo {0} still exists!");
 			VerifyChartRows(m_chart, new[] { row0, row1 }); // Should have deleted rows 2 & 3
 			VerifyRowContents(1, new[] { cellPart1_1 }); // Should have only deleted chart from cell 2 in row1
 			// Should have cleared dependent property on row 0
@@ -1377,8 +1307,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.ClearChartFromHereOn(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, row1.Hvo, row2.Hvo},
-				"Should have removed rows 2 & 3; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] {cellPart1_2.Hvo, cellPart2_1.Hvo, row1.Hvo, row2.Hvo}, "Should have removed rows 2 & 3; Hvo {0} still exists!");
 			VerifyChartRows(m_chart, new[] { row0 }); // Should have deleted rows 1 & 2
 			VerifyRowNumber("1", row0, "Should have changed row number");
 
@@ -1404,10 +1333,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.MakeDependentClauseMarker(new ChartLocation(row1, 3), new [] { row2 }, ClauseTypes.Speech);
 
 			// Verify
-			var newDepMrkrOuter = VerifyCreatedCellPart(nextHvo++,
-				"Should create two new markers") as IConstChartClauseMarker;
-			var newDepMrkrInner = VerifyCreatedCellPart(nextHvo,
-				"Should create two new markers") as IConstChartClauseMarker;
+			var newDepMrkrOuter = VerifyCreatedCellPart(nextHvo++, "Should create two new markers") as IConstChartClauseMarker;
+			var newDepMrkrInner = VerifyCreatedCellPart(nextHvo, "Should create two new markers") as IConstChartClauseMarker;
 			// Should have made new CellPart at end of row 0
 			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1, newDepMrkrOuter });
 			// Should have made new CellPart at end of row 1
@@ -1435,8 +1362,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row1, 1, allParaOccurrences[1], allParaOccurrences[1]);
 			m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[3]);
 			m_helper.MakeWordGroup(row2, 1, allParaOccurrences[4], allParaOccurrences[4]);
-			var cellPart0_2 = m_helper.MakeDependentClauseMarker(row0, 2,
-				new [] { row1, row2 }, ClauseTypes.Dependent);
+			var cellPart0_2 = m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2 }, ClauseTypes.Dependent);
 			var cell = new ChartLocation(row0, 2);
 			EndSetupTask(); // SUT has its own UOW
 
@@ -1445,8 +1371,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_logic.CallRemoveDepClause(cell);
 
 			// Verify
-			VerifyDeletedHvos(new[] {cellPart0_2.Hvo},
-				"Should have deleted clause marker from row0; Hvo {0} still exists!");
+			VerifyDeletedHvos(new[] {cellPart0_2.Hvo}, "Should have deleted clause marker from row0; Hvo {0} still exists!");
 			VerifyRowContents(0, new[] { cellPart0_1 }); // Should have deleted clause marker from row0
 			// It would also be fine to clear these fields!
 			// Should have cleared dependent and firstDep flags on row 1
@@ -1520,8 +1445,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[3]);
 			m_helper.MakeWordGroup(row2, 3, allParaOccurrences[4], allParaOccurrences[4]);
 			m_helper.MakeWordGroup(row3, 2, allParaOccurrences[5], allParaOccurrences[6]);
-			m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2, row3 },
-				ClauseTypes.Dependent);
+			m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2, row3 }, ClauseTypes.Dependent);
 
 			// SUT
 			// Because row2 is going away and 'firstDep' and 'endDep' are already set right,
@@ -1550,8 +1474,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[3]);
 			m_helper.MakeWordGroup(row2, 3, allParaOccurrences[4], allParaOccurrences[4]);
 			m_helper.MakeWordGroup(row3, 2, allParaOccurrences[5], allParaOccurrences[6]);
-			m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2, row3 },
-				ClauseTypes.Dependent);
+			m_helper.MakeDependentClauseMarker(row0, 2, new [] { row1, row2, row3 }, ClauseTypes.Dependent);
 
 			// SUT
 			// Because row3 is going away, change the 'endDep' feature in the dependent

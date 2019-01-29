@@ -26,9 +26,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		// Set by the constructor, this determines whether 'move right' means 'move next' or 'move previous' and similar things.
 		private readonly bool m_fRightToLeft;
+		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
+		private FocusBoxMenuManager _focusBoxMenuManager;
 		private IVwStylesheet m_stylesheet;
 		protected InterlinLineChoices m_lineChoices;
+		private bool m_fAdjustingSize;
 
 		/// <summary>
 		/// currently only valid after SelectOccurrence has a valid occurrence.
@@ -43,18 +46,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			btnMenu.GotFocus += HandleFocusWrongButton;
 		}
 
-		public FocusBoxController(ISharedEventHandlers sharedEventHandlers, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
-			: this(sharedEventHandlers, stylesheet, lineChoices)
-		{
-			m_fRightToLeft = rightToLeft;
-		}
-
-		public FocusBoxController(ISharedEventHandlers sharedEventHandlers, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
+		internal FocusBoxController(MajorFlexComponentParameters majorFlexComponentParameters, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
 			: this()
 		{
-			_sharedEventHandlers = sharedEventHandlers;
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			m_stylesheet = stylesheet;
 			m_lineChoices = lineChoices;
+			m_fRightToLeft = rightToLeft;
+			// Add shared stuff.
+			_sharedEventHandlers.Add(InterlinearConstants.CmdBreakPhrase, btnBreakPhrase_Click);
+			_sharedEventHandlers.AddStatusChecker(InterlinearConstants.CmdBreakPhrase, ()=> CanBreakPhrase);
+			// NB: Shared stuff must be added, before creating menu manager.
+			_focusBoxMenuManager = new FocusBoxMenuManager(_majorFlexComponentParameters);
 		}
 
 		internal bool IsDirty => InterlinWordControl.IsDirty;
@@ -116,25 +120,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-
-			SetToolTips();
 		}
 
 		#endregion
 
-		private void SetToolTips()
-		{
-#if RANDYTODO
-			toolTip.SetToolTip(btnBreakPhrase, AppendShortcutToToolTip(m_mediator.CommandSet["CmdBreakPhrase"] as Command));
-			toolTip.SetToolTip(btnConfirmChanges, AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveAndMoveNext"] as Command));
-			toolTip.SetToolTip(btnLinkNextWord, AppendShortcutToToolTip(m_mediator.CommandSet["CmdMakePhrase"] as Command));
-			toolTip.SetToolTip(btnUndoChanges, AppendShortcutToToolTip(m_mediator.CommandSet["CmdUndo"] as Command));
-			toolTip.SetToolTip(btnConfirmChangesForWholeText, AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveForWholeTextAndMoveNext"] as Command));
-#endif
-		}
-
 		internal InterlinDocForAnalysis InterlinDoc => Parent as InterlinDocForAnalysis;
-
 		internal AnalysisOccurrence SelectedOccurrence { get; set; }
 		internal AnalysisTree InitialAnalysis { get; set; }
 
@@ -241,7 +231,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AdjustSizeAndLocationForControls(this.Visible);
 		}
 
-		private bool m_fAdjustingSize;
 		internal void AdjustSizeAndLocationForControls(bool fAdjustOverallSize)
 		{
 			if (m_fAdjustingSize)
@@ -282,7 +271,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					panelSidebar.Location = new Point(panelSandbox.Width, panelSidebar.Location.Y);
 				}
-
 				Size = new Size(panelSidebar.Width + Math.Max(panelSandbox.Width, panelControlBar.Width), panelControlBar.Height + panelSandbox.Height);
 			}
 			finally
@@ -440,31 +428,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		/// <summary>
-		/// split the current occurrence into occurrences for each word in the phrase-wordform.
-		/// (if it IsPhrase)
-		/// </summary>
-		public void OnBreakPhrase(object arg)
+		private Tuple<bool, bool> CanBreakPhrase
 		{
-#if RANDYTODO
+			get
+			{
+				var basicAnswer = CanNavigateBundles && ShowBreakPhraseIcon;
+				return new Tuple<bool, bool>(basicAnswer, basicAnswer);
+			}
+		}
+
+		private void btnBreakPhrase_Click(object sender, EventArgs e)
+		{
 			// (LT-8069) in some odd circumstances, the break phrase icon lingers on the tool bar menu when it should
 			// have disappeared. If we're in that state, just return.
 			if (!ShowBreakPhraseIcon)
 			{
 				return;
 			}
-			var cmd = (ICommandUndoRedoText)arg;
-			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor, () => SelectedOccurrence.BreakPhrase());
+			UowHelpers.UndoExtension(ITextStrings.Break_phrase_into_words, Cache.ActionHandlerAccessor, () => SelectedOccurrence.BreakPhrase());
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
-#endif
-		}
-
-		private void btnBreakPhrase_Click(object sender, EventArgs e)
-		{
-#if RANDYTODO
-			OnBreakPhrase(m_mediator.CommandSet["CmdBreakPhrase"] as Command);
-#endif
 		}
 
 		private void btnUndoChanges_Click(object sender, EventArgs e)
@@ -511,33 +494,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			window.ShowContextMenu("mnuFocusBox", btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)), null, null);
 #endif
-			/*
-			 The menus items are also on the main Data menu. The event handlers can be set in ISharedEventHandlers by someone and used by both.
-			    <menu id="mnuFocusBox">
-			      <item command="CmdApproveAndMoveNext" />
-			      <item command="CmdApproveForWholeTextAndMoveNext" />
-			      <item command="CmdNextIncompleteBundle" />
-			      <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
-			      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-			        <item command="CmdApproveAndMoveNextSameLine" />
-			        <item command="CmdMoveFocusBoxRight" />
-			        <item command="CmdMoveFocusBoxLeft" />
-			      </menu>
-			      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-			        <item command="CmdBrowseMoveNext" />
-			        <item command="CmdNextIncompleteBundleNc" />
-			        <item command="CmdBrowseMoveNextSameLine" />
-			        <item command="CmdMoveFocusBoxRightNc" />
-			        <item command="CmdMoveFocusBoxLeftNc" />
-			      </menu>
-			      <item command="CmdMakePhrase" defaultVisible="false" />
-			      <item command="CmdBreakPhrase" defaultVisible="false" />
-			      <item label="-" translate="do not translate" />
-			      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-			      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-			      <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
-			    </menu>
-			*/
 		}
 
 		private string ShortcutText(Keys shortcut)
@@ -602,7 +558,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Normally, this is invoked as a result of pressing the "Enter" key
 		/// or clicking the "Approve and Move Next" green check in an analysis.
 		/// </summary>
-		internal virtual void ApproveAndMoveNext(ICommandUndoRedoText undoRedoText)
+		internal void ApproveAndMoveNext(ICommandUndoRedoText undoRedoText)
 		{
 			ApproveAndMoveNextRecursive(undoRedoText);
 		}
@@ -610,7 +566,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Approves an analysis and moves the selection to the next wordform or the
 		/// next Interlinear line. An Interlinear line is one of the configurable
-		/// "lines" in the Tools->Configure->Interlinear Lines dialog, not a segement.
+		/// "lines" in the Tools->Configure->Interlinear Lines dialog, not a segment.
 		/// The list of lines is collected in choices[] below.
 		/// WordLevel is true for word or analysis lines. The non-word lines are translation and note lines.
 		/// Normally, this is invoked as a result of pressing the "Enter" key in an analysis.
@@ -1283,18 +1239,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			display.Enabled = CanNavigateBundles && ShowLinkWordsIcon;
 			display.Visible = display.Enabled;
 			return true; //we've handled this
-		}
-
-		/// <summary>
-		/// whether or not to display the Break phrase icon and menu item.
-		/// </summary>
-		/// <remarks>OnBreakPhrase is in the base class because used by icon</remarks>
-		public bool OnDisplayBreakPhrase(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = CanNavigateBundles && ShowBreakPhraseIcon;
-			display.Visible = display.Enabled;
-			return true;
 		}
 #endif
 

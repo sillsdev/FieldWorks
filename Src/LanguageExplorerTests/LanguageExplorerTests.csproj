@@ -233,6 +233,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archiving\ArchivingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\MockRibbon.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsBase.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsForELAN.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\LLIMergeExtension.cs" />
@@ -290,9 +291,7 @@
     <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogicTests.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\ConstChartRowDecoratorTests.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartTests.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\DiscourseTestHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\InMemoryDiscourseTestBase.cs" />

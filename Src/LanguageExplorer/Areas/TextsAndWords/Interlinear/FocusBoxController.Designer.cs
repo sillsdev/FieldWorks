@@ -31,8 +31,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				components?.Dispose();
 				((IDisposable)InterlinWordControl)?.Dispose();
+				_sharedEventHandlers?.Remove(InterlinearConstants.CmdBreakPhrase);
+				_sharedEventHandlers?.RemoveStatusChecker(InterlinearConstants.CmdBreakPhrase);
+				_focusBoxMenuManager?.Dispose();
 			}
+			_majorFlexComponentParameters = null;
 			_sharedEventHandlers = null;
+			_focusBoxMenuManager = null;
 			m_stylesheet = null;
 			components = null;
 			InterlinWordControl = null;

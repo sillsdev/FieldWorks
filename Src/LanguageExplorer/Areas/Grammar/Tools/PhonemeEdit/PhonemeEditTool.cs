@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class PhonemeEditTool : ITool
 	{
-		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -42,8 +42,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_browseViewContextMenuFactory.Dispose();
+			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 			_grammarAreaWideMenuHelper.Dispose();
+			_browseViewContextMenuFactory.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_grammarAreaWideMenuHelper = null;
@@ -70,7 +71,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.StatusBar, GrammarArea.PhonemesFactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			// Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
+			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
+			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.

@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	internal sealed class BulkEditWordformsTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -42,6 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_areaWideMenuHelper.Dispose();
+			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
 			_textAndWordsAreaMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -64,8 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			}
 			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			_areaWideMenuHelper.SetupFileExportMenu();
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -88,6 +87,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
+
+			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
+			((TextAndWordsAreaMenuHelper)_textAndWordsAreaMenuHelper).AddMenusForAllButConcordanceTool();
 		}
 
 		/// <summary>

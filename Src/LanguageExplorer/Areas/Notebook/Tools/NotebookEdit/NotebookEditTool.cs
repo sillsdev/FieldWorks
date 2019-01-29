@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
-		private NotebookEditToolMenuHelper _notebookEditToolMenuHelper;
+		private IToolUiWidgetManager _notebookEditToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
@@ -48,6 +48,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
+			_notebookEditToolMenuHelper.UnwireSharedEventHandlers();
 			_notebookEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -75,7 +76,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, MyDataTree, _recordBrowseView);
+			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(this, MyDataTree, _recordBrowseView);
 			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -111,7 +112,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_notebookEditToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_notebookEditToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

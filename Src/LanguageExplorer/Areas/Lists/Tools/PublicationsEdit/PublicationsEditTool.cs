@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class PublicationsEditTool : ITool
 	{
-		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private const string PublicationList = "PublicationList";
 		private const string PublicationsEditParameters = "PublicationsEditParameters";
 		/// <summary>
@@ -47,6 +47,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
+			_listsAreaMenuHelper.UnwireSharedEventHandlers();
 			_listsAreaMenuHelper.Dispose();
 
 			_listsAreaMenuHelper = null;
@@ -66,13 +67,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PublicationsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName, majorFlexComponentParameters.LcmCache,
 				_recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize();
+			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

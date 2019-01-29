@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public Sandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+		protected Sandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: base(sharedEventHandlers, cache, ss, choices)
 		{
 		}

@@ -13,39 +13,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for the Lexicon Edit tool.
 	/// </summary>
-	internal sealed class LexiconEditToolDataTreeStackManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolDataTreeStackManager : IPartialToolUiWidgetManager
 	{
 		private const string MainPanelManager = "MainPanelManager";
 		private const string LexEntryManager = "LexEntryManager";
-		private Dictionary<string, IToolUiWidgetManager> _dataTreeWidgetManagers;
+		private Dictionary<string, IPartialToolUiWidgetManager> _dataTreeWidgetManagers;
 
 		public LexiconEditToolDataTreeStackManager(DataTree dataTree)
 		{
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 
-			_dataTreeWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
+			_dataTreeWidgetManagers = new Dictionary<string, IPartialToolUiWidgetManager>
 			{
 				{ MainPanelManager, new LexiconEditToolDataTreeMainPanelContextMenuStripManager(dataTree.DataTreeStackContextMenuFactory) },
 				{ LexEntryManager, new LexiconEditToolDataTreeStackLexEntryManager(dataTree) }
 			};
 		}
 
-		#region IToolUiWidgetManager
+		#region Implementation of IPartialToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
-				manager.Initialize(majorFlexComponentParameters, recordList);
+				manager.Initialize(majorFlexComponentParameters, toolUiWidgetManager, recordList);
 			}
 		}
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
@@ -88,10 +88,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				foreach (var manager in _dataTreeWidgetManagers.Values)
-				{
-					manager.UnwireSharedEventHandlers();
-				}
 				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
 					manager.Dispose();

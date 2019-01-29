@@ -12,12 +12,12 @@ namespace LanguageExplorer
 	{
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText.Replace("_", string.Empty)), string.Format(LanguageExplorerResources.Redo_0, baseText.Replace("_", string.Empty)), actionHandler, task);
 		}
 
 		internal static void UndoExtensionUsingNewOrCurrentUOW(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, baseText.Replace("_", string.Empty)), string.Format(LanguageExplorerResources.Redo_0, baseText.Replace("_", string.Empty)), actionHandler, task);
 		}
 	}
 }

@@ -61,6 +61,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Break phrase into words.
+        /// </summary>
+        internal static string Break_phrase_into_words {
+            get {
+                return ResourceManager.GetString("Break_phrase_into_words", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Break selected phrase into words..
+        /// </summary>
+        internal static string Break_selected_phrase_into_words {
+            get {
+                return ResourceManager.GetString("Break_selected_phrase_into_words", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to For the category: .
         /// </summary>
         internal static string ConcordanceSearchCatLabel {

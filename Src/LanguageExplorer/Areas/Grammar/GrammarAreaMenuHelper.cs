@@ -5,73 +5,54 @@
 using System;
 using System.Diagnostics;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar
 {
 	/// <summary>
 	/// This class handles all interaction for the Grammar Area common menus.
 	/// </summary>
-	internal sealed class GrammarAreaMenuHelper : IFlexComponent, IDisposable
+	internal sealed class GrammarAreaMenuHelper : IAreaUiWidgetManager
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private IArea _area;
+		private IToolUiWidgetManager _activeToolUiManager;
 		private AreaWideMenuHelper _areaWideMenuHelper;
+		private EventHandler _fileExportEventHandler;
 
-		internal GrammarAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, EventHandler fileExportEventHandler = null)
+		internal GrammarAreaMenuHelper(EventHandler fileExportEventHandler = null)
+		{
+			_fileExportEventHandler = fileExportEventHandler; // May be null, which is fine.
+		}
+
+		#region Implementation of IAreaUiWidgetManager
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(area, nameof(area));
+			Require.That(area.MachineName == AreaServices.GrammarAreaMachineName);
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_area = area;
+			_activeToolUiManager = toolUiWidgetManager; // May be null;
 			_areaWideMenuHelper = recordList == null ? new AreaWideMenuHelper(_majorFlexComponentParameters) : new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			// Set up File->Export menu, which is visible and enabled in all grammar area tools,
 			// using the default event handler for all tools except grammar sketch, which provides its own handler.
-			_areaWideMenuHelper.SetupFileExportMenu(fileExportEventHandler);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+			_areaWideMenuHelper.SetupFileExportMenu(_fileExportEventHandler);
 		}
 
-		#region Implementation of IPropertyTableProvider
+		/// <inheritdoc />
+		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
 
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
+		/// <inheritdoc />
+		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		/// <inheritdoc />
+		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			// If ActiveToolUiManager is null, then the tool should call this method.
+			// Otherwise, ActiveToolUiManager will call it.
 		}
-
 		#endregion
 
 		#region IDisposable
@@ -110,6 +91,7 @@ namespace LanguageExplorer.Areas.Grammar
 			}
 			_majorFlexComponentParameters = null;
 			_areaWideMenuHelper = null;
+			_fileExportEventHandler = null;
 
 			_isDisposed = true;
 		}

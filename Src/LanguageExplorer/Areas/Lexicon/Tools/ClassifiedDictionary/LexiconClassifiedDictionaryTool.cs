@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconClassifiedDictionaryTool : ITool
 	{
-		private LexiconClassifiedDictionaryToolMenuHelper _lexicoClassifiedDictionaryMenuHelper;
+		private IToolUiWidgetManager _lexiconClassifiedDictionaryMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
@@ -39,9 +39,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_lexicoClassifiedDictionaryMenuHelper.Dispose();
+			_lexiconClassifiedDictionaryMenuHelper.UnwireSharedEventHandlers();
+			_lexiconClassifiedDictionaryMenuHelper.Dispose();
 
-			_lexicoClassifiedDictionaryMenuHelper = null;
+			_lexiconClassifiedDictionaryMenuHelper = null;
 		}
 
 		/// <summary>
@@ -65,11 +66,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocView, xmlDocViewPaneBar);
-			_lexicoClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, xmlDocView, _recordList);
+			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(xmlDocView);
 
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
-			_lexicoClassifiedDictionaryMenuHelper.Initialize();
+			_lexiconClassifiedDictionaryMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
