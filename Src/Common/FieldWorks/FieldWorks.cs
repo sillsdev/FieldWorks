@@ -1430,7 +1430,7 @@ namespace SIL.FieldWorks
 			if (app != s_flexApp)
 				throw new ArgumentException("Invalid application", "app");
 
-			if (projectId.Equals(s_projectId))
+			if (s_projectId != null && projectId.Equals(s_projectId))
 			{
 				// We're trying to open this same project. Just open a new window for the
 				// specified application

@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						case DialogResult.OK:
 							m_fCreateNew = false;
 							m_dbFile = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
-								ProjectName + LcmFileHelper.ksFwDataXmlFileExtension);
+								ProjectName, ProjectName + LcmFileHelper.ksFwDataXmlFileExtension);
 							break;
 						case DialogResult.Cancel:
 							Enabled = true;
