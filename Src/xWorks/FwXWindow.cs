@@ -1146,7 +1146,10 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = true;
+			// Some areas have different RecordClerks which can crash when used with the
+			// the upload to webonary controller, so enable only in lexicon area for now
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			display.Enabled = areaChoice == "lexicon";
 			return true;
 		}
 
