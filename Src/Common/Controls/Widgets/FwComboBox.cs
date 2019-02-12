@@ -2217,7 +2217,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			//
 			// ** Dont change the order of the following two lines **
 			if (m_previousForm != null) // Somehow may not be, if no form is active when launched!
+			{
 				m_previousForm.Activate();
+				m_previousForm.TopMost = true;
+			}
+
 			if (m_listForm != null)
 				m_listForm.Visible = false;
 			// reset HighlightedItem to current selected.
