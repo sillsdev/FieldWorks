@@ -66,7 +66,6 @@
     </Reference>
     <Reference Include="ParatextData">
       <HintPath>..\..\packages\ParatextData.8.1.6\lib\net461\ParatextData.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="PtxUtils">
       <HintPath>..\..\packages\ParatextData.8.1.6\lib\net461\PtxUtils.dll</HintPath>

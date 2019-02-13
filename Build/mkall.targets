@@ -602,6 +602,12 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Copy the libpalso dlls that ParatextData depends on -->
+		<ItemGroup>
+			<ParatextDeps Include="$(fwrt)/packages/SIL.Lib.5.0.7/lib/net46/SIL.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ParatextDeps)" DestinationFolder="$(dir-outputBase)/lib/ParatextDeps"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKCU"/>
