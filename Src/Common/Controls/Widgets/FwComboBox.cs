@@ -2220,6 +2220,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_listForm != null)
 			{
 				m_listForm.Visible = false;
+				// set the TopMost back after hiding just in case we re-show the combobox
 				m_listForm.TopMost = listTopMostValue;
 			}
 			// reset HighlightedItem to current selected.
@@ -2330,8 +2331,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		private void m_ListForm_Deactivate(object sender, EventArgs e)
 		{
 			// If this event is processed after we have already hidden the form it does bad things to the
-			// focus we try to show a dialog from a combo box item. So we only call HideForm if the ComboBox
-			// is visible.
+			// focus when we try to show a dialog from a combo box item.
+			// So we only call HideForm if the ComboBox is visible.
 			if (Visible)
 			{
 				HideForm();
