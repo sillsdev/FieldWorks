@@ -13,12 +13,6 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class ToolbarServices
 	{
-		internal const string ToolStripStandard = "toolStripStandard";
-		internal const string ToolStripButton_Refresh = "toolStripButton_Refresh";
-		internal const string ToolStripButtonFindText = "toolStripButtonFindText";
-		internal const string ToolStripView = "toolStripView";
-		internal const string ToolStripInsert = "toolStripInsert";
-
 		private static ToolStripPanel GetTopToolStripPanel(ToolStripContainer toolStripContainer)
 		{
 			return toolStripContainer.TopToolStripPanel;
@@ -33,12 +27,12 @@ namespace LanguageExplorer
 
 		internal static ToolStrip GetStandardToolStrip(ToolStripContainer toolStripContainer)
 		{
-			return GetToolStrip(toolStripContainer, ToolStripStandard);
+			return GetToolStrip(toolStripContainer, LanguageExplorerConstants.ToolStripStandard);
 		}
 
 		internal static ToolStripItem GetStandardToolStripRefreshButton(ToolStripContainer toolStripContainer)
 		{
-			return GetStandardToolStrip(toolStripContainer).Items[ToolStripButton_Refresh];
+			return GetStandardToolStrip(toolStripContainer).Items[LanguageExplorerConstants.ToolStripButton_Refresh];
 		}
 
 		#endregion Standard toolbar
@@ -47,7 +41,7 @@ namespace LanguageExplorer
 
 		internal static ToolStrip GetViewToolStrip(ToolStripContainer toolStripContainer)
 		{
-			return GetToolStrip(toolStripContainer, ToolStripView);
+			return GetToolStrip(toolStripContainer, LanguageExplorerConstants.ToolStripView);
 		}
 
 		#endregion View toolbar
@@ -56,12 +50,12 @@ namespace LanguageExplorer
 
 		internal static ToolStrip GetInsertToolStrip(ToolStripContainer toolStripContainer)
 		{
-			return GetToolStrip(toolStripContainer, ToolStripInsert);
+			return GetToolStrip(toolStripContainer, LanguageExplorerConstants.ToolStripInsert);
 		}
 
 		internal static ToolStripItem GetInsertFindAndReplaceToolStripItem(ToolStripContainer toolStripContainer)
 		{
-			return GetInsertToolStrip(toolStripContainer).Items[ToolStripButtonFindText];
+			return GetInsertToolStrip(toolStripContainer).Items[LanguageExplorerConstants.ToolStripButtonFindText];
 		}
 
 		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripItem> insertStripItems)
@@ -89,7 +83,7 @@ namespace LanguageExplorer
 			var goners = new List<ToolStripItem>();
 			foreach (ToolStripItem item in toolStripInsert.Items)
 			{
-				if (item.Name == ToolStripButtonFindText)
+				if (item.Name == LanguageExplorerConstants.ToolStripButtonFindText)
 				{
 					item.Enabled = false;
 				}
@@ -115,5 +109,9 @@ namespace LanguageExplorer
 		}
 
 		#endregion Insert toolbar
+
+		#region Format toolbar
+
+		#endregion Format toolbar
 	}
 }

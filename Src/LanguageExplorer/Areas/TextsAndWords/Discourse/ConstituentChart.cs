@@ -82,17 +82,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				logic = new ConstituentChartLogic(cache);
 			}
 			_sharedEventHandlers = sharedEventHandlers;
-			_sharedEventHandlers.Add("CmdRepeatLastMoveLeft", RepeatLastMoveLeft_Clicked);
-			_sharedEventHandlers.AddStatusChecker("CmdRepeatLastMoveLeft", () => CanRepeatLastMoveLeft());
-			_sharedEventHandlers.Add("CmdRepeatLastMoveRight", RepeatLastMoveRight_Clicked);
-			_sharedEventHandlers.AddStatusChecker("CmdRepeatLastMoveRight", () => CanRepeatLastMoveRight());
+			_sharedEventHandlers.Add(LanguageExplorerConstants.CmdRepeatLastMoveLeft, RepeatLastMoveLeft_Clicked);
+			_sharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveLeft, () => CanRepeatLastMoveLeft);
+			_sharedEventHandlers.Add(LanguageExplorerConstants.CmdRepeatLastMoveRight, RepeatLastMoveRight_Clicked);
+			_sharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveRight, () => CanRepeatLastMoveRight);
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
 			ForEditing = true;
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
-			BuildUIComponents();
 		}
 
 		internal bool ShowExportMenu
@@ -154,6 +153,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Subscriber = flexComponentParameters.Subscriber;
 
 			m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+			// The BuildUIComponents() call has to be done before the "Body" use, otherwise it is null.
+			// BuildUIComponents() used to be in the constructor, but that failed, because there was no PropertyTable yet.
+			BuildUIComponents();
 			var lineChoices = GetLineChoices();
 			Body.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Body.LineChoices = lineChoices;
@@ -318,6 +320,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// fills the 'bottom stuff'
 			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
+			m_ribbon.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_logic.Ribbon = m_ribbon;
 			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
 
@@ -355,15 +358,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal int[] ColumnPositions { get; private set; }
 
-		internal Tuple<bool, bool> CanRepeatLastMoveLeft()
-		{
-			return new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
-		}
-
-		internal Tuple<bool, bool> CanRepeatLastMoveRight()
-		{
-			return new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
-		}
+		internal Tuple<bool, bool> CanRepeatLastMoveLeft => new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
 
 		/// <summary>
 		/// Repeat move left handler.
@@ -379,6 +374,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_logic.RepeatLastMoveBack();
 			}
 		}
+
+		internal Tuple<bool, bool> CanRepeatLastMoveRight => new Tuple<bool, bool>(true, m_logic.CanRepeatLastMove);
 
 		/// <summary>
 		/// Repeat move right handler.
@@ -1425,7 +1422,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			string persist = null;
 			if (PropertyTable != null)
 			{
-				persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
+				persist = PropertyTable.GetValue<string>(ConfigPropName ?? "InterlinConfig_Edit_ConstituentChart", null, SettingsGroup.LocalSettings);
 			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)

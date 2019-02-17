@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -113,8 +112,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var initialAnalysisObj = m_focusBox.InitialAnalysis.Analysis;
 			// approve same wordform. Should not result in change during approve.
 			m_focusBox.NewAnalysisTree.Analysis = occurrences[0].Analysis;
-			var undoRedoText = new MockUndoRedoText("Undo", "Redo");
-			m_focusBox.ApproveAndStayPut(undoRedoText);
+			m_focusBox.ApproveAndStayPut("Do Something");
 
 			// expect no change to the first occurrence.
 			Assert.AreEqual(initialAnalysisObj, occurrences[0].Analysis);
@@ -136,8 +134,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// create a new analysis.
 			var initialAnalysisTree = m_focusBox.InitialAnalysis;
 			m_focusBox.DoDuringUnitOfWork = () => WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(initialAnalysisTree.Wordform);
-			var undoRedoText = new MockUndoRedoText("Undo", "Redo");
-			m_focusBox.ApproveAndStayPut(undoRedoText);
+			m_focusBox.ApproveAndStayPut("Do Something");
 
 			// expect change to the first occurrence.
 			Assert.AreEqual(m_focusBox.NewAnalysisTree.Gloss, occurrences[0].Analysis);
@@ -161,8 +158,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var occurrences = SegmentServices.GetAnalysisOccurrences(m_para0_0).ToList();
 			m_interlinDoc.SelectOccurrence(occurrences[0]);
 			var initialAnalysisTree = m_focusBox.InitialAnalysis;
-			var undoRedoText = new MockUndoRedoText("Undo", "Redo");
-			m_focusBox.ApproveAndMoveNext(undoRedoText);
+			m_focusBox.ApproveAndMoveNext("Do Something");
 
 			// expect no change to the first occurrence.
 			Assert.AreEqual(initialAnalysisTree.Analysis, occurrences[0].Analysis);
@@ -257,30 +253,5 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			});
 		}
 		#endregion
-
-		private sealed class MockUndoRedoText : ICommandUndoRedoText
-		{
-			internal MockUndoRedoText(string undo, string redo)
-			{
-				RedoText = redo;
-				UndoText = undo;
-			}
-
-			#region ICommandUndoRedoText Members
-
-			public string RedoText
-			{
-				get;
-				private set;
-			}
-
-			public string UndoText
-			{
-				get;
-				private set;
-			}
-
-			#endregion
-		}
 	}
 }

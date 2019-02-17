@@ -20,27 +20,54 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </remarks>
 	internal class FocusBoxMenuManager : IDisposable
 	{
-		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private ISharedEventHandlers _sharedEventHandlers;
-		private ToolStripMenuItem _dataMenu;
+		private ISharedEventHandlers _privatelySharedEventHandlers;
+		private ToolStrip _insertToolStrip;
 		private ToolStripSeparator _insertToolStripSeparator;
 		private ToolStripButton _insertBreakPhraseToolStripButton;
-		private const int BreakPhraseImage = 7;
+		private bool _isActive;
 
-		internal FocusBoxMenuManager(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal FocusBoxMenuManager(MajorFlexComponentParameters majorFlexComponentParameters, ISharedEventHandlers privatelySharedEventHandlers)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(privatelySharedEventHandlers, nameof(privatelySharedEventHandlers));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			SetupMnuFocusBoxContextMenu();
-			SetupDataMenu();
-			SetupInsertToolbar();
+			_privatelySharedEventHandlers = privatelySharedEventHandlers;
+			_insertToolStrip = ToolbarServices.GetInsertToolStrip(majorFlexComponentParameters.ToolStripContainer);
+		}
+
+		/// <summary>
+		/// Set up UI widgets.
+		/// </summary>
+		internal void Activate()
+		{
+			if (_isActive)
+			{
+				// Nothing to do.
+				return;
+			}
+			//SetupInsertToolbar();
+			//Application.Idle += Application_Idle;
+			_isActive = true;
+		}
+
+		/// <summary>
+		/// Tear down UI widgets.
+		/// </summary>
+		internal void Deactivate()
+		{
+			if (!_isActive)
+			{
+				// Nothing to do.
+				return;
+			}
+			//Application.Idle -= Application_Idle;
+			//TearDownInsertToolbar();
+			_isActive = false;
 		}
 		/*
 			<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext" />
 				// Tooltip: <item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
-			<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext" />
+			<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext" /> Approve_Throughout_this_Text
 				// Tooltip: <item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
 			<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J" />
 				// Tooltip: <item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
@@ -66,9 +93,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Tooltip: NA
 			<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W" />
 				// Tooltip: <item id="CmdBreakPhrase">Break selected phrase into words.</item>
-			<command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left" />
+			<command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left" /> ConstituentChart impl
 				// Tooltip: NA
-			<command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right" />
+			<command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right" /> ConstituentChart impl
 				// Tooltip: NA
 			<command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll" />
 				// Tooltip: <item id="CmdApproveAll">Approve all the suggested analyses in this text.</item>
@@ -77,15 +104,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SetupInsertToolbar()
 		{
 			var newToolbarItems = new List<ToolStripItem>(5);
-
 			/*
 				<toolbar id="Insert" >
-					// NA: <item command="CmdInsertText" defaultVisible="false" />
+					// Not my worry: <item command="CmdInsertText" defaultVisible="false" />
 					DONE: <item label="-" translate="do not translate" />
-					// NA: <item command="CmdAddNote" defaultVisible="false" />
-					<item command="CmdApproveAll" defaultVisible="false" />
-					// NA: <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
-					// NA: <item command="CmdGoToWfiWordform" defaultVisible="false" />
+					// Not my worry: <item command="CmdAddNote" defaultVisible="false" />
+					// Not my worry (but DONE by FocusBoxController): <item command="CmdApproveAll" defaultVisible="false" />
+					// Not my worry (but DONE by TextAndWordsAreaMenuHelper): <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
+					// Not my worry: <item command="CmdGoToWfiWordform" defaultVisible="false" />
 					DONE: <item command="CmdBreakPhrase" defaultVisible="false" />
 			*/
 			using (var imageHolder = new InterlinearImageHolder())
@@ -94,87 +120,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				_insertToolStripSeparator = ToolStripButtonFactory.CreateToolStripSeparator();
 				newToolbarItems.Add(_insertToolStripSeparator);
 				// <item command="CmdBreakPhrase" defaultVisible="false" />
-				_insertBreakPhraseToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(InterlinearConstants.CmdBreakPhrase), "toolStripButtonBreakPhrase", imageHolder.buttonImages.Images[BreakPhraseImage], ITextStrings.Break_selected_phrase_into_words);
+				_insertBreakPhraseToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_privatelySharedEventHandlers.Get(LanguageExplorerConstants.CmdBreakPhrase), "toolStripButtonBreakPhrase", imageHolder.buttonImages.Images[InterlinearConstants.CmdBreakPhraseImageIndex], ITextStrings.Break_selected_phrase_into_words);
 				newToolbarItems.Add(_insertBreakPhraseToolStripButton);
-				var breakPhraseToolStripButtonStatus = _sharedEventHandlers.GetStatusChecker(InterlinearConstants.CmdBreakPhrase).Invoke();
+				var breakPhraseToolStripButtonStatus = _privatelySharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdBreakPhrase).Invoke();
 				_insertBreakPhraseToolStripButton.Visible = breakPhraseToolStripButtonStatus.Item1;
 				_insertBreakPhraseToolStripButton.Enabled = breakPhraseToolStripButtonStatus.Item2;
 			}
+			ToolbarServices.AddInsertToolbarItems(_insertToolStrip, newToolbarItems);
+		}
 
-			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
-			Application.Idle += Application_Idle;
+		private void TearDownInsertToolbar()
+		{
+			ToolbarServices.ResetInsertToolbar(_insertToolStrip);
+			_insertToolStripSeparator.Dispose();
+			_insertBreakPhraseToolStripButton.Click -= _privatelySharedEventHandlers.Get(LanguageExplorerConstants.CmdBreakPhrase);
+			_insertBreakPhraseToolStripButton.Dispose();
+			_insertToolStripSeparator = null;
+			_insertBreakPhraseToolStripButton = null;
 		}
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			var breakPhraseToolStripButtonStatus = _sharedEventHandlers.GetStatusChecker(InterlinearConstants.CmdBreakPhrase).Invoke();
+			var breakPhraseToolStripButtonStatus = _privatelySharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdBreakPhrase).Invoke();
 			_insertBreakPhraseToolStripButton.Visible = breakPhraseToolStripButtonStatus.Item1;
 			_insertBreakPhraseToolStripButton.Enabled = breakPhraseToolStripButtonStatus.Item2;
-		}
-
-		private void SetupDataMenu()
-		{
-			/*
-				<menu id="Data" label="_Data" >
-				  <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-				  <item label="-" translate="do not translate" />
-				  <!-- From here to the CmdApproveAll command, the menu items are the same as the popup menu "mnuFocusBox" -->
-				  <item command="CmdApproveAndMoveNext" defaultVisible="false" />
-				  <item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false" />
-				  <item command="CmdNextIncompleteBundle" defaultVisible="false" />
-				  <item command="CmdApprove" defaultVisible="false" />
-				  <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-					<item command="CmdApproveAndMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRight" />
-					<item command="CmdMoveFocusBoxLeft" />
-				  </menu>
-				  <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-					<item command="CmdBrowseMoveNext" />
-					<item command="CmdNextIncompleteBundleNc" />
-					<item command="CmdBrowseMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRightNc" />
-					<item command="CmdMoveFocusBoxLeftNc" />
-				  </menu>
-				  <item command="CmdMakePhrase" defaultVisible="false" />
-				  <item command="CmdBreakPhrase" defaultVisible="false" />
-				  <item label="-" translate="do not translate" />
-				  <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-				  <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-				  <item command="CmdApproveAll" defaultVisible="false" />
-				  <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-				</menu>
-			*/
-			_dataMenu = MenuServices.GetDataMenu(_majorFlexComponentParameters.MenuStrip);
-		}
-
-		private void SetupMnuFocusBoxContextMenu()
-		{
-			/*
-				<menu id="mnuFocusBox">
-				  <item command="CmdApproveAndMoveNext" />
-				  <item command="CmdApproveForWholeTextAndMoveNext" />
-				  <item command="CmdNextIncompleteBundle" />
-				  <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
-				  <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-					<item command="CmdApproveAndMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRight" />
-					<item command="CmdMoveFocusBoxLeft" />
-				  </menu>
-				  <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-					<item command="CmdBrowseMoveNext" />
-					<item command="CmdNextIncompleteBundleNc" />
-					<item command="CmdBrowseMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRightNc" />
-					<item command="CmdMoveFocusBoxLeftNc" />
-				  </menu>
-				  <item command="CmdMakePhrase" defaultVisible="false" />
-				  <item command="CmdBreakPhrase" defaultVisible="false" />
-				  <item label="-" translate="do not translate" />
-				  <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-				  <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-				  <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
-				</menu>
-			*/
 		}
 
 		#region IDisposable
@@ -208,17 +177,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
-				_insertToolStripSeparator.Dispose();
-				_insertBreakPhraseToolStripButton.Click -= _sharedEventHandlers.Get(InterlinearConstants.CmdBreakPhrase);
-				_insertBreakPhraseToolStripButton.Dispose();
+				if (_isActive)
+				{
+					Deactivate();
+				}
 			}
 
-			_sharedEventHandlers = null;
-			_insertToolStripSeparator = null;
-			_insertBreakPhraseToolStripButton = null;
-			_dataMenu = null;
-			_majorFlexComponentParameters = null;
+			_privatelySharedEventHandlers = null;
+			_insertToolStrip = null;
 			_isDisposed = true;
 		}
 		#endregion

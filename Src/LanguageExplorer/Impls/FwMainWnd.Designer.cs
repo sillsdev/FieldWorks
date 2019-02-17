@@ -75,6 +75,27 @@ namespace LanguageExplorer.Impls
 			this._data_Previous = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_Next = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_Last = new System.Windows.Forms.ToolStripMenuItem();
+			this.dataMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdApproveAndMoveNext = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdApproveForWholeTextAndMoveNext = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdNextIncompleteBundle = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdApprove = new System.Windows.Forms.ToolStripMenuItem();
+			this.ApproveAnalysisMovementMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdApproveAndMoveNextSameLine = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMoveFocusBoxRight = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMoveFocusBoxLeft = new System.Windows.Forms.ToolStripMenuItem();
+			this.BrowseMovementMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdBrowseMoveNext = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdNextIncompleteBundleNc = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdBrowseMoveNextSameLine = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMoveFocusBoxRightNc = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMoveFocusBoxLeftNc = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMakePhrase = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdBreakPhrase = new System.Windows.Forms.ToolStripMenuItem();
+			this.dataMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdRepeatLastMoveLeft = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdRepeatLastMoveRight = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdApproveAll = new System.Windows.Forms.ToolStripMenuItem();
 			this._insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.insertMenuLastGlobalSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.specialCharacterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,20 +117,20 @@ namespace LanguageExplorer.Impls
 			this.toolStripToolsMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._parserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._parseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._reparseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._reloadGrammarLexiconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._stopParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdParseAllWords = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdReparseAllWords = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdReInitializeParser = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdStopParser = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripParserMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this._tryAWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._parseWordsInTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._parseCurrentWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._clearCurrentParserAnalysesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdTryAWord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdParseWordsInCurrentText = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdParseCurrentWord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdClearSelectedWordParserAnalyses = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripParserMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.chooseParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._defaultParserXAmpleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._editParserParametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.ChooseParserMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdChooseXAmpleParser = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdChooseHCParser = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdEditParserParameters = new System.Windows.Forms.ToolStripMenuItem();
 			this._windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -146,6 +167,9 @@ namespace LanguageExplorer.Impls
 			this._tsbLast = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonFlexLiftBridge = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
+			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
+			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
+			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
@@ -158,15 +182,15 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
-			this.technicalNotesOnInterlinearImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
-			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
-			this._rightPanel = new System.Windows.Forms.Panel();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+			this.mainContainer.Panel1.SuspendLayout();
+			this.mainContainer.Panel2.SuspendLayout();
+			this.mainContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
@@ -174,10 +198,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.SuspendLayout();
 			this.toolStripInsert.SuspendLayout();
 			this.toolStripFormat.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
-			this.mainContainer.Panel1.SuspendLayout();
-			this.mainContainer.Panel2.SuspendLayout();
-			this.mainContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _menuStrip
@@ -610,7 +630,20 @@ namespace LanguageExplorer.Impls
             this._data_First,
             this._data_Previous,
             this._data_Next,
-            this._data_Last});
+            this._data_Last,
+            this.dataMenuSeparator1,
+            this.CmdApproveAndMoveNext,
+            this.CmdApproveForWholeTextAndMoveNext,
+            this.CmdNextIncompleteBundle,
+            this.CmdApprove,
+            this.ApproveAnalysisMovementMenu,
+            this.BrowseMovementMenu,
+            this.CmdMakePhrase,
+            this.CmdBreakPhrase,
+            this.dataMenuSeparator2,
+            this.CmdRepeatLastMoveLeft,
+            this.CmdRepeatLastMoveRight,
+            this.CmdApproveAll});
 			this._dataToolStripMenuItem.Name = "_dataToolStripMenuItem";
 			this._dataToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
 			this._dataToolStripMenuItem.Text = "&Data";
@@ -620,7 +653,7 @@ namespace LanguageExplorer.Impls
 			this._data_First.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
 			this._data_First.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_First.Name = "_data_First";
-			this._data_First.Size = new System.Drawing.Size(156, 22);
+			this._data_First.Size = new System.Drawing.Size(316, 22);
 			this._data_First.Text = "&First";
 			this._data_First.ToolTipText = "Show the first item.";
 			// 
@@ -630,7 +663,7 @@ namespace LanguageExplorer.Impls
 			this._data_Previous.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Previous.Name = "_data_Previous";
 			this._data_Previous.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
-			this._data_Previous.Size = new System.Drawing.Size(156, 22);
+			this._data_Previous.Size = new System.Drawing.Size(316, 22);
 			this._data_Previous.Text = "&Previous";
 			this._data_Previous.ToolTipText = "Show the previous item.";
 			// 
@@ -640,7 +673,7 @@ namespace LanguageExplorer.Impls
 			this._data_Next.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Next.Name = "_data_Next";
 			this._data_Next.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.N)));
-			this._data_Next.Size = new System.Drawing.Size(156, 22);
+			this._data_Next.Size = new System.Drawing.Size(316, 22);
 			this._data_Next.Text = "&Next";
 			this._data_Next.ToolTipText = "Show the next item.";
 			// 
@@ -649,9 +682,201 @@ namespace LanguageExplorer.Impls
 			this._data_Last.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
 			this._data_Last.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Last.Name = "_data_Last";
-			this._data_Last.Size = new System.Drawing.Size(156, 22);
+			this._data_Last.Size = new System.Drawing.Size(316, 22);
 			this._data_Last.Text = "&Last";
 			this._data_Last.ToolTipText = "Show the last item.";
+			// 
+			// dataMenuSeparator1
+			// 
+			this.dataMenuSeparator1.Name = "dataMenuSeparator1";
+			this.dataMenuSeparator1.Size = new System.Drawing.Size(313, 6);
+			this.dataMenuSeparator1.Visible = false;
+			// 
+			// CmdApproveAndMoveNext
+			// 
+			this.CmdApproveAndMoveNext.Image = ((System.Drawing.Image)(resources.GetObject("CmdApproveAndMoveNext.Image")));
+			this.CmdApproveAndMoveNext.Name = "CmdApproveAndMoveNext";
+			this.CmdApproveAndMoveNext.Size = new System.Drawing.Size(316, 22);
+			this.CmdApproveAndMoveNext.Text = "&Approve and Move Next";
+			this.CmdApproveAndMoveNext.ToolTipText = "Approve the suggested analysis and move to the next word.";
+			this.CmdApproveAndMoveNext.Visible = false;
+			// 
+			// CmdApproveForWholeTextAndMoveNext
+			// 
+			this.CmdApproveForWholeTextAndMoveNext.Image = ((System.Drawing.Image)(resources.GetObject("CmdApproveForWholeTextAndMoveNext.Image")));
+			this.CmdApproveForWholeTextAndMoveNext.Name = "CmdApproveForWholeTextAndMoveNext";
+			this.CmdApproveForWholeTextAndMoveNext.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+			this.CmdApproveForWholeTextAndMoveNext.Size = new System.Drawing.Size(316, 22);
+			this.CmdApproveForWholeTextAndMoveNext.Text = "Approve &Throughout this Text";
+			this.CmdApproveForWholeTextAndMoveNext.ToolTipText = "Approve the suggested analysis throughout this text, and move to the next word.";
+			this.CmdApproveForWholeTextAndMoveNext.Visible = false;
+			// 
+			// CmdNextIncompleteBundle
+			// 
+			this.CmdNextIncompleteBundle.Name = "CmdNextIncompleteBundle";
+			this.CmdNextIncompleteBundle.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
+			this.CmdNextIncompleteBundle.Size = new System.Drawing.Size(316, 22);
+			this.CmdNextIncompleteBundle.Text = "Approve and &Jump to Next Incomplete";
+			this.CmdNextIncompleteBundle.ToolTipText = "Approve the suggested analysis, and jump to the next word with a suggested or inc" +
+    "omplete analysis.";
+			this.CmdNextIncompleteBundle.Visible = false;
+			// 
+			// CmdApprove
+			// 
+			this.CmdApprove.Name = "CmdApprove";
+			this.CmdApprove.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+			this.CmdApprove.Size = new System.Drawing.Size(316, 22);
+			this.CmdApprove.Text = "Approve and &Stay";
+			this.CmdApprove.ToolTipText = "Approve_and_StayTooltip";
+			this.CmdApprove.Visible = false;
+			// 
+			// ApproveAnalysisMovementMenu
+			// 
+			this.ApproveAnalysisMovementMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdApproveAndMoveNextSameLine,
+            this.CmdMoveFocusBoxRight,
+            this.CmdMoveFocusBoxLeft});
+			this.ApproveAnalysisMovementMenu.Name = "ApproveAnalysisMovementMenu";
+			this.ApproveAnalysisMovementMenu.Size = new System.Drawing.Size(316, 22);
+			this.ApproveAnalysisMovementMenu.Text = "&Approve suggestion and";
+			this.ApproveAnalysisMovementMenu.Visible = false;
+			// 
+			// CmdApproveAndMoveNextSameLine
+			// 
+			this.CmdApproveAndMoveNextSameLine.Name = "CmdApproveAndMoveNextSameLine";
+			this.CmdApproveAndMoveNextSameLine.Size = new System.Drawing.Size(197, 22);
+			this.CmdApproveAndMoveNextSameLine.Text = "Move Next, &Same Line";
+			this.CmdApproveAndMoveNextSameLine.ToolTipText = "Approve the suggested analysis and move to the next word, to the same interlinear" +
+    " line.";
+			this.CmdApproveAndMoveNextSameLine.Visible = false;
+			// 
+			// CmdMoveFocusBoxRight
+			// 
+			this.CmdMoveFocusBoxRight.Name = "CmdMoveFocusBoxRight";
+			this.CmdMoveFocusBoxRight.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Right)));
+			this.CmdMoveFocusBoxRight.Size = new System.Drawing.Size(197, 22);
+			this.CmdMoveFocusBoxRight.Text = "Move &Right";
+			this.CmdMoveFocusBoxRight.ToolTipText = "Approve the suggested analysis and move to the word on the right.";
+			this.CmdMoveFocusBoxRight.Visible = false;
+			// 
+			// CmdMoveFocusBoxLeft
+			// 
+			this.CmdMoveFocusBoxLeft.Name = "CmdMoveFocusBoxLeft";
+			this.CmdMoveFocusBoxLeft.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Left)));
+			this.CmdMoveFocusBoxLeft.Size = new System.Drawing.Size(197, 22);
+			this.CmdMoveFocusBoxLeft.Text = "Move &Left";
+			this.CmdMoveFocusBoxLeft.ToolTipText = "Approve the suggested analysis and move to the word on the left.";
+			this.CmdMoveFocusBoxLeft.Visible = false;
+			// 
+			// BrowseMovementMenu
+			// 
+			this.BrowseMovementMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdBrowseMoveNext,
+            this.CmdNextIncompleteBundleNc,
+            this.CmdBrowseMoveNextSameLine,
+            this.CmdMoveFocusBoxRightNc,
+            this.CmdMoveFocusBoxLeftNc});
+			this.BrowseMovementMenu.Name = "BrowseMovementMenu";
+			this.BrowseMovementMenu.Size = new System.Drawing.Size(316, 22);
+			this.BrowseMovementMenu.Text = "Leave &suggestion and";
+			this.BrowseMovementMenu.Visible = false;
+			// 
+			// CmdBrowseMoveNext
+			// 
+			this.CmdBrowseMoveNext.Name = "CmdBrowseMoveNext";
+			this.CmdBrowseMoveNext.Size = new System.Drawing.Size(229, 22);
+			this.CmdBrowseMoveNext.Text = "Move &Next";
+			this.CmdBrowseMoveNext.ToolTipText = "Leave the suggested analysis as a suggestion, and move to the next word.";
+			this.CmdBrowseMoveNext.Visible = false;
+			// 
+			// CmdNextIncompleteBundleNc
+			// 
+			this.CmdNextIncompleteBundleNc.Name = "CmdNextIncompleteBundleNc";
+			this.CmdNextIncompleteBundleNc.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.J)));
+			this.CmdNextIncompleteBundleNc.Size = new System.Drawing.Size(229, 22);
+			this.CmdNextIncompleteBundleNc.Text = "&Jump to Next";
+			this.CmdNextIncompleteBundleNc.ToolTipText = "Leave the suggested analysis as a suggestion, and jump to the next word with a su" +
+    "ggested or incomplete analysis.";
+			this.CmdNextIncompleteBundleNc.Visible = false;
+			// 
+			// CmdBrowseMoveNextSameLine
+			// 
+			this.CmdBrowseMoveNextSameLine.Name = "CmdBrowseMoveNextSameLine";
+			this.CmdBrowseMoveNextSameLine.Size = new System.Drawing.Size(229, 22);
+			this.CmdBrowseMoveNextSameLine.Text = "Move Next, &Same Line";
+			this.CmdBrowseMoveNextSameLine.ToolTipText = "Approve the suggested analysis and move to the next word, to the same interlinear" +
+    " line.";
+			this.CmdBrowseMoveNextSameLine.Visible = false;
+			// 
+			// CmdMoveFocusBoxRightNc
+			// 
+			this.CmdMoveFocusBoxRightNc.Name = "CmdMoveFocusBoxRightNc";
+			this.CmdMoveFocusBoxRightNc.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.Right)));
+			this.CmdMoveFocusBoxRightNc.Size = new System.Drawing.Size(229, 22);
+			this.CmdMoveFocusBoxRightNc.Text = "Move &Right";
+			this.CmdMoveFocusBoxRightNc.ToolTipText = "Approve the suggested analysis and move to the word on the right.";
+			this.CmdMoveFocusBoxRightNc.Visible = false;
+			// 
+			// CmdMoveFocusBoxLeftNc
+			// 
+			this.CmdMoveFocusBoxLeftNc.Name = "CmdMoveFocusBoxLeftNc";
+			this.CmdMoveFocusBoxLeftNc.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.Left)));
+			this.CmdMoveFocusBoxLeftNc.Size = new System.Drawing.Size(229, 22);
+			this.CmdMoveFocusBoxLeftNc.Text = "Move &Left";
+			this.CmdMoveFocusBoxLeftNc.ToolTipText = "Approve the suggested analysis and move to the word on the left.";
+			this.CmdMoveFocusBoxLeftNc.Visible = false;
+			// 
+			// CmdMakePhrase
+			// 
+			this.CmdMakePhrase.Image = ((System.Drawing.Image)(resources.GetObject("CmdMakePhrase.Image")));
+			this.CmdMakePhrase.Name = "CmdMakePhrase";
+			this.CmdMakePhrase.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+			this.CmdMakePhrase.Size = new System.Drawing.Size(316, 22);
+			this.CmdMakePhrase.Text = "&Make phrase with next word";
+			this.CmdMakePhrase.Visible = false;
+			// 
+			// CmdBreakPhrase
+			// 
+			this.CmdBreakPhrase.Image = ((System.Drawing.Image)(resources.GetObject("CmdBreakPhrase.Image")));
+			this.CmdBreakPhrase.Name = "CmdBreakPhrase";
+			this.CmdBreakPhrase.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+			this.CmdBreakPhrase.Size = new System.Drawing.Size(316, 22);
+			this.CmdBreakPhrase.Text = "&Break phrase into words";
+			this.CmdBreakPhrase.ToolTipText = "Break selected phrase into words.";
+			this.CmdBreakPhrase.Visible = false;
+			// 
+			// dataMenuSeparator2
+			// 
+			this.dataMenuSeparator2.Name = "dataMenuSeparator2";
+			this.dataMenuSeparator2.Size = new System.Drawing.Size(313, 6);
+			this.dataMenuSeparator2.Visible = false;
+			// 
+			// CmdRepeatLastMoveLeft
+			// 
+			this.CmdRepeatLastMoveLeft.Name = "CmdRepeatLastMoveLeft";
+			this.CmdRepeatLastMoveLeft.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Left)));
+			this.CmdRepeatLastMoveLeft.Size = new System.Drawing.Size(316, 22);
+			this.CmdRepeatLastMoveLeft.Text = "Move &Left (last thing moved)";
+			this.CmdRepeatLastMoveLeft.Visible = false;
+			// 
+			// CmdRepeatLastMoveRight
+			// 
+			this.CmdRepeatLastMoveRight.Name = "CmdRepeatLastMoveRight";
+			this.CmdRepeatLastMoveRight.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Right)));
+			this.CmdRepeatLastMoveRight.Size = new System.Drawing.Size(316, 22);
+			this.CmdRepeatLastMoveRight.Text = "Move &Right (last thing moved)";
+			this.CmdRepeatLastMoveRight.Visible = false;
+			// 
+			// CmdApproveAll
+			// 
+			this.CmdApproveAll.Name = "CmdApproveAll";
+			this.CmdApproveAll.Size = new System.Drawing.Size(316, 22);
+			this.CmdApproveAll.Text = "Approve All";
+			this.CmdApproveAll.ToolTipText = "Approve all the suggested analyses in this text.";
+			this.CmdApproveAll.Visible = false;
 			// 
 			// _insertToolStripMenuItem
 			// 
@@ -816,114 +1041,115 @@ namespace LanguageExplorer.Impls
 			// _parserToolStripMenuItem
 			// 
 			this._parserToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._parseAllWordsToolStripMenuItem,
-            this._reparseAllWordsToolStripMenuItem,
-            this._reloadGrammarLexiconToolStripMenuItem,
-            this._stopParserToolStripMenuItem,
+            this.CmdParseAllWords,
+            this.CmdReparseAllWords,
+            this.CmdReInitializeParser,
+            this.CmdStopParser,
             this.toolStripParserMenuSparator1,
-            this._tryAWordToolStripMenuItem,
-            this._parseWordsInTextToolStripMenuItem,
-            this._parseCurrentWordToolStripMenuItem,
-            this._clearCurrentParserAnalysesToolStripMenuItem,
+            this.CmdTryAWord,
+            this.CmdParseWordsInCurrentText,
+            this.CmdParseCurrentWord,
+            this.CmdClearSelectedWordParserAnalyses,
             this.toolStripParserMenuSparator2,
-            this.chooseParserToolStripMenuItem,
-            this._editParserParametersToolStripMenuItem});
+            this.ChooseParserMenu,
+            this.CmdEditParserParameters});
 			this._parserToolStripMenuItem.Name = "_parserToolStripMenuItem";
 			this._parserToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
 			this._parserToolStripMenuItem.Text = "Pa&rser";
 			// 
-			// _parseAllWordsToolStripMenuItem
+			// CmdParseAllWords
 			// 
-			this._parseAllWordsToolStripMenuItem.Name = "_parseAllWordsToolStripMenuItem";
-			this._parseAllWordsToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._parseAllWordsToolStripMenuItem.Text = "Pa&rse all words";
-			this._parseAllWordsToolStripMenuItem.ToolTipText = "Start the Parser running.";
+			this.CmdParseAllWords.Name = "CmdParseAllWords";
+			this.CmdParseAllWords.Size = new System.Drawing.Size(228, 22);
+			this.CmdParseAllWords.Text = "Pa&rse all words";
+			this.CmdParseAllWords.ToolTipText = "Start the Parser running.";
 			// 
-			// _reparseAllWordsToolStripMenuItem
+			// CmdReparseAllWords
 			// 
-			this._reparseAllWordsToolStripMenuItem.Name = "_reparseAllWordsToolStripMenuItem";
-			this._reparseAllWordsToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._reparseAllWordsToolStripMenuItem.Text = "&Reparse all words";
+			this.CmdReparseAllWords.Name = "CmdReparseAllWords";
+			this.CmdReparseAllWords.Size = new System.Drawing.Size(228, 22);
+			this.CmdReparseAllWords.Text = "&Reparse all words";
 			// 
-			// _reloadGrammarLexiconToolStripMenuItem
+			// CmdReInitializeParser
 			// 
-			this._reloadGrammarLexiconToolStripMenuItem.Name = "_reloadGrammarLexiconToolStripMenuItem";
-			this._reloadGrammarLexiconToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._reloadGrammarLexiconToolStripMenuItem.Text = "Re&load Grammar / Lexicon";
-			this._reloadGrammarLexiconToolStripMenuItem.ToolTipText = "Reload the Parser information.";
+			this.CmdReInitializeParser.Name = "CmdReInitializeParser";
+			this.CmdReInitializeParser.Size = new System.Drawing.Size(228, 22);
+			this.CmdReInitializeParser.Text = "Re&load Grammar / Lexicon";
+			this.CmdReInitializeParser.ToolTipText = "Reload the Parser information.";
 			// 
-			// _stopParserToolStripMenuItem
+			// CmdStopParser
 			// 
-			this._stopParserToolStripMenuItem.Name = "_stopParserToolStripMenuItem";
-			this._stopParserToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._stopParserToolStripMenuItem.Text = "&Stop Parser";
-			this._stopParserToolStripMenuItem.ToolTipText = "Stop the Parser.";
+			this.CmdStopParser.Name = "CmdStopParser";
+			this.CmdStopParser.Size = new System.Drawing.Size(228, 22);
+			this.CmdStopParser.Text = "&Stop Parser";
+			this.CmdStopParser.ToolTipText = "Stop the Parser.";
+			this.CmdStopParser.Click += new System.EventHandler(this._stopParserToolStripMenuItem_Click);
 			// 
 			// toolStripParserMenuSparator1
 			// 
 			this.toolStripParserMenuSparator1.Name = "toolStripParserMenuSparator1";
 			this.toolStripParserMenuSparator1.Size = new System.Drawing.Size(225, 6);
 			// 
-			// _tryAWordToolStripMenuItem
+			// CmdTryAWord
 			// 
-			this._tryAWordToolStripMenuItem.Name = "_tryAWordToolStripMenuItem";
-			this._tryAWordToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._tryAWordToolStripMenuItem.Text = "&Try a Word...";
-			this._tryAWordToolStripMenuItem.ToolTipText = "Have the Parser try a single word.";
+			this.CmdTryAWord.Name = "CmdTryAWord";
+			this.CmdTryAWord.Size = new System.Drawing.Size(228, 22);
+			this.CmdTryAWord.Text = "&Try a Word...";
+			this.CmdTryAWord.ToolTipText = "Have the Parser try a single word.";
 			// 
-			// _parseWordsInTextToolStripMenuItem
+			// CmdParseWordsInCurrentText
 			// 
-			this._parseWordsInTextToolStripMenuItem.Name = "_parseWordsInTextToolStripMenuItem";
-			this._parseWordsInTextToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._parseWordsInTextToolStripMenuItem.Text = "Parse Words in Te&xt";
+			this.CmdParseWordsInCurrentText.Name = "CmdParseWordsInCurrentText";
+			this.CmdParseWordsInCurrentText.Size = new System.Drawing.Size(228, 22);
+			this.CmdParseWordsInCurrentText.Text = "Parse Words in Te&xt";
 			// 
-			// _parseCurrentWordToolStripMenuItem
+			// CmdParseCurrentWord
 			// 
-			this._parseCurrentWordToolStripMenuItem.Name = "_parseCurrentWordToolStripMenuItem";
-			this._parseCurrentWordToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._parseCurrentWordToolStripMenuItem.Text = "Parse &Current Word";
-			this._parseCurrentWordToolStripMenuItem.ToolTipText = "Have the Parser parse just the current word.";
+			this.CmdParseCurrentWord.Name = "CmdParseCurrentWord";
+			this.CmdParseCurrentWord.Size = new System.Drawing.Size(228, 22);
+			this.CmdParseCurrentWord.Text = "Parse &Current Word";
+			this.CmdParseCurrentWord.ToolTipText = "Have the Parser parse just the current word.";
 			// 
-			// _clearCurrentParserAnalysesToolStripMenuItem
+			// CmdClearSelectedWordParserAnalyses
 			// 
-			this._clearCurrentParserAnalysesToolStripMenuItem.Name = "_clearCurrentParserAnalysesToolStripMenuItem";
-			this._clearCurrentParserAnalysesToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._clearCurrentParserAnalysesToolStripMenuItem.Text = "Clear Current Parser &Analyses";
+			this.CmdClearSelectedWordParserAnalyses.Name = "CmdClearSelectedWordParserAnalyses";
+			this.CmdClearSelectedWordParserAnalyses.Size = new System.Drawing.Size(228, 22);
+			this.CmdClearSelectedWordParserAnalyses.Text = "Clear Current Parser &Analyses";
 			// 
 			// toolStripParserMenuSparator2
 			// 
 			this.toolStripParserMenuSparator2.Name = "toolStripParserMenuSparator2";
 			this.toolStripParserMenuSparator2.Size = new System.Drawing.Size(225, 6);
 			// 
-			// chooseParserToolStripMenuItem
+			// ChooseParserMenu
 			// 
-			this.chooseParserToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._defaultParserXAmpleToolStripMenuItem,
-            this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem});
-			this.chooseParserToolStripMenuItem.Name = "chooseParserToolStripMenuItem";
-			this.chooseParserToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this.chooseParserToolStripMenuItem.Text = "Choose Parser";
+			this.ChooseParserMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdChooseXAmpleParser,
+            this.CmdChooseHCParser});
+			this.ChooseParserMenu.Name = "ChooseParserMenu";
+			this.ChooseParserMenu.Size = new System.Drawing.Size(228, 22);
+			this.ChooseParserMenu.Text = "Choose Parser";
 			// 
-			// _defaultParserXAmpleToolStripMenuItem
+			// CmdChooseXAmpleParser
 			// 
-			this._defaultParserXAmpleToolStripMenuItem.Name = "_defaultParserXAmpleToolStripMenuItem";
-			this._defaultParserXAmpleToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-			this._defaultParserXAmpleToolStripMenuItem.Tag = "";
-			this._defaultParserXAmpleToolStripMenuItem.Text = "XAmple";
+			this.CmdChooseXAmpleParser.Name = "CmdChooseXAmpleParser";
+			this.CmdChooseXAmpleParser.Size = new System.Drawing.Size(139, 22);
+			this.CmdChooseXAmpleParser.Tag = "";
+			this.CmdChooseXAmpleParser.Text = "XAmple";
 			// 
-			// _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem
+			// CmdChooseHCParser
 			// 
-			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Name = "_phonologicalRulebasedParserHermitCrabNETToolStripMenuItem";
-			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Tag = "";
-			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Text = "Hermit Crab";
+			this.CmdChooseHCParser.Name = "CmdChooseHCParser";
+			this.CmdChooseHCParser.Size = new System.Drawing.Size(139, 22);
+			this.CmdChooseHCParser.Tag = "";
+			this.CmdChooseHCParser.Text = "Hermit Crab";
 			// 
-			// _editParserParametersToolStripMenuItem
+			// CmdEditParserParameters
 			// 
-			this._editParserParametersToolStripMenuItem.Name = "_editParserParametersToolStripMenuItem";
-			this._editParserParametersToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this._editParserParametersToolStripMenuItem.Text = "&Edit Parser Parameters...";
-			this._editParserParametersToolStripMenuItem.ToolTipText = "Edit the special parameters for the Parser.";
+			this.CmdEditParserParameters.Name = "CmdEditParserParameters";
+			this.CmdEditParserParameters.Size = new System.Drawing.Size(228, 22);
+			this.CmdEditParserParameters.Text = "&Edit Parser Parameters...";
+			this.CmdEditParserParameters.ToolTipText = "Edit the special parameters for the Parser.";
 			// 
 			// _windowToolStripMenuItem
 			// 
@@ -1032,6 +1258,13 @@ namespace LanguageExplorer.Impls
 			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
 			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Text = "Technical Notes on Lin&guaLinks Import...";
 			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_LinguaLinks_Import_Click);
+			// 
+			// technicalNotesOnInterlinearImportToolStripMenuItem
+			// 
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Name = "technicalNotesOnInterlinearImportToolStripMenuItem";
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Text = "Technical Notes on &Interlinear Import...";
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_Interlinear_Import_Click);
 			// 
 			// technicalNotesOnWritingSystemsToolStripMenuItem
 			// 
@@ -1262,6 +1495,50 @@ namespace LanguageExplorer.Impls
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
 			// 
+			// mainContainer
+			// 
+			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
+			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
+			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mainContainer.FirstControl = this._sidePane;
+			this.mainContainer.FirstLabel = "Sidebar";
+			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.mainContainer.IsInitializing = false;
+			this.mainContainer.Location = new System.Drawing.Point(0, 0);
+			this.mainContainer.Name = "mainContainer";
+			// 
+			// mainContainer.Panel1
+			// 
+			this.mainContainer.Panel1.Controls.Add(this._sidePane);
+			this.mainContainer.Panel1MinSize = 16;
+			// 
+			// mainContainer.Panel2
+			// 
+			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
+			this.mainContainer.Panel2MinSize = 16;
+			this.mainContainer.SecondControl = this._rightPanel;
+			this.mainContainer.SecondLabel = "All Content";
+			this.mainContainer.Size = new System.Drawing.Size(791, 381);
+			this.mainContainer.SplitterDistance = 140;
+			this.mainContainer.TabIndex = 0;
+			this.mainContainer.TabStop = false;
+			// 
+			// _sidePane
+			// 
+			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._sidePane.Location = new System.Drawing.Point(0, 0);
+			this._sidePane.Name = "_sidePane";
+			this._sidePane.Size = new System.Drawing.Size(140, 381);
+			this._sidePane.TabIndex = 1;
+			// 
+			// _rightPanel
+			// 
+			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rightPanel.Location = new System.Drawing.Point(0, 0);
+			this._rightPanel.Name = "_rightPanel";
+			this._rightPanel.Size = new System.Drawing.Size(647, 381);
+			this._rightPanel.TabIndex = 1;
+			// 
 			// _statusbar
 			// 
 			this._statusbar.Location = new System.Drawing.Point(0, 381);
@@ -1312,7 +1589,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonChangeFilterClearAll});
 			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripView.Location = new System.Drawing.Point(298, 24);
+			this.toolStripView.Location = new System.Drawing.Point(299, 24);
 			this.toolStripView.Name = "toolStripView";
 			this.toolStripView.Size = new System.Drawing.Size(35, 25);
 			this.toolStripView.TabIndex = 5;
@@ -1335,7 +1612,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripInsert.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonFindText});
 			this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripInsert.Location = new System.Drawing.Point(334, 24);
+			this.toolStripInsert.Location = new System.Drawing.Point(335, 24);
 			this.toolStripInsert.Name = "toolStripInsert";
 			this.toolStripInsert.Size = new System.Drawing.Size(35, 25);
 			this.toolStripInsert.TabIndex = 4;
@@ -1357,9 +1634,9 @@ namespace LanguageExplorer.Impls
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
 			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripFormat.Location = new System.Drawing.Point(371, 24);
+			this.toolStripFormat.Location = new System.Drawing.Point(372, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
+			this.toolStripFormat.Size = new System.Drawing.Size(291, 27);
 			this.toolStripFormat.TabIndex = 3;
 			// 
 			// toolStripComboBoxWritingSystem
@@ -1377,57 +1654,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripComboBoxStyles.Name = "toolStripComboBoxStyles";
 			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
 			this.toolStripComboBoxStyles.ToolTipText = "Styles";
-			// 
-			// mainContainer
-			// 
-			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
-			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
-			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mainContainer.FirstControl = this._sidePane;
-			this.mainContainer.FirstLabel = "Sidebar";
-			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.mainContainer.IsInitializing = false;
-			this.mainContainer.Location = new System.Drawing.Point(0, 0);
-			this.mainContainer.Name = "mainContainer";
-			// 
-			// technicalNotesOnInterlinearImportToolStripMenuItem
-			// 
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Name = "technicalNotesOnInterlinearImportToolStripMenuItem";
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Text = "Technical Notes on &Interlinear Import...";
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_Interlinear_Import_Click);
-			// 
-			// mainContainer.Panel1
-			// 
-			this.mainContainer.Panel1.Controls.Add(this._sidePane);
-			this.mainContainer.Panel1MinSize = 16;
-			// 
-			// mainContainer.Panel2
-			// 
-			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
-			this.mainContainer.Panel2MinSize = 16;
-			this.mainContainer.SecondControl = this._rightPanel;
-			this.mainContainer.SecondLabel = "All Content";
-			this.mainContainer.Size = new System.Drawing.Size(791, 381);
-			this.mainContainer.SplitterDistance = 140;
-			this.mainContainer.TabIndex = 0;
-			this.mainContainer.TabStop = false;
-			// 
-			// _sidePane
-			// 
-			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._sidePane.Location = new System.Drawing.Point(0, 0);
-			this._sidePane.Name = "_sidePane";
-			this._sidePane.Size = new System.Drawing.Size(140, 381);
-			this._sidePane.TabIndex = 1;
-			// 
-			// _rightPanel
-			// 
-			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._rightPanel.Location = new System.Drawing.Point(0, 0);
-			this._rightPanel.Name = "_rightPanel";
-			this._rightPanel.Size = new System.Drawing.Size(647, 381);
-			this._rightPanel.TabIndex = 1;
 			// 
 			// FwMainWnd
 			// 
@@ -1448,6 +1674,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripContainer.TopToolStripPanel.PerformLayout();
 			this.toolStripContainer.ResumeLayout(false);
 			this.toolStripContainer.PerformLayout();
+			this.mainContainer.Panel1.ResumeLayout(false);
+			this.mainContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
+			this.mainContainer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
@@ -1458,10 +1688,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripInsert.PerformLayout();
 			this.toolStripFormat.ResumeLayout(false);
 			this.toolStripFormat.PerformLayout();
-			this.mainContainer.Panel1.ResumeLayout(false);
-			this.mainContainer.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
-			this.mainContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1548,20 +1774,20 @@ namespace LanguageExplorer.Impls
 		private ToolStripSeparator toolStripToolsMenuSparator1;
 		private ToolStripMenuItem utilitiesToolStripMenuItem;
 		private ToolStripMenuItem _parserToolStripMenuItem;
-		private ToolStripMenuItem _parseAllWordsToolStripMenuItem;
-		private ToolStripMenuItem _reparseAllWordsToolStripMenuItem;
-		private ToolStripMenuItem _reloadGrammarLexiconToolStripMenuItem;
-		private ToolStripMenuItem _stopParserToolStripMenuItem;
+		private ToolStripMenuItem CmdParseAllWords;
+		private ToolStripMenuItem CmdReparseAllWords;
+		private ToolStripMenuItem CmdReInitializeParser;
+		private ToolStripMenuItem CmdStopParser;
 		private ToolStripSeparator toolStripParserMenuSparator1;
-		private ToolStripMenuItem _tryAWordToolStripMenuItem;
-		private ToolStripMenuItem _parseWordsInTextToolStripMenuItem;
-		private ToolStripMenuItem _parseCurrentWordToolStripMenuItem;
-		private ToolStripMenuItem _clearCurrentParserAnalysesToolStripMenuItem;
+		private ToolStripMenuItem CmdTryAWord;
+		private ToolStripMenuItem CmdParseWordsInCurrentText;
+		private ToolStripMenuItem CmdParseCurrentWord;
+		private ToolStripMenuItem CmdClearSelectedWordParserAnalyses;
 		private ToolStripSeparator toolStripParserMenuSparator2;
-		private ToolStripMenuItem chooseParserToolStripMenuItem;
-		private ToolStripMenuItem _defaultParserXAmpleToolStripMenuItem;
-		private ToolStripMenuItem _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem;
-		private ToolStripMenuItem _editParserParametersToolStripMenuItem;
+		private ToolStripMenuItem ChooseParserMenu;
+		private ToolStripMenuItem CmdChooseXAmpleParser;
+		private ToolStripMenuItem CmdChooseHCParser;
+		private ToolStripMenuItem CmdEditParserParameters;
 		private ToolStripMenuItem _data_First;
 		private ToolStripMenuItem _data_Previous;
 		private ToolStripMenuItem _data_Next;
@@ -1607,5 +1833,26 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem technicalNotesOnSFMDatabaseImportToolStripMenuItem;
 		private ToolStripMenuItem technicalNotesOnLinguaLinksImportToolStripMenuItem;
 		private ToolStripMenuItem technicalNotesOnInterlinearImportToolStripMenuItem;
+		private ToolStripSeparator dataMenuSeparator1;
+		private ToolStripMenuItem CmdApproveAndMoveNext;
+		private ToolStripMenuItem CmdApproveForWholeTextAndMoveNext;
+		private ToolStripMenuItem CmdNextIncompleteBundle;
+		private ToolStripMenuItem CmdApprove;
+		private ToolStripMenuItem ApproveAnalysisMovementMenu;
+		private ToolStripMenuItem CmdApproveAndMoveNextSameLine;
+		private ToolStripMenuItem CmdMoveFocusBoxRight;
+		private ToolStripMenuItem CmdMoveFocusBoxLeft;
+		private ToolStripMenuItem BrowseMovementMenu;
+		private ToolStripMenuItem CmdBrowseMoveNext;
+		private ToolStripMenuItem CmdNextIncompleteBundleNc;
+		private ToolStripMenuItem CmdBrowseMoveNextSameLine;
+		private ToolStripMenuItem CmdMoveFocusBoxRightNc;
+		private ToolStripMenuItem CmdMoveFocusBoxLeftNc;
+		private ToolStripMenuItem CmdMakePhrase;
+		private ToolStripMenuItem CmdBreakPhrase;
+		private ToolStripSeparator dataMenuSeparator2;
+		private ToolStripMenuItem CmdRepeatLastMoveLeft;
+		private ToolStripMenuItem CmdRepeatLastMoveRight;
+		private ToolStripMenuItem CmdApproveAll;
 	}
 }

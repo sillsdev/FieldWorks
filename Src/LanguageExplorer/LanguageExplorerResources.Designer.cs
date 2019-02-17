@@ -63,9 +63,39 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Add_a_Literal_Translation {
+            get {
+                object obj = ResourceManager.GetObject("Add_a_Literal_Translation", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Add_Free_Translation {
+            get {
+                object obj = ResourceManager.GetObject("Add_Free_Translation", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Add_New_Analysis {
             get {
                 object obj = ResourceManager.GetObject("Add_New_Analysis", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Add_New_Text {
+            get {
+                object obj = ResourceManager.GetObject("Add_New_Text", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -101,6 +131,16 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon ApprAndMoveNext {
+            get {
+                object obj = ResourceManager.GetObject("ApprAndMoveNext", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Arrow_Down {
             get {
                 object obj = ResourceManager.GetObject("Arrow_Down", resourceCulture);
@@ -124,6 +164,26 @@ namespace LanguageExplorer {
         internal static string BeginCompressingDataForWebonary {
             get {
                 return ResourceManager.GetString("BeginCompressingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon BreakPhrase {
+            get {
+                object obj = ResourceManager.GetObject("BreakPhrase", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon BrowseAndMoveNext {
+            get {
+                object obj = ResourceManager.GetObject("BrowseAndMoveNext", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -321,6 +381,16 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Find_and_Replace_Text {
+            get {
+                object obj = ResourceManager.GetObject("Find_and_Replace_Text", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compression complete..
         /// </summary>
         internal static string FinishedCompressingDataForWebonary {
@@ -478,6 +548,16 @@ namespace LanguageExplorer {
         internal static string Insert_0 {
             get {
                 return ResourceManager.GetString("Insert_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Insert_Note {
+            get {
+                object obj = ResourceManager.GetObject("Insert_Note", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -3452,6 +3532,16 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon LinkWords {
+            get {
+                object obj = ResourceManager.GetObject("LinkWords", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Lists {
             get {
                 object obj = ResourceManager.GetObject("Lists", resourceCulture);
@@ -3751,6 +3841,16 @@ namespace LanguageExplorer {
         internal static string WritingSystems {
             get {
                 return ResourceManager.GetString("WritingSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ZeroWidth {
+            get {
+                object obj = ResourceManager.GetObject("ZeroWidth", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

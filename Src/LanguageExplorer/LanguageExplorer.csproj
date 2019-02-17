@@ -404,6 +404,16 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
+    <Compile Include="HelpTopicPaths.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HelpTopicPaths.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LanguageExplorerResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SfmToXml\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
     <Compile Include="Controls\ProgressHandler.cs" />
@@ -3092,7 +3102,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ICollapsingSplitContainer.cs" />
-    <Compile Include="ICommandUndoRedoText.cs" />
     <Compile Include="images\Morphology\ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -3323,11 +3332,6 @@
     <Compile Include="Controls\PaneBar\PaneBar.Designer.cs">
       <DependentUpon>PaneBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="LanguageExplorerResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Impls\FlexApp.cs" />
     <Compile Include="SILErrorReportingAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -3532,7 +3536,10 @@
       <DependentUpon>WordformGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="HelpTopicPaths.resx" />
+    <EmbeddedResource Include="HelpTopicPaths.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>HelpTopicPaths.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="images\Morphology\ImageHolder.resx">
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -3731,8 +3738,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LanguageExplorerResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Impls\FwMainWnd.resx">
       <DependentUpon>FwMainWnd.cs</DependentUpon>
@@ -3761,6 +3768,18 @@
     <None Include="images\Find Dictionary.ico" />
     <Content Include="images\Find Lexical Entry.ico" />
     <Content Include="images\Find Reversal Entry.ico" />
+    <None Include="images\Interlinear\ApprAndMoveNext.ico" />
+    <None Include="images\Interlinear\BrowseAndMoveNext.ico" />
+    <None Include="images\Interlinear\LinkWords.ico" />
+    <None Include="images\Interlinear\BreakPhrase.ico" />
+    <None Include="images\Interlinear\ApproveAll.ico" />
+    <None Include="images\Interlinear\Add a Literal Translation.ico" />
+    <None Include="images\Interlinear\Add Free Translation.ico" />
+    <None Include="images\Interlinear\Add New Text.ico" />
+    <None Include="images\Interlinear\Find and Replace Text.ico" />
+    <None Include="images\Interlinear\Insert Note.ico" />
+    <None Include="images\Interlinear\ZeroWidth.ico" />
+    <None Include="images\Interlinear\ApproveAll.bmp" />
     <Content Include="images\LexEd.ico" />
     <Content Include="images\LexTextImages\AlloCoprohib.bmp" />
     <Content Include="images\LexTextImages\Blank.bmp" />

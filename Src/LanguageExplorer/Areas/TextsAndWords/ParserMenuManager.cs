@@ -40,16 +40,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Timer m_timer;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private StatusBarPanel _statusPanelProgress;
-		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
+		private ToolStripMenuItem _parserMenu;
+		private Dictionary<string, ToolStripItem> _parserToolStripMenuItems;
 		private IStText _currentStText;
 		private IWfiWordform _currentWordform;
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal ParserMenuManager(ISharedEventHandlers sharedEventHandlers, StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
+		internal ParserMenuManager(ISharedEventHandlers sharedEventHandlers, StatusBarPanel statusPanelProgress, ToolStripMenuItem parserMenu, Dictionary<string, ToolStripItem> parserMenuItems)
 		{
 			_sharedEventHandlers = sharedEventHandlers;
 			_statusPanelProgress = statusPanelProgress;
+			_parserMenu = parserMenu;
 			_parserToolStripMenuItems = parserMenuItems;
 		}
 
@@ -96,33 +98,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_sda = m_cache.MainCacheAccessor;
-
-			/*
-				{"parser", _parserToolStripMenuItem},
-				{"parseAllWords", _parseAllWordsToolStripMenuItem},
-				{"reparseAllWords", _reparseAllWordsToolStripMenuItem},
-				{"reloadGrammarLexicon", _reloadGrammarLexiconToolStripMenuItem},
-				{"stopParser", _stopParserToolStripMenuItem},
-				{"tryAWord", _tryAWordToolStripMenuItem},
-				{"parseWordsInText", _parseWordsInTextToolStripMenuItem},
-				{"parseCurrentWord", _parseCurrentWordToolStripMenuItem},
-				{"clearCurrentParserAnalyses", _clearCurrentParserAnalysesToolStripMenuItem},
-				{"defaultParserXAmple", _defaultParserXAmpleToolStripMenuItem},
-				{"phonologicalRulebasedParserHermitCrab", _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem},
-				{"editParserParameters", _editParserParametersToolStripMenuItem}
-			 */
-			_parserToolStripMenuItems["parser"].DropDownOpening += ParserMenuManager_DropDownOpening;
-			_parserToolStripMenuItems["parseAllWords"].Click += ParseAllWords_Click;
-			_parserToolStripMenuItems["reparseAllWords"].Click += ReparseAllWords_Click;
-			_parserToolStripMenuItems["reloadGrammarLexicon"].Click += ReloadGrammarLexicon_Click;
-			_parserToolStripMenuItems["stopParser"].Click += StopParser_Click;
-			_parserToolStripMenuItems["tryAWord"].Click += TryAWord_Click;
-			_parserToolStripMenuItems["parseWordsInText"].Click += ParseWordsInText_Click;
-			_parserToolStripMenuItems["parseCurrentWord"].Click += ParseCurrentWord_Click;
-			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Click += ClearCurrentParserAnalyses_Click;
-			_parserToolStripMenuItems["defaultParserXAmple"].Click += ChooseParser_Click;
-			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click += ChooseParser_Click;
-			_parserToolStripMenuItems["editParserParameters"].Click += EditParserParameters_Click;
+			_parserMenu.DropDownOpening += ParserMenuManager_DropDownOpening;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseAllWords].Click += ParseAllWords_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdReparseAllWords].Click += ReparseAllWords_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdReInitializeParser].Click += ReloadGrammarLexicon_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdStopParser].Click += StopParser_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdTryAWord].Click += TryAWord_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseWordsInCurrentText].Click += ParseWordsInText_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseCurrentWord].Click += ParseCurrentWord_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdClearSelectedWordParserAnalyses].Click += ClearCurrentParserAnalyses_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseXAmpleParser].Click += ChooseParser_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseHCParser].Click += ChooseParser_Click;
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdEditParserParameters].Click += EditParserParameters_Click;
 
 			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
 			Subscriber.Subscribe("StopParser", StopParser_Handler);
@@ -183,24 +170,24 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void ParserMenuManager_DropDownOpening(object sender, EventArgs e)
 		{
 			// Enable/Disable menus that are context sensitive.
-			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Visible = (CurrentWordform != null);
-			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Enabled = (CurrentWordform != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdClearSelectedWordParserAnalyses].Visible = (CurrentWordform != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdClearSelectedWordParserAnalyses].Enabled = (CurrentWordform != null);
 
-			_parserToolStripMenuItems["parseCurrentWord"].Visible = (CurrentWordform != null);
-			_parserToolStripMenuItems["parseCurrentWord"].Enabled = (CurrentWordform != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseCurrentWord].Visible = (CurrentWordform != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseCurrentWord].Enabled = (CurrentWordform != null);
 
-			_parserToolStripMenuItems["parseWordsInText"].Visible = (CurrentText != null);
-			_parserToolStripMenuItems["parseWordsInText"].Enabled = (CurrentText != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseWordsInCurrentText].Visible = (CurrentText != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseWordsInCurrentText].Enabled = (CurrentText != null);
 
-			_parserToolStripMenuItems["parseAllWords"].Enabled = (Connection == null);
-			_parserToolStripMenuItems["reloadGrammarLexicon"].Enabled = (Connection != null);
-			_parserToolStripMenuItems["stopParser"].Enabled = (Connection != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdReparseAllWords].Enabled = (Connection == null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdReInitializeParser].Enabled = (Connection != null);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdStopParser].Enabled = (Connection != null);
 
 			// Must wait for the queue to empty before we can fill it up again or else we run the risk of breaking the parser thread.
-			_parserToolStripMenuItems["parseAllWords"].Enabled = (Connection != null && Connection.GetQueueSize(ParserPriority.Low) == 0);
+			_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseAllWords].Enabled = (Connection != null && Connection.GetQueueSize(ParserPriority.Low) == 0);
 
-			_parserToolStripMenuItems["defaultParserXAmple"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
-			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
+			((ToolStripMenuItem)_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseXAmpleParser]).Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
+			((ToolStripMenuItem)_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseHCParser]).Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
 		}
 
 		internal ParserConnection Connection { get; set; }
@@ -409,18 +396,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
 				}
-				_parserToolStripMenuItems["parser"].DropDownOpening -= ParserMenuManager_DropDownOpening;
-				_parserToolStripMenuItems["parseAllWords"].Click -= ParseAllWords_Click;
-				_parserToolStripMenuItems["reparseAllWords"].Click -= ReparseAllWords_Click;
-				_parserToolStripMenuItems["reloadGrammarLexicon"].Click -= ReloadGrammarLexicon_Click;
-				_parserToolStripMenuItems["stopParser"].Click -= StopParser_Click;
-				_parserToolStripMenuItems["tryAWord"].Click -= TryAWord_Click;
-				_parserToolStripMenuItems["parseWordsInText"].Click -= ParseWordsInText_Click;
-				_parserToolStripMenuItems["parseCurrentWord"].Click -= ParseCurrentWord_Click;
-				_parserToolStripMenuItems["clearCurrentParserAnalyses"].Click -= ClearCurrentParserAnalyses_Click;
-				_parserToolStripMenuItems["defaultParserXAmple"].Click -= ChooseParser_Click;
-				_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click -= ChooseParser_Click;
-				_parserToolStripMenuItems["editParserParameters"].Click -= EditParserParameters_Click;
+				_parserMenu.DropDownOpening -= ParserMenuManager_DropDownOpening;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseAllWords].Click -= ParseAllWords_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdReparseAllWords].Click -= ReparseAllWords_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdReInitializeParser].Click -= ReloadGrammarLexicon_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdStopParser].Click -= StopParser_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdTryAWord].Click -= TryAWord_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseWordsInCurrentText].Click -= ParseWordsInText_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdParseCurrentWord].Click -= ParseCurrentWord_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdClearSelectedWordParserAnalyses].Click -= ClearCurrentParserAnalyses_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseXAmpleParser].Click -= ChooseParser_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdChooseHCParser].Click -= ChooseParser_Click;
+				_parserToolStripMenuItems[LanguageExplorerConstants.CmdEditParserParameters].Click -= EditParserParameters_Click;
 				Subscriber.Unsubscribe("TextSelectedWord", TextSelectedWord_Handler);
 				Subscriber.Unsubscribe("StopParser", StopParser_Handler);
 

@@ -24,10 +24,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		internal ISilDataAccess SandboxCacheDa => Caches.DataAccess;
 
-#pragma warning disable 169
-		ISilDataAccess MainCacheDa => Caches.MainCache.MainCacheAccessor;
-#pragma warning restore 169
-
 		internal ITsString GetTssInSandbox(int flid, int ws)
 		{
 			ITsString tss;

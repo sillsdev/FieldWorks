@@ -31,20 +31,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				components?.Dispose();
 				((IDisposable)InterlinWordControl)?.Dispose();
-				_sharedEventHandlers?.Remove(InterlinearConstants.CmdBreakPhrase);
-				_sharedEventHandlers?.RemoveStatusChecker(InterlinearConstants.CmdBreakPhrase);
+				// NB: Do the dispose on _focusBoxMenuManager, before removing the shared handlers.
 				_focusBoxMenuManager?.Dispose();
+				_mySharedEventHandlers?.Remove(LanguageExplorerConstants.CmdBreakPhrase);
+				_mySharedEventHandlers?.RemoveStatusChecker(LanguageExplorerConstants.CmdBreakPhrase);
 			}
-			_majorFlexComponentParameters = null;
+			base.Dispose(disposing);
+			// Do this after base call, so Deactivate works.
 			_sharedEventHandlers = null;
+			_dataMenu = null;
+			_mySharedEventHandlers = null;
+			_dataMenuDict = null;
+			_insertToolbarDict = null;
 			_focusBoxMenuManager = null;
-			m_stylesheet = null;
+			_stylesheet = null;
 			components = null;
 			InterlinWordControl = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
-			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -131,7 +136,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.btnConfirmChangesForWholeText.TabIndex = 4;
 			this.btnConfirmChangesForWholeText.TabStop = false;
 			this.btnConfirmChangesForWholeText.UseVisualStyleBackColor = true;
-			this.btnConfirmChangesForWholeText.Click += new System.EventHandler(this.btnConfirmChangesForWholeText_Click);
+			this.btnConfirmChangesForWholeText.Click += new System.EventHandler(this.ApproveForWholeTextAndMoveNext_Click);
 			//
 			// btnUndoChanges
 			//
@@ -182,7 +187,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.btnMenu.TabIndex = 0;
 			this.btnMenu.TabStop = false;
 			this.btnMenu.UseVisualStyleBackColor = true;
-			this.btnMenu.Click += new System.EventHandler(this.btnMenu_Click);
+			this.btnMenu.Click += new System.EventHandler(this.mnuFocusBox_Click);
 			//
 			// btnConfirmChanges
 			//

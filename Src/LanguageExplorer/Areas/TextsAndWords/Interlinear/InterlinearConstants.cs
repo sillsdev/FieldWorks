@@ -6,6 +6,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	internal static class InterlinearConstants
 	{
-		internal static string CmdBreakPhrase = "CmdBreakPhrase";
+		internal const int CmdMakePhraseImageIndex = 6;
+		internal const int CmdBreakPhraseImageIndex = 7;
+		internal const int CmdApproveAndMoveNextImageIndex = 9;
+		internal const int CmdApproveForWholeTextAndMoveNextImageIndex = 10;
+		internal const int CmdApproveAllImageIndex = 13;
 	}
 }

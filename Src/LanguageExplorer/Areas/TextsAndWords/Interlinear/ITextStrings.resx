@@ -373,9 +373,6 @@
   <data name="ksRedoAddNote" xml:space="preserve">
     <value>Redo insert Note</value>
   </data>
-  <data name="ksRedoApproveAnalysis" xml:space="preserve">
-    <value>Redo Approve Analysis</value>
-  </data>
   <data name="ksRedoBreakPhrase" xml:space="preserve">
     <value>Redo Break Phrase into Words</value>
   </data>
@@ -431,8 +428,8 @@
   <data name="ksUndoAllChangesHere" xml:space="preserve">
     <value>Undo all changes in this Analysis</value>
   </data>
-  <data name="ksUndoApproveAnalysis" xml:space="preserve">
-    <value>Undo Approve Analysis</value>
+  <data name="ApproveAnalysis" xml:space="preserve">
+    <value>Approve Analysis</value>
   </data>
   <data name="ksUndoBreakPhrase" xml:space="preserve">
     <value>Undo Break Phrase into Words</value>
@@ -926,9 +923,6 @@ Click "Cancel" to abort this import.</value>
   </data>
   <data name="UndoInsertText" xml:space="preserve">
     <value>Undo insert text</value>
-  </data>
-  <data name="Break_phrase_into_words" xml:space="preserve">
-    <value>_Break phrase into words</value>
   </data>
   <data name="Break_selected_phrase_into_words" xml:space="preserve">
     <value>Break selected phrase into words.</value>

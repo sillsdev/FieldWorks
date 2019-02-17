@@ -1459,4 +1459,34 @@ This version of the program requires version {1}.</value>
   <data name="ksUnknownUnderlineColor" xml:space="preserve">
     <value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
   </data>
+  <data name="Add_a_Literal_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add a Literal Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Add_Free_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add Free Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Add_New_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add New Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ApprAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\ApprAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BreakPhrase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\BreakPhrase.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BrowseAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\BrowseAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Find_and_Replace_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Find and Replace Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Insert_Note" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Insert Note.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LinkWords" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\LinkWords.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ZeroWidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\ZeroWidth.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

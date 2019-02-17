@@ -25,6 +25,10 @@ using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
+	/// <summary />
+	/// <remarks>
+	///	InterlinMaster creates two instances of this class.
+	/// </remarks>
 	internal partial class InterlinDocForAnalysis : InterlinDocRootSiteBase
 	{
 		/// <summary>
@@ -33,6 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// class do double duty.
 		/// </summary>
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
+		private bool _hasSubscribedAndShared;
 
 		public InterlinDocForAnalysis()
 		{
@@ -40,21 +45,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 			DoSpellCheck = true;
 		}
-
-		#region Overrides of SimpleRootSite
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			base.InitializeFlexComponent(flexComponentParameters);
-
-			Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
-		}
-
-		#endregion
 
 		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
@@ -270,6 +260,35 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnGotFocus(e);
 		}
 
+		/// <inheritdoc />
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			if (MyMajorFlexComponentParameters == null || Subscriber == null)
+			{
+				return;
+			}
+			if (Visible)
+			{
+				if (!_hasSubscribedAndShared)
+				{
+					// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
+					Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
+					MyMajorFlexComponentParameters.SharedEventHandlers.Add(LanguageExplorerConstants.CmdApproveAll, ApproveAll_Click);
+					_hasSubscribedAndShared = true;
+				}
+			}
+			else
+			{
+				// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
+				if (_hasSubscribedAndShared)
+				{
+					MyMajorFlexComponentParameters.SharedEventHandlers.Remove(LanguageExplorerConstants.CmdApproveAll);
+					Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
+					_hasSubscribedAndShared = false;
+				}
+			}
+		}
 		#endregion
 
 		#region ISelectOccurrence
@@ -365,7 +384,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				MoveFocusBoxIntoPlace();
 				// Now it is the right size and place we can show it.
 				TryShowFocusBox();
-				// All this CAN hapen because we're editing in another window...for example,
+				// All this CAN happen because we're editing in another window...for example,
 				// if we edit something that deletes the current wordform in a concordance view.
 				// In that case we don't want to steal the focus.
 				if (ParentForm == Form.ActiveForm)
@@ -2309,38 +2328,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		public bool OnApproveAll(object cmd)
+		private void ApproveAll_Click(object sender, EventArgs e)
 		{
-#if RANDYTODO
-			ApproveAllSuggestedAnalyses(cmd as Command);
-#endif
-			return false;
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Approve all the suggested analyses in this text. See LT-4312.
-		/// </summary>
-		/// <param name="cmd">The command object from the selection event.</param>
-		public void ApproveAllSuggestedAnalyses(Command cmd)
-		{   // Go through the entire text looking for suggested analyses that can be approved.
+			// Go through the entire text looking for suggested analyses that can be approved.
 			// remember where the focus box or ip is
 			// might be on an analysis, labels or translation text
 			var helper = SelectionHelper.Create(RootBox.Site); // only helps restore translation and note line selections
-			AnalysisOccurrence focusedWf = SelectedOccurrence; // need to restore focus box if selected
-
+			var focusedWf = SelectedOccurrence; // need to restore focus box if selected
 			// find the very first analysis
 			ISegment firstRealSeg = null;
 			IAnalysis firstRealOcc = null;
-			int occInd = 0;
-			foreach (IStPara p in RootStText.ParagraphsOS)
+			var occInd = 0;
+			foreach (var p in RootStText.ParagraphsOS)
 			{
-				var para = (IStTxtPara) p;
-				foreach (ISegment seg in para.SegmentsOS)
+				var para = (IStTxtPara)p;
+				foreach (var seg in para.SegmentsOS)
 				{
 					firstRealSeg = seg;
 					occInd = 0;
-					foreach(IAnalysis an in seg.AnalysesRS)
+					foreach (var an in seg.AnalysesRS)
 					{
 						if (an.HasWordform && an.IsValidObject)
 						{
@@ -2349,72 +2355,76 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						occInd++;
 					}
-					if (firstRealOcc != null) break;
+					if (firstRealOcc != null)
+					{
+						break;
+					}
 				}
-				if (firstRealOcc != null) break;
+				if (firstRealOcc != null)
+				{
+					break;
+				}
 			}
 			// Set it as the current segment and recurse
 			if (firstRealOcc == null)
+			{
 				return; // punctuation only or nothing to analyze
+			}
 			AnalysisOccurrence ao = null;
 			if (focusedWf != null && focusedWf.Analysis == firstRealOcc)
+			{
 				ao = new AnalysisOccurrence(focusedWf.Segment, focusedWf.Index);
+			}
 			else
+			{
 				ao = new AnalysisOccurrence(firstRealSeg, occInd);
+			}
 			TriggerAnalysisSelected(ao, true, true, false);
 			var navigator = new SegmentServices.StTextAnnotationNavigator(ao);
-
 			// This needs to be outside the block for the UOW, since what we are suppressing
 			// happens at the completion of the UOW.
-			SuppressResettingGuesses(
-				() =>
+			SuppressResettingGuesses(() =>
+			{
+				// Needs to include GetRealAnalysis, since it might create a new one.
+				UowHelpers.UndoExtension(MyMajorFlexComponentParameters.CachedUiItems[LanguageExplorerConstants.CachedMenusKey][LanguageExplorerConstants.DataMenuKey][LanguageExplorerConstants.CmdApproveAll].Text, Cache.ActionHandlerAccessor, () =>
 				{
-					// Needs to include GetRealAnalysis, since it might create a new one.
-					UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-						AnalysisOccurrence lastOccurrence;
-						var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
-						foreach (var occ in analyses)
-						{   // This could be punctuation or any kind of analysis.
-							IAnalysis occAn = occ.Analysis; // averts â€œAccess to the modified closureâ€ warning in resharper
-							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
-							{   // this is an analysis or a wordform
-								int hvo = Vc.GetGuess(occAn);
-								if (occAn.Hvo != hvo)
-								{   // this is a guess, so approve it
-									// 1) A second occurence of a word that has had a lexicon entry or sense created for it.
-									// 2) A parser result - not sure which gets picked if multiple.
-									// #2 May take a while to "percolate" through to become a "guess".
-									var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-									if (guess != null && guess is IAnalysis)
-										occ.Segment.AnalysesRS[occ.Index] = (IAnalysis) guess;
-									else
-									{
-										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
-									}
+					var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
+					AnalysisOccurrence lastOccurrence;
+					var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
+					foreach (var occ in analyses)
+					{   // This could be punctuation or any kind of analysis.
+						var occAn = occ.Analysis; // averts "Access to the modified closure" warning in ReSharper
+						if (occAn is IWfiAnalysis || occAn is IWfiWordform)
+						{   // this is an analysis or a wordform
+							var hvo = Vc.GetGuess(occAn);
+							if (occAn.Hvo != hvo)
+							{   // this is a guess, so approve it
+								// 1) A second occurence of a word that has had a lexicon entry or sense created for it.
+								// 2) A parser result - not sure which gets picked if multiple.
+								// #2 May take a while to "percolate" through to become a "guess".
+								var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+								if (guess != null && guess is IAnalysis)
+								{
+									occ.Segment.AnalysesRS[occ.Index] = (IAnalysis)guess;
 								}
-							/*	else if (occAn.HasWordform && occAn.Wordform.ParserCount > 0)
-								{   // this doesn't seem to be needed (and may not be correct) - always caught above
-									bool isHumanNoOpinion = occAn.Wordform.HumanNoOpinionParses.Cast<IWfiWordform>().Any(wf => wf.Hvo == occAn.Hvo);
-									if (isHumanNoOpinion)
-									{
-										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
-									}
-								} */
+								else
+								{
+									occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
+								}
 							}
 						}
-					});
-				}
-			);
-			// MoveFocusBoxIntoPlace();
+					}
+				});
+			});
 			if (focusedWf != null)
+			{
 				SelectOccurrence(focusedWf);
-			else if (helper != null)
-				helper.SetSelection(true, true);
+			}
+			else
+			{
+				helper?.SetSelection(true, true);
+			}
 			Update();
 		}
-#endif
 	}
 }

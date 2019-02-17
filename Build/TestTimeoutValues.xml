@@ -1,7 +1,10 @@
 <!-- Timeouts for NUnit tests are read from this file. Timeouts for Unit++ tests are read from mkall.targets -->
 <TestTimeoutValues defaultTimeLimit="70">
-	<TimeoutGroup timeLimit="120">
+	<TimeoutGroup timeLimit="180">
 		<Project name="LanguageExplorerTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="120">
+		<Project name="FwCoreDlgsTests"/>
 	</TimeoutGroup>
 	<TimeoutGroup timeLimit="90">
 		<Project name="CacheLightTests"/>

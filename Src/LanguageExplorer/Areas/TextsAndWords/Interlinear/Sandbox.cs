@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -91,12 +92,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -151,12 +150,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void OnHandleEnter()
 		{
-#if RANDYTODO
-			if (FocusBox is FocusBoxControllerForDisplay)
-			{
-				(FocusBox as FocusBoxControllerForDisplay).OnApproveAndMoveNext();
-			}
-#endif
+			FocusBox.OnApproveAndMoveNext();
 		}
 
 		#region IAnalysisControlInternal Members

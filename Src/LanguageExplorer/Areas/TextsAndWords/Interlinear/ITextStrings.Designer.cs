@@ -61,11 +61,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Break phrase into words.
+        ///   Looks up a localized string similar to Approve Analysis.
         /// </summary>
-        internal static string Break_phrase_into_words {
+        internal static string ApproveAnalysis {
             get {
-                return ResourceManager.GetString("Break_phrase_into_words", resourceCulture);
+                return ResourceManager.GetString("ApproveAnalysis", resourceCulture);
             }
         }
         
@@ -1604,15 +1604,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Approve Analysis.
-        /// </summary>
-        internal static string ksRedoApproveAnalysis {
-            get {
-                return ResourceManager.GetString("ksRedoApproveAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Break Phrase into Words.
         /// </summary>
         internal static string ksRedoBreakPhrase {
@@ -2032,15 +2023,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksUndoAllChangesHere {
             get {
                 return ResourceManager.GetString("ksUndoAllChangesHere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Approve Analysis.
-        /// </summary>
-        internal static string ksUndoApproveAnalysis {
-            get {
-                return ResourceManager.GetString("ksUndoApproveAnalysis", resourceCulture);
             }
         }
         

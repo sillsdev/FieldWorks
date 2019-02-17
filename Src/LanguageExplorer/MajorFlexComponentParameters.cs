@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.SilSidePane;
@@ -22,6 +23,8 @@ namespace LanguageExplorer
 		/// <summary />
 		internal ToolStripContainer ToolStripContainer { get; }
 		/// <summary />
+		public Dictionary<string, Dictionary<string, Dictionary<string, ToolStripItem>>> CachedUiItems { get; }
+		/// <summary />
 		internal StatusBar StatusBar { get; }
 		/// <summary />
 		internal ParserMenuManager ParserMenuManager { get; }
@@ -39,14 +42,15 @@ namespace LanguageExplorer
 		internal ISharedEventHandlers SharedEventHandlers { get; }
 		/// <summary />
 		internal SidePane SidePane { get; }
-
-		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusBar,
-			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp,
-			IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
+		/// <summary />
+		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
+			Dictionary<string, Dictionary<string, Dictionary<string, ToolStripItem>>> cachedUiItems, StatusBar statusBar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
+			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
 			ToolStripContainer = toolStripContainer;
+			CachedUiItems = cachedUiItems;
 			StatusBar = statusBar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
