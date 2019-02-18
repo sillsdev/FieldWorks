@@ -427,6 +427,10 @@
 		</ItemGroup>
 		<Move SourceFiles="@(InstallerFiles)" DestinationFiles="@(InstallerFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
 
+		<Exec WorkingDirectory="$(InstallersBaseDir)" Command="fciv -md5 $(SafeApplicationName)_$(BuildVersion)_Offline_$(Arch).exe > md5.txt"/>
+		<Exec WorkingDirectory="$(InstallersBaseDir)" Command="fciv -md5 $(SafeApplicationName)_$(BuildVersion)_Online_$(Arch).exe >> md5.txt"/>
+		<Exec WorkingDirectory="$(InstallersBaseDir)" Command="fciv -md5 $(SafeApplicationName)_$(BuildVersion)_$(Arch).msp >> md5.txt"/>
+
 		<WriteLinesToFile File="$(AppBuildDir)/version" Overwrite="true" Lines="$(BuildVersion)" />
 	</Target>
 
@@ -447,5 +451,7 @@
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
 		</ItemGroup>
 		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
+
+		<Exec WorkingDirectory="$(InstallersBaseDir)" Command="fciv -md5 $(SafeApplicationName)_$(BuildVersion)_$(Arch).msp >> md5.txt"/>
 	</Target>
 </Project>
