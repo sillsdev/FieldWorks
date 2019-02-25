@@ -1218,7 +1218,7 @@ namespace SIL.FieldWorks.Discourse
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
 			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord);
 			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWordGloss);

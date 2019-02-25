@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -718,7 +718,7 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
 			{
 				newLineChoices.Add(flid);
 				UpdateForNewLineChoices(newLineChoices);
@@ -805,7 +805,7 @@ namespace SIL.FieldWorks.IText
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
-					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
