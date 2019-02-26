@@ -322,6 +322,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public static bool IsClerkSortingByHeadword(RecordClerk clerk)
+		{
+			if (clerk.SortName == null) return false;
+			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
+			|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
+		}
+
 		#region IxCoreColleague implementation
 
 		/// <summary>

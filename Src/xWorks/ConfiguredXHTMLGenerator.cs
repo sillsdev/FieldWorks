@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -236,13 +236,6 @@ namespace SIL.FieldWorks.XWorks
 			return xhtmlPath;
 		}
 
-		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
-		{
-			if (clerk.SortName == null) return false;
-			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
-				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
-		}
-
 		private static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
@@ -263,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
-			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (RecordClerk.IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
