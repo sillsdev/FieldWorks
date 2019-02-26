@@ -2197,7 +2197,13 @@ namespace SIL.FieldWorks.Filters
 		public int Compare(object x, object y)
 		{
 			if (m_ws == null)
+			{
 				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsId);
+			}
+			if (!m_ws.DefaultCollation.IsValid && m_ws.DefaultCollation.Type.ToLower() == "system")
+			{
+				m_ws.DefaultCollation = new SystemCollationDefinition();
+			}
 			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}
 		#endregion
