@@ -977,4 +977,36 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="ksWhichIsComponent" xml:space="preserve">
     <value>Which item is really a component?</value>
   </data>
+  <data name="WritingSystemList_SelectAtLeastOneTooltip" xml:space="preserve">
+    <value>Select at least one writing system</value>
+    <comment>Tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
+  </data>
+  <data name="WritingSystemList_NormalTooltip" xml:space="preserve">
+    <value>Writing systems with selected checkboxes are always displayed.</value>
+    <comment>Tooltip for the writing system list in the writing system setup dialog</comment>
+  </data>
+  <data name="WritingSystemList_AddIpa" xml:space="preserve">
+    <value>Add IPA input system for {0}</value>
+    <comment>Menu item for adding an IPA writing system for the current writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddAudio" xml:space="preserve">
+    <value>Add Audio input system for {0}</value>
+    <comment>Menu item text for adding an audio input system for the selected writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddDialect" xml:space="preserve">
+    <value>Add new dialect of {0}</value>
+    <comment>Menu item text for adding a new dialect of the current writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddNewLanguage" xml:space="preserve">
+    <value>Add new language...</value>
+    <comment>Menu item for adding a different language to the writing system list (brings up a dialog)</comment>
+  </data>
+  <data name="WritingSystemList_DeleteWs" xml:space="preserve">
+    <value>Delete {0}</value>
+    <comment>Right click menu item in the writing system properties dialog for deleting a writing sytem. e.g. "Delete English"</comment>
+  </data>
+  <data name="WritingSystemList_MergeWs" xml:space="preserve">
+    <value>Merge...</value>
+    <comment>Right click menu item in the writing system list area. Brings up a dialog for merging one writing system into another.</comment>
+  </data>
 </root>

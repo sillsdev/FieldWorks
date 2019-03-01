@@ -117,7 +117,8 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdWritingSystemProperties" label="Se_t up Writing Systems..." message="WritingSystemProperties"/>
+		<command id="CmdVernacularWritingSystemProperties" label="Set up Vernacular Writing Systems..." message="VernWritingSystemProperties"/>
+		<command id="CmdAnalysisWritingSystemProperties" label="Set up Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
 		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject"/>
 		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject"/>
 		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
@@ -583,7 +584,8 @@
 			<item command="CmdFormatStyle"/>
 			<item command="CmdFormatApplyStyle"/>
 			<menu id="WritingSystemMenu" label="_Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo"/>
-			<item command="CmdWritingSystemProperties"/>
+			<item command="CmdVernacularWritingSystemProperties"/>
+			<item command="CmdAnalysisWritingSystemProperties"/>
 		</menu>
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools">
@@ -599,7 +601,8 @@
 				<item command="CmdRestoreDefaults"/>
 				<item label="-" translate="do not translate"/>
 				<!-- This Setup Writing Systems... is a copy of the one on the Format menu -->
-				<item command="CmdWritingSystemProperties"/>
+				<item command="CmdVernacularWritingSystemProperties"/>
+				<item command="CmdAnalysisWritingSystemProperties"/>
 				<item command="CmdAddCustomField" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->

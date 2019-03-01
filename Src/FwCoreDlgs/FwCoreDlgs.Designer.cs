@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class FwCoreDlgs {
@@ -2203,6 +2203,78 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string TextFileFilter {
             get {
                 return ResourceManager.GetString("TextFileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Audio input system for {0}.
+        /// </summary>
+        public static string WritingSystemList_AddAudio {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add new dialect of {0}.
+        /// </summary>
+        public static string WritingSystemList_AddDialect {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddDialect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add IPA input system for {0}.
+        /// </summary>
+        public static string WritingSystemList_AddIpa {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddIpa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add new language....
+        /// </summary>
+        public static string WritingSystemList_AddNewLanguage {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddNewLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete {0}.
+        /// </summary>
+        public static string WritingSystemList_DeleteWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_DeleteWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge....
+        /// </summary>
+        public static string WritingSystemList_MergeWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_MergeWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing systems with selected checkboxes are always displayed..
+        /// </summary>
+        public static string WritingSystemList_NormalTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_NormalTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select at least one writing system.
+        /// </summary>
+        public static string WritingSystemList_SelectAtLeastOneTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneTooltip", resourceCulture);
             }
         }
     }

@@ -556,7 +556,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_btnNewVernWrtSys_Click(object sender, EventArgs e)
 		{
-			foreach (var ws in DisplayNewWritingSystemProperties(m_cbVernWrtSys, m_txtName.Text))
+			foreach (var ws in DisplayNewWritingSystemProperties(m_cbVernWrtSys, FwWritingSystemSetupModel.ListType.Vernacular))
 				m_newVernWss.Add(ws);
 		}
 
@@ -629,7 +629,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_btnNewAnalWrtSys_Click(object sender, EventArgs e)
 		{
-			foreach (var ws in DisplayNewWritingSystemProperties(m_cbAnalWrtSys, null))
+			foreach (var ws in DisplayNewWritingSystemProperties(m_cbAnalWrtSys, FwWritingSystemSetupModel.ListType.Analysis))
 				m_newAnalysisWss.Add(ws);
 		}
 		#endregion
@@ -912,21 +912,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_cbAnalWrtSys.EndUpdate();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		/// <param name="comboWS">Combo box containing the list of writing systems</param>
-		/// <param name="defaultName">project name, or null</param>
-		/// ------------------------------------------------------------------------------------
-		private CoreWritingSystemDefinition[] DisplayNewWritingSystemProperties(ComboBox comboWS,
-			string defaultName)
+		/// <param name="type">The type of writing system this list is dealing with</param>
+		private CoreWritingSystemDefinition[] DisplayNewWritingSystemProperties(ComboBox comboWS, FwWritingSystemSetupModel.ListType type)
 		{
 			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(m_wsManager.WritingSystems, m_wsManager.WritingSystems,
 				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-			if (FwWritingSystemSetupDlg.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
-				false, defaultName, out newWritingSystems))
+			if (FwWritingSystemSetupDlg.ShowNewDialog(this, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
+				type, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
 				string selectedWsId = newWritingSystems.First().Id;

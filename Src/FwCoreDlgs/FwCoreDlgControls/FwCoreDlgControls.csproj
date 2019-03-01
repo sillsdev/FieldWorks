@@ -100,7 +100,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -149,6 +149,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>

@@ -270,9 +270,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				// Get the writing system and valid characters list
-				if (m_wsContainer.DefaultVernacularWritingSystem == null)
-					return null;
+				var wsToLoad = m_wsContainer == null ? m_ws : m_wsContainer.DefaultVernacularWritingSystem;
 				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException);
 			}
 		}

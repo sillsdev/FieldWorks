@@ -342,6 +342,8 @@
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.pdb"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>

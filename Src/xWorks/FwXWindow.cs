@@ -1204,7 +1204,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFileProjectProperties(object command)
 		{
-			LaunchProjPropertiesDlg(false);
+			LaunchProjPropertiesDlg();
 			return true;
 		}
 
@@ -1228,7 +1228,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
 		/// ------------------------------------------------------------------------------------
-		private void LaunchProjPropertiesDlg(bool startOnWSPage)
+		private void LaunchProjPropertiesDlg()
 		{
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
@@ -1240,8 +1240,6 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app))
 			{
 				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
-				if (startOnWSPage)
-					dlg.StartWithWSPage();
 				if (dlg.ShowDialog(this) != DialogResult.Abort)
 				{
 					fDbRenamed = dlg.ProjectNameChanged();
@@ -1330,23 +1328,45 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="arg"></param>
 		/// ------------------------------------------------------------------------------------
-		public bool OnWritingSystemProperties(object arg)
+		public bool OnVernWritingSystemProperties(object arg)
 		{
 			CheckDisposed();
 
-			LaunchProjPropertiesDlg(true);
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
 			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is very similar to OnUpdateEditCut, but for xCore applications.
+		/// Display the project properties dialog, but starting with the WS page.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
+		/// <param name="arg"></param>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayWritingSystemProperties(object commandObject,
+		public bool OnAnalyWritingSystemProperties(object arg)
+		{
+			CheckDisposed();
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayVernWritingSystemProperties(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			display.Enabled = true;
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayAnalyWritingSystemProperties(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();

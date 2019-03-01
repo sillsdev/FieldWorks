@@ -383,7 +383,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static bool DoesProjectHaveFlexRepo(IProjectIdentifier projectId)
 		{
-			return IsMercurialRepo(projectId.ProjectFolder);
+			// useful to return false on null for some unit tests
+			return projectId != null && IsMercurialRepo(projectId.ProjectFolder);
 		}
 
 		/// <summary>
@@ -392,6 +393,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static bool DoesProjectHaveLiftRepo(IProjectIdentifier projectId)
 		{
+			// useful to return false on null for some unit tests
+			if (projectId == null)
+				return false;
 			string otherRepoPath = Path.Combine(projectId.ProjectFolder, LcmFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;

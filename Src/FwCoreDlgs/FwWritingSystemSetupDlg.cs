@@ -1,489 +1,70 @@
-// Copyright (c) 2003-2017 SIL International
-// This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using SilEncConverters40;
-using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.Application.ApplicationServices;
-using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using XCore;
-using MatchedPair = SIL.WritingSystems.MatchedPair;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <inheritdoc />
-	public class FwWritingSystemSetupDlg : Form
+	/// <summary/>
+	public partial class FwWritingSystemSetupDlg : Form
 	{
-		private enum CollationRulesType
-		{
-			/// <summary>
-			/// Default Unicode ordering rules (actually CustomICU without any rules)
-			/// </summary>
-			[Description("Default Ordering")]
-			DefaultOrdering,
-			/// <summary>
-			/// Custom Simple (Shoebox/Toolbox) style rules
-			/// </summary>
-			[Description("Custom Simple (Shoebox style) rules")]
-			CustomSimple,
-			/// <summary>
-			/// Custom ICU rules
-			/// </summary>
-			[Description("Custom ICU rules")]
-			CustomIcu,
-			/// <summary>
-			/// Use the sort rules from another language. When this is set, the SortRules are interpreted as a cultureId for the language to sort like.
-			/// </summary>
-			[Description("Same as another language")]
-			OtherLanguage
-		}
-
-		#region Constants
-		/// <summary>Index(0) of the tab for writing systems General</summary>
-		public const int kWsGeneral = 0;
-		/// <summary>Index(1) of the tab for writing systems Fonts</summary>
-		public const int kWsFonts = 1;
-		/// <summary>Index(2) of the tab for writing systems Keyboard</summary>
-		public const int kWsKeyboard = 2;
-		/// <summary>Index(3) of the tab for writing systems Converters</summary>
-		public const int kWsConverters = 3;
-		/// <summary>Index(4) of the tab for writing system sorting</summary>
-		public const int kWsSorting = 4;
-		/// <summary>Index(6) of the tab for writing system Numbering system</summary>
-		public const int kWsNumbers = 6;
-		#endregion
-
-		internal WSKeyboardControl m_keyboardControl;
-		/// <summary>Index(5) of the tab for writing systems PUA characters</summary>
-		public const int kWsPUACharacters = 5;
-
-		internal WritingSystemSetupModel m_modelForKeyboard;
-		private CustomDigitEntryControl customDigits;
-		private static readonly string[] LocalizedLanguages = Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, XmlTranslatedLists.LocalizedListPrefix + "*.zip")
-			.Select(f => Path.GetFileNameWithoutExtension(f).Substring(XmlTranslatedLists.LocalizedListPrefix.Length)).ToArray();
-
-		/// <summary>
-		/// Shows the new writing system properties dialog.
-		/// </summary>
-		/// <param name="owner">The owner.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="wsManager">The ws manager.</param>
-		/// <param name="wsContainer">The ws container.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
-		/// <param name="defaultName">The default language name for the new writing system.</param>
-		/// <param name="newWritingSystems">The new writing systems.</param>
-		/// <returns></returns>
-		public static bool ShowNewDialog(Form owner, LcmCache cache, WritingSystemManager wsManager,
-			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app,
-			bool displayRelatedWss, string defaultName, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
-		{
-			newWritingSystems = null;
-			string languageTag, languageName;
-
-			using (new WaitCursor(owner))
-			using (var dlg = new LanguageLookupDialog())
-			{
-				dlg.StartPosition = FormStartPosition.CenterParent;
-				dlg.Text = FwCoreDlgs.kstidLanguageSelectionNewWsCaption;
-				dlg.MatchingLanguageFilter = FilterLocalizedLanguages;
-				dlg.SearchText = defaultName;
-
-				if (dlg.ShowDialog(owner) != DialogResult.OK)
-					return false;
-
-				languageTag = dlg.SelectedLanguage.LanguageTag;
-				languageName = dlg.DesiredLanguageName;
-				if (languageTag == WellKnownSubtags.UnlistedLanguage)
-					languageTag += "-x-" + GetPrivateUseLangCodeForNewLang(wsManager, languageName);
-			}
-
-			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new FwWritingSystemSetupDlg(cache, wsManager, wsContainer, helpTopicProvider, app))
-			{
-				wsPropsDlg.SetupDialog(languageTag, languageName, displayRelatedWss);
-
-				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
-				{
-					newWritingSystems = wsPropsDlg.NewWritingSystems;
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Filters out all secondary localized languages. Currently, FW can only provide localized lists for the primary
-		/// writing system for a language. For example, there is an "en" list localization, but not an "en-US" localization.
-		/// If a user selected "en-US", the lists would not be imported.
-		/// </summary>
-		private static bool FilterLocalizedLanguages(LanguageInfo language)
-		{
-			// FW does not have a localization for "zh", only for "zh-CN"
-			if (language.LanguageTag == "zh")
-				return false;
-
-			// English is the default localization, so it is hardcoded here.
-			if (language.LanguageTag != "en" && language.LanguageTag.StartsWith("en"))
-				return false;
-
-			return !LocalizedLanguages.Any(l => l != language.LanguageTag && language.LanguageTag.StartsWith(l));
-		}
-
-		/// <summary>
-		/// Shows the modify writing system properties dialog.
-		/// </summary>
-		/// <param name="owner">The owner.</param>
-		/// <param name="selectedWS">The selected writing system.</param>
-		/// <param name="addNewForLangOfSelectedWs">if set to <c>true</c> a new writing system with the
-		/// same language as the selected writing system will be added.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="wsContainer">The ws container.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="newWritingSystems">The new writing systems.</param>
-		/// <returns></returns>
-		public static bool ShowModifyDialog(Form owner, CoreWritingSystemDefinition selectedWS, bool addNewForLangOfSelectedWs, LcmCache cache,
-			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
-		{
-			newWritingSystems = null;
-			if (!cache.ServiceLocator.WritingSystemManager.CanSave(selectedWS))
-			{
-				string path = cache.ServiceLocator.WritingSystemManager.GetLdmlFilePath(selectedWS);
-				MessageBox.Show(owner, string.Format(FwCoreDlgs.ksCannotSaveWritingSystem, path), FwCoreDlgs.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return false; // nothing changed.
-			}
-			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new FwWritingSystemSetupDlg(cache, cache.ServiceLocator.WritingSystemManager,
-				wsContainer, helpTopicProvider, app))
-			{
-				wsPropsDlg.SetupDialog(selectedWS, true);
-				if (addNewForLangOfSelectedWs)
-					wsPropsDlg.AddNewWsForLanguage();
-
-				if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
-					return false;
-
-				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
-				{
-					if (wsPropsDlg.IsChanged)
-					{
-						newWritingSystems = wsPropsDlg.NewWritingSystems;
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
-		#region Member variables
-
-		private readonly Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition> m_tempWritingSystems = new Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition>();
-		private HashSet<CoreWritingSystemDefinition> m_activeWritingSystems;
-		private CoreWritingSystemDefinition m_prevSelectedWritingSystem;
-
-		private readonly LcmCache m_cache;
-		/// <summary></summary>
-		protected readonly WritingSystemManager m_wsManager;
-		private readonly IWritingSystemContainer m_wsContainer;
-		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly IApp m_app;
-
-		// Change flags
-		private bool m_fChanged;
-
-		// Guards
-		private bool m_userChangedLanguageName = true;
-		private bool m_userChangedVariantControl = true;
-		private bool m_userChangedSpellCheckDictionary = true;
-		private bool m_userChangedSortUsing = true;
-		private bool m_userChangedSortRules = true;
-
-		private Container components;
-		private HelpProvider helpProvider;
-
-		private TabPage tpGeneral;
-		private TabPage tpFonts;
-		private TabPage tpKeyboard;
-		private TabPage tpConverters;
-		private TabPage tpSorting;
-		private TabPage tpPUACharacters;
-		private TabPage tpNumbers;
-		private ComboBox numberSettingsCombo;
-
-		private GroupBox groupBox2;
-		private Label label1;
-		private Label label3;
-		private Label label5;
-
-		#region Ws ListBox
-
-		/// <summary> </summary>
-		private Label m_writingSystemsFor;
-		private Label lblHiddenWss;
-		/// <summary> </summary>
-		protected ListBox m_listBoxRelatedWSs;
-		/// <summary> </summary>
-		protected Button btnAdd;
-		/// <summary> </summary>
-		protected Button btnCopy;
-		/// <summary> </summary>
-		protected Button m_deleteButton;
-
-		#endregion Ws ListBox
-
-		#region LanguageName and Ethnologue Code
-
-		/// <summary> </summary>
-		protected TextBox m_tbLanguageName;
-		/// <summary> </summary>
-		protected Label m_LanguageCode;
-		private LinkLabel m_linkToEthnologue;
-
-		#endregion LanguageName and Ethnologue Code
-
-		/// <summary> </summary>
-		protected Button btnModifyEthnologueInfo;
-		/// <summary> </summary>
-		protected TabControl tabControl;
-		/// <summary> </summary>
-		protected Button btnOk;
-		/// <summary> </summary>
-		protected Button btnCancel;
-		/// <summary> </summary>
-		private Button btnHelp;
-
-		#region General Tab
-
-		/// <summary> Abbreviation: # </summary>
-		protected TextBox m_ShortWsName;
-		/// <summary> </summary>
-		protected RegionVariantControl m_regionVariantControl;
-		private GroupBox gbDirection;
-		private RadioButton rbLeftToRight;
-		/// <summary> Direction : () (#)</summary>
-		protected RadioButton rbRightToLeft;
-		private FwOverrideComboBox cbDictionaries;
-		private Label lblSpellingDictionary;
-
-		#endregion General Tab
-
-		#region Fonts Tab
-
-		/// <summary>
-		/// </summary>
-		protected DefaultFontsControl m_defaultFontsControl;
-
-		#endregion
-
-		#region Keyboard Tab
-
-
-		#endregion Keyboard Tab
-
-		#region Converters Tab
-
-		private Button btnEncodingConverter;
-		private Label m_lblEncodingConverter;
-		/// <summary> </summary>
-		protected FwOverrideComboBox cbEncodingConverter;
-
-		#endregion Converters Tab
-
-		#region Sorting Tab
-
-		private Panel m_sortRulesPanel;
-		/// <remarks>protected for tests</remarks>
-		protected ComboBox m_sortUsingComboBox;
-		/// <remarks>protected for tests</remarks>
-		protected FwTextBox m_sortRulesTextBox;
-		private Label m_sortingHelpLabel;
-		private Label m_sortUsingLabel;
-		private Panel m_sortRulesButtonPanel;
-		private Button m_angleBracketButton;
-		private Button m_ampersandButton;
-		private Panel m_sortRulesLoadPanel;
-		private Label m_sortRulesLoadLabel;
-		private LocaleMenuButton m_similarWsButton;
-		private Label m_sortLanguageLabel;
-		/// <remarks>protected for tests</remarks>
-		protected ComboBox m_sortLanguageComboBox;
-		private Panel m_sortLanguagePanel;
-
-		private CollationRulesType m_currentCollationRulesType;
-
-		#endregion Sorting Tab
-
-		#region Characters Tab
-
-		private Button btnValidChars;
-		private Label m_lblValidCharacters;
-
-		#endregion Characters Tab
-
-		private Label lblFullCode;
-		private Label m_FullCode;
-		private Label lblScriptRegionVariant;
-
-		#endregion
-
-		#region Construction, deconstruction, and initialization
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WritingSystemPropertiesDialog"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="wsManager">The ws manager.</param>
-		/// <param name="wsContainer">The ws container.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		public FwWritingSystemSetupDlg(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app) : this()
-		{
-			m_cache = cache;
-			m_wsManager = wsManager;
-			m_wsContainer = wsContainer;
-			m_helpTopicProvider = helpTopicProvider;
-			m_app = app;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WritingSystemPropertiesDialog"/> class.
-		/// </summary>
-		private FwWritingSystemSetupDlg()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-			components = new Container();
-			AccessibleName = GetType().Name;
-			m_lblValidCharacters.Tag = m_lblValidCharacters.Text;
-			m_lblEncodingConverter.Tag = m_lblEncodingConverter.Text;
-
-			LoadSortUsingComboBox();
-			LoadSortLanguageComboBox();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
+		private FwWritingSystemSetupModel _model;
+		private IHelpTopicProvider _helpTopicProvider;
+		private IApp _app;
 		/// <summary/>
-		protected override void Dispose(bool disposing)
+		public FwWritingSystemSetupDlg(FwWritingSystemSetupModel model = null, IHelpTopicProvider helpTopicProvider = null, IApp app = null) : base()
 		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && !IsDisposed)
+			InitializeComponent();
+			_helpTopicProvider = helpTopicProvider;
+			_app = app;
+			if (model != null)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_sortRulesTextBox != null && m_sortRulesTextBox.WritingSystemFactory != null)
-				{
-					var disposable = m_sortRulesTextBox.WritingSystemFactory as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-				}
+				BindToModel(model);
 			}
-			base.Dispose(disposing);
 		}
 
-		private void LoadSortUsingComboBox()
+		private void BindToModel(FwWritingSystemSetupModel model)
 		{
-			var types = new ArrayList();
-			foreach (Enum customSortRulesType in Enum.GetValues(typeof(CollationRulesType)))
-			{
-				FieldInfo fi = customSortRulesType.GetType().GetField(customSortRulesType.ToString());
-
-				var descriptions = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-				string description = descriptions.Length == 0 ? customSortRulesType.ToString() : descriptions[0].Description;
-				types.Add(new { Id = customSortRulesType.ToString(), Name = description });
-			}
-
-			m_sortUsingComboBox.ValueMember = "Id";
-			m_sortUsingComboBox.DataSource = types;
-			m_sortUsingComboBox.DisplayMember = "Name";
+			SuspendLayout();
+			model.AcceptSharedWsChangeWarning = ShowSharedWsChangeWarning;
+			Text = model.Title;
+			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
+			BindGeneralTab(model);
+			_sortControl.BindToModel(model.CurrentWsSetupModel);
+			_keyboardControl.BindToModel(model.CurrentWsSetupModel);
+			BindCurrentWSList(model);
+			BindHeader(model);
+			BindFontTab(model);
+			BindCharactersTab(model);
+			BindNumbersTab(model.CurrentWsSetupModel);
+			BindConverterTab(model);
+			_model = model;
+			model.OnCurrentWritingSystemChanged += OnCurrentWritingSystemChangedHandler;
+			ResumeLayout();
 		}
 
-		private void LoadSortLanguageComboBox()
+		private bool ShowSharedWsChangeWarning(string originalLanguageName)
 		{
-			var languages = new ArrayList();
-			foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.AllCultures).OrderBy(curCi => curCi.EnglishName))
-				languages.Add(new { Id = ci.Name, Name = ci.EnglishName });
+			var caption = FwCoreDlgs.ksPossibleDataLoss;
+			var msg = string.Format(FwCoreDlgs.ksWSChangeWarning, _model.WorkingList.Select(ws => ws.OriginalWs.LanguageName == originalLanguageName),
+				originalLanguageName, Environment.NewLine);
+			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
 
-			m_sortLanguageComboBox.ValueMember = "Id";
-			m_sortLanguageComboBox.DataSource = languages;
-			m_sortLanguageComboBox.DisplayMember = "Name";
 		}
 
-		/// <summary>
-		/// Set writing system and initialize some values for the dialog
-		/// </summary>
-		/// <param name="selectedWs">The writing system.</param>
-		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
-		public void SetupDialog(CoreWritingSystemDefinition selectedWs, bool displayRelatedWss)
+		private void BindNumbersTab(WritingSystemSetupModel model)
 		{
-			CheckDisposed();
-
-			SetupDialog(m_wsManager.CreateFrom(selectedWs), selectedWs, displayRelatedWss);
-		}
-
-		/// <summary>
-		/// Setups the dialog.
-		/// </summary>
-		/// <param name="languageTag">The language tag.</param>
-		/// <param name="languageName">Name of the language.</param>
-		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
-		public void SetupDialog(string languageTag, string languageName, bool displayRelatedWss)
-		{
-			CheckDisposed();
-
-			LanguageSubtag languageSubtag;
-			ScriptSubtag scriptSubtag;
-			RegionSubtag regionSubtag;
-			IEnumerable<VariantSubtag> variantSubtags;
-			if (!IetfLanguageTag.TryGetSubtags(languageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-				throw new ArgumentException("The language tag is invalid.", "languageTag");
-			languageSubtag = new LanguageSubtag(languageSubtag, languageName);
-			CoreWritingSystemDefinition ws = m_wsManager.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
-			SetupDialog(ws, null, displayRelatedWss);
-			SetupNumbersTab(ws);
-		}
-
-		private void SetupNumbersTab(CoreWritingSystemDefinition ws)
-		{
+			numberSettingsCombo.SelectedIndexChanged -= NumberSettingsComboOnSelectedIndexChanged;
 			var standardNumberingSystems = CLDRNumberingSystems.StandardNumberingSystems.ToArray();
 			numberSettingsCombo.Items.Add(Strings.CustomNumberingSystem);
 			var defaultDigits = CLDRNumberingSystems.GetDigitsForID(NumberingSystemDefinition.Default.Id);
@@ -495,2015 +76,396 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					numberSettingsCombo.Items.Add(standardNumberingSystem);
 				}
 			}
-			if (ws.NumberingSystem.IsCustom)
+			if (model.CurrentNumberingSystemDefinition.IsCustom)
 			{
 				numberSettingsCombo.SelectedItem = Strings.CustomNumberingSystem;
 			}
 			else
 			{
-				numberSettingsCombo.SelectedItem = CLDRNumberingSystems.GetDigitsForID(ws.NumberingSystem.Id);
+				numberSettingsCombo.SelectedItem = CLDRNumberingSystems.GetDigitsForID(model.CurrentNumberingSystemDefinition.Id);
 			}
+			customDigits.SetDigits(model.CurrentNumberingSystemDefinition.Digits, string.IsNullOrWhiteSpace(model.CurrentDefaultFontName) ? "Segoe" : model.CurrentDefaultFontName,
+				model.CurrentDefaultFontSize == 0.0f ? 12 : model.CurrentDefaultFontSize);
 
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
+			customDigits.Enabled = model.CurrentNumberingSystemDefinition.IsCustom;
+			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
 		}
 
-		private void SetupDialog(CoreWritingSystemDefinition tempWs, CoreWritingSystemDefinition origWs, bool displayRelatedWss)
+		private void NumberSettingsComboOnSelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_tempWritingSystems[tempWs] = origWs;
-			if (displayRelatedWss)
+			var selectedNumberingSystem = (string)((ComboBox)sender).SelectedItem;
+			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
 			{
-				foreach (CoreWritingSystemDefinition ws in m_wsManager.WritingSystems.Except(new[] {origWs}).Related(tempWs))
-				{
-					CoreWritingSystemDefinition newWs = m_wsManager.CreateFrom(ws);
-					m_tempWritingSystems[newWs] = ws;
-				}
-			}
-
-			LoadAvailableConverters();
-			PopulateRelatedWSsListBox(tempWs);
-			SetupNumbersTab(tempWs);
-		}
-
-		/// <summary>
-		/// Display WS's that are related to the 'ws' parameter of SetupDialog()
-		/// </summary>
-		/// <param name="selectedWs">The selected ws.</param>
-		private void PopulateRelatedWSsListBox(CoreWritingSystemDefinition selectedWs)
-		{
-			m_listBoxRelatedWSs.BeginUpdate();
-			m_listBoxRelatedWSs.Items.Clear();
-
-			// ensure SelectedItem happens after all items added to m_listBoxRelatedWSs
-			// This ensures more consistent behaviour across platforms.
-			bool fSetSelectedItem = false;
-			foreach (CoreWritingSystemDefinition tempWs in m_tempWritingSystems.Keys.OrderBy(ws => ws.DisplayLabel))
-			{
-				m_listBoxRelatedWSs.Items.Add(tempWs);
-				if (selectedWs == tempWs)
-					fSetSelectedItem = true;
-			}
-
-			if (fSetSelectedItem)
-				SelectWritingSystem(selectedWs);
-
-			m_listBoxRelatedWSs.EndUpdate();
-			// update buttons.
-			UpdateListBoxButtons();
-		}
-
-		/// <summary>
-		/// ListBox.SelectedItem actually selects the item by finding the index
-		/// of the item in the Items collection and then setting the SelectedIndex.
-		/// It searches through the Items collection using the the Equals() method.
-		/// Writing systems implement the Equals() method to perform a value equality
-		/// check instead of a reference equality check. Because of this, it is
-		/// possible for the wrong item to be selected if there are multiple writing
-		/// systems in the ListBox that have the same property values. This method
-		/// avoids that problem by searching through the Items collection using
-		/// reference equality and then setting the selected index.
-		/// </summary>
-		private void SelectWritingSystem(CoreWritingSystemDefinition ws)
-		{
-			if (ws != null)
-			{
-				for (int i = 0; i < m_listBoxRelatedWSs.Items.Count; i++)
-				{
-					if (m_listBoxRelatedWSs.Items[i] == ws)
-					{
-						m_listBoxRelatedWSs.SelectedIndex = i;
-						return;
-					}
-				}
-			}
-
-			m_listBoxRelatedWSs.SelectedIndex = -1;
-		}
-
-		private void SetupDialogFromCurrentWritingSystem()
-		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			UpdateListBoxButtons();
-			// Setup General Tab information
-			Set_tbLanguageName(ws.Language.Name ?? string.Empty);
-			SetupEthnologueCode(ws);
-
-			m_defaultFontsControl.WritingSystem = ws;
-
-			//Switch Encoding Converters to the one for the user selected writing system
-			Select_cbEncodingConverter();
-
-			PopulateSpellingDictionaryComboBox();
-
-			// Update all the labels using the selected language display name
-			SetLanguageNameLabels();
-			Set_regionVariantControl(ws);
-			SetFullNameLabels(ws.DisplayLabel);
-			SetCurrentCollationRulesTypeFromWritingSystem();
-			if (tabControl.SelectedTab == tpSorting)
-				SetupSortTab(ws);
-			m_modelForKeyboard = new WritingSystemSetupModel(ws);
-			m_keyboardControl.BindToModel(m_modelForKeyboard);
-		}
-
-		private void SetCurrentCollationRulesTypeFromWritingSystem()
-		{
-			if (CurrentWritingSystem == null || CurrentWritingSystem.DefaultCollation == null)
-			{
-				m_currentCollationRulesType = CollationRulesType.DefaultOrdering;
-			}
-			else if (CurrentWritingSystem.DefaultCollation is SimpleRulesCollationDefinition)
-			{
-				m_currentCollationRulesType = CollationRulesType.CustomSimple;
-			}
-			else if (CurrentWritingSystem.DefaultCollation is IcuRulesCollationDefinition)
-			{
-				var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
-				if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
-					m_currentCollationRulesType = CollationRulesType.CustomIcu;
-				else
-					m_currentCollationRulesType = CollationRulesType.DefaultOrdering;
-			}
-			else if (CurrentWritingSystem.DefaultCollation is SystemCollationDefinition)
-			{
-				m_currentCollationRulesType = CollationRulesType.OtherLanguage;
-			}
-		}
-
-		private void SetupSortTab(CoreWritingSystemDefinition ws)
-		{
-			m_userChangedSortUsing = false;
-			m_sortUsingComboBox.SelectedValue = m_currentCollationRulesType.ToString();
-			m_userChangedSortUsing = true;
-
-			m_userChangedSortRules = false;
-			WritingSystemManager wsManager = FwUtils.CreateWritingSystemManager();
-			string oldId = ws.Id;
-			wsManager.Set(ws);
-			// Setting it into the temporary WS manager will set its StoreID. This could cause
-			// problems if we later add it to the real WS manager. So we need to restore it.
-			ws.Id = oldId;
-			m_sortRulesTextBox.WritingSystemFactory = wsManager;
-			m_sortRulesTextBox.WritingSystemCode = ws.Handle;
-
-			switch (m_currentCollationRulesType)
-			{
-				case CollationRulesType.DefaultOrdering:
-					m_sortLanguagePanel.Visible = false;
-					m_sortRulesPanel.Visible = false;
-					break;
-
-				case CollationRulesType.CustomIcu:
-					m_sortLanguagePanel.Visible = false;
-					m_sortRulesPanel.Visible = true;
-					m_sortRulesButtonPanel.Visible = true;
-					m_sortRulesLoadPanel.Visible = true;
-					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidIcuSortingHelp, Environment.NewLine);
-					var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
-					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(icuCollation.CollationRules.Replace("\t", ""), ws.Handle);
-					break;
-
-				case CollationRulesType.CustomSimple:
-					m_sortLanguagePanel.Visible = false;
-					m_sortRulesPanel.Visible = true;
-					m_sortRulesButtonPanel.Visible = false;
-					m_sortRulesLoadPanel.Visible = false;
-					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidSimpleSortingHelp, Environment.NewLine);
-					var simpleCollation = (SimpleRulesCollationDefinition) ws.DefaultCollation;
-					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(simpleCollation.SimpleRules, ws.Handle);
-					break;
-
-				case CollationRulesType.OtherLanguage:
-					m_sortRulesPanel.Visible = false;
-					m_sortLanguagePanel.Visible = true;
-					var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
-					if (string.IsNullOrEmpty(systemCollation.LanguageTag))
-					{
-						string message;
-						systemCollation.LanguageTag = SystemCollator.ValidateLanguageTag(ws.LanguageTag, out message) ? ws.LanguageTag : (string) m_sortLanguageComboBox.SelectedValue;
-					}
-					m_sortLanguageComboBox.SelectedValue = systemCollation.LanguageTag;
-					break;
-			}
-			m_userChangedSortRules = true;
-		}
-
-		private void SetupEthnologueCode(CoreWritingSystemDefinition ws)
-		{
-			LanguageSubtag languageSubtag = ws.Language;
-			string ethCode = languageSubtag.Code; // For most languages this is right.
-			if (languageSubtag.IsPrivateUse)
-				ethCode = FwCoreDlgs.kstidNone; // code is not from ethnologue
-			else if (!string.IsNullOrEmpty(languageSubtag.Iso3Code))
-				ethCode = languageSubtag.Iso3Code; // if it has a 3-letter code show that.
-			SetLanguageCodeLabels(ethCode);
-		}
-
-		/// <summary>
-		/// Load the Spelling Dictionaries ComboBox
-		/// </summary>
-		private void PopulateSpellingDictionaryComboBox()
-		{
-			var dictionaries = new ArrayList { new { Name = FwCoreDlgs.ksWsNoDictionaryMatches, Id = FwCoreDlgs.kstidNone } };
-
-			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
-			if (string.IsNullOrEmpty(spellCheckingDictionary))
-			{
-				dictionaries.Add(new { Name = CurrentWritingSystem.LanguageTag, Id = CurrentWritingSystem.LanguageTag.Replace('-', '_') });
-			}
-
-			bool fDictionaryExistsForLanguage = false;
-			bool fAlternateDictionaryExistsForLanguage = false;
-			string selectComboItem = FwCoreDlgs.kstidNone;
-			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
-			{
-				dictionaries.Add(new { Name = GetDictionaryName(languageId), Id = languageId });
-				//If this WS.SpellCheckingDictionary matches a known Dictionary then
-				//ensure the comboBox has that item selected.
-				if (spellCheckingDictionary == languageId)
-				{
-					selectComboItem = languageId;
-					fDictionaryExistsForLanguage = true;
-				}
-				else if (!fDictionaryExistsForLanguage && !fAlternateDictionaryExistsForLanguage)
-				{
-					// The first half of the OR handles things like choosing the dictionary for 'en_US' when seeking one
-					// for 'en', as in our extension SpellingHelper. The second branch of the OR is unused at present
-					// but will help if we extend SpellingHelper to the 'en' dictionary when asked for the 'en_US' one
-					// (when it can't find an exact match).
-					if (!string.IsNullOrEmpty(spellCheckingDictionary) &&
-						(languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId)))
-					{
-						// Vernacular dictionaries may only be used if they match the requested ID exactly.
-						if (!SpellingHelper.IsVernacular(languageId))
-						{
-							selectComboItem = languageId;
-							fAlternateDictionaryExistsForLanguage = true;
-						}
-					}
-				}
-			}
-
-			m_userChangedSpellCheckDictionary = false;
-			cbDictionaries.ValueMember = "Id";
-			cbDictionaries.DataSource = dictionaries;
-			cbDictionaries.DisplayMember = "Name";
-
-			cbDictionaries.SelectedValue = selectComboItem;
-			m_userChangedSpellCheckDictionary = true;
-		}
-
-		private static string GetDictionaryName(String languageId)
-		{
-			LCModel.Core.Text.Icu.UErrorCode err;
-			string country;
-			LCModel.Core.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
-			string languageName;
-			LCModel.Core.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
-			var languageAndCountry = new StringBuilder(languageName);
-			if (!string.IsNullOrEmpty(country))
-				languageAndCountry.AppendFormat(" ({0})", country);
-			if (languageName != languageId)
-				languageAndCountry.AppendFormat(" [{0}]", languageId);
-			return languageAndCountry.ToString();
-		}
-
-		private bool IsWritingSystemHidden(CoreWritingSystemDefinition ws)
-		{
-			// Fix FWNX-563
-			CoreWritingSystemDefinition origWs;
-			if (!m_tempWritingSystems.TryGetValue(ws, out origWs) || origWs == null)
-				return false;
-
-			return !m_wsContainer.AllWritingSystems.Contains(origWs);
-		}
-
-		private void m_listBoxRelatedWSs_DrawItem(object sender, DrawItemEventArgs e)
-		{
-			if (e.Index == -1)
-				return;
-			bool selected = ((e.State & DrawItemState.Selected) != 0);
-			bool isWsHidden = IsWritingSystemHidden((CoreWritingSystemDefinition) m_listBoxRelatedWSs.Items[e.Index]);
-			using (var drawFont = new Font(e.Font, isWsHidden ? FontStyle.Italic : FontStyle.Regular))
-			{
-				Brush textBrush = isWsHidden ? SystemBrushes.GrayText : SystemBrushes.ControlText;
-				if (selected)
-					textBrush = SystemBrushes.HighlightText;
-				e.DrawBackground();
-				e.Graphics.DrawString(m_listBoxRelatedWSs.Items[e.Index].ToString(), drawFont, textBrush, e.Bounds);
-			}
-		}
-
-		private void UpdateListBoxButtons()
-		{
-			m_deleteButton.Enabled = IsNew(CurrentWritingSystem) && m_listBoxRelatedWSs.Items.Count > 1;
-		}
-
-		private bool IsNew(CoreWritingSystemDefinition ws)
-		{
-			CoreWritingSystemDefinition origWs;
-			bool present = m_tempWritingSystems.TryGetValue(ws, out origWs);
-			//IWritingSystem origWs = m_tempWritingSystems[ws];
-			return origWs == null || origWs.Handle == 0;
-		}
-
-		/// <summary>
-		/// Select the encoding converty for the currently selected writing system.
-		/// </summary>
-		private void Select_cbEncodingConverter()
-		{
-			string strLegacyMapping = string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? FwCoreDlgs.kstidNone : CurrentWritingSystem.LegacyMapping;
-			if (!cbEncodingConverter.Items.Contains(strLegacyMapping))
-			{
-				strLegacyMapping = strLegacyMapping + FwCoreDlgs.kstidNotInstalled;
-				cbEncodingConverter.Items.Add(strLegacyMapping);
-			}
-			cbEncodingConverter.SelectedItem = strLegacyMapping;
-		}
-
-		/// <summary>
-		/// Load the Available Encoding Converters.
-		/// </summary>
-		protected virtual void LoadAvailableConverters()
-		{
-			// Save the old selection so it can be restored after the combo box is filled
-			string oldSelection = null;
-			if (cbEncodingConverter.SelectedIndex != -1)
-				oldSelection = (string)cbEncodingConverter.SelectedItem;
-			try
-			{
-				var encConverters = new EncConverters();
-				cbEncodingConverter.Items.Clear();
-				cbEncodingConverter.Items.Add(FwCoreDlgs.kstidNone);
-				foreach (string convName in encConverters.Keys)
-					cbEncodingConverter.Items.Add(convName);
-				if (oldSelection != null)
-					cbEncodingConverter.SelectedItem = oldSelection;
-			}
-			catch (Exception e)
-			{
-				// If the encoding converters failed, just put in a None entry
-				Debug.WriteLine(e.Message);
-				cbEncodingConverter.Items.Clear();
-				cbEncodingConverter.Items.Add(FwCoreDlgs.kstidNone);
-				cbEncodingConverter.SelectedIndex = 0;
-			}
-		}
-
-		#endregion
-
-		#region Properties
-
-		// Allows us temporarily to override the normal behavior of CurrentWritingSystem.
-		private CoreWritingSystemDefinition m_overrideCurrentWritingSystem;
-
-		/// <summary/>
-		protected CoreWritingSystemDefinition CurrentWritingSystem
-		{
-			get
-			{
-				if (m_overrideCurrentWritingSystem != null)
-					return m_overrideCurrentWritingSystem; // occasionally we need to override this.
-				return (CoreWritingSystemDefinition) m_listBoxRelatedWSs.SelectedItem;
-			}
-		}
-
-		/// <summary/>
-		public IEnumerable<CoreWritingSystemDefinition> NewWritingSystems
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_tempWritingSystems.Keys.Where(IsNew);
-			}
-		}
-
-		/// <summary>
-		/// Returns <c>true</c> if a writing system was changed.
-		/// </summary>
-		public bool IsChanged
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fChanged;
-			}
-		}
-
-		#endregion
-
-		#region Windows Form Designer generated code
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwWritingSystemSetupDlg));
-			this.tabControl = new System.Windows.Forms.TabControl();
-			this.tpGeneral = new System.Windows.Forms.TabPage();
-			this.lblScriptRegionVariant = new System.Windows.Forms.Label();
-			this.m_FullCode = new System.Windows.Forms.Label();
-			this.lblFullCode = new System.Windows.Forms.Label();
-			this.lblSpellingDictionary = new System.Windows.Forms.Label();
-			this.cbDictionaries = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.m_regionVariantControl = new SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl();
-			this.gbDirection = new System.Windows.Forms.GroupBox();
-			this.rbLeftToRight = new System.Windows.Forms.RadioButton();
-			this.rbRightToLeft = new System.Windows.Forms.RadioButton();
-			this.m_ShortWsName = new System.Windows.Forms.TextBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.tpFonts = new System.Windows.Forms.TabPage();
-			this.m_defaultFontsControl = new SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl();
-			this.tpKeyboard = new System.Windows.Forms.TabPage();
-			this.m_keyboardControl = new SIL.Windows.Forms.WritingSystems.WSKeyboardControl();
-			this.tpConverters = new System.Windows.Forms.TabPage();
-			this.btnEncodingConverter = new System.Windows.Forms.Button();
-			this.m_lblEncodingConverter = new System.Windows.Forms.Label();
-			this.cbEncodingConverter = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.tpSorting = new System.Windows.Forms.TabPage();
-			this.m_sortUsingLabel = new System.Windows.Forms.Label();
-			this.m_sortUsingComboBox = new System.Windows.Forms.ComboBox();
-			this.m_sortRulesPanel = new System.Windows.Forms.Panel();
-			this.m_sortRulesLoadPanel = new System.Windows.Forms.Panel();
-			this.m_sortRulesLoadLabel = new System.Windows.Forms.Label();
-			this.m_similarWsButton = new SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton();
-			this.m_sortRulesButtonPanel = new System.Windows.Forms.Panel();
-			this.m_angleBracketButton = new System.Windows.Forms.Button();
-			this.m_ampersandButton = new System.Windows.Forms.Button();
-			this.m_sortRulesTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_sortingHelpLabel = new System.Windows.Forms.Label();
-			this.m_sortLanguagePanel = new System.Windows.Forms.Panel();
-			this.m_sortLanguageComboBox = new System.Windows.Forms.ComboBox();
-			this.m_sortLanguageLabel = new System.Windows.Forms.Label();
-			this.tpPUACharacters = new System.Windows.Forms.TabPage();
-			this.m_lblValidCharacters = new System.Windows.Forms.Label();
-			this.btnValidChars = new System.Windows.Forms.Button();
-			this.tpNumbers = new System.Windows.Forms.TabPage();
-			this.customDigits = new SIL.FieldWorks.Common.Widgets.CustomDigitEntryControl();
-			this.numberSettingsCombo = new System.Windows.Forms.ComboBox();
-			this.btnModifyEthnologueInfo = new System.Windows.Forms.Button();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.btnOk = new System.Windows.Forms.Button();
-			this.helpProvider = new System.Windows.Forms.HelpProvider();
-			this.m_listBoxRelatedWSs = new System.Windows.Forms.ListBox();
-			this.btnAdd = new System.Windows.Forms.Button();
-			this.btnCopy = new System.Windows.Forms.Button();
-			this.m_deleteButton = new System.Windows.Forms.Button();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.m_linkToEthnologue = new System.Windows.Forms.LinkLabel();
-			this.m_LanguageCode = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.m_tbLanguageName = new System.Windows.Forms.TextBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.m_writingSystemsFor = new System.Windows.Forms.Label();
-			this.lblHiddenWss = new System.Windows.Forms.Label();
-			this.tabControl.SuspendLayout();
-			this.tpGeneral.SuspendLayout();
-			this.gbDirection.SuspendLayout();
-			this.tpFonts.SuspendLayout();
-			this.tpKeyboard.SuspendLayout();
-			this.tpConverters.SuspendLayout();
-			this.tpSorting.SuspendLayout();
-			this.m_sortRulesPanel.SuspendLayout();
-			this.m_sortRulesLoadPanel.SuspendLayout();
-			this.m_sortRulesButtonPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_sortRulesTextBox)).BeginInit();
-			this.m_sortLanguagePanel.SuspendLayout();
-			this.tpPUACharacters.SuspendLayout();
-			this.tpNumbers.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// tabControl
-			//
-			this.tabControl.Controls.Add(this.tpGeneral);
-			this.tabControl.Controls.Add(this.tpFonts);
-			this.tabControl.Controls.Add(this.tpKeyboard);
-			this.tabControl.Controls.Add(this.tpConverters);
-			this.tabControl.Controls.Add(this.tpSorting);
-			this.tabControl.Controls.Add(this.tpPUACharacters);
-			this.tabControl.Controls.Add(this.tpNumbers);
-			this.tabControl.HotTrack = true;
-			resources.ApplyResources(this.tabControl, "tabControl");
-			this.tabControl.Name = "tabControl";
-			this.tabControl.SelectedIndex = 0;
-			this.helpProvider.SetShowHelp(this.tabControl, ((bool)(resources.GetObject("tabControl.ShowHelp"))));
-			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
-			this.tabControl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl_Deselecting);
-			//
-			// tpGeneral
-			//
-			this.tpGeneral.Controls.Add(this.lblScriptRegionVariant);
-			this.tpGeneral.Controls.Add(this.m_FullCode);
-			this.tpGeneral.Controls.Add(this.lblFullCode);
-			this.tpGeneral.Controls.Add(this.lblSpellingDictionary);
-			this.tpGeneral.Controls.Add(this.cbDictionaries);
-			this.tpGeneral.Controls.Add(this.m_regionVariantControl);
-			this.tpGeneral.Controls.Add(this.gbDirection);
-			this.tpGeneral.Controls.Add(this.m_ShortWsName);
-			this.tpGeneral.Controls.Add(this.label5);
-			resources.ApplyResources(this.tpGeneral, "tpGeneral");
-			this.tpGeneral.Name = "tpGeneral";
-			this.helpProvider.SetShowHelp(this.tpGeneral, ((bool)(resources.GetObject("tpGeneral.ShowHelp"))));
-			this.tpGeneral.UseVisualStyleBackColor = true;
-			//
-			// lblScriptRegionVariant
-			//
-			resources.ApplyResources(this.lblScriptRegionVariant, "lblScriptRegionVariant");
-			this.lblScriptRegionVariant.Name = "lblScriptRegionVariant";
-			this.helpProvider.SetShowHelp(this.lblScriptRegionVariant, ((bool)(resources.GetObject("lblScriptRegionVariant.ShowHelp"))));
-			//
-			// m_FullCode
-			//
-			resources.ApplyResources(this.m_FullCode, "m_FullCode");
-			this.m_FullCode.Name = "m_FullCode";
-			this.helpProvider.SetShowHelp(this.m_FullCode, ((bool)(resources.GetObject("m_FullCode.ShowHelp"))));
-			//
-			// lblFullCode
-			//
-			resources.ApplyResources(this.lblFullCode, "lblFullCode");
-			this.lblFullCode.Name = "lblFullCode";
-			this.helpProvider.SetShowHelp(this.lblFullCode, ((bool)(resources.GetObject("lblFullCode.ShowHelp"))));
-			//
-			// lblSpellingDictionary
-			//
-			resources.ApplyResources(this.lblSpellingDictionary, "lblSpellingDictionary");
-			this.lblSpellingDictionary.Name = "lblSpellingDictionary";
-			this.helpProvider.SetShowHelp(this.lblSpellingDictionary, ((bool)(resources.GetObject("lblSpellingDictionary.ShowHelp"))));
-			//
-			// cbDictionaries
-			//
-			this.cbDictionaries.AllowSpaceInEditBox = false;
-			this.cbDictionaries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbDictionaries.FormattingEnabled = true;
-			resources.ApplyResources(this.cbDictionaries, "cbDictionaries");
-			this.cbDictionaries.Name = "cbDictionaries";
-			this.helpProvider.SetShowHelp(this.cbDictionaries, ((bool)(resources.GetObject("cbDictionaries.ShowHelp"))));
-			this.cbDictionaries.SelectedIndexChanged += new System.EventHandler(this.cbDictionaries_SelectedIndexChanged);
-			//
-			// m_regionVariantControl
-			//
-			resources.ApplyResources(this.m_regionVariantControl, "m_regionVariantControl");
-			this.m_regionVariantControl.BackColor = System.Drawing.Color.Transparent;
-			this.m_regionVariantControl.Name = "m_regionVariantControl";
-			this.m_regionVariantControl.RegionName = "";
-			this.m_regionVariantControl.RegionSubtag = null;
-			this.m_regionVariantControl.ScriptName = "";
-			this.m_regionVariantControl.ScriptSubtag = null;
-			this.helpProvider.SetShowHelp(this.m_regionVariantControl, ((bool)(resources.GetObject("m_regionVariantControl.ShowHelp"))));
-			this.m_regionVariantControl.VariantName = "";
-			this.m_regionVariantControl.WritingSystem = null;
-			this.m_regionVariantControl.ScriptRegionVariantChanged += new System.EventHandler(this.m_regionVariantControl_ScriptRegionVariantChanged);
-			//
-			// gbDirection
-			//
-			this.gbDirection.Controls.Add(this.rbLeftToRight);
-			this.gbDirection.Controls.Add(this.rbRightToLeft);
-			resources.ApplyResources(this.gbDirection, "gbDirection");
-			this.gbDirection.Name = "gbDirection";
-			this.helpProvider.SetShowHelp(this.gbDirection, ((bool)(resources.GetObject("gbDirection.ShowHelp"))));
-			this.gbDirection.TabStop = false;
-			//
-			// rbLeftToRight
-			//
-			this.helpProvider.SetHelpString(this.rbLeftToRight, resources.GetString("rbLeftToRight.HelpString"));
-			resources.ApplyResources(this.rbLeftToRight, "rbLeftToRight");
-			this.rbLeftToRight.Name = "rbLeftToRight";
-			this.helpProvider.SetShowHelp(this.rbLeftToRight, ((bool)(resources.GetObject("rbLeftToRight.ShowHelp"))));
-			this.rbLeftToRight.TabStop = true;
-			this.rbLeftToRight.CheckedChanged += new System.EventHandler(this.rbLeftToRight_CheckedChanged);
-			//
-			// rbRightToLeft
-			//
-			this.helpProvider.SetHelpString(this.rbRightToLeft, resources.GetString("rbRightToLeft.HelpString"));
-			resources.ApplyResources(this.rbRightToLeft, "rbRightToLeft");
-			this.rbRightToLeft.Name = "rbRightToLeft";
-			this.helpProvider.SetShowHelp(this.rbRightToLeft, ((bool)(resources.GetObject("rbRightToLeft.ShowHelp"))));
-			this.rbRightToLeft.CheckedChanged += new System.EventHandler(this.rbLeftToRight_CheckedChanged);
-			//
-			// m_ShortWsName
-			//
-			this.helpProvider.SetHelpString(this.m_ShortWsName, resources.GetString("m_ShortWsName.HelpString"));
-			resources.ApplyResources(this.m_ShortWsName, "m_ShortWsName");
-			this.m_ShortWsName.Name = "m_ShortWsName";
-			this.helpProvider.SetShowHelp(this.m_ShortWsName, ((bool)(resources.GetObject("m_ShortWsName.ShowHelp"))));
-			this.m_ShortWsName.TextChanged += new System.EventHandler(this.m_ShortWsName_TextChanged);
-			//
-			// label5
-			//
-			resources.ApplyResources(this.label5, "label5");
-			this.label5.Name = "label5";
-			this.helpProvider.SetShowHelp(this.label5, ((bool)(resources.GetObject("label5.ShowHelp"))));
-			//
-			// tpFonts
-			//
-			this.tpFonts.Controls.Add(this.m_defaultFontsControl);
-			resources.ApplyResources(this.tpFonts, "tpFonts");
-			this.tpFonts.Name = "tpFonts";
-			this.helpProvider.SetShowHelp(this.tpFonts, ((bool)(resources.GetObject("tpFonts.ShowHelp"))));
-			this.tpFonts.UseVisualStyleBackColor = true;
-			//
-			// m_defaultFontsControl
-			//
-			resources.ApplyResources(this.m_defaultFontsControl, "m_defaultFontsControl");
-			this.m_defaultFontsControl.DefaultNormalFont = "";
-			this.helpProvider.SetHelpString(this.m_defaultFontsControl, resources.GetString("m_defaultFontsControl.HelpString"));
-			this.m_defaultFontsControl.Name = "m_defaultFontsControl";
-			this.helpProvider.SetShowHelp(this.m_defaultFontsControl, ((bool)(resources.GetObject("m_defaultFontsControl.ShowHelp"))));
-			this.m_defaultFontsControl.WritingSystem = null;
-			//
-			// tpKeyboard
-			//
-			this.tpKeyboard.Controls.Add(this.m_keyboardControl);
-			resources.ApplyResources(this.tpKeyboard, "tpKeyboard");
-			this.tpKeyboard.Name = "tpKeyboard";
-			this.helpProvider.SetShowHelp(this.tpKeyboard, ((bool)(resources.GetObject("tpKeyboard.ShowHelp"))));
-			this.tpKeyboard.UseVisualStyleBackColor = true;
-			//
-			// m_keyboardControl
-			//
-			resources.ApplyResources(this.m_keyboardControl, "m_keyboardControl");
-			this.m_keyboardControl.Name = "m_keyboardControl";
-			//
-			// tpConverters
-			//
-			this.tpConverters.Controls.Add(this.btnEncodingConverter);
-			this.tpConverters.Controls.Add(this.m_lblEncodingConverter);
-			this.tpConverters.Controls.Add(this.cbEncodingConverter);
-			resources.ApplyResources(this.tpConverters, "tpConverters");
-			this.tpConverters.Name = "tpConverters";
-			this.helpProvider.SetShowHelp(this.tpConverters, ((bool)(resources.GetObject("tpConverters.ShowHelp"))));
-			this.tpConverters.UseVisualStyleBackColor = true;
-			//
-			// btnEncodingConverter
-			//
-			this.helpProvider.SetHelpString(this.btnEncodingConverter, resources.GetString("btnEncodingConverter.HelpString"));
-			resources.ApplyResources(this.btnEncodingConverter, "btnEncodingConverter");
-			this.btnEncodingConverter.Name = "btnEncodingConverter";
-			this.helpProvider.SetShowHelp(this.btnEncodingConverter, ((bool)(resources.GetObject("btnEncodingConverter.ShowHelp"))));
-			this.btnEncodingConverter.Click += new System.EventHandler(this.btnEncodingConverter_Click);
-			//
-			// m_lblEncodingConverter
-			//
-			resources.ApplyResources(this.m_lblEncodingConverter, "m_lblEncodingConverter");
-			this.m_lblEncodingConverter.Name = "m_lblEncodingConverter";
-			this.helpProvider.SetShowHelp(this.m_lblEncodingConverter, ((bool)(resources.GetObject("m_lblEncodingConverter.ShowHelp"))));
-			//
-			// cbEncodingConverter
-			//
-			this.cbEncodingConverter.AllowSpaceInEditBox = false;
-			this.cbEncodingConverter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.helpProvider.SetHelpString(this.cbEncodingConverter, resources.GetString("cbEncodingConverter.HelpString"));
-			resources.ApplyResources(this.cbEncodingConverter, "cbEncodingConverter");
-			this.cbEncodingConverter.Name = "cbEncodingConverter";
-			this.helpProvider.SetShowHelp(this.cbEncodingConverter, ((bool)(resources.GetObject("cbEncodingConverter.ShowHelp"))));
-			this.cbEncodingConverter.Sorted = true;
-			this.cbEncodingConverter.SelectedIndexChanged += new System.EventHandler(this.cbEncodingConverter_SelectedIndexChanged);
-			//
-			// tpSorting
-			//
-			this.tpSorting.BackColor = System.Drawing.Color.Transparent;
-			this.tpSorting.Controls.Add(this.m_sortUsingLabel);
-			this.tpSorting.Controls.Add(this.m_sortUsingComboBox);
-			this.tpSorting.Controls.Add(this.m_sortRulesPanel);
-			this.tpSorting.Controls.Add(this.m_sortLanguagePanel);
-			resources.ApplyResources(this.tpSorting, "tpSorting");
-			this.tpSorting.Name = "tpSorting";
-			this.helpProvider.SetShowHelp(this.tpSorting, ((bool)(resources.GetObject("tpSorting.ShowHelp"))));
-			this.tpSorting.UseVisualStyleBackColor = true;
-			//
-			// m_sortUsingLabel
-			//
-			resources.ApplyResources(this.m_sortUsingLabel, "m_sortUsingLabel");
-			this.m_sortUsingLabel.Name = "m_sortUsingLabel";
-			//
-			// m_sortUsingComboBox
-			//
-			this.m_sortUsingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_sortUsingComboBox.FormattingEnabled = true;
-			resources.ApplyResources(this.m_sortUsingComboBox, "m_sortUsingComboBox");
-			this.m_sortUsingComboBox.Name = "m_sortUsingComboBox";
-			this.m_sortUsingComboBox.SelectedIndexChanged += new System.EventHandler(this.m_sortUsingComboBox_SelectedIndexChanged);
-			//
-			// m_sortRulesPanel
-			//
-			this.m_sortRulesPanel.Controls.Add(this.m_sortRulesLoadPanel);
-			this.m_sortRulesPanel.Controls.Add(this.m_sortRulesButtonPanel);
-			this.m_sortRulesPanel.Controls.Add(this.m_sortRulesTextBox);
-			this.m_sortRulesPanel.Controls.Add(this.m_sortingHelpLabel);
-			resources.ApplyResources(this.m_sortRulesPanel, "m_sortRulesPanel");
-			this.m_sortRulesPanel.Name = "m_sortRulesPanel";
-			this.helpProvider.SetShowHelp(this.m_sortRulesPanel, ((bool)(resources.GetObject("m_sortRulesPanel.ShowHelp"))));
-			//
-			// m_sortRulesLoadPanel
-			//
-			this.m_sortRulesLoadPanel.Controls.Add(this.m_sortRulesLoadLabel);
-			this.m_sortRulesLoadPanel.Controls.Add(this.m_similarWsButton);
-			resources.ApplyResources(this.m_sortRulesLoadPanel, "m_sortRulesLoadPanel");
-			this.m_sortRulesLoadPanel.Name = "m_sortRulesLoadPanel";
-			//
-			// m_sortRulesLoadLabel
-			//
-			resources.ApplyResources(this.m_sortRulesLoadLabel, "m_sortRulesLoadLabel");
-			this.m_sortRulesLoadLabel.Name = "m_sortRulesLoadLabel";
-			this.helpProvider.SetShowHelp(this.m_sortRulesLoadLabel, ((bool)(resources.GetObject("m_sortRulesLoadLabel.ShowHelp"))));
-			//
-			// m_similarWsButton
-			//
-			this.m_similarWsButton.DisplayLocaleId = null;
-			resources.ApplyResources(this.m_similarWsButton, "m_similarWsButton");
-			this.m_similarWsButton.Name = "m_similarWsButton";
-			this.m_similarWsButton.SelectedLocaleId = null;
-			this.helpProvider.SetShowHelp(this.m_similarWsButton, ((bool)(resources.GetObject("m_similarWsButton.ShowHelp"))));
-			this.m_similarWsButton.UseVisualStyleBackColor = true;
-			this.m_similarWsButton.LocaleSelected += new System.EventHandler(this.m_similarWsButton_LocaleSelected);
-			//
-			// m_sortRulesButtonPanel
-			//
-			this.m_sortRulesButtonPanel.Controls.Add(this.m_angleBracketButton);
-			this.m_sortRulesButtonPanel.Controls.Add(this.m_ampersandButton);
-			resources.ApplyResources(this.m_sortRulesButtonPanel, "m_sortRulesButtonPanel");
-			this.m_sortRulesButtonPanel.Name = "m_sortRulesButtonPanel";
-			//
-			// m_angleBracketButton
-			//
-			resources.ApplyResources(this.m_angleBracketButton, "m_angleBracketButton");
-			this.m_angleBracketButton.Name = "m_angleBracketButton";
-			this.helpProvider.SetShowHelp(this.m_angleBracketButton, ((bool)(resources.GetObject("m_angleBracketButton.ShowHelp"))));
-			this.m_angleBracketButton.UseMnemonic = false;
-			this.m_angleBracketButton.UseVisualStyleBackColor = true;
-			this.m_angleBracketButton.Click += new System.EventHandler(this.m_angleBracketButton_Click);
-			//
-			// m_ampersandButton
-			//
-			resources.ApplyResources(this.m_ampersandButton, "m_ampersandButton");
-			this.m_ampersandButton.Name = "m_ampersandButton";
-			this.helpProvider.SetShowHelp(this.m_ampersandButton, ((bool)(resources.GetObject("m_ampersandButton.ShowHelp"))));
-			this.m_ampersandButton.UseMnemonic = false;
-			this.m_ampersandButton.UseVisualStyleBackColor = true;
-			this.m_ampersandButton.Click += new System.EventHandler(this.m_ampersandButton_Click);
-			//
-			// m_sortRulesTextBox
-			//
-			this.m_sortRulesTextBox.AcceptsReturn = true;
-			this.m_sortRulesTextBox.AdjustStringHeight = false;
-			resources.ApplyResources(this.m_sortRulesTextBox, "m_sortRulesTextBox");
-			this.m_sortRulesTextBox.BackColor = System.Drawing.SystemColors.Window;
-			this.m_sortRulesTextBox.controlID = null;
-			this.m_sortRulesTextBox.HasBorder = true;
-			this.m_sortRulesTextBox.Name = "m_sortRulesTextBox";
-			this.helpProvider.SetShowHelp(this.m_sortRulesTextBox, ((bool)(resources.GetObject("m_sortRulesTextBox.ShowHelp"))));
-			this.m_sortRulesTextBox.SuppressEnter = false;
-			this.m_sortRulesTextBox.WordWrap = true;
-			this.m_sortRulesTextBox.TextChanged += new System.EventHandler(this.m_sortRulesTextBox_TextChanged);
-			//
-			// m_sortingHelpLabel
-			//
-			resources.ApplyResources(this.m_sortingHelpLabel, "m_sortingHelpLabel");
-			this.m_sortingHelpLabel.Name = "m_sortingHelpLabel";
-			this.helpProvider.SetShowHelp(this.m_sortingHelpLabel, ((bool)(resources.GetObject("m_sortingHelpLabel.ShowHelp"))));
-			this.m_sortingHelpLabel.UseMnemonic = false;
-			//
-			// m_sortLanguagePanel
-			//
-			this.m_sortLanguagePanel.Controls.Add(this.m_sortLanguageComboBox);
-			this.m_sortLanguagePanel.Controls.Add(this.m_sortLanguageLabel);
-			resources.ApplyResources(this.m_sortLanguagePanel, "m_sortLanguagePanel");
-			this.m_sortLanguagePanel.Name = "m_sortLanguagePanel";
-			//
-			// m_sortLanguageComboBox
-			//
-			this.m_sortLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_sortLanguageComboBox.FormattingEnabled = true;
-			resources.ApplyResources(this.m_sortLanguageComboBox, "m_sortLanguageComboBox");
-			this.m_sortLanguageComboBox.Name = "m_sortLanguageComboBox";
-			this.m_sortLanguageComboBox.SelectedIndexChanged += new System.EventHandler(this.m_sortLanguageComboBox_SelectedIndexChanged);
-			//
-			// m_sortLanguageLabel
-			//
-			resources.ApplyResources(this.m_sortLanguageLabel, "m_sortLanguageLabel");
-			this.m_sortLanguageLabel.Name = "m_sortLanguageLabel";
-			//
-			// tpPUACharacters
-			//
-			this.tpPUACharacters.BackColor = System.Drawing.Color.Transparent;
-			this.tpPUACharacters.Controls.Add(this.m_lblValidCharacters);
-			this.tpPUACharacters.Controls.Add(this.btnValidChars);
-			resources.ApplyResources(this.tpPUACharacters, "tpPUACharacters");
-			this.tpPUACharacters.Name = "tpPUACharacters";
-			this.helpProvider.SetShowHelp(this.tpPUACharacters, ((bool)(resources.GetObject("tpPUACharacters.ShowHelp"))));
-			this.tpPUACharacters.UseVisualStyleBackColor = true;
-			//
-			// m_lblValidCharacters
-			//
-			resources.ApplyResources(this.m_lblValidCharacters, "m_lblValidCharacters");
-			this.m_lblValidCharacters.Name = "m_lblValidCharacters";
-			this.helpProvider.SetShowHelp(this.m_lblValidCharacters, ((bool)(resources.GetObject("m_lblValidCharacters.ShowHelp"))));
-			//
-			// btnValidChars
-			//
-			this.helpProvider.SetHelpString(this.btnValidChars, resources.GetString("btnValidChars.HelpString"));
-			resources.ApplyResources(this.btnValidChars, "btnValidChars");
-			this.btnValidChars.Name = "btnValidChars";
-			this.helpProvider.SetShowHelp(this.btnValidChars, ((bool)(resources.GetObject("btnValidChars.ShowHelp"))));
-			this.btnValidChars.Click += new System.EventHandler(this.btnValidChars_Click);
-			//
-			// tpNumbers
-			//
-			this.tpNumbers.Controls.Add(this.customDigits);
-			this.tpNumbers.Controls.Add(this.numberSettingsCombo);
-			resources.ApplyResources(this.tpNumbers, "tpNumbers");
-			this.tpNumbers.Name = "tpNumbers";
-			this.tpNumbers.UseVisualStyleBackColor = true;
-			//
-			// customDigits
-			//
-			resources.ApplyResources(this.customDigits, "customDigits");
-			this.customDigits.Name = "customDigits";
-			//
-			// numberSettingsCombo
-			//
-			this.numberSettingsCombo.FormattingEnabled = true;
-			this.numberSettingsCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			resources.ApplyResources(this.numberSettingsCombo, "numberSettingsCombo");
-			this.numberSettingsCombo.Name = "numberSettingsCombo";
-			this.numberSettingsCombo.SelectedIndexChanged += new System.EventHandler(this.numberSettingsCombo_SelectedIndexChanged);
-			//
-			// btnModifyEthnologueInfo
-			//
-			this.helpProvider.SetHelpString(this.btnModifyEthnologueInfo, resources.GetString("btnModifyEthnologueInfo.HelpString"));
-			resources.ApplyResources(this.btnModifyEthnologueInfo, "btnModifyEthnologueInfo");
-			this.btnModifyEthnologueInfo.Name = "btnModifyEthnologueInfo";
-			this.helpProvider.SetShowHelp(this.btnModifyEthnologueInfo, ((bool)(resources.GetObject("btnModifyEthnologueInfo.ShowHelp"))));
-			this.btnModifyEthnologueInfo.Click += new System.EventHandler(this.btnModifyEthnologueInfo_Click);
-			//
-			// btnHelp
-			//
-			resources.ApplyResources(this.btnHelp, "btnHelp");
-			this.helpProvider.SetHelpString(this.btnHelp, resources.GetString("btnHelp.HelpString"));
-			this.btnHelp.Name = "btnHelp";
-			this.helpProvider.SetShowHelp(this.btnHelp, ((bool)(resources.GetObject("btnHelp.ShowHelp"))));
-			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-			//
-			// btnCancel
-			//
-			resources.ApplyResources(this.btnCancel, "btnCancel");
-			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.helpProvider.SetHelpString(this.btnCancel, resources.GetString("btnCancel.HelpString"));
-			this.btnCancel.Name = "btnCancel";
-			this.helpProvider.SetShowHelp(this.btnCancel, ((bool)(resources.GetObject("btnCancel.ShowHelp"))));
-			//
-			// btnOk
-			//
-			resources.ApplyResources(this.btnOk, "btnOk");
-			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.helpProvider.SetHelpString(this.btnOk, resources.GetString("btnOk.HelpString"));
-			this.btnOk.Name = "btnOk";
-			this.helpProvider.SetShowHelp(this.btnOk, ((bool)(resources.GetObject("btnOk.ShowHelp"))));
-			this.btnOk.Click += new System.EventHandler(this.OnOk);
-			//
-			// m_listBoxRelatedWSs
-			//
-			this.m_listBoxRelatedWSs.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-			this.m_listBoxRelatedWSs.FormattingEnabled = true;
-			resources.ApplyResources(this.m_listBoxRelatedWSs, "m_listBoxRelatedWSs");
-			this.m_listBoxRelatedWSs.Name = "m_listBoxRelatedWSs";
-			this.helpProvider.SetShowHelp(this.m_listBoxRelatedWSs, ((bool)(resources.GetObject("m_listBoxRelatedWSs.ShowHelp"))));
-			this.m_listBoxRelatedWSs.Sorted = true;
-			this.m_listBoxRelatedWSs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.m_listBoxRelatedWSs_DrawItem);
-			this.m_listBoxRelatedWSs.SelectedIndexChanged += new System.EventHandler(this.m_listBoxRelatedWSs_SelectedIndexChanged);
-			//
-			// btnAdd
-			//
-			resources.ApplyResources(this.btnAdd, "btnAdd");
-			this.btnAdd.Name = "btnAdd";
-			this.helpProvider.SetShowHelp(this.btnAdd, ((bool)(resources.GetObject("btnAdd.ShowHelp"))));
-			this.btnAdd.UseVisualStyleBackColor = true;
-			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-			//
-			// btnCopy
-			//
-			resources.ApplyResources(this.btnCopy, "btnCopy");
-			this.btnCopy.Name = "btnCopy";
-			this.helpProvider.SetShowHelp(this.btnCopy, ((bool)(resources.GetObject("btnCopy.ShowHelp"))));
-			this.btnCopy.UseVisualStyleBackColor = true;
-			this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
-			//
-			// m_deleteButton
-			//
-			resources.ApplyResources(this.m_deleteButton, "m_deleteButton");
-			this.m_deleteButton.Name = "m_deleteButton";
-			this.helpProvider.SetShowHelp(this.m_deleteButton, ((bool)(resources.GetObject("m_deleteButton.ShowHelp"))));
-			this.m_deleteButton.UseVisualStyleBackColor = true;
-			this.m_deleteButton.Click += new System.EventHandler(this.m_deleteButton_Click);
-			//
-			// groupBox2
-			//
-			this.groupBox2.Controls.Add(this.btnModifyEthnologueInfo);
-			this.groupBox2.Controls.Add(this.m_linkToEthnologue);
-			this.groupBox2.Controls.Add(this.m_LanguageCode);
-			this.groupBox2.Controls.Add(this.label3);
-			this.groupBox2.Controls.Add(this.m_tbLanguageName);
-			this.groupBox2.Controls.Add(this.label1);
-			resources.ApplyResources(this.groupBox2, "groupBox2");
-			this.groupBox2.Name = "groupBox2";
-			this.helpProvider.SetShowHelp(this.groupBox2, ((bool)(resources.GetObject("groupBox2.ShowHelp"))));
-			this.groupBox2.TabStop = false;
-			//
-			// m_linkToEthnologue
-			//
-			resources.ApplyResources(this.m_linkToEthnologue, "m_linkToEthnologue");
-			this.m_linkToEthnologue.Name = "m_linkToEthnologue";
-			this.helpProvider.SetShowHelp(this.m_linkToEthnologue, ((bool)(resources.GetObject("m_linkToEthnologue.ShowHelp"))));
-			this.m_linkToEthnologue.TabStop = true;
-			this.m_linkToEthnologue.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkToEthnologue_LinkClicked);
-			//
-			// m_LanguageCode
-			//
-			resources.ApplyResources(this.m_LanguageCode, "m_LanguageCode");
-			this.m_LanguageCode.Name = "m_LanguageCode";
-			this.helpProvider.SetShowHelp(this.m_LanguageCode, ((bool)(resources.GetObject("m_LanguageCode.ShowHelp"))));
-			//
-			// label3
-			//
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
-			this.helpProvider.SetShowHelp(this.label3, ((bool)(resources.GetObject("label3.ShowHelp"))));
-			//
-			// m_tbLanguageName
-			//
-			resources.ApplyResources(this.m_tbLanguageName, "m_tbLanguageName");
-			this.m_tbLanguageName.Name = "m_tbLanguageName";
-			this.helpProvider.SetShowHelp(this.m_tbLanguageName, ((bool)(resources.GetObject("m_tbLanguageName.ShowHelp"))));
-			this.m_tbLanguageName.TextChanged += new System.EventHandler(this.m_tbLanguageName_TextChanged);
-			//
-			// label1
-			//
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
-			this.helpProvider.SetShowHelp(this.label1, ((bool)(resources.GetObject("label1.ShowHelp"))));
-			//
-			// m_writingSystemsFor
-			//
-			resources.ApplyResources(this.m_writingSystemsFor, "m_writingSystemsFor");
-			this.m_writingSystemsFor.Name = "m_writingSystemsFor";
-			this.helpProvider.SetShowHelp(this.m_writingSystemsFor, ((bool)(resources.GetObject("m_writingSystemsFor.ShowHelp"))));
-			//
-			// lblHiddenWss
-			//
-			resources.ApplyResources(this.lblHiddenWss, "lblHiddenWss");
-			this.lblHiddenWss.Name = "lblHiddenWss";
-			this.helpProvider.SetShowHelp(this.lblHiddenWss, ((bool)(resources.GetObject("lblHiddenWss.ShowHelp"))));
-			//
-			// WritingSystemPropertiesDialog
-			//
-			this.AcceptButton = this.btnOk;
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.btnCancel;
-			this.Controls.Add(this.lblHiddenWss);
-			this.Controls.Add(this.m_writingSystemsFor);
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.m_deleteButton);
-			this.Controls.Add(this.btnCopy);
-			this.Controls.Add(this.btnAdd);
-			this.Controls.Add(this.m_listBoxRelatedWSs);
-			this.Controls.Add(this.btnOk);
-			this.Controls.Add(this.btnCancel);
-			this.Controls.Add(this.btnHelp);
-			this.Controls.Add(this.tabControl);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "WritingSystemPropertiesDialog";
-			this.helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.tabControl.ResumeLayout(false);
-			this.tpGeneral.ResumeLayout(false);
-			this.tpGeneral.PerformLayout();
-			this.gbDirection.ResumeLayout(false);
-			this.tpFonts.ResumeLayout(false);
-			this.tpKeyboard.ResumeLayout(false);
-			this.tpConverters.ResumeLayout(false);
-			this.tpConverters.PerformLayout();
-			this.tpSorting.ResumeLayout(false);
-			this.tpSorting.PerformLayout();
-			this.m_sortRulesPanel.ResumeLayout(false);
-			this.m_sortRulesLoadPanel.ResumeLayout(false);
-			this.m_sortRulesButtonPanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_sortRulesTextBox)).EndInit();
-			this.m_sortLanguagePanel.ResumeLayout(false);
-			this.m_sortLanguagePanel.PerformLayout();
-			this.tpPUACharacters.ResumeLayout(false);
-			this.tpPUACharacters.PerformLayout();
-			this.tpNumbers.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.groupBox2.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
-		}
-		#endregion
-
-		#region Button click handlers
-
-		private void btnEncodingConverter_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				string prevEC = cbEncodingConverter.Text;
-				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null,
-					cbEncodingConverter.Text, null, false))
-				{
-					dlg.ShowDialog();
-
-					// Reload the converter list in the combo to reflect the changes.
-					LoadAvailableConverters();
-
-					// Either select the new one or select the old one
-					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
-						cbEncodingConverter.SelectedItem = dlg.SelectedConverter;
-					else if (cbEncodingConverter.Items.Count > 0)
-						cbEncodingConverter.SelectedItem = prevEC; // preserve selection if possible
-				}
-			}
-			catch (Exception ex)
-			{
-				var sb = new StringBuilder(ex.Message);
-				sb.Append(Environment.NewLine);
-				sb.Append(FwCoreDlgs.kstidErrorAccessingEncConverters);
-				MessageBox.Show(this, sb.ToString(), ResourceHelper.GetResourceString("kstidCannotModifyWS"));
-			}
-		}
-
-		/// <summary>
-		/// Handles the Click event of the btnModifyEthnologueInfo control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void btnModifyEthnologueInfo_Click(object sender, EventArgs e)
-		{
-			if (!CheckOkToChangeContext())
-				return;
-
-			string origLangName = m_tbLanguageName.Text;
-			string selectedLanguageTag;
-			string desiredLanguageName;
-			if (!ChooseLanguage(out selectedLanguageTag, out desiredLanguageName))
-				return;
-
-			var origWsData = m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Select(ws => new {WritingSystem = ws, ws.Language, ws.IsChanged}).ToArray();
-			LanguageSubtag languageSubtag;
-			ScriptSubtag scriptSubtag;
-			RegionSubtag regionSubtag;
-			IEnumerable<VariantSubtag> variantSubtags;
-			if (!IetfLanguageTag.TryGetSubtags(selectedLanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-				return;
-			languageSubtag = new LanguageSubtag(languageSubtag, desiredLanguageName);
-			if (!CheckChangingWSForSRProject(languageSubtag))
-				return;
-			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
-			{
-				ws.Language = languageSubtag;
-				if (scriptSubtag != null)
-					ws.Script = scriptSubtag;
-				if (regionSubtag != null)
-					ws.Region = regionSubtag;
-			}
-
-			if (!CheckWSIetfLanguageTagChange())
-			{
-				// revert back to original language
-				foreach (var wsData in origWsData)
-				{
-					wsData.WritingSystem.Language = wsData.Language;
-					if (!wsData.IsChanged)
-						wsData.WritingSystem.AcceptChanges();
-				}
+				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));
+				customDigits.Enabled = false;
 			}
 			else
 			{
-				Set_tbLanguageName(languageSubtag.Name);
-				SetupEthnologueCode(CurrentWritingSystem);
-				if (m_tbLanguageName.Text != origLangName)
-				{
-					int len = Math.Min(3, m_tbLanguageName.Text.Length);
-					m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
-				}
-
-				UpdateDialogWithChangesToLanguageName();
-			}
-		}
-
-		/// <summary>
-		/// Returns a private use language code that is guaranteed to be valid and unique for both the
-		/// local and the global writing system store.
-		/// NOTE: This method should only be used for writing systems that are custom (i.e. not
-		/// defined in the current version of the ethnologue).
-		/// The returned code will *not* have the 'x-' prefix denoting a user-defined writing system,
-		/// but it will check that an existing user-defined writing system does not exist with
-		/// the returned language tag.
-		/// This method also does not worry about regions, variants, etc. as it's use is restricted to
-		/// the language subtag for a custom writing system.
-		/// </summary>
-		/// <param name="wsManager">The writing system manager.</param>
-		/// <param name="langName">The full name of the language.</param>
-		/// <returns></returns>
-		private static string GetPrivateUseLangCodeForNewLang(WritingSystemManager wsManager, string langName)
-		{
-			string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
-			var builder = new StringBuilder(nameD.ToLowerInvariant());
-			int index = 0;
-			while (index < builder.Length)
-			{
-				char c = builder[index];
-				bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-				if (!charValid)
-				{
-					// Found an invalid character, so remove it.
-					builder.Remove(index, 1);
-					continue;
-				}
-				index++;
+				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
+				customDigits.Enabled = true;
 			}
 
-			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
-			if (IetfLanguageTag.IsValidLanguageCode(isoCode) && !LangTagInUse(wsManager, "qaa-x-" + isoCode))
-				return isoCode; // The generated code is valid and not in use by the local or global store
-
-			// We failed to generate a valid, unused language tag from the language name so
-			// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
-			builder.Remove(0, builder.Length); // Clear the builder
-			builder.Append("aaa");
-			while (LangTagInUse(wsManager, "qaa-x-" + builder))
-			{
-				var newCharLast = (char)(builder[2] + 1);
-				if (newCharLast > 'z')
-				{
-					// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
-					newCharLast = 'a';
-					var newCharMiddle = (char)(builder[1] + 1);
-					if (newCharMiddle > 'z')
-					{
-						// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
-						// Assume we won't ever have more then 4096 (26^3) custom writing systems
-						newCharMiddle = 'a';
-						builder[0] = (char)(builder[0] + 1);
-					}
-					builder[1] = newCharMiddle;
-				}
-				builder[2] = newCharLast;
-			}
-			return builder.ToString();
+			BindNumbersTab(_model.CurrentWsSetupModel);
 		}
 
-		/// <summary>
-		/// Determines whether or not the specified language tag is in use by another writing system
-		/// in either the local or global writing system store.
-		/// </summary>
-		/// <param name="wsManager">The writing system manager.</param>
-		/// <param name="identifier">The language tag to check.</param>
-		/// <returns></returns>
-		private static bool LangTagInUse(WritingSystemManager wsManager, string identifier)
+		private void ShowValidCharsEditor()
 		{
-			return wsManager.AllDistinctWritingSystems.Select(ws => ws.LanguageTag).Contains(identifier);
-		}
-
-		/// <summary>
-		/// Calls the ShowDialog of the LanguageSelectionDlg. Used for tests.
-		/// </summary>
-		/// <param name="selectedLanguageTag">The selected language tag.</param>
-		/// <param name="desiredLanguageName">The desired language name.</param>
-		/// <returns></returns>
-		protected virtual bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
-		{
-			using (var dlg = new LanguageLookupDialog())
-			{
-				dlg.StartPosition = FormStartPosition.CenterParent;
-				dlg.MatchingLanguageFilter = FilterLocalizedLanguages;
-				dlg.SearchText = CurrentWritingSystem.Language.Name;
-
-				if (dlg.ShowDialog(this) != DialogResult.OK)
-				{
-					selectedLanguageTag = null;
-					desiredLanguageName = null;
-					return false;
-				}
-
-				selectedLanguageTag = dlg.SelectedLanguage.LanguageTag;
-				desiredLanguageName = dlg.DesiredLanguageName;
-				if (selectedLanguageTag == WellKnownSubtags.UnlistedLanguage)
-					selectedLanguageTag += "-x-" + GetPrivateUseLangCodeForNewLang(m_wsManager, desiredLanguageName);
-				return true;
-			}
-		}
-
-		private void Set_regionVariantControl(CoreWritingSystemDefinition ws)
-		{
-			m_userChangedVariantControl = false;
-			m_regionVariantControl.WritingSystem = ws;
-			m_userChangedVariantControl = true;
-
-			m_FullCode.Text = ws.LanguageTag;
-
-			LoadShortWsNameFromCurrentWritingSystem();
-			rbLeftToRight.Checked = !ws.RightToLeftScript;
-			rbRightToLeft.Checked = ws.RightToLeftScript;
-		}
-
-		/// <summary>
-		/// When changing the text of m_tbLanguageName we need to set a flag
-		/// so that the TextChanged event handler will return without performing
-		/// any changes.
-		/// </summary>
-		/// <param name="languageName"></param>
-		private void Set_tbLanguageName(string languageName)
-		{
-			m_userChangedLanguageName = false;
-			m_tbLanguageName.Text = languageName;
-			m_userChangedLanguageName = true;
-		}
-
-		private void SetLanguageCodeLabels(String str)
-		{
-			m_LanguageCode.Text = str;
-			m_linkToEthnologue.Text = String.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, str);
-		}
-
-		private void SetLanguageNameLabels()
-		{
-			LoadShortWsNameFromCurrentWritingSystem();
-		}
-
-		private void SetFullNameLabels(string fullName)
-		{
-			SetLabelParams(m_lblValidCharacters, fullName);
-			SetLabelParams(m_lblEncodingConverter, fullName);
-		}
-
-		private static void SetLabelParams(Label lbl, params string[] parms)
-		{
-			lbl.Text = string.Format((string)lbl.Tag, parms);
-		}
-
-		/// <summary>
-		/// User clicked the OK button - persist the changes
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		private void OnOk(object sender, EventArgs e)
-		{
-			using (new WaitCursor(this))
-			{
-				//Make sure the dialog does not close if we return early.
-				DialogResult = DialogResult.None;
-
-				if (!CheckOkToChangeContext())
-					return;
-				if (numberSettingsCombo.SelectedItem.Equals(Strings.CustomNumberingSystem))
-				{
-					CurrentWritingSystem.NumberingSystem = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
-				}
-				if (ThereAreChanges && SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
-				{
-					SaveChanges();
-				}
-
-				DialogResult = DialogResult.OK;
-			}
-		}
-
-		bool ThereAreChanges
-		{
-			get
-			{
-				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
-				{
-					CoreWritingSystemDefinition tempWs = kvp.Key;
-
-					if (IsNew(tempWs) || tempWs.IsChanged)
-						return true;
-				}
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Saves the changes to the writing system manager.
-		/// </summary>
-		protected void SaveChanges()
-		{
-			// when this dialog is called from the new language project dialog, there is no FDO cache,
-			// but we still need to update the WS manager, so we have to execute the save even if m_cache is null
-			NonUndoableUnitOfWorkHelper uowHelper = null;
-			if (m_cache != null)
-				uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor);
-			try
-			{
-				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
-				{
-					CoreWritingSystemDefinition tempWS = kvp.Key;
-					CoreWritingSystemDefinition origWS = kvp.Value;
-
-					if (IsNew(tempWS))
-					{
-						m_wsManager.Replace(tempWS); // REVIEW (Hasso) 2018.10: "Replace" seems like a strange thing to do with a new WS
-						m_fChanged = true;
-					}
-					else if (tempWS.IsChanged)
-					{
-						var oldId = origWS.Id;
-						var oldHandle = origWS.Handle;
-						origWS.Copy(tempWS); // REVIEW (Hasso) 2018.10: We already have tempWS, and after this copy, origWS is an inacurate name. So why do we copy?
-						if (oldId != tempWS.LanguageTag)
-						{
-							// update the ID
-							m_wsManager.Set(origWS);
-							if (uowHelper != null)
-								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldHandle, oldId);
-						}
-						m_fChanged = true;
-						var mediator = GetMediator();
-						if (mediator != null)
-							mediator.SendMessage("WritingSystemUpdated", kvp.Key.Id);
-					}
-				}
-				if (m_fChanged && uowHelper != null)
-				{
-					uowHelper.RollBack = false;
-				}
-				m_wsManager.Save();
-			}
-			finally
-			{
-				if (uowHelper != null)
-					uowHelper.Dispose();
-			}
-		}
-
-		private Mediator GetMediator()
-		{
-			if (m_app == null)
-				return null;
-			Form wndActive = m_app.ActiveMainWindow;
-			if (wndActive == null)
-				return null;
-			PropertyInfo pi = wndActive.GetType().GetProperty("Mediator");
-			if (pi == null)
-				return null;
-			return pi.GetValue(wndActive, null) as Mediator;
-		}
-
-		/// <summary>
-		/// Open the appropriate Help file for selected tab (Name or Attributes).
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		private void btnHelp_Click(object sender, EventArgs e)
-		{
-			string helpTopicKey = null;
-
-			switch (tabControl.SelectedIndex)
-			{
-				case kWsGeneral:
-					helpTopicKey = "khtpWsGeneral";
-					break;
-				case kWsFonts:
-					helpTopicKey = "khtpWsFonts";
-					break;
-				case kWsKeyboard:
-					helpTopicKey = "khtpWsKeyboard";
-					break;
-				case kWsConverters:
-					helpTopicKey = "khtpWsConverters";
-					break;
-				case kWsSorting:
-					helpTopicKey = "khtpWsSorting";
-					break;
-				case kWsPUACharacters:
-					helpTopicKey = "khtpWsPUACharacters";
-					break;
-			}
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, helpTopicKey);
-		}
-
-		private void btnValidChars_Click(object sender, EventArgs e)
-		{
-			using (var dlg = new ValidCharactersDlg(m_cache, m_wsContainer, m_helpTopicProvider,
-				m_app, CurrentWritingSystem, CurrentWritingSystem.DisplayLabel))
+			var currentWs = _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
+			using (var dlg = new ValidCharactersDlg(_model.Cache, null, _helpTopicProvider,
+				_app, currentWs, _model.CurrentWsSetupModel.CurrentDisplayLabel))
 			{
 				dlg.ShowDialog(this);
 			}
 		}
 
-		/// <summary>
-		/// Handles the Click event of the btnRemove control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void m_deleteButton_Click(object sender, EventArgs e)
+		private bool ShowChangeLanguage(out LanguageInfo info)
 		{
-			// if we're removing from the end of the list, the new index will be the previous one,
-			// otherwise, keep the index the same.
-			int indexNext = m_listBoxRelatedWSs.SelectedIndex == m_listBoxRelatedWSs.Items.Count - 1 ?
-				m_listBoxRelatedWSs.SelectedIndex - 1 : m_listBoxRelatedWSs.SelectedIndex;
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			m_tempWritingSystems.Remove(ws);
-			m_listBoxRelatedWSs.Items.RemoveAt(m_listBoxRelatedWSs.SelectedIndex);
-			m_listBoxRelatedWSs.SelectedIndex = indexNext;
-		}
-
-		private void btnAdd_Click(object sender, EventArgs e)
-		{
-			var cmsAddWs = components.ContextMenuStrip("cmsAddWs");
-				FwProjPropertiesDlg.ShowAddWsContextMenu(cmsAddWs, m_wsManager.AllDistinctWritingSystems, m_listBoxRelatedWSs,
-					sender as Button, btnAddWsItemClicked, null, btnNewWsItemClicked, CurrentWritingSystem);
-			}
-
-		/// <summary>
-		/// Handles the Click event of the add writing system menu item.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void btnAddWsItemClicked(object sender, EventArgs e)
-		{
-			if (!CheckOkToChangeContext())
-				return;
-
-			var mnuItem = (FwProjPropertiesDlg.WsMenuItem)sender;
-			AddWritingSystem(m_wsManager.CreateFrom(mnuItem.WritingSystem), mnuItem.WritingSystem, false);
-		}
-
-		/// <summary>
-		/// Handles the Click event of the new writing system menu item.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void btnNewWsItemClicked(object sender, EventArgs e)
-		{
-			if (!CheckOkToChangeContext())
-				return;
-
-			AddNewWsForLanguage();
-		}
-
-		/// <summary>
-		/// Adds a new writing system based on the selected language.
-		/// </summary>
-		public void AddNewWsForLanguage()
-		{
-			CheckDisposed();
-
-			// Definitely copy China region for new zh ws. Probably not a bad idea to copy other regions as well if selected.
-			CoreWritingSystemDefinition tempWs = m_wsManager.Create(CurrentWritingSystem.Language, null, CurrentWritingSystem.Region, Enumerable.Empty<VariantSubtag>());
-
-			foreach (CharacterSetDefinition charSet in CurrentWritingSystem.CharacterSets)
-				if (!tempWs.CharacterSets.ToList().Any(e=> e.ValueEquals(charSet)))
-					tempWs.CharacterSets.Add(charSet.Clone());
-			foreach (MatchedPair mp in CurrentWritingSystem.MatchedPairs)
-				if (!tempWs.MatchedPairs.Contains(mp))
-					tempWs.MatchedPairs.Add(mp);
-			foreach (PunctuationPattern pp in CurrentWritingSystem.PunctuationPatterns)
-				if (!tempWs.PunctuationPatterns.Contains(pp))
-					tempWs.PunctuationPatterns.Add(pp);
-			foreach (QuotationMark qm in CurrentWritingSystem.QuotationMarks)
-				if (!tempWs.QuotationMarks.Contains(qm))
-					tempWs.QuotationMarks.Add(qm);
-			AddWritingSystem(tempWs, null, true);
-		}
-
-		private void AddWritingSystem(CoreWritingSystemDefinition tempWs, CoreWritingSystemDefinition origWs, bool fSwitchToGeneralTab)
-		{
-			try
+			using (var langPicker = new LanguageLookupDialog())
 			{
-				m_fSkipCheckOkToChangeContext = true;
-
-				m_listBoxRelatedWSs.Items.Add(tempWs);
-				m_tempWritingSystems[tempWs] = origWs;
-				SelectWritingSystem(tempWs);
-				if (fSwitchToGeneralTab)
-					SwitchTab(kWsGeneral);
-				// A revised Palaso WritingSystem implementation changed some message handling
-				// related to changing indexes and the like.  So we now need to explicitly set the
-				// subcontrol's writing system.  See FWNX-999 for details of what went wrong (test
-				// failure and buggy dialog behavior).  The following line is the the primary fix
-				// for this change.
-				Set_regionVariantControl(CurrentWritingSystem);
+				var result = langPicker.ShowDialog(this);
+				if (result == DialogResult.OK)
+				{
+					info = langPicker.SelectedLanguage;
+					return true;
+				}
 			}
-			finally
-			{
-				m_fSkipCheckOkToChangeContext = false;
-			}
-		}
-
-		/// <summary>
-		/// Handles the Click event of the btnCopy control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void btnCopy_Click(object sender, EventArgs e)
-		{
-			if (!CheckOkToChangeContext())
-				return;
-
-			AddWritingSystem(m_wsManager.CreateFrom(CurrentWritingSystem), null, true);
-		}
-
-		#endregion
-
-		#region Other event handlers
-
-		private void m_similarWsButton_LocaleSelected(object sender, EventArgs e)
-		{
-			string baseLocale = m_similarWsButton.SelectedLocaleId;
-			var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
-			if (!string.IsNullOrEmpty(icuCollation.IcuRules))
-			{
-				// "Overwrite existing collation rules?";
-				DialogResult res = MessageBox.Show(this, FwCoreDlgs.kstidOverwriteRules,
-					FwCoreDlgs.kstidOverwriteRulesCaption, MessageBoxButtons.YesNo);
-				if (res == DialogResult.No)
-					return;
-			}
-			if (baseLocale == null)
-				baseLocale = "";
-
-			string sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
-			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
-				CurrentWritingSystem.Handle);
-
-			var resources = new ComponentResourceManager(typeof(FwWritingSystemSetupDlg));
-			// apply default text
-			m_similarWsButton.Text = (string)resources.GetObject("m_similarWsButton.Text");
-		}
-
-		private void m_ShortWsName_TextChanged(object sender, EventArgs e)
-		{
-			CurrentWritingSystem.Abbreviation = m_ShortWsName.Text;
-		}
-
-		private void rbLeftToRight_CheckedChanged(object sender, EventArgs e)
-		{
-			CurrentWritingSystem.RightToLeftScript = !rbLeftToRight.Checked;
-		}
-
-		private bool m_fSkipCheckOkToChangeContext;
-		/// <summary>
-		/// some user actions (e.g. Add ("Define New...") involve switching tabs to a context
-		/// (e.g. General tab)that will allow the user the opportunity to make it Ok to change context.
-		/// In that case, m_fSkipCheckOkToChangeContext should be set to true, so that switching tabs
-		/// does not prematurely detect we're in an invalid state.
-		/// </summary>
-		/// <returns></returns>
-		protected bool CheckOkToChangeContext()
-		{
-			if (m_fSkipCheckOkToChangeContext)
-				return true;
-			bool fOkToChangeContext = true;
-			// Check the validity of the current tab control.
-			switch (tabControl.SelectedIndex)
-			{
-				default:
-					break;
-				case kWsGeneral:
-					fOkToChangeContext = m_regionVariantControl.CheckValid();
-					break;
-				case kWsSorting:
-					fOkToChangeContext = CheckIfSortingIsOK();
-					break;
-				case kWsConverters:
-					fOkToChangeContext = CheckEncodingConverter();
-					break;
-				case kWsNumbers:
-					fOkToChangeContext = CheckForCustomNumbersValidity();
-					break;
-			}
-
-			if (fOkToChangeContext && !CheckWSIetfLanguageTagChange())
-				fOkToChangeContext = false;
-			return fOkToChangeContext;
-		}
-
-		private bool CheckForCustomNumbersValidity()
-		{
-			if (!numberSettingsCombo.SelectedItem.Equals(Strings.CustomNumberingSystem))
-			{
-				return true;
-			}
-
-			if (!customDigits.AreAllDigitsValid())
-			{
-				customDigits.HighlightProblemDigits();
-				return false;
-			}
-
-			return true;
-		}
-
-		private bool CheckIfSortingIsOK()
-		{
-			string message;
-			if (CurrentWritingSystem.DefaultCollation.Validate(out message))
-				return true;
-
-			// Switch back to the sorting tab so user can see it if CheckValid displays an error.
-			SwitchTab(kWsSorting);
-			tabControl.Update();
-			m_sortRulesTextBox.Select();
-			m_sortRulesTextBox.SelectAll();
-			string error = String.Format(FwCoreDlgs.ksInvalidSortSpec, message);
-			MessageBox.Show(this, error, FwCoreDlgs.ksSortSpecError,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			info = null;
 			return false;
 		}
 
-		private bool CheckEncodingConverter()
+		private bool ShowModifyEncodingConverter(string originalConverter, out string selectedConverter)
 		{
-			bool fOkToChangeContext = true;
-			if (cbEncodingConverter.SelectedIndex >= 0)
+			selectedConverter = null;
+			using (var dlg = new AddCnvtrDlg(_helpTopicProvider, _app, null, originalConverter, null, false))
 			{
-				string str = cbEncodingConverter.Text;
-				if (str == FwCoreDlgs.kstidNone)
-					str = null;
-				if (str != null && str.Contains(FwCoreDlgs.kstidNotInstalled))
+				dlg.ShowDialog();
+
+				// Either select the new one or select the old one
+				if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 				{
-					fOkToChangeContext = false;
-					MessageBox.Show(this, FwCoreDlgs.kstidEncoderNotAvailable);
-				}
-			}
-			return fOkToChangeContext;
-		}
-
-		/// <summary>
-		/// Checks to see if the user writing system identifier is being changed, or if a
-		/// writing system is using an identifier that already exists.
-		/// </summary>
-		/// <returns></returns>
-		private bool CheckWSIetfLanguageTagChange()
-		{
-			foreach (CoreWritingSystemDefinition tempWS in m_listBoxRelatedWSs.Items)
-			{
-				// ContainsKey check deals with m_tempWritingSystems and m_listBoxRelatedWSs.Items being
-				// out of sync which can happen because of mono/.NET winform event differences.
-				// (ie. SelectedIndexChange event being emitted on a Remove)
-				if (!m_tempWritingSystems.ContainsKey(tempWS))
-					continue;
-
-				CoreWritingSystemDefinition origWS = m_tempWritingSystems[tempWS];
-
-				if (origWS == null || tempWS.LanguageTag != origWS.LanguageTag)
-				{
-					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
-					// this, and we'd get numerous crashes and terrible behavior if it was changed.
-					if (origWS != null && (origWS == m_wsManager.UserWritingSystem || origWS.LanguageTag == "en"))
-					{
-						ShowMsgCantChangeUserWS(tempWS, origWS);
-						return false;
-					}
-
-					// Catch case where we are going to overwrite an existing writing system.
-					if (m_wsManager.Exists(tempWS.LanguageTag)
-						|| m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws != tempWS && ws.LanguageTag == tempWS.LanguageTag))
-					{
-						ShowMsgBoxCantCreateDuplicateWs(tempWS, origWS);
-						return false;
-					}
+					selectedConverter = dlg.SelectedConverter;
+					return true;
 				}
 			}
 
-			return true;
+			return false;
 		}
 
-		/// <summary>
-		/// Check if the writing system is being changed and prompt the user with instructions to successfully perform the change
-		/// </summary>
-		/// <param name="newLangTag">The language tag of the original WritingSystem.</param>
-		/// <returns></returns>
-		private bool CheckChangingWSForSRProject(LanguageSubtag newLangTag)
+		private bool ShowConfirmDeleteDialog(string wsDisplayLabel)
 		{
-			bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
-
-			if (hasFlexOrLiftRepo)
+			using (var dlg = new DeleteWritingSystemWarningDialog())
 			{
-				foreach (CoreWritingSystemDefinition tempWS in m_listBoxRelatedWSs.Items)
-				{
-					// deals with the m_tempWritingSystems and m_listBoxRelatedWSs being out of sync (see CheckIeftLanguageTagChange())
-					if (!m_tempWritingSystems.ContainsKey(tempWS) || m_tempWritingSystems[tempWS] == null)
-						continue;
-					if (newLangTag.Name != m_tempWritingSystems[tempWS].Language.Name)
-					{
-						if (AcceptWSChangeWarning(((CoreWritingSystemDefinition)m_listBoxRelatedWSs.Items[0]).Language.Name))
-							return true;
-						break;
-					}
-				}
-				return false;
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Shows the "cannot change user writing system" message.
-		/// </summary>
-		/// <param name="tempWS">The temp writing system.</param>
-		/// <param name="origWS">The original writing system.</param>
-		protected virtual void ShowMsgCantChangeUserWS(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
-		{
-			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWS, origWS.LanguageTag);
-			MessageBox.Show(msg, FwCoreDlgs.kstidWspLabel);
-		}
-
-		/// <summary>
-		/// Shows the "cannnot create duplicate writing system" message.
-		/// </summary>
-		/// <param name="tempWS">The temp writing system.</param>
-		/// <param name="origWS">The original writing system.</param>
-		protected virtual void ShowMsgBoxCantCreateDuplicateWs(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
-		{
-			string caption = FwCoreDlgs.kstidNwsCaption;
-			string msg = string.Format(FwCoreDlgs.kstidCantCreateDuplicateWS, tempWS.DisplayLabel, Environment.NewLine);
-			MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-		}
-
-		/// <summary>
-		/// Displays the "writing system change warning" message and the necessary S/R steps to avoid data loss.
-		/// </summary>
-		protected virtual bool AcceptWSChangeWarning(string wsLanguageName)
-		{
-			string caption = FwCoreDlgs.ksPossibleDataLoss;
-			string msg = string.Format(FwCoreDlgs.ksWSChangeWarning, m_listBoxRelatedWSs.Items.Count, wsLanguageName, Environment.NewLine);
-			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
-		}
-
-		/// <summary>
-		/// Handles the SelectedIndexChanged event of the tabControl control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		protected void tabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			using (new WaitCursor(this))
-			{
-				switch (tabControl.SelectedIndex)
-				{
-					case kWsSorting:
-						SetupSortTab(CurrentWritingSystem);
-						break;
-
-					case kWsKeyboard:
-						break;
-				}
+				dlg.SetWsName(wsDisplayLabel);
+				return dlg.ShowDialog() == DialogResult.Yes;
 			}
 		}
 
-		/// <summary>
-		/// Handles the Deselecting event of the tabControl control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.Windows.Forms.TabControlCancelEventArgs"/> instance containing the event data.</param>
-		protected void tabControl_Deselecting(object sender, TabControlCancelEventArgs e)
+		private void OnCurrentWritingSystemChangedHandler(object sender, EventArgs args)
 		{
-			//If we were switching away from the Sorting tab then this check
-			//will ensure we return to it and force the user to correct it
-			//if there is a problem with it.
-			//First ensure we have not just switched to this tab to prevent an infinite loop
-			//Then we want to know if we are swithing away from this tab.
-			//lastly see if the sorting string is valid.
-			e.Cancel = !CheckOkToChangeContext();
+			BindToModel(_model);
 		}
 
-		private void linkToEthnologue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void BindHeader(FwWritingSystemSetupModel model)
 		{
-			string targetURL = String.Format("http://www.ethnologue.com/show_language.asp?code={0}", m_LanguageCode.Text);
-			using (Process.Start(targetURL))
+			_toolTip.SetToolTip(_shareWithSldrCheckbox,
+				"Sharing data will benefit any other programs" + Environment.NewLine +
+				" that also use the SIL Locale Data Repository");
+			_shareWithSldrCheckbox.CheckedChanged -= _shareWithSldrCheckbox_CheckedChanged;
+			_ethnologueLink.Text = model.EthnologueLabel;
+			_languageNameTextbox.Text = model.LanguageName;
+			_shareWithSldrCheckbox.Visible = model.ShowSharingWithSldr;
+			_shareWithSldrCheckbox.Checked = model.IsSharingWithSldr;
+			model.ShowChangeLanguage = ShowChangeLanguage;
+			_shareWithSldrCheckbox.CheckedChanged += _shareWithSldrCheckbox_CheckedChanged;
+		}
+
+		private void BindGeneralTab(FwWritingSystemSetupModel model)
+		{
+			m_FullCode.Text = model.CurrentWsSetupModel.CurrentLanguageTag;
+			_spellingCombo.Items.Clear();
+			// ReSharper disable once CoVariantArrayConversion -- No writes occur in AddRange
+			_spellingCombo.Items.AddRange(model.CurrentWsSetupModel.GetSpellCheckComboBoxItems().ToArray());
+			_spellingCombo.SelectedItem = model.CurrentWsSetupModel.CurrentSpellChecker;
+			_identifiersControl.UnwireBeforeClosing();
+			_identifiersControl.BindToModel(model.CurrentWsSetupModel);
+			_identifiersControl.Selected();
+		}
+
+		private void BindFontTab(FwWritingSystemSetupModel model)
+		{
+			_defaultFontControl.WritingSystem = model.WorkingList[model.CurrentWritingSystemIndex].WorkingWs;
+		}
+
+		private void BindConverterTab(FwWritingSystemSetupModel model)
+		{
+			m_lblEncodingConverter.Text = string.Format("&Encoding converter for importing {0}:", model.WritingSystemName);
+			model.ShowModifyEncodingConverters = ShowModifyEncodingConverter;
+
+			BindEncodingConverterCombo(model);
+		}
+
+		private void BindEncodingConverterCombo(FwWritingSystemSetupModel model)
+		{
+			_encodingConverterCombo.SelectedIndexChanged -= _encodingConverterCombo_SelectedIndexChanged;
+			var encConverters = model.GetEncodingConverters();
+			_encodingConverterCombo.Items.Clear();
+			foreach (string convName in encConverters)
 			{
-			}
-		}
-
-		private void m_tbLanguageName_TextChanged(object sender, EventArgs e)
-		{
-			if (m_userChangedLanguageName)
-				UpdateDialogWithChangesToLanguageName();
-		}
-
-		private void UpdateDialogWithChangesToLanguageName()
-		{
-			UpdateLanguageNameAndWSsFromTextBox();
-			SetLanguageNameLabels();
-			Set_regionVariantControl(CurrentWritingSystem);
-			SetFullNameLabels(CurrentWritingSystem.DisplayLabel);
-			PopulateRelatedWSsListBox(CurrentWritingSystem);
-		}
-
-		private void LoadShortWsNameFromCurrentWritingSystem()
-		{
-			string shortAbbr = CurrentWritingSystem.Abbreviation;
-			string langName = CurrentWritingSystem.Language.Name;
-			m_ShortWsName.Text = shortAbbr ?? langName.Substring(0, Math.Min(langName.Length, 3));
-		}
-
-		private void UpdateLanguageNameAndWSsFromTextBox()
-		{
-			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
-			{
-				LanguageSubtag languageSubtag = ws.Language;
-				ws.Language = new LanguageSubtag(languageSubtag, m_tbLanguageName.Text ?? string.Empty);
-			}
-		}
-
-		private void m_listBoxRelatedWSs_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			// CurrentWritingSystem can be null when we remove a WS from the list when running on Mono
-			if (CurrentWritingSystem == null || m_prevSelectedWritingSystem == CurrentWritingSystem)
-			{
-				return;
-			}
-			if (!m_fSkipCheckOkToChangeContext && m_prevSelectedWritingSystem != null
-				&& m_listBoxRelatedWSs.Items.Contains(m_prevSelectedWritingSystem))
-			{
-				// Before switching to another writing system it is necessary to
-				// ensure that the various settings the user has chosen for the previous one are validated.
-				// Unfortunately m_listBoxRelatedWSs.SelectedItem has already changed, and CurrentWritingSystem
-				// therefore has too. We need the old WS to be current so we can check it.
-				// To allow this we have currentWritingSystem support an override.
-				try
-				{
-					var prevSelWs = m_prevSelectedWritingSystem;
-					m_prevSelectedWritingSystem = null; // prevents this check firing if we switch back.
-					m_overrideCurrentWritingSystem = prevSelWs;
-					if (!CheckOkToChangeContext())
-					{
-						m_overrideCurrentWritingSystem = null; // override not be in force while changing back.
-						SelectWritingSystem(prevSelWs); // reverse the change
-						m_prevSelectedWritingSystem = prevSelWs; // normal when that one is current.
-						return; // leave things set to old item; CheckOk has reported problem.
-					}
-				}
-				finally
-				{
-					m_overrideCurrentWritingSystem = null; // override should only be in force for this method.
-				}
+				_encodingConverterCombo.Items.Add(convName);
 			}
 
-			if (CurrentWritingSystem != null)
-				SetupDialogFromCurrentWritingSystem();
-			m_prevSelectedWritingSystem = CurrentWritingSystem;
-		}
-
-		/// <summary>
-		/// handles cases for tabControl.SelectedIndex = index,
-		/// and allows tests to override so that it can trigger
-		/// events tabControl_Deselecting() and tabControl_SelectedIndexChanged() since
-		/// for some reason those events aren't getting triggered in the tests.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		public virtual void SwitchTab(int index)
-		{
-			CheckDisposed();
-
-			tabControl.SelectedIndex = index;
-			switch(index)
+			if (!string.IsNullOrEmpty(model.CurrentLegacyConverter))
 			{
-				case kWsGeneral:
-					{
-						m_regionVariantControl.Select();
-						break;
-					}
-				case kWsSorting:
-					{
-						tabControl.Update();
-						m_sortRulesTextBox.Select();
-						m_sortRulesTextBox.SelectAll();
-						break;
-					}
-			}
-		}
-
-		private void cbDictionaries_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (m_userChangedSpellCheckDictionary)
-			{
-				var dictionary = (string) cbDictionaries.SelectedValue;
-				CurrentWritingSystem.SpellCheckingId = string.IsNullOrEmpty(dictionary) ? FwCoreDlgs.kstidNone : dictionary;
-			}
-		}
-
-		private void m_sortRulesTextBox_TextChanged(object sender, EventArgs e)
-		{
-			if (m_userChangedSortRules)
-			{
-				string rules = !string.IsNullOrEmpty(m_sortRulesTextBox.Text.Trim()) ? m_sortRulesTextBox.Text.Trim() : "";
-				CoreWritingSystemDefinition ws = CurrentWritingSystem;
-				switch (m_currentCollationRulesType)
-				{
-					case CollationRulesType.CustomIcu:
-						var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
-						icuCollation.Imports.Clear();
-						icuCollation.IcuRules = rules;
-						break;
-
-					case CollationRulesType.CustomSimple:
-						((SimpleRulesCollationDefinition) ws.DefaultCollation).SimpleRules = rules;
-						break;
-				}
-			}
-		}
-
-		private void m_ampersandButton_Click(object sender, EventArgs e)
-		{
-			m_sortRulesTextBox.Select();
-			m_sortRulesTextBox.SelectedText = "&";
-		}
-
-		private void m_angleBracketButton_Click(object sender, EventArgs e)
-		{
-			m_sortRulesTextBox.Select();
-			m_sortRulesTextBox.SelectedText = "<";
-		}
-
-		private void cbEncodingConverter_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (CurrentWritingSystem == null)
-				return;
-
-			// save the selected encoding converter
-			var str = cbEncodingConverter.SelectedItem as string;
-			if (str == FwCoreDlgs.kstidNone)
-				str = null;
-			CurrentWritingSystem.LegacyMapping = str;
-		}
-
-		private void m_regionVariantControl_ScriptRegionVariantChanged(object sender, EventArgs e)
-		{
-			if (!m_userChangedVariantControl)
-				return;
-			//This next assignment updates the DisplayName so it reflects the changes
-			//made in the regionVariantControl
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			m_FullCode.Text = ws.LanguageTag;
-			SetFullNameLabels(ws.DisplayLabel);
-			PopulateRelatedWSsListBox(CurrentWritingSystem);
-		}
-
-		private void m_sortUsingComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			if (!m_userChangedSortUsing || ws == null)
-				return;
-
-			m_currentCollationRulesType = (CollationRulesType) Enum.Parse(typeof(CollationRulesType), (string) m_sortUsingComboBox.SelectedValue);
-			switch (m_currentCollationRulesType)
-			{
-				case CollationRulesType.DefaultOrdering:
-				case CollationRulesType.CustomIcu:
-					ws.DefaultCollation = new IcuRulesCollationDefinition(ws.DefaultCollationType);
-					break;
-				case CollationRulesType.CustomSimple:
-					ws.DefaultCollation = new SimpleRulesCollationDefinition(ws.DefaultCollationType);
-					break;
-				case CollationRulesType.OtherLanguage:
-					ws.DefaultCollation = new SystemCollationDefinition();
-					break;
-			}
-			SetupSortTab(ws);
-		}
-
-		private void m_sortLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			if (ws != null)
-			{
-				var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
-				systemCollation.LanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
-			}
-		}
-
-		#endregion
-
-		private void numberSettingsCombo_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var digits = (string) numberSettingsCombo.SelectedItem;
-			var selectedNumberingSystem = (string) ((ComboBox) sender).SelectedItem;
-			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
-			{
-				CurrentWritingSystem.NumberingSystem = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));
-				customDigits.Enabled = false;
+				_encodingConverterCombo.SelectedItem = model.CurrentLegacyConverter;
 			}
 			else
 			{
-				digits = CurrentWritingSystem.NumberingSystem.IsCustom ? CurrentWritingSystem.NumberingSystem.Id.Split('(', ')')[1] : string.Empty;
-				customDigits.Enabled = true;
+				_encodingConverterCombo.SelectedItem = FwCoreDlgs.kstidNone;
+			}
+			_encodingConverterCombo.SelectedIndexChanged += _encodingConverterCombo_SelectedIndexChanged;
+		}
+
+		private void BindCharactersTab(FwWritingSystemSetupModel model)
+		{
+			m_lblValidCharacters.Text = string.Format("Specify the set of valid characters for {0}.", model.WritingSystemName);
+			model.ShowValidCharsEditor = ShowValidCharsEditor;
+		}
+
+		private void BindCurrentWSList(FwWritingSystemSetupModel model)
+		{
+			model.ConfirmDeleteWritingSystem = ShowConfirmDeleteDialog;
+			model.ImportListForNewWs = ImportTranslatedList;
+			model.ConfirmMergeWritingSystem = ConfirmMergeWritingSystem;
+			_writingSystemList.ItemCheck -= _writingSystemList_ItemCheck;
+			_writingSystemList.Items.Clear();
+			foreach (var ws in model.WorkingList)
+			{
+				_writingSystemList.Items.Add(new WsListItem(ws.WorkingWs.DisplayLabel, ws.WorkingWs.LanguageTag), ws.InCurrentList);
+			}
+			_writingSystemList.SelectedIndex = model.CurrentWritingSystemIndex;
+			_writingSystemList.ItemCheck += _writingSystemList_ItemCheck;
+			// Clear the problem highlight color
+			_writingSystemList.BackColor = Color.Empty;
+			_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_NormalTooltip);
+			// Set move up and move down states
+			moveUp.Enabled = model.CanMoveUp();
+			moveDown.Enabled = model.CanMoveDown();
+		}
+
+		private bool ConfirmMergeWritingSystem(string wsToMerge, out CoreWritingSystemDefinition mergeTarget)
+		{
+			mergeTarget = null;
+			if (DialogResult.No == MessageBox.Show(FwCoreDlgs.ksWSWarnWhenMergingWritingSystems,
+				FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo))
+			{
+				return false;
+			}
+			using (var dlg = new MergeWritingSystemDlg(_model.Cache, wsToMerge, _model.MergeTargets, _helpTopicProvider))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					mergeTarget = dlg.SelectedWritingSystem;
+					return true;
+				}
 			}
 
-			// ReSharper disable once CompareOfFloatsByEqualityOperator - comparing 0 is a non-issue
-			// If the current writing system is valid use font settings from it, otherwise pick reasonable defaults
-			customDigits.SetDigits(digits, string.IsNullOrWhiteSpace(CurrentWritingSystem.DefaultFontName) ? "Segoe" : CurrentWritingSystem.DefaultFontName,
-					CurrentWritingSystem.DefaultFontSize == 0.0f ? 12 : CurrentWritingSystem.DefaultFontSize);
+			return false;
+		}
+
+		private void ImportTranslatedList(string iculocaletoimport)
+		{
+			ProgressDialogWithTask.ImportTranslatedListsForWs(this, _model.Cache, iculocaletoimport);
+		}
+
+		private void _writingSystemList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_model != null)
+			{
+				_model.SelectWs(((WsListItem)_writingSystemList.SelectedItem).Code);
+			}
+		}
+
+		private void _ethnologueLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using(Process.Start(_model.EthnologueLink))
+			{
+			}
+		}
+
+		private void _changeCodeBtn_Click(object sender, EventArgs e)
+		{
+			_model.ChangeLanguage();
+			BindToModel(_model);
+		}
+
+		private void _okBtn_Click(object sender, EventArgs e)
+		{
+			if (_model.IsListValid && customDigits.AreAllDigitsValid())
+			{
+				_model.Save();
+				Close();
+			}
+			else
+			{
+				if (!_model.IsListValid)
+				{
+					_writingSystemList.BackColor = Color.Red;
+					_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_SelectAtLeastOneTooltip);
+				}
+				if (!customDigits.AreAllDigitsValid())
+				{
+					customDigits.HighlightProblemDigits();
+					_tabControl.SelectedTab = _numbersTab;
+				}
+			}
+		}
+
+		private void _addWsButton_Click(object sender, EventArgs e)
+		{
+			var disposeThese = new List<ToolStripMenuItem>();
+			foreach (ToolStripMenuItem item in _addMenuStrip.Items)
+			{
+				disposeThese.Add(item);
+			}
+			_addMenuStrip.Items.Clear();
+			foreach (var toolStripMenuItem in disposeThese)
+			{
+				toolStripMenuItem.Dispose();
+			}
+
+			foreach (var item in _model.GetAddMenuItems())
+			{
+				_addMenuStrip.Items.Add(new ToolStripMenuItem(item.MenuText, null, item.ClickHandler));
+				_addMenuStrip.Show(_addWsButton, new Point(0, _addWsButton.Height));
+			}
+		}
+
+		private void btnValidChars_Click(object sender, EventArgs e)
+		{
+			_model.EditValidCharacters();
+		}
+
+		private void _encodingConverterCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			// save the selected encoding converter
+			var str = _encodingConverterCombo.SelectedItem as string;
+			if (str == FwCoreDlgs.kstidNone)
+				str = null;
+
+			_model.CurrentLegacyConverter = str;
+		}
+
+		private void btnEncodingConverter_Click(object sender, EventArgs e)
+		{
+			_model.ModifyEncodingConverters();
+			BindEncodingConverterCombo(_model);
+		}
+
+		private void moveUp_Click(object sender, EventArgs e)
+		{
+			_model.MoveUp();
+			BindCurrentWSList(_model);
+		}
+
+		private void moveDown_Click(object sender, EventArgs e)
+		{
+			_model.MoveDown();
+			BindCurrentWSList(_model);
+		}
+
+		private void _writingSystemList_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			_model.ToggleInCurrentList();
+			BindCurrentWSList(_model);
+		}
+
+		private sealed class WsListItem : Tuple<string, string>
+		{
+			public WsListItem(string display, string code) : base(display, code)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
+			}
+
+			public string Code => Item2;
+		}
+
+		private void _writingSystemList_MouseDown(object sender, MouseEventArgs e)
+		{
+			var listBox = (CheckedListBox)sender;
+			if (e.Button == MouseButtons.Right)
+			{
+				int index = listBox.IndexFromPoint(e.Location);
+				if (index != ListBox.NoMatches)
+				{
+					if (index != _model.CurrentWritingSystemIndex)
+					{
+						listBox.Select();
+						listBox.SelectedIndex = index;
+					}
+					var disposeThese = new List<ToolStripMenuItem>();
+					foreach (ToolStripMenuItem item in _addMenuStrip.Items)
+					{
+						disposeThese.Add(item);
+					}
+					_addMenuStrip.Items.Clear();
+					foreach (var toolStripMenuItem in disposeThese)
+					{
+						toolStripMenuItem.Dispose();
+					}
+
+					foreach (var item in _model.GetRightClickMenuItems())
+					{
+						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler);
+						menuItem.Enabled = item.IsEnabled;
+						_addMenuStrip.Items.Add(menuItem);
+						_addMenuStrip.Show(listBox, e.Location);
+					}
+				}
+			}
+		}
+
+		private void _helpBtn_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem");
+		}
+
+		private void _writingSystemList_help_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem_List");
+		}
+
+		private void _shareWithSldrCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			_model.IsSharingWithSldr = _shareWithSldrCheckbox.Checked;
+		}
+
+		/// <summary>
+		/// Display a writing system dialog for the purpose of modifying a new project.
+		/// </summary>
+		public static bool ShowNewDialog(IWin32Window parentForm, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpProvider, IApp app, FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+		{
+			newWritingSystems = new List<CoreWritingSystemDefinition>();
+			var model = new FwWritingSystemSetupModel(wsContainer, type, wsManager);
+			using (var dlg = new FwWritingSystemSetupDlg(model, helpProvider, app))
+			{
+				dlg.ShowDialog(parentForm);
+				if (dlg.DialogResult == DialogResult.OK)
+				{
+					foreach (var item in model.WorkingList)
+					{
+						((List<CoreWritingSystemDefinition>)newWritingSystems).Add(item.WorkingWs);
+					}
+
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
