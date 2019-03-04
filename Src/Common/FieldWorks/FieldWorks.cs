@@ -50,6 +50,7 @@ using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
+using SIL.Lexicon;
 
 namespace SIL.FieldWorks
 {
@@ -433,7 +434,11 @@ namespace SIL.FieldWorks
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
 		{
-			return projectId.Type == BackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
+			if (!LcmSettings.IsProjectSharingEnabled(projectId.ProjectFolder))
+			{
+				return true;
+			}
+			return projectId.Type == BackendProviderType.kSharedXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// ------------------------------------------------------------------------------------

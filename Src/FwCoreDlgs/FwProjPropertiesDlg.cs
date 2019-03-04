@@ -123,6 +123,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private CheckBox m_addWSsToSldrCheckBox;
 		private String m_defaultLinkedFilesFolder;
 		private readonly ProjectLexiconSettings m_projectLexiconSettings;
+		private CheckBox m_enableProjectSharingCheckBox;
 		private readonly ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
 
 		/// <summary>Read-only Property created for m_lstAnalWs</summary>
@@ -242,6 +243,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_lstAnalWs.SelectedIndex = 0;
 
 				m_addWSsToSldrCheckBox.Checked = m_projectLexiconSettings.AddWritingSystemsToSldr;
+				m_enableProjectSharingCheckBox.Checked = m_projectLexiconSettings.ProjectSharing;
 				UpdateOKButton();
 			}
 		}
@@ -337,6 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.Label label8;
 			System.Windows.Forms.Label label6;
 			System.Windows.Forms.TabPage m_tpExternalLinks;
+			System.Windows.Forms.TabPage m_tpSharing;
 			System.Windows.Forms.Label label13;
 			System.Windows.Forms.Label label12;
 			System.Windows.Forms.Label label11;
@@ -374,6 +377,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_hideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mergeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_enableProjectSharingCheckBox = new System.Windows.Forms.CheckBox();
 			m_btnHelp = new System.Windows.Forms.Button();
 			m_btnCancel = new System.Windows.Forms.Button();
 			m_tpGeneral = new System.Windows.Forms.TabPage();
@@ -391,6 +395,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			label8 = new System.Windows.Forms.Label();
 			label6 = new System.Windows.Forms.Label();
 			m_tpExternalLinks = new System.Windows.Forms.TabPage();
+			m_tpSharing = new System.Windows.Forms.TabPage();
 			label13 = new System.Windows.Forms.Label();
 			label12 = new System.Windows.Forms.Label();
 			label11 = new System.Windows.Forms.Label();
@@ -402,6 +407,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_tabControl.SuspendLayout();
 			this.m_cmnuAddWs.SuspendLayout();
 			this.m_wsMenuStrip.SuspendLayout();
+			m_tpSharing.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// m_btnHelp
@@ -777,6 +783,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_tabControl.Controls.Add(m_tpGeneral);
 			this.m_tabControl.Controls.Add(m_tpWritingSystems);
 			this.m_tabControl.Controls.Add(m_tpExternalLinks);
+			this.m_tabControl.Controls.Add(m_tpSharing);
 			resources.ApplyResources(this.m_tabControl, "m_tabControl");
 			this.m_tabControl.Name = "m_tabControl";
 			this.m_tabControl.SelectedIndex = 0;
@@ -828,6 +835,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_deleteMenuItem, "m_deleteMenuItem");
 			this.m_deleteMenuItem.Click += new System.EventHandler(this.m_deleteMenuItem_Click);
 			//
+			// m_tpSharing
+			//
+			m_tpSharing.Controls.Add(this.m_enableProjectSharingCheckBox);
+			resources.ApplyResources(m_tpSharing, "m_tpSharing");
+			m_tpSharing.Name = "m_tpSharing";
+			m_tpSharing.UseVisualStyleBackColor = true;
+			//
+			// m_enableProjectSharingCheckBox
+			//
+			resources.ApplyResources(this.m_enableProjectSharingCheckBox, "m_enableProjectSharingCheckBox");
+			this.m_enableProjectSharingCheckBox.Name = "m_enableProjectSharingCheckBox";
+			this.helpProvider1.SetShowHelp(this.m_enableProjectSharingCheckBox, ((bool)(resources.GetObject("m_enableProjectSharingCheckBox.ShowHelp"))));
+			this.m_enableProjectSharingCheckBox.UseVisualStyleBackColor = true;
+			this.m_enableProjectSharingCheckBox.CheckedChanged += new System.EventHandler(this.m_enableProjectSharingCheckBox_CheckedChanged);
+			//
 			// FwProjPropertiesDlg
 			//
 			resources.ApplyResources(this, "$this");
@@ -854,6 +876,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_tabControl.ResumeLayout(false);
 			this.m_cmnuAddWs.ResumeLayout(false);
 			this.m_wsMenuStrip.ResumeLayout(false);
+			m_tpSharing.ResumeLayout(false);
+			m_tpSharing.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1945,6 +1969,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_addWSsToSldrCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			m_projectLexiconSettings.AddWritingSystemsToSldr = m_addWSsToSldrCheckBox.Checked;
+		}
+
+		private void m_enableProjectSharingCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			m_projectLexiconSettings.ProjectSharing = m_enableProjectSharingCheckBox.Checked;
 		}
 	}
 	#endregion //FwProjPropertiesDlg dialog
