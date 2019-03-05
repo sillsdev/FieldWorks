@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.IText
 			get
 			{
 				CheckDisposed();
-				return RootStText != null ? RootStText.Hvo : 0;
+				return RootStText != null ? (((ICmObject)RootStText).IsValidObject ? RootStText.Hvo : 0) : 0;
 			}
 		}
 
@@ -1088,7 +1088,7 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.CurrentObjectHvo == 0 || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			// Use a bookmark, if we've set one.
-			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
+			if ((RootStText != null && ((ICmObject)RootStText).IsValidObject) && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
 				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
 			{
 				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)]);
