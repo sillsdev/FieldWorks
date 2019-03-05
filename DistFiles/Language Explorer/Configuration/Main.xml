@@ -45,7 +45,7 @@
 
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
-		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
+		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete"/>
 		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord"/>
 		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P"/>
 		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
