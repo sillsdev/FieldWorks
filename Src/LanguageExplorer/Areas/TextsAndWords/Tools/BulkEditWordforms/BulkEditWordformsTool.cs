@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -18,8 +20,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditWordformsTool : ITool
 	{
-		private AreaWideMenuHelper _areaWideMenuHelper;
-		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -37,18 +39,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_areaWideMenuHelper.Dispose();
-			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
-			_textAndWordsAreaMenuHelper.Dispose();
+			_partiallySharedAreaWideMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_areaWideMenuHelper = null;
-			_textAndWordsAreaMenuHelper = null;
+			_partiallySharedAreaWideMenuHelper = null;
 			_browseViewContextMenuFactory = null;
+			_partiallySharedTextsAndWordsToolsMenuHelper = null;
 		}
 
 		/// <summary>
@@ -63,8 +66,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
-			_areaWideMenuHelper.SetupFileExportMenu();
+			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordList);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
+			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -84,12 +91,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Attribute("width").Value = "80000";
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 
-			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
-			((TextAndWordsAreaMenuHelper)_textAndWordsAreaMenuHelper).AddMenusForAllButConcordanceTool();
 		}
 
 		/// <summary>

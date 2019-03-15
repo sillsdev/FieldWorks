@@ -5037,7 +5037,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					var windowType = mainWindow.GetType();
 					var mi = windowType.GetMethod("GetMainMenu", new[] { typeof(string) });
 					var fileMenu = (ToolStripMenuItem)mi.Invoke(mainWindow, new object[] { "_fileToolStripMenuItem" });
-					m_printMenu = (ToolStripMenuItem)fileMenu.DropDownItems["printToolStripMenuItem"];
+					m_printMenu = (ToolStripMenuItem)fileMenu.DropDownItems["CmdPrint"];
 					m_printMenu.Click += Print_Click;
 					m_printMenu.Enabled = false;
 				}

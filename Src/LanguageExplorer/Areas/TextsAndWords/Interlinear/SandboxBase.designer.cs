@@ -29,7 +29,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-				SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
+				// The "new normal": Adding the handler to SharedEventHandlers is deferred,
+				// until the control becomes Visible,
+				// which does not happen for tests.
+				// Even then, it is removed, when the control is not visible, so see if it still exists, before removing it now.
+				EventHandler eventHandler;
+				if (SharedEventHandlers.TryGetEventHandler(AreaServices.SandboxJumpToTool, out eventHandler))
+				{
+					SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
+				}
 				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 			}
 

@@ -51,6 +51,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
@@ -87,15 +89,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
-			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(_xhtmlDocView);
+			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(this, _xhtmlDocView);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

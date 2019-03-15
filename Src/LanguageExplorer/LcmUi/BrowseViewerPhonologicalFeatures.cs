@@ -24,8 +24,8 @@ namespace LanguageExplorer.LcmUi
 		/// The data access passed typically is a decorator for the one in the cache, adding
 		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
-		public BrowseViewerPhonologicalFeatures(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, cache, sortItemProvider, sda)
+		public BrowseViewerPhonologicalFeatures(UiWidgetController uiWidgetController, XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: base(uiWidgetController, nodeSpec, hvoRoot, cache, sortItemProvider, sda)
 		{ }
 
 		///  <summary />

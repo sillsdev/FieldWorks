@@ -2,45 +2,31 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 
 namespace LanguageExplorer
 {
+#if RANDYTODO
+	// TODO: Remove this class when shift in menu handling is finished.
+#endif
 	/// <summary>
 	/// Class that helps tools get a main menu or a sub-menu of a main menu.
 	/// </summary>
 	internal static class MenuServices
 	{
-		private static ToolStripMenuItem GetMenu(ToolStripItemCollection dropDownItems, string menuName)
-		{
-			return (ToolStripMenuItem)dropDownItems[menuName];
-		}
-
-		private static ToolStripMenuItem GetMenu(ToolStrip menustrip, string menuName)
-		{
-			return (ToolStripMenuItem)menustrip.Items[menuName];
-		}
-
 		#region File menu
-
-		internal static ToolStripMenuItem GetFileMenu(MenuStrip menustrip)
-		{
-			return GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetFilePrintMenu(MenuStrip menustrip)
-		{
-			return GetMenu(GetFileMenu(menustrip).DropDownItems, LanguageExplorerConstants.FilePrintToolStripMenuItemName);
-		}
 
 		internal static ToolStripMenuItem GetFileExportMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetFileMenu(menustrip).DropDownItems, LanguageExplorerConstants.FileExportToolStripMenuItemName);
+			throw new NotSupportedException("GetFileExportMenu");
+			//return GetMenu(GetFileMenu(menustrip).DropDownItems, Command.CmdExport.ToString("g"));
 		}
 
 		internal static ToolStripMenuItem GetFileImportMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetFileMenu(menustrip).DropDownItems, LanguageExplorerConstants.FileImportToolStripMenuItemName);
+			throw new NotSupportedException("GetFileImportMenu");
+			//return GetMenu(GetFileMenu(menustrip).DropDownItems, Command.ImportMenu.ToString("g"));
 		}
 
 		#endregion File menu
@@ -49,22 +35,20 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetEditMenu(MenuStrip menustrip)
 		{
-			return GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetEditDeleteMenu(MenuStrip menustrip)
-		{
-			return GetMenu(GetEditMenu(menustrip).DropDownItems, LanguageExplorerConstants.EditDeleteToolStripMenuItemName);
+			throw new NotSupportedException("GetEditMenu");
+			//return GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItemName);
 		}
 
 		internal static ToolStripMenuItem GetEditFindMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetEditMenu(menustrip).DropDownItems, LanguageExplorerConstants.EditFindToolStripMenuItemName);
+			throw new NotSupportedException("GetEditFindMenu");
+			//return GetMenu(GetEditMenu(menustrip).DropDownItems, LanguageExplorerConstants.EditFindToolStripMenuItemName);
 		}
 
 		internal static ToolStripMenuItem GetEditFindAndReplaceMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetEditMenu(menustrip).DropDownItems, LanguageExplorerConstants.EditReplaceToolStripMenuItemName);
+			throw new NotSupportedException("GetEditFindAndReplaceMenu");
+			//return GetMenu(GetEditMenu(menustrip).DropDownItems, LanguageExplorerConstants.EditReplaceToolStripMenuItemName);
 		}
 
 		#endregion Edit menu
@@ -73,88 +57,42 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetViewMenu(MenuStrip menustrip)
 		{
-			return GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItemName);
+			throw new NotSupportedException("GetViewMenu");
+			//return GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItemName);
 		}
 
 		internal static ToolStripMenuItem GetViewRefreshMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetViewMenu(menustrip).DropDownItems, LanguageExplorerConstants.ViewRefreshToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetViewFilterMenu(MenuStrip menustrip)
-		{
-			return GetMenu(GetViewMenu(menustrip).DropDownItems, LanguageExplorerConstants.ViewFiltersToolStripMenuItemName);
+			throw new NotSupportedException("GetViewRefreshMenu");
+			//return GetMenu(GetViewMenu(menustrip).DropDownItems, LanguageExplorerConstants.ViewRefreshToolStripMenuItemName);
 		}
 
 		#endregion View menu
-
-		#region Data menu
-
-		internal static ToolStripMenuItem GetDataMenu(MenuStrip menustrip)
-		{
-			return GetMenu(menustrip, LanguageExplorerConstants.DataToolStripMenuItemName);
-		}
-
-		#endregion Data menu
 
 		#region Insert menu
 
 		internal static ToolStripMenuItem GetInsertMenu(MenuStrip menustrip)
 		{
-			return GetMenu(menustrip, LanguageExplorerConstants.InsertToolStripMenuItemName);
+			throw new NotSupportedException("GetInsertMenu");
+			//return GetMenu(menustrip, LanguageExplorerConstants.InsertToolStripMenuItemName);
 		}
 
 		#endregion Insert menu
-
-		#region Format menu
-
-		internal static ToolStripMenuItem GetFormatMenu(MenuStrip menustrip)
-		{
-			return GetMenu(menustrip, LanguageExplorerConstants.FormatToolStripMenuItemName);
-		}
-
-		#endregion Format menu
 
 		#region Tools menu
 
 		internal static ToolStripMenuItem GetToolsMenu(MenuStrip menustrip)
 		{
-			return GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItemName);
+			throw new NotSupportedException("GetToolsMenu");
+			//return GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItemName);
 		}
 
 		internal static ToolStripMenuItem GetToolsConfigureMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetToolsMenu(menustrip).DropDownItems, LanguageExplorerConstants.ToolsConfigureToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetToolsSpellingMenu(MenuStrip menustrip)
-		{
-			return GetMenu(GetToolsMenu(menustrip).DropDownItems, LanguageExplorerConstants.ToolsSpellingToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetToolsSpellingShowVernacularSpellingErrorsMenu(MenuStrip menustrip)
-		{
-			return GetMenu(GetToolsSpellingMenu(menustrip).DropDownItems, LanguageExplorerConstants.ToolsShowVernacularSpellingErrorsToolStripMenuItemName);
+			throw new NotSupportedException("GetToolsConfigureMenu");
+			//return GetMenu(GetToolsMenu(menustrip).DropDownItems, Command.Configure.ToString("g"));
 		}
 
 		#endregion Tools menu
-
-		#region Parser menu
-
-		internal static ToolStripMenuItem GetParserMenu(MenuStrip menustrip)
-		{
-			return GetMenu(menustrip, LanguageExplorerConstants.ParserToolStripMenuItemName);
-		}
-
-		#endregion Parser menu
-
-		#region Help menu
-
-		internal static ToolStripMenuItem GetHelpMenu(MenuStrip menustrip)
-		{
-			return GetMenu(menustrip, LanguageExplorerConstants.HelpToolStripMenuItemName);
-		}
-
-		#endregion Help menu
 	}
 }

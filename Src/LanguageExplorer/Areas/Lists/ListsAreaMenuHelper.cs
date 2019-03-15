@@ -11,6 +11,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
 {
+#if RANDYTODO
+	// TODO: Make this a private class of ListsArea. No tool/control should use it.
+#endif
 	/// <summary>
 	/// This class handles all interaction for the Lists Area common menus.
 	/// </summary>
@@ -20,8 +23,8 @@ namespace LanguageExplorer.Areas.Lists
 		private Dictionary<string, IPartialToolUiWidgetManager> _listAreaUiWidgetManagers;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private IListArea _area;
+		private ITool _tool;
 		private IRecordList MyRecordList { get; set; }
-		private IToolUiWidgetManager _activeToolUiManager;
 		private DataTree MyDataTree { get; }
 		private const string editMenu = "editMenu";
 		private const string insertMenu = "insertMenu";
@@ -31,18 +34,19 @@ namespace LanguageExplorer.Areas.Lists
 		internal const string AddNewPossibilityListItem = "AddNewPossibilityListItem";
 		internal const string AddNewSubPossibilityListItem = "AddNewSubPossibilityListItem";
 		internal const string InsertFeatureType = "InsertFeatureType";
-		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
+		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
 
-		internal ListsAreaMenuHelper(DataTree dataTree)
+		internal ListsAreaMenuHelper(ITool tool, DataTree dataTree)
 		{
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 
+			_tool = tool;
 			MyDataTree = dataTree;
 		}
 
 		#region Implementation of IAreaUiWidgetManager
 		/// <inheritdoc />
-		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(area, nameof(area));
@@ -52,12 +56,19 @@ namespace LanguageExplorer.Areas.Lists
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = (IListArea)area;
-			_activeToolUiManager = toolUiWidgetManager; // May be null;
 			MyRecordList = recordList;
-			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
+			MyPartiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
 			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
-			MyAreaWideMenuHelper.SetupFileExportMenu();
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
+
+#if RANDYTODO
+			// TODO: Move this into the tool space to conform to the new world order on menu/tool bar buttons.
+			// TODO: This class should now only worry about truly common UI widgets for the entire area.
+			// TODO: A tool will need to handle tool-specific UI widgets, even if they are shared by multiple tools in an area.
+#else
 			_listAreaUiWidgetManagers = new Dictionary<string, IPartialToolUiWidgetManager>
 			{
 				{ editMenu, new ListsAreaEditMenuManager() },
@@ -71,15 +82,13 @@ namespace LanguageExplorer.Areas.Lists
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _listAreaUiWidgetManagers.Values)
 			{
-				manager.Initialize(_majorFlexComponentParameters, _activeToolUiManager, MyRecordList);
+				manager.Initialize(_majorFlexComponentParameters, null, MyRecordList);
 			}
+#endif
 		}
 
 		/// <inheritdoc />
 		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
 		/// <inheritdoc />
 		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
@@ -130,10 +139,10 @@ namespace LanguageExplorer.Areas.Lists
 					manager.Dispose();
 				}
 				_listAreaUiWidgetManagers.Clear();
-				MyAreaWideMenuHelper.Dispose();
+				MyPartiallySharedAreaWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			MyAreaWideMenuHelper = null;
+			MyPartiallySharedAreaWideMenuHelper = null;
 			_area = null;
 			MyRecordList = null;
 			_sharedEventHandlers = null;

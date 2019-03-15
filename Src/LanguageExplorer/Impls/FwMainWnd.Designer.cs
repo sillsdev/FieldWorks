@@ -24,52 +24,89 @@ namespace LanguageExplorer.Impls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwMainWnd));
 			this._menuStrip = new System.Windows.Forms.MenuStrip();
 			this._fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.newFieldWorksProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripFileMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdNewLangProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdChooseLangProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.projectManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.fieldWorksProjectPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.backUpThisProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.restoreAProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
-			this.projectLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.deleteProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.createShortcutOnDesktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripFileMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.archiveWithRAMPSILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.uploadToWebonaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripFileMenuSparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripFileMenuSparator4 = new System.Windows.Forms.ToolStripSeparator();
-			this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.standardFormatLexiconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.translatedListContentToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripFileMenuSparator5 = new System.Windows.Forms.ToolStripSeparator();
-			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdProjectProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdBackup = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdRestoreFromBackup = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdProjectLocation = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDeleteProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdCreateProjectShortcut = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdArchiveWithRamp = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdUploadToWebonary = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdPrint = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.ImportMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportSFMLexicon = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportLinguaLinksData = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportLiftData = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportInterlinearSfm = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportWordsAndGlossesSfm = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportInterlinearData = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportSFMNotebook = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportTranslatedLists = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdExport = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdExportInterlinear = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdExportDiscourseChart = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripFileMenuSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdClose = new System.Windows.Forms.ToolStripMenuItem();
 			this._sendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdFLExBridge = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdViewMessages = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdLiftBridge = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdViewLiftMessages = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSendReceiveMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdObtainAnyFlexBridgeProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdObtainLiftProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSendReceiveMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdObtainFirstFlexBridgeProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdObtainFirstLiftProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSendReceiveMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdHelpChorus = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdCheckForFlexBridgeUpdates = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpAboutFLEXBridge = new System.Windows.Forms.ToolStripMenuItem();
 			this._editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripEditMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripEditMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.pasteHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyLocationAsHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripEditMenuSparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripEditMenuSparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdGoToEntry = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdGoToRecord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdFindAndReplaceText = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdReplaceText = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripEditMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripEditMenuSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdGoToReversalEntry = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdGoToWfiWordform = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDeleteCustomList = new System.Windows.Forms.ToolStripMenuItem();
 			this._viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripViewMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripViewMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripViewMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.LexicalToolsList = new System.Windows.Forms.ToolStripMenuItem();
+			this.WordToolsList = new System.Windows.Forms.ToolStripMenuItem();
+			this.GrammarToolsList = new System.Windows.Forms.ToolStripMenuItem();
+			this.NotebookToolsList = new System.Windows.Forms.ToolStripMenuItem();
+			this.ListsToolsList = new System.Windows.Forms.ToolStripMenuItem();
+			this.ShowInvisibleSpaces = new System.Windows.Forms.ToolStripMenuItem();
+			this.Show_DictionaryPubPreview = new System.Windows.Forms.ToolStripMenuItem();
+			this.ShowHiddenFields = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripViewMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.noFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdChooseTexts = new System.Windows.Forms.ToolStripMenuItem();
 			this._dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_First = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_Previous = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,36 +134,137 @@ namespace LanguageExplorer.Impls
 			this.CmdRepeatLastMoveRight = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdApproveAll = new System.Windows.Forms.ToolStripMenuItem();
 			this._insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.insertMenuLastGlobalSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.specialCharacterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.linkToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLexEntry = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertSense = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertVariant = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_AlternateForm = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertReversalEntry = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_Pronunciation = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertMediaFile = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_Etymology = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertSubsense = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPicture = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertExtNote = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertText = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdAddNote = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdAddWordGlossesToFreeTrans = new System.Windows.Forms.ToolStripMenuItem();
+			this.ClickInsertsInvisibleSpace = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdGuessWordBreaks = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdImportWordSet = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertHumanApprovedAnalysis = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertRecord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertSubrecord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertSubsubrecord = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdAddToLexicon = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertSemDom = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_SemanticDomain = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertAnnotationDef = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPossibility = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertCustomItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertMorphType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLexEntryInflType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLexEntryType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_LexEntryInflType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_LexEntryType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertAnthroCategory = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_AnthroCategory = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPerson = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLocation = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_Location = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLexRefType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertFeatureType = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_Possibility = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_CustomItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdAddCustomList = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPOS = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_POS_SubPossibilities = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_POS_AffixTemplate = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_POS_AffixSlot = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_POS_InflectionClass = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertEndocentricCompound = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertExocentricCompound = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertExceptionFeature = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPhonologicalClosedFeature = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertClosedFeature = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertComplexFeature = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_ClosedFeature_Value = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertPhoneme = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDataTree_Insert_Phoneme_Code = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertSegmentNaturalClasses = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertFeatureNaturalClasses = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertPhEnvironment = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertPhRegularRule = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertPhMetathesisRule = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdInsertMorphemeACP = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertAllomorphACP = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertACPGroup = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdShowCharMap = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdInsertLinkToFile = new System.Windows.Forms.ToolStripMenuItem();
 			this._formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.stylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.applyStyleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.writingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.setUpWritingSystemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdFormatStyle = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdFormatApplyStyle = new System.Windows.Forms.ToolStripMenuItem();
+			this.WritingSystemMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdVernacularWritingSystemProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdAnalysisWritingSystemProperties = new System.Windows.Forms.ToolStripMenuItem();
 			this._toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
-			this.setUpWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripToolsMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.spellingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.showVernacularSpellingErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.utilitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripToolsMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigureDictionary = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigureInterlinear = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigureXmlDocView = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigureList = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigureColumns = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdConfigHeadwordNumbers = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdRestoreDefaults = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.ToolsMenu_CmdVernacularWritingSystemProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.ToolsMenu_CmdAnalysisWritingSystemProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdAddCustomField = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdMergeEntry = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdLexiconLookup = new System.Windows.Forms.ToolStripMenuItem();
+			this.ITexts_AddWordsToLexicon = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.ToolsMenu_SpellingMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdEditSpellingStatus = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdViewIncorrectWords = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdUseVernSpellingDictionary = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdChangeSpelling = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdProjectUtilities = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolMenuSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdToolsOptions = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF2 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF3 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF4 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF6 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF7 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF8 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF9 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF10 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF11 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdMacroF12 = new System.Windows.Forms.ToolStripMenuItem();
 			this._parserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdParseAllWords = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdReparseAllWords = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdReInitializeParser = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdStopParser = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripParserMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripParserMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmdTryAWord = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdParseWordsInCurrentText = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdParseCurrentWord = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdClearSelectedWordParserAnalyses = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripParserMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripParserMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.ChooseParserMenu = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdChooseXAmpleParser = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdChooseHCParser = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,38 +272,38 @@ namespace LanguageExplorer.Impls
 			this._windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.languageExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.trainingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.demoMoviesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.resourcesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.introductionToLexicographyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.introductionToParsingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.technicalNotesOnLinguaLinksImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.technicalNotesOnInterlinearImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.technicalNotesOnWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripHelpMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.reportAProblemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.makeASuggestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripHelpMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.aboutLanguageExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpLanguageExplorer = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpTraining = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpDemoMovies = new System.Windows.Forms.ToolStripMenuItem();
+			this.HelpMenu_ResourcesMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpLexicographyIntro = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpMorphologyIntro = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpNotesSendReceive = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpNotesSFMDatabaseImport = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpNotesLinguaLinksDatabaseImport = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpNotesInterlinearImport = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpNotesWritingSystems = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpXLingPap = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripHelpMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdHelpReportBug = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdHelpMakeSuggestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripHelpMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.CmdHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripStandard = new System.Windows.Forms.ToolStrip();
-			this.toolStripButtonHistoryBack = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonHistoryForward = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.deleteToolStripButton = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.undoToolStripButton = new System.Windows.Forms.ToolStripButton();
-			this.redoToolStripButton = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton_Refresh = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this._tsbFirst = new System.Windows.Forms.ToolStripButton();
-			this._tsbPrevious = new System.Windows.Forms.ToolStripButton();
-			this._tsbNext = new System.Windows.Forms.ToolStripButton();
-			this._tsbLast = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonFlexLiftBridge = new System.Windows.Forms.ToolStripButton();
+			this.CmdHistoryBack = new System.Windows.Forms.ToolStripButton();
+			this.CmdHistoryForward = new System.Windows.Forms.ToolStripButton();
+			this.standardToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdDeleteRecord = new System.Windows.Forms.ToolStripButton();
+			this.standardToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdUndo = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdRedo = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdRefresh = new System.Windows.Forms.ToolStripButton();
+			this.standardToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdFirstRecord = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdPreviousRecord = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdNextRecord = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdLastRecord = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdFLExLiftBridge = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
 			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
@@ -175,13 +313,82 @@ namespace LanguageExplorer.Impls
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelArea = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
-			this.toolStripView = new System.Windows.Forms.ToolStrip();
-			this.toolStripButtonChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
 			this.toolStripInsert = new System.Windows.Forms.ToolStrip();
-			this.toolStripButtonFindText = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertLexEntry = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdGoToEntry = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertReversalEntry = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdGoToReversalEntry = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertText = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdAddNote = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdApproveAllButton = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertHumanApprovedAnalysis = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdGoToWfiWordform = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdFindAndReplaceText = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdBreakPhraseButton = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertRecord = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdGoToRecord = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdAddToLexicon = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdLexiconLookup = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertSemDom = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertAnnotationDef = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertPossibility = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertCustomItem = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertMorphType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertLexEntryInflType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertLexEntryType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_LexEntryType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertAnthroCategory = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertPerson = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertLocation = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_Location = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertLexRefType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertFeatureType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_Possibility = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_CustomItem = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateSemDom = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateAnnotationDef = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicatePossibility = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateCustomItem = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateMorphType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateAnthroCategory = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicatePerson = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateLocation = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateLexRefType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicateFeatureType = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertPOS = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertEndocentricCompound = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertExocentricCompound = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertExceptionFeature = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertPhonologicalClosedFeature = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertClosedFeature = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertComplexFeature = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertPhoneme = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertSegmentNaturalClasses = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertFeatureNaturalClasses = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertPhEnvironment = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertPhRegularRule = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertPhMetathesisRule = new System.Windows.Forms.ToolStripButton();
+			this.insertToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+			this.Toolbar_CmdInsertMorphemeACP = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertAllomorphACP = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdInsertACPGroup = new System.Windows.Forms.ToolStripButton();
+			this.toolStripView = new System.Windows.Forms.ToolStrip();
+			this.Toolbar_CmdChooseTexts = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
-			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
-			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
+			this.Toolbar_WritingSystemList = new System.Windows.Forms.ToolStripComboBox();
+			this.Toolbar_CombinedStylesList = new System.Windows.Forms.ToolStripComboBox();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -195,8 +402,8 @@ namespace LanguageExplorer.Impls
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).BeginInit();
-			this.toolStripView.SuspendLayout();
 			this.toolStripInsert.SuspendLayout();
+			this.toolStripView.SuspendLayout();
 			this.toolStripFormat.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -225,228 +432,430 @@ namespace LanguageExplorer.Impls
 			// _fileToolStripMenuItem
 			// 
 			this._fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newFieldWorksProjectToolStripMenuItem,
-            this.openToolStripMenuItem,
-            this.toolStripFileMenuSparator1,
+            this.CmdNewLangProject,
+            this.CmdChooseLangProject,
+            this.toolStripFileMenuSeparator1,
             this.projectManagementToolStripMenuItem,
-            this.toolStripFileMenuSparator2,
-            this.archiveWithRAMPSILToolStripMenuItem,
-            this.uploadToWebonaryToolStripMenuItem,
-            this.toolStripFileMenuSparator3,
-            this.printToolStripMenuItem,
-            this.toolStripFileMenuSparator4,
-            this.importToolStripMenuItem,
-            this.exportToolStripMenuItem,
-            this.toolStripFileMenuSparator5,
-            this.closeToolStripMenuItem});
+            this.toolStripFileMenuSeparator3,
+            this.CmdArchiveWithRamp,
+            this.CmdUploadToWebonary,
+            this.toolStripFileMenuSeparator4,
+            this.CmdPrint,
+            this.toolStripFileMenuSeparator5,
+            this.ImportMenu,
+            this.CmdExport,
+            this.CmdExportInterlinear,
+            this.CmdExportDiscourseChart,
+            this.toolStripFileMenuSeparator6,
+            this.CmdClose});
 			this._fileToolStripMenuItem.Name = "_fileToolStripMenuItem";
 			this._fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this._fileToolStripMenuItem.Text = "&File";
 			// 
-			// newFieldWorksProjectToolStripMenuItem
+			// CmdNewLangProject
 			// 
-			this.newFieldWorksProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newFieldWorksProjectToolStripMenuItem.Image")));
-			this.newFieldWorksProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.newFieldWorksProjectToolStripMenuItem.Name = "newFieldWorksProjectToolStripMenuItem";
-			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.newFieldWorksProjectToolStripMenuItem.Text = "&New FieldWorks Project...";
-			this.newFieldWorksProjectToolStripMenuItem.ToolTipText = "Create a new FieldWorks project.";
-			this.newFieldWorksProjectToolStripMenuItem.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
+			this.CmdNewLangProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdNewLangProject.Image")));
+			this.CmdNewLangProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdNewLangProject.Name = "CmdNewLangProject";
+			this.CmdNewLangProject.Size = new System.Drawing.Size(211, 22);
+			this.CmdNewLangProject.Text = "&New FieldWorks Project...";
+			this.CmdNewLangProject.ToolTipText = "Create a new FieldWorks project.";
+			this.CmdNewLangProject.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
 			// 
-			// openToolStripMenuItem
+			// CmdChooseLangProject
 			// 
-			this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
-			this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.openToolStripMenuItem.Text = "&Open...";
-			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
-			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
+			this.CmdChooseLangProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdChooseLangProject.Image")));
+			this.CmdChooseLangProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdChooseLangProject.Name = "CmdChooseLangProject";
+			this.CmdChooseLangProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.CmdChooseLangProject.Size = new System.Drawing.Size(211, 22);
+			this.CmdChooseLangProject.Text = "&Open...";
+			this.CmdChooseLangProject.ToolTipText = "Open an existing FieldWorks project.";
+			this.CmdChooseLangProject.Click += new System.EventHandler(this.File_Open);
 			// 
-			// toolStripFileMenuSparator1
+			// toolStripFileMenuSeparator1
 			// 
-			this.toolStripFileMenuSparator1.Name = "toolStripFileMenuSparator1";
-			this.toolStripFileMenuSparator1.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSeparator1.Name = "toolStripFileMenuSeparator1";
+			this.toolStripFileMenuSeparator1.Size = new System.Drawing.Size(208, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
 			this.projectManagementToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fieldWorksProjectPropertiesToolStripMenuItem,
-            this.backUpThisProjectToolStripMenuItem,
-            this.restoreAProjectToolStripMenuItem,
-            this.toolStripMenuItem7,
-            this.projectLocationsToolStripMenuItem,
-            this.deleteProjectToolStripMenuItem,
-            this.createShortcutOnDesktopToolStripMenuItem});
+            this.CmdProjectProperties,
+            this.CmdBackup,
+            this.CmdRestoreFromBackup,
+            this.toolStripFileMenuSeparator2,
+            this.CmdProjectLocation,
+            this.CmdDeleteProject,
+            this.CmdCreateProjectShortcut});
 			this.projectManagementToolStripMenuItem.Name = "projectManagementToolStripMenuItem";
 			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.projectManagementToolStripMenuItem.Text = "Project &Management";
 			this.projectManagementToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
-			// fieldWorksProjectPropertiesToolStripMenuItem
+			// CmdProjectProperties
 			// 
-			this.fieldWorksProjectPropertiesToolStripMenuItem.Name = "fieldWorksProjectPropertiesToolStripMenuItem";
-			this.fieldWorksProjectPropertiesToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.fieldWorksProjectPropertiesToolStripMenuItem.Text = "Field&Works Project Properties...";
-			this.fieldWorksProjectPropertiesToolStripMenuItem.ToolTipText = "Edit the special properties of this FieldWorks project (such as name and writing " +
+			this.CmdProjectProperties.Name = "CmdProjectProperties";
+			this.CmdProjectProperties.Size = new System.Drawing.Size(237, 22);
+			this.CmdProjectProperties.Text = "Field&Works Project Properties...";
+			this.CmdProjectProperties.ToolTipText = "Edit the special properties of this FieldWorks project (such as name and writing " +
     "systems).";
-			this.fieldWorksProjectPropertiesToolStripMenuItem.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
+			this.CmdProjectProperties.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
 			// 
-			// backUpThisProjectToolStripMenuItem
+			// CmdBackup
 			// 
-			this.backUpThisProjectToolStripMenuItem.Name = "backUpThisProjectToolStripMenuItem";
-			this.backUpThisProjectToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.backUpThisProjectToolStripMenuItem.Text = "&Back up this Project...";
-			this.backUpThisProjectToolStripMenuItem.ToolTipText = "Back up a FieldWorks project.";
-			this.backUpThisProjectToolStripMenuItem.Click += new System.EventHandler(this.File_Back_up_this_Project);
+			this.CmdBackup.Name = "CmdBackup";
+			this.CmdBackup.Size = new System.Drawing.Size(237, 22);
+			this.CmdBackup.Text = "&Back up this Project...";
+			this.CmdBackup.ToolTipText = "Back up a FieldWorks project.";
+			this.CmdBackup.Click += new System.EventHandler(this.File_Back_up_this_Project);
 			// 
-			// restoreAProjectToolStripMenuItem
+			// CmdRestoreFromBackup
 			// 
-			this.restoreAProjectToolStripMenuItem.Name = "restoreAProjectToolStripMenuItem";
-			this.restoreAProjectToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.restoreAProjectToolStripMenuItem.Text = "&Restore a Project...";
-			this.restoreAProjectToolStripMenuItem.ToolTipText = "Restore a FieldWorks project.";
-			this.restoreAProjectToolStripMenuItem.Click += new System.EventHandler(this.File_Restore_a_Project);
+			this.CmdRestoreFromBackup.Name = "CmdRestoreFromBackup";
+			this.CmdRestoreFromBackup.Size = new System.Drawing.Size(237, 22);
+			this.CmdRestoreFromBackup.Text = "&Restore a Project...";
+			this.CmdRestoreFromBackup.ToolTipText = "Restore a FieldWorks project.";
+			this.CmdRestoreFromBackup.Click += new System.EventHandler(this.File_Restore_a_Project);
 			// 
-			// toolStripMenuItem7
+			// toolStripFileMenuSeparator2
 			// 
-			this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-			this.toolStripMenuItem7.Size = new System.Drawing.Size(234, 6);
+			this.toolStripFileMenuSeparator2.Name = "toolStripFileMenuSeparator2";
+			this.toolStripFileMenuSeparator2.Size = new System.Drawing.Size(234, 6);
 			// 
-			// projectLocationsToolStripMenuItem
+			// CmdProjectLocation
 			// 
-			this.projectLocationsToolStripMenuItem.Name = "projectLocationsToolStripMenuItem";
-			this.projectLocationsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.projectLocationsToolStripMenuItem.Text = "Project Locations...";
-			this.projectLocationsToolStripMenuItem.Click += new System.EventHandler(this.File_Project_Location);
+			this.CmdProjectLocation.Name = "CmdProjectLocation";
+			this.CmdProjectLocation.Size = new System.Drawing.Size(237, 22);
+			this.CmdProjectLocation.Text = "Project Locations...";
+			this.CmdProjectLocation.Click += new System.EventHandler(this.File_Project_Location);
 			// 
-			// deleteProjectToolStripMenuItem
+			// CmdDeleteProject
 			// 
-			this.deleteProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("deleteProjectToolStripMenuItem.Image")));
-			this.deleteProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.deleteProjectToolStripMenuItem.Name = "deleteProjectToolStripMenuItem";
-			this.deleteProjectToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.deleteProjectToolStripMenuItem.Text = "&Delete Project...";
-			this.deleteProjectToolStripMenuItem.ToolTipText = "Delete FieldWorks project.";
-			this.deleteProjectToolStripMenuItem.Click += new System.EventHandler(this.File_Delete_Project);
+			this.CmdDeleteProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdDeleteProject.Image")));
+			this.CmdDeleteProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdDeleteProject.Name = "CmdDeleteProject";
+			this.CmdDeleteProject.Size = new System.Drawing.Size(237, 22);
+			this.CmdDeleteProject.Text = "&Delete Project...";
+			this.CmdDeleteProject.ToolTipText = "Delete FieldWorks project.";
+			this.CmdDeleteProject.Click += new System.EventHandler(this.File_Delete_Project);
 			// 
-			// createShortcutOnDesktopToolStripMenuItem
+			// CmdCreateProjectShortcut
 			// 
-			this.createShortcutOnDesktopToolStripMenuItem.Name = "createShortcutOnDesktopToolStripMenuItem";
-			this.createShortcutOnDesktopToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-			this.createShortcutOnDesktopToolStripMenuItem.Text = "&Create Shortcut on Desktop";
-			this.createShortcutOnDesktopToolStripMenuItem.ToolTipText = "Create a desktop shortcut to this project.";
-			this.createShortcutOnDesktopToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
+			this.CmdCreateProjectShortcut.Name = "CmdCreateProjectShortcut";
+			this.CmdCreateProjectShortcut.Size = new System.Drawing.Size(237, 22);
+			this.CmdCreateProjectShortcut.Text = "&Create Shortcut on Desktop";
+			this.CmdCreateProjectShortcut.ToolTipText = "Create a desktop shortcut to this project.";
+			this.CmdCreateProjectShortcut.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
-			// toolStripFileMenuSparator2
+			// toolStripFileMenuSeparator3
 			// 
-			this.toolStripFileMenuSparator2.Name = "toolStripFileMenuSparator2";
-			this.toolStripFileMenuSparator2.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSeparator3.Name = "toolStripFileMenuSeparator3";
+			this.toolStripFileMenuSeparator3.Size = new System.Drawing.Size(208, 6);
 			// 
-			// archiveWithRAMPSILToolStripMenuItem
+			// CmdArchiveWithRamp
 			// 
-			this.archiveWithRAMPSILToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("archiveWithRAMPSILToolStripMenuItem.Image")));
-			this.archiveWithRAMPSILToolStripMenuItem.Name = "archiveWithRAMPSILToolStripMenuItem";
-			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.archiveWithRAMPSILToolStripMenuItem.Text = "&Archive with RAMP (SIL)...";
-			this.archiveWithRAMPSILToolStripMenuItem.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
-			this.archiveWithRAMPSILToolStripMenuItem.Click += new System.EventHandler(this.File_Archive_With_RAMP);
+			this.CmdArchiveWithRamp.Image = ((System.Drawing.Image)(resources.GetObject("CmdArchiveWithRamp.Image")));
+			this.CmdArchiveWithRamp.Name = "CmdArchiveWithRamp";
+			this.CmdArchiveWithRamp.Size = new System.Drawing.Size(211, 22);
+			this.CmdArchiveWithRamp.Text = "&Archive with RAMP (SIL)...";
+			this.CmdArchiveWithRamp.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
+			this.CmdArchiveWithRamp.Click += new System.EventHandler(this.File_Archive_With_RAMP);
 			// 
-			// uploadToWebonaryToolStripMenuItem
+			// CmdUploadToWebonary
 			// 
-			this.uploadToWebonaryToolStripMenuItem.Name = "uploadToWebonaryToolStripMenuItem";
-			this.uploadToWebonaryToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.uploadToWebonaryToolStripMenuItem.Text = "Upload to &Webonary...";
-			this.uploadToWebonaryToolStripMenuItem.Click += new System.EventHandler(this.UploadToWebonary_Click);
+			this.CmdUploadToWebonary.Name = "CmdUploadToWebonary";
+			this.CmdUploadToWebonary.Size = new System.Drawing.Size(211, 22);
+			this.CmdUploadToWebonary.Text = "Upload to &Webonary...";
+			this.CmdUploadToWebonary.Click += new System.EventHandler(this.UploadToWebonary_Click);
 			// 
-			// toolStripFileMenuSparator3
+			// toolStripFileMenuSeparator4
 			// 
-			this.toolStripFileMenuSparator3.Name = "toolStripFileMenuSparator3";
-			this.toolStripFileMenuSparator3.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSeparator4.Name = "toolStripFileMenuSeparator4";
+			this.toolStripFileMenuSeparator4.Size = new System.Drawing.Size(208, 6);
 			// 
-			// printToolStripMenuItem
+			// CmdPrint
 			// 
-			this.printToolStripMenuItem.Enabled = false;
-			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
-			this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.printToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.printToolStripMenuItem.Text = "&Print...";
-			this.printToolStripMenuItem.ToolTipText = "Print";
+			this.CmdPrint.Enabled = false;
+			this.CmdPrint.Name = "CmdPrint";
+			this.CmdPrint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+			this.CmdPrint.Size = new System.Drawing.Size(211, 22);
+			this.CmdPrint.Text = "&Print...";
+			this.CmdPrint.ToolTipText = "Print";
 			// 
-			// toolStripFileMenuSparator4
+			// toolStripFileMenuSeparator5
 			// 
-			this.toolStripFileMenuSparator4.Name = "toolStripFileMenuSparator4";
-			this.toolStripFileMenuSparator4.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSeparator5.Name = "toolStripFileMenuSeparator5";
+			this.toolStripFileMenuSeparator5.Size = new System.Drawing.Size(208, 6);
 			// 
-			// importToolStripMenuItem
+			// ImportMenu
 			// 
-			this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.standardFormatLexiconToolStripMenuItem,
-            this.translatedListContentToolStripMenuItem1});
-			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-			this.importToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.importToolStripMenuItem.Text = "&Import";
+			this.ImportMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdImportSFMLexicon,
+            this.CmdImportLinguaLinksData,
+            this.CmdImportLiftData,
+            this.CmdImportInterlinearSfm,
+            this.CmdImportWordsAndGlossesSfm,
+            this.CmdImportInterlinearData,
+            this.CmdImportSFMNotebook,
+            this.CmdImportTranslatedLists});
+			this.ImportMenu.Name = "ImportMenu";
+			this.ImportMenu.Size = new System.Drawing.Size(211, 22);
+			this.ImportMenu.Text = "&Import";
 			// 
-			// standardFormatLexiconToolStripMenuItem
+			// CmdImportSFMLexicon
 			// 
-			this.standardFormatLexiconToolStripMenuItem.Name = "standardFormatLexiconToolStripMenuItem";
-			this.standardFormatLexiconToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-			this.standardFormatLexiconToolStripMenuItem.Text = "Standard Format Lexicon...";
-			this.standardFormatLexiconToolStripMenuItem.Click += new System.EventHandler(this.File_Import_Standard_Format_Marker_Click);
+			this.CmdImportSFMLexicon.Name = "CmdImportSFMLexicon";
+			this.CmdImportSFMLexicon.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportSFMLexicon.Text = "Standard Format Lexicon...";
+			this.CmdImportSFMLexicon.Click += new System.EventHandler(this.File_Import_Standard_Format_Marker_Click);
 			// 
-			// translatedListContentToolStripMenuItem1
+			// CmdImportLinguaLinksData
 			// 
-			this.translatedListContentToolStripMenuItem1.Name = "translatedListContentToolStripMenuItem1";
-			this.translatedListContentToolStripMenuItem1.Size = new System.Drawing.Size(214, 22);
-			this.translatedListContentToolStripMenuItem1.Text = "&Translated List Content";
-			this.translatedListContentToolStripMenuItem1.Click += new System.EventHandler(this.File_Translated_List_Content);
+			this.CmdImportLinguaLinksData.Name = "CmdImportLinguaLinksData";
+			this.CmdImportLinguaLinksData.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportLinguaLinksData.Text = "&LinguaLinks Data...";
+			this.CmdImportLinguaLinksData.Visible = false;
 			// 
-			// exportToolStripMenuItem
+			// CmdImportLiftData
 			// 
-			this.exportToolStripMenuItem.Enabled = false;
-			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.exportToolStripMenuItem.Text = "&Export...";
-			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
+			this.CmdImportLiftData.Name = "CmdImportLiftData";
+			this.CmdImportLiftData.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportLiftData.Text = "L&IFT Lexicon...";
+			this.CmdImportLiftData.Visible = false;
 			// 
-			// toolStripFileMenuSparator5
+			// CmdImportInterlinearSfm
 			// 
-			this.toolStripFileMenuSparator5.Name = "toolStripFileMenuSparator5";
-			this.toolStripFileMenuSparator5.Size = new System.Drawing.Size(208, 6);
+			this.CmdImportInterlinearSfm.Name = "CmdImportInterlinearSfm";
+			this.CmdImportInterlinearSfm.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportInterlinearSfm.Text = "Standard Format I&nterlinear...";
+			this.CmdImportInterlinearSfm.Visible = false;
 			// 
-			// closeToolStripMenuItem
+			// CmdImportWordsAndGlossesSfm
 			// 
-			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.closeToolStripMenuItem.Text = "&Close";
-			this.closeToolStripMenuItem.ToolTipText = "Close this project.";
-			this.closeToolStripMenuItem.Click += new System.EventHandler(this.File_CloseWindow);
+			this.CmdImportWordsAndGlossesSfm.Name = "CmdImportWordsAndGlossesSfm";
+			this.CmdImportWordsAndGlossesSfm.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportWordsAndGlossesSfm.Text = "Standard Format W&ords and Glosses...";
+			this.CmdImportWordsAndGlossesSfm.Visible = false;
+			// 
+			// CmdImportInterlinearData
+			// 
+			this.CmdImportInterlinearData.Name = "CmdImportInterlinearData";
+			this.CmdImportInterlinearData.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportInterlinearData.Text = "FLExText Interl&inear...";
+			this.CmdImportInterlinearData.Visible = false;
+			// 
+			// CmdImportSFMNotebook
+			// 
+			this.CmdImportSFMNotebook.Name = "CmdImportSFMNotebook";
+			this.CmdImportSFMNotebook.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportSFMNotebook.Text = "Standard Format &Notebook data...";
+			this.CmdImportSFMNotebook.Visible = false;
+			// 
+			// CmdImportTranslatedLists
+			// 
+			this.CmdImportTranslatedLists.Name = "CmdImportTranslatedLists";
+			this.CmdImportTranslatedLists.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportTranslatedLists.Text = "&Translated List Content";
+			this.CmdImportTranslatedLists.Click += new System.EventHandler(this.File_Translated_List_Content);
+			// 
+			// CmdExport
+			// 
+			this.CmdExport.Enabled = false;
+			this.CmdExport.Name = "CmdExport";
+			this.CmdExport.Size = new System.Drawing.Size(211, 22);
+			this.CmdExport.Text = "&Export...";
+			this.CmdExport.ToolTipText = "Export this FieldWorks project to a file.";
+			// 
+			// CmdExportInterlinear
+			// 
+			this.CmdExportInterlinear.Name = "CmdExportInterlinear";
+			this.CmdExportInterlinear.Size = new System.Drawing.Size(211, 22);
+			this.CmdExportInterlinear.Text = "&Export Interlinear...";
+			this.CmdExportInterlinear.Visible = false;
+			// 
+			// CmdExportDiscourseChart
+			// 
+			this.CmdExportDiscourseChart.Name = "CmdExportDiscourseChart";
+			this.CmdExportDiscourseChart.Size = new System.Drawing.Size(211, 22);
+			this.CmdExportDiscourseChart.Text = "Export Discourse Chart...";
+			this.CmdExportDiscourseChart.Visible = false;
+			// 
+			// toolStripFileMenuSeparator6
+			// 
+			this.toolStripFileMenuSeparator6.Name = "toolStripFileMenuSeparator6";
+			this.toolStripFileMenuSeparator6.Size = new System.Drawing.Size(208, 6);
+			// 
+			// CmdClose
+			// 
+			this.CmdClose.Name = "CmdClose";
+			this.CmdClose.Size = new System.Drawing.Size(211, 22);
+			this.CmdClose.Text = "&Close";
+			this.CmdClose.ToolTipText = "Close this project.";
+			this.CmdClose.Click += new System.EventHandler(this.File_CloseWindow);
 			// 
 			// _sendReceiveToolStripMenuItem
 			// 
+			this._sendReceiveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdFLExBridge,
+            this.CmdViewMessages,
+            this.CmdLiftBridge,
+            this.CmdViewLiftMessages,
+            this.toolStripSendReceiveMenuSeparator1,
+            this.CmdObtainAnyFlexBridgeProject,
+            this.CmdObtainLiftProject,
+            this.toolStripSendReceiveMenuSeparator2,
+            this.CmdObtainFirstFlexBridgeProject,
+            this.CmdObtainFirstLiftProject,
+            this.toolStripSendReceiveMenuSeparator3,
+            this.CmdHelpChorus,
+            this.CmdCheckForFlexBridgeUpdates,
+            this.CmdHelpAboutFLEXBridge});
 			this._sendReceiveToolStripMenuItem.Name = "_sendReceiveToolStripMenuItem";
 			this._sendReceiveToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
 			this._sendReceiveToolStripMenuItem.Text = "&Send/Receive";
+			// 
+			// CmdFLExBridge
+			// 
+			this.CmdFLExBridge.Image = ((System.Drawing.Image)(resources.GetObject("CmdFLExBridge.Image")));
+			this.CmdFLExBridge.Name = "CmdFLExBridge";
+			this.CmdFLExBridge.Size = new System.Drawing.Size(338, 22);
+			this.CmdFLExBridge.Text = "Send/Receive &Project (with other FLEx users)...";
+			this.CmdFLExBridge.ToolTipText = "Send/Receive this Project (lexicon and texts)";
+			this.CmdFLExBridge.Visible = false;
+			// 
+			// CmdViewMessages
+			// 
+			this.CmdViewMessages.Name = "CmdViewMessages";
+			this.CmdViewMessages.Size = new System.Drawing.Size(338, 22);
+			this.CmdViewMessages.Text = "&View Project Messages...";
+			this.CmdViewMessages.ToolTipText = "View Project questions, merge conflicts, and notifications";
+			this.CmdViewMessages.Visible = false;
+			// 
+			// CmdLiftBridge
+			// 
+			this.CmdLiftBridge.Image = ((System.Drawing.Image)(resources.GetObject("CmdLiftBridge.Image")));
+			this.CmdLiftBridge.Name = "CmdLiftBridge";
+			this.CmdLiftBridge.Size = new System.Drawing.Size(338, 22);
+			this.CmdLiftBridge.Text = "Send/Receive &Lexicon (WeSay)...";
+			this.CmdLiftBridge.ToolTipText = "Send/Receive only the Lexicon in this project (with WeSay or other programs that " +
+    "use LIFT)";
+			this.CmdLiftBridge.Visible = false;
+			// 
+			// CmdViewLiftMessages
+			// 
+			this.CmdViewLiftMessages.Name = "CmdViewLiftMessages";
+			this.CmdViewLiftMessages.Size = new System.Drawing.Size(338, 22);
+			this.CmdViewLiftMessages.Text = "Vie&w Lexicon Messages...";
+			this.CmdViewLiftMessages.ToolTipText = "View Lexicon (LIFT) questions, merge conflicts, and notifications";
+			this.CmdViewLiftMessages.Visible = false;
+			// 
+			// toolStripSendReceiveMenuSeparator1
+			// 
+			this.toolStripSendReceiveMenuSeparator1.Name = "toolStripSendReceiveMenuSeparator1";
+			this.toolStripSendReceiveMenuSeparator1.Size = new System.Drawing.Size(335, 6);
+			this.toolStripSendReceiveMenuSeparator1.Visible = false;
+			// 
+			// CmdObtainAnyFlexBridgeProject
+			// 
+			this.CmdObtainAnyFlexBridgeProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainAnyFlexBridgeProject.Image")));
+			this.CmdObtainAnyFlexBridgeProject.Name = "CmdObtainAnyFlexBridgeProject";
+			this.CmdObtainAnyFlexBridgeProject.Size = new System.Drawing.Size(338, 22);
+			this.CmdObtainAnyFlexBridgeProject.Text = "&Get Project from Colleague...";
+			this.CmdObtainAnyFlexBridgeProject.ToolTipText = "Receive a Project or Lexicon from a colleague for the first time (creates a new p" +
+    "roject)";
+			this.CmdObtainAnyFlexBridgeProject.Visible = false;
+			// 
+			// CmdObtainLiftProject
+			// 
+			this.CmdObtainLiftProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainLiftProject.Image")));
+			this.CmdObtainLiftProject.Name = "CmdObtainLiftProject";
+			this.CmdObtainLiftProject.Size = new System.Drawing.Size(338, 22);
+			this.CmdObtainLiftProject.Text = "Get Lexicon (WeSay) and &Merge with this Project...";
+			this.CmdObtainLiftProject.ToolTipText = "Receive a Lexicon for the first time (from a WeSay or other LIFT project) and mer" +
+    "ge it into the current project";
+			this.CmdObtainLiftProject.Visible = false;
+			// 
+			// toolStripSendReceiveMenuSeparator2
+			// 
+			this.toolStripSendReceiveMenuSeparator2.Name = "toolStripSendReceiveMenuSeparator2";
+			this.toolStripSendReceiveMenuSeparator2.Size = new System.Drawing.Size(335, 6);
+			this.toolStripSendReceiveMenuSeparator2.Visible = false;
+			// 
+			// CmdObtainFirstFlexBridgeProject
+			// 
+			this.CmdObtainFirstFlexBridgeProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainFirstFlexBridgeProject.Image")));
+			this.CmdObtainFirstFlexBridgeProject.Name = "CmdObtainFirstFlexBridgeProject";
+			this.CmdObtainFirstFlexBridgeProject.Size = new System.Drawing.Size(338, 22);
+			this.CmdObtainFirstFlexBridgeProject.Text = "Send this &Project for the first time...";
+			this.CmdObtainFirstFlexBridgeProject.ToolTipText = "Creates a full project repository for this project for the first time (other proj" +
+    "ect members will use \"Get Project\")";
+			this.CmdObtainFirstFlexBridgeProject.Visible = false;
+			// 
+			// CmdObtainFirstLiftProject
+			// 
+			this.CmdObtainFirstLiftProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainFirstLiftProject.Image")));
+			this.CmdObtainFirstLiftProject.Name = "CmdObtainFirstLiftProject";
+			this.CmdObtainFirstLiftProject.Size = new System.Drawing.Size(338, 22);
+			this.CmdObtainFirstLiftProject.Text = "Send this &Lexicon for the first time (to WeSay)...";
+			this.CmdObtainFirstLiftProject.ToolTipText = "Creates a LIFT repository for the lexical data in this project for the first time" +
+    " (for use with WeSay and other LIFT programs)";
+			this.CmdObtainFirstLiftProject.Visible = false;
+			// 
+			// toolStripSendReceiveMenuSeparator3
+			// 
+			this.toolStripSendReceiveMenuSeparator3.Name = "toolStripSendReceiveMenuSeparator3";
+			this.toolStripSendReceiveMenuSeparator3.Size = new System.Drawing.Size(335, 6);
+			this.toolStripSendReceiveMenuSeparator3.Visible = false;
+			// 
+			// CmdHelpChorus
+			// 
+			this.CmdHelpChorus.Name = "CmdHelpChorus";
+			this.CmdHelpChorus.Size = new System.Drawing.Size(338, 22);
+			this.CmdHelpChorus.Text = "&Help...";
+			this.CmdHelpChorus.ToolTipText = "Help for using Chorus-enabled features";
+			this.CmdHelpChorus.Visible = false;
+			// 
+			// CmdCheckForFlexBridgeUpdates
+			// 
+			this.CmdCheckForFlexBridgeUpdates.Name = "CmdCheckForFlexBridgeUpdates";
+			this.CmdCheckForFlexBridgeUpdates.Size = new System.Drawing.Size(338, 22);
+			this.CmdCheckForFlexBridgeUpdates.Text = "Check for FLEx Bridge &Updates...";
+			this.CmdCheckForFlexBridgeUpdates.ToolTipText = "Check for FLEx Bridge updates";
+			this.CmdCheckForFlexBridgeUpdates.Visible = false;
+			// 
+			// CmdHelpAboutFLEXBridge
+			// 
+			this.CmdHelpAboutFLEXBridge.Name = "CmdHelpAboutFLEXBridge";
+			this.CmdHelpAboutFLEXBridge.Size = new System.Drawing.Size(338, 22);
+			this.CmdHelpAboutFLEXBridge.Text = "&About FLEx Bridge...";
+			this.CmdHelpAboutFLEXBridge.ToolTipText = "Display information about FLEx Bridge";
+			this.CmdHelpAboutFLEXBridge.Visible = false;
 			// 
 			// _editToolStripMenuItem
 			// 
 			this._editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem,
-            this.toolStripEditMenuSparator1,
+            this.toolStripEditMenuSeparator1,
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.toolStripEditMenuSparator2,
+            this.toolStripEditMenuSeparator2,
             this.pasteHyperlinkToolStripMenuItem,
             this.copyLocationAsHyperlinkToolStripMenuItem,
-            this.toolStripEditMenuSparator3,
-            this.findToolStripMenuItem,
-            this.replaceToolStripMenuItem,
-            this.toolStripEditMenuSparator4,
+            this.toolStripEditMenuSeparator3,
+            this.CmdGoToEntry,
+            this.CmdGoToRecord,
+            this.CmdFindAndReplaceText,
+            this.CmdReplaceText,
+            this.toolStripEditMenuSeparator4,
             this.selectAllToolStripMenuItem,
-            this.deleteToolStripMenuItem});
+            this.deleteToolStripMenuItem,
+            this.toolStripEditMenuSeparator5,
+            this.CmdGoToReversalEntry,
+            this.CmdGoToWfiWordform,
+            this.CmdDeleteCustomList});
 			this._editToolStripMenuItem.Name = "_editToolStripMenuItem";
 			this._editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this._editToolStripMenuItem.Text = "&Edit";
@@ -473,10 +882,10 @@ namespace LanguageExplorer.Impls
 			this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
 			this.redoToolStripMenuItem.Click += new System.EventHandler(this.Edit_Redo_Click);
 			// 
-			// toolStripEditMenuSparator1
+			// toolStripEditMenuSeparator1
 			// 
-			this.toolStripEditMenuSparator1.Name = "toolStripEditMenuSparator1";
-			this.toolStripEditMenuSparator1.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSeparator1.Name = "toolStripEditMenuSeparator1";
+			this.toolStripEditMenuSeparator1.Size = new System.Drawing.Size(216, 6);
 			// 
 			// cutToolStripMenuItem
 			// 
@@ -511,10 +920,10 @@ namespace LanguageExplorer.Impls
 			this.pasteToolStripMenuItem.ToolTipText = "Paste";
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste);
 			// 
-			// toolStripEditMenuSparator2
+			// toolStripEditMenuSeparator2
 			// 
-			this.toolStripEditMenuSparator2.Name = "toolStripEditMenuSparator2";
-			this.toolStripEditMenuSparator2.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSeparator2.Name = "toolStripEditMenuSeparator2";
+			this.toolStripEditMenuSeparator2.Size = new System.Drawing.Size(216, 6);
 			// 
 			// pasteHyperlinkToolStripMenuItem
 			// 
@@ -531,32 +940,47 @@ namespace LanguageExplorer.Impls
 			this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
 			this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
 			// 
-			// toolStripEditMenuSparator3
+			// toolStripEditMenuSeparator3
 			// 
-			this.toolStripEditMenuSparator3.Name = "toolStripEditMenuSparator3";
-			this.toolStripEditMenuSparator3.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSeparator3.Name = "toolStripEditMenuSeparator3";
+			this.toolStripEditMenuSeparator3.Size = new System.Drawing.Size(216, 6);
 			// 
-			// findToolStripMenuItem
+			// CmdGoToEntry
 			// 
-			this.findToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("findToolStripMenuItem.Image")));
-			this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-			this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+			this.CmdGoToEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToEntry.Image")));
+			this.CmdGoToEntry.Name = "CmdGoToEntry";
+			this.CmdGoToEntry.Size = new System.Drawing.Size(219, 22);
+			this.CmdGoToEntry.Text = "&Find lexical Entry...";
+			this.CmdGoToEntry.Visible = false;
+			// 
+			// CmdGoToRecord
+			// 
+			this.CmdGoToRecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToRecord.Image")));
+			this.CmdGoToRecord.Name = "CmdGoToRecord";
+			this.CmdGoToRecord.Size = new System.Drawing.Size(219, 22);
+			this.CmdGoToRecord.Text = "&Find Record...";
+			this.CmdGoToRecord.Visible = false;
+			// 
+			// CmdFindAndReplaceText
+			// 
+			this.CmdFindAndReplaceText.Name = "CmdFindAndReplaceText";
+			this.CmdFindAndReplaceText.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.F)));
-			this.findToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-			this.findToolStripMenuItem.Text = "Find...";
-			this.findToolStripMenuItem.ToolTipText = "Find and Replace Text";
+			this.CmdFindAndReplaceText.Size = new System.Drawing.Size(219, 22);
+			this.CmdFindAndReplaceText.Text = "Find...";
+			this.CmdFindAndReplaceText.ToolTipText = "Find and Replace Text";
 			// 
-			// replaceToolStripMenuItem
+			// CmdReplaceText
 			// 
-			this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-			this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-			this.replaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-			this.replaceToolStripMenuItem.Text = "Replace...";
+			this.CmdReplaceText.Name = "CmdReplaceText";
+			this.CmdReplaceText.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+			this.CmdReplaceText.Size = new System.Drawing.Size(219, 22);
+			this.CmdReplaceText.Text = "Replace...";
 			// 
-			// toolStripEditMenuSparator4
+			// toolStripEditMenuSeparator4
 			// 
-			this.toolStripEditMenuSparator4.Name = "toolStripEditMenuSparator4";
-			this.toolStripEditMenuSparator4.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSeparator4.Name = "toolStripEditMenuSeparator4";
+			this.toolStripEditMenuSeparator4.Size = new System.Drawing.Size(216, 6);
 			// 
 			// selectAllToolStripMenuItem
 			// 
@@ -576,13 +1000,51 @@ namespace LanguageExplorer.Impls
 			this.deleteToolStripMenuItem.Text = "Delete";
 			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Delete_Click);
 			// 
+			// toolStripEditMenuSeparator5
+			// 
+			this.toolStripEditMenuSeparator5.Name = "toolStripEditMenuSeparator5";
+			this.toolStripEditMenuSeparator5.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSeparator5.Visible = false;
+			// 
+			// CmdGoToReversalEntry
+			// 
+			this.CmdGoToReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToReversalEntry.Image")));
+			this.CmdGoToReversalEntry.Name = "CmdGoToReversalEntry";
+			this.CmdGoToReversalEntry.Size = new System.Drawing.Size(219, 22);
+			this.CmdGoToReversalEntry.Text = "&Find reversal entry...";
+			this.CmdGoToReversalEntry.Visible = false;
+			// 
+			// CmdGoToWfiWordform
+			// 
+			this.CmdGoToWfiWordform.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToWfiWordform.Image")));
+			this.CmdGoToWfiWordform.Name = "CmdGoToWfiWordform";
+			this.CmdGoToWfiWordform.Size = new System.Drawing.Size(219, 22);
+			this.CmdGoToWfiWordform.Text = "&Find Wordform...";
+			this.CmdGoToWfiWordform.Visible = false;
+			// 
+			// CmdDeleteCustomList
+			// 
+			this.CmdDeleteCustomList.Name = "CmdDeleteCustomList";
+			this.CmdDeleteCustomList.Size = new System.Drawing.Size(219, 22);
+			this.CmdDeleteCustomList.Text = "Delete Custom &List";
+			this.CmdDeleteCustomList.Visible = false;
+			// 
 			// _viewToolStripMenuItem
 			// 
 			this._viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
-            this.toolStripViewMenuSparator1,
-            this.toolStripViewMenuSparator2,
-            this.filtersToolStripMenuItem});
+            this.toolStripViewMenuSeparator1,
+            this.LexicalToolsList,
+            this.WordToolsList,
+            this.GrammarToolsList,
+            this.NotebookToolsList,
+            this.ListsToolsList,
+            this.ShowInvisibleSpaces,
+            this.Show_DictionaryPubPreview,
+            this.ShowHiddenFields,
+            this.toolStripViewMenuSeparator2,
+            this.filtersToolStripMenuItem,
+            this.CmdChooseTexts});
 			this._viewToolStripMenuItem.Name = "_viewToolStripMenuItem";
 			this._viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this._viewToolStripMenuItem.Text = "&View";
@@ -593,27 +1055,80 @@ namespace LanguageExplorer.Impls
 			this.refreshToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
 			this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
 			this.refreshToolStripMenuItem.Text = "&Refresh";
 			this.refreshToolStripMenuItem.ToolTipText = "Refresh the screen.";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.View_Refresh);
 			// 
-			// toolStripViewMenuSparator1
+			// toolStripViewMenuSeparator1
 			// 
-			this.toolStripViewMenuSparator1.Name = "toolStripViewMenuSparator1";
-			this.toolStripViewMenuSparator1.Size = new System.Drawing.Size(129, 6);
+			this.toolStripViewMenuSeparator1.Name = "toolStripViewMenuSeparator1";
+			this.toolStripViewMenuSeparator1.Size = new System.Drawing.Size(201, 6);
 			// 
-			// toolStripViewMenuSparator2
+			// LexicalToolsList
 			// 
-			this.toolStripViewMenuSparator2.Name = "toolStripViewMenuSparator2";
-			this.toolStripViewMenuSparator2.Size = new System.Drawing.Size(129, 6);
+			this.LexicalToolsList.Name = "LexicalToolsList";
+			this.LexicalToolsList.Size = new System.Drawing.Size(204, 22);
+			this.LexicalToolsList.Text = "&Lexicon";
+			// 
+			// WordToolsList
+			// 
+			this.WordToolsList.Name = "WordToolsList";
+			this.WordToolsList.Size = new System.Drawing.Size(204, 22);
+			this.WordToolsList.Text = "&Text && Words";
+			// 
+			// GrammarToolsList
+			// 
+			this.GrammarToolsList.Name = "GrammarToolsList";
+			this.GrammarToolsList.Size = new System.Drawing.Size(204, 22);
+			this.GrammarToolsList.Text = "&Grammar";
+			// 
+			// NotebookToolsList
+			// 
+			this.NotebookToolsList.Name = "NotebookToolsList";
+			this.NotebookToolsList.Size = new System.Drawing.Size(204, 22);
+			this.NotebookToolsList.Text = "&Notebook";
+			// 
+			// ListsToolsList
+			// 
+			this.ListsToolsList.Name = "ListsToolsList";
+			this.ListsToolsList.Size = new System.Drawing.Size(204, 22);
+			this.ListsToolsList.Text = "Li&sts";
+			// 
+			// ShowInvisibleSpaces
+			// 
+			this.ShowInvisibleSpaces.CheckOnClick = true;
+			this.ShowInvisibleSpaces.Name = "ShowInvisibleSpaces";
+			this.ShowInvisibleSpaces.Size = new System.Drawing.Size(204, 22);
+			this.ShowInvisibleSpaces.Text = "Invisible Spaces";
+			this.ShowInvisibleSpaces.ToolTipText = "View the invisible, zero-width spaces in this text.";
+			this.ShowInvisibleSpaces.Visible = false;
+			// 
+			// Show_DictionaryPubPreview
+			// 
+			this.Show_DictionaryPubPreview.Name = "Show_DictionaryPubPreview";
+			this.Show_DictionaryPubPreview.Size = new System.Drawing.Size(204, 22);
+			this.Show_DictionaryPubPreview.Text = "Show &Dictionary Preview";
+			this.Show_DictionaryPubPreview.Visible = false;
+			// 
+			// ShowHiddenFields
+			// 
+			this.ShowHiddenFields.Name = "ShowHiddenFields";
+			this.ShowHiddenFields.Size = new System.Drawing.Size(204, 22);
+			this.ShowHiddenFields.Text = "&Show Hidden Fields";
+			this.ShowHiddenFields.Visible = false;
+			// 
+			// toolStripViewMenuSeparator2
+			// 
+			this.toolStripViewMenuSeparator2.Name = "toolStripViewMenuSeparator2";
+			this.toolStripViewMenuSeparator2.Size = new System.Drawing.Size(201, 6);
 			// 
 			// filtersToolStripMenuItem
 			// 
 			this.filtersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noFilterToolStripMenuItem});
 			this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
-			this.filtersToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+			this.filtersToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
 			this.filtersToolStripMenuItem.Text = "Filters";
 			// 
 			// noFilterToolStripMenuItem
@@ -623,6 +1138,14 @@ namespace LanguageExplorer.Impls
 			this.noFilterToolStripMenuItem.Name = "noFilterToolStripMenuItem";
 			this.noFilterToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
 			this.noFilterToolStripMenuItem.Text = "No Filter";
+			// 
+			// CmdChooseTexts
+			// 
+			this.CmdChooseTexts.Image = ((System.Drawing.Image)(resources.GetObject("CmdChooseTexts.Image")));
+			this.CmdChooseTexts.Name = "CmdChooseTexts";
+			this.CmdChooseTexts.Size = new System.Drawing.Size(204, 22);
+			this.CmdChooseTexts.Text = "Choose Texts...";
+			this.CmdChooseTexts.Visible = false;
 			// 
 			// _dataToolStripMenuItem
 			// 
@@ -881,89 +1404,770 @@ namespace LanguageExplorer.Impls
 			// _insertToolStripMenuItem
 			// 
 			this._insertToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.insertMenuLastGlobalSeparator1,
-            this.specialCharacterToolStripMenuItem,
-            this.linkToFileToolStripMenuItem});
+            this.CmdInsertLexEntry,
+            this.CmdInsertSense,
+            this.CmdInsertVariant,
+            this.CmdDataTree_Insert_AlternateForm,
+            this.CmdInsertReversalEntry,
+            this.CmdDataTree_Insert_Pronunciation,
+            this.CmdInsertMediaFile,
+            this.CmdDataTree_Insert_Etymology,
+            this.insertMenuSeparator1,
+            this.CmdInsertSubsense,
+            this.CmdInsertPicture,
+            this.CmdInsertExtNote,
+            this.CmdInsertText,
+            this.insertMenuSeparator2,
+            this.CmdAddNote,
+            this.CmdAddWordGlossesToFreeTrans,
+            this.ClickInsertsInvisibleSpace,
+            this.CmdGuessWordBreaks,
+            this.insertMenuSeparator3,
+            this.CmdImportWordSet,
+            this.CmdInsertHumanApprovedAnalysis,
+            this.CmdInsertRecord,
+            this.CmdInsertSubrecord,
+            this.CmdInsertSubsubrecord,
+            this.CmdAddToLexicon,
+            this.CmdInsertSemDom,
+            this.CmdDataTree_Insert_SemanticDomain,
+            this.CmdInsertAnnotationDef,
+            this.CmdInsertPossibility,
+            this.CmdInsertCustomItem,
+            this.CmdInsertMorphType,
+            this.CmdInsertLexEntryInflType,
+            this.CmdInsertLexEntryType,
+            this.CmdDataTree_Insert_LexEntryInflType,
+            this.CmdDataTree_Insert_LexEntryType,
+            this.CmdInsertAnthroCategory,
+            this.CmdDataTree_Insert_AnthroCategory,
+            this.CmdInsertPerson,
+            this.CmdInsertLocation,
+            this.CmdDataTree_Insert_Location,
+            this.CmdInsertLexRefType,
+            this.CmdInsertFeatureType,
+            this.CmdDataTree_Insert_Possibility,
+            this.CmdDataTree_Insert_CustomItem,
+            this.insertMenuSeparator4,
+            this.CmdAddCustomList,
+            this.CmdInsertPOS,
+            this.CmdDataTree_Insert_POS_SubPossibilities,
+            this.CmdDataTree_Insert_POS_AffixTemplate,
+            this.CmdDataTree_Insert_POS_AffixSlot,
+            this.CmdDataTree_Insert_POS_InflectionClass,
+            this.insertMenuSeparator5,
+            this.CmdInsertEndocentricCompound,
+            this.CmdInsertExocentricCompound,
+            this.CmdInsertExceptionFeature,
+            this.CmdInsertPhonologicalClosedFeature,
+            this.CmdInsertClosedFeature,
+            this.CmdInsertComplexFeature,
+            this.CmdDataTree_Insert_ClosedFeature_Value,
+            this.insertMenuSeparator6,
+            this.CmdInsertPhoneme,
+            this.CmdDataTree_Insert_Phoneme_Code,
+            this.insertMenuSeparator7,
+            this.CmdInsertSegmentNaturalClasses,
+            this.CmdInsertFeatureNaturalClasses,
+            this.insertMenuSeparator8,
+            this.CmdInsertPhEnvironment,
+            this.insertMenuSeparator9,
+            this.CmdInsertPhRegularRule,
+            this.CmdInsertPhMetathesisRule,
+            this.insertMenuSeparator10,
+            this.CmdInsertMorphemeACP,
+            this.CmdInsertAllomorphACP,
+            this.CmdInsertACPGroup,
+            this.insertMenuSeparator11,
+            this.CmdShowCharMap,
+            this.CmdInsertLinkToFile});
 			this._insertToolStripMenuItem.Name = "_insertToolStripMenuItem";
 			this._insertToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
 			this._insertToolStripMenuItem.Text = "&Insert";
 			// 
-			// insertMenuLastGlobalSeparator1
+			// CmdInsertLexEntry
 			// 
-			this.insertMenuLastGlobalSeparator1.Name = "insertMenuLastGlobalSeparator1";
-			this.insertMenuLastGlobalSeparator1.Size = new System.Drawing.Size(169, 6);
+			this.CmdInsertLexEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntry.Image")));
+			this.CmdInsertLexEntry.Name = "CmdInsertLexEntry";
+			this.CmdInsertLexEntry.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLexEntry.Text = "&Entry...";
+			this.CmdInsertLexEntry.Visible = false;
 			// 
-			// specialCharacterToolStripMenuItem
+			// CmdInsertSense
 			// 
-			this.specialCharacterToolStripMenuItem.Enabled = false;
-			this.specialCharacterToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("specialCharacterToolStripMenuItem.Image")));
-			this.specialCharacterToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.specialCharacterToolStripMenuItem.Name = "specialCharacterToolStripMenuItem";
-			this.specialCharacterToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-			this.specialCharacterToolStripMenuItem.Text = "Special &character...";
-			this.specialCharacterToolStripMenuItem.ToolTipText = "Start the Character Map utility.";
-			this.specialCharacterToolStripMenuItem.Click += new System.EventHandler(this.SpecialCharacterToolStripMenuItem_Click);
+			this.CmdInsertSense.Name = "CmdInsertSense";
+			this.CmdInsertSense.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSense.Text = "&Sense";
+			this.CmdInsertSense.Visible = false;
 			// 
-			// linkToFileToolStripMenuItem
+			// CmdInsertVariant
 			// 
-			this.linkToFileToolStripMenuItem.Enabled = false;
-			this.linkToFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("linkToFileToolStripMenuItem.Image")));
-			this.linkToFileToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.linkToFileToolStripMenuItem.Name = "linkToFileToolStripMenuItem";
-			this.linkToFileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-			this.linkToFileToolStripMenuItem.Text = "L&ink to File...";
-			this.linkToFileToolStripMenuItem.ToolTipText = "Insert a link to an external file.";
-			this.linkToFileToolStripMenuItem.Click += new System.EventHandler(this.LinkToFileToolStripMenuItem_Click);
+			this.CmdInsertVariant.Name = "CmdInsertVariant";
+			this.CmdInsertVariant.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertVariant.Text = "&Variant";
+			this.CmdInsertVariant.Visible = false;
+			// 
+			// CmdDataTree_Insert_AlternateForm
+			// 
+			this.CmdDataTree_Insert_AlternateForm.Name = "CmdDataTree_Insert_AlternateForm";
+			this.CmdDataTree_Insert_AlternateForm.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_AlternateForm.Text = "A&llomorph";
+			this.CmdDataTree_Insert_AlternateForm.Visible = false;
+			// 
+			// CmdInsertReversalEntry
+			// 
+			this.CmdInsertReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertReversalEntry.Image")));
+			this.CmdInsertReversalEntry.Name = "CmdInsertReversalEntry";
+			this.CmdInsertReversalEntry.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertReversalEntry.Text = "Reversal Entry";
+			this.CmdInsertReversalEntry.Visible = false;
+			// 
+			// CmdDataTree_Insert_Pronunciation
+			// 
+			this.CmdDataTree_Insert_Pronunciation.Name = "CmdDataTree_Insert_Pronunciation";
+			this.CmdDataTree_Insert_Pronunciation.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_Pronunciation.Text = "&Pronunciation";
+			this.CmdDataTree_Insert_Pronunciation.Visible = false;
+			// 
+			// CmdInsertMediaFile
+			// 
+			this.CmdInsertMediaFile.Name = "CmdInsertMediaFile";
+			this.CmdInsertMediaFile.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertMediaFile.Text = "&Sound or Movie";
+			this.CmdInsertMediaFile.Visible = false;
+			// 
+			// CmdDataTree_Insert_Etymology
+			// 
+			this.CmdDataTree_Insert_Etymology.Name = "CmdDataTree_Insert_Etymology";
+			this.CmdDataTree_Insert_Etymology.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_Etymology.Text = "&Etymology";
+			this.CmdDataTree_Insert_Etymology.Visible = false;
+			// 
+			// insertMenuSeparator1
+			// 
+			this.insertMenuSeparator1.Name = "insertMenuSeparator1";
+			this.insertMenuSeparator1.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator1.Visible = false;
+			// 
+			// CmdInsertSubsense
+			// 
+			this.CmdInsertSubsense.Name = "CmdInsertSubsense";
+			this.CmdInsertSubsense.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSubsense.Text = "Subsense (in sense)";
+			this.CmdInsertSubsense.Visible = false;
+			// 
+			// CmdInsertPicture
+			// 
+			this.CmdInsertPicture.Name = "CmdInsertPicture";
+			this.CmdInsertPicture.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPicture.Text = "&Picture";
+			this.CmdInsertPicture.Visible = false;
+			// 
+			// CmdInsertExtNote
+			// 
+			this.CmdInsertExtNote.Name = "CmdInsertExtNote";
+			this.CmdInsertExtNote.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertExtNote.Text = "&Extended Note";
+			this.CmdInsertExtNote.Visible = false;
+			// 
+			// CmdInsertText
+			// 
+			this.CmdInsertText.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertText.Image")));
+			this.CmdInsertText.Name = "CmdInsertText";
+			this.CmdInsertText.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+			this.CmdInsertText.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertText.Text = "New &Text";
+			this.CmdInsertText.Visible = false;
+			// 
+			// insertMenuSeparator2
+			// 
+			this.insertMenuSeparator2.Name = "insertMenuSeparator2";
+			this.insertMenuSeparator2.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator2.Visible = false;
+			// 
+			// CmdAddNote
+			// 
+			this.CmdAddNote.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddNote.Image")));
+			this.CmdAddNote.Name = "CmdAddNote";
+			this.CmdAddNote.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+			this.CmdAddNote.Size = new System.Drawing.Size(296, 22);
+			this.CmdAddNote.Text = "&Note";
+			this.CmdAddNote.Visible = false;
+			// 
+			// CmdAddWordGlossesToFreeTrans
+			// 
+			this.CmdAddWordGlossesToFreeTrans.Name = "CmdAddWordGlossesToFreeTrans";
+			this.CmdAddWordGlossesToFreeTrans.Size = new System.Drawing.Size(296, 22);
+			this.CmdAddWordGlossesToFreeTrans.Text = "&Word Glosses";
+			this.CmdAddWordGlossesToFreeTrans.Visible = false;
+			// 
+			// ClickInsertsInvisibleSpace
+			// 
+			this.ClickInsertsInvisibleSpace.CheckOnClick = true;
+			this.ClickInsertsInvisibleSpace.Image = ((System.Drawing.Image)(resources.GetObject("ClickInsertsInvisibleSpace.Image")));
+			this.ClickInsertsInvisibleSpace.Name = "ClickInsertsInvisibleSpace";
+			this.ClickInsertsInvisibleSpace.Size = new System.Drawing.Size(296, 22);
+			this.ClickInsertsInvisibleSpace.Text = "Click Inserts Invisible Space";
+			this.ClickInsertsInvisibleSpace.ToolTipText = "Turn on mode in which a click inserts an invisible, zero-width space.";
+			this.ClickInsertsInvisibleSpace.Visible = false;
+			// 
+			// CmdGuessWordBreaks
+			// 
+			this.CmdGuessWordBreaks.Name = "CmdGuessWordBreaks";
+			this.CmdGuessWordBreaks.Size = new System.Drawing.Size(296, 22);
+			this.CmdGuessWordBreaks.Text = "&Guess Word Breaks";
+			this.CmdGuessWordBreaks.ToolTipText = "Have Language Explorer insert invisible, zero-width spaces as word breaks accordi" +
+    "ng to the word list and lexical entries.";
+			this.CmdGuessWordBreaks.Visible = false;
+			// 
+			// insertMenuSeparator3
+			// 
+			this.insertMenuSeparator3.Name = "insertMenuSeparator3";
+			this.insertMenuSeparator3.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator3.Visible = false;
+			// 
+			// CmdImportWordSet
+			// 
+			this.CmdImportWordSet.Name = "CmdImportWordSet";
+			this.CmdImportWordSet.Size = new System.Drawing.Size(296, 22);
+			this.CmdImportWordSet.Text = "&Import Word Set...";
+			this.CmdImportWordSet.Visible = false;
+			// 
+			// CmdInsertHumanApprovedAnalysis
+			// 
+			this.CmdInsertHumanApprovedAnalysis.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertHumanApprovedAnalysis.Image")));
+			this.CmdInsertHumanApprovedAnalysis.Name = "CmdInsertHumanApprovedAnalysis";
+			this.CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertHumanApprovedAnalysis.Text = "Add Approved Analysis...";
+			this.CmdInsertHumanApprovedAnalysis.Visible = false;
+			// 
+			// CmdInsertRecord
+			// 
+			this.CmdInsertRecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertRecord.Image")));
+			this.CmdInsertRecord.Name = "CmdInsertRecord";
+			this.CmdInsertRecord.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.CmdInsertRecord.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertRecord.Text = "Record";
+			this.CmdInsertRecord.Visible = false;
+			// 
+			// CmdInsertSubrecord
+			// 
+			this.CmdInsertSubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubrecord.Image")));
+			this.CmdInsertSubrecord.Name = "CmdInsertSubrecord";
+			this.CmdInsertSubrecord.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSubrecord.Text = "Subrecord";
+			this.CmdInsertSubrecord.Visible = false;
+			// 
+			// CmdInsertSubsubrecord
+			// 
+			this.CmdInsertSubsubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubsubrecord.Image")));
+			this.CmdInsertSubsubrecord.Name = "CmdInsertSubsubrecord";
+			this.CmdInsertSubsubrecord.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSubsubrecord.Text = "Subrecord of subrecord";
+			this.CmdInsertSubsubrecord.Visible = false;
+			// 
+			// CmdAddToLexicon
+			// 
+			this.CmdAddToLexicon.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddToLexicon.Image")));
+			this.CmdAddToLexicon.Name = "CmdAddToLexicon";
+			this.CmdAddToLexicon.Size = new System.Drawing.Size(296, 22);
+			this.CmdAddToLexicon.Text = "Add to Dictionary...";
+			this.CmdAddToLexicon.Visible = false;
+			// 
+			// CmdInsertSemDom
+			// 
+			this.CmdInsertSemDom.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSemDom.Image")));
+			this.CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertSemDom.Name = "CmdInsertSemDom";
+			this.CmdInsertSemDom.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSemDom.Text = "&Semantic Domain";
+			this.CmdInsertSemDom.Visible = false;
+			// 
+			// CmdDataTree_Insert_SemanticDomain
+			// 
+			this.CmdDataTree_Insert_SemanticDomain.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_SemanticDomain.Image")));
+			this.CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_SemanticDomain.Name = "CmdDataTree_Insert_SemanticDomain";
+			this.CmdDataTree_Insert_SemanticDomain.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_SemanticDomain.Text = "Insert subdomain";
+			this.CmdDataTree_Insert_SemanticDomain.Visible = false;
+			// 
+			// CmdInsertAnnotationDef
+			// 
+			this.CmdInsertAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAnnotationDef.Image")));
+			this.CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertAnnotationDef.Name = "CmdInsertAnnotationDef";
+			this.CmdInsertAnnotationDef.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertAnnotationDef.Text = "&Annotation Definition";
+			this.CmdInsertAnnotationDef.Visible = false;
+			// 
+			// CmdInsertPossibility
+			// 
+			this.CmdInsertPossibility.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPossibility.Image")));
+			this.CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertPossibility.Name = "CmdInsertPossibility";
+			this.CmdInsertPossibility.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPossibility.Text = "&Item";
+			this.CmdInsertPossibility.Visible = false;
+			// 
+			// CmdInsertCustomItem
+			// 
+			this.CmdInsertCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertCustomItem.Image")));
+			this.CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertCustomItem.Name = "CmdInsertCustomItem";
+			this.CmdInsertCustomItem.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertCustomItem.Text = "&Item";
+			this.CmdInsertCustomItem.Visible = false;
+			// 
+			// CmdInsertMorphType
+			// 
+			this.CmdInsertMorphType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertMorphType.Image")));
+			this.CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertMorphType.Name = "CmdInsertMorphType";
+			this.CmdInsertMorphType.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertMorphType.Text = "&Morph Type";
+			this.CmdInsertMorphType.Visible = false;
+			// 
+			// CmdInsertLexEntryInflType
+			// 
+			this.CmdInsertLexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntryInflType.Image")));
+			this.CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertLexEntryInflType.Name = "CmdInsertLexEntryInflType";
+			this.CmdInsertLexEntryInflType.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLexEntryInflType.Text = "&Type";
+			this.CmdInsertLexEntryInflType.Visible = false;
+			// 
+			// CmdInsertLexEntryType
+			// 
+			this.CmdInsertLexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntryType.Image")));
+			this.CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertLexEntryType.Name = "CmdInsertLexEntryType";
+			this.CmdInsertLexEntryType.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLexEntryType.Text = "&Type";
+			this.CmdInsertLexEntryType.Visible = false;
+			// 
+			// CmdDataTree_Insert_LexEntryInflType
+			// 
+			this.CmdDataTree_Insert_LexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_LexEntryInflType.Image")));
+			this.CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_LexEntryInflType.Name = "CmdDataTree_Insert_LexEntryInflType";
+			this.CmdDataTree_Insert_LexEntryInflType.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_LexEntryInflType.Text = "Insert Subtype";
+			this.CmdDataTree_Insert_LexEntryInflType.Visible = false;
+			// 
+			// CmdDataTree_Insert_LexEntryType
+			// 
+			this.CmdDataTree_Insert_LexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_LexEntryType.Image")));
+			this.CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_LexEntryType.Name = "CmdDataTree_Insert_LexEntryType";
+			this.CmdDataTree_Insert_LexEntryType.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_LexEntryType.Text = "Insert Subtype";
+			this.CmdDataTree_Insert_LexEntryType.Visible = false;
+			// 
+			// CmdInsertAnthroCategory
+			// 
+			this.CmdInsertAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAnthroCategory.Image")));
+			this.CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertAnthroCategory.Name = "CmdInsertAnthroCategory";
+			this.CmdInsertAnthroCategory.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertAnthroCategory.Text = "Anthropology &Category";
+			this.CmdInsertAnthroCategory.Visible = false;
+			// 
+			// CmdDataTree_Insert_AnthroCategory
+			// 
+			this.CmdDataTree_Insert_AnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_AnthroCategory.Image")));
+			this.CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_AnthroCategory.Name = "CmdDataTree_Insert_AnthroCategory";
+			this.CmdDataTree_Insert_AnthroCategory.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_AnthroCategory.Text = "Insert subcategory";
+			this.CmdDataTree_Insert_AnthroCategory.Visible = false;
+			// 
+			// CmdInsertPerson
+			// 
+			this.CmdInsertPerson.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPerson.Image")));
+			this.CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertPerson.Name = "CmdInsertPerson";
+			this.CmdInsertPerson.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPerson.Text = "&Person";
+			this.CmdInsertPerson.Visible = false;
+			// 
+			// CmdInsertLocation
+			// 
+			this.CmdInsertLocation.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLocation.Image")));
+			this.CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertLocation.Name = "CmdInsertLocation";
+			this.CmdInsertLocation.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLocation.Text = "&Location";
+			this.CmdInsertLocation.Visible = false;
+			// 
+			// CmdDataTree_Insert_Location
+			// 
+			this.CmdDataTree_Insert_Location.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_Location.Image")));
+			this.CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_Location.Name = "CmdDataTree_Insert_Location";
+			this.CmdDataTree_Insert_Location.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_Location.Text = "Insert subitem";
+			this.CmdDataTree_Insert_Location.Visible = false;
+			// 
+			// CmdInsertLexRefType
+			// 
+			this.CmdInsertLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexRefType.Image")));
+			this.CmdInsertLexRefType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertLexRefType.Name = "CmdInsertLexRefType";
+			this.CmdInsertLexRefType.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLexRefType.Text = "&Lexical Reference Type";
+			this.CmdInsertLexRefType.Visible = false;
+			// 
+			// CmdInsertFeatureType
+			// 
+			this.CmdInsertFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertFeatureType.Image")));
+			this.CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertFeatureType.Name = "CmdInsertFeatureType";
+			this.CmdInsertFeatureType.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertFeatureType.Text = "&Feature Type";
+			this.CmdInsertFeatureType.Visible = false;
+			// 
+			// CmdDataTree_Insert_Possibility
+			// 
+			this.CmdDataTree_Insert_Possibility.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_Possibility.Image")));
+			this.CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_Possibility.Name = "CmdDataTree_Insert_Possibility";
+			this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_Possibility.Text = "Insert subitem";
+			this.CmdDataTree_Insert_Possibility.Visible = false;
+			// 
+			// CmdDataTree_Insert_CustomItem
+			// 
+			this.CmdDataTree_Insert_CustomItem.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_CustomItem.Image")));
+			this.CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_CustomItem.Name = "CmdDataTree_Insert_CustomItem";
+			this.CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_CustomItem.Text = "Insert subitem";
+			this.CmdDataTree_Insert_CustomItem.Visible = false;
+			// 
+			// insertMenuSeparator4
+			// 
+			this.insertMenuSeparator4.Name = "insertMenuSeparator4";
+			this.insertMenuSeparator4.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator4.Visible = false;
+			// 
+			// CmdAddCustomList
+			// 
+			this.CmdAddCustomList.Name = "CmdAddCustomList";
+			this.CmdAddCustomList.Size = new System.Drawing.Size(296, 22);
+			this.CmdAddCustomList.Text = "Custom &List...";
+			this.CmdAddCustomList.Visible = false;
+			// 
+			// CmdInsertPOS
+			// 
+			this.CmdInsertPOS.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPOS.Image")));
+			this.CmdInsertPOS.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdInsertPOS.Name = "CmdInsertPOS";
+			this.CmdInsertPOS.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.CmdInsertPOS.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPOS.Text = "Category";
+			this.CmdInsertPOS.Visible = false;
+			// 
+			// CmdDataTree_Insert_POS_SubPossibilities
+			// 
+			this.CmdDataTree_Insert_POS_SubPossibilities.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_POS_SubPossibilities.Image")));
+			this.CmdDataTree_Insert_POS_SubPossibilities.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDataTree_Insert_POS_SubPossibilities.Name = "CmdDataTree_Insert_POS_SubPossibilities";
+			this.CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_POS_SubPossibilities.Text = "Insert Subcategory...";
+			this.CmdDataTree_Insert_POS_SubPossibilities.Visible = false;
+			// 
+			// CmdDataTree_Insert_POS_AffixTemplate
+			// 
+			this.CmdDataTree_Insert_POS_AffixTemplate.Name = "CmdDataTree_Insert_POS_AffixTemplate";
+			this.CmdDataTree_Insert_POS_AffixTemplate.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_POS_AffixTemplate.Text = "Insert Affix Template";
+			this.CmdDataTree_Insert_POS_AffixTemplate.Visible = false;
+			// 
+			// CmdDataTree_Insert_POS_AffixSlot
+			// 
+			this.CmdDataTree_Insert_POS_AffixSlot.Name = "CmdDataTree_Insert_POS_AffixSlot";
+			this.CmdDataTree_Insert_POS_AffixSlot.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_POS_AffixSlot.Text = "Insert Affix Slot";
+			this.CmdDataTree_Insert_POS_AffixSlot.Visible = false;
+			// 
+			// CmdDataTree_Insert_POS_InflectionClass
+			// 
+			this.CmdDataTree_Insert_POS_InflectionClass.Name = "CmdDataTree_Insert_POS_InflectionClass";
+			this.CmdDataTree_Insert_POS_InflectionClass.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_POS_InflectionClass.Text = "Insert Inflection Class";
+			this.CmdDataTree_Insert_POS_InflectionClass.Visible = false;
+			// 
+			// insertMenuSeparator5
+			// 
+			this.insertMenuSeparator5.Name = "insertMenuSeparator5";
+			this.insertMenuSeparator5.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator5.Visible = false;
+			// 
+			// CmdInsertEndocentricCompound
+			// 
+			this.CmdInsertEndocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertEndocentricCompound.Image")));
+			this.CmdInsertEndocentricCompound.Name = "CmdInsertEndocentricCompound";
+			this.CmdInsertEndocentricCompound.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertEndocentricCompound.Text = "Headed Compound";
+			this.CmdInsertEndocentricCompound.Visible = false;
+			// 
+			// CmdInsertExocentricCompound
+			// 
+			this.CmdInsertExocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExocentricCompound.Image")));
+			this.CmdInsertExocentricCompound.Name = "CmdInsertExocentricCompound";
+			this.CmdInsertExocentricCompound.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertExocentricCompound.Text = "Non-headed Compound";
+			this.CmdInsertExocentricCompound.Visible = false;
+			// 
+			// CmdInsertExceptionFeature
+			// 
+			this.CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExceptionFeature.Image")));
+			this.CmdInsertExceptionFeature.Name = "CmdInsertExceptionFeature";
+			this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertExceptionFeature.Text = "&Exception Feature...";
+			this.CmdInsertExceptionFeature.Visible = false;
+			// 
+			// CmdInsertPhonologicalClosedFeature
+			// 
+			this.CmdInsertPhonologicalClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhonologicalClosedFeature.Image")));
+			this.CmdInsertPhonologicalClosedFeature.Name = "CmdInsertPhonologicalClosedFeature";
+			this.CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPhonologicalClosedFeature.Text = "&Phonological Feature...";
+			this.CmdInsertPhonologicalClosedFeature.Visible = false;
+			// 
+			// CmdInsertClosedFeature
+			// 
+			this.CmdInsertClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertClosedFeature.Image")));
+			this.CmdInsertClosedFeature.Name = "CmdInsertClosedFeature";
+			this.CmdInsertClosedFeature.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertClosedFeature.Text = "&Feature...";
+			this.CmdInsertClosedFeature.Visible = false;
+			// 
+			// CmdInsertComplexFeature
+			// 
+			this.CmdInsertComplexFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertComplexFeature.Image")));
+			this.CmdInsertComplexFeature.Name = "CmdInsertComplexFeature";
+			this.CmdInsertComplexFeature.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertComplexFeature.Text = "&Complex Feature...";
+			this.CmdInsertComplexFeature.Visible = false;
+			// 
+			// CmdDataTree_Insert_ClosedFeature_Value
+			// 
+			this.CmdDataTree_Insert_ClosedFeature_Value.Name = "CmdDataTree_Insert_ClosedFeature_Value";
+			this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_ClosedFeature_Value.Text = "Insert Feature Value";
+			this.CmdDataTree_Insert_ClosedFeature_Value.Visible = false;
+			// 
+			// insertMenuSeparator6
+			// 
+			this.insertMenuSeparator6.Name = "insertMenuSeparator6";
+			this.insertMenuSeparator6.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator6.Visible = false;
+			// 
+			// CmdInsertPhoneme
+			// 
+			this.CmdInsertPhoneme.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhoneme.Image")));
+			this.CmdInsertPhoneme.Name = "CmdInsertPhoneme";
+			this.CmdInsertPhoneme.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.CmdInsertPhoneme.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPhoneme.Text = "Phoneme";
+			this.CmdInsertPhoneme.Visible = false;
+			// 
+			// CmdDataTree_Insert_Phoneme_Code
+			// 
+			this.CmdDataTree_Insert_Phoneme_Code.Name = "CmdDataTree_Insert_Phoneme_Code";
+			this.CmdDataTree_Insert_Phoneme_Code.Size = new System.Drawing.Size(296, 22);
+			this.CmdDataTree_Insert_Phoneme_Code.Text = "Grapheme";
+			this.CmdDataTree_Insert_Phoneme_Code.Visible = false;
+			// 
+			// insertMenuSeparator7
+			// 
+			this.insertMenuSeparator7.Name = "insertMenuSeparator7";
+			this.insertMenuSeparator7.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator7.Visible = false;
+			// 
+			// CmdInsertSegmentNaturalClasses
+			// 
+			this.CmdInsertSegmentNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSegmentNaturalClasses.Image")));
+			this.CmdInsertSegmentNaturalClasses.Name = "CmdInsertSegmentNaturalClasses";
+			this.CmdInsertSegmentNaturalClasses.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertSegmentNaturalClasses.Text = "Natural Class (Phonemes)";
+			this.CmdInsertSegmentNaturalClasses.Visible = false;
+			// 
+			// CmdInsertFeatureNaturalClasses
+			// 
+			this.CmdInsertFeatureNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertFeatureNaturalClasses.Image")));
+			this.CmdInsertFeatureNaturalClasses.Name = "CmdInsertFeatureNaturalClasses";
+			this.CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertFeatureNaturalClasses.Text = "Natural Class (Features)";
+			this.CmdInsertFeatureNaturalClasses.Visible = false;
+			// 
+			// insertMenuSeparator8
+			// 
+			this.insertMenuSeparator8.Name = "insertMenuSeparator8";
+			this.insertMenuSeparator8.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator8.Visible = false;
+			// 
+			// CmdInsertPhEnvironment
+			// 
+			this.CmdInsertPhEnvironment.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhEnvironment.Image")));
+			this.CmdInsertPhEnvironment.Name = "CmdInsertPhEnvironment";
+			this.CmdInsertPhEnvironment.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.CmdInsertPhEnvironment.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPhEnvironment.Text = "Environment";
+			this.CmdInsertPhEnvironment.Visible = false;
+			// 
+			// insertMenuSeparator9
+			// 
+			this.insertMenuSeparator9.Name = "insertMenuSeparator9";
+			this.insertMenuSeparator9.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator9.Visible = false;
+			// 
+			// CmdInsertPhRegularRule
+			// 
+			this.CmdInsertPhRegularRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhRegularRule.Image")));
+			this.CmdInsertPhRegularRule.Name = "CmdInsertPhRegularRule";
+			this.CmdInsertPhRegularRule.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPhRegularRule.Text = "Phonological Rule";
+			this.CmdInsertPhRegularRule.Visible = false;
+			// 
+			// CmdInsertPhMetathesisRule
+			// 
+			this.CmdInsertPhMetathesisRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhMetathesisRule.Image")));
+			this.CmdInsertPhMetathesisRule.Name = "CmdInsertPhMetathesisRule";
+			this.CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertPhMetathesisRule.Text = "Metathesis Rule";
+			this.CmdInsertPhMetathesisRule.Visible = false;
+			// 
+			// insertMenuSeparator10
+			// 
+			this.insertMenuSeparator10.Name = "insertMenuSeparator10";
+			this.insertMenuSeparator10.Size = new System.Drawing.Size(293, 6);
+			this.insertMenuSeparator10.Visible = false;
+			// 
+			// CmdInsertMorphemeACP
+			// 
+			this.CmdInsertMorphemeACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertMorphemeACP.Image")));
+			this.CmdInsertMorphemeACP.Name = "CmdInsertMorphemeACP";
+			this.CmdInsertMorphemeACP.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertMorphemeACP.Text = "Rule to prevent morpheme co-occurrence";
+			this.CmdInsertMorphemeACP.Visible = false;
+			// 
+			// CmdInsertAllomorphACP
+			// 
+			this.CmdInsertAllomorphACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAllomorphACP.Image")));
+			this.CmdInsertAllomorphACP.Name = "CmdInsertAllomorphACP";
+			this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertAllomorphACP.Text = "Rule to prevent allomorph co-occurrence";
+			this.CmdInsertAllomorphACP.Visible = false;
+			// 
+			// CmdInsertACPGroup
+			// 
+			this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
+			this.CmdInsertACPGroup.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertACPGroup.Text = "Group of ad hoc rules";
+			this.CmdInsertACPGroup.Visible = false;
+			// 
+			// insertMenuSeparator11
+			// 
+			this.insertMenuSeparator11.Name = "insertMenuSeparator11";
+			this.insertMenuSeparator11.Size = new System.Drawing.Size(293, 6);
+			// 
+			// CmdShowCharMap
+			// 
+			this.CmdShowCharMap.Enabled = false;
+			this.CmdShowCharMap.Image = ((System.Drawing.Image)(resources.GetObject("CmdShowCharMap.Image")));
+			this.CmdShowCharMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdShowCharMap.Name = "CmdShowCharMap";
+			this.CmdShowCharMap.Size = new System.Drawing.Size(296, 22);
+			this.CmdShowCharMap.Text = "Special &character...";
+			this.CmdShowCharMap.ToolTipText = "Start the Character Map utility.";
+			this.CmdShowCharMap.Click += new System.EventHandler(this.SpecialCharacterToolStripMenuItem_Click);
+			// 
+			// CmdInsertLinkToFile
+			// 
+			this.CmdInsertLinkToFile.Enabled = false;
+			this.CmdInsertLinkToFile.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLinkToFile.Image")));
+			this.CmdInsertLinkToFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdInsertLinkToFile.Name = "CmdInsertLinkToFile";
+			this.CmdInsertLinkToFile.Size = new System.Drawing.Size(296, 22);
+			this.CmdInsertLinkToFile.Text = "L&ink to File...";
+			this.CmdInsertLinkToFile.ToolTipText = "Insert a link to an external file.";
+			this.CmdInsertLinkToFile.Click += new System.EventHandler(this.LinkToFileToolStripMenuItem_Click);
 			// 
 			// _formatToolStripMenuItem
 			// 
 			this._formatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stylesToolStripMenuItem,
-            this.applyStyleToolStripMenuItem,
-            this.writingSystemToolStripMenuItem,
-            this.setUpWritingSystemsToolStripMenuItem1});
+            this.CmdFormatStyle,
+            this.CmdFormatApplyStyle,
+            this.WritingSystemMenu,
+            this.CmdVernacularWritingSystemProperties,
+            this.CmdAnalysisWritingSystemProperties});
 			this._formatToolStripMenuItem.Name = "_formatToolStripMenuItem";
 			this._formatToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
 			this._formatToolStripMenuItem.Text = "F&ormat";
 			// 
-			// stylesToolStripMenuItem
+			// CmdFormatStyle
 			// 
-			this.stylesToolStripMenuItem.Name = "stylesToolStripMenuItem";
-			this.stylesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.stylesToolStripMenuItem.Text = "&Styles...";
-			this.stylesToolStripMenuItem.ToolTipText = "Add, delete, or change styles.";
-			this.stylesToolStripMenuItem.Click += new System.EventHandler(this.Format_Styles_Click);
+			this.CmdFormatStyle.Name = "CmdFormatStyle";
+			this.CmdFormatStyle.Size = new System.Drawing.Size(262, 22);
+			this.CmdFormatStyle.Text = "&Styles...";
+			this.CmdFormatStyle.ToolTipText = "Add, delete, or change styles.";
+			this.CmdFormatStyle.Click += new System.EventHandler(this.Format_Styles_Click);
 			// 
-			// applyStyleToolStripMenuItem
+			// CmdFormatApplyStyle
 			// 
-			this.applyStyleToolStripMenuItem.Name = "applyStyleToolStripMenuItem";
-			this.applyStyleToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.applyStyleToolStripMenuItem.Text = "&Apply Style...";
-			this.applyStyleToolStripMenuItem.Click += new System.EventHandler(this.applyStyleToolStripMenuItem_Click);
+			this.CmdFormatApplyStyle.Name = "CmdFormatApplyStyle";
+			this.CmdFormatApplyStyle.Size = new System.Drawing.Size(262, 22);
+			this.CmdFormatApplyStyle.Text = "&Apply Style...";
+			this.CmdFormatApplyStyle.Click += new System.EventHandler(this.applyStyleToolStripMenuItem_Click);
 			// 
-			// writingSystemToolStripMenuItem
+			// WritingSystemMenu
 			// 
-			this.writingSystemToolStripMenuItem.Name = "writingSystemToolStripMenuItem";
-			this.writingSystemToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.writingSystemToolStripMenuItem.Text = "&Writing System";
+			this.WritingSystemMenu.Name = "WritingSystemMenu";
+			this.WritingSystemMenu.Size = new System.Drawing.Size(262, 22);
+			this.WritingSystemMenu.Text = "&Writing System";
 			// 
-			// setUpWritingSystemsToolStripMenuItem1
+			// CmdVernacularWritingSystemProperties
 			// 
-			this.setUpWritingSystemsToolStripMenuItem1.Name = "setUpWritingSystemsToolStripMenuItem1";
-			this.setUpWritingSystemsToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
-			this.setUpWritingSystemsToolStripMenuItem1.Text = "Se&t up Writing Systems...";
-			this.setUpWritingSystemsToolStripMenuItem1.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
-			this.setUpWritingSystemsToolStripMenuItem1.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
+			this.CmdVernacularWritingSystemProperties.Name = "CmdVernacularWritingSystemProperties";
+			this.CmdVernacularWritingSystemProperties.Size = new System.Drawing.Size(262, 22);
+			this.CmdVernacularWritingSystemProperties.Text = "Set up Vernacular Writing Systems...";
+			this.CmdVernacularWritingSystemProperties.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
+			this.CmdVernacularWritingSystemProperties.Click += new System.EventHandler(this.CmdVernacularWritingSystemProperties_Click);
+			// 
+			// CmdAnalysisWritingSystemProperties
+			// 
+			this.CmdAnalysisWritingSystemProperties.Name = "CmdAnalysisWritingSystemProperties";
+			this.CmdAnalysisWritingSystemProperties.Size = new System.Drawing.Size(262, 22);
+			this.CmdAnalysisWritingSystemProperties.Text = "Set up Analysis Writing Systems...";
+			this.CmdAnalysisWritingSystemProperties.Click += new System.EventHandler(this.CmdAnalysisWritingSystemProperties_Click);
 			// 
 			// _toolsToolStripMenuItem
 			// 
 			this._toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.configureToolStripMenuItem,
-            this.toolStripToolsMenuSparator1,
-            this.spellingToolStripMenuItem,
-            this.utilitiesToolStripMenuItem,
-            this.toolStripToolsMenuSparator2,
-            this.optionsToolStripMenuItem});
+            this.toolMenuSeparator2,
+            this.CmdMergeEntry,
+            this.CmdLexiconLookup,
+            this.ITexts_AddWordsToLexicon,
+            this.toolMenuSeparator3,
+            this.ToolsMenu_SpellingMenu,
+            this.CmdProjectUtilities,
+            this.toolMenuSeparator5,
+            this.CmdToolsOptions,
+            this.CmdMacroF2,
+            this.CmdMacroF3,
+            this.CmdMacroF4,
+            this.CmdMacroF6,
+            this.CmdMacroF7,
+            this.CmdMacroF8,
+            this.CmdMacroF9,
+            this.CmdMacroF10,
+            this.CmdMacroF11,
+            this.CmdMacroF12});
 			this._toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
 			this._toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
 			this._toolsToolStripMenuItem.Text = "&Tools";
@@ -971,72 +2175,279 @@ namespace LanguageExplorer.Impls
 			// configureToolStripMenuItem
 			// 
 			this.configureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.restoreDefaultsToolStripMenuItem,
-            this.toolStripMenuItem20,
-            this.setUpWritingSystemsToolStripMenuItem});
+            this.CmdConfigureDictionary,
+            this.CmdConfigureInterlinear,
+            this.CmdConfigureXmlDocView,
+            this.CmdConfigureList,
+            this.CmdConfigureColumns,
+            this.CmdConfigHeadwordNumbers,
+            this.CmdRestoreDefaults,
+            this.toolMenuSeparator1,
+            this.ToolsMenu_CmdVernacularWritingSystemProperties,
+            this.ToolsMenu_CmdAnalysisWritingSystemProperties,
+            this.CmdAddCustomField});
 			this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-			this.configureToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+			this.configureToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
 			this.configureToolStripMenuItem.Text = "Configure";
 			// 
-			// restoreDefaultsToolStripMenuItem
+			// CmdConfigureDictionary
 			// 
-			this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
-			this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults...";
-			this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
+			this.CmdConfigureDictionary.Name = "CmdConfigureDictionary";
+			this.CmdConfigureDictionary.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigureDictionary.Text = "{0}";
+			this.CmdConfigureDictionary.Visible = false;
 			// 
-			// toolStripMenuItem20
+			// CmdConfigureInterlinear
 			// 
-			this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-			this.toolStripMenuItem20.Size = new System.Drawing.Size(201, 6);
+			this.CmdConfigureInterlinear.Name = "CmdConfigureInterlinear";
+			this.CmdConfigureInterlinear.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigureInterlinear.Text = "Interlinear..";
+			this.CmdConfigureInterlinear.Visible = false;
 			// 
-			// setUpWritingSystemsToolStripMenuItem
+			// CmdConfigureXmlDocView
 			// 
-			this.setUpWritingSystemsToolStripMenuItem.Name = "setUpWritingSystemsToolStripMenuItem";
-			this.setUpWritingSystemsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.setUpWritingSystemsToolStripMenuItem.Text = "Se&t up Writing Systems...";
-			this.setUpWritingSystemsToolStripMenuItem.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
-			this.setUpWritingSystemsToolStripMenuItem.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
+			this.CmdConfigureXmlDocView.Name = "CmdConfigureXmlDocView";
+			this.CmdConfigureXmlDocView.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigureXmlDocView.Text = "{0}";
+			this.CmdConfigureXmlDocView.Visible = false;
 			// 
-			// toolStripToolsMenuSparator1
+			// CmdConfigureList
 			// 
-			this.toolStripToolsMenuSparator1.Name = "toolStripToolsMenuSparator1";
-			this.toolStripToolsMenuSparator1.Size = new System.Drawing.Size(124, 6);
+			this.CmdConfigureList.Name = "CmdConfigureList";
+			this.CmdConfigureList.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigureList.Text = "List...";
+			this.CmdConfigureList.Visible = false;
 			// 
-			// spellingToolStripMenuItem
+			// CmdConfigureColumns
 			// 
-			this.spellingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showVernacularSpellingErrorsToolStripMenuItem});
-			this.spellingToolStripMenuItem.Name = "spellingToolStripMenuItem";
-			this.spellingToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-			this.spellingToolStripMenuItem.Text = "Spelling";
+			this.CmdConfigureColumns.Image = ((System.Drawing.Image)(resources.GetObject("CmdConfigureColumns.Image")));
+			this.CmdConfigureColumns.Name = "CmdConfigureColumns";
+			this.CmdConfigureColumns.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigureColumns.Text = "&Columns...";
+			this.CmdConfigureColumns.ToolTipText = "Configure current browse pane.";
+			this.CmdConfigureColumns.Visible = false;
 			// 
-			// showVernacularSpellingErrorsToolStripMenuItem
+			// CmdConfigHeadwordNumbers
 			// 
-			this.showVernacularSpellingErrorsToolStripMenuItem.Name = "showVernacularSpellingErrorsToolStripMenuItem";
-			this.showVernacularSpellingErrorsToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-			this.showVernacularSpellingErrorsToolStripMenuItem.Text = "Show Vernacular Spelling Errors";
-			this.showVernacularSpellingErrorsToolStripMenuItem.Click += new System.EventHandler(this.showVernacularSpellingErrorsToolStripMenuItem_Click);
+			this.CmdConfigHeadwordNumbers.Name = "CmdConfigHeadwordNumbers";
+			this.CmdConfigHeadwordNumbers.Size = new System.Drawing.Size(262, 22);
+			this.CmdConfigHeadwordNumbers.Text = "Headword Numbers...";
+			this.CmdConfigHeadwordNumbers.Visible = false;
 			// 
-			// utilitiesToolStripMenuItem
+			// CmdRestoreDefaults
 			// 
-			this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
-			this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-			this.utilitiesToolStripMenuItem.Text = "&Utilities...";
-			this.utilitiesToolStripMenuItem.ToolTipText = "Run some special utilities to process your data.";
-			this.utilitiesToolStripMenuItem.Click += new System.EventHandler(this.utilitiesToolStripMenuItem_Click);
+			this.CmdRestoreDefaults.Name = "CmdRestoreDefaults";
+			this.CmdRestoreDefaults.Size = new System.Drawing.Size(262, 22);
+			this.CmdRestoreDefaults.Text = "Restore Defaults...";
+			this.CmdRestoreDefaults.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
 			// 
-			// toolStripToolsMenuSparator2
+			// toolMenuSeparator1
 			// 
-			this.toolStripToolsMenuSparator2.Name = "toolStripToolsMenuSparator2";
-			this.toolStripToolsMenuSparator2.Size = new System.Drawing.Size(124, 6);
+			this.toolMenuSeparator1.Name = "toolMenuSeparator1";
+			this.toolMenuSeparator1.Size = new System.Drawing.Size(259, 6);
 			// 
-			// optionsToolStripMenuItem
+			// ToolsMenu_CmdVernacularWritingSystemProperties
 			// 
-			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-			this.optionsToolStripMenuItem.Text = "&Options...";
-			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.Tools_Options_Click);
+			this.ToolsMenu_CmdVernacularWritingSystemProperties.Name = "ToolsMenu_CmdVernacularWritingSystemProperties";
+			this.ToolsMenu_CmdVernacularWritingSystemProperties.Size = new System.Drawing.Size(262, 22);
+			this.ToolsMenu_CmdVernacularWritingSystemProperties.Text = "Set up Vernacular Writing Systems...";
+			this.ToolsMenu_CmdVernacularWritingSystemProperties.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
+			this.ToolsMenu_CmdVernacularWritingSystemProperties.Click += new System.EventHandler(this.CmdVernacularWritingSystemProperties_Click);
+			// 
+			// ToolsMenu_CmdAnalysisWritingSystemProperties
+			// 
+			this.ToolsMenu_CmdAnalysisWritingSystemProperties.Name = "ToolsMenu_CmdAnalysisWritingSystemProperties";
+			this.ToolsMenu_CmdAnalysisWritingSystemProperties.Size = new System.Drawing.Size(262, 22);
+			this.ToolsMenu_CmdAnalysisWritingSystemProperties.Text = "Set up Analysis Writing Systems...";
+			this.ToolsMenu_CmdAnalysisWritingSystemProperties.Click += new System.EventHandler(this.CmdAnalysisWritingSystemProperties_Click);
+			// 
+			// CmdAddCustomField
+			// 
+			this.CmdAddCustomField.Name = "CmdAddCustomField";
+			this.CmdAddCustomField.Size = new System.Drawing.Size(262, 22);
+			this.CmdAddCustomField.Text = "Custom &Fields...";
+			this.CmdAddCustomField.ToolTipText = "Add or edit custom fields.";
+			this.CmdAddCustomField.Visible = false;
+			// 
+			// toolMenuSeparator2
+			// 
+			this.toolMenuSeparator2.Name = "toolMenuSeparator2";
+			this.toolMenuSeparator2.Size = new System.Drawing.Size(187, 6);
+			// 
+			// CmdMergeEntry
+			// 
+			this.CmdMergeEntry.Name = "CmdMergeEntry";
+			this.CmdMergeEntry.Size = new System.Drawing.Size(190, 22);
+			this.CmdMergeEntry.Text = "&Merge with entry...";
+			this.CmdMergeEntry.Visible = false;
+			// 
+			// CmdLexiconLookup
+			// 
+			this.CmdLexiconLookup.Image = ((System.Drawing.Image)(resources.GetObject("CmdLexiconLookup.Image")));
+			this.CmdLexiconLookup.Name = "CmdLexiconLookup";
+			this.CmdLexiconLookup.Size = new System.Drawing.Size(190, 22);
+			this.CmdLexiconLookup.Text = "Find in &Dictionary...";
+			this.CmdLexiconLookup.Visible = false;
+			// 
+			// ITexts_AddWordsToLexicon
+			// 
+			this.ITexts_AddWordsToLexicon.Name = "ITexts_AddWordsToLexicon";
+			this.ITexts_AddWordsToLexicon.Size = new System.Drawing.Size(190, 22);
+			this.ITexts_AddWordsToLexicon.Text = "Add Words to Lexicon";
+			this.ITexts_AddWordsToLexicon.Visible = false;
+			// 
+			// toolMenuSeparator3
+			// 
+			this.toolMenuSeparator3.Name = "toolMenuSeparator3";
+			this.toolMenuSeparator3.Size = new System.Drawing.Size(187, 6);
+			this.toolMenuSeparator3.Visible = false;
+			// 
+			// ToolsMenu_SpellingMenu
+			// 
+			this.ToolsMenu_SpellingMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdEditSpellingStatus,
+            this.CmdViewIncorrectWords,
+            this.CmdUseVernSpellingDictionary,
+            this.toolMenuSeparator4,
+            this.CmdChangeSpelling});
+			this.ToolsMenu_SpellingMenu.Name = "ToolsMenu_SpellingMenu";
+			this.ToolsMenu_SpellingMenu.Size = new System.Drawing.Size(190, 22);
+			this.ToolsMenu_SpellingMenu.Text = "Spelling";
+			// 
+			// CmdEditSpellingStatus
+			// 
+			this.CmdEditSpellingStatus.Name = "CmdEditSpellingStatus";
+			this.CmdEditSpellingStatus.Size = new System.Drawing.Size(239, 22);
+			this.CmdEditSpellingStatus.Text = "Edit Spelling Status";
+			this.CmdEditSpellingStatus.Visible = false;
+			// 
+			// CmdViewIncorrectWords
+			// 
+			this.CmdViewIncorrectWords.Name = "CmdViewIncorrectWords";
+			this.CmdViewIncorrectWords.Size = new System.Drawing.Size(239, 22);
+			this.CmdViewIncorrectWords.Text = "View Incorrect Words in Use";
+			this.CmdViewIncorrectWords.Visible = false;
+			// 
+			// CmdUseVernSpellingDictionary
+			// 
+			this.CmdUseVernSpellingDictionary.Name = "CmdUseVernSpellingDictionary";
+			this.CmdUseVernSpellingDictionary.Size = new System.Drawing.Size(239, 22);
+			this.CmdUseVernSpellingDictionary.Text = "Show Vernacular Spelling Errors";
+			this.CmdUseVernSpellingDictionary.Visible = false;
+			this.CmdUseVernSpellingDictionary.Click += new System.EventHandler(this.showVernacularSpellingErrorsToolStripMenuItem_Click);
+			// 
+			// toolMenuSeparator4
+			// 
+			this.toolMenuSeparator4.Name = "toolMenuSeparator4";
+			this.toolMenuSeparator4.Size = new System.Drawing.Size(236, 6);
+			this.toolMenuSeparator4.Visible = false;
+			// 
+			// CmdChangeSpelling
+			// 
+			this.CmdChangeSpelling.Name = "CmdChangeSpelling";
+			this.CmdChangeSpelling.Size = new System.Drawing.Size(239, 22);
+			this.CmdChangeSpelling.Text = "Change Spelling...";
+			this.CmdChangeSpelling.Visible = false;
+			// 
+			// CmdProjectUtilities
+			// 
+			this.CmdProjectUtilities.Name = "CmdProjectUtilities";
+			this.CmdProjectUtilities.Size = new System.Drawing.Size(190, 22);
+			this.CmdProjectUtilities.Text = "&Utilities...";
+			this.CmdProjectUtilities.ToolTipText = "Run some special utilities to process your data.";
+			this.CmdProjectUtilities.Click += new System.EventHandler(this.utilitiesToolStripMenuItem_Click);
+			// 
+			// toolMenuSeparator5
+			// 
+			this.toolMenuSeparator5.Name = "toolMenuSeparator5";
+			this.toolMenuSeparator5.Size = new System.Drawing.Size(187, 6);
+			// 
+			// CmdToolsOptions
+			// 
+			this.CmdToolsOptions.Name = "CmdToolsOptions";
+			this.CmdToolsOptions.Size = new System.Drawing.Size(190, 22);
+			this.CmdToolsOptions.Text = "&Options...";
+			this.CmdToolsOptions.Click += new System.EventHandler(this.Tools_Options_Click);
+			// 
+			// CmdMacroF2
+			// 
+			this.CmdMacroF2.Name = "CmdMacroF2";
+			this.CmdMacroF2.ShortcutKeys = System.Windows.Forms.Keys.F2;
+			this.CmdMacroF2.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF2.Text = "F2";
+			this.CmdMacroF2.Visible = false;
+			// 
+			// CmdMacroF3
+			// 
+			this.CmdMacroF3.Name = "CmdMacroF3";
+			this.CmdMacroF3.ShortcutKeys = System.Windows.Forms.Keys.F3;
+			this.CmdMacroF3.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF3.Text = "F3";
+			this.CmdMacroF3.Visible = false;
+			// 
+			// CmdMacroF4
+			// 
+			this.CmdMacroF4.Name = "CmdMacroF4";
+			this.CmdMacroF4.ShortcutKeys = System.Windows.Forms.Keys.F4;
+			this.CmdMacroF4.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF4.Text = "F4";
+			this.CmdMacroF4.Visible = false;
+			// 
+			// CmdMacroF6
+			// 
+			this.CmdMacroF6.Name = "CmdMacroF6";
+			this.CmdMacroF6.ShortcutKeys = System.Windows.Forms.Keys.F6;
+			this.CmdMacroF6.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF6.Text = "F6";
+			this.CmdMacroF6.Visible = false;
+			// 
+			// CmdMacroF7
+			// 
+			this.CmdMacroF7.Name = "CmdMacroF7";
+			this.CmdMacroF7.ShortcutKeys = System.Windows.Forms.Keys.F7;
+			this.CmdMacroF7.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF7.Text = "F7";
+			this.CmdMacroF7.Visible = false;
+			// 
+			// CmdMacroF8
+			// 
+			this.CmdMacroF8.Name = "CmdMacroF8";
+			this.CmdMacroF8.ShortcutKeys = System.Windows.Forms.Keys.F7;
+			this.CmdMacroF8.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF8.Text = "F8";
+			this.CmdMacroF8.Visible = false;
+			// 
+			// CmdMacroF9
+			// 
+			this.CmdMacroF9.Name = "CmdMacroF9";
+			this.CmdMacroF9.ShortcutKeys = System.Windows.Forms.Keys.F9;
+			this.CmdMacroF9.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF9.Text = "F9";
+			this.CmdMacroF9.Visible = false;
+			// 
+			// CmdMacroF10
+			// 
+			this.CmdMacroF10.Name = "CmdMacroF10";
+			this.CmdMacroF10.ShortcutKeys = System.Windows.Forms.Keys.F10;
+			this.CmdMacroF10.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF10.Text = "F10";
+			this.CmdMacroF10.Visible = false;
+			// 
+			// CmdMacroF11
+			// 
+			this.CmdMacroF11.Name = "CmdMacroF11";
+			this.CmdMacroF11.ShortcutKeys = System.Windows.Forms.Keys.F11;
+			this.CmdMacroF11.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF11.Text = "F11";
+			this.CmdMacroF11.Visible = false;
+			// 
+			// CmdMacroF12
+			// 
+			this.CmdMacroF12.Name = "CmdMacroF12";
+			this.CmdMacroF12.ShortcutKeys = System.Windows.Forms.Keys.F12;
+			this.CmdMacroF12.Size = new System.Drawing.Size(190, 22);
+			this.CmdMacroF12.Text = "F12";
+			this.CmdMacroF12.Visible = false;
 			// 
 			// _parserToolStripMenuItem
 			// 
@@ -1045,12 +2456,12 @@ namespace LanguageExplorer.Impls
             this.CmdReparseAllWords,
             this.CmdReInitializeParser,
             this.CmdStopParser,
-            this.toolStripParserMenuSparator1,
+            this.toolStripParserMenuSeparator1,
             this.CmdTryAWord,
             this.CmdParseWordsInCurrentText,
             this.CmdParseCurrentWord,
             this.CmdClearSelectedWordParserAnalyses,
-            this.toolStripParserMenuSparator2,
+            this.toolStripParserMenuSeparator2,
             this.ChooseParserMenu,
             this.CmdEditParserParameters});
 			this._parserToolStripMenuItem.Name = "_parserToolStripMenuItem";
@@ -1083,12 +2494,11 @@ namespace LanguageExplorer.Impls
 			this.CmdStopParser.Size = new System.Drawing.Size(228, 22);
 			this.CmdStopParser.Text = "&Stop Parser";
 			this.CmdStopParser.ToolTipText = "Stop the Parser.";
-			this.CmdStopParser.Click += new System.EventHandler(this._stopParserToolStripMenuItem_Click);
 			// 
-			// toolStripParserMenuSparator1
+			// toolStripParserMenuSeparator1
 			// 
-			this.toolStripParserMenuSparator1.Name = "toolStripParserMenuSparator1";
-			this.toolStripParserMenuSparator1.Size = new System.Drawing.Size(225, 6);
+			this.toolStripParserMenuSeparator1.Name = "toolStripParserMenuSeparator1";
+			this.toolStripParserMenuSeparator1.Size = new System.Drawing.Size(225, 6);
 			// 
 			// CmdTryAWord
 			// 
@@ -1116,10 +2526,10 @@ namespace LanguageExplorer.Impls
 			this.CmdClearSelectedWordParserAnalyses.Size = new System.Drawing.Size(228, 22);
 			this.CmdClearSelectedWordParserAnalyses.Text = "Clear Current Parser &Analyses";
 			// 
-			// toolStripParserMenuSparator2
+			// toolStripParserMenuSeparator2
 			// 
-			this.toolStripParserMenuSparator2.Name = "toolStripParserMenuSparator2";
-			this.toolStripParserMenuSparator2.Size = new System.Drawing.Size(225, 6);
+			this.toolStripParserMenuSeparator2.Name = "toolStripParserMenuSeparator2";
+			this.toolStripParserMenuSeparator2.Size = new System.Drawing.Size(225, 6);
 			// 
 			// ChooseParserMenu
 			// 
@@ -1170,303 +2580,300 @@ namespace LanguageExplorer.Impls
 			// _helpToolStripMenuItem
 			// 
 			this._helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.languageExplorerToolStripMenuItem,
-            this.trainingToolStripMenuItem,
-            this.demoMoviesToolStripMenuItem,
-            this.resourcesToolStripMenuItem,
-            this.toolStripHelpMenuSparator1,
-            this.reportAProblemToolStripMenuItem,
-            this.makeASuggestionToolStripMenuItem,
-            this.toolStripHelpMenuSparator2,
-            this.aboutLanguageExplorerToolStripMenuItem});
+            this.CmdHelpLanguageExplorer,
+            this.CmdHelpTraining,
+            this.CmdHelpDemoMovies,
+            this.HelpMenu_ResourcesMenu,
+            this.toolStripHelpMenuSeparator1,
+            this.CmdHelpReportBug,
+            this.CmdHelpMakeSuggestion,
+            this.toolStripHelpMenuSeparator2,
+            this.CmdHelpAbout});
 			this._helpToolStripMenuItem.Name = "_helpToolStripMenuItem";
 			this._helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this._helpToolStripMenuItem.Text = "&Help";
 			// 
-			// languageExplorerToolStripMenuItem
+			// CmdHelpLanguageExplorer
 			// 
-			this.languageExplorerToolStripMenuItem.Name = "languageExplorerToolStripMenuItem";
-			this.languageExplorerToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-			this.languageExplorerToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.languageExplorerToolStripMenuItem.Text = "&Language Explorer...";
-			this.languageExplorerToolStripMenuItem.ToolTipText = "Help on using Language Explorer (only available in English).";
-			this.languageExplorerToolStripMenuItem.Click += new System.EventHandler(this.Help_LanguageExplorer);
+			this.CmdHelpLanguageExplorer.Name = "CmdHelpLanguageExplorer";
+			this.CmdHelpLanguageExplorer.ShortcutKeys = System.Windows.Forms.Keys.F1;
+			this.CmdHelpLanguageExplorer.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpLanguageExplorer.Text = "&Language Explorer...";
+			this.CmdHelpLanguageExplorer.ToolTipText = "Help on using Language Explorer (only available in English).";
+			this.CmdHelpLanguageExplorer.Click += new System.EventHandler(this.Help_LanguageExplorer);
 			// 
-			// trainingToolStripMenuItem
+			// CmdHelpTraining
 			// 
-			this.trainingToolStripMenuItem.Name = "trainingToolStripMenuItem";
-			this.trainingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.trainingToolStripMenuItem.Text = "&Training";
-			this.trainingToolStripMenuItem.ToolTipText = "Training for using Language Explorer (only available in English).";
-			this.trainingToolStripMenuItem.Click += new System.EventHandler(this.Help_Training);
+			this.CmdHelpTraining.Name = "CmdHelpTraining";
+			this.CmdHelpTraining.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpTraining.Text = "&Training";
+			this.CmdHelpTraining.ToolTipText = "Training for using Language Explorer (only available in English).";
+			this.CmdHelpTraining.Click += new System.EventHandler(this.Help_Training);
 			// 
-			// demoMoviesToolStripMenuItem
+			// CmdHelpDemoMovies
 			// 
-			this.demoMoviesToolStripMenuItem.Name = "demoMoviesToolStripMenuItem";
-			this.demoMoviesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.demoMoviesToolStripMenuItem.Text = "&Demo Movies...";
-			this.demoMoviesToolStripMenuItem.ToolTipText = "Run the Demo Movies.";
-			this.demoMoviesToolStripMenuItem.Click += new System.EventHandler(this.Help_DemoMovies);
+			this.CmdHelpDemoMovies.Name = "CmdHelpDemoMovies";
+			this.CmdHelpDemoMovies.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpDemoMovies.Text = "&Demo Movies...";
+			this.CmdHelpDemoMovies.ToolTipText = "Run the Demo Movies.";
+			this.CmdHelpDemoMovies.Click += new System.EventHandler(this.Help_DemoMovies);
 			// 
-			// resourcesToolStripMenuItem
+			// HelpMenu_ResourcesMenu
 			// 
-			this.resourcesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.introductionToLexicographyToolStripMenuItem,
-            this.introductionToParsingToolStripMenuItem,
-            this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem,
-            this.technicalNotesOnSFMDatabaseImportToolStripMenuItem,
-            this.technicalNotesOnLinguaLinksImportToolStripMenuItem,
-            this.technicalNotesOnInterlinearImportToolStripMenuItem,
-            this.technicalNotesOnWritingSystemsToolStripMenuItem,
-            this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem});
-			this.resourcesToolStripMenuItem.Name = "resourcesToolStripMenuItem";
-			this.resourcesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.resourcesToolStripMenuItem.Text = "&Resources";
+			this.HelpMenu_ResourcesMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CmdHelpLexicographyIntro,
+            this.CmdHelpMorphologyIntro,
+            this.CmdHelpNotesSendReceive,
+            this.CmdHelpNotesSFMDatabaseImport,
+            this.CmdHelpNotesLinguaLinksDatabaseImport,
+            this.CmdHelpNotesInterlinearImport,
+            this.CmdHelpNotesWritingSystems,
+            this.CmdHelpXLingPap});
+			this.HelpMenu_ResourcesMenu.Name = "HelpMenu_ResourcesMenu";
+			this.HelpMenu_ResourcesMenu.Size = new System.Drawing.Size(216, 22);
+			this.HelpMenu_ResourcesMenu.Text = "&Resources";
 			// 
-			// introductionToLexicographyToolStripMenuItem
+			// CmdHelpLexicographyIntro
 			// 
-			this.introductionToLexicographyToolStripMenuItem.Name = "introductionToLexicographyToolStripMenuItem";
-			this.introductionToLexicographyToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.introductionToLexicographyToolStripMenuItem.Text = "Introduction to &Lexicography...";
-			this.introductionToLexicographyToolStripMenuItem.Click += new System.EventHandler(this.Help_Introduction_To_Lexicography_Clicked);
+			this.CmdHelpLexicographyIntro.Name = "CmdHelpLexicographyIntro";
+			this.CmdHelpLexicographyIntro.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpLexicographyIntro.Text = "Introduction to &Lexicography...";
+			this.CmdHelpLexicographyIntro.Click += new System.EventHandler(this.Help_Introduction_To_Lexicography_Clicked);
 			// 
-			// introductionToParsingToolStripMenuItem
+			// CmdHelpMorphologyIntro
 			// 
-			this.introductionToParsingToolStripMenuItem.Name = "introductionToParsingToolStripMenuItem";
-			this.introductionToParsingToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.introductionToParsingToolStripMenuItem.Text = "Introduction to &Parsing...";
-			this.introductionToParsingToolStripMenuItem.Click += new System.EventHandler(this.Help_Introduction_To_Parsing_Click);
+			this.CmdHelpMorphologyIntro.Name = "CmdHelpMorphologyIntro";
+			this.CmdHelpMorphologyIntro.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpMorphologyIntro.Text = "Introduction to &Parsing...";
+			this.CmdHelpMorphologyIntro.Click += new System.EventHandler(this.Help_Introduction_To_Parsing_Click);
 			// 
-			// technicalNotesOnFieldWorksSendReceiveToolStripMenuItem
+			// CmdHelpNotesSendReceive
 			// 
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Name = "technicalNotesOnFieldWorksSendReceiveToolStripMenuItem";
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Text = "Technical Notes on FieldWorks Send-&Receive...";
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.ToolTipText = "Display technical notes on FieldWorks Send/Receive (only available in English).";
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_on_FieldWorks_Send_Receive);
+			this.CmdHelpNotesSendReceive.Name = "CmdHelpNotesSendReceive";
+			this.CmdHelpNotesSendReceive.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpNotesSendReceive.Text = "Technical Notes on FieldWorks Send-&Receive...";
+			this.CmdHelpNotesSendReceive.ToolTipText = "Display technical notes on FieldWorks Send/Receive (only available in English).";
+			this.CmdHelpNotesSendReceive.Click += new System.EventHandler(this.Help_Technical_Notes_on_FieldWorks_Send_Receive);
 			// 
-			// technicalNotesOnSFMDatabaseImportToolStripMenuItem
+			// CmdHelpNotesSFMDatabaseImport
 			// 
-			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Name = "technicalNotesOnSFMDatabaseImportToolStripMenuItem";
-			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Text = "Technical Notes on &SFM Database Import...";
-			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Techinical_Notes_On_SFM_Database_Import_Click);
+			this.CmdHelpNotesSFMDatabaseImport.Name = "CmdHelpNotesSFMDatabaseImport";
+			this.CmdHelpNotesSFMDatabaseImport.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpNotesSFMDatabaseImport.Text = "Technical Notes on &SFM Database Import...";
+			this.CmdHelpNotesSFMDatabaseImport.Click += new System.EventHandler(this.Help_Techinical_Notes_On_SFM_Database_Import_Click);
 			// 
-			// technicalNotesOnLinguaLinksImportToolStripMenuItem
+			// CmdHelpNotesLinguaLinksDatabaseImport
 			// 
-			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Name = "technicalNotesOnLinguaLinksImportToolStripMenuItem";
-			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Text = "Technical Notes on Lin&guaLinks Import...";
-			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_LinguaLinks_Import_Click);
+			this.CmdHelpNotesLinguaLinksDatabaseImport.Name = "CmdHelpNotesLinguaLinksDatabaseImport";
+			this.CmdHelpNotesLinguaLinksDatabaseImport.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpNotesLinguaLinksDatabaseImport.Text = "Technical Notes on Lin&guaLinks Import...";
+			this.CmdHelpNotesLinguaLinksDatabaseImport.Click += new System.EventHandler(this.Help_Technical_Notes_On_LinguaLinks_Import_Click);
 			// 
-			// technicalNotesOnInterlinearImportToolStripMenuItem
+			// CmdHelpNotesInterlinearImport
 			// 
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Name = "technicalNotesOnInterlinearImportToolStripMenuItem";
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Text = "Technical Notes on &Interlinear Import...";
-			this.technicalNotesOnInterlinearImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_Interlinear_Import_Click);
+			this.CmdHelpNotesInterlinearImport.Name = "CmdHelpNotesInterlinearImport";
+			this.CmdHelpNotesInterlinearImport.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpNotesInterlinearImport.Text = "Technical Notes on &Interlinear Import...";
+			this.CmdHelpNotesInterlinearImport.Click += new System.EventHandler(this.Help_Technical_Notes_On_Interlinear_Import_Click);
 			// 
-			// technicalNotesOnWritingSystemsToolStripMenuItem
+			// CmdHelpNotesWritingSystems
 			// 
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.Name = "technicalNotesOnWritingSystemsToolStripMenuItem";
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.Text = "Technical Notes on &Writing Systems...";
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.ToolTipText = "Display technical notes on Writing Systems (only available in English).";
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.Click += new System.EventHandler(this.Help_Training_Writing_Systems);
+			this.CmdHelpNotesWritingSystems.Name = "CmdHelpNotesWritingSystems";
+			this.CmdHelpNotesWritingSystems.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpNotesWritingSystems.Text = "Technical Notes on &Writing Systems...";
+			this.CmdHelpNotesWritingSystems.ToolTipText = "Display technical notes on Writing Systems (only available in English).";
+			this.CmdHelpNotesWritingSystems.Click += new System.EventHandler(this.Help_Training_Writing_Systems);
 			// 
-			// editingLinguisticsPapersUsingXLingPaperToolStripMenuItem
+			// CmdHelpXLingPap
 			// 
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Name = "editingLinguisticsPapersUsingXLingPaperToolStripMenuItem";
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Text = "Editing Linguistics Papers Using &XLingPaper...";
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.ToolTipText = "You can edit your Grammar Sketch in XLingPaper format using an XML editor (only a" +
+			this.CmdHelpXLingPap.Name = "CmdHelpXLingPap";
+			this.CmdHelpXLingPap.Size = new System.Drawing.Size(319, 22);
+			this.CmdHelpXLingPap.Text = "Editing Linguistics Papers Using &XLingPaper...";
+			this.CmdHelpXLingPap.ToolTipText = "You can edit your Grammar Sketch in XLingPaper format using an XML editor (only a" +
     "vailable in English).";
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Click += new System.EventHandler(this.Help_XLingPaper);
+			this.CmdHelpXLingPap.Click += new System.EventHandler(this.Help_XLingPaper);
 			// 
-			// toolStripHelpMenuSparator1
+			// toolStripHelpMenuSeparator1
 			// 
-			this.toolStripHelpMenuSparator1.Name = "toolStripHelpMenuSparator1";
-			this.toolStripHelpMenuSparator1.Size = new System.Drawing.Size(213, 6);
+			this.toolStripHelpMenuSeparator1.Name = "toolStripHelpMenuSeparator1";
+			this.toolStripHelpMenuSeparator1.Size = new System.Drawing.Size(213, 6);
 			// 
-			// reportAProblemToolStripMenuItem
+			// CmdHelpReportBug
 			// 
-			this.reportAProblemToolStripMenuItem.Name = "reportAProblemToolStripMenuItem";
-			this.reportAProblemToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.reportAProblemToolStripMenuItem.Text = "&Report a Problem...";
-			this.reportAProblemToolStripMenuItem.Click += new System.EventHandler(this.Help_ReportProblem);
+			this.CmdHelpReportBug.Name = "CmdHelpReportBug";
+			this.CmdHelpReportBug.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpReportBug.Text = "&Report a Problem...";
+			this.CmdHelpReportBug.Click += new System.EventHandler(this.Help_ReportProblem);
 			// 
-			// makeASuggestionToolStripMenuItem
+			// CmdHelpMakeSuggestion
 			// 
-			this.makeASuggestionToolStripMenuItem.Name = "makeASuggestionToolStripMenuItem";
-			this.makeASuggestionToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.makeASuggestionToolStripMenuItem.Text = "&Make a Suggestion...";
-			this.makeASuggestionToolStripMenuItem.Click += new System.EventHandler(this.Help_Make_a_Suggestion);
+			this.CmdHelpMakeSuggestion.Name = "CmdHelpMakeSuggestion";
+			this.CmdHelpMakeSuggestion.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpMakeSuggestion.Text = "&Make a Suggestion...";
+			this.CmdHelpMakeSuggestion.Click += new System.EventHandler(this.Help_Make_a_Suggestion);
 			// 
-			// toolStripHelpMenuSparator2
+			// toolStripHelpMenuSeparator2
 			// 
-			this.toolStripHelpMenuSparator2.Name = "toolStripHelpMenuSparator2";
-			this.toolStripHelpMenuSparator2.Size = new System.Drawing.Size(213, 6);
+			this.toolStripHelpMenuSeparator2.Name = "toolStripHelpMenuSeparator2";
+			this.toolStripHelpMenuSeparator2.Size = new System.Drawing.Size(213, 6);
 			// 
-			// aboutLanguageExplorerToolStripMenuItem
+			// CmdHelpAbout
 			// 
-			this.aboutLanguageExplorerToolStripMenuItem.Name = "aboutLanguageExplorerToolStripMenuItem";
-			this.aboutLanguageExplorerToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.aboutLanguageExplorerToolStripMenuItem.Text = "&About Language Explorer...";
-			this.aboutLanguageExplorerToolStripMenuItem.ToolTipText = "Display version information about this application.";
-			this.aboutLanguageExplorerToolStripMenuItem.Click += new System.EventHandler(this.Help_About_Language_Explorer);
+			this.CmdHelpAbout.Name = "CmdHelpAbout";
+			this.CmdHelpAbout.Size = new System.Drawing.Size(216, 22);
+			this.CmdHelpAbout.Text = "&About Language Explorer...";
+			this.CmdHelpAbout.ToolTipText = "Display version information about this application.";
+			this.CmdHelpAbout.Click += new System.EventHandler(this.Help_About_Language_Explorer);
 			// 
 			// toolStripStandard
 			// 
 			this.toolStripStandard.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripStandard.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStripStandard.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonHistoryBack,
-            this.toolStripButtonHistoryForward,
-            this.toolStripSeparator3,
-            this.deleteToolStripButton,
-            this.toolStripSeparator2,
-            this.undoToolStripButton,
-            this.redoToolStripButton,
-            this.toolStripButton_Refresh,
-            this.toolStripSeparator1,
-            this._tsbFirst,
-            this._tsbPrevious,
-            this._tsbNext,
-            this._tsbLast,
-            this.toolStripButtonFlexLiftBridge});
+            this.CmdHistoryBack,
+            this.CmdHistoryForward,
+            this.standardToolStripSeparator1,
+            this.Toolbar_CmdDeleteRecord,
+            this.standardToolStripSeparator2,
+            this.Toolbar_CmdUndo,
+            this.Toolbar_CmdRedo,
+            this.Toolbar_CmdRefresh,
+            this.standardToolStripSeparator3,
+            this.Toolbar_CmdFirstRecord,
+            this.Toolbar_CmdPreviousRecord,
+            this.Toolbar_CmdNextRecord,
+            this.Toolbar_CmdLastRecord,
+            this.Toolbar_CmdFLExLiftBridge});
 			this.toolStripStandard.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.toolStripStandard.Location = new System.Drawing.Point(3, 24);
 			this.toolStripStandard.Name = "toolStripStandard";
-			this.toolStripStandard.Size = new System.Drawing.Size(294, 27);
+			this.toolStripStandard.Size = new System.Drawing.Size(270, 27);
 			this.toolStripStandard.TabIndex = 2;
 			this.toolStripStandard.Text = "Standard";
 			// 
-			// toolStripButtonHistoryBack
+			// CmdHistoryBack
 			// 
-			this.toolStripButtonHistoryBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonHistoryBack.Enabled = false;
-			this.toolStripButtonHistoryBack.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonHistoryBack.Image")));
-			this.toolStripButtonHistoryBack.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonHistoryBack.Name = "toolStripButtonHistoryBack";
-			this.toolStripButtonHistoryBack.Size = new System.Drawing.Size(24, 24);
-			this.toolStripButtonHistoryBack.Text = "Go Back";
+			this.CmdHistoryBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.CmdHistoryBack.Enabled = false;
+			this.CmdHistoryBack.Image = ((System.Drawing.Image)(resources.GetObject("CmdHistoryBack.Image")));
+			this.CmdHistoryBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdHistoryBack.Name = "CmdHistoryBack";
+			this.CmdHistoryBack.Size = new System.Drawing.Size(24, 24);
+			this.CmdHistoryBack.Text = "Go Back";
 			// 
-			// toolStripButtonHistoryForward
+			// CmdHistoryForward
 			// 
-			this.toolStripButtonHistoryForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonHistoryForward.Enabled = false;
-			this.toolStripButtonHistoryForward.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonHistoryForward.Image")));
-			this.toolStripButtonHistoryForward.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonHistoryForward.Name = "toolStripButtonHistoryForward";
-			this.toolStripButtonHistoryForward.Size = new System.Drawing.Size(24, 24);
-			this.toolStripButtonHistoryForward.Text = "Go Forward";
+			this.CmdHistoryForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.CmdHistoryForward.Enabled = false;
+			this.CmdHistoryForward.Image = ((System.Drawing.Image)(resources.GetObject("CmdHistoryForward.Image")));
+			this.CmdHistoryForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.CmdHistoryForward.Name = "CmdHistoryForward";
+			this.CmdHistoryForward.Size = new System.Drawing.Size(24, 24);
+			this.CmdHistoryForward.Text = "Go Forward";
 			// 
-			// toolStripSeparator3
+			// standardToolStripSeparator1
 			// 
-			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
+			this.standardToolStripSeparator1.Name = "standardToolStripSeparator1";
+			this.standardToolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
-			// deleteToolStripButton
+			// Toolbar_CmdDeleteRecord
 			// 
-			this.deleteToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.deleteToolStripButton.Enabled = false;
-			this.deleteToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripButton.Image")));
-			this.deleteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.deleteToolStripButton.Name = "deleteToolStripButton";
-			this.deleteToolStripButton.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdDeleteRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDeleteRecord.Enabled = false;
+			this.Toolbar_CmdDeleteRecord.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDeleteRecord.Image")));
+			this.Toolbar_CmdDeleteRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDeleteRecord.Name = "Toolbar_CmdDeleteRecord";
+			this.Toolbar_CmdDeleteRecord.Size = new System.Drawing.Size(24, 24);
 			// 
-			// toolStripSeparator2
+			// standardToolStripSeparator2
 			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+			this.standardToolStripSeparator2.Name = "standardToolStripSeparator2";
+			this.standardToolStripSeparator2.Size = new System.Drawing.Size(6, 27);
 			// 
-			// undoToolStripButton
+			// Toolbar_CmdUndo
 			// 
-			this.undoToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.undoToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("undoToolStripButton.Image")));
-			this.undoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.undoToolStripButton.Name = "undoToolStripButton";
-			this.undoToolStripButton.Size = new System.Drawing.Size(24, 24);
-			this.undoToolStripButton.Text = "Undo";
-			this.undoToolStripButton.ToolTipText = "Undo previous actions.";
-			this.undoToolStripButton.Click += new System.EventHandler(this.Edit_Undo_Click);
+			this.Toolbar_CmdUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdUndo.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdUndo.Image")));
+			this.Toolbar_CmdUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdUndo.Name = "Toolbar_CmdUndo";
+			this.Toolbar_CmdUndo.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdUndo.Text = "Undo";
+			this.Toolbar_CmdUndo.ToolTipText = "Undo previous actions.";
+			this.Toolbar_CmdUndo.Click += new System.EventHandler(this.Edit_Undo_Click);
 			// 
-			// redoToolStripButton
+			// Toolbar_CmdRedo
 			// 
-			this.redoToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.redoToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("redoToolStripButton.Image")));
-			this.redoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.redoToolStripButton.Name = "redoToolStripButton";
-			this.redoToolStripButton.Size = new System.Drawing.Size(24, 24);
-			this.redoToolStripButton.Text = "Redo";
-			this.redoToolStripButton.ToolTipText = "Redo previous actions.";
-			this.redoToolStripButton.Click += new System.EventHandler(this.Edit_Redo_Click);
+			this.Toolbar_CmdRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdRedo.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdRedo.Image")));
+			this.Toolbar_CmdRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdRedo.Name = "Toolbar_CmdRedo";
+			this.Toolbar_CmdRedo.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdRedo.Text = "Redo";
+			this.Toolbar_CmdRedo.ToolTipText = "Redo previous actions.";
+			this.Toolbar_CmdRedo.Click += new System.EventHandler(this.Edit_Redo_Click);
 			// 
-			// toolStripButton_Refresh
+			// Toolbar_CmdRefresh
 			// 
-			this.toolStripButton_Refresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton_Refresh.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Refresh.Image")));
-			this.toolStripButton_Refresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton_Refresh.Name = "toolStripButton_Refresh";
-			this.toolStripButton_Refresh.Size = new System.Drawing.Size(24, 24);
-			this.toolStripButton_Refresh.Text = "Refresh";
-			this.toolStripButton_Refresh.ToolTipText = "Refresh the screen.";
-			this.toolStripButton_Refresh.Click += new System.EventHandler(this.View_Refresh);
+			this.Toolbar_CmdRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdRefresh.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdRefresh.Image")));
+			this.Toolbar_CmdRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdRefresh.Name = "Toolbar_CmdRefresh";
+			this.Toolbar_CmdRefresh.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdRefresh.Text = "Refresh";
+			this.Toolbar_CmdRefresh.ToolTipText = "Refresh the screen.";
+			this.Toolbar_CmdRefresh.Click += new System.EventHandler(this.View_Refresh);
 			// 
-			// toolStripSeparator1
+			// standardToolStripSeparator3
 			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+			this.standardToolStripSeparator3.Name = "standardToolStripSeparator3";
+			this.standardToolStripSeparator3.Size = new System.Drawing.Size(6, 27);
 			// 
-			// _tsbFirst
+			// Toolbar_CmdFirstRecord
 			// 
-			this._tsbFirst.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._tsbFirst.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
-			this._tsbFirst.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._tsbFirst.Name = "_tsbFirst";
-			this._tsbFirst.Size = new System.Drawing.Size(24, 24);
-			this._tsbFirst.Text = "toolStripButton";
-			this._tsbFirst.ToolTipText = "Show the first item.";
+			this.Toolbar_CmdFirstRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdFirstRecord.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
+			this.Toolbar_CmdFirstRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdFirstRecord.Name = "Toolbar_CmdFirstRecord";
+			this.Toolbar_CmdFirstRecord.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdFirstRecord.ToolTipText = "Show the first item.";
 			// 
-			// _tsbPrevious
+			// Toolbar_CmdPreviousRecord
 			// 
-			this._tsbPrevious.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._tsbPrevious.Image = global::LanguageExplorer.LanguageExplorerResources.FWLeftArrow;
-			this._tsbPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._tsbPrevious.Name = "_tsbPrevious";
-			this._tsbPrevious.Size = new System.Drawing.Size(24, 24);
-			this._tsbPrevious.Text = "toolStripButtonFlexLiftBridge";
-			this._tsbPrevious.ToolTipText = "Show the previous item.";
+			this.Toolbar_CmdPreviousRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdPreviousRecord.Image = global::LanguageExplorer.LanguageExplorerResources.FWLeftArrow;
+			this.Toolbar_CmdPreviousRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdPreviousRecord.Name = "Toolbar_CmdPreviousRecord";
+			this.Toolbar_CmdPreviousRecord.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdPreviousRecord.ToolTipText = "Show the previous item.";
 			// 
-			// _tsbNext
+			// Toolbar_CmdNextRecord
 			// 
-			this._tsbNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._tsbNext.Image = global::LanguageExplorer.LanguageExplorerResources.FWRightArrow;
-			this._tsbNext.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._tsbNext.Name = "_tsbNext";
-			this._tsbNext.Size = new System.Drawing.Size(24, 24);
-			this._tsbNext.Text = "toolStripButtonFlexLiftBridge";
-			this._tsbNext.ToolTipText = "Show the next item.";
+			this.Toolbar_CmdNextRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdNextRecord.Image = global::LanguageExplorer.LanguageExplorerResources.FWRightArrow;
+			this.Toolbar_CmdNextRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdNextRecord.Name = "Toolbar_CmdNextRecord";
+			this.Toolbar_CmdNextRecord.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdNextRecord.ToolTipText = "Show the next item.";
 			// 
-			// _tsbLast
+			// Toolbar_CmdLastRecord
 			// 
-			this._tsbLast.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._tsbLast.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
-			this._tsbLast.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._tsbLast.Name = "_tsbLast";
-			this._tsbLast.Size = new System.Drawing.Size(24, 24);
-			this._tsbLast.Text = "toolStripButtonFlexLiftBridge";
-			this._tsbLast.ToolTipText = "Show the last item.";
+			this.Toolbar_CmdLastRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdLastRecord.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
+			this.Toolbar_CmdLastRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdLastRecord.Name = "Toolbar_CmdLastRecord";
+			this.Toolbar_CmdLastRecord.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdLastRecord.ToolTipText = "Show the last item.";
 			// 
-			// toolStripButtonFlexLiftBridge
+			// Toolbar_CmdFLExLiftBridge
 			// 
-			this.toolStripButtonFlexLiftBridge.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonFlexLiftBridge.Enabled = false;
-			this.toolStripButtonFlexLiftBridge.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFlexLiftBridge.Image")));
-			this.toolStripButtonFlexLiftBridge.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonFlexLiftBridge.Name = "toolStripButtonFlexLiftBridge";
-			this.toolStripButtonFlexLiftBridge.Size = new System.Drawing.Size(24, 24);
-			this.toolStripButtonFlexLiftBridge.Text = "toolStripButtonFlexLiftBridge";
+			this.Toolbar_CmdFLExLiftBridge.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdFLExLiftBridge.Enabled = false;
+			this.Toolbar_CmdFLExLiftBridge.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdFLExLiftBridge.Image")));
+			this.Toolbar_CmdFLExLiftBridge.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdFLExLiftBridge.Name = "Toolbar_CmdFLExLiftBridge";
+			this.Toolbar_CmdFLExLiftBridge.Size = new System.Drawing.Size(24, 24);
+			this.Toolbar_CmdFLExLiftBridge.ToolTipText = "Send/Receive data in this project";
+			this.Toolbar_CmdFLExLiftBridge.Visible = false;
 			// 
 			// toolStripContainer
 			// 
@@ -1491,8 +2898,8 @@ namespace LanguageExplorer.Impls
 			// 
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this._menuStrip);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripStandard);
-			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripView);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
+			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripView);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
 			// 
 			// mainContainer
@@ -1583,77 +2990,793 @@ namespace LanguageExplorer.Impls
 			this.statusBarPanelRecordNumber.Text = "RecordNumber";
 			this.statusBarPanelRecordNumber.Width = 91;
 			// 
-			// toolStripView
-			// 
-			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonChangeFilterClearAll});
-			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripView.Location = new System.Drawing.Point(299, 24);
-			this.toolStripView.Name = "toolStripView";
-			this.toolStripView.Size = new System.Drawing.Size(35, 25);
-			this.toolStripView.TabIndex = 5;
-			// 
-			// toolStripButtonChangeFilterClearAll
-			// 
-			this.toolStripButtonChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonChangeFilterClearAll.Enabled = false;
-			this.toolStripButtonChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonChangeFilterClearAll.Image")));
-			this.toolStripButtonChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonChangeFilterClearAll.Name = "toolStripButtonChangeFilterClearAll";
-			this.toolStripButtonChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
-			this.toolStripButtonChangeFilterClearAll.ToolTipText = "Turn off all filters";
-			this.toolStripButtonChangeFilterClearAll.Click += new System.EventHandler(this.toolStripButtonChangeFilterClearAll_Click);
-			// 
 			// toolStripInsert
 			// 
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripInsert.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonFindText});
+            this.Toolbar_CmdInsertLexEntry,
+            this.Toolbar_CmdGoToEntry,
+            this.Toolbar_CmdInsertReversalEntry,
+            this.Toolbar_CmdGoToReversalEntry,
+            this.Toolbar_CmdInsertText,
+            this.insertToolStripSeparator1,
+            this.Toolbar_CmdAddNote,
+            this.Toolbar_CmdApproveAllButton,
+            this.Toolbar_CmdInsertHumanApprovedAnalysis,
+            this.Toolbar_CmdGoToWfiWordform,
+            this.Toolbar_CmdFindAndReplaceText,
+            this.Toolbar_CmdBreakPhraseButton,
+            this.Toolbar_CmdInsertRecord,
+            this.Toolbar_CmdGoToRecord,
+            this.insertToolStripSeparator2,
+            this.Toolbar_CmdAddToLexicon,
+            this.Toolbar_CmdLexiconLookup,
+            this.Toolbar_CmdInsertSemDom,
+            this.Toolbar_CmdDataTree_Insert_SemanticDomain,
+            this.Toolbar_CmdInsertAnnotationDef,
+            this.Toolbar_CmdInsertPossibility,
+            this.Toolbar_CmdInsertCustomItem,
+            this.Toolbar_CmdInsertMorphType,
+            this.Toolbar_CmdInsertLexEntryInflType,
+            this.Toolbar_CmdInsertLexEntryType,
+            this.Toolbar_CmdDataTree_Insert_LexEntryInflType,
+            this.Toolbar_CmdDataTree_Insert_LexEntryType,
+            this.Toolbar_CmdInsertAnthroCategory,
+            this.Toolbar_CmdDataTree_Insert_AnthroCategory,
+            this.Toolbar_CmdInsertPerson,
+            this.Toolbar_CmdInsertLocation,
+            this.Toolbar_CmdDataTree_Insert_Location,
+            this.Toolbar_CmdInsertLexRefType,
+            this.Toolbar_CmdInsertFeatureType,
+            this.Toolbar_CmdDataTree_Insert_Possibility,
+            this.Toolbar_CmdDataTree_Insert_CustomItem,
+            this.Toolbar_CmdDuplicateSemDom,
+            this.Toolbar_CmdDuplicateAnnotationDef,
+            this.Toolbar_CmdDuplicatePossibility,
+            this.Toolbar_CmdDuplicateCustomItem,
+            this.Toolbar_CmdDuplicateMorphType,
+            this.Toolbar_CmdDuplicateAnthroCategory,
+            this.Toolbar_CmdDuplicatePerson,
+            this.Toolbar_CmdDuplicateLocation,
+            this.Toolbar_CmdDuplicateLexRefType,
+            this.Toolbar_CmdDuplicateFeatureType,
+            this.Toolbar_CmdInsertPOS,
+            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities,
+            this.insertToolStripSeparator3,
+            this.Toolbar_CmdInsertEndocentricCompound,
+            this.Toolbar_CmdInsertExocentricCompound,
+            this.Toolbar_CmdInsertExceptionFeature,
+            this.Toolbar_CmdInsertPhonologicalClosedFeature,
+            this.Toolbar_CmdInsertClosedFeature,
+            this.Toolbar_CmdInsertComplexFeature,
+            this.insertToolStripSeparator4,
+            this.Toolbar_CmdInsertPhoneme,
+            this.insertToolStripSeparator5,
+            this.Toolbar_CmdInsertSegmentNaturalClasses,
+            this.Toolbar_CmdInsertFeatureNaturalClasses,
+            this.insertToolStripSeparator6,
+            this.Toolbar_CmdInsertPhEnvironment,
+            this.insertToolStripSeparator7,
+            this.Toolbar_CmdInsertPhRegularRule,
+            this.Toolbar_CmdInsertPhMetathesisRule,
+            this.insertToolStripSeparator8,
+            this.Toolbar_CmdInsertMorphemeACP,
+            this.Toolbar_CmdInsertAllomorphACP,
+            this.Toolbar_CmdInsertACPGroup});
 			this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripInsert.Location = new System.Drawing.Point(335, 24);
+			this.toolStripInsert.Location = new System.Drawing.Point(273, 24);
 			this.toolStripInsert.Name = "toolStripInsert";
-			this.toolStripInsert.Size = new System.Drawing.Size(35, 25);
+			this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
 			this.toolStripInsert.TabIndex = 4;
 			// 
-			// toolStripButtonFindText
+			// Toolbar_CmdInsertLexEntry
 			// 
-			this.toolStripButtonFindText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonFindText.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFindText.Image")));
-			this.toolStripButtonFindText.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonFindText.Name = "toolStripButtonFindText";
-			this.toolStripButtonFindText.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonFindText.Text = "toolStripButtonFindText";
-			this.toolStripButtonFindText.ToolTipText = "Find and Replace Text";
+			this.Toolbar_CmdInsertLexEntry.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertLexEntry.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexEntry.Image")));
+			this.Toolbar_CmdInsertLexEntry.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertLexEntry.Name = "Toolbar_CmdInsertLexEntry";
+			this.Toolbar_CmdInsertLexEntry.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertLexEntry.ToolTipText = "Create a new lexical entry.";
+			this.Toolbar_CmdInsertLexEntry.Visible = false;
+			// 
+			// Toolbar_CmdGoToEntry
+			// 
+			this.Toolbar_CmdGoToEntry.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdGoToEntry.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdGoToEntry.Image")));
+			this.Toolbar_CmdGoToEntry.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdGoToEntry.Name = "Toolbar_CmdGoToEntry";
+			this.Toolbar_CmdGoToEntry.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdGoToEntry.ToolTipText = "Find a lexical entry.";
+			this.Toolbar_CmdGoToEntry.Visible = false;
+			// 
+			// Toolbar_CmdInsertReversalEntry
+			// 
+			this.Toolbar_CmdInsertReversalEntry.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertReversalEntry.Image")));
+			this.Toolbar_CmdInsertReversalEntry.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertReversalEntry.Name = "Toolbar_CmdInsertReversalEntry";
+			this.Toolbar_CmdInsertReversalEntry.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertReversalEntry.ToolTipText = "Create a new reversal entry.";
+			this.Toolbar_CmdInsertReversalEntry.Visible = false;
+			// 
+			// Toolbar_CmdGoToReversalEntry
+			// 
+			this.Toolbar_CmdGoToReversalEntry.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdGoToReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdGoToReversalEntry.Image")));
+			this.Toolbar_CmdGoToReversalEntry.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdGoToReversalEntry.Name = "Toolbar_CmdGoToReversalEntry";
+			this.Toolbar_CmdGoToReversalEntry.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdGoToReversalEntry.ToolTipText = "Find a reversal entry.";
+			this.Toolbar_CmdGoToReversalEntry.Visible = false;
+			// 
+			// Toolbar_CmdInsertText
+			// 
+			this.Toolbar_CmdInsertText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertText.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertText.Image")));
+			this.Toolbar_CmdInsertText.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertText.Name = "Toolbar_CmdInsertText";
+			this.Toolbar_CmdInsertText.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertText.ToolTipText = "Add a new text to the corpus.";
+			this.Toolbar_CmdInsertText.Visible = false;
+			// 
+			// insertToolStripSeparator1
+			// 
+			this.insertToolStripSeparator1.Name = "insertToolStripSeparator1";
+			this.insertToolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator1.Visible = false;
+			// 
+			// Toolbar_CmdAddNote
+			// 
+			this.Toolbar_CmdAddNote.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdAddNote.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdAddNote.Image")));
+			this.Toolbar_CmdAddNote.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdAddNote.Name = "Toolbar_CmdAddNote";
+			this.Toolbar_CmdAddNote.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdAddNote.ToolTipText = "Insert a note.";
+			this.Toolbar_CmdAddNote.Visible = false;
+			// 
+			// Toolbar_CmdApproveAllButton
+			// 
+			this.Toolbar_CmdApproveAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdApproveAllButton.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdApproveAllButton.Image")));
+			this.Toolbar_CmdApproveAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdApproveAllButton.Name = "Toolbar_CmdApproveAllButton";
+			this.Toolbar_CmdApproveAllButton.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdApproveAllButton.ToolTipText = "Approve all the suggested analyses in this text.";
+			this.Toolbar_CmdApproveAllButton.Visible = false;
+			// 
+			// Toolbar_CmdInsertHumanApprovedAnalysis
+			// 
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertHumanApprovedAnalysis.Image")));
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.Name = "Toolbar_CmdInsertHumanApprovedAnalysis";
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.ToolTipText = "Create new approved analysis";
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.Visible = false;
+			// 
+			// Toolbar_CmdGoToWfiWordform
+			// 
+			this.Toolbar_CmdGoToWfiWordform.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdGoToWfiWordform.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdGoToWfiWordform.Image")));
+			this.Toolbar_CmdGoToWfiWordform.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdGoToWfiWordform.Name = "Toolbar_CmdGoToWfiWordform";
+			this.Toolbar_CmdGoToWfiWordform.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdGoToWfiWordform.Visible = false;
+			// 
+			// Toolbar_CmdFindAndReplaceText
+			// 
+			this.Toolbar_CmdFindAndReplaceText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdFindAndReplaceText.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdFindAndReplaceText.Image")));
+			this.Toolbar_CmdFindAndReplaceText.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdFindAndReplaceText.Name = "Toolbar_CmdFindAndReplaceText";
+			this.Toolbar_CmdFindAndReplaceText.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdFindAndReplaceText.ToolTipText = "Find and Replace Text";
+			this.Toolbar_CmdFindAndReplaceText.Visible = false;
+			// 
+			// Toolbar_CmdBreakPhraseButton
+			// 
+			this.Toolbar_CmdBreakPhraseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdBreakPhraseButton.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdBreakPhraseButton.Image")));
+			this.Toolbar_CmdBreakPhraseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdBreakPhraseButton.Name = "Toolbar_CmdBreakPhraseButton";
+			this.Toolbar_CmdBreakPhraseButton.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdBreakPhraseButton.ToolTipText = "Break selected phrase into words.";
+			this.Toolbar_CmdBreakPhraseButton.Visible = false;
+			// 
+			// Toolbar_CmdInsertRecord
+			// 
+			this.Toolbar_CmdInsertRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertRecord.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertRecord.Image")));
+			this.Toolbar_CmdInsertRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertRecord.Name = "Toolbar_CmdInsertRecord";
+			this.Toolbar_CmdInsertRecord.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertRecord.ToolTipText = "Create a new Record in your Notebook.";
+			this.Toolbar_CmdInsertRecord.Visible = false;
+			// 
+			// Toolbar_CmdGoToRecord
+			// 
+			this.Toolbar_CmdGoToRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdGoToRecord.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdGoToRecord.Image")));
+			this.Toolbar_CmdGoToRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdGoToRecord.Name = "Toolbar_CmdGoToRecord";
+			this.Toolbar_CmdGoToRecord.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdGoToRecord.ToolTipText = "Find a Record in your Notebook.";
+			this.Toolbar_CmdGoToRecord.Visible = false;
+			// 
+			// insertToolStripSeparator2
+			// 
+			this.insertToolStripSeparator2.Name = "insertToolStripSeparator2";
+			this.insertToolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator2.Visible = false;
+			// 
+			// Toolbar_CmdAddToLexicon
+			// 
+			this.Toolbar_CmdAddToLexicon.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdAddToLexicon.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdAddToLexicon.Image")));
+			this.Toolbar_CmdAddToLexicon.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdAddToLexicon.Name = "Toolbar_CmdAddToLexicon";
+			this.Toolbar_CmdAddToLexicon.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdAddToLexicon.ToolTipText = "Add the current word to the lexicon (if it is a vernacular word).";
+			this.Toolbar_CmdAddToLexicon.Visible = false;
+			// 
+			// Toolbar_CmdLexiconLookup
+			// 
+			this.Toolbar_CmdLexiconLookup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdLexiconLookup.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdLexiconLookup.Image")));
+			this.Toolbar_CmdLexiconLookup.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdLexiconLookup.Name = "Toolbar_CmdLexiconLookup";
+			this.Toolbar_CmdLexiconLookup.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdLexiconLookup.ToolTipText = "Show dictionary entry for root/stem of current word, or open a search dialog box." +
+    "";
+			this.Toolbar_CmdLexiconLookup.Visible = false;
+			// 
+			// Toolbar_CmdInsertSemDom
+			// 
+			this.Toolbar_CmdInsertSemDom.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertSemDom.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertSemDom.Image")));
+			this.Toolbar_CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertSemDom.Name = "Toolbar_CmdInsertSemDom";
+			this.Toolbar_CmdInsertSemDom.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertSemDom.ToolTipText = "Create a new semantic domain.";
+			this.Toolbar_CmdInsertSemDom.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_SemanticDomain
+			// 
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_SemanticDomain.Image")));
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.Name = "Toolbar_CmdDataTree_Insert_SemanticDomain";
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.ToolTipText = "Insert a subdomain in this semantic domain.";
+			this.Toolbar_CmdDataTree_Insert_SemanticDomain.Visible = false;
+			// 
+			// Toolbar_CmdInsertAnnotationDef
+			// 
+			this.Toolbar_CmdInsertAnnotationDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAnnotationDef.Image")));
+			this.Toolbar_CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertAnnotationDef.Name = "Toolbar_CmdInsertAnnotationDef";
+			this.Toolbar_CmdInsertAnnotationDef.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertAnnotationDef.ToolTipText = "Create a new annotation definition.";
+			this.Toolbar_CmdInsertAnnotationDef.Visible = false;
+			// 
+			// Toolbar_CmdInsertPossibility
+			// 
+			this.Toolbar_CmdInsertPossibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPossibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPossibility.Image")));
+			this.Toolbar_CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPossibility.Name = "Toolbar_CmdInsertPossibility";
+			this.Toolbar_CmdInsertPossibility.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPossibility.ToolTipText = "Create a new {0}.";
+			this.Toolbar_CmdInsertPossibility.Visible = false;
+			// 
+			// Toolbar_CmdInsertCustomItem
+			// 
+			this.Toolbar_CmdInsertCustomItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertCustomItem.Image")));
+			this.Toolbar_CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertCustomItem.Name = "Toolbar_CmdInsertCustomItem";
+			this.Toolbar_CmdInsertCustomItem.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertCustomItem.ToolTipText = "Create a new {0}.";
+			this.Toolbar_CmdInsertCustomItem.Visible = false;
+			// 
+			// Toolbar_CmdInsertMorphType
+			// 
+			this.Toolbar_CmdInsertMorphType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertMorphType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertMorphType.Image")));
+			this.Toolbar_CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertMorphType.Name = "Toolbar_CmdInsertMorphType";
+			this.Toolbar_CmdInsertMorphType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertMorphType.ToolTipText = "Create a new morpheme type.";
+			this.Toolbar_CmdInsertMorphType.Visible = false;
+			// 
+			// Toolbar_CmdInsertLexEntryInflType
+			// 
+			this.Toolbar_CmdInsertLexEntryInflType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertLexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexEntryInflType.Image")));
+			this.Toolbar_CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertLexEntryInflType.Name = "Toolbar_CmdInsertLexEntryInflType";
+			this.Toolbar_CmdInsertLexEntryInflType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertLexEntryInflType.Visible = false;
+			// 
+			// Toolbar_CmdInsertLexEntryType
+			// 
+			this.Toolbar_CmdInsertLexEntryType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertLexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexEntryType.Image")));
+			this.Toolbar_CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertLexEntryType.Name = "Toolbar_CmdInsertLexEntryType";
+			this.Toolbar_CmdInsertLexEntryType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertLexEntryType.ToolTipText = "Create a new {0}.";
+			this.Toolbar_CmdInsertLexEntryType.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_LexEntryInflType
+			// 
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_LexEntryInflType.Image")));
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Name = "Toolbar_CmdDataTree_Insert_LexEntryInflType";
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+			this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_LexEntryType
+			// 
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_LexEntryType.Image")));
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.Name = "Toolbar_CmdDataTree_Insert_LexEntryType";
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.ToolTipText = "Insert a new subtype in this type.";
+			this.Toolbar_CmdDataTree_Insert_LexEntryType.Visible = false;
+			// 
+			// Toolbar_CmdInsertAnthroCategory
+			// 
+			this.Toolbar_CmdInsertAnthroCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAnthroCategory.Image")));
+			this.Toolbar_CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertAnthroCategory.Name = "Toolbar_CmdInsertAnthroCategory";
+			this.Toolbar_CmdInsertAnthroCategory.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertAnthroCategory.ToolTipText = "Create a new anthropology category.";
+			this.Toolbar_CmdInsertAnthroCategory.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_AnthroCategory
+			// 
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_AnthroCategory.Image")));
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.Name = "Toolbar_CmdDataTree_Insert_AnthroCategory";
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.ToolTipText = "Insert a subcategory in this anthropology category.";
+			this.Toolbar_CmdDataTree_Insert_AnthroCategory.Visible = false;
+			// 
+			// Toolbar_CmdInsertPerson
+			// 
+			this.Toolbar_CmdInsertPerson.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPerson.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPerson.Image")));
+			this.Toolbar_CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPerson.Name = "Toolbar_CmdInsertPerson";
+			this.Toolbar_CmdInsertPerson.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPerson.ToolTipText = "Add a new person.";
+			this.Toolbar_CmdInsertPerson.Visible = false;
+			// 
+			// Toolbar_CmdInsertLocation
+			// 
+			this.Toolbar_CmdInsertLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertLocation.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLocation.Image")));
+			this.Toolbar_CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertLocation.Name = "Toolbar_CmdInsertLocation";
+			this.Toolbar_CmdInsertLocation.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertLocation.ToolTipText = "Create a new location.";
+			this.Toolbar_CmdInsertLocation.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_Location
+			// 
+			this.Toolbar_CmdDataTree_Insert_Location.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_Location.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_Location.Image")));
+			this.Toolbar_CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_Location.Name = "Toolbar_CmdDataTree_Insert_Location";
+			this.Toolbar_CmdDataTree_Insert_Location.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_Location.ToolTipText = "Insert a subitem in this location.";
+			this.Toolbar_CmdDataTree_Insert_Location.Visible = false;
+			// 
+			// Toolbar_CmdInsertLexRefType
+			// 
+			this.Toolbar_CmdInsertLexRefType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexRefType.Image")));
+			this.Toolbar_CmdInsertLexRefType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertLexRefType.Name = "Toolbar_CmdInsertLexRefType";
+			this.Toolbar_CmdInsertLexRefType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertLexRefType.ToolTipText = "Create a new lexical relation.";
+			this.Toolbar_CmdInsertLexRefType.Visible = false;
+			// 
+			// Toolbar_CmdInsertFeatureType
+			// 
+			this.Toolbar_CmdInsertFeatureType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertFeatureType.Image")));
+			this.Toolbar_CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertFeatureType.Name = "Toolbar_CmdInsertFeatureType";
+			this.Toolbar_CmdInsertFeatureType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertFeatureType.ToolTipText = "Create a new feature type.";
+			this.Toolbar_CmdInsertFeatureType.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_Possibility
+			// 
+			this.Toolbar_CmdDataTree_Insert_Possibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_Possibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_Possibility.Image")));
+			this.Toolbar_CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_Possibility.Name = "Toolbar_CmdDataTree_Insert_Possibility";
+			this.Toolbar_CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_Possibility.ToolTipText = "Insert a subitem in this item.";
+			this.Toolbar_CmdDataTree_Insert_Possibility.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_CustomItem
+			// 
+			this.Toolbar_CmdDataTree_Insert_CustomItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_CustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_CustomItem.Image")));
+			this.Toolbar_CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_CustomItem.Name = "Toolbar_CmdDataTree_Insert_CustomItem";
+			this.Toolbar_CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_CustomItem.ToolTipText = "Insert a subitem in this item.";
+			this.Toolbar_CmdDataTree_Insert_CustomItem.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateSemDom
+			// 
+			this.Toolbar_CmdDuplicateSemDom.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateSemDom.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateSemDom.Image")));
+			this.Toolbar_CmdDuplicateSemDom.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateSemDom.Name = "Toolbar_CmdDuplicateSemDom";
+			this.Toolbar_CmdDuplicateSemDom.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateSemDom.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateAnnotationDef
+			// 
+			this.Toolbar_CmdDuplicateAnnotationDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateAnnotationDef.Image")));
+			this.Toolbar_CmdDuplicateAnnotationDef.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateAnnotationDef.Name = "Toolbar_CmdDuplicateAnnotationDef";
+			this.Toolbar_CmdDuplicateAnnotationDef.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateAnnotationDef.Visible = false;
+			// 
+			// Toolbar_CmdDuplicatePossibility
+			// 
+			this.Toolbar_CmdDuplicatePossibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicatePossibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicatePossibility.Image")));
+			this.Toolbar_CmdDuplicatePossibility.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicatePossibility.Name = "Toolbar_CmdDuplicatePossibility";
+			this.Toolbar_CmdDuplicatePossibility.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicatePossibility.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateCustomItem
+			// 
+			this.Toolbar_CmdDuplicateCustomItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateCustomItem.Image")));
+			this.Toolbar_CmdDuplicateCustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateCustomItem.Name = "Toolbar_CmdDuplicateCustomItem";
+			this.Toolbar_CmdDuplicateCustomItem.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateCustomItem.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateMorphType
+			// 
+			this.Toolbar_CmdDuplicateMorphType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateMorphType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateMorphType.Image")));
+			this.Toolbar_CmdDuplicateMorphType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateMorphType.Name = "Toolbar_CmdDuplicateMorphType";
+			this.Toolbar_CmdDuplicateMorphType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateMorphType.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateAnthroCategory
+			// 
+			this.Toolbar_CmdDuplicateAnthroCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateAnthroCategory.Image")));
+			this.Toolbar_CmdDuplicateAnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateAnthroCategory.Name = "Toolbar_CmdDuplicateAnthroCategory";
+			this.Toolbar_CmdDuplicateAnthroCategory.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateAnthroCategory.Visible = false;
+			// 
+			// Toolbar_CmdDuplicatePerson
+			// 
+			this.Toolbar_CmdDuplicatePerson.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicatePerson.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicatePerson.Image")));
+			this.Toolbar_CmdDuplicatePerson.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicatePerson.Name = "Toolbar_CmdDuplicatePerson";
+			this.Toolbar_CmdDuplicatePerson.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicatePerson.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateLocation
+			// 
+			this.Toolbar_CmdDuplicateLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateLocation.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateLocation.Image")));
+			this.Toolbar_CmdDuplicateLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateLocation.Name = "Toolbar_CmdDuplicateLocation";
+			this.Toolbar_CmdDuplicateLocation.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateLocation.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateLexRefType
+			// 
+			this.Toolbar_CmdDuplicateLexRefType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateLexRefType.Image")));
+			this.Toolbar_CmdDuplicateLexRefType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateLexRefType.Name = "Toolbar_CmdDuplicateLexRefType";
+			this.Toolbar_CmdDuplicateLexRefType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateLexRefType.Visible = false;
+			// 
+			// Toolbar_CmdDuplicateFeatureType
+			// 
+			this.Toolbar_CmdDuplicateFeatureType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicateFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateFeatureType.Image")));
+			this.Toolbar_CmdDuplicateFeatureType.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDuplicateFeatureType.Name = "Toolbar_CmdDuplicateFeatureType";
+			this.Toolbar_CmdDuplicateFeatureType.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicateFeatureType.Visible = false;
+			// 
+			// Toolbar_CmdInsertPOS
+			// 
+			this.Toolbar_CmdInsertPOS.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPOS.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPOS.Image")));
+			this.Toolbar_CmdInsertPOS.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPOS.Name = "Toolbar_CmdInsertPOS";
+			this.Toolbar_CmdInsertPOS.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPOS.ToolTipText = "Add a new category.";
+			this.Toolbar_CmdInsertPOS.Visible = false;
+			// 
+			// Toolbar_CmdDataTree_Insert_POS_SubPossibilities
+			// 
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Image")));
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Name = "Toolbar_CmdDataTree_Insert_POS_SubPossibilities";
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.ToolTipText = "Add a subcategory...";
+			this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Visible = false;
+			// 
+			// insertToolStripSeparator3
+			// 
+			this.insertToolStripSeparator3.Name = "insertToolStripSeparator3";
+			this.insertToolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator3.Visible = false;
+			// 
+			// Toolbar_CmdInsertEndocentricCompound
+			// 
+			this.Toolbar_CmdInsertEndocentricCompound.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertEndocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertEndocentricCompound.Image")));
+			this.Toolbar_CmdInsertEndocentricCompound.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertEndocentricCompound.Name = "Toolbar_CmdInsertEndocentricCompound";
+			this.Toolbar_CmdInsertEndocentricCompound.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertEndocentricCompound.ToolTipText = "Create a new headed compound.";
+			this.Toolbar_CmdInsertEndocentricCompound.Visible = false;
+			// 
+			// Toolbar_CmdInsertExocentricCompound
+			// 
+			this.Toolbar_CmdInsertExocentricCompound.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertExocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertExocentricCompound.Image")));
+			this.Toolbar_CmdInsertExocentricCompound.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertExocentricCompound.Name = "Toolbar_CmdInsertExocentricCompound";
+			this.Toolbar_CmdInsertExocentricCompound.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertExocentricCompound.ToolTipText = "Create a new non-headed compound.";
+			this.Toolbar_CmdInsertExocentricCompound.Visible = false;
+			// 
+			// Toolbar_CmdInsertExceptionFeature
+			// 
+			this.Toolbar_CmdInsertExceptionFeature.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertExceptionFeature.Image")));
+			this.Toolbar_CmdInsertExceptionFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertExceptionFeature.Name = "Toolbar_CmdInsertExceptionFeature";
+			this.Toolbar_CmdInsertExceptionFeature.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertExceptionFeature.ToolTipText = "Create a new {0}.";
+			this.Toolbar_CmdInsertExceptionFeature.Visible = false;
+			// 
+			// Toolbar_CmdInsertPhonologicalClosedFeature
+			// 
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhonologicalClosedFeature.Image")));
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.Name = "Toolbar_CmdInsertPhonologicalClosedFeature";
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.ToolTipText = "Add a phonological feature.";
+			this.Toolbar_CmdInsertPhonologicalClosedFeature.Visible = false;
+			// 
+			// Toolbar_CmdInsertClosedFeature
+			// 
+			this.Toolbar_CmdInsertClosedFeature.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertClosedFeature.Image")));
+			this.Toolbar_CmdInsertClosedFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertClosedFeature.Name = "Toolbar_CmdInsertClosedFeature";
+			this.Toolbar_CmdInsertClosedFeature.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertClosedFeature.ToolTipText = "Add a feature.";
+			this.Toolbar_CmdInsertClosedFeature.Visible = false;
+			// 
+			// Toolbar_CmdInsertComplexFeature
+			// 
+			this.Toolbar_CmdInsertComplexFeature.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertComplexFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertComplexFeature.Image")));
+			this.Toolbar_CmdInsertComplexFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertComplexFeature.Name = "Toolbar_CmdInsertComplexFeature";
+			this.Toolbar_CmdInsertComplexFeature.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertComplexFeature.ToolTipText = "Add a complex feature.";
+			this.Toolbar_CmdInsertComplexFeature.Visible = false;
+			// 
+			// insertToolStripSeparator4
+			// 
+			this.insertToolStripSeparator4.Name = "insertToolStripSeparator4";
+			this.insertToolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator4.Visible = false;
+			// 
+			// Toolbar_CmdInsertPhoneme
+			// 
+			this.Toolbar_CmdInsertPhoneme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPhoneme.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhoneme.Image")));
+			this.Toolbar_CmdInsertPhoneme.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPhoneme.Name = "Toolbar_CmdInsertPhoneme";
+			this.Toolbar_CmdInsertPhoneme.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPhoneme.ToolTipText = "Create a new phoneme.";
+			this.Toolbar_CmdInsertPhoneme.Visible = false;
+			// 
+			// insertToolStripSeparator5
+			// 
+			this.insertToolStripSeparator5.Name = "insertToolStripSeparator5";
+			this.insertToolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator5.Visible = false;
+			// 
+			// Toolbar_CmdInsertSegmentNaturalClasses
+			// 
+			this.Toolbar_CmdInsertSegmentNaturalClasses.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertSegmentNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertSegmentNaturalClasses.Image")));
+			this.Toolbar_CmdInsertSegmentNaturalClasses.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertSegmentNaturalClasses.Name = "Toolbar_CmdInsertSegmentNaturalClasses";
+			this.Toolbar_CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertSegmentNaturalClasses.ToolTipText = "Create a new natural class, defined by listing phonemes.";
+			this.Toolbar_CmdInsertSegmentNaturalClasses.Visible = false;
+			// 
+			// Toolbar_CmdInsertFeatureNaturalClasses
+			// 
+			this.Toolbar_CmdInsertFeatureNaturalClasses.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertFeatureNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertFeatureNaturalClasses.Image")));
+			this.Toolbar_CmdInsertFeatureNaturalClasses.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertFeatureNaturalClasses.Name = "Toolbar_CmdInsertFeatureNaturalClasses";
+			this.Toolbar_CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertFeatureNaturalClasses.ToolTipText = "Create a new natural class, defined by features.";
+			this.Toolbar_CmdInsertFeatureNaturalClasses.Visible = false;
+			// 
+			// insertToolStripSeparator6
+			// 
+			this.insertToolStripSeparator6.Name = "insertToolStripSeparator6";
+			this.insertToolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator6.Visible = false;
+			// 
+			// Toolbar_CmdInsertPhEnvironment
+			// 
+			this.Toolbar_CmdInsertPhEnvironment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPhEnvironment.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhEnvironment.Image")));
+			this.Toolbar_CmdInsertPhEnvironment.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPhEnvironment.Name = "Toolbar_CmdInsertPhEnvironment";
+			this.Toolbar_CmdInsertPhEnvironment.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPhEnvironment.ToolTipText = "Create a new environment.";
+			this.Toolbar_CmdInsertPhEnvironment.Visible = false;
+			// 
+			// insertToolStripSeparator7
+			// 
+			this.insertToolStripSeparator7.Name = "insertToolStripSeparator7";
+			this.insertToolStripSeparator7.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator7.Visible = false;
+			// 
+			// Toolbar_CmdInsertPhRegularRule
+			// 
+			this.Toolbar_CmdInsertPhRegularRule.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPhRegularRule.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhRegularRule.Image")));
+			this.Toolbar_CmdInsertPhRegularRule.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPhRegularRule.Name = "Toolbar_CmdInsertPhRegularRule";
+			this.Toolbar_CmdInsertPhRegularRule.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPhRegularRule.ToolTipText = "Create a new phonological rule.";
+			this.Toolbar_CmdInsertPhRegularRule.Visible = false;
+			// 
+			// Toolbar_CmdInsertPhMetathesisRule
+			// 
+			this.Toolbar_CmdInsertPhMetathesisRule.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertPhMetathesisRule.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhMetathesisRule.Image")));
+			this.Toolbar_CmdInsertPhMetathesisRule.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertPhMetathesisRule.Name = "Toolbar_CmdInsertPhMetathesisRule";
+			this.Toolbar_CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertPhMetathesisRule.ToolTipText = "Create a new metathesis rule.";
+			this.Toolbar_CmdInsertPhMetathesisRule.Visible = false;
+			// 
+			// insertToolStripSeparator8
+			// 
+			this.insertToolStripSeparator8.Name = "insertToolStripSeparator8";
+			this.insertToolStripSeparator8.Size = new System.Drawing.Size(6, 25);
+			this.insertToolStripSeparator8.Visible = false;
+			// 
+			// Toolbar_CmdInsertMorphemeACP
+			// 
+			this.Toolbar_CmdInsertMorphemeACP.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertMorphemeACP.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertMorphemeACP.Image")));
+			this.Toolbar_CmdInsertMorphemeACP.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertMorphemeACP.Name = "Toolbar_CmdInsertMorphemeACP";
+			this.Toolbar_CmdInsertMorphemeACP.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertMorphemeACP.ToolTipText = "Create a rule to prevent morphemes from co-occurring.";
+			this.Toolbar_CmdInsertMorphemeACP.Visible = false;
+			// 
+			// Toolbar_CmdInsertAllomorphACP
+			// 
+			this.Toolbar_CmdInsertAllomorphACP.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertAllomorphACP.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAllomorphACP.Image")));
+			this.Toolbar_CmdInsertAllomorphACP.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertAllomorphACP.Name = "Toolbar_CmdInsertAllomorphACP";
+			this.Toolbar_CmdInsertAllomorphACP.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertAllomorphACP.ToolTipText = "Create a rule to prevent allomorphs from co-occurring.";
+			this.Toolbar_CmdInsertAllomorphACP.Visible = false;
+			// 
+			// Toolbar_CmdInsertACPGroup
+			// 
+			this.Toolbar_CmdInsertACPGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertACPGroup.Image")));
+			this.Toolbar_CmdInsertACPGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdInsertACPGroup.Name = "Toolbar_CmdInsertACPGroup";
+			this.Toolbar_CmdInsertACPGroup.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdInsertACPGroup.ToolTipText = "Create a group of ad hoc rules.";
+			this.Toolbar_CmdInsertACPGroup.Visible = false;
+			// 
+			// toolStripView
+			// 
+			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
+			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Toolbar_CmdChooseTexts,
+            this.Toolbar_CmdChangeFilterClearAll});
+			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			this.toolStripView.Location = new System.Drawing.Point(388, 24);
+			this.toolStripView.Name = "toolStripView";
+			this.toolStripView.Size = new System.Drawing.Size(35, 25);
+			this.toolStripView.TabIndex = 5;
+			// 
+			// Toolbar_CmdChooseTexts
+			// 
+			this.Toolbar_CmdChooseTexts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdChooseTexts.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChooseTexts.Image")));
+			this.Toolbar_CmdChooseTexts.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdChooseTexts.Name = "Toolbar_CmdChooseTexts";
+			this.Toolbar_CmdChooseTexts.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdChooseTexts.ToolTipText = "Choose texts to display and use.";
+			this.Toolbar_CmdChooseTexts.Visible = false;
+			// 
+			// Toolbar_CmdChangeFilterClearAll
+			// 
+			this.Toolbar_CmdChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdChangeFilterClearAll.Enabled = false;
+			this.Toolbar_CmdChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChangeFilterClearAll.Image")));
+			this.Toolbar_CmdChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Toolbar_CmdChangeFilterClearAll.Name = "Toolbar_CmdChangeFilterClearAll";
+			this.Toolbar_CmdChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
+			this.Toolbar_CmdChangeFilterClearAll.ToolTipText = "Turn off all filters";
+			this.Toolbar_CmdChangeFilterClearAll.Click += new System.EventHandler(this.toolStripButtonChangeFilterClearAll_Click);
 			// 
 			// toolStripFormat
 			// 
 			this.toolStripFormat.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripComboBoxWritingSystem,
-            this.toolStripComboBoxStyles});
+            this.Toolbar_WritingSystemList,
+            this.Toolbar_CombinedStylesList});
 			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripFormat.Location = new System.Drawing.Point(372, 24);
+			this.toolStripFormat.Location = new System.Drawing.Point(425, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(291, 27);
+			this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
 			this.toolStripFormat.TabIndex = 3;
 			// 
-			// toolStripComboBoxWritingSystem
+			// Toolbar_WritingSystemList
 			// 
-			this.toolStripComboBoxWritingSystem.DropDownWidth = 150;
-			this.toolStripComboBoxWritingSystem.Enabled = false;
-			this.toolStripComboBoxWritingSystem.Name = "toolStripComboBoxWritingSystem";
-			this.toolStripComboBoxWritingSystem.Size = new System.Drawing.Size(121, 25);
-			this.toolStripComboBoxWritingSystem.ToolTipText = "Writing System";
+			this.Toolbar_WritingSystemList.DropDownWidth = 150;
+			this.Toolbar_WritingSystemList.Enabled = false;
+			this.Toolbar_WritingSystemList.Name = "Toolbar_WritingSystemList";
+			this.Toolbar_WritingSystemList.Size = new System.Drawing.Size(121, 25);
+			this.Toolbar_WritingSystemList.ToolTipText = "Writing System";
 			// 
-			// toolStripComboBoxStyles
+			// Toolbar_CombinedStylesList
 			// 
-			this.toolStripComboBoxStyles.DropDownWidth = 250;
-			this.toolStripComboBoxStyles.Enabled = false;
-			this.toolStripComboBoxStyles.Name = "toolStripComboBoxStyles";
-			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
-			this.toolStripComboBoxStyles.ToolTipText = "Styles";
+			this.Toolbar_CombinedStylesList.DropDownWidth = 250;
+			this.Toolbar_CombinedStylesList.Enabled = false;
+			this.Toolbar_CombinedStylesList.Name = "Toolbar_CombinedStylesList";
+			this.Toolbar_CombinedStylesList.Size = new System.Drawing.Size(121, 25);
+			this.Toolbar_CombinedStylesList.ToolTipText = "Styles";
 			// 
 			// FwMainWnd
 			// 
@@ -1682,10 +3805,10 @@ namespace LanguageExplorer.Impls
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).EndInit();
-			this.toolStripView.ResumeLayout(false);
-			this.toolStripView.PerformLayout();
 			this.toolStripInsert.ResumeLayout(false);
 			this.toolStripInsert.PerformLayout();
+			this.toolStripView.ResumeLayout(false);
+			this.toolStripView.PerformLayout();
 			this.toolStripFormat.ResumeLayout(false);
 			this.toolStripFormat.PerformLayout();
 			this.ResumeLayout(false);
@@ -1705,85 +3828,85 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.ToolStripMenuItem _toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _windowToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _helpToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator1;
-		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem languageExplorerToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem trainingToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem demoMoviesToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem resourcesToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem technicalNotesOnFieldWorksSendReceiveToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSparator1;
-		private System.Windows.Forms.ToolStripMenuItem reportAProblemToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem makeASuggestionToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSparator2;
-		private System.Windows.Forms.ToolStripMenuItem aboutLanguageExplorerToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem newFieldWorksProjectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator1;
+		private System.Windows.Forms.ToolStripMenuItem CmdClose;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpLanguageExplorer;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpTraining;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpDemoMovies;
+		private System.Windows.Forms.ToolStripMenuItem HelpMenu_ResourcesMenu;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpNotesSendReceive;
+		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSeparator1;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpReportBug;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpMakeSuggestion;
+		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSeparator2;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpAbout;
+		private System.Windows.Forms.ToolStripMenuItem CmdNewLangProject;
+		private System.Windows.Forms.ToolStripMenuItem CmdChooseLangProject;
 		private System.Windows.Forms.ToolStripMenuItem projectManagementToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator5;
-		private System.Windows.Forms.ToolStripMenuItem fieldWorksProjectPropertiesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator6;
+		private System.Windows.Forms.ToolStripMenuItem CmdProjectProperties;
 		private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripViewMenuSparator1;
+		private System.Windows.Forms.ToolStripSeparator toolStripViewMenuSeparator1;
 		private System.Windows.Forms.ToolStrip toolStripStandard;
-		private System.Windows.Forms.ToolStripButton toolStripButton_Refresh;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripButton Toolbar_CmdRefresh;
+		private System.Windows.Forms.ToolStripSeparator standardToolStripSeparator3;
 		private System.Windows.Forms.ToolStripContainer toolStripContainer;
 		private System.Windows.Forms.ToolStripMenuItem configureToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem setUpWritingSystemsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem setUpWritingSystemsToolStripMenuItem1;
-		private System.Windows.Forms.ToolStripMenuItem backUpThisProjectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem restoreAProjectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
-		private System.Windows.Forms.ToolStripMenuItem projectLocationsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem deleteProjectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem createShortcutOnDesktopToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator2;
-		private System.Windows.Forms.ToolStripMenuItem archiveWithRAMPSILToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator3;
-		private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator4;
-		private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem translatedListContentToolStripMenuItem1;
+		private System.Windows.Forms.ToolStripMenuItem ToolsMenu_CmdVernacularWritingSystemProperties;
+		private System.Windows.Forms.ToolStripMenuItem CmdVernacularWritingSystemProperties;
+		private System.Windows.Forms.ToolStripMenuItem CmdBackup;
+		private System.Windows.Forms.ToolStripMenuItem CmdRestoreFromBackup;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator2;
+		private System.Windows.Forms.ToolStripMenuItem CmdProjectLocation;
+		private System.Windows.Forms.ToolStripMenuItem CmdDeleteProject;
+		private System.Windows.Forms.ToolStripMenuItem CmdCreateProjectShortcut;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator3;
+		private System.Windows.Forms.ToolStripMenuItem CmdArchiveWithRamp;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator4;
+		private System.Windows.Forms.ToolStripMenuItem CmdPrint;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSeparator5;
+		private System.Windows.Forms.ToolStripMenuItem ImportMenu;
+		private System.Windows.Forms.ToolStripMenuItem CmdExport;
+		private System.Windows.Forms.ToolStripMenuItem CmdImportTranslatedLists;
 		private System.Windows.Forms.ToolStripMenuItem newWindowToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem technicalNotesOnWritingSystemsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem editingLinguisticsPapersUsingXLingPaperToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpNotesWritingSystems;
+		private System.Windows.Forms.ToolStripMenuItem CmdHelpXLingPap;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator1;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSeparator1;
 		private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator2;
-		private System.Windows.Forms.ToolStripButton undoToolStripButton;
-		private System.Windows.Forms.ToolStripButton redoToolStripButton;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSeparator2;
+		private System.Windows.Forms.ToolStripButton Toolbar_CmdUndo;
+		private System.Windows.Forms.ToolStripButton Toolbar_CmdRedo;
 		private System.Windows.Forms.ToolStripMenuItem pasteHyperlinkToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator3;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSeparator3;
 		private System.Windows.Forms.StatusBar _statusbar;
 		private StatusBarPanel statusBarPanelMessage;
 		private StatusBarPanel statusBarPanelProgress;
 		private StatusBarPanel statusBarPanelArea;
 		private StatusBarPanel statusBarPanelRecordNumber;
-		private ToolStripSeparator toolStripEditMenuSparator4;
+		private ToolStripSeparator toolStripEditMenuSeparator4;
 		private ToolStripMenuItem selectAllToolStripMenuItem;
-		private ToolStripSeparator toolStripSeparator2;
+		private ToolStripSeparator standardToolStripSeparator2;
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
 		private Panel _rightPanel;
 		private Controls.SilSidePane.SidePane _sidePane;
-		private ToolStripSeparator toolStripToolsMenuSparator1;
-		private ToolStripMenuItem utilitiesToolStripMenuItem;
+		private ToolStripSeparator toolMenuSeparator2;
+		private ToolStripMenuItem CmdProjectUtilities;
 		private ToolStripMenuItem _parserToolStripMenuItem;
 		private ToolStripMenuItem CmdParseAllWords;
 		private ToolStripMenuItem CmdReparseAllWords;
 		private ToolStripMenuItem CmdReInitializeParser;
 		private ToolStripMenuItem CmdStopParser;
-		private ToolStripSeparator toolStripParserMenuSparator1;
+		private ToolStripSeparator toolStripParserMenuSeparator1;
 		private ToolStripMenuItem CmdTryAWord;
 		private ToolStripMenuItem CmdParseWordsInCurrentText;
 		private ToolStripMenuItem CmdParseCurrentWord;
 		private ToolStripMenuItem CmdClearSelectedWordParserAnalyses;
-		private ToolStripSeparator toolStripParserMenuSparator2;
+		private ToolStripSeparator toolStripParserMenuSeparator2;
 		private ToolStripMenuItem ChooseParserMenu;
 		private ToolStripMenuItem CmdChooseXAmpleParser;
 		private ToolStripMenuItem CmdChooseHCParser;
@@ -1792,47 +3915,47 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem _data_Previous;
 		private ToolStripMenuItem _data_Next;
 		private ToolStripMenuItem _data_Last;
-		private ToolStripButton _tsbFirst;
-		private ToolStripButton _tsbPrevious;
-		private ToolStripButton _tsbNext;
-		private ToolStripButton _tsbLast;
-		private ToolStripSeparator insertMenuLastGlobalSeparator1;
-		private ToolStripMenuItem specialCharacterToolStripMenuItem;
-		private ToolStripMenuItem linkToFileToolStripMenuItem;
+		private ToolStripButton Toolbar_CmdFirstRecord;
+		private ToolStripButton Toolbar_CmdPreviousRecord;
+		private ToolStripButton Toolbar_CmdNextRecord;
+		private ToolStripButton Toolbar_CmdLastRecord;
+		private ToolStripSeparator insertMenuSeparator1;
+		private ToolStripMenuItem CmdShowCharMap;
+		private ToolStripMenuItem CmdInsertLinkToFile;
 		private ToolStrip toolStripFormat;
 		private ToolStrip toolStripInsert;
 		private ToolStrip toolStripView;
-		private ToolStripButton toolStripButtonChangeFilterClearAll;
-		private ToolStripButton toolStripButtonFlexLiftBridge;
+		private ToolStripButton Toolbar_CmdChangeFilterClearAll;
+		private ToolStripButton Toolbar_CmdFLExLiftBridge;
 		private ToolStripMenuItem deleteToolStripMenuItem;
-		private ToolStripButton deleteToolStripButton;
-		private ToolStripButton toolStripButtonHistoryBack;
-		private ToolStripButton toolStripButtonHistoryForward;
-		private ToolStripSeparator toolStripSeparator3;
-		private ToolStripComboBox toolStripComboBoxWritingSystem;
-		private ToolStripComboBox toolStripComboBoxStyles;
-		private ToolStripMenuItem standardFormatLexiconToolStripMenuItem;
-		private ToolStripMenuItem uploadToWebonaryToolStripMenuItem;
-		private ToolStripSeparator toolStripToolsMenuSparator2;
-		private ToolStripMenuItem optionsToolStripMenuItem;
-		private ToolStripMenuItem stylesToolStripMenuItem;
-		private ToolStripMenuItem applyStyleToolStripMenuItem;
-		private ToolStripMenuItem writingSystemToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem20;
-		private ToolStripMenuItem restoreDefaultsToolStripMenuItem;
-		private ToolStripMenuItem findToolStripMenuItem;
-		private ToolStripButton toolStripButtonFindText;
-		private ToolStripMenuItem replaceToolStripMenuItem;
+		private ToolStripButton Toolbar_CmdDeleteRecord;
+		private ToolStripButton CmdHistoryBack;
+		private ToolStripButton CmdHistoryForward;
+		private ToolStripSeparator standardToolStripSeparator1;
+		private ToolStripComboBox Toolbar_WritingSystemList;
+		private ToolStripComboBox Toolbar_CombinedStylesList;
+		private ToolStripMenuItem CmdImportSFMLexicon;
+		private ToolStripMenuItem CmdUploadToWebonary;
+		private ToolStripSeparator toolMenuSeparator5;
+		private ToolStripMenuItem CmdToolsOptions;
+		private ToolStripMenuItem CmdFormatStyle;
+		private ToolStripMenuItem CmdFormatApplyStyle;
+		private ToolStripMenuItem WritingSystemMenu;
+		private ToolStripSeparator toolMenuSeparator1;
+		private ToolStripMenuItem CmdRestoreDefaults;
+		private ToolStripMenuItem CmdFindAndReplaceText;
+		private ToolStripButton Toolbar_CmdFindAndReplaceText;
+		private ToolStripMenuItem CmdReplaceText;
 		private ToolStripMenuItem filtersToolStripMenuItem;
 		private ToolStripMenuItem noFilterToolStripMenuItem;
-		private ToolStripSeparator toolStripViewMenuSparator2;
-		private ToolStripMenuItem spellingToolStripMenuItem;
-		private ToolStripMenuItem showVernacularSpellingErrorsToolStripMenuItem;
-		private ToolStripMenuItem introductionToLexicographyToolStripMenuItem;
-		private ToolStripMenuItem introductionToParsingToolStripMenuItem;
-		private ToolStripMenuItem technicalNotesOnSFMDatabaseImportToolStripMenuItem;
-		private ToolStripMenuItem technicalNotesOnLinguaLinksImportToolStripMenuItem;
-		private ToolStripMenuItem technicalNotesOnInterlinearImportToolStripMenuItem;
+		private ToolStripSeparator toolStripViewMenuSeparator2;
+		private ToolStripMenuItem ToolsMenu_SpellingMenu;
+		private ToolStripMenuItem CmdUseVernSpellingDictionary;
+		private ToolStripMenuItem CmdHelpLexicographyIntro;
+		private ToolStripMenuItem CmdHelpMorphologyIntro;
+		private ToolStripMenuItem CmdHelpNotesSFMDatabaseImport;
+		private ToolStripMenuItem CmdHelpNotesLinguaLinksDatabaseImport;
+		private ToolStripMenuItem CmdHelpNotesInterlinearImport;
 		private ToolStripSeparator dataMenuSeparator1;
 		private ToolStripMenuItem CmdApproveAndMoveNext;
 		private ToolStripMenuItem CmdApproveForWholeTextAndMoveNext;
@@ -1854,5 +3977,212 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem CmdRepeatLastMoveLeft;
 		private ToolStripMenuItem CmdRepeatLastMoveRight;
 		private ToolStripMenuItem CmdApproveAll;
+		private ToolStripButton Toolbar_CmdInsertLexEntry;
+		private ToolStripButton Toolbar_CmdGoToEntry;
+		private ToolStripButton Toolbar_CmdInsertReversalEntry;
+		private ToolStripButton Toolbar_CmdGoToReversalEntry;
+		private ToolStripButton Toolbar_CmdInsertText;
+		private ToolStripSeparator insertToolStripSeparator1;
+		private ToolStripButton Toolbar_CmdAddNote;
+		private ToolStripButton Toolbar_CmdInsertHumanApprovedAnalysis;
+		private ToolStripButton Toolbar_CmdApproveAllButton;
+		private ToolStripButton Toolbar_CmdGoToWfiWordform;
+		private ToolStripButton Toolbar_CmdBreakPhraseButton;
+		private ToolStripMenuItem CmdImportLinguaLinksData;
+		private ToolStripMenuItem CmdImportLiftData;
+		private ToolStripMenuItem CmdImportInterlinearSfm;
+		private ToolStripMenuItem CmdImportWordsAndGlossesSfm;
+		private ToolStripMenuItem CmdImportInterlinearData;
+		private ToolStripMenuItem CmdImportSFMNotebook;
+		private ToolStripMenuItem CmdExportInterlinear;
+		private ToolStripMenuItem CmdExportDiscourseChart;
+		private ToolStripMenuItem CmdFLExBridge;
+		private ToolStripMenuItem CmdViewMessages;
+		private ToolStripMenuItem CmdLiftBridge;
+		private ToolStripMenuItem CmdViewLiftMessages;
+		private ToolStripSeparator toolStripSendReceiveMenuSeparator1;
+		private ToolStripMenuItem CmdObtainAnyFlexBridgeProject;
+		private ToolStripMenuItem CmdObtainLiftProject;
+		private ToolStripSeparator toolStripSendReceiveMenuSeparator2;
+		private ToolStripMenuItem CmdObtainFirstFlexBridgeProject;
+		private ToolStripMenuItem CmdObtainFirstLiftProject;
+		private ToolStripSeparator toolStripSendReceiveMenuSeparator3;
+		private ToolStripMenuItem CmdHelpChorus;
+		private ToolStripMenuItem CmdCheckForFlexBridgeUpdates;
+		private ToolStripMenuItem CmdHelpAboutFLEXBridge;
+		private ToolStripSeparator toolStripEditMenuSeparator5;
+		private ToolStripMenuItem CmdGoToEntry;
+		private ToolStripMenuItem CmdGoToRecord;
+		private ToolStripMenuItem CmdGoToReversalEntry;
+		private ToolStripMenuItem CmdGoToWfiWordform;
+		private ToolStripMenuItem CmdDeleteCustomList;
+		private ToolStripMenuItem CmdChooseTexts;
+		private ToolStripMenuItem LexicalToolsList;
+		private ToolStripMenuItem WordToolsList;
+		private ToolStripMenuItem GrammarToolsList;
+		private ToolStripMenuItem NotebookToolsList;
+		private ToolStripMenuItem ListsToolsList;
+		private ToolStripMenuItem ShowInvisibleSpaces;
+		private ToolStripMenuItem Show_DictionaryPubPreview;
+		private ToolStripMenuItem ShowHiddenFields;
+		private ToolStripMenuItem CmdInsertLexEntry;
+		private ToolStripMenuItem CmdInsertSense;
+		private ToolStripMenuItem CmdInsertVariant;
+		private ToolStripMenuItem CmdDataTree_Insert_AlternateForm;
+		private ToolStripMenuItem CmdInsertReversalEntry;
+		private ToolStripMenuItem CmdDataTree_Insert_Pronunciation;
+		private ToolStripMenuItem CmdInsertMediaFile;
+		private ToolStripMenuItem CmdDataTree_Insert_Etymology;
+		private ToolStripMenuItem CmdInsertSubsense;
+		private ToolStripMenuItem CmdInsertPicture;
+		private ToolStripMenuItem CmdInsertExtNote;
+		private ToolStripMenuItem CmdInsertText;
+		private ToolStripSeparator insertMenuSeparator2;
+		private ToolStripMenuItem CmdAddNote;
+		private ToolStripMenuItem CmdAddWordGlossesToFreeTrans;
+		private ToolStripMenuItem CmdGuessWordBreaks;
+		private ToolStripMenuItem ClickInsertsInvisibleSpace;
+		private ToolStripSeparator insertMenuSeparator3;
+		private ToolStripMenuItem CmdImportWordSet;
+		private ToolStripMenuItem CmdInsertRecord;
+		private ToolStripMenuItem CmdInsertSubrecord;
+		private ToolStripMenuItem CmdInsertSubsubrecord;
+		private ToolStripMenuItem CmdAddToLexicon;
+		private ToolStripMenuItem CmdInsertHumanApprovedAnalysis;
+		private ToolStripMenuItem CmdInsertSemDom;
+		private ToolStripMenuItem CmdDataTree_Insert_SemanticDomain;
+		private ToolStripMenuItem CmdInsertAnnotationDef;
+		private ToolStripMenuItem CmdInsertPossibility;
+		private ToolStripMenuItem CmdInsertCustomItem;
+		private ToolStripMenuItem CmdInsertMorphType;
+		private ToolStripMenuItem CmdInsertLexEntryInflType;
+		private ToolStripMenuItem CmdInsertLexEntryType;
+		private ToolStripMenuItem CmdDataTree_Insert_LexEntryInflType;
+		private ToolStripMenuItem CmdDataTree_Insert_LexEntryType;
+		private ToolStripMenuItem CmdDataTree_Insert_AnthroCategory;
+		private ToolStripMenuItem CmdInsertAnthroCategory;
+		private ToolStripMenuItem CmdInsertPerson;
+		private ToolStripMenuItem CmdInsertLocation;
+		private ToolStripMenuItem CmdDataTree_Insert_Location;
+		private ToolStripMenuItem CmdInsertLexRefType;
+		private ToolStripMenuItem CmdInsertFeatureType;
+		private ToolStripMenuItem CmdDataTree_Insert_Possibility;
+		private ToolStripMenuItem CmdDataTree_Insert_CustomItem;
+		private ToolStripSeparator insertMenuSeparator4;
+		private ToolStripMenuItem CmdAddCustomList;
+		private ToolStripMenuItem CmdInsertPOS;
+		private ToolStripMenuItem CmdDataTree_Insert_POS_SubPossibilities;
+		private ToolStripMenuItem CmdDataTree_Insert_POS_AffixTemplate;
+		private ToolStripMenuItem CmdDataTree_Insert_POS_AffixSlot;
+		private ToolStripMenuItem CmdDataTree_Insert_POS_InflectionClass;
+		private ToolStripSeparator insertMenuSeparator5;
+		private ToolStripMenuItem CmdInsertEndocentricCompound;
+		private ToolStripMenuItem CmdInsertExocentricCompound;
+		private ToolStripMenuItem CmdInsertExceptionFeature;
+		private ToolStripMenuItem CmdInsertPhonologicalClosedFeature;
+		private ToolStripMenuItem CmdInsertClosedFeature;
+		private ToolStripMenuItem CmdInsertComplexFeature;
+		private ToolStripMenuItem CmdDataTree_Insert_ClosedFeature_Value;
+		private ToolStripSeparator insertMenuSeparator6;
+		private ToolStripMenuItem CmdInsertPhoneme;
+		private ToolStripMenuItem CmdDataTree_Insert_Phoneme_Code;
+		private ToolStripSeparator insertMenuSeparator7;
+		private ToolStripMenuItem CmdInsertSegmentNaturalClasses;
+		private ToolStripMenuItem CmdInsertFeatureNaturalClasses;
+		private ToolStripSeparator insertMenuSeparator8;
+		private ToolStripMenuItem CmdInsertPhEnvironment;
+		private ToolStripSeparator insertMenuSeparator9;
+		private ToolStripMenuItem CmdInsertPhRegularRule;
+		private ToolStripMenuItem CmdInsertPhMetathesisRule;
+		private ToolStripSeparator insertMenuSeparator10;
+		private ToolStripSeparator insertMenuSeparator11;
+		private ToolStripMenuItem CmdInsertMorphemeACP;
+		private ToolStripMenuItem CmdInsertAllomorphACP;
+		private ToolStripMenuItem CmdInsertACPGroup;
+		private ToolStripMenuItem CmdAnalysisWritingSystemProperties;
+		private ToolStripMenuItem ToolsMenu_CmdAnalysisWritingSystemProperties;
+		private ToolStripMenuItem CmdConfigureDictionary;
+		private ToolStripMenuItem CmdConfigureInterlinear;
+		private ToolStripMenuItem CmdConfigureList;
+		private ToolStripMenuItem CmdConfigureXmlDocView;
+		private ToolStripMenuItem CmdConfigureColumns;
+		private ToolStripMenuItem CmdConfigHeadwordNumbers;
+		private ToolStripMenuItem CmdAddCustomField;
+		private ToolStripMenuItem CmdMergeEntry;
+		private ToolStripMenuItem CmdLexiconLookup;
+		private ToolStripMenuItem ITexts_AddWordsToLexicon;
+		private ToolStripSeparator toolMenuSeparator3;
+		private ToolStripMenuItem CmdEditSpellingStatus;
+		private ToolStripMenuItem CmdViewIncorrectWords;
+		private ToolStripSeparator toolMenuSeparator4;
+		private ToolStripMenuItem CmdChangeSpelling;
+		private ToolStripMenuItem CmdMacroF2;
+		private ToolStripMenuItem CmdMacroF3;
+		private ToolStripMenuItem CmdMacroF4;
+		private ToolStripMenuItem CmdMacroF6;
+		private ToolStripMenuItem CmdMacroF7;
+		private ToolStripMenuItem CmdMacroF8;
+		private ToolStripMenuItem CmdMacroF9;
+		private ToolStripMenuItem CmdMacroF10;
+		private ToolStripMenuItem CmdMacroF11;
+		private ToolStripMenuItem CmdMacroF12;
+		private ToolStripButton Toolbar_CmdInsertRecord;
+		private ToolStripButton Toolbar_CmdGoToRecord;
+		private ToolStripSeparator insertToolStripSeparator2;
+		private ToolStripButton Toolbar_CmdAddToLexicon;
+		private ToolStripButton Toolbar_CmdLexiconLookup;
+		private ToolStripButton Toolbar_CmdInsertSemDom;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_SemanticDomain;
+		private ToolStripButton Toolbar_CmdInsertAnnotationDef;
+		private ToolStripButton Toolbar_CmdInsertPossibility;
+		private ToolStripButton Toolbar_CmdInsertCustomItem;
+		private ToolStripButton Toolbar_CmdInsertMorphType;
+		private ToolStripButton Toolbar_CmdInsertLexEntryInflType;
+		private ToolStripButton Toolbar_CmdInsertLexEntryType;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_LexEntryInflType;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_LexEntryType;
+		private ToolStripButton Toolbar_CmdInsertAnthroCategory;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_AnthroCategory;
+		private ToolStripButton Toolbar_CmdInsertPerson;
+		private ToolStripButton Toolbar_CmdInsertLocation;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_Location;
+		private ToolStripButton Toolbar_CmdInsertLexRefType;
+		private ToolStripButton Toolbar_CmdInsertFeatureType;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_Possibility;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_CustomItem;
+		private ToolStripButton Toolbar_CmdDuplicateSemDom;
+		private ToolStripButton Toolbar_CmdDuplicateAnnotationDef;
+		private ToolStripButton Toolbar_CmdDuplicatePossibility;
+		private ToolStripButton Toolbar_CmdDuplicateCustomItem;
+		private ToolStripButton Toolbar_CmdDuplicateMorphType;
+		private ToolStripButton Toolbar_CmdDuplicateAnthroCategory;
+		private ToolStripButton Toolbar_CmdDuplicatePerson;
+		private ToolStripButton Toolbar_CmdDuplicateLocation;
+		private ToolStripButton Toolbar_CmdDuplicateLexRefType;
+		private ToolStripButton Toolbar_CmdDuplicateFeatureType;
+		private ToolStripButton Toolbar_CmdInsertPOS;
+		private ToolStripButton Toolbar_CmdDataTree_Insert_POS_SubPossibilities;
+		private ToolStripSeparator insertToolStripSeparator3;
+		private ToolStripButton Toolbar_CmdInsertEndocentricCompound;
+		private ToolStripButton Toolbar_CmdInsertExocentricCompound;
+		private ToolStripButton Toolbar_CmdInsertExceptionFeature;
+		private ToolStripButton Toolbar_CmdInsertPhonologicalClosedFeature;
+		private ToolStripButton Toolbar_CmdInsertClosedFeature;
+		private ToolStripButton Toolbar_CmdInsertComplexFeature;
+		private ToolStripSeparator insertToolStripSeparator4;
+		private ToolStripButton Toolbar_CmdInsertPhoneme;
+		private ToolStripSeparator insertToolStripSeparator5;
+		private ToolStripButton Toolbar_CmdInsertSegmentNaturalClasses;
+		private ToolStripButton Toolbar_CmdInsertFeatureNaturalClasses;
+		private ToolStripSeparator insertToolStripSeparator6;
+		private ToolStripButton Toolbar_CmdInsertPhEnvironment;
+		private ToolStripSeparator insertToolStripSeparator7;
+		private ToolStripButton Toolbar_CmdInsertPhRegularRule;
+		private ToolStripButton Toolbar_CmdInsertPhMetathesisRule;
+		private ToolStripSeparator insertToolStripSeparator8;
+		private ToolStripButton Toolbar_CmdInsertMorphemeACP;
+		private ToolStripButton Toolbar_CmdInsertAllomorphACP;
+		private ToolStripButton Toolbar_CmdInsertACPGroup;
+		private ToolStripButton Toolbar_CmdChooseTexts;
 	}
 }

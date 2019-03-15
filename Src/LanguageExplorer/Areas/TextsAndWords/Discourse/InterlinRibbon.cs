@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// This class displays a one-line ribbon of interlinear text which keeps adding more at the end
 	/// as stuff at the start gets moved into the main chart.
 	/// </summary>
-	public class InterlinRibbon : InterlinDocRootSiteBase, IInterlinRibbon
+	internal class InterlinRibbon : InterlinDocRootSiteBase, IInterlinRibbon
 	{
 		internal const int kfragRibbonWordforms = 2000000; // should be distinct from ones used in InterlinVc
 

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
-	public partial class InterlinDocRootSiteBase : RootSite, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices, IInterlinConfigurable
+	internal partial class InterlinDocRootSiteBase : RootSite, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices, IInterlinConfigurable
 	{
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected internal int m_hvoRoot;
 		protected ICmObjectRepository m_objRepo;
-		private ToolStripMenuItem _fileMenu;
-		private ToolStripMenuItem _exportMenu;
 		/// <summary>
 		/// Context menu for use when user right-clicks on Interlinear segment labels.
 		/// </summary>
@@ -51,6 +49,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private long m_ticksWhenContextMenuClosed;
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
+		private bool _isCurrentTabForInterlineMaster;
+
+		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
 		public InterlinVc Vc { get; set; }
 		public IVwRootBox Rootb { get; set; }
@@ -93,33 +94,44 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
-		internal ToolStripMenuItem FileMenu
+		internal bool IsCurrentTabForInterlineMaster
 		{
-			get { return _fileMenu; }
+			get { return _isCurrentTabForInterlineMaster; }
 			set
 			{
-				_fileMenu = value;
-				// Add ExportInterlinear menu to File menu
-				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportInterlinear_Click, ITextStrings.ExportInterlinear, insertIndex: _fileMenu.DropDownItems.Count - 3);
-			}
-		}
-
-		internal bool ShowExportMenu
-		{
-			set
-			{
-				if (!value)
+				if (_isCurrentTabForInterlineMaster == value)
 				{
-					_exportMenu.Visible = false;
-					_exportMenu.Enabled = true;
+					// Same value, so skip the work.
+					return;
+				}
+				_isCurrentTabForInterlineMaster = value;
+				if (_isCurrentTabForInterlineMaster)
+				{
+					var userController = new UserControlUiWidgetParameterObject(this);
+					// Add handler stuff from this class and possibly from subclasses.
+					SetupUiWidgets(userController);
+					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 				}
 				else
 				{
-					_exportMenu.Visible = true;
-					_exportMenu.Enabled = m_hvoRoot != 0;
+					// remove handler stuff.
+					MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 				}
 			}
 		}
+
+		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
+		{
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> fileExportMenuHandler;
+			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.File, out fileExportMenuHandler))
+			{
+				fileExportMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.File, fileExportMenuHandler);
+			}
+			fileExportMenuHandler.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportInterlinear_Click, () => CanShowExportMenu));
+		}
+
+		private Tuple<bool, bool> CanShowExportMenu => new Tuple<bool, bool>(true, IsCurrentTabForInterlineMaster && m_hvoRoot != 0);
 
 		private void ExportInterlinear_Click(object sender, EventArgs e)
 		{
@@ -985,7 +997,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Enhance JohnT: The problem is that this can be slow! Especially when using this
 				// as a display view in a concordance. Should we detect that somehow, and in that
 				// case only parse paragraphs that need it?
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => RootStText.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(true));
 				// Sync Guesses data before we redraw anything.
 				UpdateGuessData();
 			}

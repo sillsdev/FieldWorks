@@ -34,16 +34,24 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
-		private ToolStripMenuItem m_printMenu;
+		private UiWidgetController _uiWidgetController;
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem printMenu)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
 			: base(configurationParametersElement, cache, recordList)
 		{
-			m_printMenu = printMenu;
-			m_printMenu.Click += PrintMenu_Click;
-			m_printMenu.Enabled = true;
+			_uiWidgetController = uiWidgetController;
+			// Add handler stuff.
+			var filePrintMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu) }
+			};
+			var userController = new UserControlUiWidgetParameterObject(this);
+			userController.MenuItemsForUserControl.Add(MainMenu.File, filePrintMenuHandler);
+			_uiWidgetController.AddHandlers(userController);
 		}
+
+		private Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of ViewBase
 		/// <summary>
@@ -60,13 +68,12 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 			if (disposing)
 			{
-				m_printMenu.Click -= PrintMenu_Click;
-				m_printMenu.Enabled = false;
+				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 
 			base.Dispose(disposing);
 
-			m_printMenu = null;
+			_uiWidgetController = null;
 		}
 
 		/// <summary>
@@ -718,6 +725,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
+			if (!ContainsFocus)
+			{
+				return;
+			}
 			CloseContextMenuIfOpen(); // not sure if this is necessary or not
 			PrintPage(m_mainView);
 		}

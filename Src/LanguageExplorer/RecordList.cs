@@ -631,35 +631,38 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
 
-		public IReadOnlyDictionary<Navigation, bool> CanMoveToOptions()
+		public IReadOnlyDictionary<Navigation, bool> CanMoveToOptions
 		{
-			var currentIndex = CurrentIndex;
-			foreach (var key in _canMoveTo.Keys.ToList())
+			get
 			{
-				bool canMoveTo;
-				switch (key)
+				var currentIndex = CurrentIndex;
+				foreach (var key in _canMoveTo.Keys.ToList())
 				{
-					case Navigation.First:
-						var firstItemIndex = FirstItemIndex;
-						_canMoveTo[key] = firstItemIndex != -1 && firstItemIndex != currentIndex;
-						break;
-					case Navigation.Next:
-						var nextItemIndex = NextItemIndex;
-						_canMoveTo[key] = nextItemIndex != -1 && nextItemIndex != currentIndex;
-						break;
-					case Navigation.Previous:
-						var prevItemIndex = PrevItemIndex;
-						_canMoveTo[key] = prevItemIndex != -1 && prevItemIndex != currentIndex;
-						break;
-					case Navigation.Last:
-						var lastItemIndex = LastItemIndex;
-						_canMoveTo[key] = lastItemIndex != -1 && lastItemIndex != currentIndex;
-						break;
-					default:
-						throw new IndexOutOfRangeException($"I don't know if one can move to '{key}'.");
+					bool canMoveTo;
+					switch (key)
+					{
+						case Navigation.First:
+							var firstItemIndex = FirstItemIndex;
+							_canMoveTo[key] = firstItemIndex != -1 && firstItemIndex != currentIndex;
+							break;
+						case Navigation.Next:
+							var nextItemIndex = NextItemIndex;
+							_canMoveTo[key] = nextItemIndex != -1 && nextItemIndex != currentIndex;
+							break;
+						case Navigation.Previous:
+							var prevItemIndex = PrevItemIndex;
+							_canMoveTo[key] = prevItemIndex != -1 && prevItemIndex != currentIndex;
+							break;
+						case Navigation.Last:
+							var lastItemIndex = LastItemIndex;
+							_canMoveTo[key] = lastItemIndex != -1 && lastItemIndex != currentIndex;
+							break;
+						default:
+							throw new IndexOutOfRangeException($"I don't know if one can move to '{key}'.");
+					}
 				}
+				return _canMoveTo;
 			}
-			return _canMoveTo;
 		}
 
 		/// <summary>
@@ -3636,7 +3639,7 @@ namespace LanguageExplorer
 					// Tests may not have the property set.
 					return;
 				}
-				_viewFilterMenuItem = MenuServices.GetViewFilterMenu(majorFlexComponentParameters.MenuStrip);
+				_viewFilterMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.FiltersList];
 				CreateFilterMenus();
 			}
 

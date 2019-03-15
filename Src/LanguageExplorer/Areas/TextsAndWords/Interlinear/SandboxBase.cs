@@ -218,6 +218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		int m_hvoAnalysisGuess;
 
 		private SpellCheckHelper m_spellCheckHelper;
+		private int m_wsRawWordform;
 		#endregion Data members
 
 		#region Properties
@@ -243,7 +244,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The writing system of the wordform in this analysis.
 		/// </summary>
-		int m_wsRawWordform;
 		protected internal virtual int RawWordformWs
 		{
 			get
@@ -263,7 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal ISharedEventHandlers SharedEventHandlers { get; private set; }
+		private ISharedEventHandlers SharedEventHandlers { get; set; }
 
 		internal InterlinLineChoices InterlinLineChoices { get; set; }
 
@@ -752,7 +752,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 			Caches.CreateSecCache();
 			SharedEventHandlers = sharedEventHandlers;
-			SharedEventHandlers.Add(AreaServices.SandboxJumpToTool, SandboxJumpToTool_Clicked);
 			InterlinLineChoices = choices;
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
@@ -816,6 +815,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
+		private bool _needSharedHandlers = true;
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
@@ -824,13 +824,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			if (Visible)
 			{
+				if (_needSharedHandlers)
+				{
+					SharedEventHandlers.Add(AreaServices.SandboxJumpToTool, SandboxJumpToTool_Clicked);
+					_needSharedHandlers = false;
+				}
 				EditMonitor.StartMonitoring();
 			}
 			else
 			{
+				EventHandler eventHandler;
+				if (SharedEventHandlers.TryGetEventHandler(AreaServices.SandboxJumpToTool, out eventHandler))
+				{
+					SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
+					SharedEventHandlers.RemoveStatusChecker(AreaServices.SandboxJumpToTool);
+					_needSharedHandlers = true;
+				}
 				EditMonitor.StopMonitoring();
 			}
 		}

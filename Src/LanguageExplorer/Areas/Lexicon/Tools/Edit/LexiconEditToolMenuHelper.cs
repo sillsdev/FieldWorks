@@ -62,10 +62,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
 			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
-			var lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
+			var lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_currentTool);
 			_lexiconAreaMenuHelper = lexiconAreaMenuHelper;
-			_lexiconAreaMenuHelper.Initialize(_majorFlexComponentParameters, area, this, MyRecordList);
-			lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			_lexiconAreaMenuHelper.Initialize(_majorFlexComponentParameters, area, MyRecordList);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_currentTool);
+			lexiconAreaMenuHelper.MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 			_lexiconEditToolUiWidgetManagers.Add(editMenu, new LexiconEditToolEditMenuManager());
 			_lexiconEditToolUiWidgetManagers.Add(viewMenu, new LexiconEditToolViewMenuManager(_extendedPropertyName, InnerMultiPane));
 			_lexiconEditToolUiWidgetManagers.Add(insertMenu, new LexiconEditToolInsertMenuManager(MyDataTree));

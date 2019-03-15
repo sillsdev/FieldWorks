@@ -30,21 +30,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveLeft");
 				_sharedEventHandlers.Remove("CmdRepeatLastMoveRight");
 				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveRight");
-				if (_fileMenu != null)
-				{
-					_fileMenu.DropDownItems.Remove(_exportMenu);
-					_exportMenu.Click -= ExportDiscourseChart_Click;
-					_exportMenu.Dispose();
-				}
+				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// TODO: _dataMenu
 			}
 
 			components = null;
 			_sharedEventHandlers = null;
 			m_toolTip = null;
-			_fileMenu = null;
-			_exportMenu = null;
-			_dataMenu = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

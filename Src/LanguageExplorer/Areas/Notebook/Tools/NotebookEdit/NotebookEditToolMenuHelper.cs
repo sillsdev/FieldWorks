@@ -32,6 +32,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private IArea _area;
 		private ITool _notebookEditTool;
 		private IAreaUiWidgetManager _notebookAreaMenuHelper;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
 		private IPartialToolUiWidgetManager _rightClickContextMenuManager;
 		private DataTree MyDataTree { get; set; }
 		private RecordBrowseView RecordBrowseView { get; }
@@ -76,18 +77,34 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MyRecordList = recordList;
 			var insertIndex = -1;
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(_notebookEditTool, MyDataTree);
-			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, MyRecordList);
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, MyRecordList);
+			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 			MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 			_rightClickContextMenuManager = new RightClickContextMenuManager(_notebookEditTool, MyDataTree);
 			// <item command="CmdConfigureColumns" defaultVisible="false" />
-			AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(RecordBrowseView.BrowseViewer, ++insertIndex);
-			AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_notebookEditTool);
+			_partiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
 			_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, this, MyRecordList);
 
 			// Add Insert menus, & Insert toolbar buttons.
 			AreaMenuHelperAsNotebookAreaMenuHelper.AddInsertMenuItems();
+#if RANDYTODO
+			// TODO: This tool needs to add the CmdAddToLexicon handler, since the other Notebook tools don't want it
+			if (includeCmdAddToLexicon)
+			{
+				/*
+				  <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" /> // Shared locally
+					Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
+						<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
+				*/
+				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
+				_insertEntryMenu.Tag = MyDataTree;
+				_insertEntryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			}
+#endif
 			AddInsertToolbarItems();
 			SetupSliceMenus();
 
@@ -123,7 +140,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void ToolsMenu_DropDownOpening(object sender, EventArgs e)
 		{
-			_toolsFindInDictionaryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			_toolsFindInDictionaryMenu.Enabled = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 		}
 
 		#region Implementation of IDisposable
@@ -163,6 +180,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_toolsMenu.DropDownOpening -= ToolsMenu_DropDownOpening;
 				_toolsMenu.DropDownItems.Remove(_toolsFindInDictionaryMenu);
 				_toolsFindInDictionaryMenu.Dispose();
+				_partiallySharedAreaWideMenuHelper.Dispose();
 
 				Application.Idle -= Application_Idle;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
@@ -180,6 +198,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_majorFlexComponentParameters = null;
 			_notebookEditTool = null;
 			_notebookAreaMenuHelper = null;
+			_partiallySharedAreaWideMenuHelper = null;
 			_rightClickContextMenuManager = null;
 			MyDataTree = null;
 			MyRecordList = null;
@@ -267,12 +286,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private void Application_Idle(object sender, EventArgs e)
 		{
 			// Deal with enabling of two dictionary related toolbar buttons. (Unlike FieldWorks 9.0, these are always visible.)
-			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			IVwSelection currentSelection = null;
 			if (_insertAddToDictionaryToolStripButton != null && currentSliceAsStTextSlice != null)
 			{
 				currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertAddToDictionaryToolStripButton, currentSelection);
+				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertAddToDictionaryToolStripButton, currentSelection);
 			}
 			else
 			{
@@ -281,7 +300,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			if (_insertFindInDictionaryToolStripButton != null && currentSliceAsStTextSlice != null)
 			{
 				currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-				_insertFindInDictionaryToolStripButton.Enabled = AreaMenuHelperAsNotebookAreaMenuHelper.MyAreaWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
+				_insertFindInDictionaryToolStripButton.Enabled = _partiallySharedAreaWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
 			}
 			else
 			{
@@ -294,7 +313,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			if (_insertFindInDictionaryToolStripButton != null)
 			{
-				_insertFindInDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+				_insertFindInDictionaryToolStripButton.Enabled = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 			}
 		}
 
@@ -330,7 +349,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			*/
 			_insertAddToDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.CmdAddToLexicon), "toolStripButtonAddToLexicon", AreaResources.Major_Entry.ToBitmap(), AreaResources.Add_the_current_word_to_the_lexicon);
 			newToolbarItems.Add(_insertAddToDictionaryToolStripButton);
-			_insertAddToDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			_insertAddToDictionaryToolStripButton.Enabled = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 			_insertAddToDictionaryToolStripButton.Tag = MyDataTree;
 
 			/*
@@ -339,7 +358,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			*/
 			_insertFindInDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.LexiconLookup), "toolStripButtonLexiconLookup", AreaResources.Find_Dictionary.ToBitmap(), AreaResources.Find_in_Dictionary);
 			newToolbarItems.Add(_insertFindInDictionaryToolStripButton);
-			_insertFindInDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			_insertFindInDictionaryToolStripButton.Enabled = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 
 			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
 		}

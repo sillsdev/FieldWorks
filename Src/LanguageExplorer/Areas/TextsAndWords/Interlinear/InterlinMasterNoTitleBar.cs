@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

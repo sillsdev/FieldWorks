@@ -38,7 +38,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 		internal static Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
-		private ToolStripMenuItem m_printMenu;
 		// This flag is normally set during a Refresh. When it is set, we suppress switching the focus box
 		// to the current occurrence in a concordance view, which would otherwise happen as a side effect
 		// of the Refresh. Instead, as usual the focus box stays wherever it is now. The flag is cleared
@@ -50,6 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// true (typically used as concordance 3rd pane) to suppress autocreating a text if the
 		// record list has no current object.
 		protected bool m_fSuppressAutoCreate;
+		private bool m_fInShowTabView;
 		private ISharedEventHandlers _sharedEventHandlers;
 		// These constants allow us to use a switch statement in SaveBookMark()
 		private const int ktpsInfo = (int)TabPageSelection.Info;
@@ -74,15 +74,55 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Dock = DockStyle.Top;
 			m_tcPane.Visible = showTitlePane;
 			m_rtPane.MyRecordList = recordList;
+			m_rtPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
+			m_rtPane.ConfigurationParameters = configurationParametersElement;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			m_printMenu = MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip);
-			m_taggingPane.FileMenu = MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip);
-			m_printViewPane.FileMenu = m_taggingPane.FileMenu;
-			m_idcGloss.FileMenu = m_taggingPane.FileMenu;
-			m_idcAnalyze.FileMenu = m_taggingPane.FileMenu;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			m_taggingPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_idcGloss.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_idcAnalyze.MyMajorFlexComponentParameters = majorFlexComponentParameters;
+			m_printViewPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
+		}
+
+		/// <summary>
+		/// InterlinMaster can do this command: CmdAddNote.
+		/// It passes the buck to one of many controls it contains and has them deal with what they want.
+		/// </summary>
+		private void AddEventHandlers()
+		{
+			var userController = new UserControlUiWidgetParameterObject(this);
+			// Add handler stuff from this class and possibly from subclasses.
+			SetupUiWidgets(userController);
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
+		}
+
+		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
+		{
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> editMenuItemsForUserControl;
+			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Edit, out editMenuItemsForUserControl))
+			{
+				editMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Edit, editMenuItemsForUserControl);
+			}
+			editMenuItemsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
+			editMenuItemsForUserControl.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindAndReplaceMenu_Click, () => CanCmdReplaceText));
+
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertMenuItemsForUserControl;
+			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.File, out insertMenuItemsForUserControl))
+			{
+				insertMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuItemsForUserControl);
+			}
+			insertMenuItemsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
+
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertToolBarButtonsForUserControl;
+			if (!userControlUiWidgetParameterObject.ToolBarItemsForUserControl.TryGetValue(ToolBar.Insert, out insertToolBarButtonsForUserControl))
+			{
+				insertToolBarButtonsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.ToolBarItemsForUserControl.Add(ToolBar.Insert, insertToolBarButtonsForUserControl);
+			}
+			insertToolBarButtonsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
+			insertToolBarButtonsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 		}
 
 		/// <summary>
@@ -314,6 +354,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Find the analysis we were working on.
 					if (m_rtPane != null)
 					{
+						m_rtPane.IsCurrentTabForInterlineMaster = true;
 						if (SaveBookmarkFromRootBox(m_rtPane.RootBox))
 						{
 							return;
@@ -527,18 +568,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal int TextListIndex => MyRecordList.CurrentIndex;
 
-		private bool m_fInShowTabView;
 		protected void ShowTabView()
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
-			m_taggingPane.ShowExportMenu = false;
-			m_idcGloss.ShowExportMenu = false;
-			m_idcAnalyze.ShowExportMenu = false;
-			m_printViewPane.ShowExportMenu = false;
+			m_rtPane.IsCurrentTabForInterlineMaster = false;
+			m_taggingPane.IsCurrentTabForInterlineMaster = false;
+			m_idcGloss.IsCurrentTabForInterlineMaster = false;
+			m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
+			m_printViewPane.IsCurrentTabForInterlineMaster = false;
 			if (m_constChartPane != null)
 			{
-				((ConstituentChart)m_constChartPane).ShowExportMenu = false;
+				((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 			}
 			try
 			{
@@ -572,14 +613,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (RootStText == null)
 						{
 							m_constChartPane.Enabled = false;
-							((ConstituentChart)m_constChartPane).ShowExportMenu = false;
+							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 						}
 						else
 						{
 							// LT-7733 Warning dialog for Text Chart
 							MessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
-							((ConstituentChart)m_constChartPane).ShowExportMenu = true;
+							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
 						if (ParentForm == Form.ActiveForm)
@@ -590,7 +631,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(_sharedEventHandlers, MyRecordList, m_printMenu);
+						m_infoPane.Initialize(_sharedEventHandlers, MyRecordList, _majorFlexComponentParameters.UiWidgetController);
 						m_infoPane.Dock = DockStyle.Fill;
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
 						if (m_infoPane.Enabled)
@@ -607,16 +648,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsPrint:
-						m_printViewPane.ShowExportMenu = true;
+						m_printViewPane.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsGloss:
-						m_idcGloss.ShowExportMenu = true;
+						m_idcGloss.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsAnalyze:
-						m_idcAnalyze.ShowExportMenu = true;
+						m_idcAnalyze.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsTagging:
-						m_taggingPane.ShowExportMenu = true;
+						m_taggingPane.IsCurrentTabForInterlineMaster = true;
 						break;
 				}
 				SelectAnnotation();
@@ -633,7 +674,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var constituentChart = new ConstituentChart(_majorFlexComponentParameters.LcmCache, _sharedEventHandlers);
 			m_constChartPane = constituentChart;
 			((IFlexComponent)m_constChartPane).InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			constituentChart.SetupMenus(_majorFlexComponentParameters.MenuStrip);
+			constituentChart.MyMajorFlexComponentParameters = _majorFlexComponentParameters;
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
@@ -699,46 +740,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 #endif
 		}
 
-		/// <summary>
-		/// Determine whether we need to parse any of the texts paragraphs.
-		/// </summary>
-		public static bool HasParagraphNeedingParse(IStText stText)
-		{
-			return stText.ParagraphsOS.Cast<IStTxtPara>().Any(para => !para.ParseIsCurrent);
-		}
-
-		/// <summary>
-		/// todo: add progress bar.
-		/// typically a delegate for NonUndoableUnitOfWorkHelper
-		/// </summary>
-		public static void LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(IStText stText, bool forceParse)
-		{
-			if (stText == null)
-			{
-				return;
-			}
-			using (var pp = new ParagraphParser(stText.Cache))
-			{
-				if (forceParse)
-				{
-					foreach (var para in stText.ParagraphsOS.Cast<IStTxtPara>())
-					{
-						pp.ForceParse(para);
-					}
-				}
-				else
-				{
-					foreach (var para in stText.ParagraphsOS.Cast<IStTxtPara>().Where(
-						para => !para.ParseIsCurrent))
-					{
-						pp.Parse(para);
-					}
-				}
-			}
-			var services = new AnalysisGuessServices(stText.Cache);
-			services.GenerateEntryGuesses(stText);
-		}
-
 		#region Overrides of ViewBase
 
 		/// <summary>
@@ -749,6 +750,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
+			m_rtPane.InitializeFlexComponent(flexComponentParameters);
 			m_infoPane.InitializeFlexComponent(flexComponentParameters);
 			m_idcGloss.InitializeFlexComponent(flexComponentParameters);
 			m_idcAnalyze.InitializeFlexComponent(flexComponentParameters);
@@ -766,6 +768,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		internal void FinishInitialization()
 		{
+			AddEventHandlers();
 			if (m_tcPane != null && m_tcPane.Visible)
 			{
 				// Making the tab control currently requires this first...
@@ -1126,37 +1129,57 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		internal bool InterlinearTabPageIsSelected()
 		{
-			return m_tabCtrl.SelectedIndex == ktpsAnalyze || m_tabCtrl.SelectedIndex == ktpsGloss;
+			return m_tabCtrl.SelectedIndex == ktpsAnalyze || m_tabCtrl.SelectedIndex == ktpsGloss && (m_idcAnalyze != null && m_idcAnalyze.Visible || m_idcGloss != null && m_idcGloss.Visible);
 		}
 
 		#region free translation stuff
 
-		public bool CanDisplayFindTexMenutOrFindAndReplaceTextMenu(out bool enabled)
+		/// <inheritdoc />
+		protected override bool ShowKeyboardCues { get; }
+
+		private Tuple<bool, bool> CanDisplayFindTextMenuOrFindAndReplaceTextMenu
 		{
-			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-			var menuIsVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
-			enabled = false;
-			if (menuIsVisible && m_rtPane.RootBox != null)
+			get
 			{
-				int hvoRoot, fragDummy;
-				IVwViewConstructor vcDummy;
-				IVwStylesheet ssDummy;
-				m_rtPane.RootBox.GetRootObject(out hvoRoot, out vcDummy, out fragDummy, out ssDummy);
-				enabled = hvoRoot != 0;
+				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+				var menuIsVisible = m_rtPane != null && m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
+				bool enabled;
+				if (menuIsVisible && m_rtPane.RootBox != null)
+				{
+					int hvoRoot, fragDummy;
+					IVwViewConstructor vcDummy;
+					IVwStylesheet ssDummy;
+					m_rtPane.RootBox.GetRootObject(out hvoRoot, out vcDummy, out fragDummy, out ssDummy);
+					enabled = hvoRoot != 0;
+				}
+				else
+				{
+					enabled = false;
+				}
+				// Although it's a modal dialog, it's dangerous for it to be visible in contexts where it
+				// could not be launched, presumably because it doesn't apply to that view, and may do
+				// something dangerous to another view (cf LT-7961).
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				if (app != null && !enabled)
+				{
+					app.RemoveFindReplaceDialog();
+				}
+				return new Tuple<bool, bool>(menuIsVisible, enabled);
 			}
-			else
-			{
-				enabled = false;
-			}
-			// Although it's a modal dialog, it's dangerous for it to be visible in contexts where it
-			// could not be launched, presumably because it doesn't apply to that view, and may do
-			// something dangerous to another view (cf LT-7961).
-			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
-			if (app != null && !enabled)
-			{
-				app.RemoveFindReplaceDialog();
-			}
-			return menuIsVisible;
+		}
+
+		private Tuple<bool, bool> CanCmdReplaceText => CanDisplayFindTextMenuOrFindAndReplaceTextMenu;
+
+		private void EditFindMenu_Click(object sender, EventArgs e)
+		{
+			HandleFindAndReplace(false);
+		}
+
+		private Tuple<bool, bool> CanCmdFindAndReplaceText => CanDisplayFindTextMenuOrFindAndReplaceTextMenu;
+
+		private void EditFindAndReplaceMenu_Click(object sender, EventArgs e)
+		{
+			HandleFindAndReplace(true);
 		}
 
 		internal void HandleFindAndReplace(bool doReplace)
@@ -1164,33 +1187,24 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>(FwUtils.window));
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// Enable the "Add Note" command if the idcPane is visible and wants to do it.
 		/// </summary>
-		public bool OnDisplayAddNote(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InterlinearTabPageIsSelected();
-			return true;
-		}
-#endif
+		private Tuple<bool, bool> CanCmdAddNote => new Tuple<bool, bool>(InterlinearTabPageIsSelected(), InterlinearTabPageIsSelected());
 
 		/// <summary>
-		/// Delegate this command to the idcPane. (It isn't enabled unless one exists.)
+		/// Delegate the handler, if possible.
 		/// </summary>
-		public void OnAddNote(object argument)
+		private void CmdAddNoteClick(object sender, EventArgs e)
 		{
-#if RANDYTODO
-			var command = argument as Command;
 			if (m_idcAnalyze != null && m_idcAnalyze.Visible)
 			{
-				m_idcAnalyze.AddNote(command);
+				m_idcAnalyze.AddNote();
 			}
 			else if (m_idcGloss != null && m_idcGloss.Visible)
 			{
-				m_idcGloss.AddNote(command);
-		}
-#endif
+				m_idcGloss.AddNote();
+			}
 		}
 
 		#endregion

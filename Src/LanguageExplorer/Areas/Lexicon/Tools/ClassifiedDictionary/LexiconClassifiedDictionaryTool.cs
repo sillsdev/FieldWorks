@@ -36,6 +36,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
@@ -66,7 +68,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocView, xmlDocViewPaneBar);
-			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(xmlDocView);
+			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(this, xmlDocView);
 
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);

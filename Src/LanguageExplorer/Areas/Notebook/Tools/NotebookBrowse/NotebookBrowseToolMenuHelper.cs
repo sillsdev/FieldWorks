@@ -17,8 +17,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private IAreaUiWidgetManager _notebookAreaMenuHelper;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
 		private RecordBrowseView _browseView;
 		private ToolStripButton _insertRecordToolStripButton;
 		private ToolStripButton _insertFindRecordToolStripButton;
@@ -28,6 +30,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 			Guard.AgainstNull(browseView, nameof(browseView));
 
+			_tool = currentNotebookTool;
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(currentNotebookTool);
 			_browseView = browseView;
 		}
@@ -42,12 +45,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
+			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+			_partiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 			var asImplClass = (NotebookAreaMenuHelper)_notebookAreaMenuHelper;
-			asImplClass.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
-			asImplClass.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
-			asImplClass.AddInsertMenuItems(false);
+			asImplClass.AddInsertMenuItems();
 			AddInsertToolbarItems();
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />
@@ -97,9 +102,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
 				_notebookAreaMenuHelper?.Dispose();
+				_partiallySharedAreaWideMenuHelper?.Dispose();
 			}
 			_majorFlexComponentParameters = null;
 			_notebookAreaMenuHelper = null;
+			_partiallySharedAreaWideMenuHelper = null;
 			_insertRecordToolStripButton = null;
 			_insertFindRecordToolStripButton = null;
 			_sharedEventHandlers = null;

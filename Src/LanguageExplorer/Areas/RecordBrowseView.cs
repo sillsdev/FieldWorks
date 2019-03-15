@@ -33,6 +33,7 @@ namespace LanguageExplorer.Areas
 		protected BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _browseViewContextMenuTuple;
 		private readonly System.ComponentModel.Container components;
+		private UiWidgetController _uiWidgetController;
 
 		#region Construction and disposal
 
@@ -41,11 +42,17 @@ namespace LanguageExplorer.Areas
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
+		internal RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
 			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
 			_browseViewContextMenuFactory = browseViewContextMenuFactory;
+		}
+
+		internal RecordBrowseView(UiWidgetController uiWidgetController, XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
+			: this(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
+		{
+			_uiWidgetController = uiWidgetController;
 		}
 
 		private void Init()
@@ -173,6 +180,7 @@ namespace LanguageExplorer.Areas
 			BrowseViewer = null;
 			_browseViewContextMenuFactory = null;
 			_browseViewContextMenuTuple = null;
+			_uiWidgetController = null;
 
 			base.Dispose(disposing);
 		}
@@ -372,7 +380,7 @@ namespace LanguageExplorer.Areas
 				// will get cleared to prevent these views from accessing invalid objects.
 				MyRecordList.UpdateList(false, true);
 			}
-			BrowseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher);
+			BrowseViewer = CreateBrowseViewer(_uiWidgetController, m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher);
 			BrowseViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			BrowseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
 			BrowseViewer.SortersCompatible += AreSortersCompatible;
@@ -424,9 +432,9 @@ namespace LanguageExplorer.Areas
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected virtual BrowseViewer CreateBrowseViewer(UiWidgetController uiWidgetController, XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			return new BrowseViewer(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
+			return new BrowseViewer(uiWidgetController, nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}
 
 		private void SetStyleSheet()

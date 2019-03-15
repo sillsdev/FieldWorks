@@ -14,14 +14,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private XhtmlDocView _docView;
 
-		internal LexiconDictionaryToolMenuHelper(XhtmlDocView docView)
+		internal LexiconDictionaryToolMenuHelper(ITool tool, XhtmlDocView docView)
 		{
 			Guard.AgainstNull(docView, nameof(docView));
 
+			_tool = tool;
 			_docView = docView;
 		}
 
@@ -37,8 +39,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_tool);
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 		}
 
 		/// <inheritdoc />

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -26,15 +27,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
-		private ToolStripMenuItem m_printMenu;
+		private UiWidgetController _uiWidgetController;
 
-		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, IRecordList recordList, ToolStripMenuItem printMenu)
+		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
 			: base(configurationParameters, cache, recordList)
 		{
-			m_printMenu = printMenu;
-			m_printMenu.Click += PrintMenu_Click;
-			m_printMenu.Enabled = true;
+			_uiWidgetController = uiWidgetController;
+			// Add handler stuff.
+			var filePrintMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu) }
+			};
+			var userController = new UserControlUiWidgetParameterObject(this);
+			userController.MenuItemsForUserControl.Add(MainMenu.File, filePrintMenuHandler);
+			_uiWidgetController.AddHandlers(userController);
 		}
+
+		private Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of RecordView
 		/// <summary />
@@ -49,13 +58,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				m_printMenu.Click -= PrintMenu_Click;
-				m_printMenu.Enabled = false;
+				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 
 			base.Dispose(disposing);
 
-			m_printMenu = null;
+			_uiWidgetController = null;
 		}
 		#endregion
 
@@ -140,6 +148,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
+			if (!ContainsFocus)
+			{
+				return;
+			}
 			XhtmlDocView.PrintPage(m_mainView);
 		}
 

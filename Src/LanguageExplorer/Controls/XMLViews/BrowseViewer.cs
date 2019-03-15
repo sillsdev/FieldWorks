@@ -40,6 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private ContextMenuStrip _browseViewContextMenu;
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
+		private UiWidgetController _uiWidgetController;
 		private XElement m_configParamsElement;
 		/// <summary />
 		protected DhListView m_lvHeader;
@@ -589,12 +590,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// The sortItemProvider is typically the RecordList that implements sorting and
-		/// filtering of the items we are displaying.
-		/// The data access passed typically is a decorator for the one in the cache, adding
-		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
+		/// This constructor is used by various dlgs and an overloaded one used by RecordBrowseView in various tools.
 		/// </summary>
-		public BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		internal BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			: this()
 		{
 			m_configParamsElement = configParamsElement;
@@ -627,6 +625,22 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			SortItemProvider = sortItemProvider;
+		}
+
+		/// <summary>
+		/// The sortItemProvider is typically the RecordList that implements sorting and
+		/// filtering of the items we are displaying.
+		/// The data access passed typically is a decorator for the one in the cache, adding
+		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
+		/// </summary>
+		internal BrowseViewer(UiWidgetController uiWidgetController, XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: this(configParamsElement, hvoRoot, cache, sortItemProvider, sda)
+		{
+			_uiWidgetController = uiWidgetController;
+			var userController = new UserControlUiWidgetParameterObject(this);
+			// Add handler stuff from this class and possibly from subclasses.
+			SetupUiWidgets(userController);
+			_uiWidgetController.AddHandlers(userController);
 		}
 
 		private ContextMenuStrip CreateBrowseViewContextMenu()
@@ -820,6 +834,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			HScroll = true;
 			Scroller.ResumeLayout(false);
 			ResumeLayout(false);
+		}
+
+		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
+		{
+			// Tools->Configure->Columns menu is visible and enabled in this tool.
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemForUserControl;
+			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Tools, out toolsMenuItemForUserControl))
+			{
+				toolsMenuItemForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Tools, toolsMenuItemForUserControl);
+			}
+			toolsMenuItemForUserControl.Add(Command.CmdConfigureColumns, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureColumns_Click, () => CanCmdConfigureColumns));
 		}
 
 		/// <summary>
@@ -1218,6 +1244,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
+				// Tests don't have _uiWidgetController set.
+				_uiWidgetController?.RemoveUserControlHandlers(this);
 				Subscriber.Unsubscribe("LinkFollowed", LinkFollowed_Handler);
 				if (m_configParamsElement != null && SpecialCache != null && BrowseView != null && RootObjectHvo != 0)
 				{
@@ -1293,6 +1321,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				components?.Dispose();
 				m_SortersToDispose.Dispose();
 			}
+
+			_uiWidgetController = null;
 			m_configureButton = null;
 			ScrollBar = null;
 			m_lvHeader = null;
@@ -2006,7 +2036,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				menu.MenuItems.Add(mi);
 			}
 			menu.MenuItems.Add("-");
-			menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, ConfigMoreChoicesItemClicked);
+			menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, ConfigureColumns_Click);
 			menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
 		}
 
@@ -2039,8 +2069,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			return BrowseView.Vc.HasSelectColumn ? 1 : 0;
 		}
 
+		private Tuple<bool, bool> CanCmdConfigureColumns => new Tuple<bool, bool>(true, true);
+
 		// Handle the 'more column choices' item.
-		private void ConfigMoreChoicesItemClicked(object sender, EventArgs args)
+		private void ConfigureColumns_Click(object sender, EventArgs args)
 		{
 			using (var dlg = new ColumnConfigureDialog(BrowseView.Vc.PossibleColumnSpecs, new List<XElement>(ColumnSpecs), PropertyTable))
 			{
@@ -3016,7 +3048,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void OnConfigureColumns(object sender)
 		{
-			ConfigMoreChoicesItemClicked(sender, new EventArgs());
+			ConfigureColumns_Click(sender, new EventArgs());
 		}
 
 		#region IMainContentControl Members

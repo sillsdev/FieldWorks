@@ -13,25 +13,30 @@ using SIL.Code;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
+#if RANDYTODO
+	// TODO: Make this a private class of LexiconArea. No tool/control should use it.
+#endif
 	/// <summary>
 	/// This class handles all interaction for the Lexicon Area common menus.
 	/// </summary>
 	internal sealed class LexiconAreaMenuHelper : IAreaUiWidgetManager
 	{
 		private IArea _area;
+		private ITool _tool;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
-		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
+		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
 
-		internal LexiconAreaMenuHelper()
+		internal LexiconAreaMenuHelper(ITool tool)
 		{
+			_tool = tool;
 		}
 
 		#region Implementation of IAreaUiWidgetManager
 		/// <inheritdoc />
-		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(area, nameof(area));
@@ -39,20 +44,18 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			_area = area;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_activeToolUiManager = toolUiWidgetManager; // May be null;
-			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+			MyPartiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
-			MyAreaWideMenuHelper.SetupFileExportMenu();
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			// Add two lexicon area-wide import options.
 			AddFileImportMenuItems();
-			MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />
 		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
 		/// <inheritdoc />
 		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
@@ -64,7 +67,6 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		#region IDisposable
 		private bool _isDisposed;
-		private IToolUiWidgetManager _activeToolUiManager;
 
 		~LexiconAreaMenuHelper()
 		{
@@ -95,7 +97,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			if (disposing)
 			{
-				MyAreaWideMenuHelper.Dispose();
+				MyPartiallySharedAreaWideMenuHelper.Dispose();
 				foreach (var menuTuple in _newFileMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -105,7 +107,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				_newFileMenusAndHandlers.Clear();
 			}
 			_majorFlexComponentParameters = null;
-			MyAreaWideMenuHelper = null;
+			MyPartiallySharedAreaWideMenuHelper = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;
 

@@ -2,12 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -19,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
-		private IToolUiWidgetManager _interlinearEditToolMenuHelper;
+		private InterlinearEditToolMenuHelper _interlinearEditToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -38,11 +41,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_interlinearEditToolMenuHelper.UnwireSharedEventHandlers();
 			_interlinearEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -60,7 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
-			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper();
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -69,6 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
+			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordList);
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -80,14 +85,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultFocusControl = "InterlinMaster"
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, "Texts", new PaneBar(), _interlinMaster, "Text", new PaneBar());
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
-			_interlinearEditToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 		}
@@ -149,5 +153,74 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		/// <summary>
+		/// This class handles all interaction for the InterlinearEditTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
+		/// </summary>
+		private sealed class InterlinearEditToolMenuHelper : IDisposable
+		{
+			private ITool _tool;
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+
+			internal InterlinearEditToolMenuHelper(ITool tool, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+			{
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(recordList, nameof(recordList));
+
+				_tool = tool;
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				_partiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~InterlinearEditToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
+					_partiallySharedAreaWideMenuHelper.Dispose();
+				}
+				_tool = null;
+				_partiallySharedAreaWideMenuHelper = null;
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+
+			#endregion
+		}
 	}
 }

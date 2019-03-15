@@ -151,39 +151,12 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Find a Record in your Notebook..
-        /// </summary>
-        internal static string Find_a_Record_in_your_Notebook {
-            get {
-                return ResourceManager.GetString("Find_a_Record_in_your_Notebook", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Find Record....
-        /// </summary>
-        internal static string Find_Record {
-            get {
-                return ResourceManager.GetString("Find_Record", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap goToRecord {
             get {
                 object obj = ResourceManager.GetObject("goToRecord", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Standard Format _Notebook data....
-        /// </summary>
-        internal static string Import_Standard_Format_Notebook_data {
-            get {
-                return ResourceManager.GetString("Import_Standard_Format_Notebook_data", resourceCulture);
             }
         }
         

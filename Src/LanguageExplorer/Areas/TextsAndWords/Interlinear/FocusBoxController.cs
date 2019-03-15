@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Impls;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -30,11 +29,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Set by the constructor, this determines whether 'move right' means 'move next' or 'move previous' and similar things.
 		private readonly bool _rightToLeft;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private ToolStripMenuItem _dataMenu;
-		private Dictionary<string, ToolStripItem> _dataMenuDict;
-		private Dictionary<string, ToolStripItem> _insertToolbarDict;
-		private ISharedEventHandlers _mySharedEventHandlers;
-		private FocusBoxMenuManager _focusBoxMenuManager;
+		private UiWidgetController _uiWidgetController;
+		private IReadOnlyDictionary<Command, ToolStripItem> _dataMenuDictionary;
 		private IVwStylesheet _stylesheet;
 		protected InterlinLineChoices _lineChoices;
 		private bool _adjustingSize;
@@ -63,65 +59,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_dataMenu = MenuServices.GetDataMenu(majorFlexComponentParameters.MenuStrip);
-			_dataMenuDict = majorFlexComponentParameters.CachedUiItems[LanguageExplorerConstants.CachedMenusKey][LanguageExplorerConstants.DataMenuKey];
-			_insertToolbarDict = majorFlexComponentParameters.CachedUiItems[LanguageExplorerConstants.CachedToolBarsKey][LanguageExplorerConstants.InsertToolStripKey];
-			_mySharedEventHandlers = new SharedEventHandlers();
+			_uiWidgetController = majorFlexComponentParameters.UiWidgetController;
+			_dataMenuDictionary = _uiWidgetController.DataMenuDictionary;
 			_stylesheet = stylesheet;
 			_lineChoices = lineChoices;
 			_rightToLeft = rightToLeft;
-			// Add shared stuff.
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdMakePhrase, btnLinkNextWord_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdMakePhrase, () => CanJoinWords);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdBreakPhrase, btnBreakPhrase_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdBreakPhrase, ()=> CanBreakPhrase);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext, ApproveForWholeTextAndMoveNext_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext, () => CanApproveForWholeTextAndMoveNext);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdApproveAndMoveNext, ApproveAndMoveNext_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdApproveAndMoveNext, () => CanApproveAndMoveNext);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdNextIncompleteBundle, NextIncompleteBundle_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdNextIncompleteBundle, () => CanNextIncompleteBundle);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdNextIncompleteBundleNc, NextIncompleteBundleNc_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdNextIncompleteBundleNc, () => CanNextIncompleteBundleNc);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdApprove, ApproveAndStayPut_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdApprove, () => CanApproveAndStayPut);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdApproveAndMoveNextSameLine, ApproveAndMoveNextSameLine_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdApproveAndMoveNextSameLine, () => CanApproveAndMoveNextSameLine);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdMoveFocusBoxRight, MoveFocusBoxRight_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdMoveFocusBoxRight, () => CanMoveFocusBoxRight);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdMoveFocusBoxLeft, MoveFocusBoxLeft_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdMoveFocusBoxLeft, () => CanMoveFocusBoxLeft);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdBrowseMoveNext, BrowseMoveNext_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdBrowseMoveNext, () => CanBrowseMoveNext);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdBrowseMoveNextSameLine, BrowseMoveNextSameLine_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdBrowseMoveNextSameLine, () => CanBrowseMoveNextSameLine);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdMoveFocusBoxRightNc, MoveFocusBoxRightNc_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdMoveFocusBoxRightNc, () => CanMoveFocusBoxRightNc);
-			_mySharedEventHandlers.Add(LanguageExplorerConstants.CmdMoveFocusBoxLeftNc, MoveFocusBoxLeftNc_Click);
-			_mySharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdMoveFocusBoxLeftNc, () => CanMoveFocusBoxLeftNc);
-			// NB: Shared stuff must be added, before creating menu manager.
-			_focusBoxMenuManager = new FocusBoxMenuManager(majorFlexComponentParameters, _mySharedEventHandlers);
-
 			BaseConstructorSurrogate();
 			SetToolTips();
 		}
 
 		private void SetToolTips()
 		{
-			var menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
-			toolTip.SetToolTip(btnBreakPhrase, AppendShortcutToToolTip(LanguageExplorerConstants.CmdBreakPhrase, menuItem.ToolTipText, menuItem.ShortcutKeys));
-			toolTip.SetToolTip(btnConfirmChanges, AppendShortcutToToolTip(LanguageExplorerConstants.CmdApproveAndMoveNext, _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext].ToolTipText, Keys.None));
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMakePhrase];
-			toolTip.SetToolTip(btnLinkNextWord, AppendShortcutToToolTip(LanguageExplorerConstants.CmdMakePhrase, string.Empty, menuItem.ShortcutKeys));
-			toolTip.SetToolTip(btnUndoChanges, AppendShortcutToToolTip("CmdUndo", ITextStrings.ksUndoAllChangesHere, Keys.None));
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext];
-			toolTip.SetToolTip(btnConfirmChangesForWholeText, AppendShortcutToToolTip(LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext, menuItem.ToolTipText, menuItem.ShortcutKeys));
+			var menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdBreakPhrase];
+			toolTip.SetToolTip(btnBreakPhrase, AppendShortcutToToolTip(Command.CmdBreakPhrase, menuItem.ToolTipText, menuItem.ShortcutKeys));
+			toolTip.SetToolTip(btnConfirmChanges, AppendShortcutToToolTip(Command.CmdApproveAndMoveNext, _dataMenuDictionary[Command.CmdApproveAndMoveNext].ToolTipText, Keys.None));
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMakePhrase];
+			toolTip.SetToolTip(btnLinkNextWord, AppendShortcutToToolTip(Command.CmdMakePhrase, string.Empty, menuItem.ShortcutKeys));
+			toolTip.SetToolTip(btnUndoChanges, AppendShortcutToToolTip(Command.CmdUndo, ITextStrings.ksUndoAllChangesHere, Keys.None));
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveForWholeTextAndMoveNext];
+			toolTip.SetToolTip(btnConfirmChangesForWholeText, AppendShortcutToToolTip(Command.CmdApproveForWholeTextAndMoveNext, menuItem.ToolTipText, menuItem.ShortcutKeys));
 		}
 
-		private static string AppendShortcutToToolTip(string cmd, string tooltip, Keys shortcut)
+		private static string AppendShortcutToToolTip(Command cmd, string tooltip, Keys shortcut)
 		{
 			var shortcutText = shortcut != Keys.None ? TypeDescriptor.GetConverter(typeof(Keys)).ConvertToString(null, CultureInfo.InvariantCulture, shortcut) : string.Empty;
-			if (cmd == LanguageExplorerConstants.CmdApproveAndMoveNext && !string.IsNullOrWhiteSpace(shortcutText) && shortcutText.IndexOf('+') > 0)
+			if (cmd == Command.CmdApproveAndMoveNext && !string.IsNullOrWhiteSpace(shortcutText) && shortcutText.IndexOf('+') > 0)
 			{
 				// alter this one, since there can be two key combinations that should work for it (Control-key is not always necessary).
 				shortcutText = shortcutText.Insert(0, "(");
@@ -227,7 +189,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				color = InterlinVc.MultipleApprovedGuessColor;
 			}
-
 			if (InterlinWordControl == null)
 			{
 				InterlinWordControl = CreateNewSandbox(selected);
@@ -243,13 +204,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// add the sandbox plus some padding.
 			panelSandbox.ResumeLayout();
 			ResumeLayout();
-
 			SetSandboxSize();
 		}
 
 		protected virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			var sandbox = new Sandbox(_mySharedEventHandlers, selected.Analysis.Cache, _stylesheet, _lineChoices, selected, this)
+			var sandbox = new Sandbox(_sharedEventHandlers, selected.Analysis.Cache, _stylesheet, _lineChoices, selected, this)
 			{
 				SizeToContent = true,
 				ShowMorphBundles = true,
@@ -378,8 +338,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		#region InterlinDoc interface
-
 		#region ISelectOccurrence Members
 
 		public virtual void SelectOccurrence(AnalysisOccurrence selected)
@@ -397,9 +355,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ChangeOrCreateSandbox(selected);
 		}
 
-		#endregion
-
-		#endregion InterlinDoc interface
+		#endregion ISelectOccurrence Members
 
 		private void m_sandbox_SandboxChangedEvent(object sender, SandboxChangedEventArgs e)
 		{
@@ -433,7 +389,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				btnLinkNextWord.Visible = false;
 				btnLinkNextWord.Enabled = false;
 			}
-
 			if (ShowBreakPhraseIcon)
 			{
 				btnBreakPhrase.Visible = true;
@@ -464,7 +419,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void btnLinkNextWord_Click(object sender, EventArgs e)
 		{
-			OnJoinWords(_dataMenuDict[LanguageExplorerConstants.CmdMakePhrase].Text.Replace("&", string.Empty));
+			OnJoinWords(_dataMenuDictionary[Command.CmdMakePhrase].Text);
 		}
 
 		/// <summary>
@@ -485,7 +440,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void OnJoinWords(string uowBaseText)
 		{
-			UowHelpers.UndoExtension(uowBaseText.Replace("_", string.Empty), Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(uowBaseText.Replace("&", string.Empty).Replace("_", string.Empty), Cache.ActionHandlerAccessor, () =>
 			{
 				SelectedOccurrence.MakePhraseWithNextWord();
 				InterlinDoc?.RecordGuessIfNotKnown(SelectedOccurrence);
@@ -511,7 +466,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
+			var menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdBreakPhrase];
 			UowHelpers.UndoExtension(menuItem.Text.Replace("&", string.Empty), Cache.ActionHandlerAccessor, () => SelectedOccurrence.BreakPhrase());
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
@@ -551,7 +506,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ApproveForWholeTextAndMoveNext_Click(object sender, EventArgs e)
 		{
-			ApproveGuessOrChangesForWholeTextAndMoveNext(_dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext].Text);
+			ApproveGuessOrChangesForWholeTextAndMoveNext(_dataMenuDictionary[Command.CmdApproveForWholeTextAndMoveNext].Text);
 		}
 
 		private void mnuFocusBox_Click(object sender, EventArgs e)
@@ -579,90 +534,90 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var menuItemsTuple = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			_mnuFocusBoxMenus = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(mainMenuStrip, menuItemsTuple);
 			// <item command="CmdApproveAndMoveNext" />
-			var menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext];
+			var menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveAndMoveNext];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, ApproveAndMoveNext_Click, menuItem.Text, menuItem.ToolTipText/*, Keys.Enter - Not legal for menu. */, image: menuItem.Image);
 
 			// <item command="CmdApproveForWholeTextAndMoveNext" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveForWholeTextAndMoveNext];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, ApproveForWholeTextAndMoveNext_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys, menuItem.Image);
 
 			// <item command="CmdNextIncompleteBundle" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundle];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdNextIncompleteBundle];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, NextIncompleteBundle_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApprove];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApprove];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, ApproveAndStayPut_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.ApproveAnalysisMovementMenu];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.ApproveAnalysisMovementMenu];
 			var currentMenu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(mainMenuStrip, menuItem.Text);
-			currentMenu.Name = LanguageExplorerConstants.ApproveAnalysisMovementMenu;
+			currentMenu.Name = Command.ApproveAnalysisMovementMenu.ToString("g");
 			menuItemsTuple.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentMenu, null));
 
 			// <item command="CmdApproveAndMoveNextSameLine" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveAndMoveNextSameLine];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, ApproveAndMoveNextSameLine_Click, menuItem.Text, menuItem.ToolTipText/*, Keys.Control | Keys.Enter - Not legal for menu. */);
 
 			// <item command="CmdMoveFocusBoxRight" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRight];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMoveFocusBoxRight];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, MoveFocusBoxRight_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <item command="CmdMoveFocusBoxLeft" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeft];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMoveFocusBoxLeft];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, MoveFocusBoxLeft_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.BrowseMovementMenu];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.BrowseMovementMenu];
 			currentMenu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(mainMenuStrip, menuItem.Text);
-			currentMenu.Name = LanguageExplorerConstants.BrowseMovementMenu;
+			currentMenu.Name = Command.BrowseMovementMenu.ToString("g");
 			menuItemsTuple.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentMenu, null));
 
 			// <item command="CmdBrowseMoveNext" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNext];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdBrowseMoveNext];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, BrowseMoveNext_Click, menuItem.Text, menuItem.ToolTipText/*, Keys.Shift | Keys.Enter - Not legal for menu. */);
 
 			// <item command="CmdNextIncompleteBundleNc" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundleNc];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdNextIncompleteBundleNc];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, NextIncompleteBundleNc_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <item command="CmdBrowseMoveNextSameLine" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNextSameLine];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdBrowseMoveNextSameLine];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, BrowseMoveNextSameLine_Click, menuItem.Text, menuItem.ToolTipText/*, Keys.Control | Keys.Shift | Keys.Enter - Not legal for menu. */);
 
 			// <item command="CmdMoveFocusBoxRightNc" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRightNc];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMoveFocusBoxRightNc];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, MoveFocusBoxRightNc_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			// <item command="CmdMoveFocusBoxLeftNc" />
-			menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeftNc];
+			menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMoveFocusBoxLeftNc];
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItemsTuple, currentMenu, MoveFocusBoxLeftNc_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys);
 
 			if (ShowLinkWordsIcon)
 			{
 				// <item command="CmdMakePhrase" defaultVisible="false" />
-				menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdMakePhrase];
+				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdMakePhrase];
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, btnLinkNextWord_Click, menuItem.Text, shortcutKeys: menuItem.ShortcutKeys, image: menuItem.Image);
 			}
 			if (ShowBreakPhraseIcon)
 			{
 				// <item command="CmdBreakPhrase" defaultVisible="false" />
-				menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
+				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdBreakPhrase];
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, btnBreakPhrase_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys, menuItem.Image);
 			}
 			var wantSeparator = true;
 			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveLeft, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft.ToString("g"), out eventHandler))
 			{
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(mainMenuStrip);
 				wantSeparator = false;
 				// <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
-				menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveLeft];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(LanguageExplorerConstants.CmdRepeatLastMoveLeft), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
-				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveLeft).Invoke().Item2;
+				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdRepeatLastMoveLeft];
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdRepeatLastMoveLeft.ToString("g")), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
+				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g")).Invoke().Item2;
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveRight, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
 			{
 				if (wantSeparator)
 				{
@@ -671,11 +626,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					wantSeparator = false;
 				}
 				// <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-				menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveRight];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(LanguageExplorerConstants.CmdRepeatLastMoveRight), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
-				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveRight).Invoke().Item2;
+				// Image is locked in InterlinearImageHolder
+				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdRepeatLastMoveRight];
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdRepeatLastMoveRight.ToString("g")), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
+				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g")).Invoke().Item2;
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdApproveAll, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll.ToString("g"), out eventHandler))
 			{
 				if (wantSeparator)
 				{
@@ -683,8 +639,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(mainMenuStrip);
 				}
 				// <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
-				menuItem = (ToolStripMenuItem)_dataMenuDict[LanguageExplorerConstants.CmdApproveAll];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(LanguageExplorerConstants.CmdApproveAll), menuItem.Text, menuItem.ToolTipText, image: menuItem.Image);
+				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveAll];
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdApproveAll.ToString("g")), menuItem.Text, menuItem.ToolTipText, image: menuItem.Image);
 				currentMenu.Visible = currentMenu.Enabled = Visible;
 			}
 			_mnuFocusBoxMenus.Item1.Show(btnMenu, new Point(btnMenu.Width / 2, btnMenu.Height / 2));
@@ -694,11 +650,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
-			if (Parent == null)
-			{
-				Deactivate();
-			}
-			else
+
+			_uiWidgetController?.RemoveUserControlHandlers(this);
+			if (Parent != null)
 			{
 				Activate();
 			}
@@ -707,386 +661,58 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void Activate()
 		{
-			if (_dataMenuDict == null)
+			if (_uiWidgetController == null)
 			{
 				// Tests aren't happy without it.
 				return;
 			}
-			// Add event handlers here.
-			// <item command="CmdApproveAndMoveNext" />
-			var menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext];
-			menuItem.Click += ApproveAndMoveNext_Click;
-
-			// <item command="CmdApproveForWholeTextAndMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext];
-			menuItem.Click += ApproveForWholeTextAndMoveNext_Click;
-
-			// <item command="CmdNextIncompleteBundle" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundle];
-			menuItem.Click += NextIncompleteBundle_Click;
-
-			// <item command="CmdApprove" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApprove];
-			menuItem.Click += ApproveAndStayPut_Click;
-
-			// <item command="CmdApproveAndMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine];
-			menuItem.Click += ApproveAndMoveNextSameLine_Click;
-
-			// <item command="CmdMoveFocusBoxRight" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRight];
-			menuItem.Click += MoveFocusBoxRight_Click;
-
-			// <item command="CmdMoveFocusBoxLeft" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeft];
-			menuItem.Click += MoveFocusBoxLeft_Click;
-
-			// <item command="CmdBrowseMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNext];
-			menuItem.Click += BrowseMoveNext_Click;
-
-			// <item command="CmdNextIncompleteBundleNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundleNc];
-			menuItem.Click += NextIncompleteBundleNc_Click;
-
-			// <item command="CmdBrowseMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNextSameLine];
-			menuItem.Click += BrowseMoveNextSameLine_Click;
-
-			// <item command="CmdMoveFocusBoxRightNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRightNc];
-			menuItem.Click += MoveFocusBoxRightNc_Click;
-
-			// <item command="CmdMoveFocusBoxLeftNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeftNc];
-			menuItem.Click += MoveFocusBoxLeftNc_Click;
-
-			// <item command="CmdMakePhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMakePhrase];
-			menuItem.Click += btnLinkNextWord_Click;
-
-			// <item command="CmdBreakPhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
-			menuItem.Click += btnBreakPhrase_Click;
-
+			// Wire up handlers for the main Data menu items of interest.
+			var dataMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdApproveAndMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndMoveNext_Click, ()=> CanJoinWords) },
+				{ Command.CmdApproveForWholeTextAndMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveForWholeTextAndMoveNext_Click, ()=> CanApproveForWholeTextAndMoveNext) },
+				{ Command.CmdNextIncompleteBundle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NextIncompleteBundle_Click, ()=> CanNextIncompleteBundle) },
+				{ Command.CmdApprove, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndStayPut_Click, ()=> CanApproveAndStayPut) },
+				{ Command.CmdApproveAndMoveNextSameLine, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndMoveNextSameLine_Click, ()=> CanApproveAndMoveNextSameLine) },
+				{ Command.CmdMoveFocusBoxRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxRight_Click, ()=> CanMoveFocusBoxRight) },
+				{ Command.CmdMoveFocusBoxLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxLeft_Click, ()=> CanMoveFocusBoxLeft) },
+				{ Command.CmdBrowseMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(BrowseMoveNext_Click, ()=> CanBrowseMoveNext) },
+				{ Command.CmdNextIncompleteBundleNc, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NextIncompleteBundleNc_Click, ()=> CanNextIncompleteBundleNc) },
+				{ Command.CmdBrowseMoveNextSameLine, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(BrowseMoveNextSameLine_Click, ()=> CanBrowseMoveNextSameLine) },
+				{ Command.CmdMoveFocusBoxRightNc, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxRightNc_Click, ()=> CanMoveFocusBoxRightNc) },
+				{ Command.CmdMoveFocusBoxLeftNc, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxLeftNc_Click, ()=> CanMoveFocusBoxLeftNc) },
+				{ Command.CmdMakePhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnLinkNextWord_Click, ()=> CanJoinWords) },
+				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) }
+			};
+			// Wire up handlers for tool bar buttons of interest on the insert tool bar.
+			var insertToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) }
+			};
 			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveLeft, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft.ToString("g"), out eventHandler))
 			{
 				// <item command="CmdRepeatLastMoveLeft" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveLeft];
-				menuItem.Click += eventHandler;
+				dataMenuHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g")).Invoke()));
 			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveRight, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
 			{
 				// <item command="CmdRepeatLastMoveRight" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveRight];
-				menuItem.Click += eventHandler;
+				dataMenuHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g")).Invoke()));
 			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveRight, out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
 			{
 				// <item command="CmdApproveAll" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAll];
-				menuItem.Click += eventHandler;
+				dataMenuHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
+				insertToolBarHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
 			}
-
-			_dataMenu.DropDownOpening += DataMenu_DropDownOpening;
-			_focusBoxMenuManager?.Activate();
+			var userController = new UserControlUiWidgetParameterObject(this);
+			userController.MenuItemsForUserControl.Add(MainMenu.Data, dataMenuHandlers);
+			userController.ToolBarItemsForUserControl.Add(ToolBar.Insert, insertToolBarHandlers);
+			_uiWidgetController.AddHandlers(userController);
 		}
 
-		private void DataMenu_DropDownOpening(object sender, EventArgs e)
-		{
-			// Set menu visibility/enabled here.
-			/*
-			<menu id="Data" label="_Data">
-				<item command="CmdFirstRecord" />
-				<item command="CmdPreviousRecord" />
-				<item command="CmdNextRecord" />
-				<item command="CmdLastRecord" />
-				<item label="-" translate="do not translate" />
-				<item command="CmdApproveAndMoveNext" />
-				<item command="CmdApproveForWholeTextAndMoveNext" />
-				<item command="CmdNextIncompleteBundle" />
-				<item command="CmdApprove" />
-				<menu id="ApproveAnalysisMovementMenu">
-					<item command="CmdApproveAndMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRight" />
-					<item command="CmdMoveFocusBoxLeft" />
-				</menu>
-				<menu id="BrowseMovementMenu">
-					<item command="CmdBrowseMoveNext" />
-					<item command="CmdNextIncompleteBundleNc" />
-					<item command="CmdBrowseMoveNextSameLine" />
-					<item command="CmdMoveFocusBoxRightNc" />
-					<item command="CmdMoveFocusBoxLeftNc" />
-				</menu>
-				<item command="CmdMakePhrase" />
-				<item command="CmdBreakPhrase" />
-				<item label="-" translate="do not translate" />
-				<item command= "CmdRepeatLastMoveLeft" />
-				<item command= "CmdRepeatLastMoveRight" />
-				<item command= "CmdApproveAll" />
-			</menu>
-			*/
-			// <item command="CmdApproveAndMoveNext" />
-			var menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext];
-			var canDo = CanJoinWords;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			var wantSeparator = canDo.Item1;
-
-			// <item command="CmdApproveForWholeTextAndMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext];
-			canDo = CanApproveForWholeTextAndMoveNext;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-
-			// <item command="CmdNextIncompleteBundle" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundle];
-			canDo = CanNextIncompleteBundle;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-
-			// <item command="CmdApprove" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApprove];
-			canDo = CanApproveAndStayPut;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-
-			// <item command="CmdApproveAndMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine];
-			canDo = CanApproveAndMoveNextSameLine;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-			var wantContainerMenu = menuItem.Visible;
-
-			// <item command="CmdMoveFocusBoxRight" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRight];
-			canDo = CanMoveFocusBoxRight;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			// <item command="CmdMoveFocusBoxLeft" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeft];
-			canDo = CanMoveFocusBoxLeft;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			if (wantContainerMenu)
-			{
-				// <menu id="ApproveAnalysisMovementMenu">
-				_dataMenuDict[LanguageExplorerConstants.ApproveAnalysisMovementMenu].Visible = true;
-			}
-
-			// <item command="CmdBrowseMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNext];
-			canDo = CanBrowseMoveNext;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-			wantContainerMenu = canDo.Item1;
-
-			// <item command="CmdNextIncompleteBundleNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundleNc];
-			canDo = CanNextIncompleteBundleNc;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			// <item command="CmdBrowseMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNextSameLine];
-			canDo = CanBrowseMoveNextSameLine;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || menuItem.Visible;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			// <item command="CmdMoveFocusBoxRightNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRightNc];
-			canDo = CanMoveFocusBoxRightNc;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			// <item command="CmdMoveFocusBoxLeftNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeftNc];
-			canDo = CanMoveFocusBoxLeftNc;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-			wantContainerMenu = wantContainerMenu || canDo.Item1;
-
-			if (wantContainerMenu)
-			{
-				// <menu id="BrowseMovementMenu">
-				_dataMenuDict[LanguageExplorerConstants.BrowseMovementMenu].Visible = true;
-			}
-
-			// <item command="CmdMakePhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMakePhrase];
-			canDo = CanJoinWords;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-
-			// <item command="CmdBreakPhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
-			canDo = CanBreakPhrase;
-			menuItem.Visible = canDo.Item1;
-			menuItem.Enabled = canDo.Item2;
-			wantSeparator = wantSeparator || canDo.Item1;
-
-			if (wantSeparator)
-			{
-				// Make first separator visible.
-				_dataMenuDict[LanguageExplorerConstants.DataMenuSeparator1].Visible = true;
-				wantSeparator = false;
-			}
-
-			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveLeft, out eventHandler))
-			{
-				// <item command="CmdRepeatLastMoveLeft" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveLeft];
-				canDo = _sharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveLeft).Invoke();
-				menuItem.Visible = canDo.Item1;
-				menuItem.Enabled = canDo.Item2;
-				wantSeparator = canDo.Item1;
-			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveRight, out eventHandler))
-			{
-				// <item command="CmdRepeatLastMoveRight" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveRight];
-				canDo = _sharedEventHandlers.GetStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveRight).Invoke();
-				menuItem.Visible = canDo.Item1;
-				menuItem.Enabled = canDo.Item2;
-				wantSeparator = wantSeparator || canDo.Item1;
-			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdApproveAll, out eventHandler))
-			{
-				// <item command="CmdApproveAll" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAll];
-				menuItem.Visible = Visible;
-				menuItem.Enabled = Visible;
-				wantSeparator = wantSeparator || Visible;
-			}
-
-			if (wantSeparator)
-			{
-				// Make second separator visible.
-				_dataMenuDict[LanguageExplorerConstants.DataMenuSeparator2].Visible = true;
-			}
-		}
-
-		private void Deactivate()
-		{
-			if (_dataMenuDict == null)
-			{
-				// Tests aren't happy without it.
-				return;
-			}
-			// Remove event handlers here.
-			_dataMenuDict[LanguageExplorerConstants.DataMenuSeparator1].Visible = false;
-
-			// <item command="CmdApproveAndMoveNext" />
-			var menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext];
-			menuItem.Click -= ApproveAndMoveNext_Click;
-
-			// <item command="CmdApproveForWholeTextAndMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext];
-			menuItem.Click -= ApproveForWholeTextAndMoveNext_Click;
-
-			// <item command="CmdNextIncompleteBundle" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundle];
-			menuItem.Click -= NextIncompleteBundle_Click;
-
-			// <item command="CmdApprove" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApprove];
-			menuItem.Click -= ApproveAndStayPut_Click;
-
-			// <menu id="ApproveAnalysisMovementMenu">
-			_dataMenuDict[LanguageExplorerConstants.ApproveAnalysisMovementMenu].Visible = false;
-
-			// <item command="CmdApproveAndMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine];
-			menuItem.Click -= ApproveAndMoveNextSameLine_Click;
-
-			// <item command="CmdMoveFocusBoxRight" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRight];
-			menuItem.Click -= MoveFocusBoxRight_Click;
-
-			// <item command="CmdMoveFocusBoxLeft" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeft];
-			menuItem.Click -= MoveFocusBoxLeft_Click;
-
-			// <menu id="BrowseMovementMenu">
-			_dataMenuDict[LanguageExplorerConstants.BrowseMovementMenu].Visible = false;
-
-			// <item command="CmdBrowseMoveNext" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNext];
-			menuItem.Click -= BrowseMoveNext_Click;
-
-			// <item command="CmdNextIncompleteBundleNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundleNc];
-			menuItem.Click -= NextIncompleteBundleNc_Click;
-
-			// <item command="CmdBrowseMoveNextSameLine" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNextSameLine];
-			menuItem.Click -= BrowseMoveNextSameLine_Click;
-
-			// <item command="CmdMoveFocusBoxRightNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRightNc];
-			menuItem.Click -= MoveFocusBoxRightNc_Click;
-
-			// <item command="CmdMoveFocusBoxLeftNc" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeftNc];
-			menuItem.Click -= MoveFocusBoxLeftNc_Click;
-
-			// <item command="CmdMakePhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdMakePhrase];
-			menuItem.Click -= btnLinkNextWord_Click;
-
-			// <item command="CmdBreakPhrase" />
-			menuItem = _dataMenuDict[LanguageExplorerConstants.CmdBreakPhrase];
-			menuItem.Click -= btnBreakPhrase_Click;
-
-			_dataMenuDict[LanguageExplorerConstants.DataMenuSeparator2].Visible = false;
-			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveLeft, out eventHandler))
-			{
-				// <item command="CmdRepeatLastMoveLeft" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveLeft];
-				menuItem.Click -= eventHandler;
-			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdRepeatLastMoveRight, out eventHandler))
-			{
-				// <item command="CmdRepeatLastMoveRight" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdRepeatLastMoveRight];
-				menuItem.Click -= eventHandler;
-			}
-
-			if (_sharedEventHandlers.TryGetEventHandler(LanguageExplorerConstants.CmdApproveAll, out eventHandler))
-			{
-				// <item command="CmdApproveAll" />
-				menuItem = _dataMenuDict[LanguageExplorerConstants.CmdApproveAll];
-				menuItem.Click -= eventHandler;
-			}
-
-			_dataMenu.DropDownOpening -= DataMenu_DropDownOpening;
-			_focusBoxMenuManager?.Deactivate();
-		}
+		public Tuple<bool, bool> CanDoCmdApproveAll => new Tuple<bool, bool>(Visible, Visible);
 
 		protected override void OnVisibleChanged(EventArgs e)
 		{
@@ -1543,21 +1169,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ApproveAndStayPut_Click(object sender, EventArgs e)
 		{
-			ApproveAndStayPut(_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine].Text);
+			ApproveAndStayPut(_dataMenuDictionary[Command.CmdApproveAndMoveNextSameLine].Text);
 		}
 
 		private Tuple<bool, bool> CanApproveAndMoveNextSameLine => CanApproveAndMoveNext;
 
 		private void ApproveAndMoveNextSameLine_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNextSameLine].Text, true, false, false, true);
+			OnNextBundle(_dataMenuDictionary[Command.CmdBrowseMoveNextSameLine].Text, true, false, false, true);
 		}
 
 		private Tuple<bool, bool> CanBrowseMoveNextSameLine => CanBrowseMoveNext;
 
 		private void BrowseMoveNextSameLine_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNextSameLine].Text, false, false, false, true);
+			OnNextBundle(_dataMenuDictionary[Command.CmdApproveAndMoveNextSameLine].Text, false, false, false, true);
 		}
 
 		private Tuple<bool, bool> CanBrowseMoveNext
@@ -1572,7 +1198,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void BrowseMoveNext_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdBrowseMoveNext].Text, false, false, true, true);
+			OnNextBundle(_dataMenuDictionary[Command.CmdBrowseMoveNext].Text, false, false, true, true);
 		}
 
 		private Tuple<bool, bool> CanApproveAndMoveNext
@@ -1591,7 +1217,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void OnApproveAndMoveNext()
 		{
-			OnApproveAndMoveNext(_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext].Text);
+			OnApproveAndMoveNext(_dataMenuDictionary[Command.CmdApproveAndMoveNext].Text);
 		}
 
 		public bool OnApproveAndMoveNext(string uowBaseText)
@@ -1617,7 +1243,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void MoveFocusBoxRight_Click(object sender, EventArgs e)
 		{
-			OnMoveFocusBoxRight(_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRight].Text, true);
+			OnMoveFocusBoxRight(_dataMenuDictionary[Command.CmdMoveFocusBoxRight].Text, true);
 		}
 
 		/// <summary>
@@ -1646,7 +1272,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void MoveFocusBoxRightNc_Click(object sender, EventArgs e)
 		{
-			OnMoveFocusBoxRight(_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxRightNc].Text, false);
+			OnMoveFocusBoxRight(_dataMenuDictionary[Command.CmdMoveFocusBoxRightNc].Text, false);
 		}
 
 		/// <summary>
@@ -1667,7 +1293,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void MoveFocusBoxLeft_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeft].Text, true, false, true, _rightToLeft);
+			OnNextBundle(_dataMenuDictionary[Command.CmdMoveFocusBoxLeft].Text, true, false, true, _rightToLeft);
 		}
 
 		/// <summary>
@@ -1687,7 +1313,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void MoveFocusBoxLeftNc_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdMoveFocusBoxLeftNc].Text, false, false, true, _rightToLeft);
+			OnNextBundle(_dataMenuDictionary[Command.CmdMoveFocusBoxLeftNc].Text, false, false, true, _rightToLeft);
 		}
 
 		private Tuple<bool, bool> CanNextIncompleteBundle
@@ -1701,7 +1327,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void NextIncompleteBundle_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdApproveAndMoveNext].Text, true, true, true, true);
+			OnNextBundle(_dataMenuDictionary[Command.CmdApproveAndMoveNext].Text, true, true, true, true);
 		}
 
 		/// <summary>
@@ -1716,7 +1342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void NextIncompleteBundleNc_Click(object sender, EventArgs e)
 		{
-			OnNextBundle(_dataMenuDict[LanguageExplorerConstants.CmdNextIncompleteBundleNc].Text, false, true, true, true);
+			OnNextBundle(_dataMenuDictionary[Command.CmdNextIncompleteBundleNc].Text, false, true, true, true);
 		}
 
 		private sealed class UndoRedoApproveAndMoveHelper : DisposableBase

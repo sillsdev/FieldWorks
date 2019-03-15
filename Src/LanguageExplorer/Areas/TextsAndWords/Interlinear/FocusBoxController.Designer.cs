@@ -30,20 +30,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				((IDisposable)InterlinWordControl)?.Dispose();
-				// NB: Do the dispose on _focusBoxMenuManager, before removing the shared handlers.
-				_focusBoxMenuManager?.Dispose();
-				_mySharedEventHandlers?.Remove(LanguageExplorerConstants.CmdBreakPhrase);
-				_mySharedEventHandlers?.RemoveStatusChecker(LanguageExplorerConstants.CmdBreakPhrase);
+				((IDisposable)InterlinWordControl)?.Dispose();;
 			}
 			base.Dispose(disposing);
 			// Do this after base call, so Deactivate works.
 			_sharedEventHandlers = null;
-			_dataMenu = null;
-			_mySharedEventHandlers = null;
-			_dataMenuDict = null;
-			_insertToolbarDict = null;
-			_focusBoxMenuManager = null;
+			_uiWidgetController = null;
+			_dataMenuDictionary = null;
 			_stylesheet = null;
 			components = null;
 			InterlinWordControl = null;

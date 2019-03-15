@@ -8,14 +8,12 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -28,31 +26,30 @@ namespace LanguageExplorer.Areas
 	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areas/tools,
 	/// which events are handled by the main window.
 	/// </summary>
-	internal sealed class AreaWideMenuHelper : IFlexComponent, IDisposable
+	internal sealed class PartiallySharedAreaWideMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
-		private ToolStripMenuItem _fileExportMenu;
-		private EventHandler _foreignFileExportHandler;
-		private bool _usingLocalFileExportEventHandler;
-		private ToolStripMenuItem _toolsConfigureMenu;
-		private ToolStripSeparator _toolsCustomFieldsSeparatorMenu;
-		private ToolStripMenuItem _toolsCustomFieldsMenu;
-		private ToolStripMenuItem _toolsConfigureColumnsMenu;
-		private BrowseViewer _browseViewer;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private readonly HashSet<string> _sharedEventKeyNames = new HashSet<string>();
 
-		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal PartiallySharedAreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_recordList = recordList;
+
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			PropertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+			Publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
+			Subscriber = _majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-
-			_sharedEventKeyNames.AddRange(new []
+#if RANDYTODO
+			// TODO: Are these really needed in this class?
+#endif
+			_sharedEventKeyNames.AddRange(new[]
 			{
 				AreaServices.InsertSlash,
 				AreaServices.InsertEnvironmentBar,
@@ -115,62 +112,25 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
-			: this(majorFlexComponentParameters)
-		{
-			Guard.AgainstNull(recordList, nameof(recordList));
-
-			_recordList = recordList;
-		}
-
-		#region Implementation of IPropertyTableProvider
-
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
+		private IPropertyTable PropertyTable { get; }
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
+		private IPublisher Publisher { get; }
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		private ISubscriber Subscriber { get; }
 
 		#region IDisposable
 		private bool _isDisposed;
 
-		~AreaWideMenuHelper()
+		~PartiallySharedAreaWideMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -203,44 +163,9 @@ namespace LanguageExplorer.Areas
 				{
 					_sharedEventHandlers.Remove(key);
 				}
-				if (_fileExportMenu != null)
-				{
-					if (_usingLocalFileExportEventHandler)
-					{
-						_fileExportMenu.Click -= CommonFileExportMenu_Click;
-					}
-					else
-					{
-						_fileExportMenu.Click -= _foreignFileExportHandler;
-					}
-					_fileExportMenu.Visible = false;
-					_fileExportMenu.Enabled = false;
-				}
-				if (_toolsConfigureMenu != null)
-				{
-					if (_toolsConfigureColumnsMenu != null)
-					{
-						_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
-						_toolsConfigureMenu.DropDownItems.Remove(_toolsConfigureColumnsMenu);
-					}
-					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
-					_toolsCustomFieldsMenu.Dispose();
-					_toolsCustomFieldsSeparatorMenu.Dispose();
-					_toolsCustomFieldsMenu.Dispose();
-				}
 			}
 			_majorFlexComponentParameters = null;
 			_recordList = null;
-			_fileExportMenu = null;
-			_foreignFileExportHandler = null;
-			_toolsConfigureMenu = null;
-			_toolsCustomFieldsSeparatorMenu = null;
-			_toolsCustomFieldsMenu = null;
-			_toolsConfigureColumnsMenu = null;
-			_browseViewer = null;
 			_sharedEventHandlers = null;
 
 			_isDisposed = true;
@@ -250,35 +175,19 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Setup the File->Export menu.
 		/// </summary>
-		/// <param name="handler">The handler to use, or null to use the more global one.</param>
-		internal void SetupFileExportMenu(EventHandler handler = null)
+		internal void SetupFileExportMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-			if (_foreignFileExportHandler != null)
-			{
-				if (_foreignFileExportHandler == handler)
-				{
-					// Nothing to do, since it is already set to the same one.
-					return;
-				}
-				// Changing to another one.
-				if (_usingLocalFileExportEventHandler)
-				{
-					_fileExportMenu.Click -= CommonFileExportMenu_Click;
-				}
-				else
-				{
-					_fileExportMenu.Click -= _foreignFileExportHandler;
-				}
-			}
-			_foreignFileExportHandler = handler;
 			// File->Export menu is visible and enabled in this tool.
-			// Add File->Export event handler.
-			_fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
-			_fileExportMenu.Visible = true;
-			_fileExportMenu.Enabled = true;
-			_fileExportMenu.Click += _foreignFileExportHandler ?? CommonFileExportMenu_Click;
-			_usingLocalFileExportEventHandler = _foreignFileExportHandler == null;
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> fileMenuItemsForTool;
+			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.File, out fileMenuItemsForTool))
+			{
+				fileMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.File, fileMenuItemsForTool);
+			}
+			fileMenuItemsForTool.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CommonFileExportMenu_Click, () => CanCmdExport));
 		}
+
+		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, true);
 
 		private void CommonFileExportMenu_Click(object sender, EventArgs e)
 		{
@@ -302,36 +211,16 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Setup the Tools->Configure->CustomFields menu.
 		/// </summary>
-		internal void SetupToolsCustomFieldsMenu()
+		internal void SetupToolsCustomFieldsMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
 			// Tools->Configure->CustomFields menu is visible and enabled in this tool.
-			EnsureWeHaveToolsConfigureMenu();
-			_toolsCustomFieldsSeparatorMenu = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsConfigureMenu);
-			_toolsCustomFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, AddCustomField_Click, AreaResources.CustomFields, AreaResources.CustomFieldsTooltip);
-		}
-
-		/// <summary>
-		/// Setup the Tools->Configure->Columns menu.
-		/// </summary>
-		internal void SetupToolsConfigureColumnsMenu(BrowseViewer browseViewer, int insertIndex = 0)
-		{
-			// Tools->Configure->Columns menu is visible and enabled in this tool.
-			EnsureWeHaveToolsConfigureMenu();
-			_browseViewer = browseViewer;
-			_toolsConfigureColumnsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, ConfigureColumns_Click, AreaResources.ConfigureColumns, AreaResources.ConfigureColumnsTooltip, image: ResourceHelper.ColumnChooser, insertIndex: insertIndex);
-		}
-
-		private void ConfigureColumns_Click(object sender, EventArgs e)
-		{
-			_browseViewer.OnConfigureColumns(this);
-		}
-
-		private void EnsureWeHaveToolsConfigureMenu()
-		{
-			if (_toolsConfigureMenu == null)
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForTool;
+			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.Tools, out toolsMenuItemsForTool))
 			{
-				_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
+				toolsMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.Tools, toolsMenuItemsForTool);
 			}
+			toolsMenuItemsForTool.Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));
 		}
 
 		private void DataTreeDelete_Clicked(object sender, EventArgs e)
@@ -354,6 +243,8 @@ namespace LanguageExplorer.Areas
 		{
 			SenderTagAsSlice(sender).HandleDeleteCommand();
 		}
+
+		private Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, true);
 
 		private void AddCustomField_Click(object sender, EventArgs e)
 		{

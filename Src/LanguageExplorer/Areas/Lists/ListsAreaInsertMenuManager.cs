@@ -525,10 +525,10 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 			{
 				currentTuple.Item1.Enabled = currentList.PossibilitiesOS.Any();
 			}
-			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			if (_insertEntryMenu != null && _insertEntryMenu.Visible && currentSliceAsStTextSlice != null)
 			{
-				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.

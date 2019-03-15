@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This method should cause all paragraphs in interesting texts which do not have the ParseIsCurrent flag set
 		/// to be Parsed. Created for use with ConcordanceWordList lists.
 		/// </summary>
-		internal void ParseInterstingTextsIfNeeded()
+		internal void ParseInterestingTextsIfNeeded()
 		{
 			ForceReloadList();
 		}
@@ -127,9 +127,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// We use a unique method name for inserting a text, which could otherwise be handled simply
 		/// by letting the record list handle InsertItemInVector, because after it is inserted we may
 		/// want to switch tools.
-		/// The argument should be the XmlNode for <parameters className="Text"/>.
 		/// </summary>
-		public bool OnInsertInterlinText(object argument)
+		internal bool OnInsertInterlinText()
 		{
 			return IsActiveInGui && AddNewText(new UndoableCreateAndInsertStText(m_cache, this, ITextStrings.UndoInsertText, ITextStrings.RedoInsertText));
 		}

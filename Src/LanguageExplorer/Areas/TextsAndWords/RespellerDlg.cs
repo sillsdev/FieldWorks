@@ -201,7 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
 				//(this record list and its list are not visible in this dialog, so there will be no future reload)
 				m_wordformRecordList.ListLoadingSuppressed = false;
-				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing
+				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterestingTextsIfNeeded(); //Trigger the parsing
 			}
 			m_srcwfiWordform = (IWfiWordform)m_wordformRecordList.CurrentObject;
 			return SetDlgInfoPrivate(configurationParameters);

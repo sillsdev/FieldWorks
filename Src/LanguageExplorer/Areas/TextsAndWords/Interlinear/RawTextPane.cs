@@ -3,10 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,9 +28,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class RawTextPane : RootSite, IInterlinearTabControl, IHandleBookmark
 	{
-		XmlNode m_configurationParameters;
-		private ShowSpaceDecorator m_showSpaceDa;
-		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
+		XElement _configurationParameters;
+		private ShowSpaceDecorator _showSpaceDa;
+		private bool _clickInsertsZws; // true for the special mode where click inserts a zero-width space
+		private bool _isCurrentTabForInterlineMaster;
+		private bool _showInvisibleSpaces;
+		private bool _clickInvisibleSpace;
+
+		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
 		public RawTextPane()
 			: base(null)
@@ -42,6 +48,53 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal int RootHvo { get; private set; }
 
 		internal RawTextVc Vc { get; private set; }
+
+		internal XElement ConfigurationParameters
+		{
+			set { _configurationParameters = value; }
+		}
+
+		internal bool IsCurrentTabForInterlineMaster
+		{
+			get { return _isCurrentTabForInterlineMaster; }
+			set
+			{
+				if (_isCurrentTabForInterlineMaster == value)
+				{
+					// Same value, so skip the work.
+					return;
+				}
+				_isCurrentTabForInterlineMaster = value;
+				if (_isCurrentTabForInterlineMaster)
+				{
+					// Set Check on two space menus.
+					var currentMenuItem = (ToolStripMenuItem)MyMajorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.ClickInvisibleSpace];
+					currentMenuItem.Checked = _clickInvisibleSpace;
+					currentMenuItem = (ToolStripMenuItem)MyMajorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.ShowInvisibleSpaces];
+					currentMenuItem.Checked = _showInvisibleSpaces;
+					// Add handler stuff.
+					var insertMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+					{
+						{Command.CmdGuessWordBreaks, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdGuessWordBreaks_Click, () => CanCmdGuessWordBreaks) },
+						{Command.ClickInvisibleSpace, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClickInvisibleSpace_Click, () => CanClickInvisibleSpace) }
+					};
+					var viewMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+					{
+						{Command.ShowInvisibleSpaces, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ShowInvisibleSpaces_Click, () => CanShowInvisibleSpaces) }
+					};
+					var userController = new UserControlUiWidgetParameterObject(this);
+					userController.MenuItemsForUserControl.Add(MainMenu.View, viewMenuHandler);
+					userController.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuHandler);
+					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
+
+				}
+				else
+				{
+					// remove handler stuff.
+					MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
+				}
+			}
+		}
 
 		#region IDisposable override
 
@@ -65,7 +118,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			MyRecordList = null;
 			Vc = null;
-			m_configurationParameters = null;
+			_configurationParameters = null;
 		}
 
 		#endregion IDisposable override
@@ -92,11 +145,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			if (InterlinMaster.HasParagraphNeedingParse(RootObject))
+			if (RootObject.HasParagraphNeedingParse())
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false);
+					RootObject.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false);
 				});
 			}
 		}
@@ -131,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (ClickInvisibleSpace)
+			if (_clickInvisibleSpace)
 			{
 				if (InsertInvisibleSpace(e))
 				{
@@ -200,7 +253,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-			if (!ClickInvisibleSpace)
+			if (!_clickInvisibleSpace)
 			{
 				return;
 			}
@@ -217,88 +270,95 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnLostFocus(e);
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
-		public virtual bool OnDisplayShowInvisibleSpaces(object commandObject, ref UIItemDisplayProperties display)
+		private Tuple<bool, bool> CanShowInvisibleSpaces
 		{
-			display.Enabled = true; // If this class is a current colleague we want the command
-			bool isTextPresent = RootBox != null && RootBox.Selection != null;
-			if (isTextPresent) //well, the rootbox is at least there, test it for text.
+			get
 			{
-				ITsString tss;
-				int ichLim, hvo, tag, ws;
-				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				var isTextPresent = RootBox?.Selection != null;
+				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					isTextPresent = false;
+					ITsString tss;
+					int ichLim, hvo, tag, ws;
+					bool fAssocPrev;
+					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					if (ichLim == 0 && tss.Length == 0) //nope, no text.
+					{
+						isTextPresent = false;
+					}
 				}
+				return new Tuple<bool, bool>(true, isTextPresent);
 			}
-			display.Enabled = isTextPresent;
-			return true; //we've handled this
+		}
+
+		private void ShowInvisibleSpaces_Click(object sender, EventArgs e)
+		{
+			var senderAsMenuItem = (ToolStripMenuItem)sender;
+			if (senderAsMenuItem.Checked == _showInvisibleSpaces)
+			{
+				// Nothing to do.
+				return;
+			}
+			var newVal = senderAsMenuItem.Checked;
+			if (newVal != _showSpaceDa.ShowSpaces)
+			{
+				_showSpaceDa.ShowSpaces = newVal;
+				var saveSelection = SelectionHelper.Create(this);
+				RootBox.Reconstruct();
+				saveSelection.SetSelection(true);
+			}
+			if (!newVal && _clickInvisibleSpace)
+			{
+				TurnOffClickInvisibleSpace();
+				// Set Checked for the other the menu and run its event handler.
+				var clickInvisibleSpace = (ToolStripMenuItem)MyMajorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.ClickInvisibleSpace];
+				clickInvisibleSpace.Checked = false;
+				clickInvisibleSpace.PerformClick();
+			}
 		}
 
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
-		public virtual bool OnDisplayClickInvisibleSpace(object commandObject, ref UIItemDisplayProperties display)
+		private Tuple<bool, bool> CanClickInvisibleSpace
 		{
-			display.Enabled = true; // If this class is a current colleague we want the command
-			bool isTextPresent = RootBox != null && RootBox.Selection != null;
-			if (isTextPresent) //well, the rootbox is at least there, test it for text.
+			get
 			{
-				ITsString tss;
-				int ichLim, hvo, tag, ws;
-				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				var isTextPresent = RootBox?.Selection != null;
+				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					isTextPresent = false;
+					ITsString tss;
+					int ichLim, hvo, tag, ws;
+					bool fAssocPrev;
+					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					if (ichLim == 0 && tss.Length == 0) //nope, no text.
+					{
+						isTextPresent = false;
+					}
 				}
+				return new Tuple<bool, bool>(true, isTextPresent);
 			}
-			display.Enabled = isTextPresent;
-			return true; //we've handled this
 		}
-#endif
 
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public void OnPropertyChanged(string name)
+		private void ClickInvisibleSpace_Click(object sender, EventArgs e)
 		{
-			bool newVal; // used in two cases below
-			switch (name)
+			var senderAsMenuItem = (ToolStripMenuItem)sender;
+			var newVal = senderAsMenuItem.Checked;
+			if (newVal == _clickInvisibleSpace || newVal == _clickInsertsZws)
 			{
-				case "ShowInvisibleSpaces":
-					newVal = ShowInvisibleSpaces;
-					if (newVal != m_showSpaceDa.ShowSpaces)
-					{
-						m_showSpaceDa.ShowSpaces = newVal;
-						var saveSelection = SelectionHelper.Create(this);
-						RootBox.Reconstruct();
-						saveSelection.SetSelection(true);
-					}
-					if (!newVal && ClickInvisibleSpace)
-					{
-						TurnOffClickInvisibleSpace();
-					}
-					break;
-				case "ClickInvisibleSpace":
-					newVal = ClickInvisibleSpace;
-					if (newVal == m_fClickInsertsZws)
-					{
-						return;
-					}
-					m_fClickInsertsZws = newVal;
-					if (newVal && !ShowInvisibleSpaces)
-					{
-						TurnOnShowInvisibleSpaces();
-					}
-					break;
-				default:
-					break;
+				// Nothing to do.
+				return;
+			}
+			_clickInsertsZws = newVal;
+			if (newVal && !_showInvisibleSpaces)
+			{
+				TurnOnShowInvisibleSpaces();
+				// Set Checked for the other the menu and run its event handler.
+				var showInvisibleSpacesMenu = (ToolStripMenuItem)MyMajorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.ShowInvisibleSpaces];
+				showInvisibleSpacesMenu.Checked = true;
+				showInvisibleSpacesMenu.PerformClick();
 			}
 		}
 
@@ -348,17 +408,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			PropertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
+			_showInvisibleSpaces = true;
+			PropertyTable.SetProperty("ShowInvisibleSpaces", true, true);
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			PropertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
+			_clickInvisibleSpace = false;
+			PropertyTable.SetProperty("ClickInvisibleSpace", false, true);
 		}
-
-		private bool ShowInvisibleSpaces => PropertyTable.GetValue<bool>("ShowInvisibleSpaces");
-
-		private bool ClickInvisibleSpace => PropertyTable.GetValue<bool>("ClickInvisibleSpace");
 
 		#region Overrides of RootSite
 		/// <summary>
@@ -376,11 +434,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			Vc = new RawTextVc(RootBox, m_cache, wsFirstPara);
 			SetupVc();
-			m_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
+			_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
 			{
-				ShowSpaces = ShowInvisibleSpaces
+				ShowSpaces = _showInvisibleSpaces
 			};
-			RootBox.DataAccess = m_showSpaceDa;
+			RootBox.DataAccess = _showSpaceDa;
 			RootBox.SetRootObject(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
 		}
 
@@ -415,11 +473,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			Vc.SetupVernWsForText(wsFirstPara);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo);
-			if (m_configurationParameters == null)
+			if (_configurationParameters == null)
 			{
 				return;
 			}
-			Vc.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "editable", true);
+			Vc.Editable = XmlUtils.GetOptionalBooleanAttributeValue(_configurationParameters, "editable", true);
 			Vc.Editable &= !ScriptureServices.ScriptureIsResponsibleFor(stText);
 		}
 
@@ -743,31 +801,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			second = temp;
 		}
 
-#if RANDYTODO
-		public bool OnDisplayGuessWordBreaks(object commandObject, ref UIItemDisplayProperties display)
+		private Tuple<bool, bool> CanCmdGuessWordBreaks
 		{
-			display.Visible = true;
-			bool isTextPresent = RootBox != null && RootBox.Selection != null;
-			if(isTextPresent) //well, the rootbox is at least there, test it for text.
+			get
 			{
-				ITsString tss;
-				int ichLim, hvo, tag, ws;
-				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				var isTextPresent = RootBox?.Selection != null;
+				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					isTextPresent = false;
+					ITsString tss;
+					int ichLim, hvo, tag, ws;
+					bool fAssocPrev;
+					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					if (ichLim == 0 && tss.Length == 0) //nope, no text.
+					{
+						isTextPresent = false;
+					}
 				}
+				return new Tuple<bool, bool>(true, isTextPresent);
 			}
-			display.Enabled = isTextPresent;
-			return true;
 		}
-#endif
 
 		/// <summary>
 		/// Guess where we can break words.
 		/// </summary>
-		public void OnGuessWordBreaks(object argument)
+		private void CmdGuessWordBreaks_Click(object sender, EventArgs e)
 		{
 			var sel = RootBox.Selection;
 			ITsString tss;
@@ -828,6 +885,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
+			_showInvisibleSpaces = PropertyTable.GetValue<bool>("ShowInvisibleSpaces");
+			_clickInvisibleSpace = PropertyTable.GetValue<bool>("ClickInvisibleSpace");
 		}
 
 		#endregion

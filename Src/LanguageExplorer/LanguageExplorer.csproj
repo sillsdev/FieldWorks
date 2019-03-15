@@ -299,7 +299,7 @@
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
-    <Compile Include="Areas\AreaWideMenuHelper.cs" />
+    <Compile Include="Areas\PartiallySharedAreaWideMenuHelper.cs" />
     <Compile Include="Areas\BrowseViewContextMenuFactory.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
@@ -330,8 +330,8 @@
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\IPartialToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxMenuManager.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearConstants.cs" />
+    <Compile Include="AreaUiWidgetParameterObject.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
@@ -414,6 +414,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="MainMenu.cs" />
+    <Compile Include="MainMenusParameterObject.cs" />
+    <Compile Include="MainToolBarsParameterObject.cs" />
+    <Compile Include="MainUiWidget.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
     <Compile Include="Controls\ProgressHandler.cs" />
@@ -643,7 +647,6 @@
     <Compile Include="Areas\TextsAndWords\RespellingMdc.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingSda.cs" />
     <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
-    <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -652,9 +655,7 @@
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditMenuHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedTextsAndWordsToolsMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceDisabledSlice.cs">
@@ -1310,8 +1311,12 @@
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ToolBar.cs" />
     <Compile Include="ToolbarServices.cs" />
+    <Compile Include="ToolUiWidgetParameterObject.cs" />
+    <Compile Include="UiWidgetController.cs" />
     <Compile Include="UowHelpers.cs" />
+    <Compile Include="UserControlUiWidgetParameterObject.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1713,11 +1718,6 @@
     <Compile Include="SendReceive\IBridge.cs" />
     <Compile Include="SendReceive\LiftBridge.cs" />
     <Compile Include="SendReceive\SendReceiveMenuManager.cs" />
-    <Compile Include="SendReceive\SendReceiveResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SendReceiveResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="Unicode.cs" />
@@ -2538,10 +2538,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MGAStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SendReceive\SendReceiveResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SendReceiveResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
@@ -3760,7 +3756,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InvisibleSpaceCursor.cur" />
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\IText.ico" />
-    <Content Include="Areas\TextsAndWords\Interlinear\icons\ZeroWidth.ico" />
     <Content Include="images\AddScripture.ico" />
     <Content Include="images\Create Entry.ico" />
     <None Include="images\Create Entry1.ico" />

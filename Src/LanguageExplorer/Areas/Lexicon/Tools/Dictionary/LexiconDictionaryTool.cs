@@ -56,6 +56,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
@@ -88,8 +90,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
-			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(_xhtmlDocView);
+			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(this, _xhtmlDocView);
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);

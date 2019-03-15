@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -67,9 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private ToolStripMenuItem _fileMenu;
-		protected ToolStripMenuItem _exportMenu;
-		private ToolStripMenuItem _dataMenu;
+		private bool _interlineMasterWantsExportDiscourseChartMenu;
 
 		#endregion
 
@@ -82,10 +79,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				logic = new ConstituentChartLogic(cache);
 			}
 			_sharedEventHandlers = sharedEventHandlers;
-			_sharedEventHandlers.Add(LanguageExplorerConstants.CmdRepeatLastMoveLeft, RepeatLastMoveLeft_Clicked);
-			_sharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveLeft, () => CanRepeatLastMoveLeft);
-			_sharedEventHandlers.Add(LanguageExplorerConstants.CmdRepeatLastMoveRight, RepeatLastMoveRight_Clicked);
-			_sharedEventHandlers.AddStatusChecker(LanguageExplorerConstants.CmdRepeatLastMoveRight, () => CanRepeatLastMoveRight);
+			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveLeft.ToString("g"), RepeatLastMoveLeft_Clicked);
+			_sharedEventHandlers.AddStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g"), () => CanRepeatLastMoveLeft);
+			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveRight.ToString("g"), RepeatLastMoveRight_Clicked);
+			_sharedEventHandlers.AddStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g"), () => CanRepeatLastMoveRight);
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
@@ -94,22 +91,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Vc = new InterlinVc(Cache);
 		}
 
-		internal bool ShowExportMenu
+		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
+
+		internal bool InterlineMasterWantsExportDiscourseChartDiscourseChartMenu
 		{
+			get { return _interlineMasterWantsExportDiscourseChartMenu; }
 			set
 			{
-				if (!value)
+				_interlineMasterWantsExportDiscourseChartMenu = value;
+				if (_interlineMasterWantsExportDiscourseChartMenu)
 				{
-					_exportMenu.Visible = false;
-					_exportMenu.Enabled = true;
+					// Add handler stuff.
+					var fileExportDiscourseChartMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+					{
+						{Command.CmdExportDiscourseChart, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportDiscourseChart_Click, () => CanShowExportDiscourseChartMenu) }
+					};
+					var userController = new UserControlUiWidgetParameterObject(this);
+					userController.MenuItemsForUserControl.Add(MainMenu.File, fileExportDiscourseChartMenuHandler);
+					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 				}
 				else
 				{
-					_exportMenu.Visible = true;
-					_exportMenu.Enabled = m_hvoRoot != 0 && m_chart != null && Body != null && m_logic != null;
+					// remove handler stuff.
+					MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 				}
 			}
 		}
+
+		private Tuple<bool, bool> CanShowExportDiscourseChartMenu => new Tuple<bool, bool>(true, InterlineMasterWantsExportDiscourseChartDiscourseChartMenu && m_hvoRoot != 0 && m_chart != null && Body != null && m_logic != null);
 
 		private void ExportDiscourseChart_Click(object sender, EventArgs e)
 		{
@@ -233,15 +242,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Dock = DockStyle.Fill;
 
 			ResumeLayout();
-		}
-
-		internal void SetupMenus(MenuStrip menuStrip)
-		{
-			// Add ExportInterlinear menu to File menu
-			_fileMenu = MenuServices.GetFileMenu(menuStrip);
-			_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, insertIndex: _fileMenu.DropDownItems.Count - 3);
-			// Set up Data menu items.
-			_dataMenu = MenuServices.GetDataMenu(menuStrip);
 		}
 
 		private void SplitLayout(object sender, LayoutEventArgs e)
@@ -690,9 +690,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				DetectAndReportTemplateProblem();
 				// Make sure text is parsed!
-				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
+				if (RootStText.HasParagraphNeedingParse())
 				{
-					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
+					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => RootStText.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false));
 				}
 				// We need to make or set the chart before calling NextUnusedInput.
 				FindAndCleanUpMyChart(m_hvoRoot);

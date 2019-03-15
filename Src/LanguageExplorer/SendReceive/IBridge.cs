@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.SendReceive
@@ -27,15 +26,8 @@ namespace LanguageExplorer.SendReceive
 		void RunBridge();
 
 		/// <summary>
-		/// Install the currently specified round of menus in <paramref name="mainSendReceiveToolStripMenuItem"/>.
+		/// Register UI widgets.
 		/// </summary>
-		/// <param name="currentInstallRound">The current round for adding new menu items in <paramref name="mainSendReceiveToolStripMenuItem"/>.</param>
-		/// <param name="mainSendReceiveToolStripMenuItem">The top level S/R menu in which to add the new menu items for the given <paramref name="currentInstallRound"/>.</param>
-		void InstallMenus(BridgeMenuInstallRound currentInstallRound, ToolStripMenuItem mainSendReceiveToolStripMenuItem);
-
-		/// <summary>
-		/// Enable/Disable menus.
-		/// </summary>
-		void SetEnabledStatus();
+		void RegisterHandlers(UiWidgetController uiWidgetController);
 	}
 }

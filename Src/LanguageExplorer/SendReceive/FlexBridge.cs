@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -24,10 +23,7 @@ namespace LanguageExplorer.SendReceive
 	{
 		private LcmCache Cache { get; set; }
 		private IFlexApp FlexApp { get; set; }
-		private ToolStripMenuItem _mainSendReceiveMenu;
-		private ToolStripMenuItem _viewMessagesMenu;
-		private ToolStripMenuItem _obtainAnyFlexBridgeProjectMenu;
-		private ToolStripMenuItem _sendFlexBridgeFirstTimeProjectMenu;
+		private UiWidgetController _uiWidgetController;
 
 		internal FlexBridge(LcmCache cache, IFlexApp flexApp)
 		{
@@ -37,6 +33,14 @@ namespace LanguageExplorer.SendReceive
 			Cache = cache;
 			FlexApp = flexApp;
 		}
+
+		private Tuple<bool, bool> CanDoCmdFLExBridge => new Tuple<bool, bool>(true, CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
+
+		private Tuple<bool, bool> CanDoCmdViewMessages => new Tuple<bool, bool>(true, CommonBridgeServices.NotesFileIsPresent(Cache, false));
+
+		private Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
+
+		private Tuple<bool, bool> CanDoCmdObtainFirstFlexBridgeProject => new Tuple<bool, bool>(true, !CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
 
 		#region Implementation of IBridge
 		/// <inheritdoc />
@@ -101,29 +105,28 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <inheritdoc />
-		public void InstallMenus(BridgeMenuInstallRound currentInstallRound, ToolStripMenuItem mainSendReceiveToolStripMenuItem)
+		public void RegisterHandlers(UiWidgetController uiWidgetController)
 		{
-			switch (currentInstallRound)
-			{
-				case BridgeMenuInstallRound.One:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, S_R_FlexBridge_Click, SendReceiveResources.SendReceiveFlexBridge, SendReceiveResources.SendReceiveFlexBridgeToolTip, image: SendReceiveResources.sendReceive16x16);
-					_viewMessagesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ViewMessages_FlexBridge_Click, SendReceiveResources.ViewMessagesFlexBridge, SendReceiveResources.ViewMessagesFlexBridgeTooltip);
-					break;
-				case BridgeMenuInstallRound.Two:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ObtainAnyFlexBridgeProject_Click, SendReceiveResources.ObtainAnyFlexBridgeProject, SendReceiveResources.ObtainAnyFlexBridgeProjectToolTip, image: SendReceiveResources.SendReceiveGetArrow16x16);
-					break;
-				case BridgeMenuInstallRound.Three:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, SendFlexBridgeFirstTime_Click, SendReceiveResources.SendFlexBridgeProjectFirstTime, SendReceiveResources.SendFlexBridgeProjectFirstTimeToolTip, image: SendReceiveResources.sendReceiveFirst16x16);
-					break;
-			}
-		}
+			Guard.AgainstNull(uiWidgetController, nameof(uiWidgetController));
 
-		/// <inheritdoc />
-		public void SetEnabledStatus()
-		{
-			_mainSendReceiveMenu.Enabled = CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
-			_viewMessagesMenu.Enabled = CommonBridgeServices.NotesFileIsPresent(Cache, false);
-			_sendFlexBridgeFirstTimeProjectMenu.Enabled = !CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			_uiWidgetController = uiWidgetController;
+			var globalSendReceiveMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdFLExBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(S_R_FlexBridge_Click, ()=> CanDoCmdFLExBridge) },
+				{ Command.CmdViewMessages, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ViewMessages_FlexBridge_Click, ()=> CanDoCmdViewMessages) },
+				{ Command.CmdObtainAnyFlexBridgeProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ObtainAnyFlexBridgeProject_Click, ()=> CanDoCmdObtainAnyFlexBridgeProject) },
+				{ Command.CmdObtainFirstFlexBridgeProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendFlexBridgeFirstTime_Click, ()=> CanDoCmdObtainFirstFlexBridgeProject) }
+			};
+			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{MainMenu.SendReceive,  globalSendReceiveMenuHandlers}
+			};
+			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				// Nothing to do for tool bars.
+				{ ToolBar.Standard, new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>() }
+			};
+			_uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
 		}
 		#endregion
 
@@ -191,34 +194,10 @@ namespace LanguageExplorer.SendReceive
 			if (disposing)
 			{
 				Subscriber.Unsubscribe("ViewMessages", ViewMessages);
-
-				if (_mainSendReceiveMenu != null)
-				{
-					_mainSendReceiveMenu.Click -= S_R_FlexBridge_Click;
-					_mainSendReceiveMenu.Dispose();
-				}
-				if (_viewMessagesMenu != null)
-				{
-					_viewMessagesMenu.Click -= ViewMessages_FlexBridge_Click;
-					_viewMessagesMenu.Dispose();
-				}
-				if (_obtainAnyFlexBridgeProjectMenu != null)
-				{
-					_obtainAnyFlexBridgeProjectMenu.Click -= ObtainAnyFlexBridgeProject_Click;
-					_obtainAnyFlexBridgeProjectMenu.Dispose();
-				}
-				if (_sendFlexBridgeFirstTimeProjectMenu != null)
-				{
-					_sendFlexBridgeFirstTimeProjectMenu.Click -= SendFlexBridgeFirstTime_Click;
-					_sendFlexBridgeFirstTimeProjectMenu.Dispose();
-				}
 			}
-			_mainSendReceiveMenu = null;
-			_viewMessagesMenu = null;
-			_obtainAnyFlexBridgeProjectMenu = null;
-			_sendFlexBridgeFirstTimeProjectMenu = null;
 			Cache = null;
 			FlexApp = null;
+			_uiWidgetController = null;
 
 			_isDisposed = true;
 		}
@@ -313,7 +292,7 @@ namespace LanguageExplorer.SendReceive
 
 		private void ViewMessages(object obj)
 		{
-			_viewMessagesMenu.PerformClick();
+			ViewMessages_FlexBridge_Click(null, null);
 		}
 	}
 }

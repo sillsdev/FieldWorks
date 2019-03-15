@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
@@ -17,16 +18,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
-		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
+		private ITool _tool;
 		private bool _refreshOriginalValue;
 		private ToolStripItem _refreshMenu;
 		private ToolStripItem _refreshToolBarBtn;
 
-		internal GrammarSketchToolMenuHelper()
+		internal GrammarSketchToolMenuHelper(ITool tool)
 		{
+			_tool = tool;
 		}
 
-		void FileExportMenu_Click(object sender, EventArgs e)
+		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, true);
+
+		private void FileExportMenu_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
 			{
@@ -44,8 +48,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(FileExportMenu_Click);
-			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForTool;
+			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.File, out toolsMenuItemsForTool))
+			{
+				toolsMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.File, toolsMenuItemsForTool);
+			}
+			toolsMenuItemsForTool.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			// F5 refresh is disabled in this tool.
 			_refreshMenu = MenuServices.GetViewRefreshMenu(_majorFlexComponentParameters.MenuStrip);
 			_refreshOriginalValue = _refreshMenu.Enabled;
@@ -60,7 +71,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <inheritdoc />
 		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 		}
 		#endregion
 
@@ -97,12 +107,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			{
 				_refreshMenu.Enabled = _refreshOriginalValue;
 				_refreshToolBarBtn.Enabled = _refreshOriginalValue;
-				_grammarAreaWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			_grammarAreaWideMenuHelper = null;
 			_refreshMenu = null;
 			_refreshToolBarBtn = null;
+			_area = null;
+			_tool = null;
 
 			_isDisposed = true;
 		}

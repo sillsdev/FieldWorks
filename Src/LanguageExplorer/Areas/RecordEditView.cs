@@ -38,6 +38,8 @@ namespace LanguageExplorer.Areas
 		/// Document for slice filters.
 		/// </summary>
 		private XDocument m_sliceFilterDocument;
+		private UiWidgetController _uiWidgetController;
+
 		/// <summary>
 		/// Mode string for DataTree to use at top level.
 		/// </summary>
@@ -55,25 +57,32 @@ namespace LanguageExplorer.Areas
 		private string m_titleField;
 		private string m_titleStr;
 		private string m_printLayout;
-		private ToolStripMenuItem m_printMenu;
 
 		#endregion // Data members
 
 		#region Construction and Removal
 
-		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
+		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, IRecordList recordList, DataTree dataTree, UiWidgetController uiWidgetController)
 			: base(configurationParametersElement, cache, recordList)
 		{
 			m_sliceFilterDocument = sliceFilterDocument;
+			_uiWidgetController = uiWidgetController;
 			// This must be called before InitializeComponent()
 			MyDataTree = dataTree;
 			MyDataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
-			m_printMenu = printMenu;
-			m_printMenu.Click += PrintMenu_Click;
-			m_printMenu.Enabled = true;
+			// Add handler stuff.
+			var filePrintMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu) }
+			};
+			var userController = new UserControlUiWidgetParameterObject(this);
+			userController.MenuItemsForUserControl.Add(MainMenu.File, filePrintMenuHandler);
+			_uiWidgetController.AddHandlers(userController);
 			InitializeComponent();
 			AccNameDefault = "RecordEditView";
 		}
+
+		private Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of ViewBase
 
@@ -134,8 +143,7 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				components?.Dispose();
-				m_printMenu.Click -= PrintMenu_Click;
-				m_printMenu.Enabled = false;
+				_uiWidgetController.RemoveUserControlHandlers(this);
 				if (MyDataTree != null)
 				{
 					MyDataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
@@ -147,7 +155,6 @@ namespace LanguageExplorer.Areas
 				}
 			}
 			MyDataTree = null;
-			m_printMenu = null;
 
 			base.Dispose(disposing);
 		}
@@ -496,7 +503,7 @@ namespace LanguageExplorer.Areas
 
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
-			if (m_printLayout == null || MyRecordList.CurrentObject == null)
+			if (!ContainsFocus || m_printLayout == null || MyRecordList.CurrentObject == null)
 			{
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 			}

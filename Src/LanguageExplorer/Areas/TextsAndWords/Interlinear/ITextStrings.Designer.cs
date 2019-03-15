@@ -124,6 +124,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to insert Note.
+        /// </summary>
+        internal static string InsertNote {
+            get {
+                return ResourceManager.GetString("InsertNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK will create an empty text.
         /// </summary>
         internal static string kOkbtnEmptySelection {

@@ -44,6 +44,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 			_grammarAreaWideMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
@@ -69,7 +71,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			// Use generic export event handler.
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
 			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
-			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
+			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 #if RANDYTODO
@@ -77,7 +79,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 #endif
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), MachineName,
-				majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

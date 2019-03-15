@@ -65,9 +65,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(majorFlexComponentParameters.MenuStrip);
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsConfigurationMenusAndHandlers, _toolsConfigureMenu, Tools_Configure_Dictionary_Clicked, AreaResources.ConfigureDictionary, insertIndex: ++insertIndex);
 
-			// <item command="CmdConfigureColumns" defaultVisible="false" />
-			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseViewer, ++insertIndex);
-
 			// <item command="CmdMergeEntry" defaultVisible="false"/>
 			// First add separator.
 			insertIndex = 0;

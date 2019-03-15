@@ -39,6 +39,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_browseViewContextMenuFactory.Dispose();
 			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
 			_grammarAreaWideMenuHelper.Dispose();
@@ -62,13 +64,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			// Use generic export event handler.
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
 			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
-			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
+			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
 
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList));
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList));
 		}
 
 		/// <summary>

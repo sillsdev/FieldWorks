@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -24,8 +25,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
-		private AreaWideMenuHelper _areaWideMenuHelper;
-		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -43,17 +44,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_areaWideMenuHelper.Dispose();
-			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
-			_textAndWordsAreaMenuHelper.Dispose();
+			_partiallySharedAreaWideMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_areaWideMenuHelper = null;
-			_textAndWordsAreaMenuHelper = null;
+			_partiallySharedAreaWideMenuHelper = null;
+			_partiallySharedTextsAndWordsToolsMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -69,9 +71,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
-			_areaWideMenuHelper.SetupFileExportMenu();
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
+			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordList);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
+			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -88,12 +93,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new MultiPaneParameters
 				{
@@ -112,8 +117,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
 			}
-			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, null, _recordList);
-			((TextAndWordsAreaMenuHelper)_textAndWordsAreaMenuHelper).AddMenusForAllButConcordanceTool();
 		}
 
 		/// <summary>

@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class CorpusStatisticsTool : ITool
 	{
-		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
+		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 		private StatisticsView _statisticsView;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -29,16 +29,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
 			// Setting "SecondControl" to null will dispose "_statisticsView", so no need to do it here.
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 
-			// Dispose after the main UI stuff.
-			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
-			_textAndWordsAreaMenuHelper.Dispose();
-
 			_statisticsView = null;
-			_textAndWordsAreaMenuHelper = null;
+			_partiallySharedTextsAndWordsToolsMenuHelper = null;
 		}
 
 		/// <summary>
@@ -49,14 +48,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
-			_textAndWordsAreaMenuHelper = textAndWordsAreaMenuHelper;
-
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView(majorFlexComponentParameters);
-
-			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area);
-			textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
+			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
 		/// <summary>

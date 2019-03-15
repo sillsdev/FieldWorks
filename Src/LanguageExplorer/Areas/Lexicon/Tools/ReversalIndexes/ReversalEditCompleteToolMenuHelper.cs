@@ -15,15 +15,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private IToolUiWidgetManager _commonReversalIndexMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private XhtmlDocView _docView;
 
-		internal ReversalEditCompleteToolMenuHelper(XhtmlDocView docView)
+		internal ReversalEditCompleteToolMenuHelper(ITool tool, XhtmlDocView docView)
 		{
 			Guard.AgainstNull(docView, nameof(docView));
 
 			_docView = docView;
+			_tool = tool;
 		}
 
 		#region Implementation of IToolUiWidgetManager
@@ -38,7 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper();
+			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_tool);
 			_commonReversalIndexMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 		}
 

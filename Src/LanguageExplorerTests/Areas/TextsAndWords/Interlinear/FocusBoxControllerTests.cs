@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -59,7 +58,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			m_para0_0 = m_stText0.AddNewTextPara(null);
 			m_para0_0.Contents = TsStringUtils.MakeString("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", wsXkal.Handle);
 
-			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(m_stText0, false);
+			m_stText0.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false);
 			// paragraph 0_0 simply has wordforms as analyses
 			foreach (var occurence in SegmentServices.GetAnalysisOccurrences(m_para0_0))
 			{
@@ -181,7 +180,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			SetUpMocksForOnAddWordGlossesToFreeTransTest(seg);
 			SetUpGlosses(seg, "hope", "this", "works");
 
-			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
+			m_interlinDoc.OnAddWordGlossesToFreeTrans_TESTS_ONLY();
 
 			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("hope this works.", Cache.DefaultAnalWs), seg.FreeTranslation.AnalysisDefaultWritingSystem);
 		}
@@ -204,7 +203,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			SetUpMocksForOnAddWordGlossesToFreeTransTest(seg);
 			SetUpGlosses(seg, "hope", null, "this", "works");
 
-			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
+			m_interlinDoc.OnAddWordGlossesToFreeTrans_TESTS_ONLY();
 
 			strBldr.Clear();
 			strBldr.Replace(0, 0, "hope this works.", StyleUtils.CharStyleTextProps(null, Cache.DefaultAnalWs));

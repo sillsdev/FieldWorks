@@ -32,11 +32,11 @@ namespace LanguageExplorer.Controls
 		/// <param name="cache">The LCM cache.</param>
 		/// <param name="recordList">RecordClerk to use with the container.</param>
 		/// <param name="dataTree">DataTree</param>
-		/// <param name="printMenu"></param>
+		/// <param name="uiWidgetController" />
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
-			string toolMachineName, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
+			string toolMachineName, LcmCache cache, IRecordList recordList, DataTree dataTree, UiWidgetController uiWidgetController)
 		{
 			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls
 			{
 				IsFlatList = false
 			};
-			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordList, dataTree, printMenu);
+			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordList, dataTree, uiWidgetController);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });

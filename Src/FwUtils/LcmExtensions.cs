@@ -12,6 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -57,6 +58,42 @@ namespace SIL.FieldWorks.Common.FwUtils
 				default:
 					return false;
 			}
+		}
+
+		/// <summary>
+		/// Determine whether we need to parse any of the text's paragraphs.
+		/// </summary>
+		public static bool HasParagraphNeedingParse(this IStText me)
+		{
+			return me.ParagraphsOS.Cast<IStTxtPara>().Any(para => !para.ParseIsCurrent);
+		}
+
+		/// <summary>
+		/// todo: add progress bar.
+		/// typically a delegate for NonUndoableUnitOfWorkHelper
+		/// </summary>
+		public static void LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(this IStText me, bool forceParse)
+		{
+			using (var pp = new ParagraphParser(me.Cache))
+			{
+				if (forceParse)
+				{
+					foreach (var para in me.ParagraphsOS.Cast<IStTxtPara>())
+					{
+						pp.ForceParse(para);
+					}
+				}
+				else
+				{
+					foreach (var para in me.ParagraphsOS.Cast<IStTxtPara>().Where(
+						para => !para.ParseIsCurrent))
+					{
+						pp.Parse(para);
+					}
+				}
+			}
+			var services = new AnalysisGuessServices(me.Cache);
+			services.GenerateEntryGuesses(me);
 		}
 
 		public static bool NotebookRecordRefersToThisText(this IText me, out IRnGenericRec referringRecord)

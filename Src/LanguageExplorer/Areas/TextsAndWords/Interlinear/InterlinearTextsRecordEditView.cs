@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -12,8 +11,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	internal sealed class InterlinearTextsRecordEditView : RecordEditView
 	{
-		public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
-			: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, dataTree, printMenu)
+		public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordList recordList, DataTree dataTree, UiWidgetController uiWidgetController)
+			: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, dataTree, uiWidgetController)
 		{
 			(MyDataTree as StTextDataTree).InfoPane = infoPane;
 		}

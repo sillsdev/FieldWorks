@@ -14,6 +14,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Notebook
 {
+#if RANDYTODO
+	// TODO: Make this a private class of NotebookArea. No tool/control should use it.
+#endif
 	/// <summary>
 	/// Handle creation and use of Notebook area menus.
 	/// </summary>
@@ -23,7 +26,6 @@ namespace LanguageExplorer.Areas.Notebook
 		internal const string CmdInsertRecord = "CmdInsertRecord";
 		internal const string CmdInsertSubRecord = "CmdInsertSubRecord";
 		internal const string CmdInsertSubSubRecord = "CmdInsertSubSubRecord";
-		private IToolUiWidgetManager _toolUiWidgetManager;
 		private IArea _area;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private DataTree MyDataTree { get; set; }
@@ -38,7 +40,6 @@ namespace LanguageExplorer.Areas.Notebook
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers;
 		private ToolStripMenuItem _insertSubsubrecordMenuItem;
 		private ToolStripMenuItem _insertEntryMenu;
-		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
 		internal NotebookAreaMenuHelper(ITool currentNotebookTool, DataTree dataTree = null)
 		{
@@ -50,7 +51,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		#region Implementation of IAreaUiWidgetManager
 		/// <inheritdoc />
-		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(area, nameof(area));
@@ -63,28 +64,32 @@ namespace LanguageExplorer.Areas.Notebook
 			_sharedEventHandlers.Add(CmdInsertSubRecord, Insert_Subrecord_Clicked);
 			_sharedEventHandlers.Add(CmdInsertSubSubRecord, Insert_Subsubrecord_Clicked);
 			_area = area;
-			_toolUiWidgetManager = toolUiWidgetManager; // May be null;
 			_recordList = recordList;
-			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
+
+			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
 
 			// Add Edit menu item that is available in all Notebook tools.
-			AddEditMenuItems();
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForArea;
+			if (!areaUiWidgetParameterObject.MenuItemsForArea.TryGetValue(MainMenu.Edit, out toolsMenuItemsForArea))
+			{
+				toolsMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.Edit, toolsMenuItemsForArea);
+			}
+			toolsMenuItemsForArea.Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
 
-			// File->Export menu is visible and enabled in this tool.
-			// Add File->Export event handler.
-			MyAreaWideMenuHelper.SetupFileExportMenu(FileExportMenu_Click);
-
-			// Add one notebook area-wide import option.
-			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
-			// <item command="CmdImportSFMNotebook" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, insertIndex: 1);
+			// File->Export menu is visible and maybe enabled in this tool.
+			if (!areaUiWidgetParameterObject.MenuItemsForArea.TryGetValue(MainMenu.File, out toolsMenuItemsForArea))
+			{
+				toolsMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.File, toolsMenuItemsForArea);
+			}
+			toolsMenuItemsForArea.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+			toolsMenuItemsForArea.Add(Command.CmdImportSFMNotebook, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportSFMNotebook_Clicked, () => CanCmdImportSFMNotebook));
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />
 		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _toolUiWidgetManager;
 
 		/// <inheritdoc />
 		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
@@ -125,8 +130,6 @@ namespace LanguageExplorer.Areas.Notebook
 
 			if (disposing)
 			{
-				MyAreaWideMenuHelper.Dispose();
-
 				if (MyDataTree != null)
 				{
 					MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
@@ -165,7 +168,6 @@ namespace LanguageExplorer.Areas.Notebook
 			MyDataTree = null;
 			_sharedEventHandlers = null;
 			_currentNotebookTool = null;
-			MyAreaWideMenuHelper = null;
 			_recordList = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;
@@ -192,13 +194,16 @@ namespace LanguageExplorer.Areas.Notebook
 			/*
 			  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar
 			*/
+#if RANDYTODO
+			// TODO: NotebookResources.Find_a_Record_in_your_Notebook has been removed.
 			newToolbarItems.Add(ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(CmdGoToRecord), "toolStripButtonInsertFindRecord", NotebookResources.goToRecord, $"{NotebookResources.Find_a_Record_in_your_Notebook} (CTRL+F)"));
+#endif
 		}
 
-		internal void AddInsertMenuItems(bool includeCmdAddToLexicon = true)
+		internal void AddInsertMenuItems()
 		{
 			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
-			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(includeCmdAddToLexicon ? 4 : 3);
+			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			var insertIndex = 0;
 			/*
@@ -227,17 +232,6 @@ namespace LanguageExplorer.Areas.Notebook
 			*/
 			_insertSubsubrecordMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subsubrecord_Clicked, NotebookResources.Subrecord_of_subrecord, image: NotebookResources.nbkRecord, insertIndex: insertIndex++);
 
-			if (includeCmdAddToLexicon)
-			{
-				/*
-				  <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" /> // Shared locally
-					Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
-						<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
-				*/
-				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
-				_insertEntryMenu.Tag = MyDataTree;
-				_insertEntryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
-			}
 			if (MyDataTree != null)
 			{
 				MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
@@ -250,10 +244,10 @@ namespace LanguageExplorer.Areas.Notebook
 			// Set visibility/Enable for _insertSubsubrecordMenuItem.
 			_insertSubsubrecordMenuItem.Visible = _recordList.CurrentObject != null && _recordList.CurrentObject.OwningFlid == RnGenericRecTags.kflidSubRecords;
 
-			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			if (_insertEntryMenu != null && _insertEntryMenu.Visible && currentSliceAsStTextSlice != null)
 			{
-				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}
 		}
 
@@ -261,7 +255,7 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			if (_insertEntryMenu != null)
 			{
-				_insertEntryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+				_insertEntryMenu.Enabled = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 			}
 		}
 
@@ -317,13 +311,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
-		private void AddEditMenuItems()
-		{
-			//< item command = "CmdGoToRecord" />
-			_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
-			_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GotoRecord_Clicked, NotebookResources.Find_Record, NotebookResources.Find_a_Record_in_your_Notebook, Keys.Control | Keys.F, NotebookResources.goToRecord, 10);
-		}
+		private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, true);
 
 		private void GotoRecord_Clicked(object sender, EventArgs e)
 		{
@@ -344,18 +332,18 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
+		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, !_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }));
+
 		private void FileExportMenu_Click(object sender, EventArgs e)
 		{
-			if (_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }))
-			{
-				return;
-			}
 			using (var dlg = new NotebookExportDialog())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 			}
 		}
+
+		private Tuple<bool, bool> CanCmdImportSFMNotebook => new Tuple<bool, bool>(true, true);
 
 		private void ImportSFMNotebook_Clicked(object sender, EventArgs e)
 		{

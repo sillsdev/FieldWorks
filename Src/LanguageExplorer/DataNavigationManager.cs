@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using SIL.Code;
 using SIL.ObjectModel;
 
@@ -20,28 +19,45 @@ namespace LanguageExplorer
 	/// </remarks>
 	internal sealed class DataNavigationManager : DisposableBase
 	{
-		private readonly Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> menuItems)
+		internal DataNavigationManager(UiWidgetController uiWidgetController)
 		{
-			Guard.AgainstNull(menuItems, nameof(menuItems));
+			Guard.AgainstNull(uiWidgetController, nameof(uiWidgetController));
 
-			_menuItems = menuItems;
-			var currentTuple = _menuItems[Navigation.First];
-			currentTuple.Item1.Click += First_Click;
-			currentTuple.Item2.Click += First_Click;
-			currentTuple = _menuItems[Navigation.Previous];
-			currentTuple.Item1.Click += Previous_Click;
-			currentTuple.Item2.Click += Previous_Click;
-			currentTuple = _menuItems[Navigation.Next];
-			currentTuple.Item1.Click += Next_Click;
-			currentTuple.Item2.Click += Next_Click;
-			currentTuple = _menuItems[Navigation.Last];
-			currentTuple.Item1.Click += Last_Click;
-			currentTuple.Item2.Click += Last_Click;
+			var globalSendReceiveMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, ()=> CanDoCmdFirstRecord) },
+				{ Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, ()=> CanDoCmdPreviousRecord) },
+				{ Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, ()=> CanDoCmdNextRecord) },
+				{ Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, ()=> CanDoCmdLastRecord) }
+			};
+			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{MainMenu.Data,  globalSendReceiveMenuHandlers}
+			};
+			var globalToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, ()=> CanDoCmdFirstRecord) },
+				{ Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, ()=> CanDoCmdPreviousRecord) },
+				{ Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, ()=> CanDoCmdNextRecord) },
+				{ Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, ()=> CanDoCmdLastRecord) }
+			};
+			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{ ToolBar.Standard, globalToolBarHandlers }
+			};
+			uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
 		}
+
+		private Tuple<bool, bool> CanDoCmdFirstRecord => new Tuple<bool, bool>(true, _recordList != null && _recordList.ListSize != 0 && _recordList.CanMoveToOptions[Navigation.First]);
+
+		private Tuple<bool, bool> CanDoCmdPreviousRecord => new Tuple<bool, bool>(true, _recordList != null && _recordList.ListSize != 0 && _recordList.CanMoveToOptions[Navigation.Previous]);
+
+		private Tuple<bool, bool> CanDoCmdNextRecord => new Tuple<bool, bool>(true, _recordList != null && _recordList.ListSize != 0 && _recordList.CanMoveToOptions[Navigation.Next]);
+
+		private Tuple<bool, bool> CanDoCmdLastRecord => new Tuple<bool, bool>(true, _recordList != null && _recordList.ListSize != 0 && _recordList.CanMoveToOptions[Navigation.Last]);
 
 		private void First_Click(object sender, EventArgs e)
 		{
@@ -67,51 +83,13 @@ namespace LanguageExplorer
 		{
 			set
 			{
-				if (_recordList != null)
-				{
-					// Unwire from older record list
-					_recordList.RecordChanged -= RecordListRecordChanged;
-				}
 				_recordList = value;
-				if (_recordList != null)
-				{
-					// Wire up to new record list.
-					_recordList.RecordChanged += RecordListRecordChanged;
-				}
-				SetEnabledStateForWidgets();
 			}
-		}
-
-		private void RecordListRecordChanged(object sender, RecordNavigationEventArgs recordNavigationEventArgs)
-		{
-			SetEnabledStateForWidgets();
 		}
 
 		private void MoveToIndex(Navigation navigateTo)
 		{
 			_recordList.MoveToIndex(navigateTo);
-			SetEnabledStateForWidgets();
-		}
-
-		internal void SetEnabledStateForWidgets()
-		{
-			if (_recordList == null || _recordList.ListSize == 0)
-			{
-				// Disable menu items.
-				foreach (var tuple in _menuItems.Values)
-				{
-					tuple.Item1.Enabled = false;
-					tuple.Item2.Enabled = false;
-				}
-			}
-			else
-			{
-				foreach (var kvp in _recordList.CanMoveToOptions())
-				{
-					var currentTuple = _menuItems[kvp.Key];
-					currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = kvp.Value;
-				}
-			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -125,25 +103,6 @@ namespace LanguageExplorer
 
 			if (disposing)
 			{
-				if (_recordList != null)
-				{
-					_recordList.RecordChanged -= RecordListRecordChanged;
-				}
-				var currentTuple = _menuItems[Navigation.First];
-				currentTuple.Item1.Click -= First_Click;
-				currentTuple.Item2.Click -= First_Click;
-
-				currentTuple = _menuItems[Navigation.Previous];
-				currentTuple.Item1.Click -= Previous_Click;
-				currentTuple.Item2.Click -= Previous_Click;
-
-				currentTuple = _menuItems[Navigation.Next];
-				currentTuple.Item1.Click -= Next_Click;
-				currentTuple.Item2.Click -= Next_Click;
-
-				currentTuple = _menuItems[Navigation.Last];
-				currentTuple.Item1.Click -= Last_Click;
-				currentTuple.Item2.Click -= Last_Click;
 			}
 
 			base.Dispose(disposing);

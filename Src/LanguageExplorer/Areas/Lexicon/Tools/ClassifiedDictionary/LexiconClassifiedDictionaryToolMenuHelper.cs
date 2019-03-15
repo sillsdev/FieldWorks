@@ -15,15 +15,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private XmlDocView _xmlDocView;
 		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private ToolStripMenuItem _editFindMenu;
 		private ToolStripMenuItem _replaceToolStripMenuItem;
 
-		internal LexiconClassifiedDictionaryToolMenuHelper(XmlDocView xmlDocView)
+		internal LexiconClassifiedDictionaryToolMenuHelper(ITool tool, XmlDocView xmlDocView)
 		{
 			Guard.AgainstNull(xmlDocView, nameof(xmlDocView));
 
+			_tool = tool;
 			_xmlDocView = xmlDocView;
 		}
 
@@ -43,8 +45,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			_replaceToolStripMenuItem.Click += EditFindMenu_Click;
 			_replaceToolStripMenuItem.Visible = true;
 			_replaceToolStripMenuItem.Enabled = _xmlDocView.CanUseReplaceText();
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_tool);
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 		}
 
 		/// <inheritdoc />

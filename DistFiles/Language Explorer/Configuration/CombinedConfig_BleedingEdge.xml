@@ -21,6 +21,8 @@ so I can look at that in the develop branch.
     <command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" />
     <command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords" />
     <command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg" />
+    <command id="CmdVernacularWritingSystemProperties" label="Set up Vernacular Writing Systems..." message="VernWritingSystemProperties"/>
+    <command id="CmdAnalysisWritingSystemProperties" label="Set up Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
     <command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" />
     <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" />
     <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" />
@@ -271,81 +273,6 @@ so I can look at that in the develop branch.
     </command>
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
   </commands>
-  <!-- ************************ menus *********************** -->
-  <menubar>
-    <menu id="Edit" label="_Edit" b4InsertMenu="true" >
-      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-      <item command="CmdGoToWfiWordform" defaultVisible="false" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-    </menu>
-    <menu id="View" label="_View" b4InsertMenu="true" >
-      <item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local" />
-      <item label="-" translate="do not translate" />
-      <menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local" />
-      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-      <item command="CmdChooseTexts" defaultVisible="false" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-    </menu>
-    <menu id="Insert" label="_Insert" >
-      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <item command="CmdInsertText" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdAddNote" defaultVisible="false" />
-      <item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false" />
-      <item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth" />
-      <item command="CmdGuessWordBreaks" defaultVisible="false" />
-      <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <item command="CmdInsertPOS" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
-      <item command="CmdDataTree-Insert-POS-AffixTemplate" label="Affix Template" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-POS-AffixSlot" label="Affix Slot" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-POS-InflectionClass" label="Inflection Class" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertEndocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExceptionFeature" defaultVisible="false" />
-      <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertComplexFeature" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-ClosedFeature-Value" label="Feature Value" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhoneme" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Phoneme-Code" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false" />
-      <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhEnvironment" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhRegularRule" defaultVisible="false" />
-      <item command="CmdInsertPhMetathesisRule" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertMorphemeACP" defaultVisible="false" />
-      <item command="CmdInsertAllomorphACP" defaultVisible="false" />
-      <item command="CmdInsertACPGroup" defaultVisible="false" />
-      <!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-    </menu>
-    <menu id="Tools" label="_Tools" >
-      <menu label="Configure" >
-        <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-        <item command="CmdConfigureInterlinear" defaultVisible="false" />
-        <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-      </menu>
-      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-      <!-- These two (CmdLexiconLookup & the next one) are mutually exclusive.-->
-      <item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-      <!-- Non-area-specific Tools go here. -->
-      <menu label="Spelling">
-        <item command="CmdEditSpellingStatus" defaultVisible="false" a10status="Used in Words area" />
-        <item command="CmdViewIncorrectWords" defaultVisible="false" a10status="Used in Words area" />
-        <item label="-" translate="do not translate" />
-        <item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
-      </menu>
-    </menu>
-  </menubar>
   <!-- ************************ contextMenus *********************** -->
   <contextMenus>
     <menu id="mnuBrowseView">
@@ -735,48 +662,6 @@ so I can look at that in the develop branch.
     <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
-  <!-- ************************ toolbars *********************** -->
-  <toolbars>
-    <toolbar id="Insert" >
-      <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <item command="CmdInsertText" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdAddNote" defaultVisible="false" />
-      <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
-      <item command="CmdGoToWfiWordform" defaultVisible="false" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <item command="CmdInsertPOS" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-POS-SubPossibilities" label="Subcategory..." defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertEndocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExceptionFeature" defaultVisible="false" />
-      <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertComplexFeature" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhoneme" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false" />
-      <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhEnvironment" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhRegularRule" defaultVisible="false" />
-      <item command="CmdInsertPhMetathesisRule" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertMorphemeACP" defaultVisible="false" />
-      <item command="CmdInsertAllomorphACP" defaultVisible="false" />
-      <item command="CmdInsertACPGroup" defaultVisible="false" />
-      <!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-    </toolbar>
-    <toolbar id="View" >
-      <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
-      <item command="CmdChooseTexts" defaultVisible="false" />
-      <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
-    </toolbar>
-  </toolbars>
   <contexthelpstrings>
     <!-- START include: "ContextHelp.xml" query="strings" -->
     <strings>
@@ -796,7 +681,6 @@ so I can look at that in the develop branch.
       <item id="Sidebar">Show the sidebar.</item>
       <item id="Record List">Show the list of records.</item>
       <item id="ShowHiddenFields">Display all possible fields.</item>
-      <item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
       <!-- Insert menu -->
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
@@ -820,8 +704,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
       <item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
-      <item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>
-      <item id="CmdGuessWordBreaks">Have Language Explorer insert invisible, zero-width spaces as word breaks according to the word list and lexical entries.</item>
       <!-- Tools menu -->
       <item id="Entries">Show the entries and edit them.</item>
       <item id="Problems">See a list of entries with problems.</item>

@@ -29,12 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				if (_exportMenu != null)
-				{
-					_exportMenu.Click -= ExportInterlinear_Click;
-					_fileMenu.DropDownItems.Remove(_exportMenu);
-					_exportMenu.Dispose();
-				}
+				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// Do this, before calling base.
 				m_sda?.RemoveNotification(this);
 				Vc?.Dispose();
@@ -45,8 +40,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			Vc = null;
 			m_contextButton = null;
-			_fileMenu = null;
-			_exportMenu = null;
 
 			base.Dispose(disposing);
 		}

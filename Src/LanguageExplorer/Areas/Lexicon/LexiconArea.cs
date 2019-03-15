@@ -57,8 +57,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			ActiveTool?.Deactivate(majorFlexComponentParameters);
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveAreaHandlers();
+			var activeTool = ActiveTool;
 			ActiveTool = null;
+			activeTool?.Deactivate(majorFlexComponentParameters);
 		}
 
 		/// <summary>

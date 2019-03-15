@@ -8,6 +8,9 @@ using SIL.Code;
 
 namespace LanguageExplorer.Areas.Grammar
 {
+#if RANDYTODO
+	// TODO: Make this a private class of GrammarArea. No tool/control should use it.
+#endif
 	/// <summary>
 	/// This class handles all interaction for the Grammar Area common menus.
 	/// </summary>
@@ -15,18 +18,15 @@ namespace LanguageExplorer.Areas.Grammar
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
-		private IToolUiWidgetManager _activeToolUiManager;
-		private AreaWideMenuHelper _areaWideMenuHelper;
-		private EventHandler _fileExportEventHandler;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
 
-		internal GrammarAreaMenuHelper(EventHandler fileExportEventHandler = null)
+		internal GrammarAreaMenuHelper()
 		{
-			_fileExportEventHandler = fileExportEventHandler; // May be null, which is fine.
 		}
 
 		#region Implementation of IAreaUiWidgetManager
 		/// <inheritdoc />
-		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(area, nameof(area));
@@ -34,18 +34,10 @@ namespace LanguageExplorer.Areas.Grammar
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
-			_activeToolUiManager = toolUiWidgetManager; // May be null;
-			_areaWideMenuHelper = recordList == null ? new AreaWideMenuHelper(_majorFlexComponentParameters) : new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
-			// Set up File->Export menu, which is visible and enabled in all grammar area tools,
-			// using the default event handler for all tools except grammar sketch, which provides its own handler.
-			_areaWideMenuHelper.SetupFileExportMenu(_fileExportEventHandler);
 		}
 
 		/// <inheritdoc />
 		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		IToolUiWidgetManager IAreaUiWidgetManager.ActiveToolUiManager => _activeToolUiManager;
 
 		/// <inheritdoc />
 		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
@@ -87,11 +79,10 @@ namespace LanguageExplorer.Areas.Grammar
 
 			if (disposing)
 			{
-				_areaWideMenuHelper.Dispose();
+				_partiallySharedAreaWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			_areaWideMenuHelper = null;
-			_fileExportEventHandler = null;
+			_partiallySharedAreaWideMenuHelper = null;
 
 			_isDisposed = true;
 		}

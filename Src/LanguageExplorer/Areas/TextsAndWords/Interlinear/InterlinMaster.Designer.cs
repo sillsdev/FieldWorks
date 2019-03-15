@@ -30,6 +30,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
+				_majorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 				// LT-5702
 				// The Find / Replace dlg can currently only exist in this view, so
 				// remove it when the view changes.  This will have to be expanded
@@ -57,7 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_panelGloss = null;
 			m_panelTagging = null;
 			m_panelPrintView = null;
-			m_printMenu = null;
+			_majorFlexComponentParameters = null;
 
 			base.Dispose(disposing);
 		}

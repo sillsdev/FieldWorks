@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -21,16 +20,13 @@ namespace LanguageExplorer.SendReceive
 	/// </summary>
 	internal sealed class SendReceiveMenuManager : IFlexComponent, IDisposable
 	{
+		private UiWidgetController _uiWidgetController;
 		private readonly Dictionary<string, IBridge> _bridges = new Dictionary<string, IBridge>(2);
 		private IdleQueue IdleQueue { get; set; }
 		private IFwMainWnd MainWindow { get; set; }
 		private IFlexApp FlexApp { get; set; }
 		private LcmCache Cache { get; set; }
 		private ToolStripMenuItem MainSendReceiveToolStripMenuItem { get; set; }
-		private ToolStripButton ToolStripButtonFlexLiftBridge { get; set; }
-		private ToolStripMenuItem _helpChorusMenu;
-		private ToolStripMenuItem _checkForFlexBridgeUpdatesMenu;
-		private ToolStripMenuItem _helpAboutFLEXBridgeMenu;
 		/// <summary>
 		/// This is the file that our Message slice is configured to look for in the root project folder.
 		/// The actual Lexicon.fwstub doesn't contain anything.
@@ -43,24 +39,65 @@ namespace LanguageExplorer.SendReceive
 		public const string FlexLexiconNotesFileName = FakeLexiconFileName + CommonBridgeServices.kChorusNotesExtension;
 
 		/// <summary />
-		internal SendReceiveMenuManager(IdleQueue idleQueue, IFwMainWnd mainWindow, IFlexApp flexApp, LcmCache cache, ToolStripMenuItem mainSendReceiveToolStripMenuItem, ToolStripButton toolStripButtonFlexLiftBridge)
+		internal SendReceiveMenuManager(IdleQueue idleQueue, IFwMainWnd mainWindow, IFlexApp flexApp, LcmCache cache, UiWidgetController uiWidgetController, ToolStripMenuItem mainSendReceiveToolStripMenuItem)
 		{
 			Guard.AgainstNull(idleQueue, nameof(idleQueue));
 			Guard.AgainstNull(mainWindow, nameof(mainWindow));
 			Guard.AgainstNull(flexApp, nameof(flexApp));
 			Guard.AgainstNull(cache, nameof(cache));
-			Guard.AgainstNull(mainSendReceiveToolStripMenuItem, nameof(mainSendReceiveToolStripMenuItem));
-			Guard.AgainstNull(toolStripButtonFlexLiftBridge, nameof(toolStripButtonFlexLiftBridge));
+			Guard.AgainstNull(uiWidgetController, nameof(uiWidgetController));
 
 			IdleQueue = idleQueue;
 			MainWindow = mainWindow;
 			FlexApp = flexApp;
 			Cache = cache;
+			_uiWidgetController = uiWidgetController;
 			MainSendReceiveToolStripMenuItem = mainSendReceiveToolStripMenuItem;
-			ToolStripButtonFlexLiftBridge = toolStripButtonFlexLiftBridge;
 			_bridges.Add(CommonBridgeServices.FLExBridge, new FlexBridge(Cache, FlexApp));
 			_bridges.Add(CommonBridgeServices.LiftBridge, new LiftBridge(Cache, MainWindow, FlexApp));
 			_bridges.Add(CommonBridgeServices.NoBridgeUsedYet, null);
+		}
+
+		private Tuple<bool, bool> CanDoCmdHelpChorus => new Tuple<bool, bool>(true, true);
+
+		private Tuple<bool, bool> CanDoCmdCheckForFlexBridgeUpdates => new Tuple<bool, bool>(!MiscUtils.IsUnix, !MiscUtils.IsUnix);
+
+		private Tuple<bool, bool> CanDoCmdHelpAboutFLEXBridge => new Tuple<bool, bool>(true, true);
+
+		private Tuple<bool, bool> CanDoCmdFLExLiftBridge
+		{
+			get
+			{
+				var enabled = MainSendReceiveToolStripMenuItem.Enabled;
+				if (enabled)
+				{
+					var lastBridgeUsed = GetLastBridge();
+					if (lastBridgeUsed == null)
+					{
+						enabled = false;
+					}
+					else
+					{
+						switch (lastBridgeUsed.Name)
+						{
+							case CommonBridgeServices.FLExBridge:
+								// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
+								// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
+								enabled = FLExBridgeHelper.FixItAppExists && CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+								break;
+							case CommonBridgeServices.LiftBridge:
+								// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
+								enabled = IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+								break;
+							case CommonBridgeServices.NoBridgeUsedYet: // Fall through. This isn't really needed, but it is clearer that it covers the case.
+							default:
+								enabled = false;
+								break;
+						}
+					}
+				}
+				return new Tuple<bool, bool>(true, enabled);
+			}
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -95,80 +132,35 @@ namespace LanguageExplorer.SendReceive
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_bridges[CommonBridgeServices.FLExBridge].InitializeFlexComponent(flexComponentParameters);
-			_bridges[CommonBridgeServices.LiftBridge].InitializeFlexComponent(flexComponentParameters);
-			Setup();
+			var currentBridge = _bridges[CommonBridgeServices.FLExBridge];
+			currentBridge.InitializeFlexComponent(flexComponentParameters);
+			currentBridge.RegisterHandlers(_uiWidgetController);
+			currentBridge = _bridges[CommonBridgeServices.LiftBridge];
+			currentBridge.InitializeFlexComponent(flexComponentParameters);
+			currentBridge.RegisterHandlers(_uiWidgetController);
+			// Common to Project and LIFT S/R.
+			var globalSendReceiveMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdHelpChorus, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpChorus_Click, ()=> CanDoCmdHelpChorus) },
+				{ Command.CmdCheckForFlexBridgeUpdates, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CheckForFlexBridgeUpdates_Click, ()=> CanDoCmdCheckForFlexBridgeUpdates) },
+				{ Command.CmdHelpAboutFLEXBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpAboutFLEXBridge_Click, ()=> CanDoCmdHelpAboutFLEXBridge) }
+			};
+			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{MainMenu.SendReceive,  globalSendReceiveMenuHandlers}
+			};
+			var globalToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdFLExLiftBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Flex_Or_Lift_Bridge_Clicked, ()=> CanDoCmdFLExLiftBridge) }
+			};
+			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{ ToolBar.Standard, globalToolBarHandlers }
+			};
+			_uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
 		}
 
 		#endregion
-
-		private void Setup()
-		{
-			MainSendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
-			ToolStripButtonFlexLiftBridge.Enabled = MainSendReceiveToolStripMenuItem.Enabled;
-			if (!MainSendReceiveToolStripMenuItem.Enabled)
-			{
-				return;
-			}
-			MainSendReceiveToolStripMenuItem.DropDownOpening += MainSendReceiveToolStripMenuItem_DropDownOpening;
-			// Add all of the menus to MainSendReceiveToolStripMenuItem.
-			var flexBridge = _bridges[CommonBridgeServices.FLExBridge];
-			var liftBridge = _bridges[CommonBridgeServices.LiftBridge];
-			flexBridge.InstallMenus(BridgeMenuInstallRound.One, MainSendReceiveToolStripMenuItem);
-			liftBridge.InstallMenus(BridgeMenuInstallRound.One, MainSendReceiveToolStripMenuItem);
-			MainSendReceiveToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-			flexBridge.InstallMenus(BridgeMenuInstallRound.Two, MainSendReceiveToolStripMenuItem);
-			liftBridge.InstallMenus(BridgeMenuInstallRound.Two, MainSendReceiveToolStripMenuItem);
-			MainSendReceiveToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-			flexBridge.InstallMenus(BridgeMenuInstallRound.Three, MainSendReceiveToolStripMenuItem);
-			liftBridge.InstallMenus(BridgeMenuInstallRound.Three, MainSendReceiveToolStripMenuItem);
-			MainSendReceiveToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-			AddCommonMenuItems();
-			// Add standard toolbar item's event handler and enable/disable it.
-			ToolStripButtonFlexLiftBridge.Enabled = MainSendReceiveToolStripMenuItem.Enabled; // If 'true' it may be reset to false, below.
-			if (ToolStripButtonFlexLiftBridge.Enabled)
-			{
-				var lastBridgeUsed = GetLastBridge();
-				if (lastBridgeUsed == null)
-				{
-					ToolStripButtonFlexLiftBridge.Enabled = false;
-				}
-				else
-				{
-					switch (lastBridgeUsed.Name)
-					{
-						case CommonBridgeServices.FLExBridge:
-							// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-							// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
-							ToolStripButtonFlexLiftBridge.Enabled = ToolStripButtonFlexLiftBridge.Enabled && FLExBridgeHelper.FixItAppExists && CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
-							break;
-						case CommonBridgeServices.LiftBridge:
-							// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
-							ToolStripButtonFlexLiftBridge.Enabled = ToolStripButtonFlexLiftBridge.Enabled && IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
-							break;
-						case CommonBridgeServices.NoBridgeUsedYet: // Fall through. This isn't really needed, but it is a clearer that it covers the case.
-						default:
-							ToolStripButtonFlexLiftBridge.Enabled = false;
-							break;
-					}
-				}
-			}
-			// Re-check, since it may have been disabled in the above code.
-			if (ToolStripButtonFlexLiftBridge.Enabled)
-			{
-				ToolStripButtonFlexLiftBridge.Click += Flex_Or_Lift_Bridge_Clicked;
-			}
-		}
-
-		private void AddCommonMenuItems()
-		{
-			_helpChorusMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpChorus_Click, SendReceiveResources.HelpChorus, SendReceiveResources.HelpChorusToolTip);
-			if (!MiscUtils.IsUnix)
-			{
-				_checkForFlexBridgeUpdatesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, CheckForFlexBridgeUpdates_Click, SendReceiveResources.CheckForFlexBridgeUpdates, SendReceiveResources.CheckForFlexBridgeUpdatesToolTip);
-			}
-			_helpAboutFLEXBridgeMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpAboutFLEXBridge_Click, SendReceiveResources.HelpAboutFLEXBridge, SendReceiveResources.HelpAboutFLEXBridgeToolTip);
-		}
 
 		private void HelpAboutFLEXBridge_Click(object sender, EventArgs e)
 		{
@@ -205,12 +197,6 @@ namespace LanguageExplorer.SendReceive
 			{
 				MessageBox.Show((Form)MainWindow, string.Format(LanguageExplorerResources.ksCannotLaunchX, chorusHelpPathname), LanguageExplorerResources.ksError);
 			}
-		}
-
-		private void MainSendReceiveToolStripMenuItem_DropDownOpening(object sender, EventArgs eventArgs)
-		{
-			_bridges[CommonBridgeServices.FLExBridge].SetEnabledStatus();
-			_bridges[CommonBridgeServices.LiftBridge].SetEnabledStatus();
 		}
 
 		private IBridge GetLastBridge()
@@ -279,21 +265,6 @@ namespace LanguageExplorer.SendReceive
 
 			if (disposing)
 			{
-				if (_helpChorusMenu != null)
-				{
-					_helpChorusMenu.Click -= HelpChorus_Click;
-					_helpChorusMenu.Dispose();
-				}
-				if (_checkForFlexBridgeUpdatesMenu != null)
-				{
-					_checkForFlexBridgeUpdatesMenu.Click -= CheckForFlexBridgeUpdates_Click;
-					_checkForFlexBridgeUpdatesMenu.Dispose();
-				}
-				if (_helpAboutFLEXBridgeMenu != null)
-				{
-					_helpAboutFLEXBridgeMenu.Click -= HelpAboutFLEXBridge_Click;
-					_helpAboutFLEXBridgeMenu.Dispose();
-				}
 				foreach (var bridge in _bridges.Values)
 				{
 					// "NoBridgeUsedYet" key will have  null value in the dictionary, so skip it.
@@ -306,11 +277,8 @@ namespace LanguageExplorer.SendReceive
 			MainWindow = null;
 			FlexApp = null;
 			Cache = null;
+			_uiWidgetController = null;
 			MainSendReceiveToolStripMenuItem = null;
-			ToolStripButtonFlexLiftBridge = null;
-			_helpChorusMenu = null;
-			_checkForFlexBridgeUpdatesMenu = null;
-			_helpAboutFLEXBridgeMenu = null;
 
 			_isDisposed = true;
 		}

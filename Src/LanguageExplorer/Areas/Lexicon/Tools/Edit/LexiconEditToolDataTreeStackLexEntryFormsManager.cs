@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
-			AreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+			PartiallySharedAreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
 
 			// End: <menu id="mnuDataTree-Environments-Insert">
 

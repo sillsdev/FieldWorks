@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary />
 	/// <remarks>
-	///	InterlinMaster creates two instances of this class.
+	/// InterlinMaster creates two instances of this class.
 	/// </remarks>
 	internal partial class InterlinDocForAnalysis : InterlinDocRootSiteBase
 	{
@@ -45,8 +45,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 			DoSpellCheck = true;
 		}
-
-		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
 		private void PropertyAddWordsToLexicon_Changed(object newValue)
 		{
@@ -274,7 +272,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
 					Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
-					MyMajorFlexComponentParameters.SharedEventHandlers.Add(LanguageExplorerConstants.CmdApproveAll, ApproveAll_Click);
+					MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll.ToString("g"), ApproveAll_Click);
 					_hasSubscribedAndShared = true;
 				}
 			}
@@ -283,11 +281,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
 				if (_hasSubscribedAndShared)
 				{
-					MyMajorFlexComponentParameters.SharedEventHandlers.Remove(LanguageExplorerConstants.CmdApproveAll);
+					MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll.ToString("g"));
 					Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 					_hasSubscribedAndShared = false;
 				}
 			}
+		}
+		#endregion
+
+		#region Overrides of InterlinDocRootSiteBase
+		/// <inheritdoc />
+		/// <remarks>
+		/// Base class is responsible for adding/removing handlers to UiWidgetController.
+		/// </remarks>
+		protected override void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
+		{
+			base.SetupUiWidgets(userControlUiWidgetParameterObject);
+			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertMenuItemsForUserControl;
+			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Insert, out insertMenuItemsForUserControl))
+			{
+				insertMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
+				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuItemsForUserControl);
+			}
+			insertMenuItemsForUserControl.Add(Command.CmdAddWordGlossesToFreeTrans, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddWordGlossesToFreeTransClick, () => CanCmdAddWordGlossesToFreeTrans));
 		}
 		#endregion
 
@@ -937,7 +953,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for the XML <command id="CmdAddWordGlossesToFreeTrans"...
 			if (RootBox != null && e.KeyCode == Keys.Enter)
 			{
-				OnAddWordGlossesToFreeTrans(null);
+				CmdAddWordGlossesToFreeTransClick(null, null);
 			}
 			// LT-4029 Capture arrow keys from inside the translation lines and notes.
 			var change = HandleArrowKeys(e);
@@ -1182,7 +1198,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var hasUpMotion = (e.KeyCode == Keys.Up) || (TextIsRightToLeft ? e.KeyCode == Keys.Right && (@where == WhichEnd.Right || @where == WhichEnd.Both) : e.KeyCode == Keys.Left
 			                                                                                                   && (@where == WhichEnd.Left || @where == WhichEnd.Both));
 			var isUpMove = hasUpMotion && !hasPrevAnnotation;
-			isUpNewSeg = isUpMove && !isThereRealAnalysisInSegment(curSeg); // no punctuation, or analysis ws
+			isUpNewSeg = isUpMove && !IsThereRealAnalysisInSegment(curSeg); // no punctuation, or analysis ws
 			return isUpMove;
 		}
 
@@ -1411,7 +1427,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Answers true if there is a "real" analysis in the segment.
 		/// </summary>
-		private bool isThereRealAnalysisInSegment(ISegment seg)
+		private bool IsThereRealAnalysisInSegment(ISegment seg)
 		{
 			return FindRealAnalysisInSegment(seg, true) != null;
 		}
@@ -1476,21 +1492,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return selEnd >= selLength ? WhichEnd.Right : WhichEnd.Neither;
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// Enable the 'insert word glosses' command
 		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <param name="display">The display properties.</param>
-		/// <returns>true if this command is enabled</returns>
-		public bool OnDisplayAddWordGlossesToFreeTrans(object commandObject, ref UIItemDisplayProperties display)
+		private Tuple<bool, bool> CanCmdAddWordGlossesToFreeTrans
 		{
-			ISegment dummy1;
-			int dummy2;
-			display.Visible = display.Enabled = CanAddWordGlosses(out dummy1, out dummy2);
-			return true;
+			get
+			{
+				ISegment dummy1;
+				int dummy2;
+				var canDoIt = CanAddWordGlosses(out dummy1, out dummy2);
+				return new Tuple<bool, bool>(canDoIt, canDoIt);
+			}
 		}
-#endif
 
 		/// <summary>
 		/// Answer whether the AddWordGlossesToFreeTranslation menu option should be enabled.
@@ -1532,11 +1546,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
+		/// Only used by tests!
+		/// </summary>
+		internal void OnAddWordGlossesToFreeTrans_TESTS_ONLY()
+		{
+			CmdAddWordGlossesToFreeTransClick(null, null);
+		}
+		/// <summary>
 		/// Make a free translation line out of the current glosses.
 		/// Note that this is sometimes called by reflection; the parameter of type object is required to match
 		/// the expected signature even though it is not used.
 		/// </summary>
-		public void OnAddWordGlossesToFreeTrans(object arg)
+		private void CmdAddWordGlossesToFreeTransClick(object sender, EventArgs e)
 		{
 			int ws;
 			ISegment seg;
@@ -2227,19 +2248,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-#if RANDYTODO
-		public void AddNote(Command command)
+		internal void AddNote()
 		{
-			IVwSelection sel = MakeSandboxSel();
+			var sel = MakeSandboxSel();
 			// If there's no sandbox selection, there may be one in the site itself, perhaps in another
 			// free translation.
 			if (sel == null && RootBox != null)
+			{
 				sel = RootBox.Selection;
+			}
 			if (sel == null)
+			{
 				return; // Enhance JohnT: give an error, or disable the command.
-			int cvsli = sel.CLevels(false);
+			}
+			var cvsli = sel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-
 			// Out variables for AllTextSelInfo.
 			int ihvoRoot;
 			int tagTextProp;
@@ -2250,17 +2273,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttpBogus;
-			// Main array of information retrived from sel that made combo.
-			SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-
+			// Main array of information retrieved from sel that made combo.
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 			// Identify the segment.
 			// This is important because although we are currently displaying just an StTxtPara,
 			// eventually it might be part of a higher level structure. We want this to work
 			// no matter how much higher level structure there is.
-			int itagSegments = -1;
-			for (int i = rgvsli.Length; --i >= 0; )
+			var itagSegments = -1;
+			for (var i = rgvsli.Length; --i >= 0; )
 			{
 				if (rgvsli[i].tag == StTxtParaTags.kflidSegments)
 				{
@@ -2269,32 +2289,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 			if (itagSegments == -1)
+			{
 				return; // Enhance JohnT: throw? disable command? Give an error?
-
-			int hvoSeg = rgvsli[itagSegments].hvo;
+			}
+			var hvoSeg = rgvsli[itagSegments].hvo;
 			var seg = Cache.ServiceLocator.GetObject(hvoSeg) as ISegment;
-			UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, Cache.ActionHandlerAccessor,
-				() =>
-				{
-					var note = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-					seg.NotesOS.Add(note);
-				});
-
+			UowHelpers.UndoExtension(ITextStrings.InsertNote, Cache.ActionHandlerAccessor, () =>
+			{
+				var note = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+				seg.NotesOS.Add(note);
+			});
 			TryHideFocusBoxAndUninstall();
 			if (Vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
 			{
 				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
 			}
-
 			// Now try to make a new selection in the note we just made.
 			// The elements of rgvsli from itagSegments onwards form a path to the segment.
-			// In the segment we want the note propery, specifically the new one we just made.
+			// In the segment we want the note property, specifically the new one we just made.
 			// We want to select at the start of it.
 			// LT-12613: We're adding an extra segment here:
-			SelLevInfo[] rgvsliNew = new SelLevInfo[rgvsli.Length - itagSegments + 2];
-			for (int i = 2; i < rgvsliNew.Length; i++)
+			var rgvsliNew = new SelLevInfo[rgvsli.Length - itagSegments + 2];
+			for (var i = 2; i < rgvsliNew.Length; i++)
+			{
 				rgvsliNew[i] = rgvsli[i + itagSegments - 2];
+			}
 			rgvsliNew[0].ihvo = seg.NotesOS.Count - 1;
 			rgvsliNew[0].tag = SegmentTags.kflidNotes;
 			rgvsliNew[0].cpropPrevious = 0;
@@ -2305,9 +2325,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RootBox.MakeTextSelInObj(0, rgvsliNew.Length, rgvsliNew, 0, null, true, true, false, false, true);
 			// Don't steal the focus from another window.  See FWR-1795.
 			if (ParentForm == Form.ActiveForm)
+			{
 				Focus(); // So we can actually see the selection we just made.
+			}
 		}
-#endif
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
@@ -2386,7 +2407,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SuppressResettingGuesses(() =>
 			{
 				// Needs to include GetRealAnalysis, since it might create a new one.
-				UowHelpers.UndoExtension(MyMajorFlexComponentParameters.CachedUiItems[LanguageExplorerConstants.CachedMenusKey][LanguageExplorerConstants.DataMenuKey][LanguageExplorerConstants.CmdApproveAll].Text, Cache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension(MyMajorFlexComponentParameters.UiWidgetController.DataMenuDictionary[Command.CmdApproveAll].Text, Cache.ActionHandlerAccessor, () =>
 				{
 					var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
 					AnalysisOccurrence lastOccurrence;
@@ -2403,7 +2424,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								// 2) A parser result - not sure which gets picked if multiple.
 								// #2 May take a while to "percolate" through to become a "guess".
 								var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-								if (guess != null && guess is IAnalysis)
+								if (guess is IAnalysis)
 								{
 									occ.Segment.AnalysesRS[occ.Index] = (IAnalysis)guess;
 								}

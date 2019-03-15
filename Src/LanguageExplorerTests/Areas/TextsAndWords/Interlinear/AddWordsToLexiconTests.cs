@@ -46,7 +46,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			m_text1.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);
 			(m_text1.ContentsOA[0]).Contents = TsStringUtils.MakeString("xxxa xxxb xxxc xxxd xxxe, xxxa xxxb.", Cache.DefaultVernWs);
-			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, false);
+			stText1.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false);
 			// setup language project parts of speech
 			var partOfSpeechFactory = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 			var adjunct = partOfSpeechFactory.Create();

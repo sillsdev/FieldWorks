@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
@@ -41,10 +40,7 @@ namespace LanguageExplorer.SendReceive
 		private LcmCache Cache { get; set; }
 		private Form ParentForm { get; set; }
 		private IFlexApp FlexApp { get; set; }
-		private ToolStripMenuItem _mainSendReceiveMenu;
-		private ToolStripMenuItem _viewMessagesMenu;
-		private ToolStripMenuItem _obtainLiftBridgeProjectMenu;
-		private ToolStripMenuItem _sendLiftBridgeFirstTimeProjectMenu;
+		private UiWidgetController _uiWidgetController;
 		/// <summary>
 		/// This is the file that our Message slice is configured to look for in the root project folder.
 		/// The actual Lexicon.fwstub doesn't contain anything.
@@ -108,6 +104,14 @@ namespace LanguageExplorer.SendReceive
 			_isInFullBlownDisposeMode = false; // Help the dispose method know what to *not* do.
 		}
 
+		private Tuple<bool, bool> CanDoCmdLiftBridge => new Tuple<bool, bool>(true, _oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
+
+		private Tuple<bool, bool> CanDoCmdViewLiftMessages => new Tuple<bool, bool>(true, CommonBridgeServices.NotesFileIsPresent(Cache, true));
+
+		private Tuple<bool, bool> CanDoCmdObtainLiftProject => new Tuple<bool, bool>(true, !Directory.Exists(CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)));
+
+		private Tuple<bool, bool> CanDoCmdObtainFirstLiftProject => new Tuple<bool, bool>(true, !_oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && !SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
+
 		#region Implementation of IBridge
 		/// <inheritdoc />
 		public string Name => CommonBridgeServices.LiftBridge;
@@ -155,32 +159,28 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <inheritdoc />
-		public void InstallMenus(BridgeMenuInstallRound currentInstallRound, ToolStripMenuItem mainSendReceiveToolStripMenuItem)
+		public void RegisterHandlers(UiWidgetController uiWidgetController)
 		{
-			switch (currentInstallRound)
-			{
-				case BridgeMenuInstallRound.One:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, S_R_LiftBridge_Click, SendReceiveResources.LiftBridge, SendReceiveResources.LiftBridgeToolTip, image: SendReceiveResources.sendReceive16x16);
-					_viewMessagesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ViewMessages_LiftBridge_Click, SendReceiveResources.ViewLiftMessagesLiftBridge, SendReceiveResources.ViewLiftMessagesLiftBridgeToolTip);
-					break;
-				case BridgeMenuInstallRound.Two:
-					_obtainLiftBridgeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ObtainLiftBridgeProject_Click, SendReceiveResources.ObtainLiftProject, SendReceiveResources.ObtainLiftProjectTooltip, image: SendReceiveResources.SendReceiveGetArrow16x16);
-					break;
-				case BridgeMenuInstallRound.Three:
-					_sendLiftBridgeFirstTimeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, SendLiftBridgeFirstTime_Click, SendReceiveResources.FirstLiftBridge, SendReceiveResources.FirstLiftBridgeTooltip, image: SendReceiveResources.sendReceiveFirst16x16);
-					break;
-			}
-		}
+			Guard.AgainstNull(uiWidgetController, nameof(uiWidgetController));
 
-		/// <inheritdoc />
-		public void SetEnabledStatus()
-		{
-			var hasOldLiftproject = _oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString());
-			var isConfiguredForLiftSR = SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
-			_mainSendReceiveMenu.Enabled = hasOldLiftproject || isConfiguredForLiftSR;
-			_viewMessagesMenu.Enabled = CommonBridgeServices.NotesFileIsPresent(Cache, true);
-			_obtainLiftBridgeProjectMenu.Enabled = !Directory.Exists(CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder));
-			_sendLiftBridgeFirstTimeProjectMenu.Enabled = !hasOldLiftproject && !isConfiguredForLiftSR;
+			_uiWidgetController = uiWidgetController;
+			var globalSendReceiveMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+			{
+				{ Command.CmdLiftBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(S_R_LiftBridge_Click, ()=> CanDoCmdLiftBridge) },
+				{ Command.CmdViewLiftMessages, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ViewMessages_LiftBridge_Click, ()=> CanDoCmdViewLiftMessages) },
+				{ Command.CmdObtainLiftProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ObtainLiftBridgeProject_Click, ()=> CanDoCmdObtainLiftProject) },
+				{ Command.CmdObtainFirstLiftProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendLiftBridgeFirstTime_Click, ()=> CanDoCmdObtainFirstLiftProject) }
+			};
+			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				{MainMenu.SendReceive,  globalSendReceiveMenuHandlers}
+			};
+			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
+			{
+				// Nothing to do for tool bars.
+				{ ToolBar.Standard, new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>() }
+			};
+			_uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
 		}
 		#endregion
 
@@ -250,23 +250,6 @@ namespace LanguageExplorer.SendReceive
 				if (_isInFullBlownDisposeMode)
 				{
 					Subscriber.Unsubscribe("ViewLiftMessages", ViewMessages);
-
-					if (_mainSendReceiveMenu != null)
-					{
-						_mainSendReceiveMenu.Click -= S_R_LiftBridge_Click;
-						_mainSendReceiveMenu.Dispose();
-					}
-					if (_viewMessagesMenu != null)
-					{
-						_viewMessagesMenu.Click -= ViewMessages_LiftBridge_Click;
-						_viewMessagesMenu.Dispose();
-					}
-					if (_obtainLiftBridgeProjectMenu != null)
-					{
-						_obtainLiftBridgeProjectMenu.Click -= ObtainLiftBridgeProject_Click;
-						_obtainLiftBridgeProjectMenu.Dispose();
-					}
-
 					_oldLiftBridgeProjects.Clear();
 				}
 			}
@@ -276,10 +259,7 @@ namespace LanguageExplorer.SendReceive
 			Cache = null;
 			ParentForm = null;
 			FlexApp = null;
-			_mainSendReceiveMenu = null;
-			_viewMessagesMenu = null;
-			_obtainLiftBridgeProjectMenu = null;
-			_sendLiftBridgeFirstTimeProjectMenu = null;
+			_uiWidgetController = null;
 
 			_isDisposed = true;
 		}
@@ -337,7 +317,7 @@ namespace LanguageExplorer.SendReceive
 
 		private void ViewMessages(object obj)
 		{
-			_viewMessagesMenu.PerformClick();
+			ViewMessages_LiftBridge_Click(null, null);
 		}
 
 		private void S_R_LiftBridge_Click(object sender, EventArgs e)

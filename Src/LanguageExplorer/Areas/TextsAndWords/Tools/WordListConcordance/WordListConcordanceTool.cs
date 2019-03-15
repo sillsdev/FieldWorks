@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
@@ -22,9 +24,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class WordListConcordanceTool : ITool
 	{
-		private AreaWideMenuHelper _areaWideMenuHelper;
+		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		private IToolUiWidgetManager _partiallySharedMenuHelper;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
 		private MultiPane _outerMultiPane;
 		private RecordBrowseView _mainRecordBrowseView;
@@ -46,20 +47,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane);
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_partiallySharedMenuHelper.UnwireSharedEventHandlers();
-			_partiallySharedMenuHelper.Dispose();
-			_areaWideMenuHelper.Dispose();
+			_partiallySharedAreaWideMenuHelper.Dispose();
 
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
-			_areaWideMenuHelper = null;
-			_partiallySharedMenuHelper = null;
+			_partiallySharedAreaWideMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -76,8 +77,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			{
 				_recordListProvidingOwner = recordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
-			_areaWideMenuHelper.SetupFileExportMenu();
+			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
+			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -100,13 +103,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
 			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
-			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _subservientRecordList);
+			_nestedRecordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("wordOccurrenceListUpper").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
-			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
-			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(_interlinMasterNoTitleBar);
+			_mainRecordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("wordList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -121,8 +123,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;
-
-			_partiallySharedMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordListProvidingOwner);
 		}
 
 		/// <summary>

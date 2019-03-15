@@ -927,4 +927,7 @@ Click "Cancel" to abort this import.</value>
   <data name="Break_selected_phrase_into_words" xml:space="preserve">
     <value>Break selected phrase into words.</value>
   </data>
+  <data name="InsertNote" xml:space="preserve">
+    <value>insert Note</value>
+  </data>
 </root>

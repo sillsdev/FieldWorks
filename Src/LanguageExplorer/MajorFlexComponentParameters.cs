@@ -23,7 +23,7 @@ namespace LanguageExplorer
 		/// <summary />
 		internal ToolStripContainer ToolStripContainer { get; }
 		/// <summary />
-		public Dictionary<string, Dictionary<string, Dictionary<string, ToolStripItem>>> CachedUiItems { get; }
+		public UiWidgetController UiWidgetController { get; }
 		/// <summary />
 		internal StatusBar StatusBar { get; }
 		/// <summary />
@@ -44,13 +44,13 @@ namespace LanguageExplorer
 		internal SidePane SidePane { get; }
 		/// <summary />
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			Dictionary<string, Dictionary<string, Dictionary<string, ToolStripItem>>> cachedUiItems, StatusBar statusBar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
+			UiWidgetController uiWidgetController, StatusBar statusBar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
 			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
 			ToolStripContainer = toolStripContainer;
-			CachedUiItems = cachedUiItems;
+			UiWidgetController = uiWidgetController;
 			StatusBar = statusBar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;

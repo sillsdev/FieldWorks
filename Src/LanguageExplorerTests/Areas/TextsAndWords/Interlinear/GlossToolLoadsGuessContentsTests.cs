@@ -96,7 +96,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			_text.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);
 			_text.ContentsOA[0].Contents = TsStringUtils.MakeString("xxxa xxxa xxxa.", Cache.DefaultVernWs);
-			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, true);
+			stText1.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(true);
 			using (var mockInterlinDocForAnalyis = new MockInterlinDocForAnalysis(stText1) { MockedRootBox = mockRb })
 			{
 				mockInterlinDocForAnalyis.InitializeFlexComponent(_flexComponentParameters);

@@ -21,8 +21,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		}
 
 		/// <summary />
-		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
-			: base(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
+		public AssignFeaturesToPhonemes(UiWidgetController uiWidgetController, XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
+			: base(uiWidgetController, browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
 		{
 			InitializeComponent();
 		}
@@ -47,9 +47,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 		#endregion
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected override BrowseViewer CreateBrowseViewer(UiWidgetController uiWidgetController, XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			return new BrowseViewerPhonologicalFeatures(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
+			return new BrowseViewerPhonologicalFeatures(uiWidgetController, nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}
 	}
 }

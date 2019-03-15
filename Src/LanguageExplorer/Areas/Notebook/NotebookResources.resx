@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -125,15 +125,6 @@
   </data>
   <data name="Exporting_" xml:space="preserve">
     <value>Exporting...</value>
-  </data>
-  <data name="Find_a_Record_in_your_Notebook" xml:space="preserve">
-    <value>Find a Record in your Notebook.</value>
-  </data>
-  <data name="Find_Record" xml:space="preserve">
-    <value>_Find Record...</value>
-  </data>
-  <data name="Import_Standard_Format_Notebook_data" xml:space="preserve">
-    <value>Standard Format _Notebook data...</value>
   </data>
   <data name="Insert_Subrecord" xml:space="preserve">
     <value>Insert _Subrecord</value>

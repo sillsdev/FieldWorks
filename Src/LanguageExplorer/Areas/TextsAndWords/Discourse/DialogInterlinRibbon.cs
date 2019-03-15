@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// <summary>
 	/// Used to display interlinear text from a ConstChartWordGroup in a dialog.
 	/// </summary>
-	public class DialogInterlinRibbon : InterlinRibbon
+	internal class DialogInterlinRibbon : InterlinRibbon
 	{
 		/// <summary>
 		/// In this subclass, we set the root later.

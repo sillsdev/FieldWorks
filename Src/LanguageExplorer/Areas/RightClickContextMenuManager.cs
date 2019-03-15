@@ -953,7 +953,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			var visibleAndEnabled = AreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, selectedObject, className);
+			var visibleAndEnabled = PartiallySharedAreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, selectedObject, className);
 			if (visibleAndEnabled)
 			{
 				if (wantSeparator)
@@ -1037,9 +1037,9 @@ namespace LanguageExplorer.Areas
 				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid };
 			}
 
-			AreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+			PartiallySharedAreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
 
-			AreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+			PartiallySharedAreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
 
 			// End: <menu id="mnuEnvReferenceChoices">
 

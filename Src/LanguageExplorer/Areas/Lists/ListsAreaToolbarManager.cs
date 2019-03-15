@@ -402,10 +402,10 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 			{
 				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
 			}
-			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			if (_insertEntryToolStripButton != null && _insertEntryToolStripButton.Visible && currentSliceAsStTextSlice != null)
 			{
-				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryToolStripButton, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryToolStripButton, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}
 			else
 			{

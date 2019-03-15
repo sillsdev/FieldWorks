@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.Code;
 
@@ -15,11 +16,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
 
-		internal LexiconBrowseToolMenuHelper()
+		internal LexiconBrowseToolMenuHelper(ITool tool)
 		{
+			_tool = tool;
 		}
 
 		#region Implementation of IToolUiWidgetManager
@@ -31,10 +34,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_tool);
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />

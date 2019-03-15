@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -27,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string InterlinearTexts = "interlinearTexts";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
-		private IAreaUiWidgetManager _textAndWordsAreaMenuHelper;
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
 		[Import]
 		private IPropertyTable _propertyTable;
@@ -42,12 +43,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_textAndWordsAreaMenuHelper.UnwireSharedEventHandlers();
-			_textAndWordsAreaMenuHelper.Dispose();
-			ActiveTool?.Deactivate(majorFlexComponentParameters);
+			// This will also remove any event handlers set up by the active tool,
+			// and any of the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveAreaHandlers();
+			var activeTool = ActiveTool;
+			ActiveTool = null;
+			activeTool?.Deactivate(majorFlexComponentParameters);
 
 			_textAndWordsAreaMenuHelper = null;
-			ActiveTool = null;
 		}
 
 		/// <summary>
@@ -72,8 +75,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
 			}
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper();
-			_textAndWordsAreaMenuHelper.Initialize(majorFlexComponentParameters, this);
+			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(this);
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus(areaUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 		}
 
 		/// <summary>
@@ -201,6 +206,67 @@ namespace LanguageExplorer.Areas.TextsAndWords
             </clerk>
 			*/
 			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, new VectorPropertyParameterObject(cache.LanguageProject, "InterestingTexts", InterestingTextsDecorator.kflidInterestingTexts));
+		}
+
+		private sealed class TextAndWordsAreaMenuHelper
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal TextAndWordsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+			}
+
+			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
+			{
+				/*
+					<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/> // Only Insert menu
+				*/
+				var insertMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+				{
+					{ Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, ()=> CanCmdInsertText) },
+					// Others go here.
+					{ Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, ()=> CanCmdImportWordSet) },
+					{ Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, ()=> CanCmdInsertHumanApprovedAnalysis) }
+				};
+				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.Insert, insertMenuItemsForArea);
+				var insertToolBarButtonsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
+				{
+					{ Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, ()=> CanCmdInsertText) },
+					{ Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, ()=> CanCmdInsertHumanApprovedAnalysis) }
+				};
+				areaUiWidgetParameterObject.ToolBarItemsForArea.Add(ToolBar.Insert, insertToolBarButtonsForArea);
+			}
+
+			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList is InterlinearTextsRecordList);
+
+			private void CmdInsertText_Click(object sender, EventArgs e)
+			{
+				var recordList = (InterlinearTextsRecordList)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				recordList.OnInsertInterlinText();
+			}
+
+#if RANDYTODO
+		// TODO: Make the event handler work and be enabled.
+#endif
+			private Tuple<bool, bool> CanCmdInsertHumanApprovedAnalysis => new Tuple<bool, bool>(true, false);
+
+			private void InsertHumanApprovedAnalysis_Click(object sender, EventArgs e)
+			{
+				MessageBox.Show(@"TODO: Adding new human approved analysis here.");
+			}
+
+			private Tuple<bool, bool> CanCmdImportWordSet => new Tuple<bool, bool>(true, true);
+
+			private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
+			{
+				using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
+				{
+					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+				}
+			}
 		}
 	}
 }

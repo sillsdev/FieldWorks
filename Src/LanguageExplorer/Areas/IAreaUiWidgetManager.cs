@@ -18,17 +18,12 @@ namespace LanguageExplorer.Areas
 		/// <param name="area">The area used by the implementation.</param>
 		/// <param name="toolUiWidgetManager">Optional tool-specific menu manager.</param>
 		/// <param name="recordList">Optional record list that provides the current main CmObject being displayed.</param>
-		void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IToolUiWidgetManager toolUiWidgetManager = null, IRecordList recordList = null);
+		void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList = null);
 
 		/// <summary>
 		/// Get the active tool in the current area.
 		/// </summary>
 		ITool ActiveTool { get; }
-
-		/// <summary>
-		/// Get the current IToolUiWidgetManager for the area.
-		/// </summary>
-		IToolUiWidgetManager ActiveToolUiManager { get; }
 
 		/// <summary>
 		/// In preparation for disposal, unwire any shared event handlers.

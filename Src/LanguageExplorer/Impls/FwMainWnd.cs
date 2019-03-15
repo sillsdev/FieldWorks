@@ -100,16 +100,6 @@ namespace LanguageExplorer.Impls
 		private readonly Stack<List<IdleProcessingHelper>> _idleProcessingHelpers = new Stack<List<IdleProcessingHelper>>();
 		private ISharedEventHandlers _sharedEventHandlers = new SharedEventHandlers();
 		private HashSet<string> _temporaryPropertyNames = new HashSet<string>();
-		// Menu dictionaries
-		private Dictionary<string, ToolStripItem> _fileToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _sendReceiveToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _editToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _viewToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _insertToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _formatToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _toolsToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _windowToolStripMenuItems;
-		private Dictionary<string, ToolStripItem> _helpToolStripMenuItems;
 
 		/// <summary />
 		public FwMainWnd()
@@ -152,257 +142,489 @@ namespace LanguageExplorer.Impls
 			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 		}
 
-		private Dictionary<string, Dictionary<string, ToolStripItem>> CacheMenuItems()
+		#region Cache main menu items
+
+		private Dictionary<MainMenu, Dictionary<Command, ToolStripItem>> CacheMenuItems()
 		{
-			return new Dictionary<string, Dictionary<string, ToolStripItem>>
+			return new Dictionary<MainMenu, Dictionary<Command, ToolStripItem>>
 			{
-				{ LanguageExplorerConstants.FileMenuKey,  CacheFileMenuItems()},
-				{ LanguageExplorerConstants.SendReceiveMenuKey,  CacheSendReceiveMenuItems()},
-				{ LanguageExplorerConstants.EditMenuKey,  CacheEditMenuItems()},
-				{ LanguageExplorerConstants.ViewMenuKey,  CacheViewMenuItems()},
-				{ LanguageExplorerConstants.DataMenuKey,  CacheDataMenuItems()},
-				{ LanguageExplorerConstants.InsertMenuKey,  CacheInsertMenuItems()},
-				{ LanguageExplorerConstants.FormatMenuKey,  CacheFormatMenuItems()},
-				{ LanguageExplorerConstants.ToolsMenuKey,  CacheToolsMenuItems()},
-				{ LanguageExplorerConstants.ParserMenuKey,  CacheParserMenuItems()},
-				{ LanguageExplorerConstants.WindowMenuKey,  CacheWindowMenuItems()},
-				{ LanguageExplorerConstants.HelpMenuKey,  CacheHelpMenuItems()}
+				{ MainMenu.File,  CacheFileMenuItems()},
+				{ MainMenu.SendReceive,  CacheSendReceiveMenuItems()},
+				{ MainMenu.Edit,  CacheEditMenuItems()},
+				{ MainMenu.View,  CacheViewMenuItems()},
+				{ MainMenu.Data,  CacheDataMenuItems()},
+				{ MainMenu.Insert,  CacheInsertMenuItems()},
+				{ MainMenu.Format,  CacheFormatMenuItems()},
+				{ MainMenu.Tools,  CacheToolsMenuItems()},
+				{ MainMenu.Parser,  CacheParserMenuItems()},
+				{ MainMenu.Window,  CacheWindowMenuItems()},
+				{ MainMenu.Help,  CacheHelpMenuItems()}
 			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheFileMenuItems()
+		private Dictionary<Command, ToolStripItem> CacheFileMenuItems()
 		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheSendReceiveMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheEditMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheViewMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheDataMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>(25)
+			return new Dictionary<Command, ToolStripItem>
 			{
-				{LanguageExplorerConstants.CmdFirstRecord, _data_First},
-				{LanguageExplorerConstants.CmdPreviousRecord, _data_Previous},
-				{LanguageExplorerConstants.CmdNextRecord, _data_Next},
-				{LanguageExplorerConstants.CmdLastRecord, _data_Last},
-				{LanguageExplorerConstants.DataMenuSeparator1, dataMenuSeparator1},
-				{LanguageExplorerConstants.CmdApproveAndMoveNext, CmdApproveAndMoveNext},
-				{LanguageExplorerConstants.CmdApproveForWholeTextAndMoveNext, CmdApproveForWholeTextAndMoveNext},
-				{LanguageExplorerConstants.CmdNextIncompleteBundle, CmdNextIncompleteBundle},
-				{LanguageExplorerConstants.CmdApprove, CmdApprove},
-				{LanguageExplorerConstants.ApproveAnalysisMovementMenu, ApproveAnalysisMovementMenu},
-					{LanguageExplorerConstants.CmdApproveAndMoveNextSameLine, CmdApproveAndMoveNextSameLine},
-					{LanguageExplorerConstants.CmdMoveFocusBoxRight, CmdMoveFocusBoxRight},
-					{LanguageExplorerConstants.CmdMoveFocusBoxLeft, CmdMoveFocusBoxLeft},
-				{LanguageExplorerConstants.BrowseMovementMenu, BrowseMovementMenu},
-					{LanguageExplorerConstants.CmdBrowseMoveNext, CmdBrowseMoveNext},
-					{LanguageExplorerConstants.CmdNextIncompleteBundleNc, CmdNextIncompleteBundleNc},
-					{LanguageExplorerConstants.CmdBrowseMoveNextSameLine, CmdBrowseMoveNextSameLine},
-					{LanguageExplorerConstants.CmdMoveFocusBoxRightNc, CmdMoveFocusBoxRightNc},
-					{LanguageExplorerConstants.CmdMoveFocusBoxLeftNc, CmdMoveFocusBoxLeftNc},
-				{LanguageExplorerConstants.CmdMakePhrase, CmdMakePhrase},
-				{LanguageExplorerConstants.CmdBreakPhrase, CmdBreakPhrase},
-				{LanguageExplorerConstants.DataMenuSeparator2, dataMenuSeparator2},
-				{LanguageExplorerConstants.CmdRepeatLastMoveLeft, CmdRepeatLastMoveLeft},
-				{LanguageExplorerConstants.CmdRepeatLastMoveRight, CmdRepeatLastMoveRight},
-				{LanguageExplorerConstants.CmdApproveAll, CmdApproveAll}
+				{ Command.CmdNewLangProject, CmdNewLangProject },
+				{ Command.CmdChooseLangProject, CmdChooseLangProject },
+				{ Command.Separator1, toolStripFileMenuSeparator1 },
+				{ Command.ProjectManagementMenu, projectManagementToolStripMenuItem },
+					{ Command.CmdProjectProperties, CmdProjectProperties },
+					{ Command.CmdBackup, CmdBackup },
+					{ Command.CmdRestoreFromBackup, CmdRestoreFromBackup },
+					{ Command.Separator2, toolStripFileMenuSeparator2 },
+					{ Command.CmdProjectLocation, CmdProjectLocation },
+					{ Command.CmdDeleteProject, CmdDeleteProject },
+					{ Command.CmdCreateProjectShortcut, CmdCreateProjectShortcut },
+				{ Command.Separator3, toolStripFileMenuSeparator3 },
+				{ Command.CmdArchiveWithRamp, CmdArchiveWithRamp },
+				{ Command.CmdUploadToWebonary, CmdUploadToWebonary },
+				{ Command.Separator4, toolStripFileMenuSeparator4 },
+				{ Command.CmdPrint, CmdPrint },
+				{ Command.Separator5, toolStripFileMenuSeparator5 },
+				{ Command.ImportMenu, ImportMenu },
+					{ Command.CmdImportSFMLexicon, CmdImportSFMLexicon },
+					{ Command.CmdImportLinguaLinksData, CmdImportLinguaLinksData },
+					{ Command.CmdImportLiftData, CmdImportLiftData },
+					{ Command.CmdImportInterlinearSfm, CmdImportInterlinearSfm },
+					{ Command.CmdImportWordsAndGlossesSfm, CmdImportWordsAndGlossesSfm },
+					{ Command.CmdImportInterlinearData, CmdImportInterlinearData },
+					{ Command.CmdImportSFMNotebook, CmdImportSFMNotebook },
+					{ Command.CmdImportTranslatedLists, CmdImportTranslatedLists },
+				{ Command.CmdExport, CmdExport },
+				{ Command.CmdExportInterlinear, CmdExportInterlinear },
+				{ Command.CmdExportDiscourseChart, CmdExportDiscourseChart },
+				{ Command.Separator6, toolStripFileMenuSeparator6 },
+				{ Command.CmdClose, CmdClose }
 			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheInsertMenuItems()
+		private Dictionary<Command, ToolStripItem> CacheSendReceiveMenuItems()
 		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheFormatMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheToolsMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheParserMenuItems()
-		{
-			var parserToolStripMenuItems = new Dictionary<string, ToolStripItem>(12)
+			return new Dictionary<Command, ToolStripItem>
 			{
-				{LanguageExplorerConstants.CmdParseAllWords, CmdParseAllWords},
-				{LanguageExplorerConstants.CmdReparseAllWords, CmdReparseAllWords},
-				{LanguageExplorerConstants.CmdReInitializeParser, CmdReInitializeParser},
-				{LanguageExplorerConstants.CmdStopParser, CmdStopParser},
-				{LanguageExplorerConstants.ParserMenuSeparator1, toolStripParserMenuSparator1},
-				{LanguageExplorerConstants.CmdTryAWord, CmdTryAWord},
-				{LanguageExplorerConstants.CmdParseWordsInCurrentText, CmdParseWordsInCurrentText},
-				{LanguageExplorerConstants.CmdParseCurrentWord, CmdParseCurrentWord},
-				{LanguageExplorerConstants.CmdClearSelectedWordParserAnalyses, CmdClearSelectedWordParserAnalyses},
-				{LanguageExplorerConstants.ParserMenuSeparator2, toolStripParserMenuSparator2},
-				{LanguageExplorerConstants.ChooseParserMenu, ChooseParserMenu},
-				{LanguageExplorerConstants.CmdChooseXAmpleParser, CmdChooseXAmpleParser},
-				{LanguageExplorerConstants.CmdChooseHCParser, CmdChooseHCParser},
-				{LanguageExplorerConstants.CmdEditParserParameters, CmdEditParserParameters}
-			};
-			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], MenuServices.GetParserMenu(_menuStrip), parserToolStripMenuItems);
-			return parserToolStripMenuItems;
-		}
-
-		private Dictionary<string, ToolStripItem> CacheWindowMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, ToolStripItem> CacheHelpMenuItems()
-		{
-			return new Dictionary<string, ToolStripItem>();
-		}
-
-		private Dictionary<string, Dictionary<string, ToolStripItem>> CacheToolbarItems()
-		{
-			return new Dictionary<string, Dictionary<string, ToolStripItem>>
-			{
-				{ LanguageExplorerConstants.StandardToolStripKey,  CacheStandardToolStrip()},
-				{ LanguageExplorerConstants.ViewToolStripKey,  CacheViewToolStrip()},
-				{ LanguageExplorerConstants.InsertToolStripKey,  CacheInsertToolStrip()},
-				{ LanguageExplorerConstants.FormatToolStripKey,  CacheFormatToolStrip()}
+				{Command.CmdFLExBridge, CmdFLExBridge},
+				{Command.CmdViewMessages, CmdViewMessages},
+				{Command.CmdLiftBridge, CmdLiftBridge},
+				{Command.CmdViewLiftMessages, CmdViewLiftMessages},
+				{Command.Separator1, toolStripSendReceiveMenuSeparator1},
+				{Command.CmdObtainAnyFlexBridgeProject, CmdObtainAnyFlexBridgeProject},
+				{Command.CmdObtainLiftProject, CmdObtainLiftProject},
+				{Command.Separator2, toolStripSendReceiveMenuSeparator2},
+				{Command.CmdObtainFirstFlexBridgeProject, CmdObtainFirstFlexBridgeProject},
+				{Command.CmdObtainFirstLiftProject, CmdObtainFirstLiftProject},
+				{Command.Separator3, toolStripSendReceiveMenuSeparator3},
+				{Command.CmdHelpChorus, CmdHelpChorus},
+				{Command.CmdCheckForFlexBridgeUpdates, CmdCheckForFlexBridgeUpdates},
+				{Command.CmdHelpAboutFLEXBridge, CmdHelpAboutFLEXBridge}
 			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheStandardToolStrip()
+		private Dictionary<Command, ToolStripItem> CacheEditMenuItems()
 		{
-			/*
-    <toolbar id="Standard">
-      <item command="CmdHistoryBack" />
-      <item command="CmdHistoryForward" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDeleteRecord" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdUndo" />
-      <item command="CmdRedo" />
-      <item command="CmdRefresh" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdFirstRecord" />
-      <item command="CmdPreviousRecord" />
-      <item command="CmdNextRecord" />
-      <item command="CmdLastRecord" />
-      <item command="CmdFLExLiftBridge" />
-    </toolbar>
-			*/
-			return new Dictionary<string, ToolStripItem>();
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdUndo,  undoToolStripMenuItem},
+				{ Command.CmdRedo,  redoToolStripMenuItem},
+				{ Command.Separator1,  toolStripEditMenuSeparator1},
+				{ Command.CmdCut,  cutToolStripMenuItem},
+				{ Command.CmdCopy,  copyToolStripMenuItem},
+				{ Command.CmdPaste,  pasteToolStripMenuItem},
+				{ Command.Separator2,  toolStripEditMenuSeparator2},
+				{ Command.CmdPasteHyperlink,  pasteHyperlinkToolStripMenuItem},
+				{ Command.CmdCopyLocationAsHyperlink,  copyLocationAsHyperlinkToolStripMenuItem},
+				{ Command.Separator3,  toolStripEditMenuSeparator3},
+				{ Command.CmdGoToEntry,  CmdGoToEntry},
+				{ Command.CmdGoToRecord,  CmdGoToRecord},
+				{ Command.CmdFindAndReplaceText,  CmdFindAndReplaceText},
+				{ Command.CmdReplaceText,  CmdReplaceText},
+				{ Command.Separator4,  toolStripEditMenuSeparator4},
+				{ Command.CmdSelectAll,  selectAllToolStripMenuItem},
+				{ Command.CmdDeleteRecord,  selectAllToolStripMenuItem},
+				{ Command.Separator5,  toolStripEditMenuSeparator5},
+				{ Command.CmdGoToReversalEntry,  CmdGoToReversalEntry},
+				{ Command.CmdGoToWfiWordform,  CmdGoToWfiWordform},
+				{ Command.CmdDeleteCustomList,  CmdDeleteCustomList}
+			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheViewToolStrip()
+		private Dictionary<Command, ToolStripItem> CacheViewMenuItems()
 		{
-			/*
-    <toolbar id="View">
-      <item command="CmdChooseTexts" defaultVisible="false" />
-      <item command="CmdChangeFilterClearAll" />
-    </toolbar>
-			*/
-			return new Dictionary<string, ToolStripItem>();
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdRefresh, refreshToolStripMenuItem},
+				{Command.LexicalToolsList, LexicalToolsList},
+				{Command.WordToolsList, WordToolsList},
+				{Command.GrammarToolsList, GrammarToolsList},
+				{Command.NotebookToolsList, NotebookToolsList},
+				{Command.ListsToolsList, ListsToolsList},
+				{Command.ShowInvisibleSpaces, ShowInvisibleSpaces},
+				{Command.Show_DictionaryPubPreview, Show_DictionaryPubPreview},
+				{Command.ShowHiddenFields, ShowHiddenFields},
+				{Command.Separator2, toolStripViewMenuSeparator2},
+				{Command.FiltersList, filtersToolStripMenuItem},
+					{Command.NoFilter, noFilterToolStripMenuItem},
+				{Command.CmdChooseTexts, CmdChooseTexts}
+			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheInsertToolStrip()
+		private Dictionary<Command, ToolStripItem> CacheDataMenuItems()
 		{
-			/*
-    <toolbar id="Insert">
-      <item command="CmdInsertLexEntry" defaultVisible="false" />
-      <item command="CmdGoToEntry" defaultVisible="false" />
-      <item command="CmdInsertReversalEntry" defaultVisible="false" />
-      <item command="CmdGoToReversalEntry" defaultVisible="false" />
-      <item command="CmdInsertText" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdAddNote" defaultVisible="false" />
-      <item command="CmdApproveAll" defaultVisible="false" />
-      <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
-      <item command="CmdGoToWfiWordform" defaultVisible="false" />
-      <item command="CmdFindAndReplaceText" defaultVisible="false" />
-      <item command="CmdBreakPhrase" defaultVisible="false" />
-      <item command="CmdInsertRecord" defaultVisible="false" />
-      <item command="CmdGoToRecord" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdAddToLexicon" defaultVisible="false" />
-      <item command="CmdLexiconLookup" defaultVisible="false" />
-      <item command="CmdInsertSemDom" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
-      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
-      <item command="CmdInsertPossibility" defaultVisible="false" />
-      <item command="CmdInsertCustomItem" defaultVisible="false" />
-      <item command="CmdInsertMorphType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
-      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
-      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-      <item command="CmdInsertPerson" defaultVisible="false" />
-      <item command="CmdInsertLocation" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-      <item command="CmdInsertLexRefType" defaultVisible="false" />
-      <item command="CmdInsertFeatureType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
-      <item command="CmdDuplicateSemDom" defaultVisible="false" />
-      <item command="CmdDuplicateAnnotationDef" defaultVisible="false" />
-      <item command="CmdDuplicatePossibility" defaultVisible="false" />
-      <item command="CmdDuplicateCustomItem" defaultVisible="false" />
-      <item command="CmdDuplicateMorphType" defaultVisible="false" />
-      <item command="CmdDuplicateAnthroCategory" defaultVisible="false" />
-      <item command="CmdDuplicatePerson" defaultVisible="false" />
-      <item command="CmdDuplicateLocation" defaultVisible="false" />
-      <item command="CmdDuplicateLexRefType" defaultVisible="false" />
-      <item command="CmdDuplicateFeatureType" defaultVisible="false" />
-      <item command="CmdInsertPOS" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-POS-SubPossibilities" label="Subcategory..." defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertEndocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExocentricCompound" defaultVisible="false" />
-      <item command="CmdInsertExceptionFeature" defaultVisible="false" />
-      <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertClosedFeature" defaultVisible="false" />
-      <item command="CmdInsertComplexFeature" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhoneme" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false" />
-      <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhEnvironment" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertPhRegularRule" defaultVisible="false" />
-      <item command="CmdInsertPhMetathesisRule" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertMorphemeACP" defaultVisible="false" />
-      <item command="CmdInsertAllomorphACP" defaultVisible="false" />
-      <item command="CmdInsertACPGroup" defaultVisible="false" />
-    </toolbar>
-			*/
-			return new Dictionary<string, ToolStripItem>();
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdFirstRecord, _data_First},
+				{Command.CmdPreviousRecord, _data_Previous},
+				{Command.CmdNextRecord, _data_Next},
+				{Command.CmdLastRecord, _data_Last},
+				{Command.Separator1, dataMenuSeparator1},
+				{Command.CmdApproveAndMoveNext, CmdApproveAndMoveNext},
+				{Command.CmdApproveForWholeTextAndMoveNext, CmdApproveForWholeTextAndMoveNext},
+				{Command.CmdNextIncompleteBundle, CmdNextIncompleteBundle},
+				{Command.CmdApprove, CmdApprove},
+				{Command.ApproveAnalysisMovementMenu, ApproveAnalysisMovementMenu},
+					{Command.CmdApproveAndMoveNextSameLine, CmdApproveAndMoveNextSameLine},
+					{Command.CmdMoveFocusBoxRight, CmdMoveFocusBoxRight},
+					{Command.CmdMoveFocusBoxLeft, CmdMoveFocusBoxLeft},
+				{Command.BrowseMovementMenu, BrowseMovementMenu},
+					{Command.CmdBrowseMoveNext, CmdBrowseMoveNext},
+					{Command.CmdNextIncompleteBundleNc, CmdNextIncompleteBundleNc},
+					{Command.CmdBrowseMoveNextSameLine, CmdBrowseMoveNextSameLine},
+					{Command.CmdMoveFocusBoxRightNc, CmdMoveFocusBoxRightNc},
+					{Command.CmdMoveFocusBoxLeftNc, CmdMoveFocusBoxLeftNc},
+				{Command.CmdMakePhrase, CmdMakePhrase},
+				{Command.CmdBreakPhrase, CmdBreakPhrase},
+				{Command.Separator2, dataMenuSeparator2},
+				{Command.CmdRepeatLastMoveLeft, CmdRepeatLastMoveLeft},
+				{Command.CmdRepeatLastMoveRight, CmdRepeatLastMoveRight},
+				{Command.CmdApproveAll, CmdApproveAll}
+			};
 		}
 
-		private Dictionary<string, ToolStripItem> CacheFormatToolStrip()
+		private Dictionary<Command, ToolStripItem> CacheInsertMenuItems()
 		{
-			/*
-    <toolbar id="Format">
-      <menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150" />
-      <menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250" />
-    </toolbar>
-			*/
-			return new Dictionary<string, ToolStripItem>();
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdInsertLexEntry, CmdInsertLexEntry},
+				{Command.CmdInsertSense, CmdInsertSense},
+				{Command.CmdInsertVariant, CmdInsertVariant},
+				{Command.CmdDataTree_Insert_AlternateForm, CmdDataTree_Insert_AlternateForm},
+				{Command.CmdInsertReversalEntry, CmdInsertReversalEntry},
+				{Command.CmdDataTree_Insert_Pronunciation, CmdDataTree_Insert_Pronunciation},
+				{Command.CmdInsertMediaFile, CmdInsertMediaFile},
+				{Command.CmdDataTree_Insert_Etymology, CmdDataTree_Insert_Etymology},
+				{Command.Separator1, insertMenuSeparator1},
+				{Command.CmdInsertSubsense, CmdInsertSubsense},
+				{Command.CmdInsertPicture, CmdInsertPicture},
+				{Command.CmdInsertExtNote, CmdInsertExtNote},
+				{Command.CmdInsertText, CmdInsertText},
+				{Command.Separator2, insertMenuSeparator2},
+				{Command.CmdAddNote, CmdAddNote},
+				{Command.CmdAddWordGlossesToFreeTrans, CmdAddWordGlossesToFreeTrans},
+				{Command.ClickInvisibleSpace, ClickInsertsInvisibleSpace},
+				{Command.CmdGuessWordBreaks, CmdGuessWordBreaks},
+				{Command.Separator3, insertMenuSeparator3},
+				{Command.CmdImportWordSet, CmdImportWordSet},
+				{Command.CmdInsertHumanApprovedAnalysis, CmdInsertHumanApprovedAnalysis},
+				{Command.CmdInsertRecord, CmdInsertRecord},
+				{Command.CmdInsertSubrecord, CmdInsertSubrecord},
+				{Command.CmdInsertSubsubrecord, CmdInsertSubsubrecord},
+				{Command.CmdAddToLexicon, CmdAddToLexicon},
+				{Command.CmdInsertSemDom, CmdInsertSemDom},
+				{Command.CmdDataTree_Insert_SemanticDomain, CmdDataTree_Insert_SemanticDomain},
+				{Command.CmdInsertAnnotationDef, CmdInsertAnnotationDef},
+				{Command.CmdInsertPossibility, CmdInsertPossibility},
+				{Command.CmdInsertCustomItem, CmdInsertCustomItem},
+				{Command.CmdInsertMorphType, CmdInsertMorphType},
+				{Command.CmdInsertLexEntryInflType, CmdInsertLexEntryInflType},
+				{Command.CmdInsertLexEntryType, CmdInsertLexEntryType},
+				{Command.CmdDataTree_Insert_LexEntryInflType, CmdDataTree_Insert_LexEntryInflType},
+				{Command.CmdDataTree_Insert_LexEntryType, CmdDataTree_Insert_LexEntryType},
+				{Command.CmdInsertAnthroCategory, CmdInsertAnthroCategory},
+				{Command.CmdDataTree_Insert_AnthroCategory, CmdDataTree_Insert_AnthroCategory},
+				{Command.CmdInsertPerson, CmdInsertPerson},
+				{Command.CmdInsertLocation, CmdInsertLocation},
+				{Command.CmdDataTree_Insert_Location, CmdDataTree_Insert_Location},
+				{Command.CmdInsertLexRefType, CmdInsertLexRefType},
+				{Command.CmdInsertFeatureType, CmdInsertFeatureType},
+				{Command.CmdDataTree_Insert_Possibility, CmdDataTree_Insert_Possibility},
+				{Command.CmdDataTree_Insert_CustomItem, CmdDataTree_Insert_CustomItem},
+				{Command.Separator4, insertMenuSeparator4},
+				{Command.CmdAddCustomList, CmdAddCustomList},
+				{Command.CmdInsertPOS, CmdInsertPOS},
+				{Command.CmdDataTree_Insert_POS_SubPossibilities, CmdDataTree_Insert_POS_SubPossibilities},
+				{Command.CmdDataTree_Insert_POS_AffixTemplate, CmdDataTree_Insert_POS_AffixTemplate},
+				{Command.CmdDataTree_Insert_POS_AffixSlot, CmdDataTree_Insert_POS_AffixSlot},
+				{Command.CmdDataTree_Insert_POS_InflectionClass, CmdDataTree_Insert_POS_InflectionClass},
+				{Command.Separator5, insertMenuSeparator5},
+				{Command.CmdInsertEndocentricCompound, CmdInsertEndocentricCompound},
+				{Command.CmdInsertExocentricCompound, CmdInsertExocentricCompound},
+				{Command.CmdInsertExceptionFeature, CmdInsertExceptionFeature},
+				{Command.CmdInsertPhonologicalClosedFeature, CmdInsertPhonologicalClosedFeature},
+				{Command.CmdInsertClosedFeature, CmdInsertClosedFeature},
+				{Command.CmdInsertComplexFeature, CmdInsertComplexFeature},
+				{Command.CmdDataTree_Insert_ClosedFeature_Value, CmdDataTree_Insert_ClosedFeature_Value},
+				{Command.Separator6, insertMenuSeparator6},
+				{Command.CmdInsertPhoneme, CmdInsertPhoneme},
+				{Command.CmdDataTree_Insert_Phoneme_Code, CmdDataTree_Insert_Phoneme_Code},
+				{Command.Separator7, insertMenuSeparator7},
+				{Command.CmdInsertSegmentNaturalClasses, CmdInsertSegmentNaturalClasses},
+				{Command.CmdInsertFeatureNaturalClasses, CmdInsertFeatureNaturalClasses},
+				{Command.Separator8, insertMenuSeparator8},
+				{Command.CmdInsertPhEnvironment, CmdInsertPhEnvironment},
+				{Command.Separator9, insertMenuSeparator9},
+				{Command.CmdInsertPhRegularRule, CmdInsertPhRegularRule},
+				{Command.CmdInsertPhMetathesisRule, CmdInsertPhMetathesisRule},
+				{Command.Separator10, insertMenuSeparator10},
+				{Command.CmdInsertMorphemeACP, CmdInsertMorphemeACP},
+				{Command.CmdInsertAllomorphACP, CmdInsertAllomorphACP},
+				{Command.CmdInsertACPGroup, CmdInsertACPGroup},
+				{Command.Separator11, insertMenuSeparator11},
+				{Command.CmdShowCharMap, CmdShowCharMap},
+				{Command.CmdInsertLinkToFile, CmdInsertLinkToFile}
+			};
 		}
+
+		private Dictionary<Command, ToolStripItem> CacheFormatMenuItems()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdFormatStyle, CmdFormatStyle},
+				{Command.CmdFormatApplyStyle, CmdFormatApplyStyle},
+				{Command.WritingSystemList, WritingSystemMenu},
+				{Command.CmdVernacularWritingSystemProperties, CmdVernacularWritingSystemProperties},
+				{Command.CmdAnalysisWritingSystemProperties, CmdAnalysisWritingSystemProperties}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheToolsMenuItems()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.Configure, configureToolStripMenuItem },
+					{ Command.CmdConfigureDictionary, CmdConfigureDictionary },
+					{ Command.CmdConfigureInterlinear, CmdConfigureInterlinear },
+					{ Command.CmdConfigureXmlDocView, CmdConfigureXmlDocView },
+					{ Command.CmdConfigureList, CmdConfigureList },
+					{ Command.CmdConfigureColumns, CmdConfigureColumns },
+					{ Command.CmdConfigHeadwordNumbers, CmdConfigHeadwordNumbers },
+					{ Command.CmdRestoreDefaults, CmdRestoreDefaults },
+					{ Command.Separator1, toolMenuSeparator1 },
+					{ Command.CmdVernacularWritingSystemProperties, CmdVernacularWritingSystemProperties },
+					{ Command.CmdAnalysisWritingSystemProperties, CmdAnalysisWritingSystemProperties },
+					{ Command.CmdAddCustomField, CmdAddCustomField },
+				{ Command.Separator2, toolMenuSeparator2 },
+				{ Command.CmdMergeEntry, CmdMergeEntry },
+				{ Command.CmdLexiconLookup, CmdLexiconLookup },
+				{ Command.ITexts_AddWordsToLexicon, ITexts_AddWordsToLexicon },
+				{ Command.Separator3, toolMenuSeparator3 },
+				{ Command.Spelling, ToolsMenu_SpellingMenu },
+					{ Command.CmdEditSpellingStatus, CmdEditSpellingStatus },
+					{ Command.CmdViewIncorrectWords, CmdViewIncorrectWords },
+					{ Command.CmdUseVernSpellingDictionary, CmdUseVernSpellingDictionary },
+					{ Command.Separator4, toolMenuSeparator4 },
+					{ Command.CmdChangeSpelling, CmdChangeSpelling },
+				{ Command.CmdProjectUtilities, CmdProjectUtilities },
+				{ Command.Separator5, toolMenuSeparator5 },
+				{ Command.CmdToolsOptions, CmdToolsOptions },
+				{ Command.CmdMacroF2, CmdMacroF2 },
+				{ Command.CmdMacroF3, CmdMacroF3 },
+				{ Command.CmdMacroF4, CmdMacroF4 },
+				{ Command.CmdMacroF6, CmdMacroF6 },
+				{ Command.CmdMacroF7, CmdMacroF7 },
+				{ Command.CmdMacroF8, CmdMacroF8 },
+				{ Command.CmdMacroF9, CmdMacroF9 },
+				{ Command.CmdMacroF10, CmdMacroF10 },
+				{ Command.CmdMacroF11, CmdMacroF11 },
+				{ Command.CmdMacroF12, CmdMacroF12 }
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheParserMenuItems()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdParseAllWords, CmdParseAllWords},
+				{Command.CmdReparseAllWords, CmdReparseAllWords},
+				{Command.CmdReInitializeParser, CmdReInitializeParser},
+				{Command.CmdStopParser, CmdStopParser},
+				{Command.Separator1, toolStripParserMenuSeparator1},
+				{Command.CmdTryAWord, CmdTryAWord},
+				{Command.CmdParseWordsInCurrentText, CmdParseWordsInCurrentText},
+				{Command.CmdParseCurrentWord, CmdParseCurrentWord},
+				{Command.CmdClearSelectedWordParserAnalyses, CmdClearSelectedWordParserAnalyses},
+				{Command.Separator2, toolStripParserMenuSeparator2},
+				{Command.ChooseParserMenu, ChooseParserMenu},
+					{Command.CmdChooseXAmpleParser, CmdChooseXAmpleParser},
+					{Command.CmdChooseHCParser, CmdChooseHCParser},
+				{Command.CmdEditParserParameters, CmdEditParserParameters}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheWindowMenuItems()
+		{
+			// An ordinary event handler on the window does this.
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdNewWindow,  newWindowToolStripMenuItem}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheHelpMenuItems()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdHelpLanguageExplorer,  CmdHelpLanguageExplorer},
+				{Command.CmdHelpTraining,  CmdHelpTraining},
+				{Command.CmdHelpDemoMovies,  CmdHelpDemoMovies},
+				{Command.Resources,  HelpMenu_ResourcesMenu},
+					{Command.CmdHelpLexicographyIntro,  CmdHelpLexicographyIntro},
+					{Command.CmdHelpMorphologyIntro,  CmdHelpMorphologyIntro},
+					{Command.CmdHelpNotesSendReceive,  CmdHelpNotesSendReceive},
+					{Command.CmdHelpNotesSFMDatabaseImport,  CmdHelpNotesSFMDatabaseImport},
+					{Command.CmdHelpNotesLinguaLinksDatabaseImport,  CmdHelpNotesLinguaLinksDatabaseImport},
+					{Command.CmdHelpNotesInterlinearImport,  CmdHelpNotesInterlinearImport},
+					{Command.CmdHelpNotesWritingSystems,  CmdHelpNotesWritingSystems},
+					{Command.CmdHelpXLingPap,  CmdHelpXLingPap},
+				{Command.Separator1,  toolStripHelpMenuSeparator1},
+				{Command.CmdHelpReportBug,  CmdHelpReportBug},
+				{Command.CmdHelpMakeSuggestion,  CmdHelpMakeSuggestion},
+				{Command.Separator2,  toolStripHelpMenuSeparator2},
+				{Command.CmdHelpAbout, CmdHelpAbout }
+			};
+		}
+
+		#endregion Cache main menu items
+
+		#region Cache tool bar items
+
+		private Dictionary<ToolBar, Dictionary<Command, ToolStripItem>> CacheToolbarItems()
+		{
+			return new Dictionary<ToolBar, Dictionary<Command, ToolStripItem>>
+			{
+				{ ToolBar.Standard,  CacheStandardToolStrip()},
+				{ ToolBar.View,  CacheViewToolStrip()},
+				{ ToolBar.Insert,  CacheInsertToolStrip()},
+				{ ToolBar.Format,  CacheFormatToolStrip()}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheStandardToolStrip()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{Command.CmdHistoryBack, CmdHistoryBack},
+				{Command.CmdHistoryForward, CmdHistoryForward},
+				{Command.Separator1, standardToolStripSeparator1},
+				{Command.CmdDeleteRecord, Toolbar_CmdDeleteRecord},
+				{Command.Separator2, standardToolStripSeparator2},
+				{Command.CmdUndo, Toolbar_CmdUndo},
+				{Command.CmdRedo, Toolbar_CmdRedo},
+				{Command.CmdRefresh, Toolbar_CmdRefresh},
+				{Command.Separator3, standardToolStripSeparator3},
+				{Command.CmdFirstRecord, Toolbar_CmdFirstRecord},
+				{Command.CmdPreviousRecord, Toolbar_CmdPreviousRecord},
+				{Command.CmdNextRecord, Toolbar_CmdNextRecord},
+				{Command.CmdLastRecord, Toolbar_CmdLastRecord},
+				{Command.CmdFLExLiftBridge, Toolbar_CmdFLExLiftBridge}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheInsertToolStrip()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdInsertLexEntry,  Toolbar_CmdInsertLexEntry},
+				{ Command.CmdGoToEntry,  Toolbar_CmdGoToEntry},
+				{ Command.CmdInsertReversalEntry,  Toolbar_CmdInsertReversalEntry},
+				{ Command.CmdGoToReversalEntry,  Toolbar_CmdGoToReversalEntry},
+				{ Command.CmdInsertText,  Toolbar_CmdInsertText},
+				{ Command.Separator1,  insertToolStripSeparator1},
+				{ Command.CmdAddNote,  Toolbar_CmdAddNote},
+				{ Command.CmdApproveAll,  Toolbar_CmdApproveAllButton}, // Image is locked in InterlinearImageHolder
+				{ Command.CmdInsertHumanApprovedAnalysis,  Toolbar_CmdInsertHumanApprovedAnalysis},
+				{ Command.CmdGoToWfiWordform,  Toolbar_CmdGoToWfiWordform},
+				{ Command.CmdFindAndReplaceText,  Toolbar_CmdFindAndReplaceText},
+				{ Command.CmdBreakPhrase,  Toolbar_CmdBreakPhraseButton},
+				{ Command.CmdInsertRecord,  Toolbar_CmdInsertRecord},
+				{ Command.CmdGoToRecord,  Toolbar_CmdGoToRecord},
+				{ Command.Separator2,  insertToolStripSeparator2},
+				{ Command.CmdAddToLexicon,  Toolbar_CmdAddToLexicon},
+				{ Command.CmdLexiconLookup,  Toolbar_CmdLexiconLookup},
+				{ Command.CmdInsertSemDom,  Toolbar_CmdInsertSemDom},
+				{ Command.CmdDataTree_Insert_SemanticDomain,  Toolbar_CmdDataTree_Insert_SemanticDomain},
+				{ Command.CmdInsertAnnotationDef,  Toolbar_CmdInsertAnnotationDef},
+				{ Command.CmdInsertPossibility,  Toolbar_CmdInsertPossibility},
+				{ Command.CmdInsertCustomItem,  Toolbar_CmdInsertCustomItem},
+				{ Command.CmdInsertMorphType,  Toolbar_CmdInsertMorphType},
+				{ Command.CmdInsertLexEntryInflType,  Toolbar_CmdInsertLexEntryInflType},
+				{ Command.CmdInsertLexEntryType,  Toolbar_CmdInsertLexEntryType},
+				{ Command.CmdDataTree_Insert_LexEntryInflType,  Toolbar_CmdDataTree_Insert_LexEntryInflType},
+				{ Command.CmdDataTree_Insert_LexEntryType,  Toolbar_CmdDataTree_Insert_LexEntryType},
+				{ Command.CmdInsertAnthroCategory,  Toolbar_CmdInsertAnthroCategory},
+				{ Command.CmdDataTree_Insert_AnthroCategory,  Toolbar_CmdDataTree_Insert_AnthroCategory},
+				{ Command.CmdInsertPerson,  Toolbar_CmdInsertPerson},
+				{ Command.CmdInsertLocation,  Toolbar_CmdInsertLocation},
+				{ Command.CmdDataTree_Insert_Location,  Toolbar_CmdDataTree_Insert_Location},
+				{ Command.CmdInsertLexRefType,  Toolbar_CmdInsertLexRefType},
+				{ Command.CmdInsertFeatureType,  Toolbar_CmdInsertFeatureType},
+				{ Command.CmdDataTree_Insert_Possibility,  Toolbar_CmdDataTree_Insert_Possibility},
+				{ Command.CmdDataTree_Insert_CustomItem,  Toolbar_CmdDataTree_Insert_CustomItem},
+				{ Command.CmdDuplicateSemDom,  Toolbar_CmdDuplicateSemDom},
+				{ Command.CmdDuplicateAnnotationDef,  Toolbar_CmdDuplicateAnnotationDef},
+				{ Command.CmdDuplicatePossibility,  Toolbar_CmdDuplicatePossibility},
+				{ Command.CmdDuplicateCustomItem,  Toolbar_CmdDuplicateCustomItem},
+				{ Command.CmdDuplicateMorphType,  Toolbar_CmdDuplicateMorphType},
+				{ Command.CmdDuplicateAnthroCategory,  Toolbar_CmdDuplicateAnthroCategory},
+				{ Command.CmdDuplicatePerson,  Toolbar_CmdDuplicatePerson},
+				{ Command.CmdDuplicateLocation,  Toolbar_CmdDuplicateLocation},
+				{ Command.CmdDuplicateLexRefType,  Toolbar_CmdDuplicateLexRefType},
+				{ Command.CmdDuplicateFeatureType,  Toolbar_CmdDuplicateFeatureType},
+				{ Command.CmdInsertPOS,  Toolbar_CmdInsertPOS},
+				{ Command.CmdDataTree_Insert_POS_SubPossibilities,  Toolbar_CmdDataTree_Insert_POS_SubPossibilities},
+				{ Command.Separator3,  insertToolStripSeparator3},
+				{ Command.CmdInsertEndocentricCompound,  Toolbar_CmdInsertEndocentricCompound},
+				{ Command.CmdInsertExocentricCompound,  Toolbar_CmdInsertExocentricCompound},
+				{ Command.CmdInsertExceptionFeature,  Toolbar_CmdInsertExceptionFeature},
+				{ Command.CmdInsertPhonologicalClosedFeature,  Toolbar_CmdInsertPhonologicalClosedFeature},
+				{ Command.CmdInsertClosedFeature,  Toolbar_CmdInsertClosedFeature},
+				{ Command.CmdInsertComplexFeature,  Toolbar_CmdInsertComplexFeature},
+				{ Command.Separator4,  insertToolStripSeparator4},
+				{ Command.CmdInsertPhoneme,  Toolbar_CmdInsertPhoneme},
+				{ Command.Separator5,  insertToolStripSeparator5},
+				{ Command.CmdInsertSegmentNaturalClasses,  Toolbar_CmdInsertSegmentNaturalClasses},
+				{ Command.CmdInsertFeatureNaturalClasses,  Toolbar_CmdInsertFeatureNaturalClasses},
+				{ Command.Separator6,  insertToolStripSeparator6},
+				{ Command.CmdInsertPhEnvironment,  Toolbar_CmdInsertPhEnvironment},
+				{ Command.Separator7,  insertToolStripSeparator7},
+				{ Command.CmdInsertPhRegularRule,  Toolbar_CmdInsertPhRegularRule},
+				{ Command.CmdInsertPhMetathesisRule,  Toolbar_CmdInsertPhMetathesisRule},
+				{ Command.Separator8,  insertToolStripSeparator8},
+				{ Command.CmdInsertMorphemeACP,  Toolbar_CmdInsertMorphemeACP},
+				{ Command.CmdInsertAllomorphACP,  Toolbar_CmdInsertAllomorphACP},
+				{ Command.CmdInsertACPGroup,  Toolbar_CmdInsertACPGroup}
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheViewToolStrip()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdChooseTexts,  Toolbar_CmdChooseTexts},
+				{ Command.CmdChangeFilterClearAll,  Toolbar_CmdChangeFilterClearAll} // Event handled by main window
+			};
+		}
+
+		private Dictionary<Command, ToolStripItem> CacheFormatToolStrip()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.WritingSystemList,  Toolbar_WritingSystemList},
+				{ Command.CombinedStylesList,  Toolbar_CombinedStylesList}
+			};
+		}
+
+		#endregion Cache tool bar items
 
 		/// <summary>
 		/// Gets the pathname of the "crash detector" file.
@@ -556,11 +778,11 @@ namespace LanguageExplorer.Impls
 			{
 				ClearDuringTransition();
 				// Reset Edit->Find state to default conditions. Each tool can then sort out what to do with it
-				findToolStripMenuItem.Visible = true;
-				findToolStripMenuItem.Enabled = false;
-				toolStripButtonFindText.Visible = toolStripButtonFindText.Enabled = false;
-				replaceToolStripMenuItem.Visible = true;
-				replaceToolStripMenuItem.Enabled = false;
+				CmdFindAndReplaceText.Visible = true;
+				CmdFindAndReplaceText.Enabled = false;
+				Toolbar_CmdFindAndReplaceText.Visible = Toolbar_CmdFindAndReplaceText.Enabled = false;
+				CmdReplaceText.Visible = true;
+				CmdReplaceText.Enabled = false;
 				if (_currentArea.ActiveTool != null)
 				{
 					_currentArea.ActiveTool = null;
@@ -891,8 +1113,10 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the specified main menu
 		/// </summary>
-		/// <param name="menuName"></param>
 		/// <returns>Return the specified main menu, or null if not found.</returns>
+		/// <remarks>
+		/// SimpleRootSite calls this via reflection to get the CmdPrint menu from the File menu.
+		/// </remarks>
 		public ToolStripMenuItem GetMainMenu(string menuName)
 		{
 			ToolStripMenuItem retval = null;
@@ -911,55 +1135,70 @@ namespace LanguageExplorer.Impls
 		/// </remarks>
 		public void Initialize(bool windowIsCopy = false, FwLinkArgs linkArgs = null)
 		{
+			toolStripStandard.Dock = DockStyle.Top;
+			toolStripInsert.Dock = DockStyle.Top;
+			toolStripView.Dock = DockStyle.Top;
+			toolStripFormat.Dock = DockStyle.Top;
 			_windowIsCopy = windowIsCopy;
 			_startupLink = linkArgs; // May be null.
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			SetupCustomStatusBarPanels();
-			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
-			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
+			CmdProjectLocation.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
+			CmdArchiveWithRamp.Enabled = ReapRamp.Installed;
 			_viewHelper = new ActiveViewHelper(this);
-			_linkHandler = new LinkHandler(this, Cache, toolStripButtonHistoryBack, toolStripButtonHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
+			_linkHandler = new LinkHandler(this, Cache, CmdHistoryBack, CmdHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
 			_linkHandler.InitializeFlexComponent(flexComponentParameters);
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();
-			_dataNavigationManager = new DataNavigationManager(new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
-			{
-				{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
-				{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
-				{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
-				{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
-			});
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
-			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
-			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, toolStripComboBoxStyles);
-			var cachedUiItems = new Dictionary<string, Dictionary<string, Dictionary<string, ToolStripItem>>>
+			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, Toolbar_WritingSystemList, WritingSystemMenu);
+			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, Toolbar_CombinedStylesList);
+			var mainMenus = new Dictionary<MainMenu, ToolStripMenuItem>
 			{
-				{ LanguageExplorerConstants.CachedMenusKey,  CacheMenuItems()},
-				{ LanguageExplorerConstants.CachedToolBarsKey,  CacheToolbarItems()}
+				{ MainMenu.File,  _fileToolStripMenuItem},
+				{ MainMenu.SendReceive,  _sendReceiveToolStripMenuItem},
+				{ MainMenu.Edit,  _editToolStripMenuItem},
+				{ MainMenu.View,  _viewToolStripMenuItem},
+				{ MainMenu.Data,  _dataToolStripMenuItem},
+				{ MainMenu.Insert,  _insertToolStripMenuItem},
+				{ MainMenu.Format,  _formatToolStripMenuItem},
+				{ MainMenu.Tools,  _toolsToolStripMenuItem},
+				{ MainMenu.Parser,  _parserToolStripMenuItem},
+				{ MainMenu.Window,  _windowToolStripMenuItem},
+				{ MainMenu.Help,  _helpToolStripMenuItem}
 			};
-			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, cachedUiItems, _statusbar,
+			var mainToolBars = new Dictionary<ToolBar, ToolStrip>
+			{
+				{ ToolBar.Standard,  toolStripStandard},
+				{ ToolBar.View,  toolStripView},
+				{ ToolBar.Insert,  toolStripInsert},
+				{ ToolBar.Format,  toolStripFormat}
+			};
+			var uiWidgetHelper = new UiWidgetController(new MainMenusParameterObject(mainMenus, CacheMenuItems()), new MainToolBarsParameterObject(mainToolBars, CacheToolbarItems()));
+			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], _parserToolStripMenuItem, uiWidgetHelper);
+			_dataNavigationManager = new DataNavigationManager(uiWidgetHelper);
+			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, uiWidgetHelper, _statusbar,
 				_parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			SetTemporaryProperties();
 			RecordListServices.Setup(_majorFlexComponentParameters);
 			// Most tools show it, but let them deal with it and its event handler.
-			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
-			fileExportMenu.Visible = false;
-			fileExportMenu.Enabled = false;
-			deleteToolStripButton.Click += Edit_Delete_Click;
+			CmdExport.Visible = false;
+			CmdExport.Enabled = false;
+			Toolbar_CmdDeleteRecord.Click += Edit_Delete_Click;
 			// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
 			// Windows: Enable the menu if we can find the CharMap program.
-			specialCharacterToolStripMenuItem.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
+			CmdShowCharMap.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			IdleQueue = new IdleQueue();
-			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
+			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, uiWidgetHelper, _sendReceiveToolStripMenuItem);
 			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
 			Cache.DomainDataByFlid.AddNotification(this);
-			showVernacularSpellingErrorsToolStripMenuItem.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
-			if (showVernacularSpellingErrorsToolStripMenuItem.Checked)
+			CmdUseVernSpellingDictionary.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
+			if (CmdUseVernSpellingDictionary.Checked)
 			{
 				EnableVernacularSpelling();
 			}
@@ -1221,7 +1460,7 @@ namespace LanguageExplorer.Impls
 					}
 				}
 				_idleProcessingHelpers.Clear();
-				deleteToolStripButton.Click -= Edit_Delete_Click;
+				Toolbar_CmdDeleteRecord.Click -= Edit_Delete_Click;
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 				RecordListServices.TearDown(Handle);
@@ -1252,15 +1491,6 @@ namespace LanguageExplorer.Impls
 				_viewHelper?.Dispose();
 			}
 
-			_fileToolStripMenuItem = null;
-			_sendReceiveToolStripMenuItems = null;
-			_editToolStripMenuItems = null;
-			_viewToolStripMenuItems = null;
-			_insertToolStripMenuItems = null;
-			_formatToolStripMenuItems = null;
-			_toolsToolStripMenuItems = null;
-			_windowToolStripMenuItems = null;
-			_helpToolStripMenuItems = null;
 			_sendReceiveMenuManager = null;
 			_parserMenuManager = null;
 			_dataNavigationManager = null;
@@ -1531,16 +1761,6 @@ namespace LanguageExplorer.Impls
 
 		private void File_FieldWorks_Project_Properties(object sender, EventArgs e)
 		{
-			// 'true' for either of these two menus,
-			// but 'false' for fieldWorksProjectPropertiesToolStripMenuItem on the File menu.
-			LaunchProjPropertiesDlg(sender == setUpWritingSystemsToolStripMenuItem || sender == setUpWritingSystemsToolStripMenuItem1);
-		}
-
-		/// <summary>
-		/// Launches the proj properties DLG.
-		/// </summary>
-		private void LaunchProjPropertiesDlg(bool startOnWSPage)
-		{
 			var cache = _flexApp.Cache;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 			{
@@ -1552,10 +1772,6 @@ namespace LanguageExplorer.Impls
 			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp, _flexApp))
 			{
 				dlg.ProjectPropertiesChanged += ProjectProperties_Changed;
-				if (startOnWSPage)
-				{
-					dlg.StartWithWSPage();
-				}
 				if (dlg.ShowDialog(this) != DialogResult.Abort)
 				{
 					// NOTE: This code is called, even if the user cancelled the dlg.
@@ -1581,6 +1797,16 @@ namespace LanguageExplorer.Impls
 			{
 				_flexApp.FwManager.RenameProject(sProject);
 			}
+		}
+
+		private void CmdVernacularWritingSystemProperties_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show(this, "This feature needs a merge from release9.0 into develop, before it can be finished.", "Please be patient");
+		}
+
+		private void CmdAnalysisWritingSystemProperties_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show(this, "This feature needs a merge from release9.0 into develop, before it can be finished.", "Please be patient");
 		}
 
 		private void SetWindowTitle()
@@ -1862,8 +2088,8 @@ namespace LanguageExplorer.Impls
 			redoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawRedoText);
 			redoToolStripMenuItem.Enabled = redoEnabled;
 			// Standard toolstrip buttons.
-			undoToolStripButton.Enabled = undoEnabled;
-			redoToolStripButton.Enabled = redoEnabled;
+			Toolbar_CmdUndo.Enabled = undoEnabled;
+			Toolbar_CmdRedo.Enabled = redoEnabled;
 		}
 
 		/// <summary>
@@ -1918,9 +2144,9 @@ namespace LanguageExplorer.Impls
 					enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
 				}
 			}
-			deleteToolStripButton.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
+			Toolbar_CmdDeleteRecord.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
 			deleteToolStripMenuItem.Text = deleteText;
-			deleteToolStripButton.ToolTipText = tooltipText;
+			Toolbar_CmdDeleteRecord.ToolTipText = tooltipText;
 		}
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
@@ -1974,8 +2200,6 @@ very simple minor adjustments. ;)"
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
 		protected override void OnLoad(EventArgs e)
 		{
-			// Tools make it visible as needed.
-			ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 			base.OnLoad(e);
 			var currentArea = _areaRepository.PersistedOrDefaultArea;
 			var currentTool = currentArea.PersistedOrDefaultTool;
@@ -2080,16 +2304,6 @@ very simple minor adjustments. ;)"
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-//Debug.WriteLine($"Start 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			_dataNavigationManager.SetEnabledStateForWidgets();
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"End 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			var activeView = _viewHelper.ActiveView;
 			var hasActiveView = activeView != null;
 			if (hasActiveView)
@@ -2103,7 +2317,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 				cutToolStripMenuItem.Enabled = editingHelper.CanCut();
 				copyToolStripMenuItem.Enabled = editingHelper.CanCopy();
 				pasteToolStripMenuItem.Enabled = editingHelper.CanPaste();
-				applyStyleToolStripMenuItem.Enabled = CanApplyStyle(editingHelper);
+				CmdFormatApplyStyle.Enabled = CanApplyStyle(editingHelper);
 				selectAllToolStripMenuItem.Enabled = !DataUpdateMonitor.IsUpdateInProgress();
 				if (editingHelper is RootSiteEditingHelper)
 				{
@@ -2132,7 +2346,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 				copyToolStripMenuItem.Enabled = false;
 				pasteToolStripMenuItem.Enabled = false;
 				pasteHyperlinkToolStripMenuItem.Enabled = false;
-				applyStyleToolStripMenuItem.Enabled = false;
+				CmdFormatApplyStyle.Enabled = false;
 				pasteHyperlinkToolStripMenuItem.Enabled = false;
 				selectAllToolStripMenuItem.Enabled = false;
 #if RANDYTODO_TEST_Application_Idle
@@ -2140,7 +2354,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 //Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
 			}
-			toolStripButtonChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
+			Toolbar_CmdChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
 			// Enable/disable toolbar buttons.
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.
@@ -2161,9 +2375,9 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 // TODO: Remove when finished sorting out idle issues.
 //Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
-			if (linkToFileToolStripMenuItem.Visible)
+			if (CmdInsertLinkToFile.Visible)
 			{
-				linkToFileToolStripMenuItem.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
+				CmdInsertLinkToFile.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
 			}
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.
@@ -2445,7 +2659,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 			}
-			showVernacularSpellingErrorsToolStripMenuItem.Checked = checking;
+			CmdUseVernSpellingDictionary.Checked = checking;
 			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
 			RestartSpellChecking();
 		}
@@ -2478,11 +2692,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private void RestartSpellChecking()
 		{
 			_flexApp.RestartSpellChecking();
-		}
-
-		private void _stopParserToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-
 		}
 	}
 }

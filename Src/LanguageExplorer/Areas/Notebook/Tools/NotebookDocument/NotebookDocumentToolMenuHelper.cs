@@ -46,14 +46,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_notebookAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
 			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 
 			AddTool_ConfigureItem();
-			((NotebookAreaMenuHelper)_notebookAreaMenuHelper).AddInsertMenuItems(false);
+			((NotebookAreaMenuHelper)_notebookAreaMenuHelper).AddInsertMenuItems();
 
 			// The find/Replace button is always on the toolbar, but not always visible/enabled.
 			_insertFindAndReplaceButton = ToolbarServices.GetInsertFindAndReplaceToolStripItem(_majorFlexComponentParameters.ToolStripContainer);

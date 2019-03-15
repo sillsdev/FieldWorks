@@ -291,12 +291,6 @@
   <data name="HideAdvancedListItemFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HideAdvancedListItemFields.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="CustomFields" xml:space="preserve">
-    <value>Custom _Fields...</value>
-  </data>
-  <data name="CustomFieldsTooltip" xml:space="preserve">
-    <value>Add or edit custom fields.</value>
-  </data>
   <data name="AllAnalysisVernacularWs" xml:space="preserve">
     <value>All Analysis then all Vernacular Writing Systems</value>
   </data>
@@ -594,12 +588,6 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
-  </data>
-  <data name="ConfigureColumns" xml:space="preserve">
-    <value>_Columns...</value>
-  </data>
-  <data name="ConfigureColumnsTooltip" xml:space="preserve">
-    <value>Configure current browse pane.</value>
   </data>
   <data name="ConfigureDictionary" xml:space="preserve">
     <value>Dictionary...</value>

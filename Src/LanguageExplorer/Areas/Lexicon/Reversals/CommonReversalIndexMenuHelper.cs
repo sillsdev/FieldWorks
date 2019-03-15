@@ -21,6 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		private const int FindReversalEntryImageIndex = 3;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
+		private ITool _tool;
 		private IRecordList _recordList;
 		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private ToolStripButton _insertReversalEntryToolStripButton;
@@ -31,8 +32,9 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		/// <summary />
-		public CommonReversalIndexMenuHelper()
+		public CommonReversalIndexMenuHelper(ITool tool)
 		{
+			_tool = tool;
 			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
 		}
 
@@ -48,8 +50,8 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			_area = area;
 			// It is really an instance of AllReversalEntriesRecordList.
 			_recordList = recordList;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper();
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, this, recordList);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_tool);
+			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 			SetupInsertToolbar();
 			SetupEditMenu();
 			SetupInsertMenu();

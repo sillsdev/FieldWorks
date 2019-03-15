@@ -25,7 +25,7 @@ namespace LanguageExplorer
 		bool AreCustomFieldsAProblem(int[] clsids);
 		void BecomeInactive();
 		bool CanChangeFilterClearAll { get; }
-		IReadOnlyDictionary<Navigation, bool> CanMoveToOptions();
+		IReadOnlyDictionary<Navigation, bool> CanMoveToOptions { get; }
 		int CurrentIndex { get; set; }
 		ICmObject CurrentObject { get; }
 		int CurrentObjectHvo { get; }

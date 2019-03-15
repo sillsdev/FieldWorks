@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -33,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			NewStText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			newText.ContentsOA = NewStText;
 			List.CreateFirstParagraph(NewStText, wsText);
-			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
+			NewStText.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false);
 			if (Cache.LangProject.DiscourseDataOA == null)
 			{
 				Cache.LangProject.DiscourseDataOA = Cache.ServiceLocator.GetInstance<IDsDiscourseDataFactory>().Create();

@@ -30,6 +30,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
+			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_grammarSketchToolMenuHelper.UnwireSharedEventHandlers();
 			_grammarSketchToolMenuHelper.Dispose();
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
@@ -45,7 +47,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_grammarSketchToolMenuHelper = new GrammarSketchToolMenuHelper();
+			_grammarSketchToolMenuHelper = new GrammarSketchToolMenuHelper(this);
 			_grammarSketchHtmlViewer = new GrammarSketchHtmlViewer
 			{
 				Dock = DockStyle.Fill
