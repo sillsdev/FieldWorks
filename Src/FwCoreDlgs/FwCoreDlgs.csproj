@@ -94,7 +94,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -518,7 +518,7 @@
     <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.Designer.cs">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="WritingSystemPropertiesDialog.cs">
+    <Compile Include="FwWritingSystemSetupDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="AddCnvtrDlg.resx">
@@ -687,8 +687,8 @@
     <EmbeddedResource Include="WarningNotUsingDefaultLinkedFilesLocation.resx">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WritingSystemPropertiesDialog.resx">
-      <DependentUpon>WritingSystemPropertiesDialog.cs</DependentUpon>
+    <EmbeddedResource Include="FwWritingSystemSetupDlg.resx">
+      <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs">

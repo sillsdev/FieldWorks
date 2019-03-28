@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (selectedMI.Text == LexTextControls.ks_DefineNew_)
 			{
 				IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-				if (WritingSystemPropertiesDialog.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
+				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
 					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, true, null,
 					out newWritingSystems))
 				{

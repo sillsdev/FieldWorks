@@ -36,7 +36,7 @@ using MatchedPair = SIL.WritingSystems.MatchedPair;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <inheritdoc />
-	public class WritingSystemPropertiesDialog : Form
+	public class FwWritingSystemSetupDlg : Form
 	{
 		private enum CollationRulesType
 		{
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, wsManager, wsContainer, helpTopicProvider, app))
+			using (var wsPropsDlg = new FwWritingSystemSetupDlg(cache, wsManager, wsContainer, helpTopicProvider, app))
 			{
 				wsPropsDlg.SetupDialog(languageTag, languageName, displayRelatedWss);
 
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return false; // nothing changed.
 			}
 			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, cache.ServiceLocator.WritingSystemManager,
+			using (var wsPropsDlg = new FwWritingSystemSetupDlg(cache, cache.ServiceLocator.WritingSystemManager,
 				wsContainer, helpTopicProvider, app))
 			{
 				wsPropsDlg.SetupDialog(selectedWS, true);
@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsContainer">The ws container.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		public WritingSystemPropertiesDialog(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
+		public FwWritingSystemSetupDlg(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_cache = cache;
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WritingSystemPropertiesDialog"/> class.
 		/// </summary>
-		private WritingSystemPropertiesDialog()
+		private FwWritingSystemSetupDlg()
 		{
 			//
 			// Required for Windows Form Designer support
@@ -901,7 +901,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WritingSystemPropertiesDialog));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwWritingSystemSetupDlg));
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.tpGeneral = new System.Windows.Forms.TabPage();
 			this.lblScriptRegionVariant = new System.Windows.Forms.Label();
@@ -2037,7 +2037,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 
-			var resources = new ComponentResourceManager(typeof(WritingSystemPropertiesDialog));
+			var resources = new ComponentResourceManager(typeof(FwWritingSystemSetupDlg));
 			// apply default text
 			m_similarWsButton.Text = (string)resources.GetObject("m_similarWsButton.Text");
 		}

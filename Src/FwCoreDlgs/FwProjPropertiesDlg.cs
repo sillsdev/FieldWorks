@@ -1406,7 +1406,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var selectedWs = GetCurrentSelectedWs(list);
 
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-			if (WritingSystemPropertiesDialog.ShowModifyDialog(this, selectedWs, addNewForLangOfSelectedWs, m_cache, CurrentWritingSystemContainer,
+			if (FwWritingSystemSetupDlg.ShowModifyDialog(this, selectedWs, addNewForLangOfSelectedWs, m_cache, CurrentWritingSystemContainer,
 				m_helpTopicProvider, m_app, out newWritingSystems))
 			{
 				m_fWsChanged = true;
@@ -1576,7 +1576,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void DisplayNewWritingSystemProperties(CheckedListBox list)
 		{
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-			if (WritingSystemPropertiesDialog.ShowNewDialog(this, m_cache, m_cache.ServiceLocator.WritingSystemManager, CurrentWritingSystemContainer,
+			if (FwWritingSystemSetupDlg.ShowNewDialog(this, m_cache, m_cache.ServiceLocator.WritingSystemManager, CurrentWritingSystemContainer,
 				m_helpTopicProvider, m_app, true, null, out newWritingSystems))
 			{
 				foreach (CoreWritingSystemDefinition ws in newWritingSystems)

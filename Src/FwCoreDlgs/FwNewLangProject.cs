@@ -925,7 +925,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(m_wsManager.WritingSystems, m_wsManager.WritingSystems,
 				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-			if (WritingSystemPropertiesDialog.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
+			if (FwWritingSystemSetupDlg.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
 				false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
