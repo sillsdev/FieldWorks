@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var wsDef = new CoreWritingSystemDefinition(_currentWs);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
-			// Set language name to be based off current language
+			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			// Can't use SelectWs because initially the new dialect is identical
 			CurrentWsSetupModel = new WritingSystemSetupModel(wsDef, WritingSystemSetupModel.SelectionsForSpecialCombo.ScriptRegionVariant);
@@ -669,7 +669,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void AddAudioHandler(object sender, EventArgs e)
 		{
 			var wsDef = new CoreWritingSystemDefinition(_currentWs) {IsVoice = true};
-			// Set language name to be based off current language
+			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
 			SelectWs(wsDef.LanguageTag);
@@ -688,7 +688,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				wsDef.Keyboard = ipaKeyboard.Id;
 			}
-			// Set language name to be based off current language
+			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
 			SelectWs(wsDef.LanguageTag);

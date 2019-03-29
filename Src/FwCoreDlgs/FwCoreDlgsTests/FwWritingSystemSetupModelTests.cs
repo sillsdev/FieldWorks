@@ -304,9 +304,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.LanguageName = "Testing";
 			var addMenuItems = testModel.GetAddMenuItems();
+			// SUT
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
-			// SUT
 			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.EqualTo("en-Zxxx-x-audio"));
 			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
 		}
@@ -319,9 +319,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.LanguageName = "Testing";
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
+			// SUT
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
-			// SUT
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.Not.EqualTo(origEnIndex));
 			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
 		}
@@ -333,9 +333,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
+			// SUT
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
-			// SUT
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.EqualTo(origEnIndex + 1));
 		}
 
@@ -346,9 +346,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
+			// SUT
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
-			// SUT
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.EqualTo(origEnIndex + 1));
 			CollectionAssert.AreEqual(new [] { "en", "en-Zxxx-x-audio", "fr"}, testModel.WorkingList.Select(ws => ws.WorkingWs.LanguageTag));
 		}
