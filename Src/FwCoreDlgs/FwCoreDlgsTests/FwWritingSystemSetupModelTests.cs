@@ -327,6 +327,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void WritingSystemList_AddItems_AddDialect_AddAfterSelected()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var origEnIndex = testModel.CurrentWritingSystemIndex;
+			var addMenuItems = testModel.GetAddMenuItems();
+			// Add an audio writing system because it currently doesn't require a cache to create properly
+			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
+			// SUT
+			Assert.That(testModel.CurrentWritingSystemIndex, Is.EqualTo(origEnIndex + 1));
+		}
+
+		[Test]
+		public void WritingSystemList_AddItems_AddAudio_AddAfterSelected()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var origEnIndex = testModel.CurrentWritingSystemIndex;
+			var addMenuItems = testModel.GetAddMenuItems();
+			// Add an audio writing system because it currently doesn't require a cache to create properly
+			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
+			// SUT
+			Assert.That(testModel.CurrentWritingSystemIndex, Is.EqualTo(origEnIndex + 1));
+			CollectionAssert.AreEqual(new [] { "en", "en-Zxxx-x-audio", "fr"}, testModel.WorkingList.Select(ws => ws.WorkingWs.LanguageTag));
+		}
+
+		[Test]
 		public void Model_NewWritingSystemAddedInManagerAndList()
 		{
 			// Set up mocks to verify wsManager save behavior
