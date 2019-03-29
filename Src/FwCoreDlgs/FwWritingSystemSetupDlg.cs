@@ -33,12 +33,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		#region Model binding methods
 		private void BindToModel(FwWritingSystemSetupModel model)
 		{
 			SuspendLayout();
 			model.AcceptSharedWsChangeWarning = ShowSharedWsChangeWarning;
 			Text = model.Title;
 			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
+			model.CurrentWsSetupModel.CurrentItemUpdated -= OnCurrentItemUpdated;
 			BindGeneralTab(model);
 			_sortControl.BindToModel(model.CurrentWsSetupModel);
 			_keyboardControl.BindToModel(model.CurrentWsSetupModel);
@@ -50,16 +52,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			BindConverterTab(model);
 			_model = model;
 			model.OnCurrentWritingSystemChanged += OnCurrentWritingSystemChangedHandler;
+			model.CurrentWsSetupModel.CurrentItemUpdated += OnCurrentItemUpdated;
 			ResumeLayout();
-		}
-
-		private bool ShowSharedWsChangeWarning(string originalLanguageName)
-		{
-			var caption = FwCoreDlgs.ksPossibleDataLoss;
-			var msg = string.Format(FwCoreDlgs.ksWSChangeWarning, _model.WorkingList.Select(ws => ws.OriginalWs.LanguageName == originalLanguageName),
-				originalLanguageName, Environment.NewLine);
-			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
-
 		}
 
 		private void BindNumbersTab(WritingSystemSetupModel model)
@@ -90,58 +84,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 			customDigits.Enabled = model.CurrentNumberingSystemDefinition.IsCustom;
 			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
-		}
-
-		private void ShowValidCharsEditor()
-		{
-			var currentWs = _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
-			using (var dlg = new ValidCharactersDlg(_model.Cache, null, _helpTopicProvider,
-				_app, currentWs, _model.CurrentWsSetupModel.CurrentDisplayLabel))
-			{
-				dlg.ShowDialog(this);
-			}
-		}
-
-		private bool ShowChangeLanguage(out LanguageInfo info)
-		{
-			using (var langPicker = new LanguageLookupDialog())
-			{
-				var result = langPicker.ShowDialog(this);
-				if (result == DialogResult.OK)
-				{
-					info = langPicker.SelectedLanguage;
-					return true;
-				}
-			}
-			info = null;
-			return false;
-		}
-
-		private bool ShowModifyEncodingConverter(string originalConverter, out string selectedConverter)
-		{
-			selectedConverter = null;
-			using (var dlg = new AddCnvtrDlg(_helpTopicProvider, _app, null, originalConverter, null, false))
-			{
-				dlg.ShowDialog();
-
-				// Either select the new one or select the old one
-				if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
-				{
-					selectedConverter = dlg.SelectedConverter;
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private bool ShowConfirmDeleteDialog(string wsDisplayLabel)
-		{
-			using (var dlg = new DeleteWritingSystemWarningDialog())
-			{
-				dlg.SetWsName(wsDisplayLabel);
-				return dlg.ShowDialog() == DialogResult.Yes;
-			}
 		}
 
 		private void BindHeader(FwWritingSystemSetupModel model)
@@ -233,6 +175,70 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			moveDown.Enabled = model.CanMoveDown();
 		}
 
+		#endregion
+
+		#region Delegates (called by presentation model)
+		private bool ShowSharedWsChangeWarning(string originalLanguageName)
+		{
+			var caption = FwCoreDlgs.ksPossibleDataLoss;
+			var msg = string.Format(FwCoreDlgs.ksWSChangeWarning, _model.WorkingList.Select(ws => ws.OriginalWs.LanguageName == originalLanguageName),
+				originalLanguageName, Environment.NewLine);
+			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
+
+		}
+
+		private void ShowValidCharsEditor()
+		{
+			var currentWs = _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
+			using (var dlg = new ValidCharactersDlg(_model.Cache, null, _helpTopicProvider,
+				_app, currentWs, _model.CurrentWsSetupModel.CurrentDisplayLabel))
+			{
+				dlg.ShowDialog(this);
+			}
+		}
+
+		private bool ShowChangeLanguage(out LanguageInfo info)
+		{
+			using (var langPicker = new LanguageLookupDialog())
+			{
+				var result = langPicker.ShowDialog(this);
+				if (result == DialogResult.OK)
+				{
+					info = langPicker.SelectedLanguage;
+					return true;
+				}
+			}
+			info = null;
+			return false;
+		}
+
+		private bool ShowModifyEncodingConverter(string originalConverter, out string selectedConverter)
+		{
+			selectedConverter = null;
+			using (var dlg = new AddCnvtrDlg(_helpTopicProvider, _app, null, originalConverter, null, false))
+			{
+				dlg.ShowDialog();
+
+				// Either select the new one or select the old one
+				if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
+				{
+					selectedConverter = dlg.SelectedConverter;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool ShowConfirmDeleteDialog(string wsDisplayLabel)
+		{
+			using (var dlg = new DeleteWritingSystemWarningDialog())
+			{
+				dlg.SetWsName(wsDisplayLabel);
+				return dlg.ShowDialog() == DialogResult.Yes;
+			}
+		}
+
 		private bool ConfirmMergeWritingSystem(string wsToMerge, out CoreWritingSystemDefinition mergeTarget)
 		{
 			mergeTarget = null;
@@ -257,6 +263,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			ProgressDialogWithTask.ImportTranslatedListsForWs(this, _model.Cache, iculocaletoimport);
 		}
+		#endregion
 
 		#region Event handlers
 		private void NumberSettingsComboOnSelectedIndexChanged(object sender, EventArgs e)
@@ -442,6 +449,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				_model.LanguageName = _languageNameTextbox.Text;
 				BindToModel(_model);
 			}
+		}
+
+		private void OnCurrentItemUpdated(object sender, EventArgs e)
+		{
+			BindCurrentWSList(_model);
 		}
 		#endregion
 
