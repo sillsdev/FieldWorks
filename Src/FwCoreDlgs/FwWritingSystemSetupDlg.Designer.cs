@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._changeCodeBtn.TabIndex = 3;
 			this._changeCodeBtn.Text = "Change...";
 			this._changeCodeBtn.UseVisualStyleBackColor = true;
-			this._changeCodeBtn.Click += new System.EventHandler(this._changeCodeBtn_Click);
+			this._changeCodeBtn.Click += new System.EventHandler(this.ChangeCodeButtonClick);
 			// 
 			// _ethnologueLink
 			// 
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._ethnologueLink.TabIndex = 4;
 			this._ethnologueLink.TabStop = true;
 			this._ethnologueLink.Text = "&Ethnologue entry for {0}";
-			this._ethnologueLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._ethnologueLink_LinkClicked);
+			this._ethnologueLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.EthnologueLinkClicked);
 			// 
 			// splitContainer2
 			// 
@@ -235,9 +235,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._wsListPanel.SetRowSpan(this._writingSystemList, 6);
 			this._writingSystemList.Size = new System.Drawing.Size(179, 405);
 			this._writingSystemList.TabIndex = 7;
-			this._writingSystemList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._writingSystemList_ItemCheck);
-			this._writingSystemList.SelectedIndexChanged += new System.EventHandler(this._writingSystemList_SelectedIndexChanged);
-			this._writingSystemList.MouseDown += new System.Windows.Forms.MouseEventHandler(this._writingSystemList_MouseDown);
+			this._writingSystemList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.WritingSystemListItemCheck);
+			this._writingSystemList.SelectedIndexChanged += new System.EventHandler(this.WritingSystemListSelectedIndexChanged);
+			this._writingSystemList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WritingSystemListMouseDown);
 			// 
 			// _addWsButton
 			// 
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._addWsButton.Size = new System.Drawing.Size(32, 32);
 			this._addWsButton.TabIndex = 8;
 			this._addWsButton.UseVisualStyleBackColor = true;
-			this._addWsButton.Click += new System.EventHandler(this._addWsButton_Click);
+			this._addWsButton.Click += new System.EventHandler(this.AddWsButtonClick);
 			// 
 			// moveUp
 			// 
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.moveUp.TabIndex = 1;
 			this.moveUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveUp.UseVisualStyleBackColor = true;
-			this.moveUp.Click += new System.EventHandler(this.moveUp_Click);
+			this.moveUp.Click += new System.EventHandler(this.MoveUpClick);
 			// 
 			// moveDown
 			// 
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.moveDown.TabIndex = 2;
 			this.moveDown.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveDown.UseVisualStyleBackColor = true;
-			this.moveDown.Click += new System.EventHandler(this.moveDown_Click);
+			this.moveDown.Click += new System.EventHandler(this.MoveDownClick);
 			// 
 			// _help
 			// 
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._help.Size = new System.Drawing.Size(32, 32);
 			this._help.TabIndex = 9;
 			this._help.UseVisualStyleBackColor = true;
-			this._help.Click += new System.EventHandler(this._writingSystemList_help_Click);
+			this._help.Click += new System.EventHandler(this.WritingListHelpClick);
 			// 
 			// _tabControl
 			// 
@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnValidChars.Size = new System.Drawing.Size(116, 22);
 			this.btnValidChars.TabIndex = 13;
 			this.btnValidChars.Text = "&Valid Characters...";
-			this.btnValidChars.Click += new System.EventHandler(this.btnValidChars_Click);
+			this.btnValidChars.Click += new System.EventHandler(this.OnValidCharsButtonClick);
 			// 
 			// _numbersTab
 			// 
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnEncodingConverter.Size = new System.Drawing.Size(75, 23);
 			this.btnEncodingConverter.TabIndex = 13;
 			this.btnEncodingConverter.Text = "&More...";
-			this.btnEncodingConverter.Click += new System.EventHandler(this.btnEncodingConverter_Click);
+			this.btnEncodingConverter.Click += new System.EventHandler(this.EncodingConverterButtonClick);
 			// 
 			// m_lblEncodingConverter
 			// 
@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._encodingConverterCombo.Size = new System.Drawing.Size(168, 21);
 			this._encodingConverterCombo.Sorted = true;
 			this._encodingConverterCombo.TabIndex = 12;
-			this._encodingConverterCombo.SelectedIndexChanged += new System.EventHandler(this._encodingConverterCombo_SelectedIndexChanged);
+			this._encodingConverterCombo.SelectedIndexChanged += new System.EventHandler(this.EncodingConverterComboSelectedIndexChanged);
 			// 
 			// flowLayoutPanel1
 			// 
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._helpBtn.TabIndex = 0;
 			this._helpBtn.Text = "Help";
 			this._helpBtn.UseVisualStyleBackColor = true;
-			this._helpBtn.Click += new System.EventHandler(this._helpBtn_Click);
+			this._helpBtn.Click += new System.EventHandler(this.FormHelpClick);
 			// 
 			// _cancelBtn
 			// 
@@ -607,7 +607,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._okBtn.TabIndex = 2;
 			this._okBtn.Text = "OK";
 			this._okBtn.UseVisualStyleBackColor = true;
-			this._okBtn.Click += new System.EventHandler(this._okBtn_Click);
+			this._okBtn.Click += new System.EventHandler(this.OkButtonClick);
 			// 
 			// _addMenuStrip
 			// 
@@ -623,7 +623,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._shareWithSldrCheckbox.TabIndex = 5;
 			this._shareWithSldrCheckbox.Text = "Share writing system data with SLDR";
 			this._shareWithSldrCheckbox.UseVisualStyleBackColor = true;
-			this._shareWithSldrCheckbox.CheckedChanged += new System.EventHandler(this._shareWithSldrCheckbox_CheckedChanged);
+			this._shareWithSldrCheckbox.CheckedChanged += new System.EventHandler(this.ShareWithSldrCheckboxCheckChanged);
 			// 
 			// FwWritingSystemSetupDlg
 			// 

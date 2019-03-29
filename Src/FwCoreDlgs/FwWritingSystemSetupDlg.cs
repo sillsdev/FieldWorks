@@ -92,23 +92,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
 		}
 
-		private void NumberSettingsComboOnSelectedIndexChanged(object sender, EventArgs e)
-		{
-			var selectedNumberingSystem = (string)((ComboBox)sender).SelectedItem;
-			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
-			{
-				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));
-				customDigits.Enabled = false;
-			}
-			else
-			{
-				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
-				customDigits.Enabled = true;
-			}
-
-			BindNumbersTab(_model.CurrentWsSetupModel);
-		}
-
 		private void ShowValidCharsEditor()
 		{
 			var currentWs = _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
@@ -161,23 +144,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void OnCurrentWritingSystemChangedHandler(object sender, EventArgs args)
-		{
-			BindToModel(_model);
-		}
-
 		private void BindHeader(FwWritingSystemSetupModel model)
 		{
+			_languageNameTextbox.TextChanged -= LanguageNameTextboxOnTextChanged;
 			_toolTip.SetToolTip(_shareWithSldrCheckbox,
 				"Sharing data will benefit any other programs" + Environment.NewLine +
 				" that also use the SIL Locale Data Repository");
-			_shareWithSldrCheckbox.CheckedChanged -= _shareWithSldrCheckbox_CheckedChanged;
+			_shareWithSldrCheckbox.CheckedChanged -= ShareWithSldrCheckboxCheckChanged;
 			_ethnologueLink.Text = model.EthnologueLabel;
 			_languageNameTextbox.Text = model.LanguageName;
 			_shareWithSldrCheckbox.Visible = model.ShowSharingWithSldr;
 			_shareWithSldrCheckbox.Checked = model.IsSharingWithSldr;
 			model.ShowChangeLanguage = ShowChangeLanguage;
-			_shareWithSldrCheckbox.CheckedChanged += _shareWithSldrCheckbox_CheckedChanged;
+			_shareWithSldrCheckbox.CheckedChanged += ShareWithSldrCheckboxCheckChanged;
+			_languageNameTextbox.TextChanged += LanguageNameTextboxOnTextChanged;
 		}
 
 		private void BindGeneralTab(FwWritingSystemSetupModel model)
@@ -207,7 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void BindEncodingConverterCombo(FwWritingSystemSetupModel model)
 		{
-			_encodingConverterCombo.SelectedIndexChanged -= _encodingConverterCombo_SelectedIndexChanged;
+			_encodingConverterCombo.SelectedIndexChanged -= EncodingConverterComboSelectedIndexChanged;
 			var encConverters = model.GetEncodingConverters();
 			_encodingConverterCombo.Items.Clear();
 			foreach (string convName in encConverters)
@@ -223,7 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				_encodingConverterCombo.SelectedItem = FwCoreDlgs.kstidNone;
 			}
-			_encodingConverterCombo.SelectedIndexChanged += _encodingConverterCombo_SelectedIndexChanged;
+			_encodingConverterCombo.SelectedIndexChanged += EncodingConverterComboSelectedIndexChanged;
 		}
 
 		private void BindCharactersTab(FwWritingSystemSetupModel model)
@@ -237,14 +217,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.ConfirmDeleteWritingSystem = ShowConfirmDeleteDialog;
 			model.ImportListForNewWs = ImportTranslatedList;
 			model.ConfirmMergeWritingSystem = ConfirmMergeWritingSystem;
-			_writingSystemList.ItemCheck -= _writingSystemList_ItemCheck;
+			_writingSystemList.ItemCheck -= WritingSystemListItemCheck;
 			_writingSystemList.Items.Clear();
 			foreach (var ws in model.WorkingList)
 			{
 				_writingSystemList.Items.Add(new WsListItem(ws.WorkingWs.DisplayLabel, ws.WorkingWs.LanguageTag), ws.InCurrentList);
 			}
 			_writingSystemList.SelectedIndex = model.CurrentWritingSystemIndex;
-			_writingSystemList.ItemCheck += _writingSystemList_ItemCheck;
+			_writingSystemList.ItemCheck += WritingSystemListItemCheck;
 			// Clear the problem highlight color
 			_writingSystemList.BackColor = Color.Empty;
 			_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_NormalTooltip);
@@ -278,7 +258,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ProgressDialogWithTask.ImportTranslatedListsForWs(this, _model.Cache, iculocaletoimport);
 		}
 
-		private void _writingSystemList_SelectedIndexChanged(object sender, EventArgs e)
+		#region Event handlers
+		private void NumberSettingsComboOnSelectedIndexChanged(object sender, EventArgs e)
+		{
+			var selectedNumberingSystem = (string)((ComboBox)sender).SelectedItem;
+			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
+			{
+				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));
+				customDigits.Enabled = false;
+			}
+			else
+			{
+				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
+				customDigits.Enabled = true;
+			}
+
+			BindNumbersTab(_model.CurrentWsSetupModel);
+		}
+
+		private void OnCurrentWritingSystemChangedHandler(object sender, EventArgs args)
+		{
+			BindToModel(_model);
+		}
+
+		private void WritingSystemListSelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (_model != null)
 			{
@@ -286,20 +289,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void _ethnologueLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void EthnologueLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			using(Process.Start(_model.EthnologueLink))
 			{
 			}
 		}
 
-		private void _changeCodeBtn_Click(object sender, EventArgs e)
+		private void ChangeCodeButtonClick(object sender, EventArgs e)
 		{
 			_model.ChangeLanguage();
 			BindToModel(_model);
 		}
 
-		private void _okBtn_Click(object sender, EventArgs e)
+		private void OkButtonClick(object sender, EventArgs e)
 		{
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
@@ -321,7 +324,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void _addWsButton_Click(object sender, EventArgs e)
+		private void AddWsButtonClick(object sender, EventArgs e)
 		{
 			var disposeThese = new List<ToolStripMenuItem>();
 			foreach (ToolStripMenuItem item in _addMenuStrip.Items)
@@ -341,12 +344,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void btnValidChars_Click(object sender, EventArgs e)
+		private void OnValidCharsButtonClick(object sender, EventArgs e)
 		{
 			_model.EditValidCharacters();
 		}
 
-		private void _encodingConverterCombo_SelectedIndexChanged(object sender, EventArgs e)
+		private void EncodingConverterComboSelectedIndexChanged(object sender, EventArgs e)
 		{
 			// save the selected encoding converter
 			var str = _encodingConverterCombo.SelectedItem as string;
@@ -356,46 +359,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_model.CurrentLegacyConverter = str;
 		}
 
-		private void btnEncodingConverter_Click(object sender, EventArgs e)
+		private void EncodingConverterButtonClick(object sender, EventArgs e)
 		{
 			_model.ModifyEncodingConverters();
 			BindEncodingConverterCombo(_model);
 		}
 
-		private void moveUp_Click(object sender, EventArgs e)
+		private void MoveUpClick(object sender, EventArgs e)
 		{
 			_model.MoveUp();
 			BindCurrentWSList(_model);
 		}
 
-		private void moveDown_Click(object sender, EventArgs e)
+		private void MoveDownClick(object sender, EventArgs e)
 		{
 			_model.MoveDown();
 			BindCurrentWSList(_model);
 		}
 
-		private void _writingSystemList_ItemCheck(object sender, ItemCheckEventArgs e)
+		private void WritingSystemListItemCheck(object sender, ItemCheckEventArgs e)
 		{
 			_model.ToggleInCurrentList();
 			BindCurrentWSList(_model);
 		}
 
-		private sealed class WsListItem : Tuple<string, string>
+		private void WritingSystemListMouseDown(object sender, MouseEventArgs e)
 		{
-			public WsListItem(string display, string code) : base(display, code)
-			{
-			}
-
-			public override string ToString()
-			{
-				return Item1;
-			}
-
-			public string Code => Item2;
-		}
-
-		private void _writingSystemList_MouseDown(object sender, MouseEventArgs e)
-		{
+			// Show a menu when the right click is made over a writing system.
 			var listBox = (CheckedListBox)sender;
 			if (e.Button == MouseButtons.Right)
 			{
@@ -404,6 +394,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (index != _model.CurrentWritingSystemIndex)
 					{
+						// Select the item if it isn't currently selected before showing the menu.
 						listBox.Select();
 						listBox.SelectedIndex = index;
 					}
@@ -429,20 +420,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void _helpBtn_Click(object sender, EventArgs e)
+		private void FormHelpClick(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem");
 		}
 
-		private void _writingSystemList_help_Click(object sender, EventArgs e)
+		private void WritingListHelpClick(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem_List");
 		}
 
-		private void _shareWithSldrCheckbox_CheckedChanged(object sender, EventArgs e)
+		private void ShareWithSldrCheckboxCheckChanged(object sender, EventArgs e)
 		{
 			_model.IsSharingWithSldr = _shareWithSldrCheckbox.Checked;
 		}
+
+		private void LanguageNameTextboxOnTextChanged(object sender, EventArgs e)
+		{
+			if (!string.IsNullOrEmpty(_languageNameTextbox.Text.Trim()))
+			{
+				_model.LanguageName = _languageNameTextbox.Text;
+				BindToModel(_model);
+			}
+		}
+		#endregion
+
+		#region List Item Model
+		private sealed class WsListItem : Tuple<string, string>
+		{
+			public WsListItem(string display, string code) : base(display, code)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
+			}
+
+			public string Code => Item2;
+		}
+		#endregion
+
 
 		/// <summary>
 		/// Display a writing system dialog for the purpose of modifying a new project.
