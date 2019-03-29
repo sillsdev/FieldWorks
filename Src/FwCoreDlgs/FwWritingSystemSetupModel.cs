@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public WritingSystemSetupModel CurrentWsSetupModel
 		{
-			get => _currentWsSetupModel;
+			get { return _currentWsSetupModel; }
 
 			private set
 			{
@@ -185,7 +185,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This indicates if the Graphite Font options should be configurable
 		/// </summary>
-		public bool EnableGraphiteFontOptions => _currentWs?.DefaultFont != null && _currentWs.DefaultFont.Engines.HasFlag(FontEngines.Graphite);
+		public bool EnableGraphiteFontOptions
+		{
+			get
+			{
+				return _currentWs?.DefaultFont != null && _currentWs.DefaultFont.Engines.HasFlag(FontEngines.Graphite);
+			}
+		}
 
 		/// <summary/>
 		public bool TryGetFont(string text, out FontDefinition font)
@@ -194,16 +200,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public bool CanMoveUp() => WorkingList.Count > 1 && WorkingList.First().WorkingWs != _currentWs;
+		public bool CanMoveUp()
+		{
+			return WorkingList.Count > 1 && WorkingList.First().WorkingWs != _currentWs;
+		}
 
 		/// <summary/>
-		public bool CanMoveDown() => WorkingList.Count > 1 && WorkingList.Last().WorkingWs != _currentWs;
+		public bool CanMoveDown()
+		{
+			return WorkingList.Count > 1 && WorkingList.Last().WorkingWs != _currentWs;
+		}
 
 		/// <summary/>
-		public bool CanMerge() => WorkingList.Count > 1;
+		public bool CanMerge()
+		{
+			return WorkingList.Count > 1;
+		}
 
 		/// <summary/>
-		public bool CanDelete() => WorkingList.Count > 1;
+		public bool CanDelete()
+		{
+			return WorkingList.Count > 1;
+		}
 
 		/// <summary/>
 		public void SelectWs(string wsTag)
@@ -279,7 +297,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string LanguageCode
 		{
-			get => _currentWs?.Language.Iso3Code;
+			get { return _currentWs?.Language.Iso3Code; }
 		}
 
 		/// <summary>
@@ -287,17 +305,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string LanguageName
 		{
-			get => _languageName;
+			get { return _languageName; }
 			set
 			{
 				if (!string.IsNullOrEmpty(value) && value != _languageName)
 				{
 					foreach (var relatedWs in WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName))
 					{
-						relatedWs.WorkingWs.Language = new LanguageSubtag(relatedWs.WorkingWs.Language.Code, value);
+						relatedWs.WorkingWs.Language = new LanguageSubtag(relatedWs.WorkingWs.Language, value);
 					}
 				}
-
 				_languageName = value;
 			}
 		}
@@ -307,7 +324,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string WritingSystemName
 		{
-			get => _currentWs.DisplayLabel;
+			get { return _currentWs.DisplayLabel; }
 		}
 
 		/// <summary/>
@@ -331,21 +348,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public bool IsGraphiteEnabled
 		{
-			get => _currentWs.IsGraphiteEnabled;
-			set => _currentWs.IsGraphiteEnabled = value;
+			get { return _currentWs.IsGraphiteEnabled; }
+			set { _currentWs.IsGraphiteEnabled = value; }
 		}
 
 		/// <summary/>
 		public string CurrentDefaultFontFeatures
 		{
-			get => _currentWs.DefaultFontFeatures;
+			get { return _currentWs.DefaultFontFeatures; }
 		}
 
 		/// <summary/>
 		public FontDefinition CurrentDefaultFont
 		{
-			get => _currentWs.DefaultFont;
-			set => _currentWs.DefaultFont = value;
+			get { return _currentWs.DefaultFont; }
+			set { _currentWs.DefaultFont = value; }
 		}
 
 		/// <summary/>
@@ -709,8 +726,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string CurrentLegacyConverter
 		{
-			get => _currentWs?.LegacyMapping;
-			set => _currentWs.LegacyMapping = value;
+			get { return _currentWs?.LegacyMapping; }
+			set { _currentWs.LegacyMapping = value; }
 		}
 
 		/// <summary>
@@ -719,13 +736,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public IEnumerable<WSListItemModel> MergeTargets
 		{
-			get => WorkingList.Where(item => item.OriginalWs != null && item.WorkingWs != _currentWs);
+			get
+			{
+				return WorkingList.Where(item =>
+					item.OriginalWs != null && item.WorkingWs != _currentWs);
+			}
 		}
 
 		/// <summary>
 		/// Are we displaying the share with SLDR setting
 		/// </summary>
-		public bool ShowSharingWithSldr => _listType == ListType.Vernacular;
+		public bool ShowSharingWithSldr
+		{
+			get { return _listType == ListType.Vernacular; }
+		}
 
 		/// <summary>
 		/// Should the vernacular language data be shared with the SLDR

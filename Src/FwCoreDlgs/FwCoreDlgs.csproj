@@ -151,9 +151,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.Windows.Forms.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems.Tests">
-      <HintPath>..\..\..\..\libpalaso\output\Debug\SIL.WritingSystems.Tests.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>

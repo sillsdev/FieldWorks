@@ -379,10 +379,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var newLangName = "Ingrish";
 			testModel.LanguageName = newLangName;
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
+			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"),
+				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
+			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.StringMatching("en"));
+			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"),
+				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en-fonipa");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
+			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"),
+				"Changing the name should not change the language to private use");
 		}
 
 		[Test]
