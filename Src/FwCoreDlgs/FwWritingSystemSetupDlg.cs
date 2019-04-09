@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FwWritingSystemSetupModel _model;
 		private IHelpTopicProvider _helpTopicProvider;
 		private IApp _app;
+
 		/// <summary/>
 		public FwWritingSystemSetupDlg(FwWritingSystemSetupModel model = null, IHelpTopicProvider helpTopicProvider = null, IApp app = null) : base()
 		{
@@ -32,6 +33,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				BindToModel(model);
 			}
 		}
+
+		/// <summary/>
+		public event EventHandler WritingSystemListUpdated;
 
 		#region Model binding methods
 		private void BindToModel(FwWritingSystemSetupModel model)
@@ -94,6 +98,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				" that also use the SIL Locale Data Repository");
 			_shareWithSldrCheckbox.CheckedChanged -= ShareWithSldrCheckboxCheckChanged;
 			_ethnologueLink.Text = model.EthnologueLabel;
+			_languageCode.Text = model.LanguageCode;
 			_languageNameTextbox.Text = model.LanguageName;
 			_shareWithSldrCheckbox.Visible = model.ShowSharingWithSldr;
 			_shareWithSldrCheckbox.Checked = model.IsSharingWithSldr;
@@ -161,9 +166,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.ConfirmMergeWritingSystem = ConfirmMergeWritingSystem;
 			_writingSystemList.ItemCheck -= WritingSystemListItemCheck;
 			_writingSystemList.Items.Clear();
+			var uniqueLabels = new HashSet<string>();
 			foreach (var ws in model.WorkingList)
 			{
-				_writingSystemList.Items.Add(new WsListItem(ws.WorkingWs.DisplayLabel, ws.WorkingWs.LanguageTag), ws.InCurrentList);
+				var label = ws.WorkingWs.DisplayLabel;
+				while (uniqueLabels.Contains(label))
+				{
+					label += "(Copy)";
+				}
+				_writingSystemList.Items.Add(new WsListItem(label, ws.WorkingWs.LanguageTag), ws.InCurrentList);
+				uniqueLabels.Add(label);
 			}
 			_writingSystemList.SelectedIndex = model.CurrentWritingSystemIndex;
 			_writingSystemList.ItemCheck += WritingSystemListItemCheck;
@@ -303,7 +315,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void ChangeCodeButtonClick(object sender, EventArgs e)
+		private void ChangeCodeLinkClick(object sender, EventArgs e)
 		{
 			_model.ChangeLanguage();
 			BindToModel(_model);
@@ -314,14 +326,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
 				_model.Save();
+				if (_model.CurrentWsListChanged)
+				{
+					WritingSystemListUpdated(this, EventArgs.Empty);
+				}
 				Close();
 			}
 			else
 			{
 				if (!_model.IsListValid)
 				{
-					_writingSystemList.BackColor = Color.Red;
 					_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_SelectAtLeastOneTooltip);
+					_wsListPanel.Refresh();
+					MessageBox.Show("You must select one writing system, and there should be no duplicates",
+						"Invalid writing system list", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 				if (!customDigits.AreAllDigitsValid())
 				{
@@ -388,6 +406,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			_model.ToggleInCurrentList();
 			BindCurrentWSList(_model);
+			_wsListPanel.Refresh();
 		}
 
 		private void WritingSystemListMouseDown(object sender, MouseEventArgs e)
@@ -425,6 +444,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
+			else if (e.Button == MouseButtons.Left)
+			{
+				int index = listBox.IndexFromPoint(e.Location);
+				if (index == -1)
+				{
+
+				}
+		}
 		}
 
 		private void FormHelpClick(object sender, EventArgs e)
@@ -454,6 +481,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OnCurrentItemUpdated(object sender, EventArgs e)
 		{
 			BindCurrentWSList(_model);
+			// Binding the general tab is overkill, this method is called because it was changed
+			// but we do want the code to refresh, so do that.
+			m_FullCode.Text = _model.CurrentWsSetupModel.CurrentLanguageTag;
 		}
 		#endregion
 
@@ -496,6 +526,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			return false;
+		}
+
+		private void WsListPanelCellPaint(object sender, TableLayoutCellPaintEventArgs e)
+		{
+			if (e.Column == 0 && !_model.IsListValid)
+			{
+				e.Graphics.FillRectangle(new SolidBrush(Color.Red), e.CellBounds);
+			}
 		}
 	}
 }

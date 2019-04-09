@@ -244,6 +244,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				WorkingList[index].WorkingWs);
 			WorkingList.RemoveAt(index);
 			WorkingList.Insert(index, newListItem);
+			CurrentWsListChanged = true;
 		}
 
 		/// <summary/>
@@ -255,6 +256,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			WorkingList.Remove(currentItem);
 			WorkingList.Insert(currentIndex - 1, currentItem);
+			if (currentItem.InCurrentList)
+				CurrentWsListChanged = true;
 		}
 
 		/// <summary/>
@@ -266,6 +269,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			WorkingList.Remove(currentItem);
 			WorkingList.Insert(currentIndex + 1, currentItem);
+			if (currentItem.InCurrentList)
+				CurrentWsListChanged = true;
 		}
 
 		/// <summary/>
@@ -282,6 +287,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
+				var langTagSet = new HashSet<string>();
+				foreach (var ws in WorkingList)
+				{
+					if (langTagSet.Contains(ws.WorkingWs.LanguageTag))
+						return false;
+					langTagSet.Add(ws.WorkingWs.LanguageTag);
+				}
 				return WorkingList.Any(item => item.InCurrentList);
 			}
 		}
@@ -600,15 +612,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				_mergedWritingSystems[_currentWs] = mergeWithWsId;
 				WorkingList.RemoveAt(CurrentWritingSystemIndex);
+				CurrentWsListChanged = true;
 				SelectWs(WorkingList.First().WorkingWs.LanguageTag);
 			}
 		}
 
 		private void DeleteCurrentWritingSystem(object sender, EventArgs e)
 		{
-
 			// If the writing system is in the other list as well, simply hide it silently.
 			var otherList = _listType == ListType.Vernacular ? _wsContainer.AnalysisWritingSystems : _wsContainer.VernacularWritingSystems;
+			if (WorkingList[CurrentWritingSystemIndex].InCurrentList)
+			{
+				CurrentWsListChanged = true;
+			}
 			if (otherList.Contains(_currentWs))
 			{
 				WorkingList.RemoveAt(CurrentWritingSystemIndex);
@@ -650,6 +666,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Cache?.ServiceLocator.WritingSystemManager.GetOrSet(langInfo.LanguageTag, out wsDef);
 				wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
 				WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
+				CurrentWsListChanged = true;
 				SelectWs(wsDef.LanguageTag);
 			}
 		}
@@ -658,6 +675,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var wsDef = new CoreWritingSystemDefinition(_currentWs);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
+			CurrentWsListChanged = true;
 			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			// Can't use SelectWs because initially the new dialect is identical
@@ -672,6 +690,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
+			CurrentWsListChanged = true;
 			SelectWs(wsDef.LanguageTag);
 		}
 
@@ -691,6 +710,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Set language name to be based on current language
 			wsDef.Language = new LanguageSubtag(wsDef.Language, _currentWs.LanguageName);
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
+			CurrentWsListChanged = true;
 			SelectWs(wsDef.LanguageTag);
 		}
 
@@ -767,6 +787,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			set { _projectLexiconSettings.AddWritingSystemsToSldr = value; }
 		}
+
+		/// <summary>
+		/// Set to true if anything that would update the displayed view of writing systems has changed.
+		/// Moving current writing systems up or down. Adding a writing system, removing a writing system,
+		/// or changing the selection state of a writing system.
+		/// </summary>
+		/// <remarks>We are not currently attempting to set back to false if a user undoes some work</remarks>
+		public bool CurrentWsListChanged { get; private set; }
 	}
 
 	/// <summary>

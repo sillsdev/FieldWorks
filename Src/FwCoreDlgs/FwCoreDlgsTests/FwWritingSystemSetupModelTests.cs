@@ -245,8 +245,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual(expectedResult, testModel.CanMerge());
 		}
 
-		[TestCase("en", new[] { "en" }, false)] // Can't merge if there is no other writing system in the list
-		[TestCase("fr", new[] { "fr", "en" }, true)] // Can merge if there is more than one
+		[TestCase("en", new[] { "en" }, false)] // Can't delete if there is no other writing system in the list
+		[TestCase("fr", new[] { "fr", "en" }, true)] // Can delete if there is more than one
 		public void WritingSystemList_CanDelete(string toMove, string[] options, bool expectedResult)
 		{
 			var container = new TestWSContainer(options);
@@ -270,6 +270,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new [] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			Assert.IsTrue(testModel.IsListValid);
+		}
+
+		[Test]
+		public void WritingSystemList_IsListValid_FalseIfDuplicateItem()
+		{
+			var container = new TestWSContainer(new[] { "en", "en" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.IsFalse(testModel.IsListValid);
 		}
 
 		[Test]
@@ -617,6 +625,112 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Test switching to default switches back to default digits
 			testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.Default;
 			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Is.StringMatching("0123456789"));
+		}
+
+		[Test]
+		public void CurrentWsListChanged_NoChanges_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.IsFalse(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_MoveSelectedDown_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.MoveDown();
+			Assert.True(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_MoveSelectedUp_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			testModel.MoveUp();
+			Assert.True(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_MoveUnSelectedDown_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			testModel.MoveDown();
+			Assert.False(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_MoveUnSelectedUp_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			testModel.MoveUp();
+			Assert.False(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_AddNew_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
+			Assert.True(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_UnSelectItem_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.ToggleInCurrentList();
+			Assert.IsTrue(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_SelectItem_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			testModel.ToggleInCurrentList();
+			Assert.IsTrue(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_DeleteSelected_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			Assert.IsTrue(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_DeleteUnSelected_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			Assert.IsFalse(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_RemoveUnSelected_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.IsFalse(testModel.CurrentWsListChanged);
 		}
 
 		private bool TestShowModifyConverters(string originalconverter, out string selectedconverter)

@@ -1239,7 +1239,7 @@ namespace SIL.FieldWorks.XWorks
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app))
 			{
-				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
+				dlg.ProjectPropertiesChanged += OnWritingSystemListChanged;
 				if (dlg.ShowDialog(this) != DialogResult.Abort)
 				{
 					fDbRenamed = dlg.ProjectNameChanged();
@@ -1265,20 +1265,16 @@ namespace SIL.FieldWorks.XWorks
 				m_app.FwManager.RenameProject(sProject, m_app);
 		}
 
-		private void OnProjectPropertiesChanged(object sender, EventArgs eventArgs)
+		private void OnWritingSystemListChanged(object sender, EventArgs eventArgs)
 		{
-			// this event is fired before the Project Properties dialog is closed, so that we have a chance
+			// this event is fired before the WritingSystemProperties dialog is closed, so that we have a chance
 			// to refresh everything before Paint events start getting fired, which can cause problems if
 			// any writing systems are removed that a rootsite is currently displaying
-			var dlg = (FwProjPropertiesDlg) sender;
-			if (dlg.WritingSystemsChanged())
-			{
-				if (m_app is FwXApp)
-					((FwXApp)m_app).OnMasterRefresh(null);
+			if (m_app is FwXApp)
+				((FwXApp)m_app).OnMasterRefresh(null);
 
-				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
-					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
-			}
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+				m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, m_app.Cache.ProjectId.Name);
 		}
 
 		/// <summary>
@@ -1322,11 +1318,9 @@ namespace SIL.FieldWorks.XWorks
 			return oldName;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Display the project properties dialog, but starting with the WS page.
+		/// Show the writing systems properties dialog with the Vernacular list.
 		/// </summary>
-		/// <param name="arg"></param>
 		/// ------------------------------------------------------------------------------------
 		public bool OnVernWritingSystemProperties(object arg)
 		{
@@ -1335,22 +1329,21 @@ namespace SIL.FieldWorks.XWorks
 
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.WritingSystemListUpdated += OnWritingSystemListChanged;
 			view.ShowDialog(this);
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Display the project properties dialog, but starting with the WS page.
+		/// Show the writing systems properties dialog with the Analysis list.
 		/// </summary>
-		/// <param name="arg"></param>
-		/// ------------------------------------------------------------------------------------
 		public bool OnAnalyWritingSystemProperties(object arg)
 		{
 			CheckDisposed();
 
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.WritingSystemListUpdated += OnWritingSystemListChanged;
 			view.ShowDialog(this);
 			return true;
 		}
