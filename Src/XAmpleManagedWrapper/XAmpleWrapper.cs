@@ -3,45 +3,51 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 
 namespace XAmpleManagedWrapper
 {
 	public class XAmpleWrapper : IXAmpleWrapper, IDisposable
 	{
-		protected XAmpleDLLWrapper m_xample;
+		private XAmpleDLLWrapper m_xample;
+		private static readonly object m_lockObject = new object();
 
 		#region Disposable stuff
-		#if DEBUG
-		/// <summary/>
+
+		/// <summary />
 		~XAmpleWrapper()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
-		public bool IsDisposed
+		private bool IsDisposed
 		{
 			get;
-			private set;
+			set;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		/// <summary />
+		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+			if (disposing)
 			{
 				// dispose managed and unmanaged objects
 				m_xample.Dispose();
 			}
+			m_xample = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -56,7 +62,10 @@ namespace XAmpleManagedWrapper
 
 		public string ParseWord (string wordform)
 		{
-			return m_xample.ParseString (wordform);
+			lock (m_lockObject)
+			{
+				return m_xample.ParseString(wordform);
+			}
 		}
 
 
@@ -68,7 +77,10 @@ namespace XAmpleManagedWrapper
 
 		public void LoadFiles (string fixedFilesDir, string dynamicFilesDir, string databaseName)
 		{
-			m_xample.LoadFiles (fixedFilesDir, dynamicFilesDir, databaseName);
+			lock (m_lockObject)
+			{
+				m_xample.LoadFiles(fixedFilesDir, dynamicFilesDir, databaseName);
+			}
 		}
 
 
@@ -78,11 +90,7 @@ namespace XAmpleManagedWrapper
 		}
 
 
-		public int AmpleThreadId {
-			get { return m_xample.GetAmpleThreadId (); }
-		}
-
+		public int AmpleThreadId => m_xample.GetAmpleThreadId ();
 		#endregion
-
 	}
 }
