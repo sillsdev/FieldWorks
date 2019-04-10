@@ -41,8 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			// This will also remove any event handlers set up by the active tool,
-			// and any of the tool's UserControl instances that may have registered event handlers.
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
@@ -210,7 +209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 				if (disposing)
 				{
-					_majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
+					//_majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 					_partiallySharedAreaWideMenuHelper.Dispose();
 				}
 				_tool = null;

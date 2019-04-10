@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
@@ -25,12 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		/// </summary>
 		internal void AddMenusForAllButConcordanceTool(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> fileMenuItemsForTool;
-			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.File, out fileMenuItemsForTool))
-			{
-				fileMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.File, fileMenuItemsForTool);
-			}
+			var fileMenuItemsForTool = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File];
 			fileMenuItemsForTool.Add(Command.CmdImportInterlinearSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearSfm_Click, () => CanCmdImportInterlinearSfm));
 			fileMenuItemsForTool.Add(Command.CmdImportWordsAndGlossesSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordsAndGlossesSfm_Click, () => CanCmdImportWordsAndGlossesSfm));
 			fileMenuItemsForTool.Add(Command.CmdImportInterlinearData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearData_Click, () => CanCmdImportInterlinearData));

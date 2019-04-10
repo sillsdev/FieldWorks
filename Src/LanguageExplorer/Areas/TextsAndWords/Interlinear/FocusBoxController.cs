@@ -700,15 +700,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// <item command="CmdRepeatLastMoveRight" />
 				dataMenuHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g")).Invoke()));
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll.ToString("g"), out eventHandler))
 			{
 				// <item command="CmdApproveAll" />
 				dataMenuHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
 				insertToolBarHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
 			}
 			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl.Add(MainMenu.Data, dataMenuHandlers);
-			userController.ToolBarItemsForUserControl.Add(ToolBar.Insert, insertToolBarHandlers);
+			var dataMenuDictionary = userController.MenuItemsForUserControl[MainMenu.Data];
+			foreach (var dataMenuKvp in dataMenuHandlers)
+			{
+				dataMenuDictionary.Add(dataMenuKvp.Key, dataMenuKvp.Value);
+			}
+			var insertToolBarDictionary = userController.ToolBarItemsForUserControl[ToolBar.Insert];
+			foreach (var toolBarKvp in insertToolBarDictionary)
+			{
+				insertToolBarDictionary.Add(toolBarKvp.Key, toolBarKvp.Value);
+			}
 			_uiWidgetController.AddHandlers(userController);
 		}
 

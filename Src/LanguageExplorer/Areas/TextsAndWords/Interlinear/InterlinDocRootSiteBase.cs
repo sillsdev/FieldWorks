@@ -115,20 +115,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				else
 				{
 					// remove handler stuff.
-					MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
+					TearDownUiWidgets();
 				}
 			}
 		}
 
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> fileExportMenuHandler;
-			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.File, out fileExportMenuHandler))
-			{
-				fileExportMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.File, fileExportMenuHandler);
-			}
-			fileExportMenuHandler.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportInterlinear_Click, () => CanShowExportMenu));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportInterlinear_Click, () => CanShowExportMenu));
+		}
+
+		protected virtual void TearDownUiWidgets()
+		{
+			MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 		}
 
 		private Tuple<bool, bool> CanShowExportMenu => new Tuple<bool, bool>(true, IsCurrentTabForInterlineMaster && m_hvoRoot != 0);

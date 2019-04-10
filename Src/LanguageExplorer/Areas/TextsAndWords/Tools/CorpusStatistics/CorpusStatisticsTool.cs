@@ -29,8 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			// This will also remove any event handlers set up by the active tool,
-			// and any of the tool's UserControl instances that may have registered event handlers.
+			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
 			// Setting "SecondControl" to null will dispose "_statisticsView", so no need to do it here.
@@ -48,12 +47,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
-			_statisticsView = new StatisticsView(majorFlexComponentParameters);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
 			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			// NB: Create the StatisticsView 'after' adding the tool handler, or you eat an exception for no tool registered.
+			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'. (The constructor does that.)
+			_statisticsView = new StatisticsView(majorFlexComponentParameters);
 		}
 
 		/// <summary>

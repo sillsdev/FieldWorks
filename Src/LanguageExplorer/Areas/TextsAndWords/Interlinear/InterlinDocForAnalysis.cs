@@ -37,12 +37,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// class do double duty.
 		/// </summary>
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
-		private bool _hasSubscribedAndShared;
 
 		public InterlinDocForAnalysis()
 		{
 			InitializeComponent();
-			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 			DoSpellCheck = true;
 		}
 
@@ -257,36 +255,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ExistingFocusBox?.Focus();
 			base.OnGotFocus(e);
 		}
-
-		/// <inheritdoc />
-		protected override void OnVisibleChanged(EventArgs e)
-		{
-			base.OnVisibleChanged(e);
-			if (MyMajorFlexComponentParameters == null || Subscriber == null)
-			{
-				return;
-			}
-			if (Visible)
-			{
-				if (!_hasSubscribedAndShared)
-				{
-					// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
-					Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
-					MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll.ToString("g"), ApproveAll_Click);
-					_hasSubscribedAndShared = true;
-				}
-			}
-			else
-			{
-				// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
-				if (_hasSubscribedAndShared)
-				{
-					MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll.ToString("g"));
-					Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
-					_hasSubscribedAndShared = false;
-				}
-			}
-		}
 		#endregion
 
 		#region Overrides of InterlinDocRootSiteBase
@@ -297,13 +265,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
 			base.SetupUiWidgets(userControlUiWidgetParameterObject);
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertMenuItemsForUserControl;
-			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Insert, out insertMenuItemsForUserControl))
-			{
-				insertMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuItemsForUserControl);
-			}
-			insertMenuItemsForUserControl.Add(Command.CmdAddWordGlossesToFreeTrans, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddWordGlossesToFreeTransClick, () => CanCmdAddWordGlossesToFreeTrans));
+
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdAddWordGlossesToFreeTrans, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddWordGlossesToFreeTransClick, () => CanCmdAddWordGlossesToFreeTrans));
+			// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
+			Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
+			MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll.ToString("g"), ApproveAll_Click);
+			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
+		}
+
+		protected override void TearDownUiWidgets()
+		{
+			base.TearDownUiWidgets();
+
+			RightMouseClickedEvent -= InterlinDocForAnalysis_RightMouseClickedEvent;
+			MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll.ToString("g"));
+			Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 		}
 		#endregion
 

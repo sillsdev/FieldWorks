@@ -109,7 +109,6 @@ namespace LanguageExplorer
 		CmdPreviousRecord,
 		CmdNextRecord,
 		CmdLastRecord,
-		CmdParse,
 		CmdApproveAndMoveNext,
 		CmdApproveForWholeTextAndMoveNext,
 		CmdNextIncompleteBundle,

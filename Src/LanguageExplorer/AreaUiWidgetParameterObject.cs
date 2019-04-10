@@ -10,14 +10,14 @@ namespace LanguageExplorer
 	internal sealed class AreaUiWidgetParameterObject
 	{
 		internal IArea Area { get; }
-		internal Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> MenuItemsForArea { get; }
-		internal Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> ToolBarItemsForArea { get; }
+		internal IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> MenuItemsForArea { get; }
+		internal IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> ToolBarItemsForArea { get; }
 
 		internal AreaUiWidgetParameterObject(IArea area)
 		{
 			Area = area;
-			MenuItemsForArea = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-			ToolBarItemsForArea = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
+			MenuItemsForArea = UiWidgetServices.PopulateForMenus;
+			ToolBarItemsForArea = UiWidgetServices.PopulateForToolBars;
 		}
 	}
 }

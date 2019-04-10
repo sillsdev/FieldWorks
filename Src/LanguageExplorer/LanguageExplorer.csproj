@@ -404,11 +404,14 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
+    <Compile Include="GlobalUiWidgetParameterObject.cs" />
     <Compile Include="HelpTopicPaths.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpTopicPaths.resx</DependentUpon>
     </Compile>
+    <Compile Include="ICommandBasedSharedEventHandlers.cs" />
+    <Compile Include="Impls\CommandBasedSharedEventHandlers.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1315,6 +1318,7 @@
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="ToolUiWidgetParameterObject.cs" />
     <Compile Include="UiWidgetController.cs" />
+    <Compile Include="UiWidgetServices.cs" />
     <Compile Include="UowHelpers.cs" />
     <Compile Include="UserControlUiWidgetParameterObject.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
@@ -1714,9 +1718,7 @@
     <Compile Include="RecordListServices.cs" />
     <Compile Include="SendReceive\BridgeMenuInstallRound.cs" />
     <Compile Include="SendReceive\CommonBridgeServices.cs" />
-    <Compile Include="SendReceive\FlexBridge.cs" />
     <Compile Include="SendReceive\IBridge.cs" />
-    <Compile Include="SendReceive\LiftBridge.cs" />
     <Compile Include="SendReceive\SendReceiveMenuManager.cs" />
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />

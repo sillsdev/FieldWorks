@@ -98,29 +98,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> editMenuItemsForUserControl;
-			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Edit, out editMenuItemsForUserControl))
-			{
-				editMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Edit, editMenuItemsForUserControl);
-			}
+			var editMenuItemsForUserControl = userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Edit];
 			editMenuItemsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 			editMenuItemsForUserControl.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindAndReplaceMenu_Click, () => CanCmdReplaceText));
-
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertMenuItemsForUserControl;
-			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.File, out insertMenuItemsForUserControl))
-			{
-				insertMenuItemsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuItemsForUserControl);
-			}
-			insertMenuItemsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
-
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> insertToolBarButtonsForUserControl;
-			if (!userControlUiWidgetParameterObject.ToolBarItemsForUserControl.TryGetValue(ToolBar.Insert, out insertToolBarButtonsForUserControl))
-			{
-				insertToolBarButtonsForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.ToolBarItemsForUserControl.Add(ToolBar.Insert, insertToolBarButtonsForUserControl);
-			}
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
+			var insertToolBarButtonsForUserControl = userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.Insert];
 			insertToolBarButtonsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
 			insertToolBarButtonsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 		}

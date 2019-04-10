@@ -224,20 +224,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				/*
 					<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/> // Only Insert menu
 				*/
-				var insertMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-				{
-					{ Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, ()=> CanCmdInsertText) },
-					// Others go here.
-					{ Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, ()=> CanCmdImportWordSet) },
-					{ Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, ()=> CanCmdInsertHumanApprovedAnalysis) }
-				};
-				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.Insert, insertMenuItemsForArea);
-				var insertToolBarButtonsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-				{
-					{ Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, ()=> CanCmdInsertText) },
-					{ Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, ()=> CanCmdInsertHumanApprovedAnalysis) }
-				};
-				areaUiWidgetParameterObject.ToolBarItemsForArea.Add(ToolBar.Insert, insertToolBarButtonsForArea);
+				var insertMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert];
+				insertMenuDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
+				insertMenuDictionary.Add(Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, () => CanCmdImportWordSet));
+				insertMenuDictionary.Add(Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
+				var insertToolBarDictionary = areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert];
+				insertToolBarDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
+				insertToolBarDictionary.Add(Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
 			}
 
 			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList is InterlinearTextsRecordList);

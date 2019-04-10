@@ -69,20 +69,10 @@ namespace LanguageExplorer.Areas.Notebook
 			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
 
 			// Add Edit menu item that is available in all Notebook tools.
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForArea;
-			if (!areaUiWidgetParameterObject.MenuItemsForArea.TryGetValue(MainMenu.Edit, out toolsMenuItemsForArea))
-			{
-				toolsMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.Edit, toolsMenuItemsForArea);
-			}
+			var toolsMenuItemsForArea = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit];
 			toolsMenuItemsForArea.Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
-
 			// File->Export menu is visible and maybe enabled in this tool.
-			if (!areaUiWidgetParameterObject.MenuItemsForArea.TryGetValue(MainMenu.File, out toolsMenuItemsForArea))
-			{
-				toolsMenuItemsForArea = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				areaUiWidgetParameterObject.MenuItemsForArea.Add(MainMenu.File, toolsMenuItemsForArea);
-			}
+			toolsMenuItemsForArea = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File];
 			toolsMenuItemsForArea.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
 			toolsMenuItemsForArea.Add(Command.CmdImportSFMNotebook, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportSFMNotebook_Clicked, () => CanCmdImportSFMNotebook));
 			_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);

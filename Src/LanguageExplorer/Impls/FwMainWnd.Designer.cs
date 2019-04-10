@@ -3723,7 +3723,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdChooseTexts,
             this.Toolbar_CmdChangeFilterClearAll});
 			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripView.Location = new System.Drawing.Point(388, 24);
+			this.toolStripView.Location = new System.Drawing.Point(385, 24);
 			this.toolStripView.Name = "toolStripView";
 			this.toolStripView.Size = new System.Drawing.Size(35, 25);
 			this.toolStripView.TabIndex = 5;
@@ -3757,7 +3757,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_WritingSystemList,
             this.Toolbar_CombinedStylesList});
 			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-			this.toolStripFormat.Location = new System.Drawing.Point(425, 24);
+			this.toolStripFormat.Location = new System.Drawing.Point(421, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
 			this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
 			this.toolStripFormat.TabIndex = 3;

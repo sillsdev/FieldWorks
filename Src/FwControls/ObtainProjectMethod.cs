@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		internal const string ImportLexiconDll = @"LanguageExplorer.dll";
-		internal const string ImportLexiconClass = @"LanguageExplorer.SendReceive.LiftBridge";
+		internal const string ImportLexiconClass = @"LanguageExplorer.SendReceive.SendReceiveMenuManager";
 		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
 
 		internal static void CallImportObtainedLexicon(LcmCache cache, string liftPath, Form parent)

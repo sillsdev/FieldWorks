@@ -10,14 +10,14 @@ namespace LanguageExplorer
 	internal sealed class ToolUiWidgetParameterObject
 	{
 		internal ITool Tool { get; }
-		internal Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> MenuItemsForTool { get; }
-		internal Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> ToolBarItemsForTool { get; }
+		internal IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> MenuItemsForTool { get; }
+		internal IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> ToolBarItemsForTool { get; }
 
 		internal ToolUiWidgetParameterObject(ITool tool)
 		{
 			Tool = tool;
-			MenuItemsForTool = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-			ToolBarItemsForTool = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
+			MenuItemsForTool = UiWidgetServices.PopulateForMenus;
+			ToolBarItemsForTool = UiWidgetServices.PopulateForToolBars;
 		}
 	}
 }

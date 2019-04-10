@@ -1157,6 +1157,7 @@ namespace LanguageExplorer.Impls
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, Toolbar_WritingSystemList, WritingSystemMenu);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, Toolbar_CombinedStylesList);
+			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			var mainMenus = new Dictionary<MainMenu, ToolStripMenuItem>
 			{
 				{ MainMenu.File,  _fileToolStripMenuItem},
@@ -1179,8 +1180,9 @@ namespace LanguageExplorer.Impls
 				{ ToolBar.Format,  toolStripFormat}
 			};
 			var uiWidgetHelper = new UiWidgetController(new MainMenusParameterObject(mainMenus, CacheMenuItems()), new MainToolBarsParameterObject(mainToolBars, CacheToolbarItems()));
-			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], _parserToolStripMenuItem, uiWidgetHelper);
-			_dataNavigationManager = new DataNavigationManager(uiWidgetHelper);
+			var globalUiWidgetParameterObject = new GlobalUiWidgetParameterObject();
+			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], _parserToolStripMenuItem, uiWidgetHelper.ParserMenuDictionary, globalUiWidgetParameterObject);
+			_dataNavigationManager = new DataNavigationManager(globalUiWidgetParameterObject);
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, uiWidgetHelper, _statusbar,
 				_parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			SetTemporaryProperties();
@@ -1194,15 +1196,20 @@ namespace LanguageExplorer.Impls
 			CmdShowCharMap.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			IdleQueue = new IdleQueue();
-			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, uiWidgetHelper, _sendReceiveToolStripMenuItem);
-			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
+			if (_sendReceiveToolStripMenuItem.Enabled)
+			{
+				// No need for it, if FB isn't even installed.
+				_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, globalUiWidgetParameterObject);
+				_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
+			}
 			Cache.DomainDataByFlid.AddNotification(this);
 			CmdUseVernSpellingDictionary.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
 			if (CmdUseVernSpellingDictionary.Checked)
 			{
 				EnableVernacularSpelling();
 			}
-			_macroMenuHandler.Initialize(_majorFlexComponentParameters);
+			_macroMenuHandler.Initialize(_majorFlexComponentParameters, globalUiWidgetParameterObject);
+			uiWidgetHelper.AddGlobalHandlers(globalUiWidgetParameterObject);
 			SetupOutlookBar();
 			SetWindowTitle();
 			SetupWindowSizeIfNeeded(restoreSize);
@@ -2354,7 +2361,7 @@ very simple minor adjustments. ;)"
 //Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 #endif
 			}
-			Toolbar_CmdChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
+			Toolbar_CmdChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList?.CanChangeFilterClearAll ?? false;
 			// Enable/disable toolbar buttons.
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.

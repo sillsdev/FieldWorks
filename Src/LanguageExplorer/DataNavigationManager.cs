@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.Code;
 using SIL.ObjectModel;
@@ -22,33 +21,21 @@ namespace LanguageExplorer
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal DataNavigationManager(UiWidgetController uiWidgetController)
+		internal DataNavigationManager(GlobalUiWidgetParameterObject globalParameterObject)
 		{
-			Guard.AgainstNull(uiWidgetController, nameof(uiWidgetController));
+			Guard.AgainstNull(globalParameterObject, nameof(globalParameterObject));
 
-			var globalSendReceiveMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-			{
-				{ Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, ()=> CanDoCmdFirstRecord) },
-				{ Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, ()=> CanDoCmdPreviousRecord) },
-				{ Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, ()=> CanDoCmdNextRecord) },
-				{ Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, ()=> CanDoCmdLastRecord) }
-			};
-			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
-			{
-				{MainMenu.Data,  globalSendReceiveMenuHandlers}
-			};
-			var globalToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-			{
-				{ Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, ()=> CanDoCmdFirstRecord) },
-				{ Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, ()=> CanDoCmdPreviousRecord) },
-				{ Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, ()=> CanDoCmdNextRecord) },
-				{ Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, ()=> CanDoCmdLastRecord) }
-			};
-			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
-			{
-				{ ToolBar.Standard, globalToolBarHandlers }
-			};
-			uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
+			var dataMenuDictionary = globalParameterObject.GlobalMenuItems[MainMenu.Data];
+			dataMenuDictionary.Add(Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, () => CanDoCmdFirstRecord));
+			dataMenuDictionary.Add(Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, () => CanDoCmdPreviousRecord));
+			dataMenuDictionary.Add(Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, () => CanDoCmdNextRecord));
+			dataMenuDictionary.Add(Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, () => CanDoCmdLastRecord));
+
+			var standardToolBarDictionary = globalParameterObject.GlobalToolBarItems[ToolBar.Standard];
+			standardToolBarDictionary.Add(Command.CmdFirstRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(First_Click, () => CanDoCmdFirstRecord));
+			standardToolBarDictionary.Add(Command.CmdPreviousRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Previous_Click, () => CanDoCmdPreviousRecord));
+			standardToolBarDictionary.Add(Command.CmdNextRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Next_Click, () => CanDoCmdNextRecord));
+			standardToolBarDictionary.Add(Command.CmdLastRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Last_Click, () => CanDoCmdLastRecord));
 		}
 
 		private Tuple<bool, bool> CanDoCmdFirstRecord => new Tuple<bool, bool>(true, _recordList != null && _recordList.ListSize != 0 && _recordList.CanMoveToOptions[Navigation.First]);

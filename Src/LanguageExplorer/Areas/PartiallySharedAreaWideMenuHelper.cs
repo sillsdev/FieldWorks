@@ -178,13 +178,7 @@ namespace LanguageExplorer.Areas
 		internal void SetupFileExportMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
 			// File->Export menu is visible and enabled in this tool.
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> fileMenuItemsForTool;
-			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.File, out fileMenuItemsForTool))
-			{
-				fileMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.File, fileMenuItemsForTool);
-			}
-			fileMenuItemsForTool.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CommonFileExportMenu_Click, () => CanCmdExport));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CommonFileExportMenu_Click, () => CanCmdExport));
 		}
 
 		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, true);
@@ -214,13 +208,7 @@ namespace LanguageExplorer.Areas
 		internal void SetupToolsCustomFieldsMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
 			// Tools->Configure->CustomFields menu is visible and enabled in this tool.
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForTool;
-			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.Tools, out toolsMenuItemsForTool))
-			{
-				toolsMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.Tools, toolsMenuItemsForTool);
-			}
-			toolsMenuItemsForTool.Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));
 		}
 
 		private void DataTreeDelete_Clicked(object sender, EventArgs e)

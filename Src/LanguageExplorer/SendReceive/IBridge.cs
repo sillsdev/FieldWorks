@@ -28,6 +28,6 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// Register UI widgets.
 		/// </summary>
-		void RegisterHandlers(UiWidgetController uiWidgetController);
+		void RegisterHandlers(GlobalUiWidgetParameterObject globalParameterObject);
 	}
 }

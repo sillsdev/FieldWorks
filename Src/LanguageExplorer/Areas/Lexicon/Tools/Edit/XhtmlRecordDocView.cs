@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -34,12 +33,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			_uiWidgetController = uiWidgetController;
 			// Add handler stuff.
-			var filePrintMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-			{
-				{Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu) }
-			};
 			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl.Add(MainMenu.File, filePrintMenuHandler);
+			userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
 			_uiWidgetController.AddHandlers(userController);
 		}
 

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
@@ -19,9 +18,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IArea _area;
 		private ITool _tool;
-		private bool _refreshOriginalValue;
-		private ToolStripItem _refreshMenu;
-		private ToolStripItem _refreshToolBarBtn;
 
 		internal GrammarSketchToolMenuHelper(ITool tool)
 		{
@@ -49,21 +45,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = area;
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemsForTool;
-			if (!toolUiWidgetParameterObject.MenuItemsForTool.TryGetValue(MainMenu.File, out toolsMenuItemsForTool))
-			{
-				toolsMenuItemsForTool = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				toolUiWidgetParameterObject.MenuItemsForTool.Add(MainMenu.File, toolsMenuItemsForTool);
-			}
-			toolsMenuItemsForTool.Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, () => CanCmdRefresh));
+			toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Standard].Add(Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, () => CanCmdRefresh));
 			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-			// F5 refresh is disabled in this tool.
-			_refreshMenu = MenuServices.GetViewRefreshMenu(_majorFlexComponentParameters.MenuStrip);
-			_refreshOriginalValue = _refreshMenu.Enabled;
-			_refreshMenu.Enabled = false;
-			_refreshToolBarBtn = ToolbarServices.GetStandardToolStripRefreshButton(_majorFlexComponentParameters.ToolStripContainer);
-			_refreshToolBarBtn.Enabled = false;
 		}
+
+		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, false);
 
 		/// <inheritdoc />
 		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
@@ -105,12 +93,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			if (disposing)
 			{
-				_refreshMenu.Enabled = _refreshOriginalValue;
-				_refreshToolBarBtn.Enabled = _refreshOriginalValue;
 			}
 			_majorFlexComponentParameters = null;
-			_refreshMenu = null;
-			_refreshToolBarBtn = null;
 			_area = null;
 			_tool = null;
 

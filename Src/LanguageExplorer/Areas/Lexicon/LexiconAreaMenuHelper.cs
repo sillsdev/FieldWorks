@@ -3,11 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using LanguageExplorer.Controls;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 
@@ -24,8 +21,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		private IArea _area;
 		private ITool _tool;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private ToolStripMenuItem _fileImportMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
 
@@ -45,11 +40,14 @@ namespace LanguageExplorer.Areas.Lexicon
 			_area = area;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			MyPartiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+#if RANDYTODO
+			// TODO: Are the following area or tool wide?
+#endif
 			// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			// Add two lexicon area-wide import options.
-			AddFileImportMenuItems();
+			AddFileImportMenuItems(toolUiWidgetParameterObject);
 			MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
@@ -98,33 +96,24 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (disposing)
 			{
 				MyPartiallySharedAreaWideMenuHelper.Dispose();
-				foreach (var menuTuple in _newFileMenusAndHandlers)
-				{
-					menuTuple.Item1.Click -= menuTuple.Item2;
-					_fileImportMenu.DropDownItems.Remove(menuTuple.Item1);
-					menuTuple.Item1.Dispose();
-				}
-				_newFileMenusAndHandlers.Clear();
 			}
 			_majorFlexComponentParameters = null;
 			MyPartiallySharedAreaWideMenuHelper = null;
-			_fileImportMenu = null;
-			_newFileMenusAndHandlers = null;
 
 			_isDisposed = true;
 		}
 		#endregion
 
-		private void AddFileImportMenuItems()
+		private void AddFileImportMenuItems(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
-
+			var fileMenuItemsForTool = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File];
 			// <item command="CmdImportLinguaLinksData" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLinguaLinksData_Clicked, LexiconResources.ImportLinguaLinksData, insertIndex: 1);
-
+			fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => CanCmdImportLinguaLinksData));
 			// <item command="CmdImportLiftData" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLiftData_Clicked, LexiconResources.ImportLIFTLexicon, insertIndex: 2);
+			fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => CanCmdImportLiftData));
 		}
+
+		private Tuple<bool, bool> CanCmdImportLinguaLinksData => new Tuple<bool, bool>(true, true);
 
 		private void ImportLinguaLinksData_Clicked(object sender, EventArgs e)
 		{
@@ -133,6 +122,8 @@ namespace LanguageExplorer.Areas.Lexicon
 				AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 			}
 		}
+
+		private Tuple<bool, bool> CanCmdImportLiftData => new Tuple<bool, bool>(true, true);
 
 		private void ImportLiftData_Clicked(object sender, EventArgs e)
 		{

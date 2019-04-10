@@ -29,6 +29,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				m_rtPane.IsCurrentTabForInterlineMaster = false;
+				m_taggingPane.IsCurrentTabForInterlineMaster = false;
+				m_idcGloss.IsCurrentTabForInterlineMaster = false;
+				m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
+				m_printViewPane.IsCurrentTabForInterlineMaster = false;
 				components?.Dispose();
 				_majorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 				// LT-5702

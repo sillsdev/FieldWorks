@@ -102,12 +102,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (_interlineMasterWantsExportDiscourseChartMenu)
 				{
 					// Add handler stuff.
-					var fileExportDiscourseChartMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-					{
-						{Command.CmdExportDiscourseChart, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportDiscourseChart_Click, () => CanShowExportDiscourseChartMenu) }
-					};
 					var userController = new UserControlUiWidgetParameterObject(this);
-					userController.MenuItemsForUserControl.Add(MainMenu.File, fileExportDiscourseChartMenuHandler);
+					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExportDiscourseChart, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportDiscourseChart_Click, () => CanShowExportDiscourseChartMenu));
 					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 				}
 				else

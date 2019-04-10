@@ -22,10 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	internal sealed partial class StatisticsView : UserControl, IMainContentControl
 	{
 		private IRecordList _recordList;
-		private ToolStrip _toolStripView;
-		private ToolStripButton _chooseTextsToolStripButton;
-		private ToolStripMenuItem _viewToolStripMenuItem;
-		private ToolStripMenuItem _chooseTextsToolStripMenuItem;
+		private UiWidgetController _uiWidgetController;
 
 		/// <summary />
 		public StatisticsView()
@@ -38,6 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
+			_uiWidgetController = majorFlexComponentParameters.UiWidgetController;
 			var cm = new ContextMenu();
 			var mi = new MenuItem("Copy");
 			mi.Click += Copy_Menu_Item_Click;
@@ -46,29 +44,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
-			// Add toolbar button.
-			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);
-			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
-			{
-				DisplayStyle = ToolStripItemDisplayStyle.Image,
-				ToolTipText = LanguageExplorerResources.chooseTextsToDisplayAndUse,
-				ImageTransparentColor = Color.Magenta,
-				Size = new Size(24, 24),
-				Text = LanguageExplorerResources.chooseTexts
-			};
-			_toolStripView.Items.Add(_chooseTextsToolStripButton);
-			// Add menu item to View menu.
-			_chooseTextsToolStripMenuItem = new ToolStripMenuItem(LanguageExplorerResources.chooseTexts, LanguageExplorerResources.AddScripture.ToBitmap())
-			{
-				ImageTransparentColor = Color.Magenta,
-				ToolTipText = LanguageExplorerResources.chooseTexts
-			};
-			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			_viewToolStripMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
-			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
-			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
-			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
+			var userControlUiWidgetParameterObject = new UserControlUiWidgetParameterObject(this);
+
+			// Handle tool bar button on View tool bar.
+			userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => CanCmdChooseTexts));
+			// Handle menu item in View menu.
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => CanCmdChooseTexts));
+			_uiWidgetController.AddHandlers(userControlUiWidgetParameterObject);
 		}
+
+		public Tuple<bool, bool> CanCmdChooseTexts => new Tuple<bool, bool>(true, true);
 
 		#region Implementation of IPropertyTableProvider
 
@@ -184,24 +169,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			if (disposing)
 			{
 				components?.Dispose();
-
-				_chooseTextsToolStripButton.Click -= AddTexts_Clicked;
-				_chooseTextsToolStripMenuItem.Click -= AddTexts_Clicked;
-
-				// Remove menu item.
-				_viewToolStripMenuItem.DropDownItems.Remove(_chooseTextsToolStripMenuItem);
-				_chooseTextsToolStripMenuItem.Dispose();
-				_chooseTextsToolStripMenuItem = null;
-
-				// Remove toolbar button.
-				_toolStripView.Items.Remove(_chooseTextsToolStripButton);
-				_chooseTextsToolStripButton.Dispose();
+				_uiWidgetController?.RemoveUserControlHandlers(this);
 			}
 			_recordList = null;
-			_toolStripView = null;
-			_chooseTextsToolStripButton = null;
-			_viewToolStripMenuItem = null;
-			_chooseTextsToolStripMenuItem = null;
+			_uiWidgetController = null;
 
 			base.Dispose(disposing);
 		}
@@ -280,7 +251,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 				var labText = (ws?.ToString() ?? "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + tabCharacter + labText + tabCharacter;
-				statisticsBox.Text += "" + keyValuePair.Value.Count;
+				statisticsBox.Text += string.Empty + keyValuePair.Value.Count;
 				uniqueWords += keyValuePair.Value.Count; //increase the total of unique words
 			}
 			// next insert the word count.
@@ -292,7 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 				var labText = (ws?.ToString() ?? "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + tabCharacter + labText + tabCharacter;
-				statisticsBox.Text += "" + keyValuePair.Value;
+				statisticsBox.Text += string.Empty + keyValuePair.Value;
 			}
 			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalSentencesText + tabCharacter;
 			// next insert the sentence count.

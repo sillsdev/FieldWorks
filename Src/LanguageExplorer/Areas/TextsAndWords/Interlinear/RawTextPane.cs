@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -73,18 +72,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					currentMenuItem = (ToolStripMenuItem)MyMajorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.ShowInvisibleSpaces];
 					currentMenuItem.Checked = _showInvisibleSpaces;
 					// Add handler stuff.
-					var insertMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-					{
-						{Command.CmdGuessWordBreaks, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdGuessWordBreaks_Click, () => CanCmdGuessWordBreaks) },
-						{Command.ClickInvisibleSpace, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClickInvisibleSpace_Click, () => CanClickInvisibleSpace) }
-					};
-					var viewMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-					{
-						{Command.ShowInvisibleSpaces, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ShowInvisibleSpaces_Click, () => CanShowInvisibleSpaces) }
-					};
 					var userController = new UserControlUiWidgetParameterObject(this);
-					userController.MenuItemsForUserControl.Add(MainMenu.View, viewMenuHandler);
-					userController.MenuItemsForUserControl.Add(MainMenu.Insert, insertMenuHandler);
+					userController.MenuItemsForUserControl[MainMenu.View].Add(Command.ShowInvisibleSpaces, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ShowInvisibleSpaces_Click, () => CanShowInvisibleSpaces));
+					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdGuessWordBreaks, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdGuessWordBreaks_Click, () => CanCmdGuessWordBreaks));
+					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.ClickInvisibleSpace, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClickInvisibleSpace_Click, () => CanClickInvisibleSpace));
 					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 
 				}

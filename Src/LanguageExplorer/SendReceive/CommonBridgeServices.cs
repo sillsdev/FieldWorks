@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
@@ -74,7 +75,7 @@ namespace LanguageExplorer.SendReceive
 
 		internal static void PublishHandleLocalHotlinkMessage(IPublisher publisher, object sender, FLExJumpEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(e.JumpUrl))
+			if (!String.IsNullOrEmpty(e.JumpUrl))
 			{
 				publisher.Publish("HandleLocalHotlink", new LocalLinkArgs { Link = e.JumpUrl });
 			}
@@ -197,6 +198,65 @@ namespace LanguageExplorer.SendReceive
 			}
 			var flexProjName = Path.GetFileName(projectFolder);
 			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+		}
+
+		/// <summary>
+		/// Convert FLEx ChorusNotes file referencing lex entries to LIFT notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <remarks>
+		/// This method is internal, rather than static to let a test call it.
+		/// </remarks>
+		internal static void ConvertFlexNotesToLift(TextReader reader, TextWriter writer, string liftFileName)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			// produce: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			ConvertRefAttrs(reader, writer, liftFileName, "lift://{0}?type=entry&amp;label={1}&amp;id={2}");
+		}
+
+		/// <summary>
+		/// Convert LIFT ChorusNotes file to FLEx notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <remarks>
+		/// This method is internal, rather than static to let a test call it.
+		/// </remarks>
+		internal static void ConvertLiftNotesToFlex(TextReader reader, TextWriter writer)
+		{
+			// produce: silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			ConvertRefAttrs(reader, writer, String.Empty, "silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid={2}&amp;tag=&amp;id={2}&amp;label={1}");
+		}
+
+		private static void ConvertRefAttrs(TextReader reader, TextWriter writer, string liftFileName, string outputTemplate)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			// or: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			// both contain id=...&amp; and label=...&amp. One may be at the end without following &amp;.
+			// Note that the ? is essential to prevent the greedy match including multiple parameters.
+			// A label may contain things like &quot; so we can't just search for [^&]*.
+			var reOuter = new Regex("ref=\\\"([^\\\"]*)\"");
+			var reLabel = new Regex("label=(.*?)(&amp;|$)");
+			var reId = new Regex("id=(.*?)(&amp;|$)");
+			string line;
+			while ((line = reader.ReadLine()) != null)
+			{
+				var matchLine = reOuter.Match(line);
+				if (matchLine.Success)
+				{
+					var input = matchLine.Groups[1].Value;
+					var matchLabel = reLabel.Match(input);
+					var matchId = reId.Match(input);
+					if (matchLabel.Success && matchId.Success)
+					{
+						var guid = matchId.Groups[1].Value;
+						var label = matchLabel.Groups[1].Value;
+						var output = String.Format(outputTemplate, liftFileName, label, guid);
+						writer.WriteLine(line.Replace(input, output));
+						continue;
+					}
+				}
+				writer.WriteLine(line);
+			}
 		}
 	}
 }

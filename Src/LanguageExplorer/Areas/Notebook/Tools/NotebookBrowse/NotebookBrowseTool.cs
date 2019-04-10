@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(this, _recordBrowseView);
+			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(this);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 
 			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);

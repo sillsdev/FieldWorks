@@ -21,18 +21,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		private ISharedEventHandlers _sharedEventHandlers;
 		private IAreaUiWidgetManager _notebookAreaMenuHelper;
 		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
-		private RecordBrowseView _browseView;
 		private ToolStripButton _insertRecordToolStripButton;
 		private ToolStripButton _insertFindRecordToolStripButton;
 
-		internal NotebookBrowseToolMenuHelper(ITool currentNotebookTool, RecordBrowseView browseView)
+		internal NotebookBrowseToolMenuHelper(ITool currentNotebookTool)
 		{
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
-			Guard.AgainstNull(browseView, nameof(browseView));
 
 			_tool = currentNotebookTool;
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(currentNotebookTool);
-			_browseView = browseView;
 		}
 
 		#region Implementation of IToolUiWidgetManager
@@ -49,10 +46,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 			_partiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if !RANDYTODO
+			// TODO: The following belongs in the area init.
+#endif
 			var asImplClass = (NotebookAreaMenuHelper)_notebookAreaMenuHelper;
 			asImplClass.AddInsertMenuItems();
 			AddInsertToolbarItems();
-			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />
@@ -110,7 +110,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_insertRecordToolStripButton = null;
 			_insertFindRecordToolStripButton = null;
 			_sharedEventHandlers = null;
-			_browseView = null;
 
 			_isDisposed = true;
 		}

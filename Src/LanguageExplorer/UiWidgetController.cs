@@ -16,11 +16,13 @@ namespace LanguageExplorer
 	/// </summary>
 	/// <remarks>
 	/// Registration must occur in this order: 1) area, 2) tool, 3) user controls, which is optional.
+	/// Global will happen early on in the main window creation.
 	/// </remarks>
 	internal sealed class UiWidgetController
 	{
 		private readonly MainMenusController _mainMenusController;
 		private readonly ToolBarsController _toolBarsController;
+		private bool _hasCalledAddGlobalHandlers;
 
 		#region Currently registered
 
@@ -83,13 +85,17 @@ namespace LanguageExplorer
 		/// Add handlers for the more global type menus/tool bar buttons.
 		/// </summary>
 		/// <remarks>
-		/// This method can be called more than once, but not more than once per menu/tool bar button command.
+		/// This can be called only once.
 		/// </remarks>
-		internal void AddGlobalHandlers(Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalMenuItems,
-			Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalToolBarItems)
+		internal void AddGlobalHandlers(GlobalUiWidgetParameterObject globalParameterObject)
 		{
-			_mainMenusController.AddGlobalHandlers(globalMenuItems);
-			_toolBarsController.AddGlobalHandlers(globalToolBarItems);
+			if (_hasCalledAddGlobalHandlers)
+			{
+				throw new InvalidOperationException("Cannot call 'AddGlobalHandlers' more than once.");
+			}
+			_mainMenusController.AddGlobalHandlers(globalParameterObject.GlobalMenuItems);
+			_toolBarsController.AddGlobalHandlers(globalParameterObject.GlobalToolBarItems);
+			_hasCalledAddGlobalHandlers = true;
 		}
 
 		/// <summary>
@@ -122,15 +128,8 @@ namespace LanguageExplorer
 			// NB: visibility/enabling is handled via: 1) application idle event for tool bar buttons, and 2) drop down opening event handler on the respective main menu.
 			// Store provided handlers, etc for area.
 			_area = areaParameterObject.Area;
-			AddHandlers(new AddHandlerParameterObject(areaParameterObject.MenuItemsForArea, areaParameterObject.ToolBarItemsForArea));
-		}
-
-		private void CheckForExistingUserControls(string message)
-		{
-			if (_userControls.Any())
-			{
-				throw new InvalidOperationException($"Cannot register {message}, when former user controls have not been unregistered.");
-			}
+			_mainMenusController.AddAreaHandlers(areaParameterObject.MenuItemsForArea);
+			_toolBarsController.AddAreaHandlers(areaParameterObject.ToolBarItemsForArea);
 		}
 
 		/// <summary>
@@ -159,7 +158,8 @@ namespace LanguageExplorer
 			CheckForExistingUserControls("a tool");
 			// Store provided handlers, etc for tool.
 			_tool = toolParameterObject.Tool;
-			AddHandlers(new AddHandlerParameterObject(toolParameterObject.MenuItemsForTool, toolParameterObject.ToolBarItemsForTool));
+			_mainMenusController.AddToolHandlers(toolParameterObject.MenuItemsForTool);
+			_toolBarsController.AddToolHandlers(toolParameterObject.ToolBarItemsForTool);
 		}
 
 		/// <summary>
@@ -172,6 +172,10 @@ namespace LanguageExplorer
 		internal void AddHandlers(UserControlUiWidgetParameterObject userControlParameterObject)
 		{
 			CheckForNullArea("user control");
+			if (_area == null)
+			{
+				throw new InvalidOperationException("Cannot register a user control, when the respective area has not been registered, even if the area had nothing to register.");
+			}
 			if (_tool == null)
 			{
 				throw new InvalidOperationException("Cannot register a user control, when the respective tool has not been registered, even if the tool had nothing to register.");
@@ -186,12 +190,6 @@ namespace LanguageExplorer
 			// NB: visibility/enabling is handled via: 1) application idle event for tool bar buttons, and 2) drop down opening event handler on the respective main menu.
 			_mainMenusController.AddUserControlHandlers(userControlParameterObject.UserControl, userControlParameterObject.MenuItemsForUserControl);
 			_toolBarsController.AddUserControlHandlers(userControlParameterObject.UserControl, userControlParameterObject.ToolBarItemsForUserControl);
-		}
-
-		private void AddHandlers(AddHandlerParameterObject addHandlerParameterObject)
-		{
-			_mainMenusController.AddAreaHandlers(addHandlerParameterObject.MenuItems);
-			_toolBarsController.AddAreaHandlers(addHandlerParameterObject.ToolBarItems);
 		}
 
 		/// <summary>
@@ -253,6 +251,14 @@ namespace LanguageExplorer
 			_toolBarsController.RemoveUserControlHandlers(userControl);
 		}
 
+		private void CheckForExistingUserControls(string message)
+		{
+			if (_userControls.Any())
+			{
+				throw new InvalidOperationException($"Cannot register {message}, when former user controls have not been unregistered.");
+			}
+		}
+
 		private void CheckForNullArea(string message)
 		{
 			if (_area == null)
@@ -264,18 +270,6 @@ namespace LanguageExplorer
 		#endregion Registration
 
 		#region Private controller classes that do the real work
-
-		private sealed class AddHandlerParameterObject
-		{
-			internal Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> MenuItems { get; }
-			internal Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> ToolBarItems { get; }
-
-			internal AddHandlerParameterObject(Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> menuItems, Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> toolBarItems)
-			{
-				MenuItems = menuItems;
-				ToolBarItems = toolBarItems;
-			}
-		}
 
 		private sealed class MainMenusController
 		{
@@ -293,7 +287,7 @@ namespace LanguageExplorer
 				return _supportedMenuItems[mainMenu];
 			}
 
-			internal void AddGlobalHandlers(Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalMenuItems)
+			internal void AddGlobalHandlers(IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalMenuItems)
 			{
 				foreach (var mainMenuKvp in globalMenuItems)
 				{
@@ -301,7 +295,7 @@ namespace LanguageExplorer
 				}
 			}
 
-			internal void AddAreaHandlers(Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> menuItemsForArea)
+			internal void AddAreaHandlers(IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> menuItemsForArea)
 			{
 				foreach (var mainMenuKvp in menuItemsForArea)
 				{
@@ -309,7 +303,7 @@ namespace LanguageExplorer
 				}
 			}
 
-			internal void AddToolHandlers(Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> menuItemsForTool)
+			internal void AddToolHandlers(IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> menuItemsForTool)
 			{
 				foreach (var mainMenuKvp in menuItemsForTool)
 				{
@@ -561,7 +555,7 @@ namespace LanguageExplorer
 				return _supportedToolBarItems[toolBar];
 			}
 
-			internal void AddGlobalHandlers(Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalToolBarItems)
+			internal void AddGlobalHandlers(IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalToolBarItems)
 			{
 				foreach (var toolBarControllerKvp in globalToolBarItems)
 				{
@@ -569,7 +563,7 @@ namespace LanguageExplorer
 				}
 			}
 
-			internal void AddAreaHandlers(Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> toolBarItemsForArea)
+			internal void AddAreaHandlers(IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> toolBarItemsForArea)
 			{
 				foreach (var toolBarControllerKvp in toolBarItemsForArea)
 				{
@@ -577,7 +571,7 @@ namespace LanguageExplorer
 				}
 			}
 
-			internal void AddToolHandlers(Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> toolBarItemsForTool)
+			internal void AddToolHandlers(IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> toolBarItemsForTool)
 			{
 				foreach (var toolBarControllerKvp in toolBarItemsForTool)
 				{

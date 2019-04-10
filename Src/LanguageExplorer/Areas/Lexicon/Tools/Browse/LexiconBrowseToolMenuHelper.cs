@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.Code;
 
@@ -39,6 +38,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+#if RANDYTODO
+			// TODO: Add toolUiWidgetParameterObject to UiWidgetController.
+#endif
 		}
 
 		/// <inheritdoc />

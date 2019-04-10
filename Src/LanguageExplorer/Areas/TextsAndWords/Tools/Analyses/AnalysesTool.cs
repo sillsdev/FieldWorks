@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -44,8 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			// This will also remove any event handlers set up by the active tool,
-			// and any of the tool's UserControl instances that may have registered event handlers.
+			// This will also remove any event handlers set up by any of the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
@@ -74,9 +72,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
 			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.

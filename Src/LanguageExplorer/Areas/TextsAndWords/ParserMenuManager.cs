@@ -41,19 +41,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private ISharedEventHandlers _sharedEventHandlers;
 		private StatusBarPanel _statusPanelProgress;
 		private ToolStripMenuItem _parserMenu;
-		private UiWidgetController _uiWidgetController;
 		private IReadOnlyDictionary<Command, ToolStripItem> _parserMenuDictionary;
+		private GlobalUiWidgetParameterObject _globalUiWidgetParameterObject;
 		private IStText _currentStText;
 		private IWfiWordform _currentWordform;
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal ParserMenuManager(ISharedEventHandlers sharedEventHandlers, StatusBarPanel statusPanelProgress, ToolStripMenuItem parserMenu, UiWidgetController uiWidgetController)
+		internal ParserMenuManager(ISharedEventHandlers sharedEventHandlers, StatusBarPanel statusPanelProgress, ToolStripMenuItem parserMenu, IReadOnlyDictionary<Command, ToolStripItem> parserMenuDictionary, GlobalUiWidgetParameterObject globalUiWidgetParameterObject)
 		{
 			_sharedEventHandlers = sharedEventHandlers;
 			_statusPanelProgress = statusPanelProgress;
 			_parserMenu = parserMenu;
-			_uiWidgetController = uiWidgetController;
+			_parserMenuDictionary = parserMenuDictionary;
+			_globalUiWidgetParameterObject = globalUiWidgetParameterObject;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -99,29 +100,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_sda = m_cache.MainCacheAccessor;
-			_parserMenuDictionary = _uiWidgetController.ParserMenuDictionary;
 			_parserMenu.DropDownOpening += ParserMenu_DropDownOpening;
-			var globalParserMenuItems = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-			{
-				{ Command.CmdParseAllWords, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseAllWords_Click, () => CanCmdParseAllWords) },
-				{ Command.CmdReparseAllWords, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ReparseAllWords_Click, () => CanCmdReparseAllWords) },
-				{ Command.CmdReInitializeParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ReloadGrammarLexicon_Click, () => CanCmdReInitializeParser) },
-				{ Command.CmdStopParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(StopParser_Click, () => CanCmdStopParser) },
-				{ Command.CmdTryAWord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(TryAWord_Click, () => CanCmdTryAWord) },
-				{ Command.CmdParseWordsInCurrentText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseWordsInText_Click, () => CanCmdParseWordsInCurrentText) },
-				{ Command.CmdParseCurrentWord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseCurrentWord_Click, () => CanCmdParseCurrentWord) },
-				{ Command.CmdClearSelectedWordParserAnalyses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClearCurrentParserAnalyses_Click, () => CanCmdClearSelectedWordParserAnalyses) },
-				{ Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser) },
-				{ Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser) },
-				{ Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => CanChooseParser) }
-			};
-			var globalMenuData = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>
-			{
-				{MainMenu.Parser,  globalParserMenuItems}
-			};
-			//var globalToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-			var globalToolBarData = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-			_uiWidgetController.AddGlobalHandlers(globalMenuData, globalToolBarData);
+			var parserMenuDictionary = _globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Parser];
+			parserMenuDictionary.Add(Command.CmdParseAllWords, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseAllWords_Click, () => CanCmdParseAllWords));
+			parserMenuDictionary.Add(Command.CmdReparseAllWords, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ReparseAllWords_Click, () => CanCmdReparseAllWords));
+			parserMenuDictionary.Add(Command.CmdReInitializeParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ReloadGrammarLexicon_Click, () => CanCmdReInitializeParser));
+			parserMenuDictionary.Add(Command.CmdStopParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(StopParser_Click, () => CanCmdStopParser));
+			parserMenuDictionary.Add(Command.CmdTryAWord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(TryAWord_Click, () => CanCmdTryAWord));
+			parserMenuDictionary.Add(Command.CmdParseWordsInCurrentText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseWordsInText_Click, () => CanCmdParseWordsInCurrentText));
+			parserMenuDictionary.Add(Command.CmdParseCurrentWord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseCurrentWord_Click, () => CanCmdParseCurrentWord));
+			parserMenuDictionary.Add(Command.CmdClearSelectedWordParserAnalyses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClearCurrentParserAnalyses_Click, () => CanCmdClearSelectedWordParserAnalyses));
+			parserMenuDictionary.Add(Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser));
+			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser));
+			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => CanChooseParser));
 
 			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
 			Subscriber.Subscribe("StopParser", StopParser_Handler);
@@ -199,8 +190,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void ParserMenu_DropDownOpening(object sender, EventArgs e)
 		{
-			((ToolStripMenuItem)_parserMenuDictionary[Command.CmdChooseXAmpleParser]).Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
-			((ToolStripMenuItem)_parserMenuDictionary[Command.CmdChooseHCParser]).Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
+			var activeParser = m_cache.LangProject.MorphologicalDataOA.ActiveParser;
+			((ToolStripMenuItem)_parserMenuDictionary[Command.CmdChooseXAmpleParser]).Checked = activeParser == "XAmple";
+			((ToolStripMenuItem)_parserMenuDictionary[Command.CmdChooseHCParser]).Checked = activeParser == "HC";
 		}
 
 		internal ParserConnection Connection { get; set; }
@@ -437,12 +429,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_cache = null;
 			m_traceSwitch = null;
 			Connection = null;
+			_sharedEventHandlers = null;
 			_statusPanelProgress = null;
+			_parserMenu = null;
+			_parserMenuDictionary = null;
+			_globalUiWidgetParameterObject = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
 			_recordList = null;
-			_uiWidgetController = null;
 
 			IsDisposed = true;
 		}

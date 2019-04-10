@@ -839,13 +839,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
 			// Tools->Configure->Columns menu is visible and enabled in this tool.
-			Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolsMenuItemForUserControl;
-			if (!userControlUiWidgetParameterObject.MenuItemsForUserControl.TryGetValue(MainMenu.Tools, out toolsMenuItemForUserControl))
-			{
-				toolsMenuItemForUserControl = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
-				userControlUiWidgetParameterObject.MenuItemsForUserControl.Add(MainMenu.Tools, toolsMenuItemForUserControl);
-			}
-			toolsMenuItemForUserControl.Add(Command.CmdConfigureColumns, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureColumns_Click, () => CanCmdConfigureColumns));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureColumns, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureColumns_Click, () => CanCmdConfigureColumns));
 		}
 
 		/// <summary>

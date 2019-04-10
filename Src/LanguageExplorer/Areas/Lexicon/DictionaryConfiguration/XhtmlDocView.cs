@@ -42,12 +42,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			_uiWidgetController = uiWidgetController;
 			// Add handler stuff.
-			var filePrintMenuHandler = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
-			{
-				{Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu) }
-			};
 			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl.Add(MainMenu.File, filePrintMenuHandler);
+			userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
 			_uiWidgetController.AddHandlers(userController);
 		}
 

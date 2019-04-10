@@ -17,8 +17,8 @@ namespace LanguageExplorer
 		internal UserControlUiWidgetParameterObject(UserControl userControl)
 		{
 			UserControl = userControl;
-			MenuItemsForUserControl = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-			ToolBarItemsForUserControl = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
+			MenuItemsForUserControl = UiWidgetServices.PopulateForMenus;
+			ToolBarItemsForUserControl = UiWidgetServices.PopulateForToolBars;
 		}
 	}
 }

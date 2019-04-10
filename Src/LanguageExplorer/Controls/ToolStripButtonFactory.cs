@@ -15,6 +15,8 @@ namespace LanguageExplorer.Controls
 	{
 		internal static ToolStripButton CreateToolStripButton(EventHandler eventHandler, string buttonName, Image image, string tooltip = "")
 		{
+			throw new NotSupportedException("CreateToolStripButton");
+			/*
 			var newToolStripButton = new ToolStripButton(buttonName, image, eventHandler)
 			{
 				DisplayStyle = ToolStripItemDisplayStyle.Image
@@ -24,11 +26,13 @@ namespace LanguageExplorer.Controls
 				newToolStripButton.ToolTipText = tooltip;
 			}
 			return newToolStripButton;
+			*/
 		}
 
 		internal static ToolStripSeparator CreateToolStripSeparator()
 		{
-			return new ToolStripSeparator();
+			throw new NotSupportedException("CreateToolStripButton");
+			//return new ToolStripSeparator();
 		}
 	}
 }

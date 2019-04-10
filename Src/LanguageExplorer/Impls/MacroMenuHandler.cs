@@ -8,8 +8,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -29,8 +27,6 @@ namespace LanguageExplorer.Impls
 		private List<IFlexMacro> _currentMacros;
 		private IFwMainWnd _mainWindow;
 		private LcmCache _cache;
-		private ToolStripMenuItem _toolsMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newToolsMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		/// <summary>
 		/// Number of distinct macros we support.
 		/// Note that just increasing this won't help. You will also need to add new commands and menu items to the
@@ -47,7 +43,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Work over any imported macros: 1) put them in order, 2) resolve conflicts in shortcut keys, and 3) set up menus.
 		/// </summary>
-		internal void Initialize(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, GlobalUiWidgetParameterObject globalParameterObject)
 		{
 			_mainWindow = majorFlexComponentParameters.MainWindow;
 			_cache = majorFlexComponentParameters.LcmCache;
@@ -61,23 +57,21 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			_toolsMenu = MenuServices.GetToolsMenu(majorFlexComponentParameters.MenuStrip);
-			_toolsMenu.DropDownOpening += ToolsMenu_DropDownOpening;
-			// They all go to the end of the Tools menu.
-			var shortcutKeys = new Dictionary<int, Keys>
+			var allMacroMenus = CollectMacroMenus(majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary);
+			var shortcutKeys = new List<Keys>
 			{
-				{ 0, Keys.F2 },
-				{ 1, Keys.F3 },
-				{ 2, Keys.F4 },
-				{ 3, Keys.F5 },
-				{ 4, Keys.F6 },
-				{ 5, Keys.F7 },
-				{ 6, Keys.F8 },
-				{ 7, Keys.F9 },
-				{ 8, Keys.F10 },
-				{ 9, Keys.F11 },
-				{ 10, Keys.F12 }
+				Keys.F2,
+				Keys.F3,
+				Keys.F4,
+				Keys.F6,
+				Keys.F7,
+				Keys.F8,
+				Keys.F9,
+				Keys.F10,
+				Keys.F11,
+				Keys.F12
 			};
+			var toolsMenuDictionary = globalParameterObject.GlobalMenuItems[MainMenu.Tools];
 			var idx = 0;
 			foreach (var macro in _currentMacros)
 			{
@@ -85,19 +79,35 @@ namespace LanguageExplorer.Impls
 				{
 					continue;
 				}
-				var newMacroMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsMenusAndHandlers, _toolsMenu, Macro_Clicked, macro.CommandName, shortcutKeys: shortcutKeys[idx++]);
-				newMacroMenu.Tag = macro;
+				var macroMenu = allMacroMenus[idx];
+				Command command;
+				Enum.TryParse(macroMenu.Name, out command);
+				macroMenu.ShortcutKeys = shortcutKeys[idx++];
+				macroMenu.Tag = macro;
+				toolsMenuDictionary.Add(command, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Macro_Clicked, () => CanDoMacro(macro)));
 			}
 		}
 
-		private void ToolsMenu_DropDownOpening(object sender, EventArgs e)
+		private Tuple<bool, bool> CanDoMacro(IFlexMacro macro)
 		{
-			foreach (var tuple in _newToolsMenusAndHandlers)
+			return new Tuple<bool, bool>(true, SafeToDoMacro(macro));
+		}
+
+		private static List<ToolStripMenuItem> CollectMacroMenus(IReadOnlyDictionary<Command, ToolStripItem> toolsMenuDictionary)
+		{
+			return new List<ToolStripMenuItem>
 			{
-				var macroMenu = tuple.Item1;
-				var macro = (IFlexMacro)macroMenu.Tag;
-				macroMenu.Enabled = SafeToDoMacro(macro);
-			}
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF2],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF3],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF4],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF6],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF7],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF8],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF9],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF10],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF11],
+				(ToolStripMenuItem)toolsMenuDictionary[Command.CmdMacroF12]
+			};
 		}
 
 		private void Macro_Clicked(object sender, EventArgs e)
@@ -164,6 +174,9 @@ namespace LanguageExplorer.Impls
 			return result;
 		}
 
+		/// <summary>
+		/// Only internal, because some test calls it.
+		/// </summary>
 		internal bool SafeToDoMacro(IFlexMacro macro)
 		{
 			ICmObject obj;
@@ -180,6 +193,9 @@ namespace LanguageExplorer.Impls
 			return SafeToDoMacro(macro, selection, out obj, out flid, out ws, out start, out length);
 		}
 
+		/// <summary>
+		/// Only internal, because some test calls it.
+		/// </summary>
 		internal bool SafeToDoMacro(IFlexMacro macro, IVwSelection sel, out ICmObject obj, out int flid, out int ws, out int start, out int length)
 		{
 			start = flid = ws = length = 0; // defaults so we can return early.
@@ -242,26 +258,11 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				if (_toolsMenu != null)
-				{
-					_toolsMenu.DropDownOpening -= ToolsMenu_DropDownOpening;
-					// Unwire each macro menu.
-					foreach (var tuple in _newToolsMenusAndHandlers)
-					{
-						var macroMenu = tuple.Item1;
-						_toolsMenu.DropDownItems.Remove(macroMenu);
-						macroMenu.Click -= tuple.Item2;
-						macroMenu.Dispose();
-					}
-					_newToolsMenusAndHandlers.Clear();
-				}
 				_importedMacros?.Clear();
 			}
 			_importedMacros = null;
 			_mainWindow = null;
 			_cache = null;
-			_toolsMenu = null;
-			_newToolsMenusAndHandlers = null;
 
 			IsDisposed = true;
 		}
