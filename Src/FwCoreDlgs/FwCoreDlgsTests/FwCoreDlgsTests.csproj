@@ -299,15 +299,15 @@
     </Compile>
     <Compile Include="CharContextCtrlTests.cs" />
     <Compile Include="FwCharacterCategorizerTests.cs" />
+    <Compile Include="FwChooseAnthroListModelTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
+    <Compile Include="TestWSContainer.cs" />
     <Compile Include="ValidCharactersDlgTests.cs" />
     <Compile Include="FindCollectorEnvTests.cs" />
     <Compile Include="FwFindReplaceDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FwNewLangProjectTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FwNewLangProjectModelTests.cs" />
     <Compile Include="FwStylesDlgTests.cs" />
     <Compile Include="FwWritingSystemSetupModelTests.cs" />
     <Compile Include="RealSplashScreenTests.cs" />

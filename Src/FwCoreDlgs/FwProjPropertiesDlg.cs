@@ -1,29 +1,20 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Lexicon;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -154,11 +145,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void InitializeGeneralTab()
 		{
+			m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
 			m_txtProjName.Text = m_lblProjName.Text = m_sOrigProjName = m_cache.ProjectId.Name;
 			m_tbLocation.Text = m_cache.ProjectId.Path;
 			m_lblProjCreatedDate.Text = m_langProj.DateCreated.ToString("g");
 			m_lblProjModifiedDate.Text = m_langProj.DateModified.ToString("g");
 			m_txtProjDescription.Text = m_sOrigDescription = m_langProj.Description.UserDefaultWritingSystem.Text;
+			m_txtProjName.TextChanged += m_txtProjName_TextChanged;
 		}
 		#endregion
 
@@ -682,6 +675,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				WarnOnNonDefaultLinkedFilesChange();
 			}
+
+			using (new WaitCursor(this))
+			{
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				{
+					SaveInternal();
+					NotifyProjectPropsChangedAndClose();
+				});
+			}
 		}
 
 		/// <summary>
@@ -714,7 +716,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void SaveInternal()
 		{
-			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
+			var wsContainer = m_cache.ServiceLocator.WritingSystems;
 
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
@@ -829,8 +831,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_txtProjName_TextChanged(object sender, EventArgs e)
 		{
-			FwNewLangProject.CheckForValidProjectName(m_txtProjName);
-			m_txtProjName.Text = m_txtProjName.Text.Normalize();
+			string errorMessage;
+			var projectText = m_txtProjName.Text;
+			if(!FwNewLangProjectModel.CheckForValidProjectName(ref projectText, out errorMessage))
+			{
+				MessageBox.Show(errorMessage, "Pick a new project name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			m_txtProjName.Text = projectText;
 			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0;
 			m_lblProjName.Text = m_txtProjName.Text;
 		}

@@ -112,10 +112,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// ReSharper disable once CoVariantArrayConversion -- No writes occur in AddRange
 			_spellingCombo.Items.AddRange(model.CurrentWsSetupModel.GetSpellCheckComboBoxItems().ToArray());
 			_spellingCombo.SelectedItem = model.CurrentWsSetupModel.CurrentSpellChecker;
+			_rightToLeftCheckbox.CheckedChanged -= RightToLeftCheckChanged;
 			_rightToLeftCheckbox.Checked = model.CurrentWsSetupModel.CurrentRightToLeftScript;
+			_rightToLeftCheckbox.CheckedChanged += RightToLeftCheckChanged;
 			_identifiersControl.UnwireBeforeClosing();
 			_identifiersControl.BindToModel(model.CurrentWsSetupModel);
 			_identifiersControl.Selected();
+			_enableAdvanced.Visible = model.ShowAdvancedScriptRegionVariantCheckBox;
+			_enableAdvanced.Checked = model.ShowAdvancedScriptRegionVariantView;
 		}
 
 		private void BindFontTab(FwWritingSystemSetupModel model)
@@ -190,9 +194,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool ShouldChangeHomographWs(string newHomographWs)
 		{
 			var msg = ResourceHelper.GetResourceString("kstidChangeHomographNumberWs");
-			var changeWs = MessageBox.Show(string.Format(msg, newHomographWs),
+			var changeWs = MessageBox.Show(this, string.Format(msg, newHomographWs),
 				ResourceHelper.GetResourceString("kstidChangeHomographNumberWsTitle"),
-				MessageBoxButtons.YesNo);
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			return changeWs == DialogResult.Yes;
 		}
 

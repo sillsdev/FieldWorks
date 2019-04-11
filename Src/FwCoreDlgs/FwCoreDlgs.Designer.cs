@@ -2162,6 +2162,51 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is used for glosses, definitions, notes, text analyses, and so on..
+        /// </summary>
+        public static string NewLangProjWizard_AnalysisWritingSystemExplanation {
+            get {
+                return ResourceManager.GetString("NewLangProjWizard_AnalysisWritingSystemExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose analysis language writing system.
+        /// </summary>
+        public static string NewProjectWizard_AnalysisHeader {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_AnalysisHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A project named {0} already exists. Choose a new name or click cancel and open the existing project..
+        /// </summary>
+        public static string NewProjectWizard_DuplicateProjectName {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_DuplicateProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing Systems Set Up for Monolingual Dictionary.
+        /// </summary>
+        public static string NewProjectWizard_MonolingualCaption {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_MonolingualCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You chose the same vernacular and analysis language writing systems..
+        /// </summary>
+        public static string NewProjectWizard_MonolingualMessage {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_MonolingualMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text Files (*.txt)|*.txt|All Files (*.*)|*.*.
         /// </summary>
         public static string ofDlg_Filter {

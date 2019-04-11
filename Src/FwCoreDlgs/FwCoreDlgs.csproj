@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -376,11 +376,34 @@
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FwCharacterCategorizer.cs" />
-    <Compile Include="FwCheckAnthroListDlg.cs">
-      <SubType>Form</SubType>
+    <Compile Include="FwChooseAnthroListCtrl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <Compile Include="FwChooseAnthroListCtrl.Designer.cs">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwChooseAnthroListModel.cs" />
+    <Compile Include="FwNewLangProject.Designer.cs">
+      <DependentUpon>FwNewLangProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjectModel.cs" />
+    <Compile Include="FwNewLangProjMoreWsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FwStylesModifiedDlg.cs">
       <SubType>Form</SubType>
@@ -429,9 +452,6 @@
     </Compile>
     <Compile Include="FwApplyStyleDlg.Designer.cs">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DuplicateProjectFoundDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
@@ -526,6 +546,12 @@
     <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.Designer.cs">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </Compile>
+    <Compile Include="WizardStep.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WizardStep.Designer.cs">
+      <DependentUpon>WizardStep.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddCnvtrDlg.resx">
       <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -584,8 +610,17 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <EmbeddedResource Include="FwChooseAnthroListCtrl.resx">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjMoreWsControl.resx">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjWritingSystemsControl.resx">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewProjectProjectNameControl.resx">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwStylesModifiedDlg.resx">
       <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
@@ -611,10 +646,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
-      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwChooserDlg.resx">
@@ -699,6 +730,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="WizardStep.resx">
+      <DependentUpon>WizardStep.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\FwCopyRight.png" />
@@ -716,6 +750,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\WizardConnectToStep.png" />
+    <Content Include="Resources\WizardStepComplete.png" />
+    <None Include="Resources\WizardNotComplete.png" />
     <None Include="Resources\Bullet.png" />
     <None Include="Resources\wait22trans.gif" />
     <Content Include="Resources\Warning.png" />

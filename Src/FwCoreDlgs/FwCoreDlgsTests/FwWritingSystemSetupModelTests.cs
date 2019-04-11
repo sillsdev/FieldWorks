@@ -866,8 +866,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_TopVernIsNotHomographWs_UncheckedWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
-			Cache.LangProject.VernWss = "en fr";
-			Cache.LangProject.CurVernWss = "en fr";
+			Assert.AreEqual("en fr", Cache.LangProject.VernWss, "Test data setup incorrect, english should be first followed by french");
+			Assert.AreEqual("en fr", Cache.LangProject.CurVernWss, "Test data setup incorrect, english should be first followed by french");
 			Cache.LangProject.HomographWs = "fr";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);

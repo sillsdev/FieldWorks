@@ -790,7 +790,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (ShowChangeLanguage(out langInfo))
 			{
 				CoreWritingSystemDefinition wsDef = null;
-				Cache?.ServiceLocator.WritingSystemManager.GetOrSet(langInfo.LanguageTag, out wsDef);
+				if(!_wsManager.TryGet(langInfo.LanguageTag, out wsDef))
+				{
+					wsDef = _wsManager.Set(langInfo.LanguageTag);
+				}
 				wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
 				WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
 				CurrentWsListChanged = true;
@@ -824,10 +827,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void AddIpaHandler(object sender, EventArgs e)
 		{
 			var variants = new List<VariantSubtag> { WellKnownSubtags.IpaVariant };
-			variants.AddRange(_currentWs.Variants);
-			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, _currentWs.Script, _currentWs.Region, variants);
-			CoreWritingSystemDefinition wsDef = null;
-			Cache?.ServiceLocator.WritingSystemManager.GetOrSet(ipaLanguageTag, out wsDef);
+			variants.AddRange(_currentWs.Variants.Where(variant => variant != WellKnownSubtags.AudioPrivateUse));
+			var cleanScript = _currentWs.Script == null ||_currentWs.Script.Code == WellKnownSubtags.AudioScript ? null : _currentWs.Script;
+			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, cleanScript, _currentWs.Region, variants);
+			CoreWritingSystemDefinition wsDef;
+			if (!_wsManager.TryGet(ipaLanguageTag, out wsDef))
+			{
+				wsDef = new CoreWritingSystemDefinition(ipaLanguageTag);
+				_wsManager.Set(wsDef);
+			}
 			wsDef.Abbreviation = "ipa";
 			IKeyboardDefinition ipaKeyboard = Keyboard.Controller.AvailableKeyboards.FirstOrDefault(k => k.Id.ToLower().Contains("ipa"));
 			if (ipaKeyboard != null)

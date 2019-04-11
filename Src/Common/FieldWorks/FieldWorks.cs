@@ -1791,21 +1791,28 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new FwNewLangProject())
+			FwNewLangProjectModel model = null;
+			using (var progress = new ProgressDialogWithTask(s_threadHelper))
 			{
-				dlg.SetDialogProperties(helpTopicProvider);
+				progress.Title = "Loading language data";
+				progress.IsIndeterminate = true;
+				progress.AllowCancel = false;
+				progress.RunTask((args, obj) => model = new FwNewLangProjectModel());
+			}
+			using (var dlg = new FwNewLangProject(model, helpTopicProvider))
+			{
 				switch (dlg.DisplayDialog(dialogOwner))
 				{
 					case DialogResult.OK:
 						if (dlg.IsProjectNew)
-							return new ProjectId(dlg.GetDatabaseFile());
+							return new ProjectId(dlg.DatabaseName);
 						else
 						{
 							// The user tried to create a new project which already exists and
 							// then choose to open the project. Therefore open the project and return
 							// null for the ProjectId so the caller of this method does not try to
 							// create a new project.
-							ProjectId projectId = new ProjectId(dlg.GetDatabaseFile());
+							ProjectId projectId = new ProjectId(dlg.DatabaseName);
 							OpenExistingProject(projectId, app, dialogOwner);
 							return null;
 						}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,10 +11,10 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -33,8 +33,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
+			var liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				LcmCache.ModelVersion, "0.13_ldml3", null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -54,6 +55,8 @@ namespace SIL.FieldWorks.Common.Controls
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
+			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()),
+				string.Format("vers: {0}, {1}", LcmCache.ModelVersion, liftVersion), 0);
 			EnsureLinkedFoldersExist(fwdataFileFullPathname);
 
 			return fwdataFileFullPathname;
@@ -91,7 +94,8 @@ namespace SIL.FieldWorks.Common.Controls
 			string projectPath;
 			LcmCache cache;
 
-			var anthroListFile = CallPickAnthroList(helpTopicProvider);
+			// Default to the enhanced OCM file list
+			var anthroListFile = FwDirectoryFinder.ksOCMFrameFilename;
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
@@ -111,20 +115,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		#region Reflective Methods And Supporting Constants
-
-		internal const string PickAnthroDll = @"FwCoreDlgs.dll";
-		internal const string PickAnthroClass = @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg";
-		internal const string PickAnthroMethod = @"PickAnthroList";
-
-		internal static string CallPickAnthroList(IHelpTopicProvider helpTopicProvider)
-		{
-			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
-			// reference, or any obviously suitable project to move it to without creating other References loops.
-			// nasty reflection calls seems less technical debt than creating an otherwise unnecessary project.
-			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass,
-				PickAnthroMethod, null, helpTopicProvider);
-		}
 
 		internal const string ImportLexiconDll = @"LexEdDll.dll";
 		internal const string ImportLexiconClass = @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener";

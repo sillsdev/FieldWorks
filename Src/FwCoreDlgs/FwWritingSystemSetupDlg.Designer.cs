@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._fontTab.Location = new System.Drawing.Point(4, 22);
 			this._fontTab.Name = "_fontTab";
 			this._fontTab.Padding = new System.Windows.Forms.Padding(3);
-			this._fontTab.Size = new System.Drawing.Size(639, 436);
+			this._fontTab.Size = new System.Drawing.Size(639, 443);
 			this._fontTab.TabIndex = 1;
 			this._fontTab.Text = "Font";
 			this._fontTab.UseVisualStyleBackColor = true;
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._keyboardTab.Location = new System.Drawing.Point(4, 22);
 			this._keyboardTab.Name = "_keyboardTab";
 			this._keyboardTab.Padding = new System.Windows.Forms.Padding(3);
-			this._keyboardTab.Size = new System.Drawing.Size(639, 436);
+			this._keyboardTab.Size = new System.Drawing.Size(639, 443);
 			this._keyboardTab.TabIndex = 2;
 			this._keyboardTab.Text = "Keyboard";
 			this._keyboardTab.UseVisualStyleBackColor = true;
@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._keyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._keyboardControl.Location = new System.Drawing.Point(3, 3);
 			this._keyboardControl.Name = "_keyboardControl";
-			this._keyboardControl.Size = new System.Drawing.Size(633, 430);
+			this._keyboardControl.Size = new System.Drawing.Size(633, 437);
 			this._keyboardControl.TabIndex = 1;
 			// 
 			// _sortTab
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._sortTab.Location = new System.Drawing.Point(4, 22);
 			this._sortTab.Name = "_sortTab";
 			this._sortTab.Padding = new System.Windows.Forms.Padding(3);
-			this._sortTab.Size = new System.Drawing.Size(639, 436);
+			this._sortTab.Size = new System.Drawing.Size(639, 443);
 			this._sortTab.TabIndex = 3;
 			this._sortTab.Text = "Sorting";
 			this._sortTab.UseVisualStyleBackColor = true;
@@ -564,7 +564,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._sortControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._sortControl.Location = new System.Drawing.Point(3, 3);
 			this._sortControl.Name = "_sortControl";
-			this._sortControl.Size = new System.Drawing.Size(633, 430);
+			this._sortControl.Size = new System.Drawing.Size(633, 437);
 			this._sortControl.TabIndex = 1;
 			// 
 			// _charactersTab
@@ -577,7 +577,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._charactersTab.Location = new System.Drawing.Point(4, 22);
 			this._charactersTab.Name = "_charactersTab";
 			this._charactersTab.Padding = new System.Windows.Forms.Padding(3);
-			this._charactersTab.Size = new System.Drawing.Size(639, 436);
+			this._charactersTab.Size = new System.Drawing.Size(639, 443);
 			this._charactersTab.TabIndex = 4;
 			this._charactersTab.Text = "Characters";
 			this._charactersTab.UseVisualStyleBackColor = true;
@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._numbersTab.Location = new System.Drawing.Point(4, 22);
 			this._numbersTab.Name = "_numbersTab";
 			this._numbersTab.Padding = new System.Windows.Forms.Padding(3);
-			this._numbersTab.Size = new System.Drawing.Size(639, 436);
+			this._numbersTab.Size = new System.Drawing.Size(639, 443);
 			this._numbersTab.TabIndex = 5;
 			this._numbersTab.Text = "Numbers";
 			this._numbersTab.UseVisualStyleBackColor = true;
@@ -646,7 +646,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._convertersTab.Location = new System.Drawing.Point(4, 22);
 			this._convertersTab.Name = "_convertersTab";
 			this._convertersTab.Padding = new System.Windows.Forms.Padding(3);
-			this._convertersTab.Size = new System.Drawing.Size(639, 436);
+			this._convertersTab.Size = new System.Drawing.Size(639, 443);
 			this._convertersTab.TabIndex = 6;
 			this._convertersTab.Text = "Converters";
 			this._convertersTab.UseVisualStyleBackColor = true;
