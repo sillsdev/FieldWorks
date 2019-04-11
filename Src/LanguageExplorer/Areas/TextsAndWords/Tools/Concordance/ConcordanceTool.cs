@@ -67,6 +67,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
+			// Tool must be added, even when it adds no tool specific handlers.
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

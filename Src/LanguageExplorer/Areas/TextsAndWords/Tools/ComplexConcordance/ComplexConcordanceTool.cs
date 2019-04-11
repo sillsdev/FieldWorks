@@ -67,6 +67,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
+			// Tool must be added, even when it adds no tool specific handlers.
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
