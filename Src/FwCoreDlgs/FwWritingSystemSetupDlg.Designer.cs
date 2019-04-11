@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._mainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._mainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
 			this._mainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._mainLayoutPanel.Size = new System.Drawing.Size(891, 600);
+			this._mainLayoutPanel.Size = new System.Drawing.Size(891, 609);
 			this._mainLayoutPanel.TabIndex = 1;
 			// 
 			// splitContainer2
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// splitContainer2.Panel2
 			// 
 			this.splitContainer2.Panel2.Controls.Add(this.tableLayoutPanel2);
-			this.splitContainer2.Size = new System.Drawing.Size(885, 560);
+			this.splitContainer2.Size = new System.Drawing.Size(885, 569);
 			this.splitContainer2.SplitterDistance = 228;
 			this.splitContainer2.TabIndex = 1;
 			// 
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._wsListPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
 			this._wsListPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
 			this._wsListPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._wsListPanel.Size = new System.Drawing.Size(228, 560);
+			this._wsListPanel.Size = new System.Drawing.Size(228, 569);
 			this._wsListPanel.TabIndex = 2;
 			this._wsListPanel.CellPaint += new System.Windows.Forms.TableLayoutCellPaintEventHandler(this.WsListPanelCellPaint);
 			// 
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this._writingSystemListPanel.Panel2.Controls.Add(this._writingSystemList);
 			this._wsListPanel.SetRowSpan(this._writingSystemListPanel, 6);
-			this._writingSystemListPanel.Size = new System.Drawing.Size(184, 554);
+			this._writingSystemListPanel.Size = new System.Drawing.Size(184, 563);
 			this._writingSystemListPanel.SplitterDistance = 25;
 			this._writingSystemListPanel.TabIndex = 10;
 			// 
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._writingSystemList.FormattingEnabled = true;
 			this._writingSystemList.Location = new System.Drawing.Point(0, 0);
 			this._writingSystemList.Name = "_writingSystemList";
-			this._writingSystemList.Size = new System.Drawing.Size(184, 525);
+			this._writingSystemList.Size = new System.Drawing.Size(184, 534);
 			this._writingSystemList.TabIndex = 8;
 			this._writingSystemList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.WritingSystemListItemCheck);
 			this._writingSystemList.SelectedIndexChanged += new System.EventHandler(this.WritingSystemListSelectedIndexChanged);
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tableLayoutPanel2.RowCount = 2;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.60232F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 83.39768F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(653, 560);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(653, 569);
 			this.tableLayoutPanel2.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(647, 86);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(647, 88);
 			this.tableLayoutPanel1.TabIndex = 3;
 			// 
 			// _shareWithSldrCheckbox
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._languageCodeLayout.Location = new System.Drawing.Point(0, 53);
 			this._languageCodeLayout.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
 			this._languageCodeLayout.Name = "_languageCodeLayout";
-			this._languageCodeLayout.Size = new System.Drawing.Size(250, 28);
+			this._languageCodeLayout.Size = new System.Drawing.Size(250, 30);
 			this._languageCodeLayout.TabIndex = 8;
 			// 
 			// _languageLabel
@@ -403,10 +403,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._tabControl.Controls.Add(this._numbersTab);
 			this._tabControl.Controls.Add(this._convertersTab);
 			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._tabControl.Location = new System.Drawing.Point(3, 95);
+			this._tabControl.Location = new System.Drawing.Point(3, 97);
 			this._tabControl.Name = "_tabControl";
 			this._tabControl.SelectedIndex = 0;
-			this._tabControl.Size = new System.Drawing.Size(647, 462);
+			this._tabControl.Size = new System.Drawing.Size(647, 469);
 			this._tabControl.TabIndex = 2;
 			// 
 			// _generalTab
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._generalTab.Location = new System.Drawing.Point(4, 22);
 			this._generalTab.Name = "_generalTab";
 			this._generalTab.Padding = new System.Windows.Forms.Padding(3);
-			this._generalTab.Size = new System.Drawing.Size(639, 436);
+			this._generalTab.Size = new System.Drawing.Size(639, 443);
 			this._generalTab.TabIndex = 0;
 			this._generalTab.Text = "General";
 			// 
@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this._enableAdvanced.AutoSize = true;
 			this._enableAdvanced.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this._enableAdvanced.Location = new System.Drawing.Point(7, 403);
+			this._enableAdvanced.Location = new System.Drawing.Point(17, 399);
 			this._enableAdvanced.Name = "_enableAdvanced";
 			this._enableAdvanced.Size = new System.Drawing.Size(75, 17);
 			this._enableAdvanced.TabIndex = 21;
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// _identifiersControl
 			// 
 			this._identifiersControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._identifiersControl.Location = new System.Drawing.Point(1, 120);
+			this._identifiersControl.Location = new System.Drawing.Point(1, 121);
 			this._identifiersControl.Name = "_identifiersControl";
 			this._identifiersControl.Size = new System.Drawing.Size(632, 276);
 			this._identifiersControl.TabIndex = 20;
@@ -451,7 +451,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this._rightToLeftCheckbox.AutoSize = true;
 			this._rightToLeftCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this._rightToLeftCheckbox.Location = new System.Drawing.Point(13, 96);
+			this._rightToLeftCheckbox.Location = new System.Drawing.Point(13, 93);
 			this._rightToLeftCheckbox.Name = "_rightToLeftCheckbox";
 			this._rightToLeftCheckbox.Size = new System.Drawing.Size(80, 17);
 			this._rightToLeftCheckbox.TabIndex = 19;
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_FullCode.AutoSize = true;
 			this.m_FullCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.m_FullCode.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.m_FullCode.Location = new System.Drawing.Point(55, 10);
+			this.m_FullCode.Location = new System.Drawing.Point(55, 7);
 			this.m_FullCode.Name = "m_FullCode";
 			this.m_FullCode.Size = new System.Drawing.Size(119, 17);
 			this.m_FullCode.TabIndex = 17;
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this.lblFullCode.AutoSize = true;
 			this.lblFullCode.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.lblFullCode.Location = new System.Drawing.Point(14, 12);
+			this.lblFullCode.Location = new System.Drawing.Point(14, 9);
 			this.lblFullCode.Name = "lblFullCode";
 			this.lblFullCode.Size = new System.Drawing.Size(41, 13);
 			this.lblFullCode.TabIndex = 16;
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this.lblSpellingDictionary.AutoSize = true;
 			this.lblSpellingDictionary.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.lblSpellingDictionary.Location = new System.Drawing.Point(14, 40);
+			this.lblSpellingDictionary.Location = new System.Drawing.Point(14, 37);
 			this.lblSpellingDictionary.Name = "lblSpellingDictionary";
 			this.lblSpellingDictionary.Size = new System.Drawing.Size(95, 13);
 			this.lblSpellingDictionary.TabIndex = 15;
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._spellingCombo.AllowSpaceInEditBox = false;
 			this._spellingCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._spellingCombo.FormattingEnabled = true;
-			this._spellingCombo.Location = new System.Drawing.Point(17, 59);
+			this._spellingCombo.Location = new System.Drawing.Point(17, 56);
 			this._spellingCombo.Name = "_spellingCombo";
 			this._spellingCombo.Size = new System.Drawing.Size(183, 21);
 			this._spellingCombo.TabIndex = 18;
@@ -585,15 +585,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this.m_lblValidCharacters.AutoSize = true;
 			this.m_lblValidCharacters.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.m_lblValidCharacters.Location = new System.Drawing.Point(129, 17);
+			this.m_lblValidCharacters.Location = new System.Drawing.Point(14, 11);
 			this.m_lblValidCharacters.Name = "m_lblValidCharacters";
-			this.m_lblValidCharacters.Size = new System.Drawing.Size(0, 13);
+			this.m_lblValidCharacters.Size = new System.Drawing.Size(115, 13);
 			this.m_lblValidCharacters.TabIndex = 12;
+			this.m_lblValidCharacters.Text = "Valid characters for {0}";
 			// 
 			// btnValidChars
 			// 
 			this.btnValidChars.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.btnValidChars.Location = new System.Drawing.Point(11, 11);
+			this.btnValidChars.Location = new System.Drawing.Point(17, 30);
 			this.btnValidChars.Name = "btnValidChars";
 			this.btnValidChars.Size = new System.Drawing.Size(116, 22);
 			this.btnValidChars.TabIndex = 13;
@@ -652,7 +653,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// btnEncodingConverter
 			// 
 			this.btnEncodingConverter.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.btnEncodingConverter.Location = new System.Drawing.Point(186, 10);
+			this.btnEncodingConverter.Location = new System.Drawing.Point(193, 33);
 			this.btnEncodingConverter.Name = "btnEncodingConverter";
 			this.btnEncodingConverter.Size = new System.Drawing.Size(75, 23);
 			this.btnEncodingConverter.TabIndex = 13;
@@ -665,14 +666,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lblEncodingConverter.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.m_lblEncodingConverter.Location = new System.Drawing.Point(12, 10);
 			this.m_lblEncodingConverter.Name = "m_lblEncodingConverter";
-			this.m_lblEncodingConverter.Size = new System.Drawing.Size(0, 13);
+			this.m_lblEncodingConverter.Size = new System.Drawing.Size(149, 13);
 			this.m_lblEncodingConverter.TabIndex = 11;
+			this.m_lblEncodingConverter.Text = "Set up input converters for {0}";
 			// 
 			// _encodingConverterCombo
 			// 
 			this._encodingConverterCombo.AllowSpaceInEditBox = false;
 			this._encodingConverterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._encodingConverterCombo.Location = new System.Drawing.Point(10, 11);
+			this._encodingConverterCombo.Location = new System.Drawing.Point(17, 34);
 			this._encodingConverterCombo.Name = "_encodingConverterCombo";
 			this._encodingConverterCombo.Size = new System.Drawing.Size(168, 21);
 			this._encodingConverterCombo.Sorted = true;
@@ -686,7 +688,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.flowLayoutPanel1.Controls.Add(this._okBtn);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 569);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 578);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(885, 28);
 			this.flowLayoutPanel1.TabIndex = 2;
@@ -735,11 +737,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelBtn;
-			this.ClientSize = new System.Drawing.Size(891, 600);
+			this.ClientSize = new System.Drawing.Size(891, 609);
 			this.ControlBox = false;
 			this.Controls.Add(this._mainLayoutPanel);
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(800, 575);
+			this.MinimumSize = new System.Drawing.Size(800, 620);
 			this.Name = "FwWritingSystemSetupDlg";
 			this.ShowIcon = false;
 			this.Text = "Writing System Properties";
