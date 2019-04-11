@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, parametersElement, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(parametersElement, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);

@@ -22,14 +22,14 @@ namespace LanguageExplorer.Areas.Grammar
 	/// </summary>
 	internal class RecordBrowseActiveView : RecordBrowseView
 	{
-		internal RecordBrowseActiveView(UiWidgetController uiWidgetController, XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
-			: base(uiWidgetController, browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
+		internal RecordBrowseActiveView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+			: base(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList, uiWidgetController)
 		{
 		}
 
-		protected override BrowseViewer CreateBrowseViewer(UiWidgetController uiWidgetController, XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController)
 		{
-			var viewer = new BrowseActiveViewer(uiWidgetController, nodeSpec, hvoRoot, cache, sortItemProvider, sda);
+			var viewer = new BrowseActiveViewer(nodeSpec, hvoRoot, cache, sortItemProvider, sda, uiWidgetController);
 			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
 			return viewer;
 		}
@@ -82,8 +82,8 @@ namespace LanguageExplorer.Areas.Grammar
 			public event CheckBoxActiveChangedEventHandler CheckBoxActiveChanged;
 
 			/// <summary />
-			public BrowseActiveViewer(UiWidgetController uiWidgetController, XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-				: base(uiWidgetController, configParamsElement, hvoRoot, cache, sortItemProvider, sda)
+			public BrowseActiveViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController)
+				: base(configParamsElement, hvoRoot, cache, sortItemProvider, sda, uiWidgetController)
 			{
 			}
 

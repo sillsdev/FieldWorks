@@ -84,18 +84,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_printViewPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 		}
 
-		/// <summary>
-		/// InterlinMaster can do this command: CmdAddNote.
-		/// It passes the buck to one of many controls it contains and has them deal with what they want.
-		/// </summary>
-		private void AddEventHandlers()
-		{
-			var userController = new UserControlUiWidgetParameterObject(this);
-			// Add handler stuff from this class and possibly from subclasses.
-			SetupUiWidgets(userController);
-			_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
-		}
-
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
 			var editMenuItemsForUserControl = userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Edit];
@@ -515,32 +503,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnLayout(levent);
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Enable if there's anything to select.  This is needed so that the toolbar button is
-		/// disabled when there's nothing to look up.  Otherwise, crashes can result when it's
-		/// clicked but there's nothing there to process!  It's misleading to the user if
-		/// nothing else.  We leave the button visible so that the user doesn't get nauseated
-		/// from the buttons appearing and disappearing rapidly.
-		/// </summary>
-		public bool OnDisplayLexiconLookup(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Visible = true;
-			if (m_tabCtrl.SelectedIndex != ktpsRawText)
-				display.Enabled = false;
-			else
-			{
-				//LT-6904 : exposed this case where the m_rtPane was null
-				// (another case of toolbar processing being done at an unexpected time)
-				if (m_rtPane == null)
-					display.Enabled = false;
-				else
-					display.Enabled = m_rtPane.LexiconLookupEnabled();
-			}
-			return true;
-		}
-#endif
-
 		private int RootStTextHvo => RootStText?.Hvo ?? 0;
 
 		/// <remarks>virtual for tests</remarks>
@@ -554,11 +516,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
-			m_rtPane.IsCurrentTabForInterlineMaster = false;
-			m_taggingPane.IsCurrentTabForInterlineMaster = false;
-			m_idcGloss.IsCurrentTabForInterlineMaster = false;
-			m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
-			m_printViewPane.IsCurrentTabForInterlineMaster = false;
+			if (ShouldSetupUiWidgets)
+			{
+				m_rtPane.IsCurrentTabForInterlineMaster = false;
+				m_taggingPane.IsCurrentTabForInterlineMaster = false;
+				m_idcGloss.IsCurrentTabForInterlineMaster = false;
+				m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
+				m_printViewPane.IsCurrentTabForInterlineMaster = false;
+			}
 			if (m_constChartPane != null)
 			{
 				((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
@@ -602,7 +567,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// LT-7733 Warning dialog for Text Chart
 							MessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
-							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = true;
+							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = ShouldSetupUiWidgets;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
 						if (ParentForm == Form.ActiveForm)
@@ -630,16 +595,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsPrint:
-						m_printViewPane.IsCurrentTabForInterlineMaster = true;
+						m_printViewPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
 						break;
 					case ktpsGloss:
-						m_idcGloss.IsCurrentTabForInterlineMaster = true;
+						m_idcGloss.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
 						break;
 					case ktpsAnalyze:
-						m_idcAnalyze.IsCurrentTabForInterlineMaster = true;
+						m_idcAnalyze.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
 						break;
 					case ktpsTagging:
-						m_taggingPane.IsCurrentTabForInterlineMaster = true;
+						m_taggingPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
 						break;
 				}
 				SelectAnnotation();
@@ -745,12 +710,20 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		#endregion
 
+		protected virtual bool ShouldSetupUiWidgets => true;
+
 		/// <summary>
 		/// About to show, so finish initializing.
 		/// </summary>
 		internal void FinishInitialization()
 		{
-			AddEventHandlers();
+			if (ShouldSetupUiWidgets)
+			{
+				var userController = new UserControlUiWidgetParameterObject(this);
+				// Add handler stuff from this class and possibly from subclasses.
+				SetupUiWidgets(userController);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
+			}
 			if (m_tcPane != null && m_tcPane.Visible)
 			{
 				// Making the tab control currently requires this first...

@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 #endif
 
 			var root = XDocument.Parse(GrammarResources.AdhocCoprohibitionRuleEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

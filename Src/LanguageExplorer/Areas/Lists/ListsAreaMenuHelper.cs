@@ -63,7 +63,6 @@ namespace LanguageExplorer.Areas.Lists
 			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
-
 #if RANDYTODO
 			// TODO: Move this into the tool space to conform to the new world order on menu/tool bar buttons.
 			// TODO: This class should now only worry about truly common UI widgets for the entire area.

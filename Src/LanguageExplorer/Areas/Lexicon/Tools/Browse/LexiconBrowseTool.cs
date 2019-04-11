@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);

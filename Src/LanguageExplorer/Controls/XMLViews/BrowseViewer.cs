@@ -633,14 +633,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// The data access passed typically is a decorator for the one in the cache, adding
 		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
-		internal BrowseViewer(UiWidgetController uiWidgetController, XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		internal BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController = null)
 			: this(configParamsElement, hvoRoot, cache, sortItemProvider, sda)
 		{
+			// Should be null for nested instance (cf. WordListConcordanceTool).
+			// Otherwise, UI widgets will be registered more than once.
 			_uiWidgetController = uiWidgetController;
-			var userController = new UserControlUiWidgetParameterObject(this);
-			// Add handler stuff from this class and possibly from subclasses.
-			SetupUiWidgets(userController);
-			_uiWidgetController.AddHandlers(userController);
+			if (_uiWidgetController != null)
+			{
+				var userController = new UserControlUiWidgetParameterObject(this);
+				// Add handler stuff from this class and possibly from subclasses.
+				SetupUiWidgets(userController);
+				_uiWidgetController.AddHandlers(userController);
+			}
 		}
 
 		private ContextMenuStrip CreateBrowseViewContextMenu()

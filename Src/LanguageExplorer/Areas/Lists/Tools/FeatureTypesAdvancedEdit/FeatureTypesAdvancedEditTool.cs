@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

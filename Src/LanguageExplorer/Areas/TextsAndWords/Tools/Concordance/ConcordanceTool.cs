@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			};
 			_concordanceControl = new ConcordanceControl(majorFlexComponentParameters.SharedEventHandlers, (MatchingConcordanceItems)_recordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("wordOccurrenceList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);

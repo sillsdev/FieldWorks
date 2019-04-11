@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultFocusControl = "InterlinMaster"
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, "Texts", new PaneBar(), _interlinMaster, "Text", new PaneBar());

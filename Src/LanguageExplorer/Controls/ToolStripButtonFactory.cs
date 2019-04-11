@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls
 {
+#if RANDYTODO
+	// TODO: Remove this class when shift in menu handling is finished.
+#endif
 	/// <summary>
 	/// Factory that creates an instance of ToolStripButton.
 	/// </summary>

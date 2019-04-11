@@ -100,12 +100,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
 			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
-			_nestedRecordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("wordOccurrenceListUpper").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _subservientRecordList);
+			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
-			_mainRecordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("wordList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
+			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordListProvidingOwner, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -117,6 +117,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			};
 			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _mainRecordBrowseView, "Concordance", new PaneBar(), _nestedMultiPane, "Tabs", new PaneBar());
+			// The next method call will add UserControl event handlers.
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;

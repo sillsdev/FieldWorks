@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Attribute("width").Value = "80000";
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 

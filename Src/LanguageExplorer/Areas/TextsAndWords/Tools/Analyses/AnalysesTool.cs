@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

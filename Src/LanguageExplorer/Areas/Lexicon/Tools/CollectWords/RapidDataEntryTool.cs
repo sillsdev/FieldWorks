@@ -138,7 +138,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_nestedRecordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(RDEwords, majorFlexComponentParameters.StatusBar, RDEwordsFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _nestedRecordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _nestedRecordList, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,

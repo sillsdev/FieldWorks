@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(_sharedEventHandlers);

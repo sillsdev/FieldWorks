@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 #endif
 
 			var root = XDocument.Parse(GrammarResources.FeaturesAdvancedEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 #if RANDYTODO

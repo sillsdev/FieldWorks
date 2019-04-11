@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 #endif
 
 			var root = XDocument.Parse(GrammarResources.PhonologicalRuleEditToolParameters).Root;
-			_recordBrowseActiveView = new RecordBrowseActiveView(majorFlexComponentParameters.UiWidgetController, root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

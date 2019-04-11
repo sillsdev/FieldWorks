@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			// TODO: Set up factory method for the browse view.
 #endif
 
-			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(majorFlexComponentParameters.UiWidgetController, XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

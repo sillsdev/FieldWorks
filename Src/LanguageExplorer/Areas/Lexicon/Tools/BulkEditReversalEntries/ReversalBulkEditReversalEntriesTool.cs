@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 #endif
 
 			_mainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);

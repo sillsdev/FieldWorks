@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			// TODO: Set up factory method for the browse view.
 #endif
 
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList));
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController));
 		}
 
 		/// <summary>

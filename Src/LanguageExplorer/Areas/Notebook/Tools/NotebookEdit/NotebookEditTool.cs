@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(this, MyDataTree, _recordBrowseView);
 			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters

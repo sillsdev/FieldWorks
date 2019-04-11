@@ -76,8 +76,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					userController.MenuItemsForUserControl[MainMenu.View].Add(Command.ShowInvisibleSpaces, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ShowInvisibleSpaces_Click, () => CanShowInvisibleSpaces));
 					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdGuessWordBreaks, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdGuessWordBreaks_Click, () => CanCmdGuessWordBreaks));
 					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.ClickInvisibleSpace, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClickInvisibleSpace_Click, () => CanClickInvisibleSpace));
+					userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
+					userController.ToolBarItemsForUserControl[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
 					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
-
 				}
 				else
 				{
@@ -659,36 +660,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		/// <summary>
-		/// Look up the selected wordform in the dictionary and display its lexical entry.
-		/// </summary>
-		public bool OnLexiconLookup(object argument)
+		private Tuple<bool, bool> CanCmdLexiconLookup
+		{
+			get
+			{
+				var enabled = false;
+				var sel = RootBox?.Selection;
+				if (sel != null && sel.IsValid)
+				{
+					// We just need to see if it's possible
+					int hvoDummy, tagDummy, wsDummy, ichMinDummy, ichLimDummy;
+					enabled = GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
+				}
+				return new Tuple<bool, bool>(true, enabled);
+			}
+		}
+
+		private void CmdLexiconLookup_Click(object sender, EventArgs e)
 		{
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
-			return true;
-		}
-
-		/// <summary>
-		/// Returns true if there's anything to select.  This is needed so that the toolbar
-		/// button is disabled when there's nothing to select and look up.  Otherwise, crashes
-		/// can result when it's clicked but there's nothing there to process!  It's misleading
-		/// to the user if nothing else.  It would be nice if the processing could be minimized,
-		/// but this seems to be minimal. (GJM - 23 Feb 2012 Is that better? LT-12726)
-		/// </summary>
-		public bool LexiconLookupEnabled()
-		{
-			var sel = RootBox?.Selection;
-			if (sel == null || !sel.IsValid)
-			{
-				return false;
-			}
-			int hvoDummy, tagDummy, wsDummy, ichMinDummy, ichLimDummy;
-			// We just need to see if it's possible
-			return GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
 		}
 
 		private static bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)

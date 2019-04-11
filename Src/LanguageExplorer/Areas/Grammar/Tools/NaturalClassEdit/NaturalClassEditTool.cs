@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 #endif
 
 			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(majorFlexComponentParameters.UiWidgetController, root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

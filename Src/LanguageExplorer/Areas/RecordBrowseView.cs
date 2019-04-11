@@ -42,16 +42,11 @@ namespace LanguageExplorer.Areas
 			Init();
 		}
 
-		internal RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
+		internal RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController = null)
 			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
 			_browseViewContextMenuFactory = browseViewContextMenuFactory;
-		}
-
-		internal RecordBrowseView(UiWidgetController uiWidgetController, XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
-			: this(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
-		{
 			_uiWidgetController = uiWidgetController;
 		}
 
@@ -116,7 +111,7 @@ namespace LanguageExplorer.Areas
 			// after ShowRecord() below sets m_browseViewer.CurrentIndex.
 			// As far as I (EricP) can tell "RestoreSelectionAndScrollPos" should only occur
 			// after Init() (ie. Application.Idle()) and the user has created a new selection based upon
-			// clicking or keyboard input. In otherwords, there is no reason to try to
+			// clicking or keyboard input. In other words, there is no reason to try to
 			// restore a BrowseView Selection that has occurred before the user has
 			// done anything to create a selection with the cursor.
 			// In effort to avoid this crashing path, we clear any RootBox.Selection that
@@ -380,7 +375,7 @@ namespace LanguageExplorer.Areas
 				// will get cleared to prevent these views from accessing invalid objects.
 				MyRecordList.UpdateList(false, true);
 			}
-			BrowseViewer = CreateBrowseViewer(_uiWidgetController, m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher);
+			BrowseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher, _uiWidgetController);
 			BrowseViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			BrowseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
 			BrowseViewer.SortersCompatible += AreSortersCompatible;
@@ -432,9 +427,9 @@ namespace LanguageExplorer.Areas
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(UiWidgetController uiWidgetController, XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController)
 		{
-			return new BrowseViewer(uiWidgetController, nodeSpec, hvoRoot, cache, sortItemProvider, sda);
+			return new BrowseViewer(nodeSpec, hvoRoot, cache, sortItemProvider, sda, uiWidgetController);
 		}
 
 		private void SetStyleSheet()
