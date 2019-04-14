@@ -895,7 +895,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.SandboxJumpToTool), menuLabel);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.SandboxJumpToTool), menuLabel);
 			var tagList = new List<object> { AreaServices.PosEditMachineName, className };
 			menu.Tag = tagList;
 		}
@@ -904,7 +904,7 @@ namespace LanguageExplorer.Areas
 		{
 			// 2 users in PopupContextMenuCreatorMethod_mnuObjectChoices.
 			EventHandler eventHandler;
-			if (_currentTool.MachineName != AreaServices.ConcordanceMachineName || !slice.MyCmObject.IsValidObject || !_sharedEventHandlers.TryGetEventHandler(AreaServices.JumpToConcordance, out eventHandler))
+			if (_currentTool.MachineName != AreaServices.ConcordanceMachineName || !slice.MyCmObject.IsValidObject || !_sharedEventHandlers.TryGetEventHandler(Command.JumpToConcordance, out eventHandler))
 			{
 				return;
 			}
@@ -1037,9 +1037,9 @@ namespace LanguageExplorer.Areas
 				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid };
 			}
 
-			PartiallySharedAreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+			PartiallySharedAreaWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(slice, menuItems, contextMenuStrip);
 
-			PartiallySharedAreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+			PartiallySharedAreaWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(slice, menuItems, contextMenuStrip);
 
 			// End: <menu id="mnuEnvReferenceChoices">
 

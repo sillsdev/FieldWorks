@@ -127,21 +127,11 @@ namespace LanguageExplorer.Areas
 		#endregion menus
 
 		#region commands
-		internal const string InsertSlash = "InsertSlash";
-		internal const string InsertEnvironmentBar = "InsertEnvironmentBar";
-		internal const string InsertNaturalClass = "InsertNaturalClass";
-		internal const string InsertOptionalItem = "InsertOptionalItem";
-		internal const string InsertHashMark = "InsertHashMark";
-		internal const string ShowEnvironmentError = "ShowEnvironmentError";
-		internal const string ContextSetFeatures = "ContextSetFeatures";
 		internal const string JumpToTool = "JumpToTool";
-		internal const string JumpToConcordance = "JumpToConcordance";
-		internal const string SandboxJumpToTool = "SandboxJumpToTool";
 		internal const string InsertCategory = "InsertCategory";
 		internal const string DataTreeDelete = "DataTreeDelete";
 		internal const string CmdDeleteSelectedObject = "CmdDeleteSelectedObject";
 		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
-		internal const string CmdAddToLexicon = "CmdAddToLexicon";
 		internal const string LexiconLookup = "LexiconLookup";
 		#endregion commands
 

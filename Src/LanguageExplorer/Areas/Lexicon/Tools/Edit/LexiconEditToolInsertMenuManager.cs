@@ -59,16 +59,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_mainWnd = majorFlexComponentParameters.MainWindow;
 			MyRecordList = recordList;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertLexEntry, Insert_Entry_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSense, Insert_Sense_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSubsense, Insert_Subsense_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm, Insert_Allomorph_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_Etymology, Insert_Etymology_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation, Insert_Pronunciation_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertExtNote, Insert_ExtendedNote_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertPicture, Insert_Picture_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertVariant, Insert_Variant_Clicked);
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertMediaFile, Insert_Sound_Or_Movie_File_Clicked);
+			_sharedEventHandlers.Add(Command.CmdInsertLexEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Entry_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertSense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sense_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertSubsense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsense_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdDataTree_Insert_AlternateForm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Allomorph_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdDataTree_Insert_Etymology, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Etymology_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdDataTree_Insert_Pronunciation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Pronunciation_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertExtNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ExtendedNote_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertPicture, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Picture_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertVariant, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Variant_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertMediaFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sound_Or_Movie_File_Clicked, _sharedEventHandlers.SeeAndDo));
 
 			MyDataTree.CurrentSliceChanged += MyDataTree_CurrentSliceChanged;
 
@@ -151,16 +151,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertLexEntry);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertSense);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertSubsense);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_Etymology);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertExtNote);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertPicture);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertVariant);
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertMediaFile);
+				_sharedEventHandlers.Remove(Command.CmdInsertLexEntry);
+				_sharedEventHandlers.Remove(Command.CmdInsertSense);
+				_sharedEventHandlers.Remove(Command.CmdInsertSubsense);
+				_sharedEventHandlers.Remove(Command.CmdDataTree_Insert_AlternateForm);
+				_sharedEventHandlers.Remove(Command.CmdDataTree_Insert_Etymology);
+				_sharedEventHandlers.Remove(Command.CmdDataTree_Insert_Pronunciation);
+				_sharedEventHandlers.Remove(Command.CmdInsertExtNote);
+				_sharedEventHandlers.Remove(Command.CmdInsertPicture);
+				_sharedEventHandlers.Remove(Command.CmdInsertVariant);
+				_sharedEventHandlers.Remove(Command.CmdInsertMediaFile);
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
 
 				foreach (var menuTuple in _newInsertMenusAndHandlers)

@@ -264,7 +264,7 @@ namespace LanguageExplorer.Areas.Lists
 			      <item command="CmdDataTree-Insert-Possibility" /> // Shared
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subitem) };
 
 			// End: <menu id="mnuDataTree-SubPossibilities">
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Areas.Lists
 				    </command>
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subitem) };
 
 			// End: <menu id="mnuDataTree-SubLocation">
@@ -313,7 +313,7 @@ namespace LanguageExplorer.Areas.Lists
 				<item command="CmdDataTree-Insert-AnthroCategory" /> // Shared
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subcategory, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subcategory, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subcategory) };
 
 			// End: <menu id="mnuDataTree-SubAnthroCategory">
@@ -336,7 +336,7 @@ namespace LanguageExplorer.Areas.Lists
 				<item command="CmdDataTree-Insert-SemanticDomain" />
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subdomain, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subdomain, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subdomain) };
 
 			// End: <menu id="mnuDataTree-SubSemanticDomain">
@@ -359,7 +359,7 @@ namespace LanguageExplorer.Areas.Lists
 				<item command="CmdDataTree-Insert-LexEntryType" />
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subtype) };
 
 			// End: <menu id="mnuDataTree-SubComplexEntryType">
@@ -382,7 +382,7 @@ namespace LanguageExplorer.Areas.Lists
 				<item command="CmdDataTree-Insert-LexEntryType" />
 			*/
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, AreaServices.PopulateForSubitemInsert(ListsAreaMenuHelper.GetPossibilityList(MyRecordList), currentPossibility, ListResources.Insert_Subtype) };
 
 			// End: <menu id="mnuDataTree-SubVariantEntryType">

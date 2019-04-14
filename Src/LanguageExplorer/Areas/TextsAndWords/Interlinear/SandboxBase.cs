@@ -828,18 +828,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (_needSharedHandlers)
 				{
-					SharedEventHandlers.Add(AreaServices.SandboxJumpToTool, SandboxJumpToTool_Clicked);
+					SharedEventHandlers.Add(Command.SandboxJumpToTool, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SandboxJumpToTool_Clicked, SharedEventHandlers.SeeAndDo));
 					_needSharedHandlers = false;
 				}
 				EditMonitor.StartMonitoring();
 			}
 			else
 			{
-				EventHandler eventHandler;
-				if (SharedEventHandlers.TryGetEventHandler(AreaServices.SandboxJumpToTool, out eventHandler))
+				Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
+				if (SharedEventHandlers.TryGetEventHandler(Command.SandboxJumpToTool, out handlerAndFunction))
 				{
-					SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
-					SharedEventHandlers.RemoveStatusChecker(AreaServices.SandboxJumpToTool);
+					SharedEventHandlers.Remove(Command.SandboxJumpToTool);
 					_needSharedHandlers = true;
 				}
 				EditMonitor.StopMonitoring();
@@ -878,6 +877,58 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool PassKeysToKeyboardHandler => !SandboxEditMonitor.IsMonitoring;
 
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				// The "new normal": Adding the handler to SharedEventHandlers is deferred,
+				// until the control becomes Visible,
+				// which does not happen for tests.
+				// Even then, it is removed, when the control is not visible, so see if it still exists, before removing it now.
+				Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
+				if (SharedEventHandlers.TryGetEventHandler(Command.SandboxJumpToTool, out handlerAndFunction))
+				{
+					SharedEventHandlers.Remove(Command.SandboxJumpToTool);
+				}
+				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
+			}
+
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				components?.Dispose();
+				EditMonitor?.Dispose();
+				m_vc?.Dispose();
+				Caches?.Dispose();
+				DisposeComboHandler();
+				if (FirstLineHandler != null)
+				{
+					FirstLineHandler.AnalysisChosen -= new EventHandler(Handle_AnalysisChosen);
+					FirstLineHandler.Dispose();
+				}
+			}
+			m_stylesheet = null;
+			Caches = null;
+			// StringCaseStatus m_case; // Enum, which is a value type, and value types can't be set to null.
+			m_ComboHandler = null; // handles most kinds of combo box.
+			FirstLineHandler = null; // handles the one on the base line.
+			EditMonitor = null;
+			m_vc = null;
+			m_rawWordform = null;
+			FormOfWordform = null;
+			SharedEventHandlers = null;
+		}
 
 		#region Other methods
 

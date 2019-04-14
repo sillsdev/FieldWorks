@@ -26,10 +26,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				components?.Dispose();
 				m_toolTip?.Dispose();
-				_sharedEventHandlers.Remove("CmdRepeatLastMoveLeft");
-				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveLeft");
-				_sharedEventHandlers.Remove("CmdRepeatLastMoveRight");
-				_sharedEventHandlers.RemoveStatusChecker("CmdRepeatLastMoveRight");
+				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveLeft);
+				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveRight);
 				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// TODO: _dataMenu
 			}

@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
 			m_tbSearchText.SuppressEnter = true;
-			_sharedEventHandlers.Add(AreaServices.JumpToConcordance, JumpToConcordance_Clicked);
+			_sharedEventHandlers.Add(Command.JumpToConcordance, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(JumpToConcordance_Clicked, _sharedEventHandlers.SeeAndDo));
 		}
 
 		#region Overrides of ConcordanceControlBase
@@ -128,6 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
+				_sharedEventHandlers.Remove(Command.JumpToConcordance);
 				if (m_recordList != null)
 				{
 					// Don't dispose of the record list, since it can monitor relevant PropChanges

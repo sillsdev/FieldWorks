@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers = sharedEventHandlers;
 			if (s_counter++ == 0)
 			{
-				_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
+				_sharedEventHandlers.Add(Command.CmdCtxtSetFeatures, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ContextSetFeatures_Clicked, _sharedEventHandlers.SeeAndDo));
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas
 				RuleFormulaControl.InsertionControl.SizeChanged -= InsertionControl_SizeChanged;
 				if (--s_counter == 0)
 				{
-					_sharedEventHandlers.Remove(AreaServices.ContextSetFeatures);
+					_sharedEventHandlers.Remove(Command.CmdCtxtSetFeatures);
 				}
 			}
 

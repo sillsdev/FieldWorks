@@ -15,59 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
-			if (IsDisposed)
-			{
-				// No need to run it more than once.
-				return;
-			}
-
-			if (disposing)
-			{
-				// The "new normal": Adding the handler to SharedEventHandlers is deferred,
-				// until the control becomes Visible,
-				// which does not happen for tests.
-				// Even then, it is removed, when the control is not visible, so see if it still exists, before removing it now.
-				EventHandler eventHandler;
-				if (SharedEventHandlers.TryGetEventHandler(AreaServices.SandboxJumpToTool, out eventHandler))
-				{
-					SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
-				}
-				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
-			}
-
-			base.Dispose(disposing);
-
-			if (disposing)
-			{
-				components?.Dispose();
-				EditMonitor?.Dispose();
-				m_vc?.Dispose();
-				Caches?.Dispose();
-				DisposeComboHandler();
-				if (FirstLineHandler != null)
-				{
-					FirstLineHandler.AnalysisChosen -= new EventHandler(Handle_AnalysisChosen);
-					FirstLineHandler.Dispose();
-				}
-			}
-			m_stylesheet = null;
-			Caches = null;
-			// StringCaseStatus m_case; // Enum, which is a value type, and value types can't be set to null.
-			m_ComboHandler = null; // handles most kinds of combo box.
-			FirstLineHandler = null; // handles the one on the base line.
-			EditMonitor = null;
-			m_vc = null;
-			m_rawWordform = null;
-			FormOfWordform = null;
-			SharedEventHandlers = null;
-		}
-
 		#region Component Designer generated code
 
 		/// <summary>

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
@@ -20,10 +21,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		}
 
 		/// <summary>
-		/// The Concordance tool doesn't want these menus, but all other area tools do want them.
+		/// Several T & W area tools don't want these menus, but all other T & W area tools do want them.
 		/// </summary>
-		internal void AddMenusForAllButConcordanceTool(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+		internal void AddMenusForExpectedTextAndWordsTools(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
+			var toolsThatAreNotExpectedCallThisMethod = new HashSet<string>
+			{
+				AreaServices.ComplexConcordanceMachineName,
+				AreaServices.ConcordanceMachineName,
+				AreaServices.InterlinearEditMachineName,
+				AreaServices.WordListConcordanceMachineName
+			};
+			if (toolsThatAreNotExpectedCallThisMethod.Contains(toolUiWidgetParameterObject.Tool.MachineName))
+			{
+				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not exepcted to call this method.");
+			}
 			var fileMenuItemsForTool = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File];
 			fileMenuItemsForTool.Add(Command.CmdImportInterlinearSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearSfm_Click, () => CanCmdImportInterlinearSfm));
 			fileMenuItemsForTool.Add(Command.CmdImportWordsAndGlossesSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordsAndGlossesSfm_Click, () => CanCmdImportWordsAndGlossesSfm));

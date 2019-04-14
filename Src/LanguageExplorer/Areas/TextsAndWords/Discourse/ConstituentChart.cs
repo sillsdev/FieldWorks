@@ -79,10 +79,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				logic = new ConstituentChartLogic(cache);
 			}
 			_sharedEventHandlers = sharedEventHandlers;
-			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveLeft.ToString("g"), RepeatLastMoveLeft_Clicked);
-			_sharedEventHandlers.AddStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g"), () => CanRepeatLastMoveLeft);
-			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveRight.ToString("g"), RepeatLastMoveRight_Clicked);
-			_sharedEventHandlers.AddStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g"), () => CanRepeatLastMoveRight);
+			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveLeft_Clicked, () => CanRepeatLastMoveLeft));
+			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveRight_Clicked, () => CanRepeatLastMoveRight));
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;

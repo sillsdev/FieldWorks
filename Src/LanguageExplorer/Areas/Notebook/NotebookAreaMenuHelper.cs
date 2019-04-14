@@ -22,10 +22,6 @@ namespace LanguageExplorer.Areas.Notebook
 	/// </summary>
 	internal sealed class NotebookAreaMenuHelper : IAreaUiWidgetManager
 	{
-		internal const string CmdGoToRecord = "CmdGoToRecord";
-		internal const string CmdInsertRecord = "CmdInsertRecord";
-		internal const string CmdInsertSubRecord = "CmdInsertSubRecord";
-		internal const string CmdInsertSubSubRecord = "CmdInsertSubSubRecord";
 		private IArea _area;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private DataTree MyDataTree { get; set; }
@@ -59,10 +55,10 @@ namespace LanguageExplorer.Areas.Notebook
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_sharedEventHandlers.Add(CmdGoToRecord, GotoRecord_Clicked);
-			_sharedEventHandlers.Add(CmdInsertRecord, Insert_Record_Clicked);
-			_sharedEventHandlers.Add(CmdInsertSubRecord, Insert_Subrecord_Clicked);
-			_sharedEventHandlers.Add(CmdInsertSubSubRecord, Insert_Subsubrecord_Clicked);
+			_sharedEventHandlers.Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Record_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertSubrecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subrecord_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdInsertSubsubrecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsubrecord_Clicked, _sharedEventHandlers.SeeAndDo));
 			_area = area;
 			_recordList = recordList;
 
@@ -149,10 +145,10 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				_newInsertMenusAndHandlers?.Clear();
 
-				_sharedEventHandlers.Remove(CmdGoToRecord);
-				_sharedEventHandlers.Remove(CmdInsertRecord);
-				_sharedEventHandlers.Remove(CmdInsertSubRecord);
-				_sharedEventHandlers.Remove(CmdInsertSubSubRecord);
+				_sharedEventHandlers.Remove(Command.CmdGoToRecord);
+				_sharedEventHandlers.Remove(Command.CmdInsertRecord);
+				_sharedEventHandlers.Remove(Command.CmdInsertSubrecord);
+				_sharedEventHandlers.Remove(Command.CmdInsertSubsubrecord);
 			}
 			_majorFlexComponentParameters = null;
 			MyDataTree = null;
@@ -179,7 +175,7 @@ namespace LanguageExplorer.Areas.Notebook
 					  <params className="RnGenericRec" />
 					</command>
 			*/
-			newToolbarItems.Add(ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(CmdInsertRecord), "toolStripButtonInsertRecord", NotebookResources.nbkRecord, $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)"));
+			newToolbarItems.Add(ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.GetEventHandler(Command.CmdInsertRecord), "toolStripButtonInsertRecord", NotebookResources.nbkRecord, $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)"));
 
 			/*
 			  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar

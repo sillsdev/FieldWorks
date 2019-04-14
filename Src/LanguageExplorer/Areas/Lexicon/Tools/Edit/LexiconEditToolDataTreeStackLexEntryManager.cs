@@ -316,9 +316,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 			// <item command="CmdDataTree-Insert-Pronunciation"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation), LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdDataTree_Insert_Pronunciation), LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 			// <item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertMediaFile), LexiconResources.Insert_Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdInsertMediaFile), LexiconResources.Insert_Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
@@ -373,7 +373,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 			// <item command="CmdDataTree-Insert-Etymology"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.GetEventHandler(Command.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			return hotlinksMenuItemList;
 		}
@@ -390,7 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
 			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);

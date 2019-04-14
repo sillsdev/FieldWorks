@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdMergeEntry, Merge_With_Entry_Clicked);
+			_sharedEventHandlers.Add(Command.CmdMergeEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Merge_With_Entry_Clicked, _sharedEventHandlers.SeeAndDo));
 			MyRecordList = recordList;
 
 			var insertIndex = -1;
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdMergeEntry);
+				_sharedEventHandlers.Remove(Command.CmdMergeEntry);
 				foreach (var menuTuple in _newToolsConfigurationMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;

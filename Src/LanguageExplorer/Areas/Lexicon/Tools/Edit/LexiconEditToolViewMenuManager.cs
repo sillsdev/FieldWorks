@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_subscriber = majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_sharedEventHandlers.Add(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked, Show_Dictionary_Preview_Clicked);
+			_sharedEventHandlers.Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, _sharedEventHandlers.SeeAndDo));
 
 			MyRecordList = recordList;
 
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked);
+				_sharedEventHandlers.Remove(Command.Show_DictionaryPubPreview);
 				_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_viewMenu.DropDownOpening -= ViewMenu_DropDown_Opening;
 				foreach (var menuTuple in _newViewMenusAndHandlers)

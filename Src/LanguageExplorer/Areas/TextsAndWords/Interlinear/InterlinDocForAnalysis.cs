@@ -269,7 +269,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdAddWordGlossesToFreeTrans, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddWordGlossesToFreeTransClick, () => CanCmdAddWordGlossesToFreeTrans));
 			// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
 			Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
-			MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll.ToString("g"), ApproveAll_Click);
+			MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAll_Click, null));
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 		}
 
@@ -278,7 +278,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.TearDownUiWidgets();
 
 			RightMouseClickedEvent -= InterlinDocForAnalysis_RightMouseClickedEvent;
-			MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll.ToString("g"));
+			MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll);
 			Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 		}
 		#endregion

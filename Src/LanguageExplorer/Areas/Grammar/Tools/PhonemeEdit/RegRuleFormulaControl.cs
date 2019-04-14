@@ -141,7 +141,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			if (IsFeatsNCContextCurrent)
 			{
 				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCtxtSetFeatures), AreaResources.Set_Phonological_Features);
 			}
 
 			// <item label="-" translate="do not translate" /> Optionally inserted at separatorTwoInsertIndex. See below.

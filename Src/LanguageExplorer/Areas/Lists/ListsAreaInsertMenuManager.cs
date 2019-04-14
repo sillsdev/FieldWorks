@@ -56,9 +56,9 @@ namespace LanguageExplorer.Areas.Lists
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 
-			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.AddNewPossibilityListItem, AddNewPossibilityListItem_Clicked);
-			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.AddNewSubPossibilityListItem, AddNewSubPossibilityListItem_Clicked);
-			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.InsertFeatureType, InsertFeatureType_Clicked);
+			_majorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddNewPossibilityListItem_Clicked, _sharedEventHandlers.SeeAndDo));
+			_majorFlexComponentParameters.SharedEventHandlers.Add(Command.AddNewSubPossibilityListItem, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddNewSubPossibilityListItem_Clicked, _sharedEventHandlers.SeeAndDo));
+			_majorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, _sharedEventHandlers.SeeAndDo));
 
 			// Add Lists area Insert menus
 			AddInsertMenus();
@@ -124,9 +124,9 @@ namespace LanguageExplorer.Areas.Lists
 					tuple.Item1.Dispose();
 				}
 				_newInsertMenusAndHandlers.Clear();
-				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.AddNewPossibilityListItem);
-				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.AddNewSubPossibilityListItem);
-				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.InsertFeatureType);
+				_majorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdInsertPossibility);
+				_majorFlexComponentParameters.SharedEventHandlers.Remove(Command.AddNewSubPossibilityListItem);
+				_majorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdInsertFeatureType);
 			}
 			_newInsertMenusAndHandlers = null;
 			_insertMenu = null;
@@ -345,7 +345,7 @@ namespace LanguageExplorer.Areas.Lists
 			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
 			{
 				// Add "Entry" menu to all other tools.
-				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
+				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _sharedEventHandlers.GetEventHandler(Command.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
 				_insertEntryMenu.Tag = MyDataTree;
 				_insertEntryMenu.Visible = false;
 			}

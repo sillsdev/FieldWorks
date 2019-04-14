@@ -60,8 +60,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Collect up all shared stuff, before initializing them.
 			// That way, they can each have access to everyone's shared event handlers.
 			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
+			_sharedEventHandlers.Add(Command.DataTreeMerge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DataTreeMerge_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.CmdDataTree_Split_Sense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DataTreeSplit_Clicked, _sharedEventHandlers.SeeAndDo));
 			var lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_currentTool);
 			_lexiconAreaMenuHelper = lexiconAreaMenuHelper;
 			_lexiconAreaMenuHelper.Initialize(_majorFlexComponentParameters, area, MyRecordList);
@@ -147,8 +147,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					handlerKvp.Value.Dispose();
 				}
-				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeMerge);
-				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeSplit);
+				_sharedEventHandlers.Remove(Command.DataTreeMerge);
+				_sharedEventHandlers.Remove(Command.CmdDataTree_Split_Sense);
 				_lexiconEditToolUiWidgetManagers.Clear();
 				_lexiconAreaMenuHelper.Dispose();
 			}

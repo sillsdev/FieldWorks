@@ -27,19 +27,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string mnuDataTree_ExtendedNote_Examples = "mnuDataTree-ExtendedNote-Examples";
 		internal const string mnuDataTree_Picture = "mnuDataTree-Picture";
 		internal const string mnuDataTree_Subsenses = "mnuDataTree-Subsenses";
-
-		internal const string CmdGoToEntry = "GoToEntry_Clicked";
-		internal const string Show_Dictionary_Preview_Clicked = "Show_Dictionary_Preview_Clicked";
-		internal const string CmdDataTree_Insert_AlternateForm = "Insert_Allomorph_Clicked";
-		internal const string CmdDataTree_Insert_Etymology = "Insert_Etymology_Clicked";
-		internal const string CmdDataTree_Insert_Pronunciation = "Insert_Pronunciation_Clicked";
-		internal const string CmdInsertExtNote = "Insert_ExtendedNote_Clicked";
-		internal const string CmdInsertSense = "Insert_Sense_Clicked";
-		internal const string CmdInsertSubsense = "Insert_Subsense_Clicked";
-		internal const string CmdInsertPicture = "Insert_Picture_Clicked";
-		internal const string CmdInsertVariant = "Insert_Variant_Clicked";
-		internal const string CmdInsertMediaFile = "Insert_Sound_Or_Movie_File_Clicked";
-		internal const string CmdInsertLexEntry = "Insert_Entry_Clicked";
-		internal const string CmdMergeEntry = "Merge_With_Entry_Clicked";
 	}
 }

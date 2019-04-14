@@ -12,7 +12,7 @@ namespace LanguageExplorer
 	/// </summary>
 	internal enum Command
 	{
-		// Shared separator values.
+		#region Shared separator values.
 		Separator1,
 		Separator2,
 		Separator3,
@@ -24,7 +24,9 @@ namespace LanguageExplorer
 		Separator9,
 		Separator10,
 		Separator11,
+		#endregion Shared separator values.
 
+		#region Menus
 		// File menu
 		CmdNewLangProject,
 		CmdChooseLangProject,
@@ -270,6 +272,9 @@ namespace LanguageExplorer
 		CmdHelpReportBug,
 		CmdHelpMakeSuggestion,
 		CmdHelpAbout,
+		#endregion  Menus
+
+		#region Toolbars
 		// Format toolbar
 		// WritingSystemList, Also on Format menu
 		CombinedStylesList,
@@ -351,6 +356,33 @@ namespace LanguageExplorer
 		// CmdPreviousRecord,
 		// CmdNextRecord,
 		// CmdLastRecord,
-		CmdFLExLiftBridge
+		CmdFLExLiftBridge,
+		#endregion Toolbars
+
+		#region Others
+		/// <summary>
+		/// A family of merge commands, such as: CmdDataTree-Merge-Allomorph
+		/// </summary>
+		DataTreeMerge,
+		CmdDataTree_Split_Sense,
+		CmdCtxtSetFeatures,
+		/// <summary>
+		/// A family of sub possibility commands, such as: CmdDataTree-Insert-Possibility
+		/// </summary>
+		AddNewSubPossibilityListItem,
+		SandboxJumpToTool,
+		/// <summary>
+		/// Used for these original commands:
+		///		CmdWordformJumpToConcordance
+		///		CmdAnalysisJumpToConcordance
+		///		CmdMorphJumpToConcordance
+		///		CmdEntryJumpToConcordance
+		///		CmdSenseJumpToConcordance
+		///		CmdLexGramInfoJumpToConcordance
+		///		CmdWordGlossJumpToConcordance
+		///		CmdWordPOSJumpToConcordance
+		/// </summary>
+		JumpToConcordance
+		#endregion Others
 	}
 }

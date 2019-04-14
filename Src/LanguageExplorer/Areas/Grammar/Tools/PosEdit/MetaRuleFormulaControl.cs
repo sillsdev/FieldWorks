@@ -226,7 +226,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			if (IsFeatsNCContextCurrent)
 			{
 				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCtxtSetFeatures), AreaResources.Set_Phonological_Features);
 			}
 			// Need to remember where to insert the separator, if it is needed, at all.
 			var separatorInsertIndex = menuItems.Count - 1;

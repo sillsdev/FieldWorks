@@ -606,18 +606,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, btnBreakPhrase_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys, menuItem.Image);
 			}
 			var wantSeparator = true;
-			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft.ToString("g"), out eventHandler))
+			Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out handlerAndFunction))
 			{
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(mainMenuStrip);
 				wantSeparator = false;
 				// <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
 				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdRepeatLastMoveLeft];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdRepeatLastMoveLeft.ToString("g")), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
-				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g")).Invoke().Item2;
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, handlerAndFunction.Item1, menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
+				currentMenu.Enabled = handlerAndFunction.Item2.Invoke().Item2;
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight, out handlerAndFunction))
 			{
 				if (wantSeparator)
 				{
@@ -628,10 +628,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
 				// Image is locked in InterlinearImageHolder
 				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdRepeatLastMoveRight];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdRepeatLastMoveRight.ToString("g")), menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
-				currentMenu.Enabled = _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g")).Invoke().Item2;
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, handlerAndFunction.Item1, menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
+				currentMenu.Enabled = handlerAndFunction.Item2.Invoke().Item2;
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll.ToString("g"), out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll, out handlerAndFunction))
 			{
 				if (wantSeparator)
 				{
@@ -640,7 +640,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				// <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
 				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveAll];
-				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, _sharedEventHandlers.Get(Command.CmdApproveAll.ToString("g")), menuItem.Text, menuItem.ToolTipText, image: menuItem.Image);
+				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, handlerAndFunction.Item1, menuItem.Text, menuItem.ToolTipText, image: menuItem.Image);
 				currentMenu.Visible = currentMenu.Enabled = Visible;
 			}
 			_mnuFocusBoxMenus.Item1.Show(btnMenu, new Point(btnMenu.Width / 2, btnMenu.Height / 2));
@@ -689,22 +689,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) }
 			};
-			EventHandler eventHandler;
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft.ToString("g"), out eventHandler))
+			Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out handlerAndFunction))
 			{
 				// <item command="CmdRepeatLastMoveLeft" />
-				dataMenuHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveLeft.ToString("g")).Invoke()));
+				dataMenuHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => handlerAndFunction.Item2.Invoke()));
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight.ToString("g"), out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveRight, out handlerAndFunction))
 			{
 				// <item command="CmdRepeatLastMoveRight" />
-				dataMenuHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => _sharedEventHandlers.GetStatusChecker(Command.CmdRepeatLastMoveRight.ToString("g")).Invoke()));
+				dataMenuHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => handlerAndFunction.Item2.Invoke()));
 			}
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll.ToString("g"), out eventHandler))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll, out handlerAndFunction))
 			{
 				// <item command="CmdApproveAll" />
-				dataMenuHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
-				insertToolBarHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(eventHandler, () => CanDoCmdApproveAll));
+				dataMenuHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => CanDoCmdApproveAll));
+				insertToolBarHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => CanDoCmdApproveAll));
 			}
 			var userController = new UserControlUiWidgetParameterObject(this);
 			var dataMenuDictionary = userController.MenuItemsForUserControl[MainMenu.Data];

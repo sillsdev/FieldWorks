@@ -21,6 +21,12 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas
 {
+#if RANDYTODO
+	// TODO: It would be better if this class were split into behaviors that are shared:
+	// TODO: 1. between different areas, (this class)
+	// TODO: 2. between individual tools from different areas (new class). (That is, no tool should be using this class in the end.)
+	// TODO: 3. between UserControls from different areas (new class).
+#endif
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
 	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areas/tools,
@@ -28,39 +34,49 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal sealed class PartiallySharedAreaWideMenuHelper : IDisposable
 	{
+		private const string InsertSlash = "InsertSlash";
+		private const string InsertEnvironmentBar = "InsertEnvironmentBar";
+		private const string InsertNaturalClass = "InsertNaturalClass";
+		private const string InsertOptionalItem = "InsertOptionalItem";
+		private const string InsertHashMark = "InsertHashMark";
+		private const string ShowEnvironmentError = "ShowEnvironmentError";
+		private const string CmdAddToLexicon = "CmdAddToLexicon";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private readonly HashSet<string> _sharedEventKeyNames = new HashSet<string>();
+		private readonly HashSet<string> _notSharedEventKeyNames = new HashSet<string>();
+		private static PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
 
 		internal PartiallySharedAreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
+			Require.That(_partiallySharedAreaWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is nut null.");
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = recordList;
 
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			PropertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			Publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			Subscriber = _majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 
-#if RANDYTODO
-			// TODO: Are these really needed in this class?
-#endif
+			_notSharedEventKeyNames.AddRange(new[]
+			{
+				InsertSlash,
+				InsertEnvironmentBar,
+				InsertNaturalClass,
+				InsertOptionalItem,
+				InsertHashMark,
+				ShowEnvironmentError,
+				CmdAddToLexicon
+			});
 			_sharedEventKeyNames.AddRange(new[]
 			{
-				AreaServices.InsertSlash,
-				AreaServices.InsertEnvironmentBar,
-				AreaServices.InsertNaturalClass,
-				AreaServices.InsertOptionalItem,
-				AreaServices.InsertHashMark,
-				AreaServices.ShowEnvironmentError,
 				AreaServices.JumpToTool,
 				AreaServices.InsertCategory,
 				AreaServices.DataTreeDelete,
-				AreaServices.CmdAddToLexicon,
 				AreaServices.LexiconLookup,
 				AreaServices.CmdDeleteSelectedObject,
 				AreaServices.DeleteSelectedBrowseViewObject
@@ -69,24 +85,6 @@ namespace LanguageExplorer.Areas
 			{
 				switch (key)
 				{
-					case AreaServices.InsertSlash:
-						_sharedEventHandlers.Add(key, Insert_Slash_Clicked);
-						break;
-					case AreaServices.InsertEnvironmentBar:
-						_sharedEventHandlers.Add(key, Insert_Underscore_Clicked);
-						break;
-					case AreaServices.InsertNaturalClass:
-						_sharedEventHandlers.Add(key, Insert_NaturalClass_Clicked);
-						break;
-					case AreaServices.InsertOptionalItem:
-						_sharedEventHandlers.Add(key, Insert_OptionalItem_Clicked);
-						break;
-					case AreaServices.InsertHashMark:
-						_sharedEventHandlers.Add(key, Insert_HashMark_Clicked);
-						break;
-					case AreaServices.ShowEnvironmentError:
-						_sharedEventHandlers.Add(key, ShowEnvironmentError_Clicked);
-						break;
 					case AreaServices.JumpToTool:
 						_sharedEventHandlers.Add(key, JumpToTool_Clicked);
 						break;
@@ -95,9 +93,6 @@ namespace LanguageExplorer.Areas
 						break;
 					case AreaServices.DataTreeDelete:
 						_sharedEventHandlers.Add(key, DataTreeDelete_Clicked);
-						break;
-					case AreaServices.CmdAddToLexicon:
-						_sharedEventHandlers.Add(key, CmdAddToLexicon_Clicked);
 						break;
 					case AreaServices.LexiconLookup:
 						_sharedEventHandlers.Add(key, LexiconLookup_Clicked);
@@ -110,6 +105,7 @@ namespace LanguageExplorer.Areas
 						break;
 				}
 			}
+			_partiallySharedAreaWideMenuHelper = this;
 		}
 
 		/// <summary>
@@ -159,10 +155,13 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				_partiallySharedAreaWideMenuHelper = null;
 				foreach (var key in _sharedEventKeyNames)
 				{
 					_sharedEventHandlers.Remove(key);
 				}
+				_sharedEventKeyNames.Clear();
+				_notSharedEventKeyNames.Clear();
 			}
 			_majorFlexComponentParameters = null;
 			_recordList = null;
@@ -316,18 +315,18 @@ namespace LanguageExplorer.Areas
 			return (IPhEnvSliceCommon)slice;
 		}
 
-		internal static void CreateShowEnvironmentErrorMessageMenus(ISharedEventHandlers sharedEventHandlers, Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		internal static void CreateShowEnvironmentErrorMessageContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
 		{
 			/*
 		      <item command="CmdShowEnvironmentErrorMessage" />
 					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.ShowEnvironmentError), LanguageExplorerResources.Describe_Error_in_Environment);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanShowEnvironmentError;
 			menu.Tag = slice;
 		}
 
-		internal static void CreateCommonEnvironmentMenus(ISharedEventHandlers sharedEventHandlers, Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		internal static void CreateCommonEnvironmentContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
 		{
 			if (contextMenuStrip.Items.Count > 0)
 			{
@@ -341,7 +340,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvSlash" />
 					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertSlash), AreaResources.Insert_Environment_slash);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_Slash_Clicked, AreaResources.Insert_Environment_slash);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
 			menu.Tag = slice;
 
@@ -350,7 +349,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" /> SHARED
 			*/
 
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertEnvironmentBar), AreaResources.Insert_Environment_bar);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_Underscore_Clicked, AreaResources.Insert_Environment_bar);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
 			menu.Tag = slice;
 
@@ -358,7 +357,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvNaturalClass" />
 					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertNaturalClass), AreaResources.Insert_Natural_Class);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_NaturalClass_Clicked, AreaResources.Insert_Natural_Class);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
 			menu.Tag = slice;
 
@@ -366,7 +365,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvOptionalItem" />
 					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertOptionalItem), AreaResources.Insert_Optional_Item);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_OptionalItem_Clicked, AreaResources.Insert_Optional_Item);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
 			menu.Tag = slice;
 
@@ -374,7 +373,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvHashMark" />
 					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertHashMark), AreaResources.Insert_Word_Boundary);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_HashMark_Clicked, AreaResources.Insert_Word_Boundary);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
 			menu.Tag = slice;
 		}

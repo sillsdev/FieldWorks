@@ -15,7 +15,5 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal const string CmdAlphabeticalOrder = "AlphabeticalOrder_Clicked";
 		internal const string MoveUpObjectInOwningSequence = "MoveUpObjectInOwningSequence";
 		internal const string MoveDownObjectInOwningSequence = "MoveDownObjectInOwningSequence";
-		internal const string DataTreeMerge = "DataTreeMerge";
-		internal const string DataTreeSplit = "DataTreeSplit";
 	}
 }

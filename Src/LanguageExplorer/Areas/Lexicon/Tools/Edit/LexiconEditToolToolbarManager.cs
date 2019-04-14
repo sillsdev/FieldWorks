@@ -32,9 +32,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyRecordList = recordList;
 
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />
-			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry), "toolStripButtonInsertEntry", AreaResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
+			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.GetEventHandler(Command.CmdInsertLexEntry), "toolStripButtonInsertEntry", AreaResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
 			// <item command="CmdGoToEntry" defaultVisible="false" />
-			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry), "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
+			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.GetEventHandler(Command.CmdGoToEntry), "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
 
 			ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
@@ -42,8 +42,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <inheritdoc />
 		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			_insertEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry);
-			_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry);
+			_insertEntryToolStripButton.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdInsertLexEntry);
+			_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdGoToEntry);
 		}
 
 		#endregion

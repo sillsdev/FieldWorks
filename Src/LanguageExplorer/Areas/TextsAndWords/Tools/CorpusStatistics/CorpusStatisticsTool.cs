@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		{
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
 			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
-			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForAllButConcordanceTool(toolUiWidgetParameterObject);
+			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			// NB: Create the StatisticsView 'after' adding the tool handler, or you eat an exception for no tool registered.
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'. (The constructor does that.)

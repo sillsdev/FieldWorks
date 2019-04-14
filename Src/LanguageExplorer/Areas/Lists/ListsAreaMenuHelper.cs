@@ -31,9 +31,6 @@ namespace LanguageExplorer.Areas.Lists
 		private const string toolsMenu = "toolsMenu";
 		private const string insertToolbar = "insertToolbar";
 		private const string dataTreeStack = "dataTreeStack";
-		internal const string AddNewPossibilityListItem = "AddNewPossibilityListItem";
-		internal const string AddNewSubPossibilityListItem = "AddNewSubPossibilityListItem";
-		internal const string InsertFeatureType = "InsertFeatureType";
 		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
 
 		internal ListsAreaMenuHelper(ITool tool, DataTree dataTree)

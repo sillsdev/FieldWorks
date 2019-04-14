@@ -61,8 +61,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// <inheritdoc />
 		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
-			_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
-			_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+			_insertRecordToolStripButton.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdInsertRecord);
+			_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdGoToRecord);
 			_notebookAreaMenuHelper.UnwireSharedEventHandlers();
 		}
 		#endregion

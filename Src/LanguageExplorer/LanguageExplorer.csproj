@@ -410,8 +410,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpTopicPaths.resx</DependentUpon>
     </Compile>
-    <Compile Include="ICommandBasedSharedEventHandlers.cs" />
-    <Compile Include="Impls\CommandBasedSharedEventHandlers.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

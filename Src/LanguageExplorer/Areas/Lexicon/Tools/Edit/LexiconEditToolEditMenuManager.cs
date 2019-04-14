@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdGoToEntry, GoToEntry_Clicked);
+			_sharedEventHandlers.Add(Command.CmdGoToEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToEntry_Clicked, _sharedEventHandlers.SeeAndDo));
 			MyRecordList = recordList;
 
 			_editMenu = MenuServices.GetEditMenu(majorFlexComponentParameters.MenuStrip);
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdGoToEntry);
+				_sharedEventHandlers.Remove(Command.CmdGoToEntry);
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
