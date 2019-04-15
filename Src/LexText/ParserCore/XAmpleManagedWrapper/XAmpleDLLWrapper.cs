@@ -434,7 +434,11 @@ namespace XAmpleManagedWrapper
 
 		protected void RemoveSetup ()
 		{
-			CheckPtr (m_setup);
+			// just quit if we weren't initialized (or if we've already cleaned up)
+			if(m_setup == IntPtr.Zero)
+			{
+				return;
+			}
 
 			string sResult;
 			if (m_ampleReset != null) {
