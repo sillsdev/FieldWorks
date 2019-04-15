@@ -16,7 +16,7 @@ using Is = NUnit.Framework.Is;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	class FwWritingSystemSetupModelTests
+	class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 
 		[SetUp]
@@ -731,6 +731,91 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			Assert.IsFalse(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
+		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndSetsNew()
+		{
+			Cache.LangProject.VernWss = "en fr";
+			Cache.LangProject.CurVernWss = "en fr";
+			Cache.LangProject.HomographWs = "en";
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var warningShown = false;
+			testModel.ShouldChangeHomographWs = ws => { warningShown = true; return true; };
+			testModel.ToggleInCurrentList();
+			testModel.Save();
+			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
+			Assert.AreEqual(Cache.LangProject.HomographWs, "fr", "Homograph ws not changed.");
+		}
+
+		[Test]
+		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndDoesNotSetOnNo()
+		{
+			Cache.LangProject.VernWss = "en fr";
+			Cache.LangProject.CurVernWss = "en fr";
+			Cache.LangProject.HomographWs = "en";
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var warningShown = false;
+			testModel.ShouldChangeHomographWs = ws => { warningShown = true; return false; };
+			testModel.ToggleInCurrentList();
+			testModel.Save();
+			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
+			Assert.AreEqual(Cache.LangProject.HomographWs, "en", "Homograph ws should not have been changed.");
+		}
+
+		[Test]
+		public void CurrentWsListChanged_TopVernIsHomographWs_MovedDownWarnsAndSetsNew()
+		{
+			Cache.LangProject.VernWss = "en fr";
+			Cache.LangProject.CurVernWss = "en fr";
+			Cache.LangProject.HomographWs = "en";
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var warningShown = false;
+			testModel.ShouldChangeHomographWs = ws => { warningShown = true; return true; };
+			testModel.MoveDown();
+			testModel.Save();
+			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
+			Assert.AreEqual(Cache.LangProject.HomographWs, "fr", "Homograph ws not changed.");
+		}
+
+		[Test]
+		public void CurrentWsListChanged_TopVernIsHomographWs_NewWsAddedAbove_WarnsAndSetsNew()
+		{
+			Cache.LangProject.VernWss = "en fr";
+			Cache.LangProject.CurVernWss = "en fr";
+			Cache.LangProject.HomographWs = "en";
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var warningShown = false;
+			testModel.ShouldChangeHomographWs = ws => { warningShown = true; return true; };
+			testModel.ImportListForNewWs = import => { };
+			var addMenuItems = testModel.GetAddMenuItems();
+			// Add an audio writing system because it currently doesn't require a cache to create properly
+			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
+			testModel.MoveUp(); // move the audio writing system up. It should be first now.
+			testModel.Save();
+			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
+			Assert.AreEqual(Cache.LangProject.HomographWs, "en-Zxxx-x-audio", "Homograph ws not changed.");
+		}
+
+		[Test]
+		public void CurrentWsListChanged_TopVernIsNotHomographWs_UncheckedWarnsAndSetsNew()
+		{
+			Cache.LangProject.VernWss = "en fr";
+			Cache.LangProject.CurVernWss = "en fr";
+			Cache.LangProject.HomographWs = "fr";
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			var warningShown = false;
+			testModel.ShouldChangeHomographWs = ws => { warningShown = true; return true; };
+			testModel.SelectWs("fr");
+			testModel.ToggleInCurrentList();
+			testModel.Save();
+			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
+			Assert.AreEqual(Cache.LangProject.HomographWs, "en", "Homograph ws not changed.");
 		}
 
 		private bool TestShowModifyConverters(string originalconverter, out string selectedconverter)

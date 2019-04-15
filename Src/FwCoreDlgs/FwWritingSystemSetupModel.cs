@@ -92,6 +92,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public delegate bool SharedWsChangeDelegate(string originalLanguage);
 
 		/// <summary/>
+		public delegate bool ChangeHomographWs(string newHomographWs);
+
+		/// <summary/>
 		public ChangeLanguageDelegate ShowChangeLanguage;
 
 		/// <summary/>
@@ -107,6 +110,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public SharedWsChangeDelegate AcceptSharedWsChangeWarning;
 
 		/// <summary/>
+		public ChangeHomographWs ShouldChangeHomographWs;
+
+		/// <summary/>
 		public ImportTranslatedListDelegate ImportListForNewWs;
 
 		/// <summary/>
@@ -115,6 +121,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IWritingSystemContainer _wsContainer;
 		private ProjectLexiconSettingsDataMapper _projectLexiconSettingsDataMapper;
 		private ProjectLexiconSettings _projectLexiconSettings;
+		// We need to know if the homographWs was equal to the top vernacular writing system on construction
+		// to be able to show warnings triggered by changing this.
+		private bool _homographWsWasTopVern;
+		// We need to know if the homographWs was in the current list on construction
+		// to be able to show warnings triggered by removing it from the current list
+		private bool _homographWsWasInCurrent;
 
 		/// <summary>
 		/// event raised when the writing system has been changed by the presenter
@@ -149,6 +161,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(Cache?.ServiceLocator.DataSetup.ProjectSettingsStore);
 				_projectLexiconSettingsDataMapper.Read(_projectLexiconSettings);
+				_homographWsWasTopVern = WorkingList.First(ws => ws.InCurrentList).OriginalWs.Id == Cache.LangProject.HomographWs;
+				// guard against homograph ws not being in the project for paranoia's sake
+				var homographWs = WorkingList.FirstOrDefault(ws => ws.OriginalWs.Id == Cache.LangProject.HomographWs);
+				_homographWsWasInCurrent = homographWs?.InCurrentList ?? false;
 			}
 		}
 
@@ -448,10 +464,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Update the writing system data
 			// when this dialog is called from the new language project dialog, there is no FDO cache,
-			// but we still need to update the WorkingWs manager, so we have to execute the save even if m_cache is null
+			// but we still need to update the WorkingWs manager, so we have to execute the save even if Cache is null
 			NonUndoableUnitOfWorkHelper uowHelper = null;
 			if (Cache != null)
+			{
 				uowHelper = new NonUndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor);
+			}
+
 			try
 			{
 				IList<CoreWritingSystemDefinition> currentWritingSystems;
@@ -483,7 +502,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				currentWritingSystems.Clear();
 				allWritingSystems.Clear();
-				var atLeastOneChange = false;
+				// Adjust the homograph writing system after possibly interacting with the user
+				var atLeastOneChange = HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
 				foreach (var wsListItem in WorkingList)
 				{
 					if (wsListItem.OriginalWs != null)
@@ -522,26 +542,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						currentWritingSystems.Add(workingWs);
 					}
 				}
-				_wsManager.Save();
+				// Handle any merged writing systems
 				foreach (var mergedWs in _mergedWritingSystems)
 				{
+					atLeastOneChange = true;
 					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
 				}
-				// Delete any writing systems that were removed from the active list and are not present in the other list
-				var deletedWsIds = new List<string>();
-				foreach (var deleteCandidate in deletedWritingSystems)
-				{
-					if (!otherWritingSystems.Contains(deleteCandidate))
-					{
-						WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
-						deletedWsIds.Add(deleteCandidate.Id);
-						atLeastOneChange = true;
-					}
-				}
-				if (deletedWsIds.Count > 0)
-				{
-					_mediator?.SendMessage("WritingSystemDeleted", deletedWsIds.ToArray());
-				}
+				// Handle any deleted writing systems
+				var deletedSomeWritingSystems = DeleteWritingSystems(deletedWritingSystems, otherWritingSystems);
+				atLeastOneChange = atLeastOneChange || deletedSomeWritingSystems;
+				// Save all the changes to the current writing systems
+				_wsManager.Save();
 				foreach (var newWs in newWritingSystems)
 				{
 					ImportListForNewWs(newWs.IcuLocale);
@@ -558,6 +569,62 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (uowHelper != null)
 					uowHelper.Dispose();
 			}
+		}
+
+		private bool HandleHomographWsChanges(bool homographWsWasTopVern, List<WSListItemModel> workingList, string homographWs, bool wasSelected)
+		{
+			if (_listType != ListType.Vernacular)
+				return false;
+			// If the homograph writing system has been removed then change to the top current vernacular with no user interaction
+			if (workingList.All(ws => ws.OriginalWs?.Id != homographWs))
+			{
+				Cache.LangProject.HomographWs = workingList.First(ws => ws.InCurrentList).WorkingWs.Id;
+				return true;
+			}
+			var userWantsChange = false;
+			var newTopVernacular = workingList.First(ws => ws.InCurrentList);
+			if (homographWsWasTopVern)
+			{
+				// if the top language is new or different then display the question
+				if (newTopVernacular.OriginalWs == null || newTopVernacular.OriginalWs.Id != homographWs)
+				{
+					userWantsChange = ShouldChangeHomographWs(newTopVernacular.WorkingWs.DisplayLabel);
+				}
+			}
+			else if(wasSelected && !workingList.First(ws => ws.OriginalWs?.Id == homographWs).InCurrentList)
+			{
+				userWantsChange = ShouldChangeHomographWs(newTopVernacular.WorkingWs.DisplayLabel);
+			}
+			if (userWantsChange)
+			{
+				Cache.LangProject.HomographWs = workingList.First(ws => ws.InCurrentList).WorkingWs.Id ?? workingList.First(ws => ws.InCurrentList).WorkingWs.LanguageTag;
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool DeleteWritingSystems(List<CoreWritingSystemDefinition> deletedWritingSystems, ICollection<CoreWritingSystemDefinition> otherWritingSystems)
+		{
+			var atLeastOneDeleted = false;
+			// Delete any writing systems that were removed from the active list and are not present in the other list
+			var deletedWsIds = new List<string>();
+			foreach (var deleteCandidate in deletedWritingSystems)
+			{
+				if (!otherWritingSystems.Contains(deleteCandidate))
+				{
+					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
+					deletedWsIds.Add(deleteCandidate.Id);
+					atLeastOneDeleted = true;
+				}
+			}
+
+			if (deletedWsIds.Count > 0)
+			{
+				_mediator?.SendMessage("WritingSystemDeleted", deletedWsIds.ToArray());
+			}
+
+			return atLeastOneDeleted;
 		}
 
 		private bool IsNew(WSListItemModel tempWs)

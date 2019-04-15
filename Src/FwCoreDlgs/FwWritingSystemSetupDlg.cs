@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
@@ -164,6 +165,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.ConfirmDeleteWritingSystem = ShowConfirmDeleteDialog;
 			model.ImportListForNewWs = ImportTranslatedList;
 			model.ConfirmMergeWritingSystem = ConfirmMergeWritingSystem;
+			model.ShouldChangeHomographWs = ShouldChangeHomographWs;
 			_writingSystemList.ItemCheck -= WritingSystemListItemCheck;
 			_writingSystemList.Items.Clear();
 			var uniqueLabels = new HashSet<string>();
@@ -185,6 +187,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Set move up and move down states
 			moveUp.Enabled = model.CanMoveUp();
 			moveDown.Enabled = model.CanMoveDown();
+		}
+
+		private bool ShouldChangeHomographWs(string newHomographWs)
+		{
+			var msg = ResourceHelper.GetResourceString("kstidChangeHomographNumberWs");
+			var changeWs = MessageBox.Show(string.Format(msg, newHomographWs),
+				ResourceHelper.GetResourceString("kstidChangeHomographNumberWsTitle"),
+				MessageBoxButtons.YesNo);
+			return changeWs == DialogResult.Yes;
 		}
 
 		#endregion
