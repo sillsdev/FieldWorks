@@ -457,6 +457,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._rightToLeftCheckbox.TabIndex = 19;
 			this._rightToLeftCheckbox.Text = "Right-to-left";
 			this._rightToLeftCheckbox.UseVisualStyleBackColor = true;
+			this._rightToLeftCheckbox.CheckedChanged += new System.EventHandler(this.RightToLeftCheckChanged);
 			// 
 			// m_FullCode
 			// 

@@ -11,7 +11,10 @@ using SIL.WritingSystems.Tests;
 using Rhino;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using Is = NUnit.Framework.Is;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -382,7 +385,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void Model_ChangedWritingSystemSetInManager()
+		public void Model_ChangedWritingSystemIdSetInManager()
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
@@ -391,7 +394,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
 			var enWs = container.VernacularWritingSystems.First();
-			testModel.CurrentWsSetupModel.CurrentDefaultFontName = "Test SIL";
+			testModel.ShowChangeLanguage = ShowChangeLanguage;
+			testModel.ChangeLanguage();
 			testModel.Save();
 
 			Assert.That(2, Is.EqualTo(container.VernacularWritingSystems.Count));
@@ -403,7 +407,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Set(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
+			mockWsManager.Expect(manager => manager.Save()).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] {"fr", "fr-FR", "fr-Zxxx-x-audio"});
 			var testModel = new FwWritingSystemSetupModel(container,
@@ -481,6 +485,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void RightToLeft_ChangesOnSwitch()
+		{
+			var container = new TestWSContainer(new[] { "fr", "en-GB", "en-fonipa" });
+			var fr = container.CurrentVernacularWritingSystems.First();
+			fr.RightToLeftScript = true;
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			Assert.IsTrue(testModel.CurrentWsSetupModel.CurrentRightToLeftScript);
+			testModel.SelectWs("en-fonipa");
+			Assert.IsFalse(testModel.CurrentWsSetupModel.CurrentRightToLeftScript);
+		}
+
+		[Test]
 		public void CurrentWritingSystemIndex_IntiallyZero()
 		{
 			var container = new TestWSContainer(new[] { "fr", "en-GB", "en-fonipa" });
@@ -527,6 +544,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("English", testModel.CurrentWsSetupModel.CurrentLanguageName);
 			testModel.SelectWs("en");
 			Assert.AreEqual("English", testModel.CurrentWsSetupModel.CurrentLanguageName);
+		}
+
+		[Test]
+		public void ChangeLanguage_ChangingDefaultVernacularWorks()
+		{
+			var langProj = Cache.LangProject;
+			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+			ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(langProj, FwWritingSystemSetupModel.ListType.Vernacular, wsManager, Cache);
+			testModel.SelectWs("fr");
+			testModel.ShowChangeLanguage = ShowChangeLanguage;
+			testModel.ChangeLanguage();
+			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
+			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.AreEqual("auc", langProj.CurVernWss);
 		}
 
 		private bool ShowChangeLanguage(out LanguageInfo info)
@@ -736,8 +772,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndSetsNew()
 		{
-			Cache.LangProject.VernWss = "en fr";
-			Cache.LangProject.CurVernWss = "en fr";
+			SetupHomographLanguagesInCache();
 			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
@@ -752,8 +787,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndDoesNotSetOnNo()
 		{
-			Cache.LangProject.VernWss = "en fr";
-			Cache.LangProject.CurVernWss = "en fr";
+			SetupHomographLanguagesInCache();
 			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
@@ -768,8 +802,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_TopVernIsHomographWs_MovedDownWarnsAndSetsNew()
 		{
-			Cache.LangProject.VernWss = "en fr";
-			Cache.LangProject.CurVernWss = "en fr";
+			SetupHomographLanguagesInCache();
 			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
@@ -784,8 +817,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_TopVernIsHomographWs_NewWsAddedAbove_WarnsAndSetsNew()
 		{
-			Cache.LangProject.VernWss = "en fr";
-			Cache.LangProject.CurVernWss = "en fr";
+			SetupHomographLanguagesInCache();
 			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
@@ -804,6 +836,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_TopVernIsNotHomographWs_UncheckedWarnsAndSetsNew()
 		{
+			SetupHomographLanguagesInCache();
 			Cache.LangProject.VernWss = "en fr";
 			Cache.LangProject.CurVernWss = "en fr";
 			Cache.LangProject.HomographWs = "fr";
@@ -816,6 +849,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.Save();
 			Assert.IsTrue(warningShown, "No homograph ws changed warning shown.");
 			Assert.AreEqual(Cache.LangProject.HomographWs, "en", "Homograph ws not changed.");
+		}
+
+		private void SetupHomographLanguagesInCache()
+		{
+			CoreWritingSystemDefinition fr;
+			CoreWritingSystemDefinition en;
+			if (!Cache.ServiceLocator.WritingSystemManager.TryGet("fr", out fr))
+			{
+				fr = Cache.ServiceLocator.WritingSystemManager.Create("fr");
+			}
+			if (!Cache.ServiceLocator.WritingSystemManager.TryGet("en", out en))
+			{
+				en = Cache.ServiceLocator.WritingSystemManager.Create("en");
+			}
+			Cache.ServiceLocator.WritingSystemManager.Set(fr);
+			Cache.ServiceLocator.WritingSystemManager.Set(en);
+			Cache.LangProject.CurrentVernacularWritingSystems.Clear();
+			Cache.LangProject.CurrentVernacularWritingSystems.Add(en);
+			Cache.LangProject.CurrentVernacularWritingSystems.Add(fr);
+			Cache.LangProject.VernacularWritingSystems.Clear();
+			Cache.LangProject.VernacularWritingSystems.AddRange(Cache.LangProject.CurrentVernacularWritingSystems);
 		}
 
 		private bool TestShowModifyConverters(string originalconverter, out string selectedconverter)
@@ -843,7 +897,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				foreach (var lang in vernacular)
 				{
-					var ws = new CoreWritingSystemDefinition(lang);
+					var ws = new CoreWritingSystemDefinition(lang) { Id = lang };
 					_vernacular.Add(ws);
 					if (curVern == null)
 					{
@@ -855,7 +909,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					foreach (var lang in analysis)
 					{
-						var ws = new CoreWritingSystemDefinition(lang);
+						var ws = new CoreWritingSystemDefinition(lang) { Id = lang };
 						_analysis.Add(ws);
 						if (curAnaly == null)
 						{
@@ -868,14 +922,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					foreach (var lang in curVern)
 					{
-						_curVern.Add(new CoreWritingSystemDefinition(lang));
+						_curVern.Add(new CoreWritingSystemDefinition(lang) { Id = lang });
 					}
 				}
 				if (curAnaly != null)
 				{
 					foreach (var lang in curAnaly)
 					{
-						_curAnaly.Add(new CoreWritingSystemDefinition(lang));
+						_curAnaly.Add(new CoreWritingSystemDefinition(lang) { Id = lang });
 					}
 				}
 				Repo = new TestLdmlInXmlWritingSystemRepository();

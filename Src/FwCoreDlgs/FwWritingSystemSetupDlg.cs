@@ -115,6 +115,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// ReSharper disable once CoVariantArrayConversion -- No writes occur in AddRange
 			_spellingCombo.Items.AddRange(model.CurrentWsSetupModel.GetSpellCheckComboBoxItems().ToArray());
 			_spellingCombo.SelectedItem = model.CurrentWsSetupModel.CurrentSpellChecker;
+			_rightToLeftCheckbox.Checked = model.CurrentWsSetupModel.CurrentRightToLeftScript;
 			_identifiersControl.UnwireBeforeClosing();
 			_identifiersControl.BindToModel(model.CurrentWsSetupModel);
 			_identifiersControl.Selected();
@@ -545,6 +546,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				e.Graphics.FillRectangle(new SolidBrush(Color.Red), e.CellBounds);
 			}
+		}
+
+		private void RightToLeftCheckChanged(object sender, EventArgs e)
+		{
+			_model.CurrentWsSetupModel.CurrentRightToLeftScript = _rightToLeftCheckbox.Checked;
 		}
 	}
 }

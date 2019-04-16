@@ -1271,7 +1271,9 @@ namespace SIL.FieldWorks.XWorks
 			// to refresh everything before Paint events start getting fired, which can cause problems if
 			// any writing systems are removed that a rootsite is currently displaying
 			if (m_app is FwXApp)
+			{
 				((FwXApp)m_app).OnMasterRefresh(null);
+			}
 
 			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
 				m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, m_app.Cache.ProjectId.Name);
