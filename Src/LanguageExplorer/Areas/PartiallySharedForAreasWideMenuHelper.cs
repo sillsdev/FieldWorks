@@ -6,50 +6,23 @@ using System;
 using System.Diagnostics;
 using SIL.Code;
 
-namespace LanguageExplorer.Areas.Grammar
+namespace LanguageExplorer.Areas
 {
-#if RANDYTODO
-	// TODO: Make this a private class of GrammarArea. No tool/control should use it.
-#endif
-	/// <summary>
-	/// This class handles all interaction for the Grammar Area common menus.
-	/// </summary>
-	internal sealed class GrammarAreaMenuHelper : IAreaUiWidgetManager
+	internal sealed class PartiallySharedForAreasWideMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private IArea _area;
 
-		internal GrammarAreaMenuHelper()
-		{
-		}
-
-		#region Implementation of IAreaUiWidgetManager
-		/// <inheritdoc />
-		void IAreaUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		internal PartiallySharedForAreasWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(area, nameof(area));
-			Require.That(area.MachineName == AreaServices.GrammarAreaMachineName);
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_area = area;
 		}
-
-		/// <inheritdoc />
-		ITool IAreaUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		void IAreaUiWidgetManager.UnwireSharedEventHandlers()
-		{
-			// If ActiveToolUiManager is null, then the tool should call this method.
-			// Otherwise, ActiveToolUiManager will call it.
-		}
-		#endregion
 
 		#region IDisposable
 		private bool _isDisposed;
 
-		~GrammarAreaMenuHelper()
+		~PartiallySharedForAreasWideMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);

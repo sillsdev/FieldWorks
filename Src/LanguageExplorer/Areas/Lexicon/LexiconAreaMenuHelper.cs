@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private ITool _tool;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 
-		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
+		internal PartiallySharedForToolsWideMenuHelper MyPartiallySharedForToolsWideMenuHelper { get; private set; }
 
 		internal LexiconAreaMenuHelper(ITool tool)
 		{
@@ -39,16 +39,16 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			_area = area;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			MyPartiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+			MyPartiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, recordList);
 #if RANDYTODO
 			// TODO: Are the following area or tool wide?
 #endif
 			// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			MyPartiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			// Add two lexicon area-wide import options.
 			AddFileImportMenuItems(toolUiWidgetParameterObject);
-			MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+			MyPartiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
@@ -95,10 +95,10 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			if (disposing)
 			{
-				MyPartiallySharedAreaWideMenuHelper.Dispose();
+				MyPartiallySharedForToolsWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			MyPartiallySharedAreaWideMenuHelper = null;
+			MyPartiallySharedForToolsWideMenuHelper = null;
 
 			_isDisposed = true;
 		}

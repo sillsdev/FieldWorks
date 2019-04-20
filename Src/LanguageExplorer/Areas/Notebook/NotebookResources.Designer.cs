@@ -79,24 +79,6 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create a new Record in your Notebook..
-        /// </summary>
-        internal static string Create_a_new_Record_in_your_Notebook {
-            get {
-                return ResourceManager.GetString("Create_a_new_Record_in_your_Notebook", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Create a Subrecord in your Notebook..
-        /// </summary>
-        internal static string Create_a_Subrecord_in_your_Notebook {
-            get {
-                return ResourceManager.GetString("Create_a_Subrecord_in_your_Notebook", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Participants.
         /// </summary>
         internal static string Delete_Participants {
@@ -273,33 +255,6 @@ namespace LanguageExplorer.Areas.Notebook {
         internal static string NotebookRecordGoDlgParameters {
             get {
                 return ResourceManager.GetString("NotebookRecordGoDlgParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Record.
-        /// </summary>
-        internal static string Record {
-            get {
-                return ResourceManager.GetString("Record", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Subrecord.
-        /// </summary>
-        internal static string Subrecord {
-            get {
-                return ResourceManager.GetString("Subrecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Subrecord of subrecord.
-        /// </summary>
-        internal static string Subrecord_of_subrecord {
-            get {
-                return ResourceManager.GetString("Subrecord_of_subrecord", resourceCulture);
             }
         }
     }

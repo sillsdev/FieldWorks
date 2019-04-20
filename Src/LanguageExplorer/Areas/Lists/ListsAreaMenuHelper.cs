@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Lists
 		private const string toolsMenu = "toolsMenu";
 		private const string insertToolbar = "insertToolbar";
 		private const string dataTreeStack = "dataTreeStack";
-		internal PartiallySharedAreaWideMenuHelper MyPartiallySharedAreaWideMenuHelper { get; private set; }
+		internal PartiallySharedForToolsWideMenuHelper MyPartiallySharedForToolsWideMenuHelper { get; private set; }
 
 		internal ListsAreaMenuHelper(ITool tool, DataTree dataTree)
 		{
@@ -54,10 +54,10 @@ namespace LanguageExplorer.Areas.Lists
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_area = (IListArea)area;
 			MyRecordList = recordList;
-			MyPartiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
+			MyPartiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
 			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-			MyPartiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			MyPartiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
 #if RANDYTODO
@@ -135,10 +135,10 @@ namespace LanguageExplorer.Areas.Lists
 					manager.Dispose();
 				}
 				_listAreaUiWidgetManagers.Clear();
-				MyPartiallySharedAreaWideMenuHelper.Dispose();
+				MyPartiallySharedForToolsWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			MyPartiallySharedAreaWideMenuHelper = null;
+			MyPartiallySharedForToolsWideMenuHelper = null;
 			_area = null;
 			MyRecordList = null;
 			_sharedEventHandlers = null;

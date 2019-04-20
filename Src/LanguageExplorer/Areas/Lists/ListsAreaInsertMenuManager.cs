@@ -345,6 +345,9 @@ namespace LanguageExplorer.Areas.Lists
 			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
 			{
 				// Add "Entry" menu to all other tools.
+#if RANDYTODO
+				// TODO: Get it from PartiallySharedForToolsWideMenuHelper::SetupAddToLexicon
+#endif
 				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _sharedEventHandlers.GetEventHandler(Command.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
 				_insertEntryMenu.Tag = MyDataTree;
 				_insertEntryMenu.Visible = false;
@@ -525,10 +528,10 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 			{
 				currentTuple.Item1.Enabled = currentList.PossibilitiesOS.Any();
 			}
-			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			if (_insertEntryMenu != null && _insertEntryMenu.Visible && currentSliceAsStTextSlice != null)
 			{
-				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+				PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.

@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class WordListConcordanceTool : ITool
 	{
-		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
 		private MultiPane _outerMultiPane;
@@ -51,13 +51,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_partiallySharedAreaWideMenuHelper.Dispose();
+			_partiallySharedForToolsWideMenuHelper.Dispose();
 
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
-			_partiallySharedAreaWideMenuHelper = null;
+			_partiallySharedForToolsWideMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -74,9 +74,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			{
 				_recordListProvidingOwner = recordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
+			_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			_partiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO

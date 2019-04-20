@@ -23,16 +23,18 @@ namespace LanguageExplorer.Areas
 {
 #if RANDYTODO
 	// TODO: It would be better if this class were split into behaviors that are shared:
-	// TODO: 1. between different areas, (this class)
-	// TODO: 2. between individual tools from different areas (new class). (That is, no tool should be using this class in the end.)
-	// TODO: 3. between UserControls from different areas (new class).
+	// TODO: 1. between different areas, (new class). (That is, no area should be using this class in the end.)
+	// TODO: 2. between individual tools from same/different areas (this class).
+	// TODO: 3. between UserControls from different areas (new class). (That is, no area or user control should be using this class in the end.)
+	// DONE: the other two classes exist (PartiallySharedForAreasWideMenuHelper & PartiallySharedForUserControlWideMenuHelper).
+	// TODO: Now to see what can be added to them (from this class or elsewhere).
 #endif
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
 	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areas/tools,
 	/// which events are handled by the main window.
 	/// </summary>
-	internal sealed class PartiallySharedAreaWideMenuHelper : IDisposable
+	internal sealed class PartiallySharedForToolsWideMenuHelper : IDisposable
 	{
 		private const string InsertSlash = "InsertSlash";
 		private const string InsertEnvironmentBar = "InsertEnvironmentBar";
@@ -40,19 +42,20 @@ namespace LanguageExplorer.Areas
 		private const string InsertOptionalItem = "InsertOptionalItem";
 		private const string InsertHashMark = "InsertHashMark";
 		private const string ShowEnvironmentError = "ShowEnvironmentError";
-		private const string CmdAddToLexicon = "CmdAddToLexicon";
+		private const string CmdAddToLexicon = "CmdAddToLexicon"; // Insert menu, mnuStTextChoices, Insert tool bar
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private readonly HashSet<string> _sharedEventKeyNames = new HashSet<string>();
 		private readonly HashSet<string> _notSharedEventKeyNames = new HashSet<string>();
-		private static PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+		private readonly HashSet<Command> _eventuallySharedCommands = new HashSet<Command>();
+		private static PartiallySharedForToolsWideMenuHelper s_partiallySharedForToolsWideMenuHelper;
 
-		internal PartiallySharedAreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal PartiallySharedForToolsWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Require.That(_partiallySharedAreaWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is nut null.");
+			Require.That(s_partiallySharedForToolsWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is nut null.");
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = recordList;
@@ -70,7 +73,7 @@ namespace LanguageExplorer.Areas
 				InsertOptionalItem,
 				InsertHashMark,
 				ShowEnvironmentError,
-				CmdAddToLexicon
+				CmdAddToLexicon // Call SetupAddToLexicon to use it.
 			});
 			_sharedEventKeyNames.AddRange(new[]
 			{
@@ -105,7 +108,7 @@ namespace LanguageExplorer.Areas
 						break;
 				}
 			}
-			_partiallySharedAreaWideMenuHelper = this;
+			s_partiallySharedForToolsWideMenuHelper = this;
 		}
 
 		/// <summary>
@@ -126,7 +129,7 @@ namespace LanguageExplorer.Areas
 		#region IDisposable
 		private bool _isDisposed;
 
-		~PartiallySharedAreaWideMenuHelper()
+		~PartiallySharedForToolsWideMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -155,12 +158,17 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				_partiallySharedAreaWideMenuHelper = null;
+				s_partiallySharedForToolsWideMenuHelper = null;
 				foreach (var key in _sharedEventKeyNames)
 				{
 					_sharedEventHandlers.Remove(key);
 				}
 				_sharedEventKeyNames.Clear();
+				foreach (var command in _eventuallySharedCommands)
+				{
+					_sharedEventHandlers.Remove(command);
+				}
+				_eventuallySharedCommands.Clear();
 				_notSharedEventKeyNames.Clear();
 			}
 			_majorFlexComponentParameters = null;
@@ -321,7 +329,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdShowEnvironmentErrorMessage" />
 					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanShowEnvironmentError;
 			menu.Tag = slice;
 		}
@@ -340,7 +348,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvSlash" />
 					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_Slash_Clicked, AreaResources.Insert_Environment_slash);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_Slash_Clicked, AreaResources.Insert_Environment_slash);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
 			menu.Tag = slice;
 
@@ -349,7 +357,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" /> SHARED
 			*/
 
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_Underscore_Clicked, AreaResources.Insert_Environment_bar);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_Underscore_Clicked, AreaResources.Insert_Environment_bar);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
 			menu.Tag = slice;
 
@@ -357,7 +365,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvNaturalClass" />
 					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_NaturalClass_Clicked, AreaResources.Insert_Natural_Class);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_NaturalClass_Clicked, AreaResources.Insert_Natural_Class);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
 			menu.Tag = slice;
 
@@ -365,7 +373,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvOptionalItem" />
 					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_OptionalItem_Clicked, AreaResources.Insert_Optional_Item);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_OptionalItem_Clicked, AreaResources.Insert_Optional_Item);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
 			menu.Tag = slice;
 
@@ -373,7 +381,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvHashMark" />
 					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _partiallySharedAreaWideMenuHelper.Insert_HashMark_Clicked, AreaResources.Insert_Word_Boundary);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_HashMark_Clicked, AreaResources.Insert_Word_Boundary);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
 			menu.Tag = slice;
 		}
@@ -435,7 +443,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		internal static void Set_CmdAddToLexicon_State(LcmCache cache, ToolStripItem toolStripItem, IVwSelection selection)
+		internal static bool Set_CmdInsertFoo_Enabled_State(LcmCache cache, IVwSelection selection)
 		{
 			var enabled = false;
 			if (selection != null)
@@ -458,8 +466,25 @@ namespace LanguageExplorer.Areas
 					enabled = true;
 				}
 			}
+			return enabled;
+		}
 
-			toolStripItem.Enabled = enabled;
+		internal void StartSharing(Command command, Func<Tuple<bool, bool>> seeAndDo)
+		{
+			switch (command)
+			{
+				case Command.CmdAddToLexicon:
+					_eventuallySharedCommands.Add(command);
+					_sharedEventHandlers.Add(command, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddToLexicon_Clicked, seeAndDo));
+					break;
+			}
+		}
+
+		internal void SetupAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+		{
+			// CmdAddToLexicon goes on Insert menu & Insert toolbar
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));
+			toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));
 		}
 
 		private void CmdAddToLexicon_Clicked(object sender, EventArgs e)

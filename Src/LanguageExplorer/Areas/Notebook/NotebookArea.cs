@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -24,6 +25,7 @@ namespace LanguageExplorer.Areas.Notebook
 		internal const string Records = "records";
 		private const string MyUiName = "Notebook";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		[Import]
 		private IPropertyTable _propertyTable;
 
@@ -52,6 +54,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
+			_notebookAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -63,6 +66,11 @@ namespace LanguageExplorer.Areas.Notebook
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName, true);
+
+			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(this);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
+			_notebookAreaMenuHelper.InitializeAreaWideMenus(areaUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 		}
 
 		/// <summary>
@@ -162,6 +170,64 @@ namespace LanguageExplorer.Areas.Notebook
 			*/
 			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
 				new VectorPropertyParameterObject(cache.LanguageProject.ResearchNotebookOA, "AllRecords", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false)));
+		}
+
+		/// <summary>
+		/// Handle creation and use of Notebook area menus.
+		/// </summary>
+		private sealed class NotebookAreaMenuHelper
+		{
+			private IArea _area;
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+			}
+
+			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
+			{
+				_area = areaUiWidgetParameterObject.Area;
+				// Add Edit menu item that is available in all Notebook tools.
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
+				// File->Export menu is visible and maybe enabled in this tool. (Area)
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File].Add(Command.CmdImportSFMNotebook, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportSFMNotebook_Clicked, () => CanCmdImportSFMNotebook));
+
+				areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
+			}
+
+			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, true);
+
+			private void GotoRecord_Clicked(object sender, EventArgs e)
+			{
+				/*
+					<command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" >
+					  <parameters title="Go To Record" formlabel="Go _To..." okbuttonlabel="_Go" />
+					</command>
+				*/
+				using (var dlg = new RecordGoDlg())
+				{
+					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+					var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+					dlg.SetDlgInfo(cache, null);
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(_area.ActiveTool.MachineName, dlg.SelectedObject.Guid));
+					}
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdImportSFMNotebook => new Tuple<bool, bool>(true, true);
+
+			private void ImportSFMNotebook_Clicked(object sender, EventArgs e)
+			{
+				using (var importWizardDlg = new NotebookImportWiz())
+				{
+					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
+				}
+			}
 		}
 	}
 }

@@ -421,7 +421,6 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			{
 				Application.Idle -= Application_Idle;
 				_lexiconAreaMenuHelper?.Dispose();
-				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertReversalEntryToolStripButton.Click -= InsertReversalEntryClicked;
 				_insertReversalEntryToolStripButton.Dispose();
 				_insertGoToReversalEntryToolStripButton.Click -= GotoReversalEntryClicked;

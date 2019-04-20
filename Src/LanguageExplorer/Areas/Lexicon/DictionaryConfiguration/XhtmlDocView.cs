@@ -66,10 +66,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
+			_uiWidgetController = null;
 
 			base.Dispose(disposing);
-
-			_uiWidgetController = null;
 		}
 
 		/// <summary>

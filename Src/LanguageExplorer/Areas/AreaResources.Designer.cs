@@ -207,15 +207,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Document....
-        /// </summary>
-        internal static string ConfigureDocument {
-            get {
-                return ResourceManager.GetString("ConfigureDocument", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete selected {0}.
         /// </summary>
         internal static string Delete_selected_0 {

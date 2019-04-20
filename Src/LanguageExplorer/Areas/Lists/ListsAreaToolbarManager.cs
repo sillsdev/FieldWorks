@@ -100,7 +100,6 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				Application.Idle -= ApplicationOnIdle;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
-				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertItemToolStripButton?.Dispose();
 				_insertSubItemToolStripButton?.Dispose();
 				_duplicateItemToolStripButton?.Dispose();
@@ -310,6 +309,9 @@ namespace LanguageExplorer.Areas.Lists
 			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
 			{
 				// Add "Entry" menu to all other tools.
+#if RANDYTODO
+				// TODO: Get it from PartiallySharedForToolsWideMenuHelper::SetupAddToLexicon
+#endif
 				_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.GetEventHandler(Command.CmdAddToLexicon), "toolStripButtonInsertEntry", AreaResources.Major_Entry.ToBitmap(), AreaResources.Add_to_Dictionary);
 				_insertEntryToolStripButton.Tag = MyDataTree;
 				_insertEntryToolStripButton.Visible = false;
@@ -391,10 +393,10 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 			{
 				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
 			}
-			var currentSliceAsStTextSlice = PartiallySharedAreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			if (_insertEntryToolStripButton != null && _insertEntryToolStripButton.Visible && currentSliceAsStTextSlice != null)
 			{
-				PartiallySharedAreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryToolStripButton, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+				PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}
 			else
 			{

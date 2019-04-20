@@ -16,44 +16,12 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class ToolbarServices
 	{
-		#region Standard toolbar
-
-		internal static ToolStripItem GetStandardToolStripRefreshButton(ToolStripContainer toolStripContainer)
-		{
-			throw new NotSupportedException("GetStandardToolStripRefreshButton");
-			//return GetStandardToolStrip(toolStripContainer).Items[LanguageExplorerConstants.ToolStripButton_Refresh];
-		}
-
-		#endregion Standard toolbar
-
-		#region View toolbar
-
-		internal static ToolStrip GetViewToolStrip(ToolStripContainer toolStripContainer)
-		{
-			throw new NotSupportedException("GetViewToolStrip");
-			//return GetToolStrip(toolStripContainer, LanguageExplorerConstants.ToolStripView);
-		}
-
-		#endregion View toolbar
-
 		#region Insert toolbar
-
-		internal static ToolStripItem GetInsertFindAndReplaceToolStripItem(ToolStripContainer toolStripContainer)
-		{
-			throw new NotSupportedException("GetInsertFindAndReplaceToolStripItem");
-			//return GetInsertToolStrip(toolStripContainer).Items[LanguageExplorerConstants.ToolStripButtonFindText];
-		}
 
 		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripItem> insertStripItems)
 		{
 			throw new NotSupportedException("AddInsertToolbarItems");
 			//AddInsertToolbarItems(GetInsertToolStrip(majorFlexComponentParameters.ToolStripContainer), insertStripItems);
-		}
-
-		internal static void ResetInsertToolbar(MajorFlexComponentParameters majorFlexComponentParameters)
-		{
-			throw new NotSupportedException("Don't even 'think' of calling 'ResetInsertToolbar' now.");
-			//ResetInsertToolbar(GetInsertToolStrip(majorFlexComponentParameters.ToolStripContainer));
 		}
 
 		#endregion Insert toolbar

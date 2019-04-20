@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			};
 			if (toolsThatAreNotExpectedCallThisMethod.Contains(toolUiWidgetParameterObject.Tool.MachineName))
 			{
-				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not exepcted to call this method.");
+				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not expected to call this method.");
 			}
 			var fileMenuItemsForTool = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File];
 			fileMenuItemsForTool.Add(Command.CmdImportInterlinearSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearSfm_Click, () => CanCmdImportInterlinearSfm));

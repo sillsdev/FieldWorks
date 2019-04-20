@@ -136,10 +136,11 @@ namespace LanguageExplorer
 		/// Register an tool's menu/tool bars.
 		/// </summary>
 		/// <remarks>
-		/// This can be called more than once, per tool, but each call must work with menus/tool bar buttons that no other call has worked with.
+		/// This cannot be called more than once, per tool.
 		/// </remarks>
-		/// <exception cref="InvalidOperationException">Thrown if a multiple tools are registered, without the earlier one being unregistered,
-		/// or if the tool is not in the previously registered area.</exception>
+		/// <exception cref="InvalidOperationException">Thrown if: 1) the same tool is registered more than once,
+		/// 2) multiple tools are registered, without the earlier one being unregistered,
+		/// or 3) if the tool is not in the previously registered area.</exception>
 		internal void AddHandlers(ToolUiWidgetParameterObject toolParameterObject)
 		{
 			CheckForNullArea("tool");
@@ -446,6 +447,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler from menu item.
 						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
 						currentSubmenuOfMainMenu.Visible = false;
+						currentSubmenuOfMainMenu.Enabled = false;
+						currentSubmenuOfMainMenu.Tag = null;
 					}
 					ConditionallyRemoveDropDownHandler();
 				}
@@ -463,6 +466,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler from menu item.
 						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
 						currentSubmenuOfMainMenu.Visible = false;
+						currentSubmenuOfMainMenu.Enabled = false;
+						currentSubmenuOfMainMenu.Tag = null;
 					}
 					ConditionallyRemoveDropDownHandler();
 				}
@@ -482,6 +487,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler from menu item.
 						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
 						currentSubmenuOfMainMenu.Visible = false;
+						currentSubmenuOfMainMenu.Enabled = false;
+						currentSubmenuOfMainMenu.Tag = null;
 					}
 					ConditionallyRemoveDropDownHandler();
 				}
@@ -692,6 +699,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler to tool bar button item.
 						currentToolStripItem.Click -= commandKvp.Value.Item1;
 						currentToolStripItem.Visible = false;
+						currentToolStripItem.Enabled = false;
+						currentToolStripItem.Tag = null;
 					}
 				}
 
@@ -708,6 +717,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler to tool bar button item.
 						currentToolStripItem.Click -= commandKvp.Value.Item1;
 						currentToolStripItem.Visible = false;
+						currentToolStripItem.Enabled = false;
+						currentToolStripItem.Tag = null;
 					}
 				}
 
@@ -726,6 +737,8 @@ namespace LanguageExplorer
 						// Remove supplied click event handler to tool bar button item.
 						currentToolStripItem.Click -= commandKvp.Value.Item1;
 						currentToolStripItem.Visible = false;
+						currentToolStripItem.Enabled = false;
+						currentToolStripItem.Tag = null;
 					}
 				}
 

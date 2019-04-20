@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyPartiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+			((LexiconAreaMenuHelper)_lexiconAreaMenuHelper).MyPartiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 #if RANDYTODO
 			// TODO: Add toolUiWidgetParameterObject to UiWidgetController.
 #endif

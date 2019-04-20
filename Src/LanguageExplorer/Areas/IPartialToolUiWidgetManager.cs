@@ -7,7 +7,7 @@ using System;
 namespace LanguageExplorer.Areas
 {
 	/// <summary>
-	/// Interface for UI widgets, such as menus or toolbars, that allows for managing what is added to a main component and the related events.
+	/// Interface for UI widgets, such as menus or tool bars, that allows for managing what is added to a main component and the related events.
 	/// This interface is used for 'nested' managers used by an instance of IToolUiWidgetManager.
 	/// </summary>
 	internal interface IPartialToolUiWidgetManager : IDisposable

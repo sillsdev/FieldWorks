@@ -27,7 +27,10 @@ namespace LanguageExplorer
 		#endregion Shared separator values.
 
 		#region Menus
-		// File menu
+
+		/// <summary>
+		/// File menu
+		/// </summary>
 		CmdNewLangProject,
 		CmdChooseLangProject,
 		// Separator1 goes here
@@ -61,7 +64,9 @@ namespace LanguageExplorer
 		CmdExportDiscourseChart,
 		CmdClose,
 
-		// SendReceive menu
+		/// <summary>
+		/// Send/Receive menu
+		/// </summary>
 		CmdFLExBridge,
 		CmdViewMessages,
 		CmdLiftBridge,
@@ -74,7 +79,9 @@ namespace LanguageExplorer
 		CmdCheckForFlexBridgeUpdates,
 		CmdHelpAboutFLEXBridge,
 
-		// Edit menu
+		/// <summary>
+		/// Edit menu
+		/// </summary>
 		CmdUndo,
 		CmdRedo,
 		CmdCut,
@@ -92,7 +99,9 @@ namespace LanguageExplorer
 		CmdGoToWfiWordform,
 		CmdDeleteCustomList,
 
-		// View menu
+		/// <summary>
+		/// View menu
+		/// </summary>
 		CmdRefresh,
 		LexicalToolsList,
 		WordToolsList,
@@ -106,7 +115,9 @@ namespace LanguageExplorer
 			NoFilter,
 		CmdChooseTexts,
 
-		// Data menu
+		/// <summary>
+		/// Data menu
+		/// </summary>
 		CmdFirstRecord,
 		CmdPreviousRecord,
 		CmdNextRecord,
@@ -131,7 +142,9 @@ namespace LanguageExplorer
 		CmdRepeatLastMoveRight,
 		CmdApproveAll,
 
-		// Insert menu
+		/// <summary>
+		/// Insert menu
+		/// </summary>
 		CmdInsertLexEntry,
 		CmdInsertSense,
 		CmdInsertVariant,
@@ -199,14 +212,18 @@ namespace LanguageExplorer
 		CmdShowCharMap,
 		CmdInsertLinkToFile,
 
-		// Format menu
+		/// <summary>
+		/// Format menu
+		/// </summary>
 		CmdFormatStyle,
 		CmdFormatApplyStyle,
 		WritingSystemList,
 		CmdVernacularWritingSystemProperties, // (Also on Tools menu)
 		CmdAnalysisWritingSystemProperties, // (Also on Tools menu)
 
-		// Tools menu
+		/// <summary>
+		/// Tools menu
+		/// </summary>
 		Configure, // Menu that contains sub-menus.
 			CmdConfigureDictionary,
 			CmdConfigureInterlinear,
@@ -239,7 +256,9 @@ namespace LanguageExplorer
 		CmdMacroF11,
 		CmdMacroF12,
 
-		// Parser menu
+		/// <summary>
+		/// Parser menu
+		/// </summary>
 		CmdParseAllWords,
 		CmdReparseAllWords,
 		CmdReInitializeParser,
@@ -253,10 +272,14 @@ namespace LanguageExplorer
 		CmdChooseHCParser,
 		CmdEditParserParameters,
 
-		// Window menu
+		/// <summary>
+		/// Window menu
+		/// </summary>
 		CmdNewWindow,
 
-		// Help menu
+		/// <summary>
+		/// Help menu
+		/// </summary>
 		CmdHelpLanguageExplorer,
 		CmdHelpTraining,
 		CmdHelpDemoMovies,
@@ -272,13 +295,20 @@ namespace LanguageExplorer
 		CmdHelpReportBug,
 		CmdHelpMakeSuggestion,
 		CmdHelpAbout,
+
 		#endregion  Menus
 
 		#region Toolbars
-		// Format toolbar
+
+		/// <summary>
+		/// Format toolbar
+		/// </summary>
 		// WritingSystemList, Also on Format menu
 		CombinedStylesList,
-		// Insert toolbar
+
+		/// <summary>
+		/// Insert toolbar
+		/// </summary>
 		// CmdInsertLexEntry,
 		// CmdGoToEntry,
 		// CmdInsertReversalEntry,
@@ -341,11 +371,15 @@ namespace LanguageExplorer
 		// CmdInsertAllomorphACP,
 		// CmdInsertACPGroup,
 
-		// View ToolBar
+		/// <summary>
+		/// View ToolBar
+		/// </summary>
 		// CmdChooseTexts,
 		CmdChangeFilterClearAll,
 
-		// Standard ToolBar
+		/// <summary>
+		/// Standard ToolBar
+		/// </summary>
 		CmdHistoryBack,
 		CmdHistoryForward,
 		// CmdDeleteRecord,
@@ -357,6 +391,7 @@ namespace LanguageExplorer
 		// CmdNextRecord,
 		// CmdLastRecord,
 		CmdFLExLiftBridge,
+
 		#endregion Toolbars
 
 		#region Others

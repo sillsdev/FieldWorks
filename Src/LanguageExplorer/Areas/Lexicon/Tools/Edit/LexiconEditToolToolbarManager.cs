@@ -81,7 +81,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				ToolbarServices.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 				_insertGoToEntryToolStripButton.Dispose();
 			}

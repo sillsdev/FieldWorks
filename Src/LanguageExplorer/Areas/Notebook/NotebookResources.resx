@@ -129,9 +129,6 @@
   <data name="Insert_Subrecord" xml:space="preserve">
     <value>Insert _Subrecord</value>
   </data>
-  <data name="Insert_Subrecord_of_Subrecord" xml:space="preserve">
-    <value>Insert S_ubrecord of Subrecord</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="NotebookBrowseColumnDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\NotebookBrowseColumnDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -155,21 +152,6 @@
   </data>
   <data name="NotebookRecordGoDlgParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\NotebookRecordGoDlgParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Create_a_new_Record_in_your_Notebook" xml:space="preserve">
-    <value>Create a new Record in your Notebook.</value>
-  </data>
-  <data name="Create_a_Subrecord_in_your_Notebook" xml:space="preserve">
-    <value>Create a Subrecord in your Notebook.</value>
-  </data>
-  <data name="Record" xml:space="preserve">
-    <value>Record</value>
-  </data>
-  <data name="Subrecord" xml:space="preserve">
-    <value>Subrecord</value>
-  </data>
-  <data name="Subrecord_of_subrecord" xml:space="preserve">
-    <value>Subrecord of subrecord</value>
   </data>
   <data name="Choose_Owner_of_Demoted_Record" xml:space="preserve">
     <value>Choose Owner of Demoted Record</value>
@@ -195,5 +177,8 @@
   <data name="ksRnLinkFieldOptions" xml:space="preserve">
     <value>Link field options</value>
     <comment>used in AnthroFieldMappingDlg</comment>
+  </data>
+  <data name="Insert_Subrecord_of_Subrecord" xml:space="preserve">
+    <value>Insert S_ubrecord of Subrecord</value>
   </data>
 </root>

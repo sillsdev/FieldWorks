@@ -775,9 +775,6 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Word_Gloss" xml:space="preserve">
     <value>Word Gloss</value>
   </data>
-  <data name="ConfigureDocument" xml:space="preserve">
-    <value>Document...</value>
-  </data>
   <data name="Find_Dictionary" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\Find Dictionary.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

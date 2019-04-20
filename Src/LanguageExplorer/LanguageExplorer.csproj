@@ -299,7 +299,9 @@
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
-    <Compile Include="Areas\PartiallySharedAreaWideMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\Tools\SharedNotebookToolMenuHelper.cs" />
+    <Compile Include="Areas\PartiallySharedForAreasWideMenuHelper.cs" />
+    <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
     <Compile Include="Areas\BrowseViewContextMenuFactory.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
@@ -330,6 +332,7 @@
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\IPartialToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
+    <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Controls\ControlServices.cs" />
@@ -380,15 +383,11 @@
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
     <Compile Include="Areas\MessageBoxes.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentToolMenuHelper.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseToolMenuHelper.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookEdit\NotebookEditToolMenuHelper.cs" />
     <Compile Include="Areas\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
-    <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Areas\RuleInsertType.cs" />

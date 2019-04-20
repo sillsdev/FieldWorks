@@ -284,8 +284,8 @@ namespace LanguageExplorer.Areas
 				Name = AreaServices.mnuEnvChoices
 			};
 			_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
-			PartiallySharedAreaWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
-			PartiallySharedAreaWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
+			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
+			PartiallySharedForToolsWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
 			_mnuEnvChoices.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 			return true;
 		}

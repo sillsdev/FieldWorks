@@ -15,22 +15,6 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class MenuServices
 	{
-		#region File menu
-
-		internal static ToolStripMenuItem GetFileExportMenu(MenuStrip menustrip)
-		{
-			throw new NotSupportedException("GetFileExportMenu");
-			//return GetMenu(GetFileMenu(menustrip).DropDownItems, Command.CmdExport.ToString("g"));
-		}
-
-		internal static ToolStripMenuItem GetFileImportMenu(MenuStrip menustrip)
-		{
-			throw new NotSupportedException("GetFileImportMenu");
-			//return GetMenu(GetFileMenu(menustrip).DropDownItems, Command.ImportMenu.ToString("g"));
-		}
-
-		#endregion File menu
-
 		#region Edit menu
 
 		internal static ToolStripMenuItem GetEditMenu(MenuStrip menustrip)
@@ -59,12 +43,6 @@ namespace LanguageExplorer
 		{
 			throw new NotSupportedException("GetViewMenu");
 			//return GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItemName);
-		}
-
-		internal static ToolStripMenuItem GetViewRefreshMenu(MenuStrip menustrip)
-		{
-			throw new NotSupportedException("GetViewRefreshMenu");
-			//return GetMenu(GetViewMenu(menustrip).DropDownItems, LanguageExplorerConstants.ViewRefreshToolStripMenuItemName);
 		}
 
 		#endregion View menu

@@ -65,7 +65,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			};
 			var xmlDocViewPaneBar = new PaneBar();
 			xmlDocViewPaneBar.AddControls(new List<Control> { panelButton });
-			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			// NB: XmlDocView adds user control handler.
+			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocView, xmlDocViewPaneBar);
 			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(this, xmlDocView);

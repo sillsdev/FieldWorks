@@ -72,6 +72,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
+			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
 			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordList);
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -154,13 +155,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		#endregion
 
 		/// <summary>
-		/// This class handles all interaction for the InterlinearEditTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
+		/// This class handles all interaction for the InterlinearEditTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
 		/// </summary>
 		private sealed class InterlinearEditToolMenuHelper : IDisposable
 		{
 			private ITool _tool;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
 			internal InterlinearEditToolMenuHelper(ITool tool, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 			{
@@ -170,9 +171,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 				_tool = tool;
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, recordList);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_partiallySharedAreaWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+				_partiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -210,10 +211,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				if (disposing)
 				{
 					//_majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-					_partiallySharedAreaWideMenuHelper.Dispose();
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_tool = null;
-				_partiallySharedAreaWideMenuHelper = null;
+				_partiallySharedForToolsWideMenuHelper = null;
 				_majorFlexComponentParameters = null;
 
 				_isDisposed = true;

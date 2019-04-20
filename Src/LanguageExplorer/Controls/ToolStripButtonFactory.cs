@@ -31,11 +31,5 @@ namespace LanguageExplorer.Controls
 			return newToolStripButton;
 			*/
 		}
-
-		internal static ToolStripSeparator CreateToolStripSeparator()
-		{
-			throw new NotSupportedException("CreateToolStripButton");
-			//return new ToolStripSeparator();
-		}
 	}
 }

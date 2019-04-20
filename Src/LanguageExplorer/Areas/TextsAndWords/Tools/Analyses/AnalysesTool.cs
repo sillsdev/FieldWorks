@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
-		private PartiallySharedAreaWideMenuHelper _partiallySharedAreaWideMenuHelper;
+		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
@@ -49,10 +49,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_partiallySharedAreaWideMenuHelper.Dispose();
+			_partiallySharedForToolsWideMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_partiallySharedAreaWideMenuHelper = null;
+			_partiallySharedForToolsWideMenuHelper = null;
 			_partiallySharedTextsAndWordsToolsMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
@@ -70,8 +70,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_partiallySharedAreaWideMenuHelper = new PartiallySharedAreaWideMenuHelper(majorFlexComponentParameters, _recordList);
-			_partiallySharedAreaWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, _recordList);
+			_partiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

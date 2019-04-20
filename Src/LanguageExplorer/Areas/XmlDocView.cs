@@ -48,6 +48,7 @@ namespace LanguageExplorer.Areas
 		private string m_titleStr; // Helps avoid running through SetInfoBarText 4x!
 		private string m_currentPublication;
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
+		private UiWidgetController _uiWidgetController;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -62,9 +63,14 @@ namespace LanguageExplorer.Areas
 			AccNameDefault = "XmlDocView";
 		}
 
-		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
 			: base(configurationParametersElement, cache, recordList)
 		{
+			_uiWidgetController = uiWidgetController;
+			// Add handler stuff.
+			var userController = new UserControlUiWidgetParameterObject(this);
+			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => CanCmdConfigureXmlDocView));
+			_uiWidgetController.AddHandlers(userController);
 		}
 
 		#region TitleBar Layout Menu
@@ -240,11 +246,13 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				_uiWidgetController.RemoveUserControlHandlers(this);
 				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
 				DisposeTooltip();
 				components?.Dispose();
 			}
 			m_currentObject = null;
+			_uiWidgetController = null;
 
 			base.Dispose(disposing);
 		}
@@ -1068,10 +1076,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			SetInfoBarText();
 		}
 
+		private Tuple<bool, bool> CanCmdConfigureXmlDocView => new Tuple<bool, bool>(true, true);
+
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
-		internal void ConfigureXmlDocView_Clicked(object sender, EventArgs e)
+		private void ConfigureXmlDocView_Clicked(object sender, EventArgs e)
 		{
 			RunConfigureDialog(string.Empty);
 		}

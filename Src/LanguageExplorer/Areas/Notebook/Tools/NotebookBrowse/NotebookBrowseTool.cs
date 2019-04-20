@@ -5,9 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
@@ -20,7 +22,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
-		private IToolUiWidgetManager _browseToolMenuHelper;
+		private NotebookBrowseToolMenuHelper _browseToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -46,7 +48,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_browseToolMenuHelper.UnwireSharedEventHandlers();
 			_browseToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -74,10 +75,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(this);
+			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
+			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
-
-			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
@@ -154,6 +154,89 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			// End: <menu id="mnuBrowseView" (partial) >
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+
+		/// <summary>
+		/// This class handles all interaction for the NotebookBrowseTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
+		/// </summary>
+		private sealed class NotebookBrowseToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private ITool _tool;
+			private ISharedEventHandlers _sharedEventHandlers;
+			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private IRecordList MyRecordList { get; }
+
+			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_tool = tool;
+				MyRecordList = recordList;
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				SetupToolUiWidgets();
+			}
+
+			private void SetupToolUiWidgets()
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList);
+				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
+				_partiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~NotebookBrowseToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_sharedNotebookToolMenuHelper?.Dispose();
+					_partiallySharedForToolsWideMenuHelper?.Dispose();
+				}
+
+				_majorFlexComponentParameters = null;
+				_tool = null;
+				_sharedEventHandlers = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_sharedNotebookToolMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }
