@@ -372,7 +372,6 @@ OutputMorphs
 					<xsl:if test="@guid=$sEnclitic">
 						<xsl:text>=</xsl:text>
 					</xsl:if>
-					<!--<object type="tGrammaticalGloss">-->
 					<xsl:choose>
 						<xsl:when test="@guid=$sEnclitic">
 							<xsl:value-of select="substring-after(normalize-space(item[@type=$sType and @lang=$sLang]), '=')"/>
@@ -384,7 +383,6 @@ OutputMorphs
 							<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
 						</xsl:otherwise>
 					</xsl:choose>
-					<!--					</object>-->
 					<xsl:if test="@guid=$sProclitic">
 						<xsl:text>=</xsl:text>
 					</xsl:if>
@@ -399,13 +397,17 @@ OutputMorphs
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
+					<xsl:if test="$sType='gls'">
+						<xsl:variable name="sGlossPrepend" select="normalize-space(item[@type='glsPrepend' and @lang=$sLang])"/>
+						<xsl:if test="string-length($sGlossPrepend) &gt; 0">
+							<xsl:value-of select="$sGlossPrepend"/>
+						</xsl:if>
+					</xsl:if>
 					<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
 					<xsl:if test="$sType='gls'">
 						<xsl:variable name="sGlossAppend" select="normalize-space(item[@type='glsAppend' and @lang=$sLang])"/>
 						<xsl:if test="string-length($sGlossAppend) &gt; 0">
-							<!--							<object type="tGrammaticalGloss">-->
 							<xsl:value-of select="$sGlossAppend"/>
-							<!--							</object>-->
 						</xsl:if>
 					</xsl:if>
 				</xsl:otherwise>
