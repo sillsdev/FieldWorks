@@ -1330,8 +1330,8 @@ namespace SIL.FieldWorks.XWorks
 
 
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.WritingSystemListUpdated += OnWritingSystemListChanged;
 			view.ShowDialog(this);
 			return true;
 		}
@@ -1344,8 +1344,8 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.WritingSystemListUpdated += OnWritingSystemListChanged;
 			view.ShowDialog(this);
 			return true;
 		}

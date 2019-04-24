@@ -96,6 +96,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(testModel.EnableGraphiteFontOptions, "Non Graphite fonts should not have the EnableGraphiteFontOptions available");
 		}
 
+		[TestCase("en", false)]
+		[TestCase("en-Arab", true)]
+		[TestCase("en-Qaaa-x-Mark", true)]
+		public void AdvancedConfiguration_AdvancedScriptRegionVariantCheckboxVisible(string languageTag, bool expectedResult)
+		{
+			var container = new TestWSContainer(new[] { languageTag });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.AreEqual(expectedResult, testModel.ShowAdvancedScriptRegionVariantCheckBox);
+		}
+
 		[Test]
 		public void AdvancedConfiguration_GraphiteFont_GraphiteFontOptionsAreEnabled()
 		{
@@ -389,7 +399,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Set(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
+			mockWsManager.Expect(manager => manager.Replace(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
@@ -399,7 +409,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.Save();
 
 			Assert.That(2, Is.EqualTo(container.VernacularWritingSystems.Count));
-			mockWsManager.AssertWasCalled(manager => manager.Set(enWs));
+			mockWsManager.AssertWasCalled(manager => manager.Replace(enWs));
 		}
 
 		[Test]
@@ -427,6 +437,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("free.", container.VernacularWritingSystems.First().Abbreviation);
 			Assert.NotNull(container.VernacularWritingSystems.First().DefaultCollation);
 			Assert.AreEqual("Z z Y y X x", ((SimpleRulesCollationDefinition) container.VernacularWritingSystems.First().DefaultCollation).SimpleRules);
+		}
+
+		[Test]
+		public void Model_WritingSystemListUpdated_CalledOnChange()
+		{
+			var writingSystemListUpdatedCalled = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr", "fr-FR", "fr-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemListUpdated += (sender, args) =>
+			{
+				writingSystemListUpdatedCalled = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view to move ws labels for instance)
+			testModel.MoveDown();
+			testModel.Save();
+			Assert.True(writingSystemListUpdatedCalled, "WritingSystemListUpdated should have been called after this change");
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular)]

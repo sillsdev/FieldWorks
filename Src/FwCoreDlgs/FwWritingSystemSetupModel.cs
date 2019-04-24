@@ -72,6 +72,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly Mediator _mediator;
 
 		/// <summary/>
+		public event EventHandler WritingSystemListUpdated;
+
+		/// <summary/>
 		public delegate bool ChangeLanguageDelegate(out LanguageInfo info);
 
 		/// <summary/>
@@ -196,7 +199,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool ShowAdvancedScriptRegionVariantView
 		{
-			get { return _currentWs.Language.IsPrivateUse || _currentWs.Script.IsPrivateUse || _currentWs.Region.IsPrivateUse; }
+			get
+			{
+				return _currentWs.Language.IsPrivateUse ||
+					(_currentWs.Script != null && _currentWs.Script.IsPrivateUse) ||
+					(_currentWs.Region != null && _currentWs.Region.IsPrivateUse);
+			}
+		}
+
+		/// <summary>
+		/// This is used to determine if the 'Advanced' checkbox should be shown under the writing system identity control
+		/// </summary>
+		public bool ShowAdvancedScriptRegionVariantCheckBox
+		{
+			get
+			{
+				return CurrentWsSetupModel.SelectionForSpecialCombo == WritingSystemSetupModel.SelectionsForSpecialCombo.ScriptRegionVariant ||
+					ShowAdvancedScriptRegionVariantView;
+			}
 		}
 
 		/// <summary>
@@ -497,19 +517,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					default:
 						throw new NotImplementedException($"{_listType} not yet supported.");
 				}
-				// All writing systems that are no longer present may be deleted
-				var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
 				// Track the new writing systems for importing translated lists
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				// Adjust the homograph writing system after possibly interacting with the user
 				var atLeastOneChange = HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
+
+				// Handle any deleted writing systems
+				var deletedSomeWritingSystems = DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
+				atLeastOneChange = atLeastOneChange || deletedSomeWritingSystems;
+
 				for (int workinglistIndex = 0, curIndex = 0; workinglistIndex < WorkingList.Count; ++workinglistIndex)
 				{
 					var wsListItem = WorkingList[workinglistIndex];
-					if (wsListItem.OriginalWs != null)
-					{
-						deletedWritingSystems.Remove(wsListItem.OriginalWs);
-					}
 					var workingWs = wsListItem.WorkingWs;
 					var origWS = wsListItem.OriginalWs;
 
@@ -541,9 +560,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						if (string.IsNullOrEmpty(oldId) || !IetfLanguageTag.AreTagsEquivalent(oldId, workingWs.LanguageTag))
 						{
 							// update the ID
-							_wsManager.Set(origWS);
+							_wsManager.Replace(origWS);
 							if (uowHelper != null)
+							{
 								WritingSystemServices.UpdateWritingSystemId(Cache, origWS, oldHandle, oldId);
+							}
 						}
 						atLeastOneChange = true;
 						_mediator?.SendMessage("WritingSystemUpdated", origWS.Id);
@@ -555,8 +576,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					atLeastOneChange = true;
 					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
 				}
-				// Handle any deleted writing systems
-				var deletedSomeWritingSystems = DeleteWritingSystems(deletedWritingSystems, currentWritingSystems, allWritingSystems, otherWritingSystems);
 				atLeastOneChange = atLeastOneChange || deletedSomeWritingSystems;
 				// Save all the changes to the current writing systems
 				_wsManager.Save();
@@ -573,6 +592,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			finally
 			{
+				if (CurrentWsListChanged)
+				{
+					WritingSystemListUpdated?.Invoke(this, EventArgs.Empty);
+				}
 				if (uowHelper != null)
 					uowHelper.Dispose();
 			}
@@ -633,14 +656,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
-		private bool DeleteWritingSystems(List<CoreWritingSystemDefinition> deletedWritingSystems,
+		private bool DeleteWritingSystems(
 			ICollection<CoreWritingSystemDefinition> currentWritingSystems,
 			ICollection<CoreWritingSystemDefinition> allWritingSystems,
-			ICollection<CoreWritingSystemDefinition> otherWritingSystems)
+			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
+			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
 		{
 			var atLeastOneDeleted = false;
 			// Delete any writing systems that were removed from the active list and are not present in the other list
 			var deletedWsIds = new List<string>();
+			var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
+			deletedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
 			foreach (var deleteCandidate in deletedWritingSystems)
 			{
 				currentWritingSystems.Remove(deleteCandidate);

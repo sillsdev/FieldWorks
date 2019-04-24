@@ -35,9 +35,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// <summary/>
-		public event EventHandler WritingSystemListUpdated;
-
 		#region Model binding methods
 		private void BindToModel(FwWritingSystemSetupModel model)
 		{
@@ -338,10 +335,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
 				_model.Save();
-				if (_model.CurrentWsListChanged)
-				{
-					WritingSystemListUpdated(this, EventArgs.Empty);
-				}
 				Close();
 			}
 			else
