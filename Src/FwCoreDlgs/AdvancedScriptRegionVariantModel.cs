@@ -208,15 +208,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// We don't want to lose the RegionCode and RegionName if the user picks "QM" and already have a custom region set
 				// otherwise we do want to set them
 				_region = value;
-				if (value.Code != "QM" || RegionCode == null)
+				if (value.Code != "QM" || RegionCode == null || StandardSubtags.IsValidRegisteredVariantCode(value.Code))
 				{
 					RegionCode = value.Code;
 					RegionName = value.Name;
 					ChangeCode?.Invoke();
-				}
-				else if(RegionCode != "QM" && CurrentWs.Region.IsPrivateUse)
-				{
-					_region = new RegionListItem(new RegionSubtag(RegionCode, RegionName));
 				}
 			}
 		}

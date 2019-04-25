@@ -93,6 +93,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(model.OtherVariants, Is.EqualTo("x-Kala-KA-extra1-extra2"));
 		}
 
+		/// <summary>
+		/// Proves that you can remove the custom script and region codes by changing the 'Code' field
+		/// </summary>
+		[Test]
+		public void CodeRemovingPUCodesWorks()
+		{
+			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-Qaaa-QM-x-Cust-CT" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
+			model.RegionName = "CustomRegion";
+			Assert.That(model.RegionCode, Is.EqualTo("CT"));
+			Assert.That(model.ScriptCode, Is.EqualTo("Cust"));
+			model.Code = "fr-Qaaa-QM";
+			Assert.That(model.ScriptCode, Is.EqualTo("Qaaa"), "Private use script code was not removed.");
+			Assert.That(model.RegionCode, Is.EqualTo("QM"), "Private use region code was not removed.");
+		}
+
 		/// <summary/>
 		[Test]
 		public void SetScriptUpdatesCodeAndScriptCode()
