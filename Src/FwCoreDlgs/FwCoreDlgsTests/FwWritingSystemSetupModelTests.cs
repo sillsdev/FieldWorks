@@ -85,6 +85,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void AdvancedConfiguration_StandardAndPrivateUse_IsEnabled()
+		{
+			var container = new TestWSContainer(new[] { "fr-fonipa-x-special" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.IsTrue(testModel.ShowAdvancedScriptRegionVariantView, "Model should show advanced view when there are multiple variants");
+		}
+
+		[Test]
+		public void AdvancedConfiguration_AllPrivateUse_IsNotEnabled()
+		{
+			var container = new TestWSContainer(new[] { "fr-x-special-extra" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			Assert.IsFalse(testModel.ShowAdvancedScriptRegionVariantView, "Model should show advanced view when there are multiple variants");
+		}
+
+		[Test]
+		public void AdvancedConfiguration_ClearingAdvanced_ShowsWarning_ClearsCustomContent()
+		{
+			var container = new TestWSContainer(new[] { "fr-Qaaa-QM-fonipa-x-Cust-CM-extra" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			bool confirmClearCalled = false;
+			testModel.ConfirmClearAdvanced = () =>
+			{
+				confirmClearCalled = true;
+				return true;
+			};
+			Assert.IsTrue(testModel.ShowAdvancedScriptRegionVariantView, "should be advanced to start");
+			testModel.ShowAdvancedScriptRegionVariantView = false;
+			Assert.IsTrue(confirmClearCalled);
+			Assert.IsNull(testModel.CurrentWsSetupModel.CurrentRegionTag);
+			Assert.IsFalse(testModel.CurrentWsSetupModel.CurrentIso15924Script.IsPrivateUse);
+		}
+
+		[Test]
 		public void AdvancedConfiguration_NonGraphiteFont_GraphiteFontOptionsAreDisabled()
 		{
 			var englishWithDefaultScript = new CoreWritingSystemDefinition("en");

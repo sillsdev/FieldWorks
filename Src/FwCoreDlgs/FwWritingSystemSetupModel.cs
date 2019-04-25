@@ -102,6 +102,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public delegate bool ChangeHomographWs(string newHomographWs);
 
 		/// <summary/>
+		public delegate bool ConfirmClearAdvancedDelegate();
+
+		/// <summary/>
 		public ChangeLanguageDelegate ShowChangeLanguage;
 
 		/// <summary/>
@@ -125,6 +128,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public ConfirmMergeWritingSystemDelegate ConfirmMergeWritingSystem;
 
+		/// <summary/>
+		public ConfirmClearAdvancedDelegate ConfirmClearAdvanced;
+
 		private IWritingSystemContainer _wsContainer;
 		private ProjectLexiconSettingsDataMapper _projectLexiconSettingsDataMapper;
 		private ProjectLexiconSettings _projectLexiconSettings;
@@ -134,6 +140,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// We need to know if the homographWs was in the current list on construction
 		// to be able to show warnings triggered by removing it from the current list
 		private bool _homographWsWasInCurrent;
+		// backing variable for when the user checks the box on something that doesn't require advanced view yet
+		private bool _showAdvancedView;
 
 		/// <summary>
 		/// event raised when the writing system has been changed by the presenter
@@ -204,9 +212,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				return _currentWs.Language.IsPrivateUse ||
-					(_currentWs.Script != null && _currentWs.Script.IsPrivateUse) ||
-					(_currentWs.Region != null && _currentWs.Region.IsPrivateUse);
+				return _showAdvancedView || _currentWs.Language.IsPrivateUse ||
+					_currentWs.Script != null && _currentWs.Script.IsPrivateUse ||
+					_currentWs.Region != null && _currentWs.Region.IsPrivateUse ||
+					_currentWs.Variants.Count > 1 && !_currentWs.Variants.First().IsPrivateUse;
+			}
+			set
+			{
+				if (ShowAdvancedScriptRegionVariantView && !_currentWs.Language.IsPrivateUse && ConfirmClearAdvanced())
+				{
+					if (_currentWs.Region != null && _currentWs.Region.IsPrivateUse)
+					{
+						_currentWs.Region = null;
+					}
+					if (_currentWs.Script != null && _currentWs.Script.IsPrivateUse)
+					{
+						_currentWs.Script = null;
+					}
+
+					if (_currentWs.Variants.Count > 1)
+					{
+						_currentWs.Variants.RemoveRangeAt(1, _currentWs.Variants.Count - 1);
+					}
+					_showAdvancedView = value;
+				}
+				else if (!ShowAdvancedScriptRegionVariantView)
+				{
+					_showAdvancedView = true;
+				}
 			}
 		}
 

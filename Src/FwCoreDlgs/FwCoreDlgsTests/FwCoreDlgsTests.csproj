@@ -294,6 +294,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdvancedScriptRegionVariantModelTests.cs" />
     <Compile Include="CnvtrPropertiesCtrlTests.cs">
       <SubType>Form</SubType>
     </Compile>

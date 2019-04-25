@@ -15,7 +15,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 
@@ -129,11 +128,37 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_rightToLeftCheckbox.CheckedChanged -= RightToLeftCheckChanged;
 			_rightToLeftCheckbox.Checked = model.CurrentWsSetupModel.CurrentRightToLeftScript;
 			_rightToLeftCheckbox.CheckedChanged += RightToLeftCheckChanged;
-			_identifiersControl.UnwireBeforeClosing();
-			_identifiersControl.BindToModel(model.CurrentWsSetupModel);
-			_identifiersControl.Selected();
+
+			if (model.ShowAdvancedScriptRegionVariantView)
+			{
+				_generalTab.Controls.Remove(_identifiersControl);
+				_generalTab.Controls.Add(_advancedIdentifiersControl);
+				_identifiersControl.Visible = false;
+				_advancedIdentifiersControl.Visible = true;
+				_advancedIdentifiersControl.Enabled = true;
+				_advancedIdentifiersControl.BindToModel(new AdvancedScriptRegionVariantModel(model));
+				_advancedIdentifiersControl.Selected();
+			}
+			else
+			{
+				_generalTab.Controls.Remove(_advancedIdentifiersControl);
+				_generalTab.Controls.Add(_identifiersControl);
+				_identifiersControl.Visible = true;
+				_advancedIdentifiersControl.Visible = false;
+				_identifiersControl.UnwireBeforeClosing();
+				_identifiersControl.BindToModel(model.CurrentWsSetupModel);
+				_identifiersControl.Selected();
+			}
+			_enableAdvanced.CheckedChanged -= EnableAdvancedOnCheckedChanged;
 			_enableAdvanced.Visible = model.ShowAdvancedScriptRegionVariantCheckBox;
 			_enableAdvanced.Checked = model.ShowAdvancedScriptRegionVariantView;
+			_enableAdvanced.CheckedChanged += EnableAdvancedOnCheckedChanged;
+		}
+
+		private void EnableAdvancedOnCheckedChanged(object sender, EventArgs e)
+		{
+			_model.ShowAdvancedScriptRegionVariantView = _enableAdvanced.Checked;
+			BindGeneralTab(_model);
 		}
 
 		private void BindFontTab(FwWritingSystemSetupModel model)
@@ -182,6 +207,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.ImportListForNewWs = ImportTranslatedList;
 			model.ConfirmMergeWritingSystem = ConfirmMergeWritingSystem;
 			model.ShouldChangeHomographWs = ShouldChangeHomographWs;
+			model.ConfirmClearAdvanced = ConfirmClearAdvancedData;
 			_writingSystemList.ItemCheck -= WritingSystemListItemCheck;
 			_writingSystemList.Items.Clear();
 			var uniqueLabels = new HashSet<string>();
@@ -304,6 +330,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
+		private bool ConfirmClearAdvancedData()
+		{
+			if (DialogResult.No == MessageBox.Show("Clearing the Advanced check box will remove all your advanced choices. Do you want to continue?",
+				"Clear Advanced", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		private void ImportTranslatedList(string iculocaletoimport)
 		{
 			ProgressDialogWithTask.ImportTranslatedListsForWs(this, _model.Cache, iculocaletoimport);
@@ -343,7 +380,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void EthnologueLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			using(Process.Start(_model.EthnologueLink))
+			using (Process.Start(_model.EthnologueLink))
 			{
 			}
 		}
@@ -480,7 +517,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 
 				}
-		}
+			}
 		}
 
 		private void FormHelpClick(object sender, EventArgs e)
@@ -513,6 +550,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Binding the general tab is overkill, this method is called because it was changed
 			// but we do want the code to refresh, so do that.
 			m_FullCode.Text = _model.CurrentWsSetupModel.CurrentLanguageTag;
+			_enableAdvanced.Visible = _model.ShowAdvancedScriptRegionVariantCheckBox;
 		}
 		#endregion
 
