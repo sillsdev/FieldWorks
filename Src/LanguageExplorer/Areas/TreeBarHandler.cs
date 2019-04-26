@@ -223,6 +223,7 @@ namespace LanguageExplorer.Areas
 			{
 				// Dispose managed resources here.
 				m_hvoToTreeNodeTable?.Clear();
+				m_tree.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -261,11 +262,18 @@ namespace LanguageExplorer.Areas
 				{
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				}
+
+				if (m_tree == tree)
+				{
+					// This prevents some DisposableToolStripMenuItem from nt being disposed properly,
+					// resulting in this write line for it/them" "Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");"
+					tree.ContextMenuStrip?.Dispose();
+					// Removing the handlers first seems to be necessary because multiple tree handlers are
+					// working with one treeview. Only this active one should have handlers connected.
+					// If we fail to do this, switching to a different list causes drag and drop to stop working.
+					ReleaseRecordBar();
+				}
 				m_tree = tree;
-				// Removing the handlers first seems to be necessary because multiple tree handlers are
-				// working with one treeview. Only this active one should have handlers connected.
-				// If we fail to do this, switching to a different list causes drag and drop to stop working.
-				ReleaseRecordBar();
 				tree.NodeMouseClick += tree_NodeMouseClick;
 				if (editable)
 				{

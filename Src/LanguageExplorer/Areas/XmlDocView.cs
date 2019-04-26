@@ -248,6 +248,7 @@ namespace LanguageExplorer.Areas
 			{
 				_uiWidgetController.RemoveUserControlHandlers(this);
 				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+				m_contextMenu?.Dispose();
 				DisposeTooltip();
 				components?.Dispose();
 			}

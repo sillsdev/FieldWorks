@@ -147,30 +147,21 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List....
-        /// </summary>
-        internal static string ConfigureList {
-            get {
-                return ResourceManager.GetString("ConfigureList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configure properties of a list..
-        /// </summary>
-        internal static string ConfigureListTooltip {
-            get {
-                return ResourceManager.GetString("ConfigureListTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Copy {
             get {
                 object obj = ResourceManager.GetObject("Copy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom List.
+        /// </summary>
+        internal static string CustomList {
+            get {
+                return ResourceManager.GetString("CustomList", resourceCulture);
             }
         }
         

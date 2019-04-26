@@ -150,7 +150,7 @@ namespace LanguageExplorer
 			}
 			if (_tool != null)
 			{
-				if (toolParameterObject.Tool != _tool)
+				if (toolParameterObject.Tool == _tool)
 				{
 					throw new InvalidOperationException("Cannot register a tool more than once.");
 				}

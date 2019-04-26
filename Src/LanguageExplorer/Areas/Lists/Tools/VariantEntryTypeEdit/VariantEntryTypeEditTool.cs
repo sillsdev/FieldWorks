@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -22,13 +25,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class VariantEntryTypeEditTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private const string VariantEntryTypeList = "VariantEntryTypeList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
+		private VariantEntryTypeEditMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
@@ -48,10 +51,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
-
-			_listsAreaMenuHelper = null;
+			_toolMenuHelper.Dispose();
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -68,13 +69,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			_toolMenuHelper = new VariantEntryTypeEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA.VariantEntryTypesOA, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.VariantEntryTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -159,6 +159,143 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.VariantEntryTypesOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+		}
+
+		private sealed class VariantEntryTypeEditMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private readonly ICmPossibilityList _list;
+			private readonly IRecordList _recordList;
+
+			internal VariantEntryTypeEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_list = list;
+				_recordList = recordList;
+				SetupToolUiWidgets(tool, dataTree);
+			}
+
+			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// NB: Inserts one of two class options:
+				//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance.
+				//		2) It will only insert LexEntryType at the top or nested in other LexEntryType instances.
+				// <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
+				// <command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem"> CmdDataTree_Insert_LexEntryType
+				// <command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem"> CmdDataTree_Insert_LexEntryInflType
+				// Insert menu & tool bar
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				insertMenuDictionary.Add(Command.CmdInsertLexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
+				insertToolbarDictionary.Add(Command.CmdInsertLexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
+
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubVariantEntryType, Create_mnuDataTree_SubVariantEntryType);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubVariantEntryType(Slice slice, string contextMenuId)
+			{
+				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubVariantEntryType, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubVariantEntryType}', but got '{contextMenuId}' instead.");
+
+				// Start: <menu id="mnuDataTree-SubVariantEntryType">
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ListsAreaConstants.mnuDataTree_SubVariantEntryType
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				/*
+					<item command="CmdDataTree-Insert-LexEntryType" />
+				*/
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_LexEntryType_Click, ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
+
+				// End: <menu id="mnuDataTree-SubVariantEntryType">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_LexEntryInflType => new Tuple<bool, bool>(true, _recordList.CurrentObject is ILexEntryInflType);
+
+			private void CmdDataTree_Insert_LexEntryInflType_Click(object sender, EventArgs e)
+			{
+				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create((ILexEntryInflType)_recordList.CurrentObject);
+				if (newPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertLexEntryType => new Tuple<bool, bool>(true, true);
+
+			private void CmdInsertLexEntryType_Click(object sender, EventArgs e)
+			{
+				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create(_list);
+				if (newPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_LexEntryType => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+
+			private void CmdDataTree_Insert_LexEntryType_Click(object sender, EventArgs e)
+			{
+				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create((ILexEntryType)_recordList.CurrentObject);
+				if (newPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~VariantEntryTypeEditMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

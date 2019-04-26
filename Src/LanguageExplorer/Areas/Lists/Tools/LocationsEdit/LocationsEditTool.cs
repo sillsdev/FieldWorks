@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -22,13 +25,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class LocationsEditTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private const string LocationList = "LocationList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
+		private LocationsEditMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
@@ -48,10 +51,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
-
-			_listsAreaMenuHelper = null;
+			_toolMenuHelper.Dispose();
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -68,13 +69,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			_toolMenuHelper = new LocationsEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.LocationsOA, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.LocationsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -158,6 +158,136 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LocationsOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best vernoranal"));
+		}
+
+		private sealed class LocationsEditMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private readonly ICmPossibilityList _list;
+			private readonly IRecordList _recordList;
+
+			internal LocationsEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_list = list;
+				_recordList = recordList;
+				SetupToolUiWidgets(tool, dataTree);
+			}
+
+			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Goes in Insert menu & Insert toolbar;
+				var menuItemsDictionary = toolUiWidgetParameterObject.MenuItemsForTool;
+				var toolBarItemsDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool;
+				var insertMenuDictionary = menuItemsDictionary[MainMenu.Insert];
+				var insertToolbarDictionary = toolBarItemsDictionary[ToolBar.Insert];
+				// <item command="CmdInsertLocation" defaultVisible="false" />
+				// <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
+				insertMenuDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> CanCmdInsertLocation));
+				insertToolbarDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => CanCmdInsertLocation));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
+
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubLocation(Slice slice, string contextMenuId)
+			{
+				/*
+					// Used for CmLocation, but, unexpectedly, also for: LexEntryType
+					// I'm not sure how one can reasonable insert an instance of CmLocation into a list of LexEntryType instance, given that the list should prevent that.
+					<menu id="mnuDataTree-SubLocation">
+				*/
+				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubLocation, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubLocation}', but got '{contextMenuId}' instead.");
+
+				// Start: <menu id="mnuDataTree-SubLocation">
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ListsAreaConstants.mnuDataTree_SubLocation
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				/*
+					  <item command="CmdDataTree-Insert-Location" /> // Shared
+						<command id="CmdDataTree-Insert-Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+						  <parameters field="SubPossibilities" className="CmLocation" />
+						</command>
+				*/
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Location_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+
+				// End: <menu id="mnuDataTree-SubLocation">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertLocation => new Tuple<bool, bool>(true, true);
+
+			private void CmdInsertLocation_Click(object sender, EventArgs e)
+			{
+				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), _list);
+				if (newPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_Location => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+
+			private void CmdDataTree_Insert_Location_Click(object sender, EventArgs e)
+			{
+				var newSubItem = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), (ICmLocation)_recordList.CurrentObject);
+				if (newSubItem != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~LocationsEditMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

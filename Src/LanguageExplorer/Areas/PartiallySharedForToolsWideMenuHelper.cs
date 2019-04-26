@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Require.That(s_partiallySharedForToolsWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is nut null.");
+			Require.That(s_partiallySharedForToolsWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is not null.");
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = recordList;
@@ -239,7 +239,7 @@ namespace LanguageExplorer.Areas
 			SenderTagAsSlice(sender).HandleDeleteCommand();
 		}
 
-		private Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, true);
+		private static Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, true);
 
 		private void AddCustomField_Click(object sender, EventArgs e)
 		{
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Areas
 			UowHelpers.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
 		}
 
-		private void ShowEnvironmentError_Clicked(object sender, EventArgs e)
+		private static void ShowEnvironmentError_Clicked(object sender, EventArgs e)
 		{
 			SenderTagAsIPhEnvSliceCommon(sender).ShowEnvironmentError();
 		}
@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdShowEnvironmentErrorMessage" />
 					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanShowEnvironmentError;
 			menu.Tag = slice;
 		}
@@ -480,7 +480,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		internal void SetupAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+		internal void SetupAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree)
 		{
 			// CmdAddToLexicon goes on Insert menu & Insert toolbar
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));

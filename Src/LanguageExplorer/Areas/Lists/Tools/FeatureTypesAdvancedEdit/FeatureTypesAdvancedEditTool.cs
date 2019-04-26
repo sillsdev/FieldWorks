@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -21,15 +23,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// <summary>
 	/// ITool implementation for the "featureTypesAdvancedEdit" tool in the "lists" area.
 	/// </summary>
+	/// <remarks>
+	/// Oddly enough, this tool isn't a real list (e.g., nothing owned by ICmPossibilityList).
+	/// </remarks>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
+		private FeatureTypesAdvancedEditMenuHelper _toolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
+
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
 
@@ -49,12 +55,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_listsAreaMenuHelper = null;
 			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -67,18 +72,25 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(FeatureTypes, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants
+						.RecordListRepository).GetRecordList(FeatureTypes, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
+
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root,
+				_browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList,
+				majorFlexComponentParameters.UiWidgetController);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
-			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new FeatureTypesAdvancedEditMenuHelper(majorFlexComponentParameters, this);
+			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters),
+				XDocument.Parse(AreaResources.HideAdvancedListItemFields),
+				majorFlexComponentParameters.LcmCache, _recordList, dataTree,
+				majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -89,19 +101,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null,
+				showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields,
+				LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			paneBar.AddControls(new List<Control> { panelButton });
-
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", paneBar);
-
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
+						majorFlexComponentParameters.MainCollapsingSplitContainer,
+						mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
+						recordEditView, "Details", paneBar);
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
@@ -170,7 +183,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache,
+			FlexComponentParameters flexComponentParameters, string recordListId,
+			StatusBar statusBar)
 		{
 			Require.That(recordListId == FeatureTypes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{FeatureTypes}'.");
 			/*
@@ -178,7 +193,84 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
               <recordList owner="MsFeatureSystem" property="FeatureTypes" />
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, new VectorPropertyParameterObject(cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes", FsFeatureSystemTags.kflidFeatures));
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				new VectorPropertyParameterObject(cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes", FsFeatureSystemTags.kflidFeatures));
+		}
+
+		private sealed class FeatureTypesAdvancedEditMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private readonly IFsFeatureSystem _featureSystem;
+
+			internal FeatureTypesAdvancedEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_featureSystem = _majorFlexComponentParameters.LcmCache.LanguageProject.MsFeatureSystemOA;
+				SetupToolUiWidgets(tool);
+			}
+
+			private void SetupToolUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Add to Insert menu & Insert toolbar
+				// <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, ()=> CanCmdInsertFeatureType));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, () => CanCmdInsertFeatureType));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertFeatureType => new Tuple<bool, bool>(true, true);
+
+			private void InsertFeatureType_Clicked(object sender, EventArgs e)
+			{
+				using (var dlg = new MasterInflectionFeatureListDlg("FsFeatDefn"))
+				{
+					dlg.SetDlginfo(_featureSystem, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, true);
+					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
+				}
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~FeatureTypesAdvancedEditMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

@@ -19,10 +19,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 	/// <summary>
 	/// ITool implementation for the "morphTypeEdit" tool in the "lists" area.
 	/// </summary>
+	/// <remarks>This list is closed for editing.</remarks>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class MorphTypeEditTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private const string MorphTypeList = "MorphTypeList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -48,10 +48,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
-
-			_listsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -68,13 +64,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			//_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.MorphTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

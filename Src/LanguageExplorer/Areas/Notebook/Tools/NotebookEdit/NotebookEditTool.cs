@@ -264,7 +264,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, null, MyRecordList);
 
 				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
-				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject);
+				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
 				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
 				menuItem.Tag = MyDataTree;
 
@@ -498,7 +498,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(Slice slice, string contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Participants, $"Expected argument value of '{mnuDataTree_Subrecord_Hotlinks}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == mnuDataTree_Participants, $"Expected argument value of '{mnuDataTree_Participants}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree-Participants">
 
@@ -536,7 +536,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(Slice slice, string contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_SubRecords, $"Expected argument value of '{mnuDataTree_Subrecord_Hotlinks}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == mnuDataTree_SubRecords, $"Expected argument value of '{mnuDataTree_SubRecords}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree-SubRecords">
 
@@ -556,7 +556,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(Slice slice, string contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_SubRecordSummary, $"Expected argument value of '{mnuDataTree_Subrecord_Hotlinks}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == mnuDataTree_SubRecordSummary, $"Expected argument value of '{mnuDataTree_SubRecordSummary}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree-SubRecordSummary">
 

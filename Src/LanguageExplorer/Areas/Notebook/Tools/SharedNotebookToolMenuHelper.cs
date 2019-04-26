@@ -169,7 +169,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			_sharedEventHandlers = null;
 			_dataTree = null;
 			_recordList = null;
-			_tool = null;
 
 			_isDisposed = true;
 		}

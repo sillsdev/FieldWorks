@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -26,7 +27,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
@@ -34,6 +34,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private IRecordList _recordList;
 		private RecordBrowseView _recordBrowseView;
 		private IReversalIndexRepository _reversalIndexRepository;
+		private ReversalIndexPosEditMenuHelper _toolMenuHelper;
 		private IReversalIndex _currentReversalIndex;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
@@ -56,15 +57,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_cache = null;
 			_recordBrowseView = null;
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
-			_listsAreaMenuHelper = null;
 			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex.PartsOfSpeechOA, _recordList, dataTree);
 			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -128,7 +128,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -255,6 +254,322 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			// NB: No need to pass 'recordListId' to the constructor, since it supplies ReversalIndexPOSRecordList.ReversalEntriesPOS for the id.
 			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
+		}
+
+		private sealed class ReversalIndexPosEditMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private readonly ICmPossibilityList _list;
+			private readonly IRecordList _recordList;
+			private readonly DataTree _dataTree;
+
+			private IPropertyTable PropertyTable => _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+
+			internal ReversalIndexPosEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_list = list;
+				_recordList = recordList;
+				_dataTree = dataTree;
+				SetupToolUiWidgets(tool, dataTree);
+			}
+
+			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
+				// <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+				// Insert menu & tool bar for both.
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				insertMenuDictionary.Add(Command.CmdInsertPOS, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				insertToolbarDictionary.Add(Command.CmdInsertPOS, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, string contextMenuId)
+			{
+				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_MoveMainReversalPOS}', but got '{contextMenuId}' instead.");
+
+				// Start: <menu id="mnuDataTree-MoveMainReversalPOS">
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ListsAreaConstants.mnuDataTree_MoveMainReversalPOS
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
+
+				/*
+				  <item command="CmdDataTree-Move-MoveReversalPOS" /> // Shared locally
+						<command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
+						  <!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
+						</command>
+				*/
+				var currentPartOfSpeech = _recordList.CurrentObject as IPartOfSpeech;
+				var enabled = CanMergeOrMovePos(currentPartOfSpeech);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReversalPOS_Clicked, ListResources.Move_Category);
+				menu.Enabled = enabled;
+				menu.Tag = currentPartOfSpeech;
+
+				/*
+				  <item label="-" translate="do not translate" />
+				*/
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+				/*
+				  <item command="CmdDataTree-Merge-MergeReversalPOS" /> // Shared locally
+					<command id="CmdDataTree-Merge-MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS" />
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
+				menu.Enabled = enabled;
+				menu.Tag = currentPartOfSpeech;
+
+				/*
+				  <item command="CmdDataTree-Delete-ReversalSubPOS" />
+					<command id="CmdDataTree-Delete-ReversalSubPOS" label="Delete this Category and any Subcategories" message="DataTreeDelete" icon="Delete">
+					  <parameters field="SubPossibilities" className="PartOfSpeech" />
+					</command> Delete_this_Category_and_any_Subcategories
+				*/
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree-MoveMainReversalPOS">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(Slice slice, string contextMenuId)
+			{
+				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_MoveReversalPOS}', but got '{contextMenuId}' instead.");
+
+				// Start: <menu id="mnuDataTree-MoveReversalPOS">
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ListsAreaConstants.mnuDataTree_MoveReversalPOS
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
+
+				/*
+				  <item command="CmdDataTree-Move-MoveReversalPOS" /> // Shared locally
+				*/
+				var currentPartOfSpeech = _recordList.CurrentObject as IPartOfSpeech;
+				var enabled = CanMergeOrMovePos(currentPartOfSpeech);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReversalPOS_Clicked, ListResources.Move_Category);
+				menu.Enabled = enabled;
+				menu.Tag = currentPartOfSpeech;
+
+				using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
+				{
+					/*
+						<command id="CmdDataTree-Promote-ProReversalSubPOS" label="Promote" message="PromoteReversalSubPOS" icon="MoveLeft">
+						  <parameters field="SubPossibilities" className="PartOfSpeech" />
+						</command>
+					*/
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_ReversalSubPOS_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeft]);
+					menu.Tag = currentPartOfSpeech;
+				}
+
+				// <item label="-" translate="do not translate" />
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+				// <item command="CmdDataTree-Merge-MergeReversalPOS" />
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
+				menu.Enabled = enabled;
+				menu.Tag = currentPartOfSpeech;
+
+				// <item command="CmdDataTree-Delete-ReversalSubPOS" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree-MoveReversalPOS">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private static IEnumerable<IPartOfSpeech> MergeOrMoveCandidates(IPartOfSpeech partOfSpeechCandidate)
+			{
+				var retval = new HashSet<IPartOfSpeech>();
+				foreach (var partOfSpeech in partOfSpeechCandidate.OwningList.ReallyReallyAllPossibilities)
+				{
+					if (ReferenceEquals(partOfSpeechCandidate, partOfSpeech))
+					{
+						continue;
+					}
+					retval.Add((IPartOfSpeech)partOfSpeech);
+				}
+				return retval;
+			}
+
+			private static bool CanMergeOrMovePos(IPartOfSpeech partOfSpeech)
+			{
+				return partOfSpeech.OwningList.ReallyReallyAllPossibilities.Count > 1;
+			}
+
+			private void MoveReversalPOS_Clicked(object sender, EventArgs e)
+			{
+				var slice = _dataTree.CurrentSlice;
+				if (slice == null)
+				{
+					return;
+				}
+				var currentPartOfSpeech = (IPartOfSpeech)slice.MyCmObject;
+				var cache = _dataTree.Cache;
+				var labels = MergeOrMoveCandidates(currentPartOfSpeech).Where(pos => !pos.SubPossibilitiesOS.Contains(currentPartOfSpeech))
+					.Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
+				using (var dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_move_to, null))
+				{
+					dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						var currentPOS = currentPartOfSpeech;
+						var newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
+						UowHelpers.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, () =>
+						{
+							newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
+							if (!newOwner.SubPossibilitiesOS.Contains(currentPOS)) //this is also prevented in the interface, but I'm paranoid
+							{
+								newOwner.SubPossibilitiesOS.Add(currentPOS);
+							}
+						});
+#if RANDYTODO
+					// TODO: Does the Jump broadcast still need to be done?
+					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
+					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
+					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
+#endif
+					}
+				}
+			}
+
+			private void MergeReversalPOS_Clicked(object sender, EventArgs e)
+			{
+				var slice = _dataTree.CurrentSlice;
+				if (slice == null)
+				{
+					return;
+				}
+				var currentPartOfSpeech = (IPartOfSpeech)slice.MyCmObject;
+				var cache = _dataTree.Cache;
+				var labels = MergeOrMoveCandidates(currentPartOfSpeech).Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
+				using (var dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_merge_into, null))
+				{
+					dlg.SetHelpTopic("khtpMergeCategories");
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						var currentPOS = currentPartOfSpeech;
+						var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
+						// Pass false to MergeObject, since we really don't want to merge the string info.
+						UowHelpers.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, () => survivor.MergeObject(currentPOS, false));
+#if RANDYTODO
+					// TODO: Does the Jump broadcast still need to be done?
+					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
+					// Have to jump to a main PartOfSpeech, as RecordList doesn't know anything about subcategories.
+					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
+#endif
+					}
+				}
+			}
+
+			private void Promote_ReversalSubPOS_Clicked(object sender, EventArgs e)
+			{
+				var slice = _dataTree.CurrentSlice;
+				if (slice == null)
+				{
+					return;
+				}
+				var cache = _dataTree.Cache;
+				var currentPartOfSpeech = (ICmPossibility)slice.MyCmObject;
+				var newOwner = currentPartOfSpeech.Owner.Owner;
+				switch (newOwner.ClassID)
+				{
+					default:
+						throw new ArgumentException("Illegal class.");
+					case PartOfSpeechTags.kClassId:
+						UowHelpers.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((IPartOfSpeech)newOwner).SubPossibilitiesOS.Add(currentPartOfSpeech));
+						break;
+					case CmPossibilityListTags.kClassId:
+						UowHelpers.UndoExtension(AreaResources.Promote, cache.ActionHandlerAccessor, () => ((ICmPossibilityList)newOwner).PossibilitiesOS.Add(currentPartOfSpeech));
+						break;
+				}
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
+
+			private void CmdInsertPOS_Click(object sender, EventArgs e)
+			{
+				// Insert in main list.
+				InsertPossibility();
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_POS_SubPossibilities => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+
+			private void CmdDataTree_Insert_POS_SubPossibilities_Click(object sender, EventArgs e)
+			{
+				InsertPossibility(_recordList.CurrentObject as IPartOfSpeech);
+			}
+
+			private void InsertPossibility(IPartOfSpeech selectedCategoryOwner = null)
+			{
+				IPartOfSpeech newPossibility;
+				using (var dlg = new MasterCategoryListDlg())
+				{
+					var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+					dlg.SetDlginfo(_list, propertyTable, true, selectedCategoryOwner);
+					dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
+					newPossibility = dlg.SelectedPOS;
+				}
+				if (newPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~ReversalIndexPosEditMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

@@ -57,6 +57,8 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, true);
 			_sidePane = majorFlexComponentParameters.SidePane;
+			// Do nothing registration, but required, before a list tool can be registered.
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new AreaUiWidgetParameterObject(this));
 		}
 
 		/// <summary>
@@ -233,21 +235,26 @@ namespace LanguageExplorer.Areas.Lists
 		}
 
 		/// <summary>
-		/// Change the display name of the custom list in the Tab.
+		/// Change the display name of the list in the Tab.
 		/// </summary>
-		public void ModifiedCustomList(ITool tool)
+		public void ModifiedListDisplayName(ITool tool)
 		{
 			_sidePane.SuspendLayout();
+			var isCustomList = false;
 			foreach (var kvp in _sortedListOfCustomTools)
 			{
 				if (tool != kvp.Value)
 				{
 					continue;
 				}
+				isCustomList = true;
 				_sortedListOfCustomTools.Remove(kvp.Key);
 				break;
 			}
-			_sortedListOfCustomTools.Add(tool.MachineName, tool);
+			if (isCustomList)
+			{
+				_sortedListOfCustomTools.Add(tool.MachineName, tool);
+			}
 			_sidePane.RenameItem(ListAreaTab, tool, tool.UiName);
 			_sidePane.ResumeLayout();
 		}

@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -22,13 +24,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class StatusEditTool : ITool
 	{
-		private IAreaUiWidgetManager _listsAreaMenuHelper;
 		private const string StatusList = "StatusList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
+		private StatusMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
@@ -48,10 +50,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
-			_listsAreaMenuHelper.UnwireSharedEventHandlers();
-			_listsAreaMenuHelper.Dispose();
-
-			_listsAreaMenuHelper = null;
+			_toolMenuHelper.Dispose();
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -68,13 +68,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			_toolMenuHelper = new StatusMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.StatusOA, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.StatusEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 
 			// Too early before now.
-			_listsAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -158,6 +157,79 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.StatusOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+		}
+
+		private sealed class StatusMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private SharedListToolMenuHelper _sharedListToolMenuHelper;
+			private SharedForPlainVanillaListToolMenuHelper _sharedForPlainVanillaListToolMenuHelper;
+
+			internal StatusMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				var partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
+				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, partiallySharedForToolsWideMenuHelper, tool, list, recordList);
+				_sharedForPlainVanillaListToolMenuHelper = new SharedForPlainVanillaListToolMenuHelper(_majorFlexComponentParameters, partiallySharedForToolsWideMenuHelper, tool, list, recordList, dataTree);
+
+				SetupToolUiWidgets(tool);
+			}
+
+			private void SetupToolUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_sharedForPlainVanillaListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~StatusMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_sharedListToolMenuHelper.Dispose();
+					_sharedForPlainVanillaListToolMenuHelper.Dispose();
+				}
+				_sharedListToolMenuHelper = null;
+				_sharedForPlainVanillaListToolMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

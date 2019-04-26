@@ -30,8 +30,8 @@ namespace LanguageExplorer
 		void RemoveCustomListTool(ITool gonerTool);
 
 		/// <summary>
-		/// Change the display name of the custom list in the Tab.
+		/// Change the display name of the list in the Tab.
 		/// </summary>
-		void ModifiedCustomList(ITool tool);
+		void ModifiedListDisplayName(ITool tool);
 	}
 }
