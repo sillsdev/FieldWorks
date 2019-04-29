@@ -1,3 +1,7 @@
+// Copyright (c) 2019 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,11 +72,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private NewProjStep CurrentStep;
 
 		private IWizardStep[] _steps = {
-			new NewLangProjStep("Project Name", false, true, false),
-			new NewLangProjStep("Vernacular", false, false, false),
-			new NewLangProjStep("Analysis", false, false, false),
-			new NewLangProjStep("More", true, false, false),
-			new NewLangProjStep("Anthropology", true, false, false)
+			new NewLangProjStep("Project Name", false, true),
+			new NewLangProjStep("Vernacular", false),
+			new NewLangProjStep("Analysis", false),
+			new NewLangProjStep("More", true),
+			new NewLangProjStep("Anthropology", true)
 		};
 
 		private string _projectName;
@@ -445,12 +449,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class NewLangProjStep : IWizardStep
 	{
 		/// <summary/>
-		public NewLangProjStep(string name, bool optional, bool isCurrent, bool isComplete)
+		public NewLangProjStep(string name, bool optional, bool isCurrent = false)
 		{
 			StepName = name;
 			IsOptional = optional;
 			IsCurrent = isCurrent;
-			IsComplete = isComplete;
 		}
 
 		/// <summary/>
