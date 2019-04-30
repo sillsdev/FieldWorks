@@ -560,6 +560,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							AddOrMoveInList(currentWritingSystems, curIndex, origWS);
 							++curIndex;
 						}
+						else
+						{
+							SafelyRemoveFromList(currentWritingSystems, wsListItem);
+						}
 						if (string.IsNullOrEmpty(oldId) || !IetfLanguageTag.AreTagsEquivalent(oldId, workingWs.LanguageTag))
 						{
 							// update the ID
@@ -571,6 +575,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 						atLeastOneChange = true;
 						_mediator?.SendMessage("WritingSystemUpdated", origWS.Id);
+					}
+					else // Writing system is not new or changed, but we might have added or removed from the current list
+					{
+						if (wsListItem.InCurrentList && !currentWritingSystems.Contains(origWS))
+						{
+							AddOrMoveInList(currentWritingSystems, curIndex, origWS);
+							++curIndex;
+							atLeastOneChange = true;
+						}
+						else if(!wsListItem.InCurrentList)
+						{
+							atLeastOneChange = SafelyRemoveFromList(currentWritingSystems, wsListItem);
+						}
 					}
 				}
 				// Handle any merged writing systems
@@ -624,6 +641,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			allWritingSystems.Clear();
 			allWritingSystems.AddRange(updatedList);
+		}
+
+		/// <summary>
+		/// Remove the writing system associated with this list item from the given list (unless it didn't exist there before)
+		/// </summary>
+		/// <returns>true if item was removed</returns>
+		private bool SafelyRemoveFromList(IList<CoreWritingSystemDefinition> currentWritingSystems, WSListItemModel wsListItem)
+		{
+			if (wsListItem.OriginalWs != null)
+			{
+				return currentWritingSystems.Remove(wsListItem.OriginalWs);
+			}
+
+			return false;
 		}
 
 		private bool HandleHomographWsChanges(bool homographWsWasTopVern, List<WSListItemModel> workingList, string homographWs, bool wasSelected)

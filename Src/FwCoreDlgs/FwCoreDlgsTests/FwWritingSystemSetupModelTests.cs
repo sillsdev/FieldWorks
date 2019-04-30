@@ -880,6 +880,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual(Cache.LangProject.HomographWs, "en", "Homograph ws not changed.");
 		}
 
+		[Test]
+		public void CurrentWsListChanged_CurrentVernacularList_ToggleSaved()
+		{
+			SetupHomographLanguagesInCache(); // adds fr and en to the current
+			Cache.LangProject.HomographWs = "en"; // set to en so the homograph writing system won't be updated when we remove fr from current
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			testModel.SelectWs("fr");
+			testModel.ToggleInCurrentList();
+			testModel.Save();
+			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("en"), "French should have been removed from the CurrentVernacular list on Save");
+		}
+
+		[Test]
+		public void CurrentWsListChanged_CurrentVernacularList_ToggleSavedWithOtherChange()
+		{
+			SetupHomographLanguagesInCache(); // adds fr and en to the current
+			Cache.LangProject.HomographWs = "en"; // set to en so the homograph writing system won't be updated when we remove fr from current
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			testModel.SelectWs("fr");
+			testModel.CurrentWsSetupModel.CurrentAbbreviation = "fra";
+			testModel.ToggleInCurrentList();
+			testModel.Save();
+			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("en"), "French should have been removed from the CurrentVernacular list on Save");
+		}
+
 		private void SetupHomographLanguagesInCache()
 		{
 			CoreWritingSystemDefinition fr;
