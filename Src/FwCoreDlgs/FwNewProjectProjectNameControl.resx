@@ -193,7 +193,7 @@
     <value>4</value>
   </data>
   <data name="m_lblProjectName.Text" xml:space="preserve">
-    <value>&amp;Name the project</value>
+    <value>Name the project</value>
   </data>
   <data name="&gt;&gt;m_lblProjectName.Name" xml:space="preserve">
     <value>m_lblProjectName</value>
