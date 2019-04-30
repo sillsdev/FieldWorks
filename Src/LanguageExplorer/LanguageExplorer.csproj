@@ -299,6 +299,7 @@
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
+    <Compile Include="Areas\CustomFieldsMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\PartiallySharedListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedForPlainVanillaListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedListToolMenuHelper.cs" />

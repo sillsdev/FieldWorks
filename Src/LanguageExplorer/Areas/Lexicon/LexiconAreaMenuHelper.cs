@@ -16,11 +16,12 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// This class handles all interaction for the Lexicon Area common menus.
 	/// </summary>
-	internal sealed class LexiconAreaMenuHelper : IAreaUiWidgetManager
+	internal sealed class LexiconAreaMenuHelper : IDisposable, IAreaUiWidgetManager
 	{
 		private IArea _area;
 		private ITool _tool;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private CustomFieldsMenuHelper _customFieldsMenuHelper;
 
 		internal PartiallySharedForToolsWideMenuHelper MyPartiallySharedForToolsWideMenuHelper { get; private set; }
 
@@ -39,7 +40,12 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			_area = area;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+
 			MyPartiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, recordList);
+			_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
+			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
+			_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 #if RANDYTODO
 			// TODO: Are the following area or tool wide?
 #endif
@@ -48,7 +54,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			MyPartiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			// Add two lexicon area-wide import options.
 			AddFileImportMenuItems(toolUiWidgetParameterObject);
-			MyPartiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 

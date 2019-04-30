@@ -66,10 +66,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconAreaMenuHelper = lexiconAreaMenuHelper;
 			_lexiconAreaMenuHelper.Initialize(_majorFlexComponentParameters, area, MyRecordList);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_currentTool);
-			lexiconAreaMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
-#if RANDYTODO
-			// TODO: Add toolUiWidgetParameterObject to UiWidgetController.
-#endif
 			_lexiconEditToolUiWidgetManagers.Add(editMenu, new LexiconEditToolEditMenuManager());
 			_lexiconEditToolUiWidgetManagers.Add(viewMenu, new LexiconEditToolViewMenuManager(_extendedPropertyName, InnerMultiPane));
 			_lexiconEditToolUiWidgetManagers.Add(insertMenu, new LexiconEditToolInsertMenuManager(MyDataTree));
@@ -82,7 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				manager.Initialize(_majorFlexComponentParameters, this, MyRecordList);
 			}
-
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 		}
 
 		/// <inheritdoc />

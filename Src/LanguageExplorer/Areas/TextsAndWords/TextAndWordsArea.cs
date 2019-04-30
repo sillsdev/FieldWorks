@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -49,6 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.Dispose();
 
 			_textAndWordsAreaMenuHelper = null;
 		}
@@ -208,9 +210,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, new VectorPropertyParameterObject(cache.LanguageProject, "InterestingTexts", InterestingTextsDecorator.kflidInterestingTexts));
 		}
 
-		private sealed class TextAndWordsAreaMenuHelper
+		private sealed class TextAndWordsAreaMenuHelper : IDisposable
 		{
-			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private CustomFieldsMenuHelper _customFieldsMenuHelper;
 
 			internal TextAndWordsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 			{
@@ -221,6 +224,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
 			{
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, areaUiWidgetParameterObject.Area);
+				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
 				/*
 					<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/> // Only Insert menu
 				*/
@@ -260,6 +265,47 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 				}
 			}
+
+			#region IDisposable
+			private bool _isDisposed;
+
+			~TextAndWordsAreaMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_customFieldsMenuHelper.Dispose();
+				}
+				_majorFlexComponentParameters = null;
+				_customFieldsMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

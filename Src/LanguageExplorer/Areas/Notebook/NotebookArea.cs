@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -175,10 +176,11 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <summary>
 		/// Handle creation and use of Notebook area menus.
 		/// </summary>
-		private sealed class NotebookAreaMenuHelper
+		private sealed class NotebookAreaMenuHelper : IDisposable
 		{
 			private IArea _area;
-			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private CustomFieldsMenuHelper _customFieldsMenuHelper;
 
 			internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 			{
@@ -190,6 +192,8 @@ namespace LanguageExplorer.Areas.Notebook
 			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
 			{
 				_area = areaUiWidgetParameterObject.Area;
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
+				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
 				// Add Edit menu item that is available in all Notebook tools.
 				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
 				// File->Export menu is visible and maybe enabled in this tool. (Area)
@@ -228,6 +232,48 @@ namespace LanguageExplorer.Areas.Notebook
 					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 				}
 			}
+
+			#region IDisposable
+			private bool _isDisposed;
+
+			~NotebookAreaMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_customFieldsMenuHelper.Dispose();
+				}
+				_area = null;
+				_majorFlexComponentParameters = null;
+				_customFieldsMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

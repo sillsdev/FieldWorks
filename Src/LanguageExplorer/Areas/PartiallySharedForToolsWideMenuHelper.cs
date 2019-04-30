@@ -17,7 +17,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas
 {
@@ -28,6 +27,7 @@ namespace LanguageExplorer.Areas
 	// TODO: 3. between UserControls from different areas (new class). (That is, no area or user control should be using this class in the end.)
 	// DONE: the other two classes exist (PartiallySharedForAreasWideMenuHelper & PartiallySharedForUserControlWideMenuHelper).
 	// TODO: Now to see what can be added to them (from this class or elsewhere).
+	// DONE: Spun off CustomFieldsMenuHelper class (area wide for areas that allow custom fields).
 #endif
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
@@ -209,15 +209,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <summary>
-		/// Setup the Tools->Configure->CustomFields menu.
-		/// </summary>
-		internal void SetupToolsCustomFieldsMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
-		{
-			// Tools->Configure->CustomFields menu is visible and enabled in this tool.
-			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));
-		}
-
 		private void DataTreeDelete_Clicked(object sender, EventArgs e)
 		{
 			HandleDeletion(sender);
@@ -237,40 +228,6 @@ namespace LanguageExplorer.Areas
 		private static void HandleDeletion(object sender)
 		{
 			SenderTagAsSlice(sender).HandleDeleteCommand();
-		}
-
-		private static Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, true);
-
-		private void AddCustomField_Click(object sender, EventArgs e)
-		{
-			var activeForm = PropertyTable.GetValue<Form>(FwUtils.window);
-			if (SharedBackendServices.AreMultipleApplicationsConnected(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache)))
-			{
-				MessageBoxUtils.Show(activeForm, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsText, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
-
-			var locationType = CustomFieldLocationType.Lexicon;
-			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			switch (areaChoice)
-			{
-				case AreaServices.LexiconAreaMachineName:
-					locationType = CustomFieldLocationType.Lexicon;
-					break;
-				case AreaServices.NotebookAreaMachineName:
-					locationType = CustomFieldLocationType.Notebook;
-					break;
-				case AreaServices.TextAndWordsAreaMachineName:
-					locationType = CustomFieldLocationType.Interlinear;
-					break;
-			}
-			using (var dlg = new AddCustomFieldDlg(PropertyTable, Publisher, locationType))
-			{
-				if (dlg.ShowCustomFieldWarning(activeForm))
-				{
-					dlg.ShowDialog(activeForm);
-				}
-			}
 		}
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)

@@ -56,6 +56,8 @@ namespace LanguageExplorer.Areas.Grammar
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName, true);
+			// Do nothing registration, but required, before a grammar tool can be registered.
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new AreaUiWidgetParameterObject(this));
 		}
 
 		/// <summary>

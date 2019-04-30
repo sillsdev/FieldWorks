@@ -164,9 +164,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
-			private ISharedEventHandlers _sharedEventHandlers;
 			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
-			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private IRecordList MyRecordList { get; }
 
 			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
@@ -178,7 +176,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
 				MyRecordList = recordList;
-				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				SetupToolUiWidgets();
 			}
 
@@ -187,8 +184,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList);
 				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
-				_partiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -225,13 +220,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				if (disposing)
 				{
 					_sharedNotebookToolMenuHelper?.Dispose();
-					_partiallySharedForToolsWideMenuHelper?.Dispose();
 				}
 
 				_majorFlexComponentParameters = null;
 				_tool = null;
-				_sharedEventHandlers = null;
-				_partiallySharedForToolsWideMenuHelper = null;
 				_sharedNotebookToolMenuHelper = null;
 
 				_isDisposed = true;

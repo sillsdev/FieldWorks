@@ -161,7 +161,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			private ITool _tool;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
 			internal InterlinearEditToolMenuHelper(ITool tool, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 			{
@@ -171,9 +170,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 				_tool = tool;
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, recordList);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_partiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
+				// Do nothing registration is needed, in case there are any user controls that want to register.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -210,11 +208,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 				if (disposing)
 				{
-					//_majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_tool = null;
-				_partiallySharedForToolsWideMenuHelper = null;
 				_majorFlexComponentParameters = null;
 
 				_isDisposed = true;

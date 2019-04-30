@@ -10,6 +10,12 @@ using SIL.Code;
 
 namespace LanguageExplorer
 {
+#if RANDYTODO
+	// TODO: Redo "Func<Tuple<bool, bool>>" to only have the second bool (enabled),
+	// TODO: so that any registered menu/tool bar button will be visible.
+	// TODO: Theory has it, that should make the separator visibility known at registration point,
+	// TODO: rather than sort them out at runtime.
+#endif
 	/// <summary>
 	/// This class aims to be a focal point for the areas, tools, and controls to declare which main menu items and toolbar buttons
 	/// are to be activated/deactivated, as the areas, tools, controls change.

@@ -259,7 +259,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_tool, MyDataTree);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
-				_partiallySharedForToolsWideMenuHelper.SetupToolsCustomFieldsMenu(toolUiWidgetParameterObject);
 				MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
 				_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, null, MyRecordList);
 
