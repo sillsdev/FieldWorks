@@ -1103,15 +1103,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sort Specification Error.
-        /// </summary>
-        public static string ksSortSpecError {
-            get {
-                return ResourceManager.GetString("ksSortSpecError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Specifies the actual encoding converter..
         /// </summary>
         public static string ksSpecifiesActualEC {
