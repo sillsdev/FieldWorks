@@ -206,6 +206,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set
 			{
 				_projectName = value;
+				_steps[(int)CurrentStep].IsComplete = IsProjectNameValid;
 				LoadProjectNameSetup();
 			}
 		}

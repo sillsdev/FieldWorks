@@ -212,6 +212,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.False(model.CanGoNext());
 		}
 
+		/// <summary/>
+		[Test]
+		public void FwNewLangProjectModel_CannotClickFinishWithBlankProjectName()
+		{
+			var model = new FwNewLangProjectModel();
+			model.LoadProjectNameSetup = () => { };
+			model.LoadVernacularSetup = () => { };
+			model.LoadAnalysisSetup = () => { };
+			model.LoadAdvancedWsSetup = () => { };
+			model.LoadAnthropologySetup = () => { };
+			model.ProjectName = "a";
+			var fakeTestWs = new CoreWritingSystemDefinition("fr");
+			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
+			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
+			model.WritingSystemContainer.CurrentAnalysisWritingSystems.Add(fakeTestWs);
+			model.WritingSystemContainer.AnalysisWritingSystems.Add(fakeTestWs);
+			Assert.True(model.CanGoNext());
+			model.Next(); // Vernacular
+			model.Next(); // Analysis
+			Assert.True(model.CanFinish());
+			model.Back();
+			model.Back();
+			model.ProjectName = "";
+			Assert.False(model.CanFinish());
+		}
+
 		private void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
 		{
 			ILangProject lp = cache.LanguageProject;
