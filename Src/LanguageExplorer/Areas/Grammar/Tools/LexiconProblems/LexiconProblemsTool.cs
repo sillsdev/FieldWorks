@@ -23,7 +23,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconProblemsTool : ITool
 	{
-		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
 		private const string LexProblems = "lexProblems";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -46,10 +45,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		{
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
-			_grammarAreaWideMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
-			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -65,10 +61,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexProblems, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			// Use generic export event handler.
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
-			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
-			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
+			// Do nothing for this tool
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
 
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.

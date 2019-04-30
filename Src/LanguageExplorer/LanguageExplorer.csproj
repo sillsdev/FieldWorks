@@ -323,14 +323,12 @@
     <Compile Include="Areas\CustomFieldLocationType.cs" />
     <Compile Include="Areas\FxtType.cs" />
     <Compile Include="Areas\FxtTypes.cs" />
-    <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IAreaUiWidgetManager.cs" />
     <Compile Include="Areas\IdAndString.cs" />

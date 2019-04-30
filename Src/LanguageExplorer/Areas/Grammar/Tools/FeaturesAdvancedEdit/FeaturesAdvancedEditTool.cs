@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class FeaturesAdvancedEditTool : ITool
 	{
-		private IAreaUiWidgetManager _grammarAreaWideMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string Features = "features";
 		private MultiPane _multiPane;
@@ -46,11 +45,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_browseViewContextMenuFactory.Dispose();
-			_grammarAreaWideMenuHelper.UnwireSharedEventHandlers();
-			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
-			_grammarAreaWideMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -66,10 +62,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Features, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			// Use generic export event handler.
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper();
-			// If this tool ends up needing an impl of IToolUiWidgetManager, then feed it in for the following null.
-			_grammarAreaWideMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
+			// Do nothing for this tool
+			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.

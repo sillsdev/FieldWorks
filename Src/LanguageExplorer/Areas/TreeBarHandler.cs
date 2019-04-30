@@ -223,7 +223,7 @@ namespace LanguageExplorer.Areas
 			{
 				// Dispose managed resources here.
 				m_hvoToTreeNodeTable?.Clear();
-				m_tree.Dispose();
+				m_tree?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
