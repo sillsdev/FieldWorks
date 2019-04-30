@@ -81,9 +81,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected string m_sOrigDescription;
 		private LinkLabel linkLbl_useDefaultFolder;
 		private String m_defaultLinkedFilesFolder;
-		private readonly ProjectLexiconSettings m_projectLexiconSettings;
+		private ProjectLexiconSettings m_projectLexiconSettings;
 		private CheckBox m_enableProjectSharingCheckBox;
-		private readonly ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
+		private ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
 		/// <summary>Read-only Property created for m_sOrigProjName</summary>
 		public string OriginalProjectName
 		{
@@ -126,11 +126,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
-			m_projectLexiconSettings = new ProjectLexiconSettings();
-			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
 
 			m_langProj = m_cache.LanguageProject;
+			InitializeProjectSharingTab();
 			InitializeGeneralTab();
 			m_fLinkedFilesChanged = false;
 			txtExtLnkEdit.Text = m_langProj.LinkedFilesRootDir;
@@ -138,11 +136,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_defaultLinkedFilesFolder = LcmFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		private void InitializeProjectSharingTab()
+		{
+			m_projectLexiconSettingsDataMapper =
+				new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
+			m_projectLexiconSettings = new ProjectLexiconSettings();
+			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
+			m_enableProjectSharingCheckBox.Checked = m_projectLexiconSettings.ProjectSharing;
+		}
+
 		private void InitializeGeneralTab()
 		{
 			m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
@@ -547,7 +550,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_enableProjectSharingCheckBox.Name = "m_enableProjectSharingCheckBox";
 			this.helpProvider1.SetShowHelp(this.m_enableProjectSharingCheckBox, ((bool)(resources.GetObject("m_enableProjectSharingCheckBox.ShowHelp"))));
 			this.m_enableProjectSharingCheckBox.UseVisualStyleBackColor = true;
-			this.m_enableProjectSharingCheckBox.CheckedChanged += new System.EventHandler(this.m_enableProjectSharingCheckBox_CheckedChanged);
 			//
 			// FwProjPropertiesDlg
 			//
@@ -661,7 +663,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			if (!DidProjectTabChange() && !DidLinkedFilesTabChange())
+			if (!DidProjectTabChange() && !DidLinkedFilesTabChange() && !DidSharingTabChange())
 			{
 				NotifyProjectPropsChangedAndClose(); //Ok, but nothing changed. Nothing to see here, carry on.
 				return;
@@ -684,6 +686,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					NotifyProjectPropsChangedAndClose();
 				});
 			}
+		}
+
+		private bool DidSharingTabChange()
+		{
+			return m_projectLexiconSettings.ProjectSharing != m_enableProjectSharingCheckBox.Checked;
 		}
 
 		/// <summary>
@@ -725,7 +732,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
 			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
-
+			m_projectLexiconSettings.ProjectSharing = m_enableProjectSharingCheckBox.Checked;
 			m_projectLexiconSettingsDataMapper.Write(m_projectLexiconSettings);
 		}
 
@@ -854,11 +861,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			txtExtLnkEdit.Text = m_defaultLinkedFilesFolder;
 			if (!Directory.Exists(m_defaultLinkedFilesFolder))
 				Directory.CreateDirectory(m_defaultLinkedFilesFolder);
-		}
-
-		private void m_enableProjectSharingCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			m_projectLexiconSettings.ProjectSharing = m_enableProjectSharingCheckBox.Checked;
 		}
 	}
 	#endregion //FwProjPropertiesDlg dialog
