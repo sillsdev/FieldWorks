@@ -705,7 +705,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
-				if (!otherWritingSystems.Contains(deleteCandidate))
+				// The cache will be null while creating a new project, in which case we aren't really deleting anything
+				if (!otherWritingSystems.Contains(deleteCandidate) && Cache != null)
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
@@ -771,7 +772,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CoreWritingSystemDefinition mergeWithWsId;
 			if (ConfirmMergeWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel, out mergeWithWsId))
 			{
-				_mergedWritingSystems[_currentWs] = mergeWithWsId;
+				// If we are in the new language project dialog we do not need to track the merged writing systems
+				if (Cache != null)
+				{
+					_mergedWritingSystems[_currentWs] = mergeWithWsId;
+				}
 				WorkingList.RemoveAt(CurrentWritingSystemIndex);
 				CurrentWsListChanged = true;
 				SelectWs(WorkingList.First().WorkingWs.LanguageTag);
@@ -786,7 +791,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CurrentWsListChanged = true;
 			}
-			if (otherList.Contains(_currentWs))
+			if (otherList.Contains(_currentWs) || WorkingList[CurrentWritingSystemIndex].OriginalWs == null)
 			{
 				WorkingList.RemoveAt(CurrentWritingSystemIndex);
 				SelectWs(WorkingList.First().WorkingWs.LanguageTag);

@@ -1,3 +1,7 @@
+// Copyright (c) 2019 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +14,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 
@@ -257,6 +260,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool ShowConfirmDeleteDialog(string wsDisplayLabel)
 		{
+			// If there is no cache then we are probably creating a new language project.
+			// In any case, we don't need to warn about data being deleted if there is no project.
+			if (_model.Cache == null)
+			{
+				return true;
+			}
 			using (var dlg = new DeleteWritingSystemWarningDialog())
 			{
 				dlg.SetWsName(wsDisplayLabel);

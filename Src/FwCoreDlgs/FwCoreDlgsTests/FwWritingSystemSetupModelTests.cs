@@ -1,20 +1,20 @@
+// Copyright (c) 2019 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Rhino.Mocks;
+using SIL.Extensions;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Tests;
-using Rhino;
-using Rhino.Mocks;
-using Rhino.Mocks.Constraints;
-using SIL.Extensions;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainServices;
 using Is = NUnit.Framework.Is;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -776,6 +776,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
+		}
+
+		/// <summary>
+		/// Proves that the delete option should work during the New Project Wizard use of this model/dialog
+		/// </summary>
+		[Test]
+		public void CurrentWsListChanged_DeleteSelected_SaveDoesNotCrashWithNoCache()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
+			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// Proves that the merge option should work during the New Project Wizard use of this model/dialog
+		/// </summary>
+		[Test]
+		public void CurrentWsListChanged_MergeSelected_SaveDoesNotCrashWithNoCache()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
+			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) => {
+				tag = container.CurrentVernacularWritingSystems.First();
+				return true;
+			};
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Merge")).ClickHandler(this, EventArgs.Empty);
+			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
 		}
 
 		[Test]
