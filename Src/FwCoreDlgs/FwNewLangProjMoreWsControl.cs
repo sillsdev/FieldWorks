@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -12,7 +11,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	public partial class FwNewLangProjMoreWsControl : UserControl
 	{
-		private FwNewLangProjectModel _model;
+		private readonly FwNewLangProjectModel _model;
 
 		/// <summary/>
 		public FwNewLangProjMoreWsControl(FwNewLangProjectModel model = null)
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer,
 				FwWritingSystemSetupModel.ListType.Vernacular,
-				new WritingSystemManager());
+				_model.WritingSystemManager);
 			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel))
 			{
 				wsDlg.ShowDialog(this);
@@ -35,7 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void ConfigureAnalysisClick(object sender, System.EventArgs e)
 		{
 			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer, FwWritingSystemSetupModel.ListType.Analysis,
-				new WritingSystemManager());
+				_model.WritingSystemManager);
 			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel))
 			{
 				wsDlg.ShowDialog(this);
