@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -167,6 +168,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string ItemTypeName(this ICmCustomItem me)
 		{
 			return StringTable.Table.GetString(me.GetType().Name, "ClassNames");
+		}
+
+		public static bool AreCustomFieldsAProblem(this IFwMetaDataCacheManaged me, int[] clsids)
+		{
+			var rePunct = new Regex(@"\p{P}");
+			foreach (var clsid in clsids)
+			{
+				var flids = me.GetFields(clsid, true, (int)CellarPropertyTypeFilter.All);
+				foreach (var flid in flids)
+				{
+					if (!me.IsCustom(flid))
+					{
+						continue;
+					}
+					var name = me.GetFieldName(flid);
+					if (!rePunct.IsMatch(name))
+					{
+						continue;
+					}
+					var msg = string.Format(FwUtilsStrings.PunctInFieldNameWarning, name);
+					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
+					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
+					return (MessageBox.Show(Form.ActiveForm, msg, FwUtilsStrings.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
+				}
+			}
+			return false; // no punctuation in custom fields.
 		}
 
 		public static bool TryGetFieldId(this IFwMetaDataCacheManaged me, string className, string fieldName, out int flid, bool includeBaseClasses = true)

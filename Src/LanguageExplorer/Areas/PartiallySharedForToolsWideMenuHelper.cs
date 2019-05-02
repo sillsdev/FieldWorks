@@ -28,6 +28,7 @@ namespace LanguageExplorer.Areas
 	// DONE: the other two classes exist (PartiallySharedForAreasWideMenuHelper & PartiallySharedForUserControlWideMenuHelper).
 	// TODO: Now to see what can be added to them (from this class or elsewhere).
 	// DONE: Spun off CustomFieldsMenuHelper class (area wide for areas that allow custom fields).
+	// DONE: Spun off FileExportMenuHelper class (area wide for areas that allow custom fields).
 #endif
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
@@ -179,47 +180,17 @@ namespace LanguageExplorer.Areas
 		}
 		#endregion
 
-		/// <summary>
-		/// Setup the File->Export menu.
-		/// </summary>
-		internal void SetupFileExportMenu(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
-		{
-			// File->Export menu is visible and enabled in this tool.
-			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CommonFileExportMenu_Click, () => CanCmdExport));
-		}
-
-		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, true);
-
-		private void CommonFileExportMenu_Click(object sender, EventArgs e)
-		{
-			// This handles the general case, if nobody else is handling it.
-			// Areas/Tools that uses this code:
-			// A. lexicon area: all 8 tools
-			// B. textsWords area: Analyses, bulkEditWordforms, wordListConcordance
-			// C. grammar area: all tools, except grammarSketch, which goes its own way
-			// D. lists area: all 27 tools
-			if (_recordList.AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
-			{
-				return;
-			}
-			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
-			{
-				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
-			}
-		}
-
-		private void DataTreeDelete_Clicked(object sender, EventArgs e)
+		private static void DataTreeDelete_Clicked(object sender, EventArgs e)
 		{
 			HandleDeletion(sender);
 		}
 
-		private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+		private static void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
 		{
 			HandleDeletion(sender);
 		}
 
-		private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
+		private static void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
 		{
 			var tag = (IList<object>)((ToolStripMenuItem)sender).Tag;
 			((IRecordList)tag[0]).DeleteRecord((string)tag[1], (StatusBarProgressPanel)tag[2]);

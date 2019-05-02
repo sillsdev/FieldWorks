@@ -2,10 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -17,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconBrowseTool : ITool
 	{
-		private IToolUiWidgetManager _browseToolMenuHelper;
+		private LexiconBrowseToolMenuHelper _browseToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -41,7 +44,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_browseToolMenuHelper.UnwireSharedEventHandlers();
 			_browseToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
@@ -61,12 +63,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-			_browseToolMenuHelper = new LexiconBrowseToolMenuHelper(this);
+			_browseToolMenuHelper = new LexiconBrowseToolMenuHelper(majorFlexComponentParameters, this);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
-
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
@@ -74,7 +75,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			_browseToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
@@ -131,5 +131,66 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		/// <summary>
+		/// This class handles all interaction for the LexiconBrowseTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
+		/// </summary>
+		private sealed class LexiconBrowseToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private ITool _tool;
+
+			internal LexiconBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_tool = tool;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~LexiconBrowseToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <inheritdoc />
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+				_tool = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

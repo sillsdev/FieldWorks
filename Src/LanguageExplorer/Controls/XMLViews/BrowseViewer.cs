@@ -639,14 +639,28 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Should be null for nested instance (cf. WordListConcordanceTool).
 			// Otherwise, UI widgets will be registered more than once.
 			_uiWidgetController = uiWidgetController;
+		}
+
+		#region Overrides of MainUserControl
+		/// <inheritdoc />
+		protected override void RegisterUiWidgets(bool shouldRegister)
+		{
 			if (_uiWidgetController != null)
 			{
-				var userController = new UserControlUiWidgetParameterObject(this);
-				// Add handler stuff from this class and possibly from subclasses.
-				SetupUiWidgets(userController);
-				_uiWidgetController.AddHandlers(userController);
+				if (shouldRegister)
+				{
+					var userController = new UserControlUiWidgetParameterObject(this);
+					// Add handler stuff from this class and possibly from subclasses.
+					SetupUiWidgets(userController);
+					_uiWidgetController.AddHandlers(userController);
+				}
+				else
+				{
+					_uiWidgetController.RemoveUserControlHandlers(this);
+				}
 			}
 		}
+		#endregion
 
 		private ContextMenuStrip CreateBrowseViewContextMenu()
 		{

@@ -222,7 +222,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private ITool _tool;
 			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
-			private IPartialToolUiWidgetManager _rightClickContextMenuManager;
+			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private DataTree MyDataTree { get; set; }
 			private RecordBrowseView RecordBrowseView { get; }
 			private IRecordList MyRecordList { get; set; }
@@ -257,10 +257,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
 				MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 				MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
-				_rightClickContextMenuManager = new RightClickContextMenuManager(_tool, MyDataTree);
+				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
 				MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
-				_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, null, MyRecordList);
 
 				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
 				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
@@ -379,9 +378,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (disposing)
 				{
 					_sharedNotebookToolMenuHelper?.Dispose();
-					_rightClickContextMenuManager?.UnwireSharedEventHandlers();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
-
 					_rightClickContextMenuManager?.Dispose();
 					MyBrowseViewContextMenuFactory?.Dispose();
 				}

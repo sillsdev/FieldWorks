@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -27,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
-		private IToolUiWidgetManager _reversalEditCompleteToolMenuHelper;
+		private ReversalEditCompleteToolMenuHelper _reversalEditCompleteToolMenuHelper;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
@@ -57,7 +59,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_reversalEditCompleteToolMenuHelper.UnwireSharedEventHandlers();
 			_reversalEditCompleteToolMenuHelper.Dispose();
 
 			_cache = null;
@@ -90,7 +91,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(this, _xhtmlDocView);
+			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, _recordList, _xhtmlDocView);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -129,7 +130,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_reversalEditCompleteToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -225,8 +225,80 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
 		{
-			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
+			reversalToolStripMenuItem.Checked = ((IReversalIndex)reversalToolStripMenuItem.Tag).Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid");
+		}
+
+		private sealed class ReversalEditCompleteToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
+			private XhtmlDocView _docView;
+
+			internal ReversalEditCompleteToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, XhtmlDocView docView)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(docView, nameof(docView));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_docView = docView;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
+				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
+				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
+
+			private void EditFindMenu_Click(object sender, EventArgs e)
+			{
+				_docView.FindText();
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~ReversalEditCompleteToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_commonReversalIndexMenuHelper.Dispose();
+				}
+				_majorFlexComponentParameters = null;
+				_commonReversalIndexMenuHelper = null;
+				_docView = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

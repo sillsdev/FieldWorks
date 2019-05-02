@@ -38,8 +38,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_uiWidgetController.AddHandlers(userController);
 		}
 
-		private Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
-
 		#region Overrides of RecordView
 		/// <summary />
 		protected override void Dispose(bool disposing)
@@ -127,16 +125,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Enable the 'File Print...' menu option for the LexEdit dictionary preview
-		/// </summary>
-		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = true;
-			return true;
-		}
-#endif
+		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Handle the 'File Print...' menu item click

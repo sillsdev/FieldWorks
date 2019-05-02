@@ -25,6 +25,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -588,33 +589,6 @@ namespace LanguageExplorer
 			//RecordListServices.SetRecordList();
 		}
 
-		public bool AreCustomFieldsAProblem(int[] clsids)
-		{
-			var mdc = m_cache.GetManagedMetaDataCache();
-			var rePunct = new Regex(@"\p{P}");
-			foreach (var clsid in clsids)
-			{
-				var flids = mdc.GetFields(clsid, true, (int)CellarPropertyTypeFilter.All);
-				foreach (var flid in flids)
-				{
-					if (!mdc.IsCustom(flid))
-					{
-						continue;
-					}
-					var name = mdc.GetFieldName(flid);
-					if (!rePunct.IsMatch(name))
-					{
-						continue;
-					}
-					var msg = string.Format(LanguageExplorerResources.PunctInFieldNameWarning, name);
-					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
-					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
-					return (MessageBox.Show(Form.ActiveForm, msg, LanguageExplorerResources.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
-				}
-			}
-			return false; // no punctuation in custom fields.
-		}
-
 		public virtual void BecomeInactive()
 		{
 			TearDownFilterMenu();
@@ -1134,7 +1108,7 @@ namespace LanguageExplorer
 			// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
 			// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
 			// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
-			if (AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
+			if (m_cache.GetManagedMetaDataCache().AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
 			{
 				return true;
 			}

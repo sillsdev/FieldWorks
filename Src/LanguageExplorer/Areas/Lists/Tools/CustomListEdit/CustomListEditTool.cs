@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				_tool = tool;
 				_list = list;
 				_recordList = recordList;
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList), tool, list, recordList);
+				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
 
 				SetupToolUiWidgets();
 			}

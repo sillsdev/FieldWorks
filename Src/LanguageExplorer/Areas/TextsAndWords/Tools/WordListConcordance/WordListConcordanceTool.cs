@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class WordListConcordanceTool : ITool
 	{
-		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+		private FileExportMenuHelper _fileExportMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
 		private MultiPane _outerMultiPane;
@@ -51,13 +51,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_partiallySharedForToolsWideMenuHelper.Dispose();
+			_fileExportMenuHelper.Dispose();
 
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
-			_partiallySharedForToolsWideMenuHelper = null;
+			_fileExportMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -74,9 +74,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			{
 				_recordListProvidingOwner = recordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
+			_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
 			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_partiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO

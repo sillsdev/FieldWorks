@@ -13,31 +13,28 @@ namespace LanguageExplorer.Areas.Lists.Tools
 	internal sealed class SharedListToolMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private IRecordList _recordList;
 		private ITool _tool;
 		private readonly ICmPossibilityList _possibilityList;
-		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+		private FileExportMenuHelper _fileExportMenuHelper;
 		private IListArea Area => (IListArea)_tool.Area;
 
-		internal SharedListToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, PartiallySharedForToolsWideMenuHelper partiallySharedForToolsWideMenuHelper, ITool tool, ICmPossibilityList possibilityList, IRecordList recordList)
+		internal SharedListToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, FileExportMenuHelper fileExportMenuHelper, ITool tool, ICmPossibilityList possibilityList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(partiallySharedForToolsWideMenuHelper, nameof(partiallySharedForToolsWideMenuHelper));
+			Guard.AgainstNull(fileExportMenuHelper, nameof(fileExportMenuHelper));
 			Guard.AgainstNull(tool, nameof(tool));
 			Guard.AgainstNull(possibilityList, nameof(possibilityList));
-			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_partiallySharedForToolsWideMenuHelper = partiallySharedForToolsWideMenuHelper;
+			_fileExportMenuHelper = fileExportMenuHelper;
 			_tool = tool;
 			_possibilityList = possibilityList;
-			_recordList = recordList;
 		}
 
 		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
 			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
-			_partiallySharedForToolsWideMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+			_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 			// <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdConfigureList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureList_Click, ()=> CanCmdConfigureList));
 		}
@@ -88,11 +85,11 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			if (disposing)
 			{
-				_partiallySharedForToolsWideMenuHelper.Dispose();
+				_fileExportMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
-			_recordList = null;
 			_tool = null;
+			_fileExportMenuHelper = null;
 
 			_isDisposed = true;
 		}

@@ -306,7 +306,7 @@
     <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FwUtilsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Include="IFwRegistryHelper.cs" />

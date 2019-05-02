@@ -3,11 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -15,109 +13,34 @@ using SIL.LCModel;
 namespace LanguageExplorer.Areas.Lexicon.Reversals
 {
 	/// <summary />
-	internal sealed class CommonReversalIndexMenuHelper : IToolUiWidgetManager
+	internal sealed class CommonReversalIndexMenuHelper : IDisposable
 	{
-		private const int InsertReversalEntryImageIndex = 2;
-		private const int FindReversalEntryImageIndex = 3;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private IArea _area;
-		private ITool _tool;
 		private IRecordList _recordList;
-		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
-		private ToolStripButton _insertReversalEntryToolStripButton;
-		private ToolStripButton _insertGoToReversalEntryToolStripButton;
-		private ToolStripMenuItem _editMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-		private ToolStripMenuItem _insertMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		/// <summary />
-		public CommonReversalIndexMenuHelper(ITool tool)
-		{
-			_tool = tool;
-			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
-		}
-
-		#region Implementation of IToolUiWidgetManager
-		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, IRecordList recordList)
+		internal CommonReversalIndexMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(area, nameof(area));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
-			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_area = area;
-			// It is really an instance of AllReversalEntriesRecordList.
 			_recordList = recordList;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_tool);
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, area, recordList);
-			SetupInsertToolbar();
-			SetupEditMenu();
-			SetupInsertMenu();
 		}
 
-		/// <inheritdoc />
-		ITool IToolUiWidgetManager.ActiveTool => _area.ActiveTool;
-
-		/// <inheritdoc />
-		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		internal void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-		}
-		#endregion
+			Guard.AgainstNull(toolUiWidgetParameterObject, nameof(toolUiWidgetParameterObject));
 
-		private void SetupEditMenu()
-		{
-			using (var lexEntryImages = new LexEntryImages())
-			{
-				// <command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area">
-				_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GotoReversalEntryClicked, LexiconResources.FindReversalEntry, LexiconResources.FindReversalEntryTooltip, Keys.Control | Keys.F, lexEntryImages.buttonImages.Images[FindReversalEntryImageIndex]);
-			}
-			_editMenu.DropDownOpening += EditMenu_DropDownOpening;
+			var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+			// <command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area">
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdGoToReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoReversalEntryClicked, ()=> CanCmdGoToReversalEntry));
+			insertToolBarDictionary.Add(Command.CmdGoToReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoReversalEntryClicked, () => CanCmdGoToReversalEntry));
+			// <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, () => CanCmdInsertReversalEntry));
+			insertToolBarDictionary.Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, ()=> CanCmdInsertReversalEntry));
 		}
 
-		private void EditMenu_DropDownOpening(object sender, EventArgs e)
-		{
-			SetEnabledStateForGotoReversalEntry(_newEditMenusAndHandlers[0].Item1);
-		}
-
-		private void SetupInsertMenu()
-		{
-			using (var lexEntryImages = new LexEntryImages())
-			{
-				// <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
-				_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, InsertReversalEntryClicked, LexiconResources.ReversalEntry,
-					LexiconResources.CreateNewReversalEntryTooltip, image: lexEntryImages.buttonImages.Images[InsertReversalEntryImageIndex], insertIndex: 0);
-			}
-		}
-
-		private void SetupInsertToolbar()
-		{
-			using (var lexEntryImages = new LexEntryImages())
-			{
-				/*
-					<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
-					  <parameters className="ReversalIndexEntry" />
-					</command>
-				 */
-				_insertReversalEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(InsertReversalEntryClicked, "insertReversalEntryToolStripButton", lexEntryImages.buttonImages.Images[InsertReversalEntryImageIndex], LexiconResources.CreateNewReversalEntryTooltip);
-				// CmdGoToReversalEntry is used in:
-				//		1. Main "Edit" menu.
-				//		2. Insert toolbar.
-				/*
-					<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area">
-					  <parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
-					</command>
-				 */
-				_insertGoToReversalEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(GotoReversalEntryClicked, "insertGoToReversalEntryToolStripButton", lexEntryImages.buttonImages.Images[FindReversalEntryImageIndex], LexiconResources.FindReversalEntryTooltip);
-
-				ToolbarServices.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertReversalEntryToolStripButton, _insertGoToReversalEntryToolStripButton });
-
-				Application.Idle += Application_Idle;
-			}
-		}
+		private static Tuple<bool, bool> CanCmdInsertReversalEntry => new Tuple<bool, bool>(true, true);
 
 		private void InsertReversalEntryClicked(object sender, EventArgs e)
 		{
@@ -140,6 +63,15 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			});
 		}
 
+		private Tuple<bool, bool> CanCmdGoToReversalEntry
+		{
+			get
+			{
+				var rie = Entry;
+				return new Tuple<bool, bool>(true, rie != null && rie.Owner.Hvo != 0 && rie.ReversalIndex.EntriesOC.Any());
+			}
+		}
+
 		/// <summary />
 		private void GotoReversalEntryClicked(object sender, EventArgs e)
 		{
@@ -156,17 +88,6 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 					LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(null, selEntry.Guid));
 				}
 			}
-		}
-
-		private void Application_Idle(object sender, EventArgs e)
-		{
-			SetEnabledStateForGotoReversalEntry(_insertGoToReversalEntryToolStripButton);
-		}
-
-		private void SetEnabledStateForGotoReversalEntry(ToolStripItem tsi)
-		{
-			var rie = Entry;
-			tsi.Enabled = rie != null && rie.Owner.Hvo != 0 && rie.ReversalIndex.EntriesOC.Any();
 		}
 
 		private IReversalIndexEntry Entry => _recordList.CurrentObject as IReversalIndexEntry;
@@ -419,23 +340,9 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 
 			if (disposing)
 			{
-				Application.Idle -= Application_Idle;
-				_lexiconAreaMenuHelper?.Dispose();
-				_insertReversalEntryToolStripButton.Click -= InsertReversalEntryClicked;
-				_insertReversalEntryToolStripButton.Dispose();
-				_insertGoToReversalEntryToolStripButton.Click -= GotoReversalEntryClicked;
-				_insertGoToReversalEntryToolStripButton.Dispose();
 			}
-
 			_majorFlexComponentParameters = null;
 			_recordList = null;
-			_lexiconAreaMenuHelper = null;
-			_insertReversalEntryToolStripButton = null;
-			_insertGoToReversalEntryToolStripButton = null;
-			_editMenu = null;
-			_newEditMenusAndHandlers = null;
-			_insertMenu = null;
-			_newInsertMenusAndHandlers = null;
 
 			_isDisposed = true;
 		}

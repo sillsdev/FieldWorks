@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
@@ -61,6 +62,29 @@ namespace LanguageExplorer.Controls
 		#endregion IMainUserControl implementation
 
 		#endregion Accessibility functionality for MainUserControl derived objects
+
+		#region Overrides of Control
+		/// <inheritdoc />
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+			RegisterUiWidgets(true);
+		}
+
+		/// <summary>
+		/// Sub-classes can override, if they have an interest in (un-)registering any main meus or tool bar buttons.
+		/// </summary>
+		protected virtual void RegisterUiWidgets(bool shouldRegister)
+		{
+		}
+
+		/// <inheritdoc />
+		protected override void OnLostFocus(EventArgs e)
+		{
+			RegisterUiWidgets(false);
+			base.OnLostFocus(e);
+		}
+		#endregion
 
 		/// <summary>
 		/// Dispose the object.

@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class FwUtilsStrings {
+    public class FwUtilsStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.Common.FwUtils.FwUtilsStrings", typeof(FwUtilsStrings).Assembly);
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Abort.
         /// </summary>
-        internal static string Abort {
+        public static string Abort {
             get {
                 return ResourceManager.GetString("Abort", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        internal static string Cancel {
+        public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Information dialogs you previously dismissed with &quot;do not show me this again&quot; will be shown again due to an error. Sorry!.
         /// </summary>
-        internal static string CannotRestoreSavedResponses {
+        public static string CannotRestoreSavedResponses {
             get {
                 return ResourceManager.GetString("CannotRestoreSavedResponses", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Do not show this again..
         /// </summary>
-        internal static string DonTShowThisAgain {
+        public static string DonTShowThisAgain {
             get {
                 return ResourceManager.GetString("DonTShowThisAgain", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Ignore.
         /// </summary>
-        internal static string Ignore {
+        public static string Ignore {
             get {
                 return ResourceManager.GetString("Ignore", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to The help file could not be located..
         /// </summary>
-        internal static string ksCannotFindHelp {
+        public static string ksCannotFindHelp {
             get {
                 return ResourceManager.GetString("ksCannotFindHelp", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Change Failed.
         /// </summary>
-        internal static string ksChangeFailed {
+        public static string ksChangeFailed {
             get {
                 return ResourceManager.GetString("ksChangeFailed", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to A deleted object.
         /// </summary>
-        internal static string ksDeletedObject {
+        public static string ksDeletedObject {
             get {
                 return ResourceManager.GetString("ksDeletedObject", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to AD.
         /// </summary>
-        internal static string ksGenDateAD {
+        public static string ksGenDateAD {
             get {
                 return ResourceManager.GetString("ksGenDateAD", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to After.
         /// </summary>
-        internal static string ksGenDateAfter {
+        public static string ksGenDateAfter {
             get {
                 return ResourceManager.GetString("ksGenDateAfter", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        internal static string ksGenDateApprox {
+        public static string ksGenDateApprox {
             get {
                 return ResourceManager.GetString("ksGenDateApprox", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to BC.
         /// </summary>
-        internal static string ksGenDateBC {
+        public static string ksGenDateBC {
             get {
                 return ResourceManager.GetString("ksGenDateBC", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Before.
         /// </summary>
-        internal static string ksGenDateBefore {
+        public static string ksGenDateBefore {
             get {
                 return ResourceManager.GetString("ksGenDateBefore", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Illegal characters.
         /// </summary>
-        internal static string ksIllegalChars {
+        public static string ksIllegalChars {
             get {
                 return ResourceManager.GetString("ksIllegalChars", resourceCulture);
             }
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         ///   Looks up a localized string similar to The name cannot contain these characters:
         ///{0}.
         /// </summary>
-        internal static string ksIllegalNameMsg {
+        public static string ksIllegalNameMsg {
             get {
                 return ResourceManager.GetString("ksIllegalNameMsg", resourceCulture);
             }
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to The help topic is not available for topic: {0}.
         /// </summary>
-        internal static string ksNoHelpTopicX {
+        public static string ksNoHelpTopicX {
             get {
                 return ResourceManager.GetString("ksNoHelpTopicX", resourceCulture);
             }
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         ///because a project with the same name is already open.
         ///If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart FLEx..
         /// </summary>
-        internal static string ksPtCommunicationProblem {
+        public static string ksPtCommunicationProblem {
             get {
                 return ResourceManager.GetString("ksPtCommunicationProblem", resourceCulture);
             }
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to You do not have permission to change the setting &quot;{0}&quot;. Administrator privileges are required to make changes affecting all users of this computer..
         /// </summary>
-        internal static string ksRegChangeFailed {
+        public static string ksRegChangeFailed {
             get {
                 return ResourceManager.GetString("ksRegChangeFailed", resourceCulture);
             }
@@ -228,7 +228,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Version: {0}  {1}  {2}.
         /// </summary>
-        internal static string kstidAppVersionFmt {
+        public static string kstidAppVersionFmt {
             get {
                 return ResourceManager.GetString("kstidAppVersionFmt", resourceCulture);
             }
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug..
         /// </summary>
-        internal static string kstIdCantDoDictExists {
+        public static string kstIdCantDoDictExists {
             get {
                 return ResourceManager.GetString("kstIdCantDoDictExists", resourceCulture);
             }
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Spelling Dictionary Problem.
         /// </summary>
-        internal static string kstidCantDoDictExistsCaption {
+        public static string kstidCantDoDictExistsCaption {
             get {
                 return ResourceManager.GetString("kstidCantDoDictExistsCaption", resourceCulture);
             }
@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to  cm.
         /// </summary>
-        internal static string kstidCm {
+        public static string kstidCm {
             get {
                 return ResourceManager.GetString("kstidCm", resourceCulture);
             }
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         ///   Looks up a localized string similar to File does not exist:
         ///{0}.
         /// </summary>
-        internal static string kstidFileNotFound {
+        public static string kstidFileNotFound {
             get {
                 return ResourceManager.GetString("kstidFileNotFound", resourceCulture);
             }
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to  in.
         /// </summary>
-        internal static string kstidIn {
+        public static string kstidIn {
             get {
                 return ResourceManager.GetString("kstidIn", resourceCulture);
             }
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to &quot;.
         /// </summary>
-        internal static string kstidInches {
+        public static string kstidInches {
             get {
                 return ResourceManager.GetString("kstidInches", resourceCulture);
             }
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to  The writing system {0} specifies an invalid spelling dictionary ({1}). Valid spelling dictionary IDs must only contain ASCII alphanumeric characters or underline. Spell checking will not work for this writing system until you correct this in the Writing System Properties dialog..
         /// </summary>
-        internal static string kstidInvalidDictId {
+        public static string kstidInvalidDictId {
             get {
                 return ResourceManager.GetString("kstidInvalidDictId", resourceCulture);
             }
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Invalid FieldWorks project type..
         /// </summary>
-        internal static string kstidInvalidFwProjType {
+        public static string kstidInvalidFwProjType {
             get {
                 return ResourceManager.GetString("kstidInvalidFwProjType", resourceCulture);
             }
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to This software is licensed under the LGPL, version 2.1 or later.
         /// </summary>
-        internal static string kstidLicense {
+        public static string kstidLicense {
             get {
                 return ResourceManager.GetString("kstidLicense", resourceCulture);
             }
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to (http://www.gnu.org/licenses/lgpl-2.1.html).
         /// </summary>
-        internal static string kstidLicenseURL {
+        public static string kstidLicenseURL {
             get {
                 return ResourceManager.GetString("kstidLicenseURL", resourceCulture);
             }
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Version: {0}.
         /// </summary>
-        internal static string kstidMajorVersionFmt {
+        public static string kstidMajorVersionFmt {
             get {
                 return ResourceManager.GetString("kstidMajorVersionFmt", resourceCulture);
             }
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to  mm.
         /// </summary>
-        internal static string kstidMm {
+        public static string kstidMm {
             get {
                 return ResourceManager.GetString("kstidMm", resourceCulture);
             }
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to FieldWorks project name not specified..
         /// </summary>
-        internal static string kstidNoProjectName {
+        public static string kstidNoProjectName {
             get {
                 return ResourceManager.GetString("kstidNoProjectName", resourceCulture);
             }
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to  pt.
         /// </summary>
-        internal static string kstidPt {
+        public static string kstidPt {
             get {
                 return ResourceManager.GetString("kstidPt", resourceCulture);
             }
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
-        internal static string No {
+        public static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
             }
@@ -373,16 +373,35 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
-        internal static string Ok {
+        public static string Ok {
             get {
                 return ResourceManager.GetString("Ok", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Punctuation in custom field name.
+        /// </summary>
+        public static string PunctInfieldNameCaption {
+            get {
+                return ResourceManager.GetString("PunctInfieldNameCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+        ///Do you want to continue with the export?.
+        /// </summary>
+        public static string PunctInFieldNameWarning {
+            get {
+                return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retry.
         /// </summary>
-        internal static string Retry {
+        public static string Retry {
             get {
                 return ResourceManager.GetString("Retry", resourceCulture);
             }
@@ -391,7 +410,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to XML Configuration Error.
         /// </summary>
-        internal static string XMLConfigurationError {
+        public static string XMLConfigurationError {
             get {
                 return ResourceManager.GetString("XMLConfigurationError", resourceCulture);
             }
@@ -400,7 +419,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        internal static string Yes {
+        public static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
             }

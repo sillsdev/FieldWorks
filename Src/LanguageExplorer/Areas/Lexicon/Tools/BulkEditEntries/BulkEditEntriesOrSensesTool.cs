@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -21,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
-		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
+		private BulkEditEntriesOrSensesMenuHelper _bulkEditEntriesOrSensesMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
@@ -45,11 +47,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose these after the main UI stuff.
+			_bulkEditEntriesOrSensesMenuHelper.Dispose();
 			_browseViewContextMenuFactory.Dispose();
-			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
-			_lexiconAreaMenuHelper.Dispose();
 
-			_lexiconAreaMenuHelper = null;
+			_bulkEditEntriesOrSensesMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -68,7 +69,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(this);
+			_bulkEditEntriesOrSensesMenuHelper = new BulkEditEntriesOrSensesMenuHelper(majorFlexComponentParameters, this, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -82,7 +83,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
@@ -282,6 +282,62 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
             </clerk>
 			 */
 			return new EntriesOrChildClassesRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA);
+		}
+
+		private sealed class BulkEditEntriesOrSensesMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal BulkEditEntriesOrSensesMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~BulkEditEntriesOrSensesMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <inheritdoc />
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -13,6 +14,7 @@ using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -26,7 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
-		private IToolUiWidgetManager _commonReversalIndexMenuHelper;
+		private ReversalBulkToolMenuHelper _reversalBulkToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -61,8 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_commonReversalIndexMenuHelper.UnwireSharedEventHandlers();
-			_commonReversalIndexMenuHelper.Dispose();
+			_reversalBulkToolMenuHelper.Dispose();
 			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 
 			_reversalIndexRepository = null;
@@ -70,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			_recordBrowseView = null;
 			_cache = null;
 			_mainPanelMenuContextMenuFactory = null;
-			_commonReversalIndexMenuHelper = null;
+			_reversalBulkToolMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}
 
@@ -94,7 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
-			_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(this);
+			_reversalBulkToolMenuHelper = new ReversalBulkToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -114,7 +115,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView, browseViewPaneBar);
-			_commonReversalIndexMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
@@ -219,6 +219,67 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
 			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
+		}
+
+		private sealed class ReversalBulkToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
+
+			internal ReversalBulkToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
+				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~ReversalBulkToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_commonReversalIndexMenuHelper.Dispose();
+				}
+				_majorFlexComponentParameters = null;
+				_commonReversalIndexMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

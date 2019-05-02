@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			insertToolBarDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
 		}
 
-		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, !_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }));
+		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, !_majorFlexComponentParameters.LcmCache.GetManagedMetaDataCache().AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }));
 
 		private void FileExportMenu_Click(object sender, EventArgs e)
 		{

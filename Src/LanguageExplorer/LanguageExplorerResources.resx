@@ -1134,9 +1134,6 @@ you expect.</value>
   <data name="ksYes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="PunctInfieldNameCaption" xml:space="preserve">
-    <value>Punctuation in custom field name</value>
-  </data>
   <data name="ADeletedObject" xml:space="preserve">
     <value>A deleted object</value>
   </data>
@@ -1167,10 +1164,6 @@ you expect.</value>
   </data>
   <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
     <value>What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?</value>
-  </data>
-  <data name="PunctInFieldNameWarning" xml:space="preserve">
-    <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
-Do you want to continue with the export?</value>
   </data>
   <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
     <value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>

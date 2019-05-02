@@ -478,7 +478,7 @@ namespace LanguageExplorer.Areas
 			if (new Regex(@"\p{P}").IsMatch(fieldName))
 			{
 				var msg = string.Format(AreaResources.PunctInFieldNameError, fieldName);
-				MessageBox.Show(this, msg, LanguageExplorerResources.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, msg, FwUtilsStrings.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return true;
 			}
 			foreach (var fdw in m_customFields)

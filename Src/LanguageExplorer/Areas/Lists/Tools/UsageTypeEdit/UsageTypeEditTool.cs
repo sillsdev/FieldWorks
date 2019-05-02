@@ -175,9 +175,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				var partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, partiallySharedForToolsWideMenuHelper, tool, list, recordList);
-				_sharedForPlainVanillaListToolMenuHelper = new SharedForPlainVanillaListToolMenuHelper(_majorFlexComponentParameters, partiallySharedForToolsWideMenuHelper, tool, list, recordList, dataTree);
+				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
+				_sharedForPlainVanillaListToolMenuHelper = new SharedForPlainVanillaListToolMenuHelper(_majorFlexComponentParameters, new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList), tool, list, recordList, dataTree);
 
 				SetupToolUiWidgets(tool);
 			}

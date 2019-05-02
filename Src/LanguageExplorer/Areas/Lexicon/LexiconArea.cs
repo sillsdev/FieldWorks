@@ -2,13 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Filters;
+using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -35,6 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private bool _hasBeenActivated;
 		[Import]
 		private IPropertyTable _propertyTable;
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -60,9 +65,12 @@ namespace LanguageExplorer.Areas.Lexicon
 			// This will also remove any event handlers set up by the active tool,
 			// and any of the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveAreaHandlers();
+			_lexiconAreaMenuHelper.Dispose();
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
+
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -87,8 +95,8 @@ namespace LanguageExplorer.Areas.Lexicon
 				}
 				_hasBeenActivated = true;
 			}
-			_propertyTable.SetDefault(LexiconEditToolConstants.Show_DictionaryPubPreview, true, true);
 			_propertyTable.SetDefault("Show_reversalIndexEntryList", true);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, this);
 		}
 
 		/// <summary>
@@ -207,6 +215,100 @@ namespace LanguageExplorer.Areas.Lexicon
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
 				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable), new RecordFilterParameterObject(allowDeletions: false));
+		}
+
+		/// <summary>
+		/// This class handles all interaction for the Lexicon Area common menus.
+		/// </summary>
+		private sealed class LexiconAreaMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private IArea _area;
+			private CustomFieldsMenuHelper _customFieldsMenuHelper;
+			private FileExportMenuHelper _fileExportMenuHelper;
+
+			internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IArea area)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(area, nameof(area));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_area = area;
+
+				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
+				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
+				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
+				// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
+				_fileExportMenuHelper.SetupFileExportMenu(areaUiWidgetParameterObject);
+				var fileMenuItemsForTool = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File];
+				// Add two lexicon area-wide import options.
+				// <item command="CmdImportLinguaLinksData" />
+				fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => CanCmdImportLinguaLinksData));
+				// <item command="CmdImportLiftData" />
+				fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => CanCmdImportLiftData));
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanCmdImportLinguaLinksData => new Tuple<bool, bool>(true, true);
+
+			private void ImportLinguaLinksData_Clicked(object sender, EventArgs e)
+			{
+				using (var importWizardDlg = new LinguaLinksImportDlg())
+				{
+					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdImportLiftData => new Tuple<bool, bool>(true, true);
+
+			private void ImportLiftData_Clicked(object sender, EventArgs e)
+			{
+				using (var importWizardDlg = new LiftImportDlg())
+				{
+					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
+				}
+			}
+
+			#region IDisposable
+			private bool _isDisposed;
+
+			~LexiconAreaMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+				_area = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

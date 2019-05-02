@@ -178,7 +178,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList), tool, list, recordList);
+				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
 				SetupToolUiWidgets(tool, dataTree);
 			}
 

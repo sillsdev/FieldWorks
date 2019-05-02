@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -24,7 +26,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
-		private IAreaUiWidgetManager _lexiconAreaMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
@@ -35,6 +36,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
+		private RapidDataEntryToolMenuHelper _rapidDataEntryToolMenuHelper;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -76,13 +78,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
-			_lexiconAreaMenuHelper.UnwireSharedEventHandlers();
-			_lexiconAreaMenuHelper.Dispose();
+			_rapidDataEntryToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_nestedRecordList = null;
-			_lexiconAreaMenuHelper = null;
 			_browseViewContextMenuFactory = null;
+			_rapidDataEntryToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -101,7 +102,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(this);
+			_rapidDataEntryToolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
@@ -162,7 +163,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
-			_lexiconAreaMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
@@ -209,7 +209,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Collect Words";
+		public string UiName => "CRASHES: Collect Words";
 
 		#endregion
 
@@ -239,6 +239,65 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			return new SubservientRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)),
 				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
+		}
+
+		/// <summary>
+		/// This class handles all interaction for the RapidDataEntryTool for its menus and tool bars.
+		/// </summary>
+		private sealed class RapidDataEntryToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			//private ITool _tool;
+
+			internal RapidDataEntryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~RapidDataEntryToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <inheritdoc />
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.DictionaryConfiguration;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -27,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
-		private IToolUiWidgetManager _dictionaryToolMenuHelper;
+		private LexiconDictionaryToolMenuHelper _dictionaryToolMenuHelper;
 		private string _configureObjectName;
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
@@ -61,7 +63,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_dictionaryToolMenuHelper.UnwireSharedEventHandlers();
 			_dictionaryToolMenuHelper.Dispose();
 			_dataTreeStackContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 
@@ -88,10 +89,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
+			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(this, _xhtmlDocView);
+			_dictionaryToolMenuHelper.DocView = _xhtmlDocView;
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -123,7 +125,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
-			_dictionaryToolMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
 		}
@@ -166,7 +167,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Dictionary";
+		public string UiName => "BUGGY: Dictionary";
 
 		#endregion
 
@@ -321,6 +322,72 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 			_propertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true);
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
+		}
+
+		private sealed class LexiconDictionaryToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal XhtmlDocView DocView { get; set; }
+
+			internal LexiconDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
+
+			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
+			{
+				DocView.FindText();
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~LexiconDictionaryToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+				DocView = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

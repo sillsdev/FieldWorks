@@ -70,15 +70,32 @@ namespace LanguageExplorer.Areas
 			// This must be called before InitializeComponent()
 			MyDataTree = dataTree;
 			MyDataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
-			// Add handler stuff.
-			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
-			_uiWidgetController.AddHandlers(userController);
 			InitializeComponent();
 			AccNameDefault = "RecordEditView";
 		}
 
-		private Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
+		#region Overrides of MainUserControl
+		/// <inheritdoc />
+		protected override void RegisterUiWidgets(bool shouldRegister)
+		{
+			if (_uiWidgetController != null)
+			{
+				if (shouldRegister)
+				{
+					var userController = new UserControlUiWidgetParameterObject(this);
+					// Add handler stuff from this class and possibly from subclasses.
+					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
+					_uiWidgetController.AddHandlers(userController);
+				}
+				else
+				{
+					_uiWidgetController.RemoveUserControlHandlers(this);
+				}
+			}
+		}
+		#endregion
+
+		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of ViewBase
 

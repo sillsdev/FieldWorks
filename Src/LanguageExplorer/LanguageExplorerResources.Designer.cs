@@ -3598,25 +3598,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Punctuation in custom field name.
-        /// </summary>
-        internal static string PunctInfieldNameCaption {
-            get {
-                return ResourceManager.GetString("PunctInfieldNameCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
-        ///Do you want to continue with the export?.
-        /// </summary>
-        internal static string PunctInFieldNameWarning {
-            get {
-                return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Redo.
         /// </summary>
         internal static string Redo {

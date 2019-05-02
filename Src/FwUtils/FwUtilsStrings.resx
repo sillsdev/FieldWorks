@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -250,5 +250,12 @@ If you want to use Paratext with this project, make a change in this project (so
   <data name="ksIllegalNameMsg" xml:space="preserve">
     <value>The name cannot contain these characters:
 {0}</value>
+  </data>
+  <data name="PunctInfieldNameCaption" xml:space="preserve">
+    <value>Punctuation in custom field name</value>
+  </data>
+  <data name="PunctInFieldNameWarning" xml:space="preserve">
+    <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+Do you want to continue with the export?</value>
   </data>
 </root>

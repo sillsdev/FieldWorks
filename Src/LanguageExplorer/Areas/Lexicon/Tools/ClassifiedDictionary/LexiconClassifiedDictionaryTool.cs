@@ -2,13 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -20,7 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconClassifiedDictionaryTool : ITool
 	{
-		private IToolUiWidgetManager _lexiconClassifiedDictionaryMenuHelper;
+		private LexiconClassifiedDictionaryToolMenuHelper _lexiconClassifiedDictionaryMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
@@ -41,7 +46,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_lexiconClassifiedDictionaryMenuHelper.UnwireSharedEventHandlers();
 			_lexiconClassifiedDictionaryMenuHelper.Dispose();
 
 			_lexiconClassifiedDictionaryMenuHelper = null;
@@ -59,6 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
+			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, this);
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
 				Dock = DockStyle.Right
@@ -67,13 +72,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			xmlDocViewPaneBar.AddControls(new List<Control> { panelButton });
 			// NB: XmlDocView adds user control handler.
 			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				xmlDocView, xmlDocViewPaneBar);
-			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(this, xmlDocView);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, xmlDocView, xmlDocViewPaneBar);
 
 			// Too early before now.
+			_lexiconClassifiedDictionaryMenuHelper.DocView = xmlDocView;
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
-			_lexiconClassifiedDictionaryMenuHelper.Initialize(majorFlexComponentParameters, Area, _recordList);
 		}
 
 		/// <summary>
@@ -129,5 +132,79 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private sealed class LexiconClassifiedDictionaryToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			internal XmlDocView DocView { get; set; }
+
+			internal LexiconClassifiedDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
+				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, ()=> CanCmdFindAndReplaceText));
+				editMenuDictionary.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdCmdReplaceText_Click, () => CanCmdCmdReplaceText));
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
+
+			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
+			{
+				_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(true, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+			}
+
+			private Tuple<bool, bool> CanCmdCmdReplaceText => new Tuple<bool, bool>(true, DocView.CanUseReplaceText());
+
+			private void CmdCmdReplaceText_Click(object sender, EventArgs e)
+			{
+				_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~LexiconClassifiedDictionaryToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+				DocView = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

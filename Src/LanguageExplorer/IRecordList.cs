@@ -22,7 +22,6 @@ namespace LanguageExplorer
 		event EventHandler SorterChangedByList;
 
 		void ActivateUI(bool updateStatusBar = true);
-		bool AreCustomFieldsAProblem(int[] clsids);
 		void BecomeInactive();
 		bool CanChangeFilterClearAll { get; }
 		IReadOnlyDictionary<Navigation, bool> CanMoveToOptions { get; }

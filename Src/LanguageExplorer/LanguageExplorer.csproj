@@ -300,6 +300,7 @@
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\CustomFieldsMenuHelper.cs" />
+    <Compile Include="Areas\FileExportMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\PartiallySharedListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedForPlainVanillaListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedListToolMenuHelper.cs" />
@@ -330,9 +331,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
-    <Compile Include="Areas\IAreaUiWidgetManager.cs" />
     <Compile Include="Areas\IdAndString.cs" />
-    <Compile Include="Areas\IPartialToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
@@ -343,31 +342,14 @@
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPhEnvSliceCommon.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
-    <Compile Include="Areas\IToolUiWidgetManager.cs" />
-    <Compile Include="Areas\Lexicon\LexiconAreaConstants.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Browse\LexiconBrowseToolMenuHelper.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeMainPanelContextMenuStripManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryFormsManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexSenseManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolToolbarManager.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
-    <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconClassifiedDictionaryToolMenuHelper.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryToolMenuHelper.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolConstants.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolEditMenuManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolInsertMenuManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolToolsMenuManager.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolViewMenuManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntryVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEditCompleteToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\AddCustomListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -384,7 +366,6 @@
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Areas\RuleInsertType.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinConfigurable.cs" />
@@ -1031,7 +1012,6 @@
     <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\DataTreeStackContextMenuFactory.cs" />
-    <Compile Include="Controls\ToolStripButtonFactory.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">
@@ -1308,7 +1288,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ToolBar.cs" />
-    <Compile Include="ToolbarServices.cs" />
     <Compile Include="ToolUiWidgetParameterObject.cs" />
     <Compile Include="UiWidgetController.cs" />
     <Compile Include="UiWidgetServices.cs" />
@@ -1681,7 +1660,6 @@
     </Compile>
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
-    <Compile Include="MenuServices.cs" />
     <Compile Include="MGA\GlossListBox.cs">
       <SubType>Component</SubType>
     </Compile>

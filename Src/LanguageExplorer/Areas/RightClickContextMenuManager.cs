@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -24,50 +23,34 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// Implementation that supports the addition(s) to FLEx's right-click context menus for use by any tool.
 	/// </summary>
-	internal sealed class RightClickContextMenuManager : IPartialToolUiWidgetManager
+	internal sealed class RightClickContextMenuManager : IDisposable
 	{
 		private ITool _currentTool;
-		private DataTree MyDataTree { get; set; }
+		private DataTree _dataTree;
 		private FlexComponentParameters _flexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private IRecordList MyRecordList { get; set; }
+		private IRecordList _recordList;
 		private LcmCache _cache;
 
-		internal RightClickContextMenuManager(ITool currentTool, DataTree dataTree)
-		{
-			Guard.AgainstNull(currentTool, nameof(currentTool));
-			Guard.AgainstNull(dataTree, nameof(dataTree));
-
-			_currentTool = currentTool;
-			MyDataTree = dataTree;
-		}
-
-		#region Implementation of IPartialToolUiWidgetManager
-
-		/// <inheritdoc />
-		void IPartialToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IToolUiWidgetManager toolUiWidgetManager, IRecordList recordList)
+		internal RightClickContextMenuManager(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentTool, DataTree dataTree, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(currentTool, nameof(currentTool));
+			Guard.AgainstNull(dataTree, nameof(dataTree));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
+			_currentTool = currentTool;
+			_dataTree = dataTree;
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			MyRecordList = recordList;
+			_recordList = recordList;
 			_cache = majorFlexComponentParameters.LcmCache;
 
-			var rightClickPopupMenuFactory = MyDataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory;
-
+			var rightClickPopupMenuFactory = _dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory;
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
 		}
-
-		/// <inheritdoc />
-		void IPartialToolUiWidgetManager.UnwireSharedEventHandlers()
-		{
-		}
-
-		#endregion
 
 		#region Implementation of IDisposable
 
@@ -106,10 +89,10 @@ namespace LanguageExplorer.Areas
 			{
 			}
 			_currentTool = null;
-			MyDataTree = null;
+			_dataTree = null;
 			_flexComponentParameters = null;
 			_sharedEventHandlers = null;
-			MyRecordList = null;
+			_recordList = null;
 			_cache = null;
 
 			 _isDisposed = true;
@@ -146,7 +129,7 @@ namespace LanguageExplorer.Areas
 			*/
 			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.AnalysesMachineName, ref wantSeparator, WfiWordformTags.kClassName, AreaResources.Show_in_Word_Analyses);
 
-	// <menu label="Show Concordance of">
+			// <menu label="Show Concordance of">
 			// NB: Use the returned 'menu' to hold its sub-menus.
 			var menu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(contextMenuStrip, AreaResources.Show_Concordance_of);
 
@@ -213,7 +196,7 @@ namespace LanguageExplorer.Areas
 					    </command>
 			*/
 			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Word_Category, AreaServices.WordPartOfSpeech);
-	// </menu>  End of "Show Concordance of" menu.
+			// </menu>  End of "Show Concordance of" menu.
 
 			/*
 		      <item command="CmdPOSJumpToDefault" />
@@ -305,7 +288,7 @@ namespace LanguageExplorer.Areas
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private void DeleteAnalysis_Clicked(object sender, EventArgs e)
+		private static void DeleteAnalysis_Clicked(object sender, EventArgs e)
 		{
 			((Slice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
 		}
@@ -657,7 +640,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="lexiconEdit" className="LexEntryRef" />
 				    </command>
 			*/
-			var ler = MyDataTree.CurrentSlice.MyCmObject as ILexEntryRef;
+			var ler = _dataTree.CurrentSlice.MyCmObject as ILexEntryRef;
 			ICmObject target = null;
 			var selectedComponentHvo = slice.Flid != LexEntryRefTags.kflidComponentLexemes || ler == null ? 0 : slice.GetSelectionHvoFromControls();
 			var menuIsChecked = false;
@@ -720,7 +703,7 @@ namespace LanguageExplorer.Areas
 						wantSeparator = false;
 					}
 					// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence), AreaResources.Move_Left);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdMoveTargetToPreviousInSequence), AreaResources.Move_Left);
 					menu.Enabled = enabled;
 				}
 
@@ -736,7 +719,7 @@ namespace LanguageExplorer.Areas
 						ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					}
 					// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.CmdMoveTargetToNextInSequence), AreaResources.Move_Right);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdMoveTargetToNextInSequence), AreaResources.Move_Right);
 					menu.Enabled = enabled;
 				}
 			}
@@ -750,14 +733,14 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var fieldName = XmlUtils.GetOptionalAttributeValue(MyDataTree.CurrentSlice.ConfigurationNode, "field");
+				var fieldName = XmlUtils.GetOptionalAttributeValue(_dataTree.CurrentSlice.ConfigurationNode, "field");
 				return !string.IsNullOrEmpty(fieldName) && fieldName.Equals("AnthroCodes");
 			}
 		}
 
 		private void JumpToToolAndFilterAnthroItem(object sender, EventArgs e)
 		{
-			var obj = ((VectorReferenceView)((VectorReferenceLauncher)MyDataTree.CurrentSlice.Control).MainControl).SelectedObject;
+			var obj = ((VectorReferenceView)((VectorReferenceLauncher)_dataTree.CurrentSlice.Control).MainControl).SelectedObject;
 			if (obj == null)
 			{
 				return;
@@ -774,7 +757,7 @@ namespace LanguageExplorer.Areas
 
 		private void VisibleComplexForm_Clicked(object sender, EventArgs e)
 		{
-			var currentSlice = MyDataTree.CurrentSlice;
+			var currentSlice = _dataTree.CurrentSlice;
 			var entryOrSense = currentSlice.MyCmObject;
 			var entry = _cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(currentSlice.GetSelectionHvoFromControls());
 			ILexEntryRef lexEntryRef;
@@ -844,7 +827,7 @@ namespace LanguageExplorer.Areas
 
 		private void AddComponentToPrimary_Clicked(object sender, EventArgs e)
 		{
-			var currentSlice = MyDataTree.CurrentSlice;
+			var currentSlice = _dataTree.CurrentSlice;
 			var ler = (ILexEntryRef)currentSlice.MyCmObject;
 			var target = (ICmObject)((ToolStripMenuItem)sender).Tag;
 			if (ler.PrimaryLexemesRS.Contains(target))
@@ -927,7 +910,7 @@ namespace LanguageExplorer.Areas
 		{
 			// 7 users in PopupContextMenuCreatorMethod_mnuObjectChoices
 			// 6 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
-			var selectedObject = MyRecordList.CurrentObject;
+			var selectedObject = _recordList.CurrentObject;
 			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
 			if (asReferenceVectorSlice != null)
 			{
@@ -953,7 +936,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			var visibleAndEnabled = PartiallySharedForToolsWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, selectedObject, className);
+			var visibleAndEnabled = PartiallySharedForToolsWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, _recordList.CurrentObject, selectedObject, className);
 			if (visibleAndEnabled)
 			{
 				if (wantSeparator)
@@ -979,7 +962,7 @@ namespace LanguageExplorer.Areas
 			{
 				menuLabel = string.Format(AreaResources.Show_in_0_list, listToJumpTo.ShortName);
 			}
-			var selectedObject = MyRecordList.CurrentObject as ICmPossibility; // Most likely it is null.
+			var selectedObject = _recordList.CurrentObject as ICmPossibility; // Most likely it is null.
 			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
 			if (asReferenceVectorSlice != null)
 			{
@@ -1034,7 +1017,7 @@ namespace LanguageExplorer.Areas
 						</command>
 				*/
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Environments_list);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
 			}
 
 			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(slice, menuItems, contextMenuStrip);
@@ -1050,8 +1033,8 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var currentSlice = MyDataTree.CurrentSlice;
-				if (_currentTool.MachineName == AreaServices.EnvironmentEditMachineName && currentSlice.MyCmObject == MyRecordList.CurrentObject || currentSlice.MyCmObject.IsOwnedBy(MyRecordList.CurrentObject))
+				var currentSlice = _dataTree.CurrentSlice;
+				if (_currentTool.MachineName == AreaServices.EnvironmentEditMachineName && currentSlice.MyCmObject == _recordList.CurrentObject || currentSlice.MyCmObject.IsOwnedBy(_recordList.CurrentObject))
 				{
 					return false;
 				}
@@ -1059,10 +1042,10 @@ namespace LanguageExplorer.Areas
 				{
 					return true;
 				}
-				return MyDataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId;
+				return _dataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId;
 			}
 		}
 
-#endregion "mnuEnvReferenceChoices"
+		#endregion "mnuEnvReferenceChoices"
 	}
 }

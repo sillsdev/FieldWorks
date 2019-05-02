@@ -152,8 +152,8 @@ namespace LanguageExplorer.Areas
 		internal const string OwnerClassName = "ownerClassName";
 		internal const string BaseUowMessage = "baseUowMessage";
 		internal const string PanelMenuId = "left";
-		internal const string MainItem = "MainItem";
-		internal const string SubItem = "Subitem";
+		internal const string CmdMoveTargetToPreviousInSequence = "MoveTargetDownInSequence_Clicked";
+		internal const string CmdMoveTargetToNextInSequence = "MoveTargetUpInSequence_Clicked";
 		#endregion Random strings
 
 		/// <summary>
@@ -278,7 +278,7 @@ namespace LanguageExplorer.Areas
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
 			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(form, string.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
+			MessageBox.Show(form, String.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
 		}
 
 		/// <summary>
