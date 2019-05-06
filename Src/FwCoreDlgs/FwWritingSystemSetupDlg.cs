@@ -12,8 +12,10 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
+using SIL.Keyboarding;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 
@@ -110,6 +112,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void BindGeneralTab(FwWritingSystemSetupModel model)
 		{
+			if (Keyboard.Controller != null && model.Cache != null)
+			{
+				IKeyboardDefinition userInterfaceKeyboard;
+				if (Keyboard.Controller.TryGetKeyboard(model.Cache.DefaultUserWs,
+					out userInterfaceKeyboard))
+				{
+					userInterfaceKeyboard.Activate();
+				}
+			}
 			m_FullCode.Text = model.CurrentWsSetupModel.CurrentLanguageTag;
 			_spellingCombo.Items.Clear();
 			// ReSharper disable once CoVariantArrayConversion -- No writes occur in AddRange
