@@ -549,6 +549,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The name can contain only the letters A-Z (without diacritics), the numbers 0-9, and basic punctuation..
+        /// </summary>
+        public static string ksIllegalNameNonRomanMsg {
+            get {
+                return ResourceManager.GetString("ksIllegalNameNonRomanMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name cannot contain &quot;extended&quot; letters or letters with diacritics (such as {0})..
+        /// </summary>
+        public static string ksIllegalNameWithDiacriticsMsg {
+            get {
+                return ResourceManager.GetString("ksIllegalNameWithDiacriticsMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  and {0}..
         /// </summary>
         public static string ksIncludesAndRestoreDlg {

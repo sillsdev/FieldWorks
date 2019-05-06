@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
@@ -217,7 +219,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get
 			{
 				string errorMessage;
-				string projName = ProjectName;
+				var projName = ProjectName;
 				return !string.IsNullOrEmpty(ProjectName?.Trim()) && CheckForValidProjectName(ref projName, out errorMessage);
 			}
 
@@ -232,14 +234,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					return "Enter a project name.";
 				}
-				else
+
+				string errorMessage;
+				var projName = ProjectName;
+				if (!CheckForValidProjectName(ref projName, out errorMessage))
 				{
-					string errorMessage;
-					string projName = ProjectName;
-					if (!CheckForValidProjectName(ref projName, out errorMessage))
-					{
-						return errorMessage;
-					}
+					return errorMessage;
 				}
 
 				return string.Empty;
@@ -300,7 +300,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return null;
 		}
 
-		/// <summary/>
+		/// <param name="projectName">The Project Name reference will be modified to remove illegal characters</param>
+		/// <param name="errorMessage"></param>
+		/// <returns><c>true</c> if the given project name is valid; otherwise, <c>false</c></returns>
 		public static bool CheckForValidProjectName(ref string projectName, out string errorMessage)
 		{
 			errorMessage = null;
@@ -308,29 +310,43 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// [] are typically used as delimiters for file names in SQL queries. () are used in older
 			// backup file names and as such, they can cause grief when trying to restore. Old example:
 			// Jim's (old) backup (Jim_s (old) backup) ....zip. The file name was Jim_s (old) backup.mdf.
-			string sIllegalChars =
-				MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
-			char[] illegalChars = sIllegalChars.ToCharArray();
-			int illegalPos = projectName.IndexOfAny(illegalChars);
-			if (illegalPos >= 0)
+			var sIllegalChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
+			var firstIllegalChar = (char)0;
+			var sbProjectName = new StringBuilder(projectName);
+			for (var i = sbProjectName.Length - 1; i >= 0; i--)
 			{
-				while (illegalPos >= 0)
+				if (sIllegalChars.Contains(sbProjectName[i]) || sbProjectName[i] > 126) // all non-ASCII characters are forbidden
 				{
-					projectName = projectName.Remove(illegalPos, 1);
-					illegalPos = projectName.IndexOfAny(illegalChars);
+					firstIllegalChar = sbProjectName[i];
+					sbProjectName.Remove(i, 1);
 				}
-				// show the message
-				// Remove characters that can not be keyboarded (below code point 32). The
-				// user doesn't need to be warned about these since they can't be entered
-				// via keyboard.
-				string sIllegalCharsKeyboard = sIllegalChars;
-				for (int n = 0; n < 32; n++)
+			}
+			if (firstIllegalChar > 0)
+			{
+				if (firstIllegalChar < 127) // likely an illegal symbol (e.g. /:\)
 				{
-					int index = sIllegalCharsKeyboard.IndexOf((char)n);
-					if (index >= 0)
-						sIllegalCharsKeyboard = sIllegalCharsKeyboard.Remove(index, 1);
+					// Prepare to show the message:
+					// Remove characters that cannot be keyboarded (below code point 32). The user doesn't
+					// need to be warned about these since they can't be entered via the keyboard.
+					var sIllegalCharsForMessage = sIllegalChars;
+					for (int n = 0; n < 32; n++)
+					{
+						int index = sIllegalCharsForMessage.IndexOf((char)n);
+						if (index >= 0)
+							sIllegalCharsForMessage = sIllegalCharsForMessage.Remove(index, 1);
+					}
+
+					errorMessage = string.Format(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsForMessage);
 				}
-				errorMessage = string.Format(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsKeyboard);
+				else if (firstIllegalChar >= '\u00C0' && firstIllegalChar < '\u02B0') // likely a Latin character with diacritics
+				// (somewhere between u0190 and u02B0, "letters with diacritics" become interspersed with extended Latin letters)
+				{
+					errorMessage = string.Format(FwCoreDlgs.ksIllegalNameWithDiacriticsMsg, firstIllegalChar);
+				}
+				else // Unicode (which could be diacritics, non-Latin characters, spacing markers, emoji, or many other things)
+				{
+					errorMessage = FwCoreDlgs.ksIllegalNameNonRomanMsg;
+				}
 				return false;
 			}
 			// The project name is valid check so check for a duplicate name

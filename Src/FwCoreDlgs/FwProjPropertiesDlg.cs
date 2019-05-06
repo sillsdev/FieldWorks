@@ -842,7 +842,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var projectText = m_txtProjName.Text;
 			if(!FwNewLangProjectModel.CheckForValidProjectName(ref projectText, out errorMessage))
 			{
-				MessageBox.Show(errorMessage, "Pick a new project name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(errorMessage, FwCoreDlgControls.FwCoreDlgControls.ksPickNewProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			m_txtProjName.Text = projectText;
 			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0;

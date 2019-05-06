@@ -405,6 +405,12 @@ your account write access to the appropriate directories, or else modify the wri
     <value>The name cannot contain these characters:
 {0}</value>
   </data>
+  <data name="ksIllegalNameWithDiacriticsMsg" xml:space="preserve">
+    <value>The name cannot contain "extended" letters or letters with diacritics (such as {0}).</value>
+  </data>
+  <data name="ksIllegalNameNonRomanMsg" xml:space="preserve">
+    <value>The name can contain only the letters A-Z (without diacritics), the numbers 0-9, and basic punctuation.</value>
+  </data>
   <data name="ksInfixMenuCmd" xml:space="preserve">
     <value>{0} Infix</value>
     <comment>Menu Command: {0} is an example of an Infix</comment>

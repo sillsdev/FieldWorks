@@ -10,6 +10,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -82,23 +83,78 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		[TestCase("abcdefghijklmnopqrstuvwxyz_-_ABCDEFGHIJKLMNOPQRSTUVWXYZ", true)]
 		[TestCase(null, false)]
+		[TestCase("\\", false)]
+		[TestCase("\"", false)]
 		[TestCase("", false)]
 		[TestCase(":", false)]
-		[TestCase("\\", false)]
 		[TestCase("/", false)]
 		[TestCase("<", false)]
 		[TestCase(">", false)]
-		[TestCase("\"", false)]
 		[TestCase("|", false)]
 		[TestCase("?", false)]
 		[TestCase("*", false)]
-		// [TestCase("franç", false)] Enable when Non-Ascii filtering is enabled
+		[TestCase("franç", false)] // upper ASCII is forbidden
+		[TestCase("\u0344", false)] // non-ASCII is forbidden
 		public void FwNewLangProjectModel_ProjectNameIsValid(string projName, bool expectedResult)
 		{
 			var testModel = new FwNewLangProjectModel();
 			testModel.LoadProjectNameSetup = () => { };
 			testModel.ProjectName = projName;
 			Assert.That(testModel.IsProjectNameValid, Is.EqualTo(expectedResult));
+		}
+
+		/// <summary/>
+		[Test]
+		public void FwNewLangProjectModel_InvalidProjectNameMessage_Symbols()
+		{
+			var testModel = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				ProjectName = "/"
+			};
+			var messageStart = FwCoreDlgs.ksIllegalNameMsg;
+			var firstParamPos = messageStart.IndexOf("{");
+			if (firstParamPos > 0)
+			{
+				messageStart = messageStart.Substring(0, firstParamPos - 1);
+			}
+			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
+		}
+
+		/// <summary/>
+		[Test]
+		public void FwNewLangProjectModel_InvalidProjectNameMessage_Diacritics()
+		{
+			var testModel = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				ProjectName = "español"
+			};
+			var messageStart = FwCoreDlgs.ksIllegalNameWithDiacriticsMsg;
+			var firstParamPos = messageStart.IndexOf("{");
+			if (firstParamPos > 0)
+			{
+				messageStart = messageStart.Substring(0, firstParamPos - 1);
+			}
+			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
+		}
+
+		/// <summary/>
+		[Test]
+		public void FwNewLangProjectModel_InvalidProjectNameMessage_NonRoman()
+		{
+			var testModel = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				ProjectName = "\u0344"
+			};
+			var messageStart = FwCoreDlgs.ksIllegalNameNonRomanMsg;
+			var firstParamPos = messageStart.IndexOf("{");
+			if (firstParamPos > 0)
+			{
+				messageStart = messageStart.Substring(0, firstParamPos - 1);
+			}
+			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
 		}
 
 		/// <summary/>
