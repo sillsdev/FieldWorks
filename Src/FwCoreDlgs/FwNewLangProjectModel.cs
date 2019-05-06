@@ -74,11 +74,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private NewProjStep CurrentStep;
 
 		private IWizardStep[] _steps = {
-			new NewLangProjStep("Project Name", false, true),
-			new NewLangProjStep("Vernacular", false),
-			new NewLangProjStep("Analysis", false),
-			new NewLangProjStep("More", true),
-			new NewLangProjStep("Anthropology", true)
+			new NewLangProjStep(FwCoreDlgs.NewProjectWizard_Name_Step, false, true),
+			new NewLangProjStep(FwCoreDlgs.NewProjectWizard_Vernacular_Step, false),
+			new NewLangProjStep(FwCoreDlgs.NewProjectWizard_Analysis_Step, false),
+			new NewLangProjStep(FwCoreDlgs.NewProjectWizard_More_Step, true),
+			new NewLangProjStep(FwCoreDlgs.NewProjectWizard_Anthro_Step, true)
 		};
 
 		private string _projectName;

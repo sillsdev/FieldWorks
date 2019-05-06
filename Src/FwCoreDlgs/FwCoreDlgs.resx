@@ -1031,4 +1031,24 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>A project named {0} already exists. Choose a new name or click cancel and open the existing project.</value>
     <comment>This error text is shown in the New Project Wizard when the user types a duplicate project name</comment>
   </data>
+  <data name="NewProjectWizard_Name_Step" xml:space="preserve">
+    <value>Name</value>
+    <comment>the text used at the top of the new project wizard for the Project Name step</comment>
+  </data>
+  <data name="NewProjectWizard_Vernacular_Step" xml:space="preserve">
+    <value>Vernacular</value>
+    <comment>label at the top of the new project wizard for selecting the default vernacular language</comment>
+  </data>
+  <data name="NewProjectWizard_Analysis_Step" xml:space="preserve">
+    <value>Analysis</value>
+    <comment>label at the top of the new project wizard for choosing the default analysis language</comment>
+  </data>
+  <data name="NewProjectWizard_More_Step" xml:space="preserve">
+    <value>More</value>
+    <comment>the label used at the top of the new project wizard where you can select 'more' writing system options</comment>
+  </data>
+  <data name="NewProjectWizard_Anthro_Step" xml:space="preserve">
+    <value>Anthropology</value>
+    <comment>label at the top of the new project wizard for picking the starting anthropology categories list</comment>
+  </data>
 </root>

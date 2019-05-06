@@ -117,7 +117,108 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_optionalIndicator.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_stepLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_lineToPreviousImage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_lineToPreviousImage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 4</value>
+  </data>
+  <data name="_lineToPreviousImage.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_lineToPreviousImage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 24</value>
+  </data>
+  <data name="_lineToPreviousImage.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;_lineToPreviousImage.Name" xml:space="preserve">
+    <value>_lineToPreviousImage</value>
+  </data>
+  <data name="&gt;&gt;_lineToPreviousImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lineToPreviousImage.Parent" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_lineToPreviousImage.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_stepName.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_stepName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_stepName.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Georgia, 11pt</value>
+  </data>
+  <data name="_stepName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 28</value>
+  </data>
+  <data name="_stepName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>118, 34</value>
+  </data>
+  <data name="_stepName.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_stepName.Text" xml:space="preserve">
+    <value>Anthropology</value>
+  </data>
+  <data name="_stepName.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;_stepName.Name" xml:space="preserve">
+    <value>_stepName</value>
+  </data>
+  <data name="&gt;&gt;_stepName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_stepName.Parent" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_stepName.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="_lineToNextImage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="_lineToNextImage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 4</value>
+  </data>
+  <data name="_lineToNextImage.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_lineToNextImage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 24</value>
+  </data>
+  <data name="_lineToNextImage.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;_lineToNextImage.Name" xml:space="preserve">
+    <value>_lineToNextImage</value>
+  </data>
+  <data name="&gt;&gt;_lineToNextImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lineToNextImage.Parent" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_lineToNextImage.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="_statusImage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
   <data name="_statusImage.InitialImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
@@ -142,5 +243,119 @@
         tjwvxMTiTojEIYTvnb/B459CHIkgbYh0R/3z4lKICyQJuVE9CPmPCV5x7O/bQlHUH6QqEd+uky2/AAAA
         AElFTkSuQmCC
 </value>
+  </data>
+  <data name="_statusImage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 4</value>
+  </data>
+  <data name="_statusImage.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_statusImage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 24</value>
+  </data>
+  <data name="_statusImage.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_statusImage.Name" xml:space="preserve">
+    <value>_statusImage</value>
+  </data>
+  <data name="&gt;&gt;_statusImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_statusImage.Parent" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_statusImage.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="_stepLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_stepLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_stepLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_stepLayout.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_stepLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 80</value>
+  </data>
+  <data name="_stepLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;_stepLayout.Name" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_stepLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_stepLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_stepLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_stepLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_lineToPreviousImage" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_optionalIndicator" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="_stepName" Row="1" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="_lineToNextImage" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_statusImage" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,50,Absolute,24,Absolute,50" /&gt;&lt;Rows Styles="Absolute,28,Absolute,34,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="_optionalIndicator.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_optionalIndicator.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Georgia, 8.25pt</value>
+  </data>
+  <data name="_optionalIndicator.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 62</value>
+  </data>
+  <data name="_optionalIndicator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>118, 20</value>
+  </data>
+  <data name="_optionalIndicator.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_optionalIndicator.Text" xml:space="preserve">
+    <value>(Optional)</value>
+  </data>
+  <data name="_optionalIndicator.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopCenter</value>
+  </data>
+  <data name="&gt;&gt;_optionalIndicator.Name" xml:space="preserve">
+    <value>_optionalIndicator</value>
+  </data>
+  <data name="&gt;&gt;_optionalIndicator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_optionalIndicator.Parent" xml:space="preserve">
+    <value>_stepLayout</value>
+  </data>
+  <data name="&gt;&gt;_optionalIndicator.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>124, 80</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>124, 80</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 80</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>WizardStep</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

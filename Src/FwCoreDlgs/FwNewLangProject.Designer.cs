@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._next = new System.Windows.Forms.Button();
 			this._previous = new System.Windows.Forms.Button();
 			this._mainContentPanel = new System.Windows.Forms.Panel();
-			this._stepsContainer = new System.Windows.Forms.FlowLayoutPanel();
+			this._stepsPanel = new System.Windows.Forms.TableLayoutPanel();
 			btnCancel = new System.Windows.Forms.Button();
 			this._tableLayoutPanel.SuspendLayout();
 			this._buttonPannel.SuspendLayout();
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this._tableLayoutPanel, "_tableLayoutPanel");
 			this._tableLayoutPanel.Controls.Add(this._buttonPannel, 0, 2);
 			this._tableLayoutPanel.Controls.Add(this._mainContentPanel, 0, 1);
-			this._tableLayoutPanel.Controls.Add(this._stepsContainer, 0, 0);
+			this._tableLayoutPanel.Controls.Add(this._stepsPanel, 0, 0);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
 			// 
 			// _buttonPannel
@@ -104,10 +104,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._mainContentPanel.Name = "_mainContentPanel";
 			this._mainContentPanel.TabStop = true;
 			// 
-			// _stepsContainer
+			// _stepsPanel
 			// 
-			resources.ApplyResources(this._stepsContainer, "_stepsContainer");
-			this._stepsContainer.Name = "_stepsContainer";
+			resources.ApplyResources(this._stepsPanel, "_stepsPanel");
+			this._stepsPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
+			this._stepsPanel.Name = "_stepsPanel";
 			// 
 			// FwNewLangProject
 			// 
@@ -152,6 +153,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		private FlowLayoutPanel _stepsContainer;
+		private TableLayoutPanel _stepsPanel;
 	}
 }

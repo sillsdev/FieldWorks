@@ -2180,11 +2180,29 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analysis.
+        /// </summary>
+        public static string NewProjectWizard_Analysis_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Analysis_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose analysis language writing system.
         /// </summary>
         public static string NewProjectWizard_AnalysisHeader {
             get {
                 return ResourceManager.GetString("NewProjectWizard_AnalysisHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anthropology.
+        /// </summary>
+        public static string NewProjectWizard_Anthro_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Anthro_Step", resourceCulture);
             }
         }
         
@@ -2212,6 +2230,33 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string NewProjectWizard_MonolingualMessage {
             get {
                 return ResourceManager.GetString("NewProjectWizard_MonolingualMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        public static string NewProjectWizard_More_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_More_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string NewProjectWizard_Name_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Name_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vernacular.
+        /// </summary>
+        public static string NewProjectWizard_Vernacular_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Vernacular_Step", resourceCulture);
             }
         }
         

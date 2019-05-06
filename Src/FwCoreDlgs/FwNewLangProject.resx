@@ -237,123 +237,6 @@
   <data name="_tableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;_buttonPannel.Name" xml:space="preserve">
-    <value>_buttonPannel</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.Parent" xml:space="preserve">
-    <value>_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_mainContentPanel.Name" xml:space="preserve">
-    <value>_mainContentPanel</value>
-  </data>
-  <data name="&gt;&gt;_mainContentPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_mainContentPanel.Parent" xml:space="preserve">
-    <value>_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_mainContentPanel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_stepsContainer.Name" xml:space="preserve">
-    <value>_stepsContainer</value>
-  </data>
-  <data name="&gt;&gt;_stepsContainer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_stepsContainer.Parent" xml:space="preserve">
-    <value>_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_stepsContainer.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_tableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="_tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="_tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 307</value>
-  </data>
-  <data name="_tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_tableLayoutPanel.Name" xml:space="preserve">
-    <value>_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_tableLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_tableLayoutPanel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_tableLayoutPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_buttonPannel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_mainContentPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_stepsContainer" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Absolute,80,Percent,100,Absolute,40" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="&gt;&gt;_next.Name" xml:space="preserve">
-    <value>_next</value>
-  </data>
-  <data name="&gt;&gt;_next.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_next.Parent" xml:space="preserve">
-    <value>_buttonPannel</value>
-  </data>
-  <data name="&gt;&gt;_next.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;_previous.Name" xml:space="preserve">
-    <value>_previous</value>
-  </data>
-  <data name="&gt;&gt;_previous.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_previous.Parent" xml:space="preserve">
-    <value>_buttonPannel</value>
-  </data>
-  <data name="&gt;&gt;_previous.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="_buttonPannel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_buttonPannel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>RightToLeft</value>
-  </data>
-  <data name="_buttonPannel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 270</value>
-  </data>
-  <data name="_buttonPannel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>618, 34</value>
-  </data>
-  <data name="_buttonPannel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.Name" xml:space="preserve">
-    <value>_buttonPannel</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.Parent" xml:space="preserve">
-    <value>_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_buttonPannel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="_next.Location" type="System.Drawing.Point, System.Drawing">
     <value>297, 3</value>
   </data>
@@ -402,6 +285,33 @@
   <data name="&gt;&gt;_previous.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="_buttonPannel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_buttonPannel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="_buttonPannel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 270</value>
+  </data>
+  <data name="_buttonPannel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>618, 34</value>
+  </data>
+  <data name="_buttonPannel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;_buttonPannel.Name" xml:space="preserve">
+    <value>_buttonPannel</value>
+  </data>
+  <data name="&gt;&gt;_buttonPannel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_buttonPannel.Parent" xml:space="preserve">
+    <value>_tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;_buttonPannel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="_mainContentPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -426,32 +336,71 @@
   <data name="&gt;&gt;_mainContentPanel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="_stepsContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="_stepsPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_stepsPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="_stepsContainer.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_stepsPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="_stepsContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_stepsPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
   </data>
-  <data name="_stepsContainer.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_stepsPanel.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_stepsPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>624, 80</value>
   </data>
-  <data name="_stepsContainer.TabIndex" type="System.Int32, mscorlib">
+  <data name="_stepsPanel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;_stepsContainer.Name" xml:space="preserve">
-    <value>_stepsContainer</value>
+  <data name="&gt;&gt;_stepsPanel.Name" xml:space="preserve">
+    <value>_stepsPanel</value>
   </data>
-  <data name="&gt;&gt;_stepsContainer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;_stepsPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_stepsContainer.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_stepsPanel.Parent" xml:space="preserve">
     <value>_tableLayoutPanel</value>
   </data>
-  <data name="&gt;&gt;_stepsContainer.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_stepsPanel.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="_stepsPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls /&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="_tableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 307</value>
+  </data>
+  <data name="_tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;_tableLayoutPanel.Name" xml:space="preserve">
+    <value>_tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;_tableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_tableLayoutPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_tableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_buttonPannel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_mainContentPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_stepsPanel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Absolute,80,Percent,100,Absolute,40" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

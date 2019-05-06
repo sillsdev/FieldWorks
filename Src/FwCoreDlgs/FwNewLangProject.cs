@@ -169,6 +169,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ResumeLayout();
 		}
 
+		/// <inheritdoc/>
+		protected override void OnLayout(LayoutEventArgs levent)
+		{
+			for(var i = 0; i < _stepsPanel.ColumnCount; ++i)
+			{
+				_stepsPanel.ColumnStyles[i].Width = 124;
+				_stepsPanel.ColumnStyles[i].SizeType = SizeType.Absolute;
+			}
+			base.OnLayout(levent);
+		}
+
 		private void Bind(FwNewLangProjectModel model)
 		{
 			BindWizardStepControls(model);
@@ -183,17 +194,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
+			_stepsPanel.ColumnCount = model.Steps.Count();
 			for (var index = 0; index < model.Steps.Count(); ++index)
 			{
-				if (_stepsContainer.Controls.Count < model.Steps.Count())
+				if (_stepsPanel.Controls.Count < model.Steps.Count())
 				{
 					var stepControl = new WizardStep();
 					stepControl.Bind(model.Steps.ElementAt(index), index == 0, index == model.Steps.Count() - 1);
-					_stepsContainer.Controls.Add(stepControl);
+					if (_stepsPanel.ColumnStyles.Count <= index)
+					{
+						_stepsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, stepControl.Width));
+					}
+					else
+					{
+						_stepsPanel.ColumnStyles[index].SizeType = SizeType.Absolute;
+						_stepsPanel.ColumnStyles[index].Width = stepControl.Width;
+					}
+					_stepsPanel.Controls.Add(stepControl, index, 0);
 				}
 				else
 				{
-					var stepControl = (WizardStep)_stepsContainer.Controls[index];
+					var stepControl = (WizardStep)_stepsPanel.Controls[index];
 					stepControl.Bind(model.Steps.ElementAt(index), index == 0, index == model.Steps.Count() - 1);
 				}
 			}
