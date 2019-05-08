@@ -321,6 +321,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					sbProjectName.Remove(i, 1);
 				}
 			}
+			projectName = sbProjectName.ToString();
 			if (firstIllegalChar > 0)
 			{
 				if (firstIllegalChar < 127) // likely an illegal symbol (e.g. /:\)
