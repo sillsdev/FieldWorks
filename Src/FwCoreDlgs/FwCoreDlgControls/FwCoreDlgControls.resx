@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -496,9 +496,5 @@
   </data>
   <data name="ksIllegalXmlChars" xml:space="preserve">
     <value>Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed.</value>
-  </data>
-  <data name="ksPickNewProjName" xml:space="preserve">
-    <value>Pick a new project name</value>
-    <comment>This is the title for the dialog that is shown when the user has entered unsupported characters in the project name</comment>
   </data>
 </root>

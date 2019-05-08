@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public void Next()
 		{
-			if (CurrentStepIsValid())
+			if (CurrentStepIsComplete())
 			{
 				var step = _steps[(int) CurrentStep];
 				step.IsComplete = true;
@@ -151,13 +151,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void SetCompleteOnEnter()
 		{
-			if (CurrentStepIsValid())
+			if (CurrentStepIsComplete())
 			{
 				_steps[(int)CurrentStep].IsComplete = true;
 			}
 		}
 
-		private bool CurrentStepIsValid()
+		private bool CurrentStepIsComplete()
 		{
 			switch (CurrentStep)
 			{
@@ -220,7 +220,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				string errorMessage;
 				var projName = ProjectName;
-				return !string.IsNullOrEmpty(ProjectName?.Trim()) && CheckForValidProjectName(ref projName, out errorMessage);
+				return !string.IsNullOrEmpty(ProjectName?.Trim()) && CheckForSafeProjectName(ref projName, out errorMessage)
+					&& CheckForUniqueProjectName(projName);
 			}
 
 		}
@@ -232,14 +233,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (string.IsNullOrEmpty(ProjectName))
 				{
-					return "Enter a project name.";
+					return FwCoreDlgs.NewProjectWizard_EnterProjectName;
 				}
 
 				string errorMessage;
 				var projName = ProjectName;
-				if (!CheckForValidProjectName(ref projName, out errorMessage))
+				if (!CheckForSafeProjectName(ref projName, out errorMessage))
 				{
 					return errorMessage;
+				}
+
+				if (!CheckForUniqueProjectName(projName))
+				{
+					return string.Format(FwCoreDlgs.NewProjectWizard_DuplicateProjectName, projName);
 				}
 
 				return string.Empty;
@@ -303,7 +309,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="projectName">The Project Name reference will be modified to remove illegal characters</param>
 		/// <param name="errorMessage"></param>
 		/// <returns><c>true</c> if the given project name is valid; otherwise, <c>false</c></returns>
-		public static bool CheckForValidProjectName(ref string projectName, out string errorMessage)
+		public static bool CheckForSafeProjectName(ref string projectName, out string errorMessage)
 		{
 			errorMessage = null;
 			// Don't allow illegal characters. () and [] have significance.
@@ -324,6 +330,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			projectName = sbProjectName.ToString();
 			if (firstIllegalChar > 0)
 			{
+				var sbErrorMessage = new StringBuilder();
 				if (firstIllegalChar < 127) // likely an illegal symbol (e.g. /:\)
 				{
 					// Prepare to show the message:
@@ -337,25 +344,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							sIllegalCharsForMessage = sIllegalCharsForMessage.Remove(index, 1);
 					}
 
-					errorMessage = string.Format(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsForMessage);
+					sbErrorMessage.AppendFormat(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsForMessage);
 				}
 				else if (firstIllegalChar >= '\u00C0' && firstIllegalChar < '\u02B0') // likely a Latin character with diacritics
 				// (somewhere between u0190 and u02B0, "letters with diacritics" become interspersed with extended Latin letters)
 				{
-					errorMessage = string.Format(FwCoreDlgs.ksIllegalNameWithDiacriticsMsg, firstIllegalChar);
+					sbErrorMessage.AppendFormat(FwCoreDlgs.ksIllegalNameWithDiacriticsMsg, firstIllegalChar);
 				}
 				else // Unicode (which could be diacritics, non-Latin characters, spacing markers, emoji, or many other things)
 				{
-					errorMessage = FwCoreDlgs.ksIllegalNameNonRomanMsg;
+					sbErrorMessage.Append(FwCoreDlgs.ksIllegalNameNonRomanMsg);
 				}
+				sbErrorMessage.AppendLine().Append(FwCoreDlgs.ksIllegalNameExplanation);
+				errorMessage = sbErrorMessage.ToString();
 				return false;
 			}
-			// The project name is valid check so check for a duplicate name
-			var projInfo = ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, projectName);
-			if (projInfo == null)
-				return true;
-			errorMessage = string.Format(FwCoreDlgs.NewProjectWizard_DuplicateProjectName, projectName);
-			return false;
+
+			return true;
+		}
+
+		/// <summary/>
+		public static bool CheckForUniqueProjectName(string projectName)
+		{
+			return ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, projectName) == null;
 		}
 
 		/// <summary/>
@@ -367,7 +378,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public bool CanGoNext()
 		{
-			return CurrentStepIsValid() && (int)CurrentStep < _steps.Length - 1;
+			return CurrentStepIsComplete() && (int)CurrentStep < _steps.Length - 1;
 		}
 
 		/// <summary/>

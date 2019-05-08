@@ -554,38 +554,33 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 		/// <summary>
 		/// Routine to eliminate illegal characters from being entered as part of a Project filename.
+		/// Note that we allow backups with existing illegal (Unicode) characters to be restored under the same name (or [name]-01).
+		/// TODO (Hasso) 2019.05: prevent pasting illegal characters (Ctrl-V and right-click)--must use TextChanged or similar (LT-19712)
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.KeyPressEventArgs"/> instance
 		/// containing the event data.</param>
 		private void m_txtOtherProjectName_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			var key = e.KeyChar;
-			if (e.KeyChar == (int)Keys.Back)
-				return;
-
-			if (IsIllegalInFilename(key))
+			switch ((int)e.KeyChar)
 			{
-				IssueBeep();
-				e.Handled = true; // This will cause the character to NOT be entered.
-				return;
+				case (int)Keys.Back: // Backspace
+				case 26: // Ctrl-Z (undo)
+				case 25: // Ctrl-Y (redo)
+				case 24: // Ctrl-X (cut)
+				case 22: // Ctrl-V (paste)
+				case 3: // Ctrl-C (copy)
+				case 1: // Ctrl-A (select all)
+					return;
 			}
-			e.Handled = false; // Gets processed normally elsewhere
-		}
 
-		private bool IsIllegalInFilename(char keyPressed)
-		{
-			return m_invalidCharArray.Any(ch => keyPressed == ch);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Issues a warning beep when the user performs an illegal operation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void IssueBeep()
-		{
-			FwUtils.ErrorBeep();
+			string errorMessage;
+			string character = e.KeyChar.ToString();
+			if (!FwNewLangProjectModel.CheckForSafeProjectName(ref character, out errorMessage))
+			{
+				MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				e.Handled = true; // This will cause the character NOT to be entered.
+			}
 		}
 
 		#endregion

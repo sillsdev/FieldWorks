@@ -398,8 +398,8 @@ your account write access to the appropriate directories, or else modify the wri
   <data name="ksFwWsSyncProblem" xml:space="preserve">
     <value>FieldWorks Project synchronization problem</value>
   </data>
-  <data name="ksIllegalChars" xml:space="preserve">
-    <value>Illegal characters</value>
+  <data name="ksIllegalNameExplanation" xml:space="preserve">
+    <value>The project name is used in file names, so unexpected characters can cause problems with Send/Receive and other tasks.</value>
   </data>
   <data name="ksIllegalNameMsg" xml:space="preserve">
     <value>The name cannot contain these characters:
@@ -1027,10 +1027,6 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>Writing Systems Set Up for Monolingual Dictionary</value>
     <comment>Caption for the dialog that alerts the user when they select a monolingual configuration. (this is a soft warning)</comment>
   </data>
-  <data name="NewProjectWizard_DuplicateProjectName" xml:space="preserve">
-    <value>A project named {0} already exists. Choose a new name or click cancel and open the existing project.</value>
-    <comment>This error text is shown in the New Project Wizard when the user types a duplicate project name</comment>
-  </data>
   <data name="NewProjectWizard_Name_Step" xml:space="preserve">
     <value>Name</value>
     <comment>the text used at the top of the new project wizard for the Project Name step</comment>
@@ -1050,5 +1046,21 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="NewProjectWizard_Anthro_Step" xml:space="preserve">
     <value>Anthropology</value>
     <comment>label at the top of the new project wizard for picking the starting anthropology categories list</comment>
+  </data>
+  <data name="NewProjectWizard_EnterProjectName" xml:space="preserve">
+    <value>Enter a project name.</value>
+    <comment>This text is shown in the New Project Wizard when the project name field is empty</comment>
+  </data>
+  <data name="NewProjectWizard_DuplicateProjectName" xml:space="preserve">
+    <value>A project named {0} already exists. Choose a new name or click cancel and open the existing project.</value>
+    <comment>This error text is shown in the New Project Wizard when the user types a duplicate project name</comment>
+  </data>
+  <data name="FwProjProperties_DuplicateProjectName" xml:space="preserve">
+    <value>Another project named {0} already exists. Choose a new name or click cancel to change this project's name back to {1}.</value>
+    <comment>This error text is shown in the Project Properties Dialog when the user types a duplicate project name</comment>
+  </data>
+  <data name="FwProjProperties_PickDifferentProjName" xml:space="preserve">
+    <value>Pick a different project name</value>
+    <comment>This is the title for the dialog that is shown when the user has entered unsupported characters in the project name, or has entered the same name as another project</comment>
   </data>
 </root>

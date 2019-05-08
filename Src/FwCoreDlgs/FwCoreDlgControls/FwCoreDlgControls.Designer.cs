@@ -349,15 +349,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pick a new project name.
-        /// </summary>
-        internal static string ksPickNewProjName {
-            get {
-                return ResourceManager.GetString("ksPickNewProjName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 1.5 Line Spacing.
         /// </summary>
         internal static string ksPlusSpacing {

@@ -88,6 +88,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Another project named {0} already exists. Choose a new name or click cancel to change this project&apos;s name back to {1}..
+        /// </summary>
+        public static string FwProjProperties_DuplicateProjectName {
+            get {
+                return ResourceManager.GetString("FwProjProperties_DuplicateProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick a different project name.
+        /// </summary>
+        public static string FwProjProperties_PickDifferentProjName {
+            get {
+                return ResourceManager.GetString("FwProjProperties_PickDifferentProjName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bulk Replace Setup.
         /// </summary>
         public static string khtpBulkReplaceTitle {
@@ -530,11 +548,11 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal characters.
+        ///   Looks up a localized string similar to The project name is used in file names, so unexpected characters can cause problems with Send/Receive and other tasks..
         /// </summary>
-        public static string ksIllegalChars {
+        public static string ksIllegalNameExplanation {
             get {
-                return ResourceManager.GetString("ksIllegalChars", resourceCulture);
+                return ResourceManager.GetString("ksIllegalNameExplanation", resourceCulture);
             }
         }
         
@@ -2212,6 +2230,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string NewProjectWizard_DuplicateProjectName {
             get {
                 return ResourceManager.GetString("NewProjectWizard_DuplicateProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a project name..
+        /// </summary>
+        public static string NewProjectWizard_EnterProjectName {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_EnterProjectName", resourceCulture);
             }
         }
         

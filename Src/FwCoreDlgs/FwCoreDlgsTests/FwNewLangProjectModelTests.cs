@@ -39,7 +39,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				LoadProjectNameSetup = () => { },
 				LoadVernacularSetup = () => { },
 				LoadAnalysisSetup = () => { },
-				ProjectName = dbName,
 				AnthroModel = new FwChooseAnthroListModel { CurrentList = FwChooseAnthroListModel.ListChoice.UserDef }
 			};
 			try
@@ -97,10 +96,42 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[TestCase("\u0344", false)] // non-ASCII is forbidden
 		public void FwNewLangProjectModel_ProjectNameIsValid(string projName, bool expectedResult)
 		{
-			var testModel = new FwNewLangProjectModel();
-			testModel.LoadProjectNameSetup = () => { };
-			testModel.ProjectName = projName;
+			var testModel = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				ProjectName = projName
+			};
 			Assert.That(testModel.IsProjectNameValid, Is.EqualTo(expectedResult));
+		}
+
+		/// <summary/>
+		[Test]
+		public void FwNewLangProjectModel_ProjectNameIsUnique()
+		{
+			const string extantDbName = "Maileingwidj2025";
+
+			try
+			{
+				CreateDb(extantDbName);
+				string errorMessage;
+				Assert.True(FwNewLangProjectModel.CheckForUniqueProjectName("something else"), "unique name should be unique");
+				Assert.False(FwNewLangProjectModel.CheckForUniqueProjectName(extantDbName), "duplicate name should not be unique");
+
+				// Creating a new project is expensive (several seconds), so test this property that also checks uniqueness here:
+				var testModel = new FwNewLangProjectModel
+				{
+					LoadProjectNameSetup = () => { },
+					ProjectName = "something new"
+				};
+				Assert.True(testModel.IsProjectNameValid, "unique name should be valid");
+				testModel.ProjectName = extantDbName;
+				Assert.False(testModel.IsProjectNameValid, "duplicate name should not be valid");
+			}
+			finally
+			{
+				// Blow away the database to clean things up
+				DestroyDb(extantDbName, false);
+			}
 		}
 
 		/// <summary/>
@@ -118,7 +149,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
+
+			var messageActual = testModel.InvalidProjectNameMessage;
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>
@@ -136,7 +170,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
+
+			var messageActual = testModel.InvalidProjectNameMessage;
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>
@@ -154,7 +191,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-			Assert.That(testModel.InvalidProjectNameMessage, Is.StringStarting(messageStart));
+
+			var messageActual = testModel.InvalidProjectNameMessage;
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>
@@ -331,6 +371,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(fNounFound, "Did not find Noun CatalogSourceId");
 			Assert.IsTrue(fProformFound, "Did not find Pro-form CatalogSourceId");
 			Assert.IsTrue(fVerbFound, "Did not find Verb CatalogSourceId");
+		}
+
+		private void CreateDb(string dbName, string vernWs = "fr")
+		{
+			if (DbExists(dbName))
+				DestroyDb(dbName, true);
+
+			var testProject = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				LoadAnalysisSetup = () => { },
+				ProjectName = dbName,
+				AnthroModel = new FwChooseAnthroListModel { CurrentList = FwChooseAnthroListModel.ListChoice.UserDef }
+			};
+			testProject.Next();
+			testProject.SetDefaultWs(new LanguageInfo { LanguageTag = "fr" });
+			testProject.Next();
+			using (var threadHelper = new ThreadHelper())
+			{
+				testProject.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
+			}
 		}
 
 		private static string DbDirectory(string dbName)

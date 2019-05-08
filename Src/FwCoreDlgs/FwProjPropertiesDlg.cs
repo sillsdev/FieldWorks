@@ -838,14 +838,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_txtProjName_TextChanged(object sender, EventArgs e)
 		{
-			string errorMessage;
-			var projectText = m_txtProjName.Text;
-			if(!FwNewLangProjectModel.CheckForValidProjectName(ref projectText, out errorMessage))
+			// If the project name is unchanged (or changed back), don't check for validity. (This will allow users who have already
+			// given their projects non-ASCII names to change other project properties without having to change their project names)
+			if (!OriginalProjectName.Equals(m_txtProjName.Text))
 			{
-				MessageBox.Show(errorMessage, FwCoreDlgControls.FwCoreDlgControls.ksPickNewProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				string errorMessage;
+				var projectName = m_txtProjName.Text;
+				if (!FwNewLangProjectModel.CheckForSafeProjectName(ref projectName, out errorMessage))
+				{
+					MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+					m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
+					m_txtProjName.Text = projectName;
+					m_txtProjName.TextChanged += m_txtProjName_TextChanged;
+				}
+
+				if (!FwNewLangProjectModel.CheckForUniqueProjectName(projectName))
+				{
+					MessageBox.Show(string.Format(FwCoreDlgs.FwProjProperties_DuplicateProjectName, projectName, OriginalProjectName),
+						FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
-			m_txtProjName.Text = projectText;
-			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0;
+
+			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0 &&
+				(OriginalProjectName.Equals(m_txtProjName.Text) || FwNewLangProjectModel.CheckForUniqueProjectName(m_txtProjName.Text));
 			m_lblProjName.Text = m_txtProjName.Text;
 		}
 
