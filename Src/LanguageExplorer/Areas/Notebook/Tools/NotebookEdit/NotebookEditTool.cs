@@ -34,13 +34,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	{
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
-		private NotebookEditToolMenuHelper _notebookEditToolMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		private DataTree MyDataTree { get; set; }
+		private NotebookEditToolMenuHelper _toolMenuHelper;
+		private DataTree _dataTree;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -57,12 +55,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_notebookEditToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_notebookEditToolMenuHelper = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
+			_dataTree = null;
 		}
 
 		/// <summary>
@@ -78,16 +75,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
-			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, MyDataTree, _recordBrowseView);
-			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, _dataTree, _recordBrowseView);
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, _dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -99,7 +93,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
+			var panelMenu = new PanelMenu(_dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -183,41 +177,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
-		{
-			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
-			// Start: <menu id="mnuBrowseView" (partial) >
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = AreaServices.mnuBrowseView
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
-			var currentSlice = MyDataTree.CurrentSlice;
-			if (currentSlice == null)
-			{
-				MyDataTree.GotoFirstSlice();
-			}
-			menu.Tag = MyDataTree.CurrentSlice;
-
-			// End: <menu id="mnuBrowseView" (partial) >
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
 		/// <summary>
 		/// This class handles all interaction for the NotebookEditTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
 		/// </summary>
 		private sealed class NotebookEditToolMenuHelper : IDisposable
 		{
-			internal const string mnuDataTree_Subrecord_Hotlinks = "mnuDataTree-Subrecord-Hotlinks";
-			internal const string mnuDataTree_Participants = "mnuDataTree-Participants";
-			internal const string mnuDataTree_SubRecords = "mnuDataTree-SubRecords";
-			internal const string mnuDataTree_SubRecords_Hotlinks = "mnuDataTree-SubRecords-Hotlinks";
-			internal const string mnuDataTree_SubRecordSummary = "mnuDataTree-SubRecordSummary";
-
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
 			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
@@ -227,8 +191,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private RecordBrowseView RecordBrowseView { get; }
 			private IRecordList MyRecordList { get; set; }
 			private ISharedEventHandlers _sharedEventHandlers;
-
-			internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
 
 			internal NotebookEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView)
 			{
@@ -247,6 +209,38 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				SetupToolUiWidgets();
 			}
 
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+				var currentSlice = MyDataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					MyDataTree.GotoFirstSlice();
+				}
+				menu.Tag = MyDataTree.CurrentSlice;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				var currentSlice = MyDataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					MyDataTree.GotoFirstSlice();
+				}
+				currentSlice.HandleDeleteCommand();
+			}
+
 			private void SetupToolUiWidgets()
 			{
 				// Slice menus don't need to add anything to: toolUiWidgetParameterObject.
@@ -255,8 +249,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList, MyDataTree);
 				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
-				MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-				MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
 				MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
@@ -271,6 +263,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
 			}
 
 			private Tuple<bool, bool> CanCmdAddToLexicon
@@ -380,7 +373,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					_sharedNotebookToolMenuHelper?.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_rightClickContextMenuManager?.Dispose();
-					MyBrowseViewContextMenuFactory?.Dispose();
 				}
 				_majorFlexComponentParameters = null;
 				_tool = null;
@@ -389,7 +381,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_rightClickContextMenuManager = null;
 				MyDataTree = null;
 				MyRecordList = null;
-				MyBrowseViewContextMenuFactory = null;
 				_sharedEventHandlers = null;
 
 				_isDisposed = true;
@@ -402,10 +393,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
-				// <item label="Insert _Subrecord" command="CmdDataTree-Insert-Subrecord"/>
+				// <item label="Insert _Subrecord" command="CmdDataTree_Insert_Subrecord"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubrecord), NotebookResources.Insert_Subrecord);
 
-				// <item label="Insert S_ubrecord of Subrecord" command="CmdDataTree-Insert-Subsubrecord" defaultVisible="false"/>
+				// <item label="Insert S_ubrecord of Subrecord" command="CmdDataTree_Insert_Subsubrecord" defaultVisible="false"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubsubrecord), NotebookResources.Insert_Subrecord_of_Subrecord);
 
 				/*
@@ -470,44 +461,44 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				#region Left edge context menus
 
-				// <menu id="mnuDataTree-Participants">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Participants, Create_mnuDataTree_Participants);
+				// <menu id="mnuDataTree_Participants">
+				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Participants, Create_mnuDataTree_Participants);
 
-				// <menu id="mnuDataTree-SubRecords">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
+				// <menu id="mnuDataTree_SubRecords">
+				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
 
-				// <menu id="mnuDataTree-SubRecordSummary">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
+				// <menu id="mnuDataTree_SubRecordSummary">
+				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
 
 				#endregion Left edge context menus
 
 				#region Hotlinks menus
 
-				// <menu id="mnuDataTree-Subrecord-Hotlinks">
-				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
+				// <menu id="mnuDataTree_Subrecord_Hotlinks">
+				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
 
-				// <menu id="mnuDataTree-SubRecords-Hotlinks">
-				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
+				// <menu id="mnuDataTree_SubRecords_Hotlinks">
+				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
 
 				#endregion Hotlinks menus
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Participants, $"Expected argument value of '{mnuDataTree_Participants}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Participants, $"Expected argument value of '{ContextMenuName.mnuDataTree_Participants.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Participants">
+				// Start: <menu id="mnuDataTree_Participants">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Participants
+					Name = ContextMenuName.mnuDataTree_Participants.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <command id="CmdDataTree-Delete-Participants" label="Delete Participants" message="DeleteParticipants" />
+				// <command id="CmdDataTree_Delete_Participants" label="Delete Participants" message="DeleteParticipants" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_Participants_Clicked, NotebookResources.Delete_Participants);
 
-				// End: <menu id="mnuDataTree-Participants">
+				// End: <menu id="mnuDataTree_Participants">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -530,43 +521,43 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				parentSlice.Expand();
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_SubRecords, $"Expected argument value of '{mnuDataTree_SubRecords}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecords, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubRecords">
+				// Start: <menu id="mnuDataTree_SubRecords">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Participants
+					Name = ContextMenuName.mnuDataTree_SubRecords.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree-Insert-Subrecord" /> // Shared locally
+				// <item command="CmdDataTree_Insert_Subrecord" /> // Shared locally
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubrecord), NotebookResources.Insert_Subrecord);
 
-				// End: <menu id="mnuDataTree-SubRecords">
+				// End: <menu id="mnuDataTree_SubRecords">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_SubRecordSummary, $"Expected argument value of '{mnuDataTree_SubRecordSummary}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecordSummary, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecordSummary.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubRecordSummary">
+				// Start: <menu id="mnuDataTree_SubRecordSummary">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Participants
+					Name = ContextMenuName.mnuDataTree_Participants.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
-				// <item command="CmdDataTree-Insert-Subrecord" /> // Shared locally
+				// <item command="CmdDataTree_Insert_Subrecord" /> // Shared locally
 				var eventHandler = _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubrecord);
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, eventHandler, NotebookResources.Insert_Subrecord);
 
-				// <item command="CmdDataTree-Insert-Subsubrecord" /> // Shared locally
+				// <item command="CmdDataTree_Insert_Subsubrecord" /> // Shared locally
 				eventHandler = _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubsubrecord);
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, eventHandler, NotebookResources.Insert_Subrecord_of_Subrecord);
 
@@ -606,7 +597,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DemoteSubrecord_Clicked, NotebookResources.Demote_WithDots);
 				menu.Enabled = CanDemoteSubitemInVector;
 
-				// End: <menu id="mnuDataTree-SubRecordSummary">
+				// End: <menu id="mnuDataTree_SubRecordSummary">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -753,24 +744,24 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				return null;
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Subrecord_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Subrecord_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_Subrecord_Hotlinks, $"Expected argument value of '{mnuDataTree_Subrecord_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Subrecord_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subrecord_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				/*
-					<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
+					<command id="CmdDataTree_Insert_Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
 					  <parameters className="RnGenericRec" subrecord="true" />
 					</command>
 				*/
 				return CommonHotlinksCreator();
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_SubRecords_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_SubRecords_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_SubRecords_Hotlinks, $"Expected argument value of '{mnuDataTree_SubRecords_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_SubRecords_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				/*
-					<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector"> // Shared locally
+					<command id="CmdDataTree_Insert_Subrecord" label="Insert _Subrecord" message="InsertItemInVector"> // Shared locally
 					  <parameters className="RnGenericRec" subrecord="true" />
 					</command>
 				*/
@@ -782,37 +773,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector"> // Shared locally
+					<command id="CmdDataTree_Insert_Subrecord" label="Insert _Subrecord" message="InsertItemInVector"> // Shared locally
 					  <parameters className="RnGenericRec" subrecord="true" />
 					</command>
 				*/
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.GetEventHandler(Command.CmdInsertSubrecord), NotebookResources.Insert_Subrecord);
 
 				return hotlinksMenuItemList;
-			}
-
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
-			{
-				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
-				// Start: <menu id="mnuBrowseView" (partial) >
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = AreaServices.mnuBrowseView
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
-				var currentSlice = MyDataTree.CurrentSlice;
-				if (currentSlice == null)
-				{
-					MyDataTree.GotoFirstSlice();
-				}
-				menu.Tag = MyDataTree.CurrentSlice;
-
-				// End: <menu id="mnuBrowseView" (partial) >
-
-				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 		}
 	}

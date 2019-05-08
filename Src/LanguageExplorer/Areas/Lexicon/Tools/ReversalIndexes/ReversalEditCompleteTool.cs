@@ -92,9 +92,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, _recordList, _xhtmlDocView);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
@@ -249,6 +246,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
 				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+#endif
 			}
 
 			private Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);

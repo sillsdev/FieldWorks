@@ -26,7 +26,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -36,7 +35,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
-		private RapidDataEntryToolMenuHelper _rapidDataEntryToolMenuHelper;
+		private RapidDataEntryToolMenuHelper _toolMenuHelper;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -77,13 +76,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_rapidDataEntryToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_nestedRecordList = null;
-			_browseViewContextMenuFactory = null;
-			_rapidDataEntryToolMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -102,12 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_rapidDataEntryToolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this);
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
+			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this);
 			var recordBar = new RecordBar(_propertyTable)
 			{
 				IsFlatList = false,
@@ -131,15 +123,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			if (_nestedRecordList == null)
 			{
 				_nestedRecordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(RDEwords, majorFlexComponentParameters.StatusBar, RDEwordsFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _nestedRecordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordList, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -247,7 +236,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private sealed class RapidDataEntryToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			//private ITool _tool;
 
 			internal RapidDataEntryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
 			{
@@ -259,6 +247,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// TODO: Set up factory method for the browse view.
+#endif
 			}
 
 			#region Implementation of IDisposable

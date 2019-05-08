@@ -30,12 +30,12 @@
 		<part ref="DateModifiedAllA"  visibility="never"/>
 		<part ref="Messages" visibility="always"/>
 		<part ref="Senses" param="Normal" expansion="expanded"/>
-		<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
+		<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree_VariantForms" hotlinks="mnuDataTree_VariantForms_Hotlinks">
 			<indent>
 				<part ref="VariantForms"/>
 			</indent>
 		</part>
-		<part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree-AlternateForms" hotlinks="mnuDataTree-AlternateForms-Hotlinks">
+		<part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree_AlternateForms" hotlinks="mnuDataTree_AlternateForms_Hotlinks">
 			<indent>
 				<part ref="AlternateForms" param="Normal"/>
 			</indent>
@@ -70,7 +70,7 @@
 	</layout>
 
 	<layout class="LexEtymology" type="detail" name="Normal">
-		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Etymology" hotlinks="mnuDataTree-Etymology-Hotlinks">
+		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree_Etymology" hotlinks="mnuDataTree_Etymology_Hotlinks">
 			<indent>
 				<part ref="PrecComment" label="Preceding Annotation" visibility="ifdata"/>
 				<part ref="Language" label="Source Language" visibility="ifdata"/>

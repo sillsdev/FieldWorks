@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				new XAttribute("label", roledPartic.RoleRA.Name.BestAnalysisAlternative.Text),
 				new XAttribute("field", "Participants"),
 				new XAttribute("editor", "possVectorReference"),
-				new XAttribute("menu", "mnuDataTree-Participants"));
+				new XAttribute("menu", "mnuDataTree_Participants"));
 			foreach (var childNode in node.Elements())
 			{
 				sliceElem.Add(XElement.Parse(childNode.GetOuterXml()));

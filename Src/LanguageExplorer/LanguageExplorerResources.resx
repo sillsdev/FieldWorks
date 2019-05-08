@@ -1476,4 +1476,7 @@ This version of the program requires version {1}.</value>
   <data name="ZeroWidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Interlinear\ZeroWidth.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ShowFailingItems" xml:space="preserve">
+    <value>ShowFailingItems</value>
+  </data>
 </root>

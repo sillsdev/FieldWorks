@@ -22,8 +22,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
-		private NotebookBrowseToolMenuHelper _browseToolMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private NotebookBrowseToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -47,12 +46,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_browseToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_browseToolMenuHelper = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 			_majorFlexComponentParameters = null;
 		}
 
@@ -71,12 +68,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
-			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordList);
+			_toolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 		}
 
@@ -135,28 +130,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
-		{
-			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
-			// Start: <menu id="mnuBrowseView" (partial) >
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = AreaServices.mnuBrowseView
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			var menuText = string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames"));
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.DeleteSelectedBrowseViewObject), menuText);
-			var tagList = new List<object> { recordList, menuText, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar) };
-			menu.Tag = tagList;
-
-			// End: <menu id="mnuBrowseView" (partial) >
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-
 		/// <summary>
 		/// This class handles all interaction for the NotebookBrowseTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
 		/// </summary>
@@ -166,8 +139,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			private ITool _tool;
 			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
 			private IRecordList MyRecordList { get; }
+			private RecordBrowseView _recordBrowseView;
 
-			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
+			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
@@ -177,6 +151,28 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_tool = tool;
 				MyRecordList = recordList;
 				SetupToolUiWidgets();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteSelectedBrowseViewObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
+			{
+				MyRecordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private void SetupToolUiWidgets()

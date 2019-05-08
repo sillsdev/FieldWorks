@@ -419,7 +419,7 @@
 	</layout>
 
 	<layout class="RnGenericRec" type="detail" name="SubRecordSection">
-		<part ref="SubRecordsSection" expansion="expanded" label="Subrecords" menu="mnuDataTree-SubRecords" hotlinks="mnuDataTree-SubRecords-Hotlinks">
+		<part ref="SubRecordsSection" expansion="expanded" label="Subrecords" menu="mnuDataTree_SubRecords" hotlinks="mnuDataTree_SubRecords_Hotlinks">
 			<indent>
 				<part ref="SubRecords"/>
 			</indent>
@@ -427,7 +427,7 @@
 	</layout>
 
 	<layout class="RnGenericRec" type="detail" name="SubRecord">
-		<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="doNotExpand" menu="mnuDataTree-SubRecordSummary" hotlinks="mnuDataTree-Subrecord-Hotlinks">
+		<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="doNotExpand" menu="mnuDataTree_SubRecordSummary" hotlinks="mnuDataTree_Subrecord_Hotlinks">
 			<indent>
 				<sublayout name="Normal" layoutChoiceField="Type"/>
 			</indent>

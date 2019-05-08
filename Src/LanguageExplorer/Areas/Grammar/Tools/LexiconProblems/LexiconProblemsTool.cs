@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -24,6 +26,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	internal sealed class LexiconProblemsTool : ITool
 	{
 		private const string LexProblems = "lexProblems";
+		private ConcordanceToolMenuHelperMenuHelper _toolMenuHelper;
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar on the left has no top PaneBar for information, menus, etc.
@@ -46,6 +49,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+
+			_toolMenuHelper.Dispose();
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -61,12 +67,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexProblems, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			// Do nothing for this tool
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
-
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
+			_toolMenuHelper = new ConcordanceToolMenuHelperMenuHelper(majorFlexComponentParameters, this);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, root.Element("parameters"), null, MachineName, majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
@@ -147,6 +148,64 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
 			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject, "Problems", LangProjectTags.kflidAnnotations), new RecordFilterParameterObject(probAnnFilter));
+		}
+
+		private sealed class ConcordanceToolMenuHelperMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal ConcordanceToolMenuHelperMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				// Tool must be added, even when it adds no tool specific handlers.
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// TODO: Set up factory method for the browse view.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~ConcordanceToolMenuHelperMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

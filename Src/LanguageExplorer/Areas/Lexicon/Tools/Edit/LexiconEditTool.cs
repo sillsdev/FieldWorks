@@ -37,7 +37,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
 		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
@@ -66,13 +65,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
 			_lexiconEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_innerMultiPane = null;
 			_lexiconEditToolMenuHelper = null;
-			_browseViewContextMenuFactory = null;
 			MyDataTree = null;
 			_sharedEventHandlers = null;
 		}
@@ -92,8 +89,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.
@@ -107,11 +102,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(_sharedEventHandlers);
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, showHiddenFieldsPropertyName);
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, showHiddenFieldsPropertyName);
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -226,36 +221,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
-		{
-			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
-			// Start: <menu id="mnuBrowseView" (partial) >
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = AreaServices.mnuBrowseView
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
-
-			// <item command="CmdEntryJumpToConcordance"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
-			menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, recordList.CurrentObject.Guid };
-
-			// <item label="-" translate="do not translate"/>
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), String.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
-			var currentSlice = MyDataTree.CurrentSlice;
-			if (currentSlice == null)
-			{
-				MyDataTree.GotoFirstSlice();
-			}
-			menu.Tag = MyDataTree.CurrentSlice;
-
-			// End: <menu id="mnuBrowseView" (partial) >
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
 		/// <summary>
 		/// This class handles all interaction for the LexiconEditTool for its menus, tool bars, plus all context menus that are used in Slices and PaneBars.
 		/// </summary>
@@ -274,53 +239,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private ToolStripMenuItem _show_DictionaryPubPreviewContextMenu;
 			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
-			private const string mnuReorderVector = "mnuReorderVector";
-			private const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
-			private const string mnuDataTree_VariantSpec = "mnuDataTree-VariantSpec";
-			private const string mnuDataTree_ComplexFormSpec = "mnuDataTree-ComplexFormSpec";
-			private const string mnuDataTree_DeleteAddLexReference = "mnuDataTree-DeleteAddLexReference";
-			private const string mnuDataTree_DeleteReplaceLexReference = "mnuDataTree-DeleteReplaceLexReference";
-			private const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
-			private const string mnuDataTree_ExtendedNote_Hotlinks = "mnuDataTree-ExtendedNote-Hotlinks";
-			private const string mnuDataTree_LexemeFormContext = "mnuDataTree-LexemeFormContext";
-			private const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
-			private const string mnuDataTree_VariantForms_Hotlinks = "mnuDataTree-VariantForms-Hotlinks";
-			private const string mnuDataTree_CitationFormContext = "mnuDataTree-CitationFormContext";
-			private const string mnuDataTree_Sense = "mnuDataTree-Sense";
-			private const string mnuDataTree_Etymology = "mnuDataTree-Etymology";
-			private const string mnuDataTree_AlternateForms = "mnuDataTree-AlternateForms";
-			private const string mnuDataTree_Pronunciation = "mnuDataTree-Pronunciation";
-			private const string mnuDataTree_Environments_Insert = "mnuDataTree-Environments-Insert";
-			private const string mnuDataTree_LexemeForm = "mnuDataTree-LexemeForm";
-			private const string mnuDataTree_VariantForms = "mnuDataTree-VariantForms";
-			private const string mnuDataTree_Allomorph = "mnuDataTree-Allomorph";
-			private const string mnuDataTree_AffixProcess = "mnuDataTree-AffixProcess";
-			private const string mnuDataTree_VariantForm = "mnuDataTree-VariantForm";
-			private const string mnuDataTree_AlternateForm = "mnuDataTree-AlternateForm";
-			private const string mnuDataTree_Example = "mnuDataTree-Example";
-			private const string mnuDataTree_ExtendedNotes = "mnuDataTree-ExtendedNotes";
-			private const string mnuDataTree_ExtendedNote = "mnuDataTree-ExtendedNote";
-			private const string mnuDataTree_ExtendedNote_Examples = "mnuDataTree-ExtendedNote-Examples";
-			private const string mnuDataTree_Picture = "mnuDataTree-Picture";
-			private const string mnuDataTree_Subsenses = "mnuDataTree-Subsenses";
+			private RecordBrowseView _recordBrowseView;
 
 			internal MultiPane InnerMultiPane { get; set; }
 
-			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, string extendedPropertyName)
+			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, string extendedPropertyName)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
-				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				_subscriber = _majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 				_publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
 				_cache = _majorFlexComponentParameters.LcmCache;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				_recordList = recordList;
+				_recordBrowseView = recordBrowseView;
 				_mainWnd = majorFlexComponentParameters.MainWindow;
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
@@ -328,6 +266,45 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+				// <item command="CmdEntryJumpToConcordance"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdEntryJumpToConcordance_Click, AreaResources.Show_Entry_In_Concordance);
+
+				// <item label="-" translate="do not translate"/>
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+				}
+				menu.Tag = _dataTree.CurrentSlice;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+				}
+				currentSlice.HandleDeleteCommand();
 			}
 
 			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
@@ -359,11 +336,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				insertMenuDictionary.Add(Command.CmdInsertSense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sense_Clicked, () => CanCmdInsertSense));
 				// <item command="CmdInsertSubsense" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertSubsense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsense_Clicked, () => CanCmdInsertSubsense));
-				// <item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
+				// <item command="CmdDataTree_Insert_AlternateForm" label="A_llomorph" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_AlternateForm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Allomorph_Clicked, () => CanCmdDataTree_Insert_AlternateForm));
-				// <item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
+				// <item command="CmdDataTree_Insert_Etymology" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Etymology, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Etymology_Clicked, () => CanCmdDataTree_Insert_Etymology));
-				// <item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+				// <item command="CmdDataTree_Insert_Pronunciation" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Pronunciation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Pronunciation_Clicked, () => CanCmdDataTree_Insert_Pronunciation));
 				// <item command="CmdInsertExtNote" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertExtNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ExtendedNote_Clicked, () => CanCmdInsertExtNote));
@@ -746,13 +723,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <part ref="ComplexFormEntries" visibility="always"/>
 				// and
 				// <part ref="ComponentLexemes"/>
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuReorderVector, Create_mnuReorderVector);
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuReorderVector, Create_mnuReorderVector);
 
 				// <part id="LexEntryRef-Detail-VariantEntryTypes" type="Detail">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_VariantSpec, Create_mnuDataTree_VariantSpec);
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantSpec, Create_mnuDataTree_VariantSpec);
 
 				// <part id="LexEntryRef-Detail-ComplexEntryTypes" type="Detail">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_ComplexFormSpec, Create_mnuDataTree_ComplexFormSpec);
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ComplexFormSpec, Create_mnuDataTree_ComplexFormSpec);
 
 				#endregion left edge menus
 
@@ -761,15 +738,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#endregion hotlinks
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuReorderVector, $"Expected argument value of '{mnuReorderVector}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuReorderVector, $"Expected argument value of '{ContextMenuName.mnuReorderVector.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 				// Start: <menu id="mnuReorderVector">
 				// This menu and its commands are shared
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuReorderVector
+					Name = ContextMenuName.mnuReorderVector.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -800,14 +777,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantSpec(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantSpec(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_VariantSpec, $"Expected argument value of '{mnuDataTree_VariantSpec}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantSpec.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-VariantSpec">
+				// Start: <menu id="mnuDataTree_VariantSpec">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_VariantSpec
+					Name = ContextMenuName.mnuDataTree_VariantSpec.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -818,14 +795,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 					if (visible)
 					{
-						// <command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
+						// <command id="CmdDataTree_MoveUp_VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
 						menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 						menu.Enabled = enabled;
 					}
 					enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 					if (visible)
 					{
-						// <command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
+						// <command id="CmdDataTree_MoveDown_VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
 						menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 						menu.Enabled = enabled;
 					}
@@ -833,13 +810,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_VariantSpec_Clicked, LexiconResources.Add_another_Variant_Info_section, LexiconResources.Add_another_Variant_Info_section_Tooltip);
 
-				// <command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
+				// <command id="CmdDataTree_Delete_VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant_Info, Delete_this_Foo_Clicked);
 
-				// End: <menu id="mnuDataTree-VariantSpec">
+				// End: <menu id="mnuDataTree_VariantSpec">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -847,28 +824,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void Insert_VariantSpec_Clicked(object sender, EventArgs e)
 			{
 				/*
-				<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
+				<command id="CmdDataTree_Insert_VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
 					<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
 				</command>
 				*/
 				_dataTree.CurrentSlice.HandleInsertCommand("EntryRefs", LexEntryRefTags.kClassName, LexEntryTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ComplexFormSpec(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ComplexFormSpec(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_ComplexFormSpec, $"Expected argument value of '{mnuDataTree_ComplexFormSpec}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ComplexFormSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_ComplexFormSpec.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-ComplexFormSpec">
+				// Start: <menu id="mnuDataTree_ComplexFormSpec">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_ComplexFormSpec
+					Name = ContextMenuName.mnuDataTree_ComplexFormSpec.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
+				// <command id="CmdDataTree_Delete_ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Complex_Form_Info, Delete_this_Foo_Clicked);
 
-				// End: <menu id="mnuDataTree-ComplexFormSpec">
+				// End: <menu id="mnuDataTree_ComplexFormSpec">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -886,20 +863,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				// Only one slice has menus, but several have chooser dlgs.
 				// <part ref="Pronunciations" param="Normal" visibility="ifdata"/>
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_AlternateForms, $"Expected argument value of '{mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Pronunciation">
+				// Start: <menu id="mnuDataTree_Pronunciation">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_AlternateForms
+					Name = ContextMenuName.mnuDataTree_AlternateForms.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
-				// <item command="CmdDataTree-Insert-Pronunciation"/>
+				// <item command="CmdDataTree_Insert_Pronunciation"/>
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Pronunciation_Clicked, LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 				// <item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sound_Or_Movie_File_Clicked, LexiconResources.Insert_Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
@@ -911,14 +888,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 					if (visible)
 					{
-						// <command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+						// <command id="CmdDataTree_MoveUp_Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 						menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 						menu.Enabled = enabled;
 					}
 					enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 					if (visible)
 					{
-						// <command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+						// <command id="CmdDataTree_MoveDown_Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 						menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 						menu.Enabled = enabled;
 					}
@@ -927,13 +904,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_this_Pronunciation, Delete_this_Foo_Clicked);
 
 				// Not added here. It is added by the slice, along with the generic slice menus.
 				// <item label="-" translate="do not translate"/>
 
-				// End: <menu id="mnuDataTree-Pronunciation>
+				// End: <menu id="mnuDataTree_Pronunciation>
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -945,35 +922,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void Register_Etymologies_Bundle()
 			{
 				// Register the etymology hotlinks.
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
+				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
 
 				// <part ref="Etymologies" param="Normal" visibility="ifdata" />
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_Etymology_Hotlinks, $"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Etymology_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-				// <item command="CmdDataTree-Insert-Etymology"/>
+				// <item command="CmdDataTree_Insert_Etymology"/>
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 				return hotlinksMenuItemList;
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Etymology, $"Expected argument value of '{mnuDataTree_Etymology}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Etymology, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Etymology">
+				// Start: <menu id="mnuDataTree_Etymology">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Etymology
+					Name = ContextMenuName.mnuDataTree_Etymology.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
-				// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+				// <item command="CmdDataTree_Insert_Etymology" label="Insert _Etymology"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 				// <item label="-" translate="do not translate"/>
@@ -981,13 +958,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					//	<parameters field="Etymology" className="LexEtymology"/>
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					//	<parameters field="Etymology" className="LexEtymology"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
@@ -996,10 +973,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_this_Etymology, Delete_this_Foo_Clicked);
 
-				// End: <menu id="mnuDataTree-Etymology">
+				// End: <menu id="mnuDataTree_Etymology">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1013,61 +990,61 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// The LexReferenceMultiSlice class potentially generates new slice xml information, including a couple left-edge menus.
 				// Those two menu factory methods are registered here.
 
-				// "mnuDataTree-DeleteAddLexReference"
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_DeleteAddLexReference, Create_mnuDataTree_DeleteAddLexReference);
+				// "mnuDataTree_DeleteAddLexReference"
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteAddLexReference, Create_mnuDataTree_DeleteAddLexReference);
 
-				// "mnuDataTree-DeleteReplaceLexReference"
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_DeleteReplaceLexReference, Create_mnuDataTree_DeleteReplaceLexReference);
+				// "mnuDataTree_DeleteReplaceLexReference"
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteReplaceLexReference, Create_mnuDataTree_DeleteReplaceLexReference);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_DeleteAddLexReference, $"Expected argument value of '{mnuDataTree_DeleteAddLexReference}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteAddLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteAddLexReference.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-DeleteAddLexReference">
+				// Start: <menu id="mnuDataTree_DeleteAddLexReference">
 				// This menu and its commands are shared
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_DeleteAddLexReference
+					Name = ContextMenuName.mnuDataTree_DeleteAddLexReference.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
-				// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
+				// <command id="CmdDataTree_Delete_LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Relation, DataTreeDelete_LexReference_Clicked);
 
-				// <command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference" />
+				// <command id="CmdDataTree_Add_ToLexReference" label="Add Reference" message="DataTreeAddReference" />
 				CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LanguageExplorerResources.ksIdentifyRecord);
 
-				// <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
+				// <command id="CmdDataTree_EditDetails_LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
 				Create_Edit_LexReferenceMenu(menuItems, contextMenuStrip, slice);
 
-				// End: <menu id="mnuDataTree-DeleteAddLexReference">
+				// End: <menu id="mnuDataTree_DeleteAddLexReference">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteReplaceLexReference(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteReplaceLexReference(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_DeleteReplaceLexReference, $"Expected argument value of '{mnuDataTree_DeleteReplaceLexReference}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteReplaceLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteReplaceLexReference.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-DeleteReplaceLexReference">
+				// Start: <menu id="mnuDataTree_DeleteReplaceLexReference">
 				// This menu and its commands are shared
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_DeleteReplaceLexReference
+					Name = ContextMenuName.mnuDataTree_DeleteReplaceLexReference.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
-				// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
+				// <command id="CmdDataTree_Delete_LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Relation, DataTreeDelete_LexReference_Clicked);
 
-				// <command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference" />
+				// <command id="CmdDataTree_Replace_LexReference" label="Replace Reference" message="DataTreeAddReference" />
 				CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LexiconResources.ksReplaceXEntry);
 
-				// <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
+				// <command id="CmdDataTree_EditDetails_LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
 				Create_Edit_LexReferenceMenu(menuItems, contextMenuStrip, slice);
 
-				// End: <menu id="mnuDataTree-DeleteReplaceLexReference">
+				// End: <menu id="mnuDataTree_DeleteReplaceLexReference">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1112,9 +1089,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 			{
-				// <menu id="PaneBar-LexicalDetail" label="">
+				// <menu id="PaneBar_LexicalDetail" label="">
 				// <menu id="LexEntryPaneMenu" icon="MenuWidget">
-				// Handled elsewhere: <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
+				// Handled elsewhere: <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_lexiconEdit" defaultVisible="true" settingsGroup="local"/>
 				var contextMenuStrip = new ContextMenuStrip();
 
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
@@ -1136,16 +1113,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// Insert _Variant menu item. (CmdInsertVariant->msg: InsertItemViaBackrefVector, also on Insert menu)
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Variant_Clicked, LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip);
 
-				// Insert A_llomorph menu item. (CmdDataTree-Insert-AlternateForm->msg: DataTreeInsert, also on Insert menu)
+				// Insert A_llomorph menu item. (CmdDataTree_Insert_AlternateForm->msg: DataTreeInsert, also on Insert menu)
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip);
 
-				// Insert _Pronunciation menu item. (CmdDataTree-Insert-Pronunciation->msg: DataTreeInsert, also on Insert menu)
+				// Insert _Pronunciation menu item. (CmdDataTree_Insert_Pronunciation->msg: DataTreeInsert, also on Insert menu)
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Pronunciation_Clicked, LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 
 				// Insert Sound or Movie _File menu item. (CmdInsertMediaFile->msg: InsertMediaFile, also on Insert menu)
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sound_Or_Movie_File_Clicked, LexiconResources.Insert_Sound_Or_Movie_File, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
 
-				// Insert _Etymology menu item. (CmdDataTree-Insert-Etymology->msg: DataTreeInsert, also on Insert menu and a hotlionks and another context menu.)
+				// Insert _Etymology menu item. (CmdDataTree_Insert_Etymology->msg: DataTreeInsert, also on Insert menu and a hotlionks and another context menu.)
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 				// Separator
@@ -1269,35 +1246,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void RegisterHotLinkMenus()
 			{
-				// mnuDataTree-ExtendedNote-Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_ExtendedNote_Hotlinks, Create_mnuDataTree_ExtendedNote_Hotlinks);
+				// mnuDataTree_ExtendedNote_Hotlinks
+				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, Create_mnuDataTree_ExtendedNote_Hotlinks);
 
-				// mnuDataTree-Sense-Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
+				// mnuDataTree_Sense_Hotlinks
+				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_ExtendedNote_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_ExtendedNote_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_ExtendedNote_Hotlinks, $"Expected argument value of '{mnuDataTree_ExtendedNote_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_ExtNote" label="Insert Extended Note" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_ExtendedNote_Clicked, LexiconResources.Insert_Extended_Note);
 
 				return hotlinksMenuItemList;
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Sense_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Sense_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_Sense_Hotlinks, $"Expected argument value of '{mnuDataTree_Sense_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Sense_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
-				//<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
+				//<command id="CmdDataTree_Insert_Example" label="Insert _Example" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Example_Clicked, LexiconResources.Insert_Example);
 
-				// <item command="CmdDataTree-Insert-SenseBelow"/>
+				// <item command="CmdDataTree_Insert_SenseBelow"/>
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_SenseBelow_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
 
 				return hotlinksMenuItemList;
@@ -1350,45 +1327,45 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void RegisterSliceLeftEdgeMenus()
 			{
-				// mnuDataTree-Sense
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Sense, Create_mnuDataTree_Sense);
+				// mnuDataTree_Sense
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense, Create_mnuDataTree_Sense);
 
-				// mnuDataTree-Example
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Example, Create_mnuDataTree_Example);
+				// mnuDataTree_Example
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Example, Create_mnuDataTree_Example);
 
-				// <menu id="mnuDataTree-ExtendedNotes">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_ExtendedNotes, Create_mnuDataTree_ExtendedNotes);
+				// <menu id="mnuDataTree_ExtendedNotes">
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNotes, Create_mnuDataTree_ExtendedNotes);
 
-				// <menu id="mnuDataTree-ExtendedNote">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_ExtendedNote, Create_mnuDataTree_ExtendedNote);
+				// <menu id="mnuDataTree_ExtendedNote">
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote, Create_mnuDataTree_ExtendedNote);
 
-				// <menu id="mnuDataTree-ExtendedNote-Examples">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_ExtendedNote_Examples, Create_mnuDataTree_ExtendedNote_Examples);
+				// <menu id="mnuDataTree_ExtendedNote_Examples">
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Examples, Create_mnuDataTree_ExtendedNote_Examples);
 
-				// <menu id="mnuDataTree-Picture">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Picture, Create_mnuDataTree_Picture);
+				// <menu id="mnuDataTree_Picture">
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Picture, Create_mnuDataTree_Picture);
 
 				// NB: I don't see "SubSenses" in shipping code.
-				// <menu id="mnuDataTree-Subsenses">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Subsenses, Create_mnuDataTree_Subsenses);
+				// <menu id="mnuDataTree_Subsenses">
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Subsenses, Create_mnuDataTree_Subsenses);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_ExtendedNotes, $"Expected argument value of '{mnuDataTree_ExtendedNotes}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNotes, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNotes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-ExtendedNotes">
+				// Start: <menu id="mnuDataTree_ExtendedNotes">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_ExtendedNotes
+					Name = ContextMenuName.mnuDataTree_ExtendedNotes.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_ExtNote" label="Insert Extended Note" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExtNote_Clicked, LexiconResources.Insert_Extended_Note);
 
-				// End: <menu id="mnuDataTree-ExtendedNotes">
+				// End: <menu id="mnuDataTree_ExtendedNotes">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1398,19 +1375,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_dataTree.CurrentSlice.HandleInsertCommand("ExtendedNote", LexExtendedNoteTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_ExtendedNote, $"Expected argument value of '{mnuDataTree_ExtendedNote}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-ExtendedNote">
+				// Start: <menu id="mnuDataTree_ExtendedNote">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_ExtendedNote
+					Name = ContextMenuName.mnuDataTree_ExtendedNote.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
-				// <command id="CmdDataTree-Delete-ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Extended_Note, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
@@ -1418,12 +1395,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Extended_Note_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Extended_Note_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -1431,10 +1408,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Insert-ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExampleInNote_Clicked, LexiconResources.Insert_Example_in_Note);
 
-				// End: <menu id="mnuDataTree-ExtendedNote">
+				// End: <menu id="mnuDataTree_ExtendedNote">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1444,22 +1421,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_dataTree.CurrentSlice.HandleInsertCommand("Examples", LexExampleSentenceTags.kClassName, LexExtendedNoteTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote_Examples(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote_Examples(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_ExtendedNote_Examples, $"Expected argument value of '{mnuDataTree_ExtendedNote_Examples}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Examples.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-ExtendedNote-Examples">
+				// Start: <menu id="mnuDataTree_ExtendedNote_Examples">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_ExtendedNote_Examples
+					Name = ContextMenuName.mnuDataTree_ExtendedNote_Examples.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
-				// <command id="CmdDataTree-Insert-ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExampleInNote_Clicked, LexiconResources.Insert_Example_in_Note);
 
-				// <command id="CmdDataTree-Delete-ExampleInNote" label="Delete Example from Note" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_ExampleInNote" label="Delete Example from Note" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example_from_Note, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
@@ -1467,34 +1444,34 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-ExampleInNote" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_ExampleInNote" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-ExampleInNote" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_ExampleInNote" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
 
-				// End: <menu id="mnuDataTree-ExtendedNote-Examples">
+				// End: <menu id="mnuDataTree_ExtendedNote_Examples">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Picture(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Picture(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Picture, $"Expected argument value of '{mnuDataTree_Picture}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Picture, $"Expected argument value of '{ContextMenuName.mnuDataTree_Picture.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Picture">
+				// Start: <menu id="mnuDataTree_Picture">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Picture
+					Name = ContextMenuName.mnuDataTree_Picture.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
-				// <command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
+				// <command id="CmdDataTree_Properties_Picture" label="Picture Properties" message="PictureProperties">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Properties_Picture_Clicked, LexiconResources.Picture_Properties);
 
 				// <item label="-" translate="do not translate"/>
@@ -1502,12 +1479,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Picture_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Picture_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -1515,10 +1492,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Delete-Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Picture, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-Picture">
+				// End: <menu id="mnuDataTree_Picture">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1556,42 +1533,42 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Subsenses(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Subsenses(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Subsenses, $"Expected argument value of '{mnuDataTree_Subsenses}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Subsenses, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subsenses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Subsenses">
+				// Start: <menu id="mnuDataTree_Subsenses">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Subsenses
+					Name = ContextMenuName.mnuDataTree_Subsenses.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree-Insert-SubSense"/>
+				// <item command="CmdDataTree_Insert_SubSense"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsense_Clicked, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
 
-				// End: <menu id="mnuDataTree-Subsenses">
+				// End: <menu id="mnuDataTree_Subsenses">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Example(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Example(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Example, $"Expected argument value of '{mnuDataTree_Example}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Example, $"Expected argument value of '{ContextMenuName.mnuDataTree_Example.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Example">
+				// Start: <menu id="mnuDataTree_Example">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Example
+					Name = ContextMenuName.mnuDataTree_Example.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 
-				// <command id="CmdDataTree-Insert-Translation" label="Insert Translation" message="DataTreeInsert">
+				// <command id="CmdDataTree_Insert_Translation" label="Insert Translation" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Translation_Clicked, LexiconResources.Insert_Translation);
 
-				// <command id="CmdDataTree-Delete-Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
@@ -1599,12 +1576,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -1615,35 +1592,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, FindExampleSentence_Clicked, LexiconResources.Find_example_sentence);
 
-				// End: <menu id="mnuDataTree-Example">
+				// End: <menu id="mnuDataTree_Example">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Sense, $"Expected argument value of '{mnuDataTree_Sense}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Sense, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Sense">
+				// Start: <menu id="mnuDataTree_Sense">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Sense
+					Name = ContextMenuName.mnuDataTree_Sense.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(21);
 
-				//<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
+				//<command id="CmdDataTree_Insert_Example" label="Insert _Example" message="DataTreeInsert">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Example_Clicked, LexiconResources.Insert_Example);
 
 				// <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, FindExampleSentence_Clicked, LexiconResources.Find_example_sentence);
 
-				// <item command="CmdDataTree-Insert-ExtNote"/>
+				// <item command="CmdDataTree_Insert_ExtNote"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExtendedNote_Clicked, LexiconResources.Insert_Extended_Note);
 
-				// <item command="CmdDataTree-Insert-SenseBelow"/>
+				// <item command="CmdDataTree_Insert_SenseBelow"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sense_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
 
-				// <item command="CmdDataTree-Insert-SubSense"/>
+				// <item command="CmdDataTree_Insert_SubSense"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsense_Clicked, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
 
 				// <item command="CmdInsertPicture" label="Insert _Picture" defaultVisible="false"/>
@@ -1661,20 +1638,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-Sense" label="Move Sense Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_Sense" label="Move Sense Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Sense_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Sense_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <command id="CmdDataTree-MakeSub-Sense" label="Demote" message="DemoteSense" icon="MoveRight">
+					// <command id="CmdDataTree_MakeSub_Sense" label="Demote" message="DemoteSense" icon="MoveRight">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Demote_Sense_Clicked, AreaResources.Demote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveRight]);
 					menu.Enabled = CanDemoteSense(slice);
 
-					// <command id="CmdDataTree-Promote-Sense" label="Promote" message="PromoteSense" icon="MoveLeft">
+					// <command id="CmdDataTree_Promote_Sense" label="Promote" message="PromoteSense" icon="MoveLeft">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_Sense_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeft]);
 					menu.Enabled = CanPromoteSense(slice);
 				}
@@ -1682,18 +1659,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Merge-Sense" label="Merge Sense into..." message="DataTreeMerge">
+				// <command id="CmdDataTree_Merge_Sense" label="Merge Sense into..." message="DataTreeMerge">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Sense_into);
 				menu.Enabled = slice.CanMergeNow;
 
-				// <command id="CmdDataTree-Split-Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
+				// <command id="CmdDataTree_Split_Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeSplit_Clicked, LexiconResources.Move_Sense_to_a_New_Entry);
 				menu.Enabled = slice.CanSplitNow;
 
-				// <command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
+				// <command id="CmdDataTree_Delete_Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.DeleteSenseAndSubsenses, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-Sense">
+				// End: <menu id="mnuDataTree_Sense">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1769,11 +1746,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#region left edge menus
 
 				// 1. <part id="MoForm-Detail-AsLexemeForm" type="Detail">
-				//		Needs: menu="mnuDataTree-LexemeForm".
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
+				//		Needs: menu="mnuDataTree_LexemeForm".
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
 				// 2. <part ref="PhoneEnvBasic" visibility="ifdata"/>
-				//		Needs: menu="mnuDataTree-Environments-Insert".
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Environments_Insert, Create_mnuDataTree_Environments_Insert);
+				//		Needs: menu="mnuDataTree_Environments_Insert".
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Environments_Insert, Create_mnuDataTree_Environments_Insert);
 
 				#endregion left edge menus
 
@@ -1783,20 +1760,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				#region right click popups
 
-				// "mnuDataTree-LexemeFormContext" (right click menu)
-				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuDataTree_LexemeFormContext, Create_mnuDataTree_LexemeFormContext_RightClick);
+				// "mnuDataTree_LexemeFormContext" (right click menu)
+				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_LexemeFormContext, Create_mnuDataTree_LexemeFormContext_RightClick);
 
 				#endregion right click popups
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeForm(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeForm(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_LexemeForm, $"Expected argument value of '{mnuDataTree_LexemeForm}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-LexemeForm">
+				// Start: <menu id="mnuDataTree_LexemeForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_LexemeForm
+					Name = ContextMenuName.mnuDataTree_LexemeForm.ToString()
 				};
 				var entry = (ILexEntry)_recordList.CurrentObject;
 				var hasAllomorphs = entry.AlternateFormsOS.Any();
@@ -1808,24 +1785,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (hasAllomorphs)
 				{
-					// <command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
+					// <command id="CmdDataTree_Swap_LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
 				}
 
 				var mmt = entry.PrimaryMorphType;
 				if (hasAllomorphs && mmt != null && mmt.IsAffixType)
 				{
-					// <command id="CmdDataTree-Convert-LexemeForm-AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm"><parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
+					// <command id="CmdDataTree_Convert_LexemeForm_AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm"><parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Convert_LexemeForm_AffixProcess_Clicked, LexiconResources.Convert_to_Affix_Process);
 				}
 
 				if (hasAllomorphs && entry.AlternateFormsOS[0] is IMoAffixAllomorph)
 				{
-					// <command id="CmdDataTree-Convert-LexemeForm-AffixAllomorph" label="Convert to Affix Form" message="ConvertLexemeForm"><parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
+					// <command id="CmdDataTree_Convert_LexemeForm_AffixAllomorph" label="Convert to Affix Form" message="ConvertLexemeForm"><parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Convert_LexemeForm_AffixAllomorph_Clicked, LexiconResources.Convert_to_Affix_Form);
 				}
 
-				// End: <menu id="mnuDataTree-LexemeForm">
+				// End: <menu id="mnuDataTree_LexemeForm">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -1937,33 +1914,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 
-			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Environments_Insert(Slice slice, string contextMenuId)
+			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Environments_Insert(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Environments_Insert, $"Expected argument value of '{mnuDataTree_Environments_Insert}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Environments_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_Environments_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Environments-Insert">
-				// This "mnuDataTree-Environments-Insert" menu is used in four places.
+				// Start: <menu id="mnuDataTree_Environments_Insert">
+				// This "mnuDataTree_Environments_Insert" menu is used in four places.
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_Environments_Insert
+					Name = ContextMenuName.mnuDataTree_Environments_Insert.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
 				PartiallySharedForToolsWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(slice, menuItems, contextMenuStrip);
 
-				// End: <menu id="mnuDataTree-Environments-Insert">
+				// End: <menu id="mnuDataTree_Environments_Insert">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_LexemeFormContext, $"Expected argument value of '{mnuDataTree_LexemeFormContext}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeFormContext}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-LexemeFormContext">
+				// Start: <menu id="mnuDataTree_LexemeFormContext">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_LexemeFormContext
+					Name = ContextMenuName.mnuDataTree_LexemeFormContext.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -1973,10 +1950,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item command="CmdLexemeFormJumpToConcordance"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
-				// <item command="CmdDataTree-Swap-LexemeForm"/>
+				// <item command="CmdDataTree_Swap_LexemeForm"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
 
-				// End: <menu id="mnuDataTree-LexemeFormContext">
+				// End: <menu id="mnuDataTree_LexemeFormContext">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -2014,68 +1991,71 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#region right click popups
 
 				// <part label="Citation Form" ref="CitationFormAllV"/>
-				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuDataTree_CitationFormContext, Create_mnuDataTree_CitationFormContext);
+				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_CitationFormContext, Create_mnuDataTree_CitationFormContext);
 
 				#endregion right click popups
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CitationFormContext(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CitationFormContext(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_CitationFormContext, $"Expected argument value of '{mnuDataTree_CitationFormContext}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CitationFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_CitationFormContext.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-CitationFormContext">
+				// Start: <menu id="mnuDataTree_CitationFormContext">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_CitationFormContext
+					Name = ContextMenuName.mnuDataTree_CitationFormContext.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdEntryJumpToConcordance"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid };
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdEntryJumpToConcordance_Click, AreaResources.Show_Entry_In_Concordance);
 
-				// End: <menu id="mnuDataTree-CitationFormContext">
+				// End: <menu id="mnuDataTree_CitationFormContext">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
+			private void CmdEntryJumpToConcordance_Click(object sender, EventArgs e)
+			{
+				LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid));
+			}
 			#endregion CitationForm
 
 			#region Forms_Sections_Bundle
 
 			private void Register_Forms_Sections_Bundle()
 			{
-				// mnuDataTree-Allomorph (shared: MoStemAllomorph & MoAffixAllomorph)
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_Allomorph, Create_mnuDataTree_Allomorph);
+				// mnuDataTree_Allomorph (shared: MoStemAllomorph & MoAffixAllomorph)
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Allomorph, Create_mnuDataTree_Allomorph);
 
-				// mnuDataTree-AffixProcess
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_AffixProcess, Create_mnuDataTree_AffixProcess);
+				// mnuDataTree_AffixProcess
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AffixProcess, Create_mnuDataTree_AffixProcess);
 
-				// mnuDataTree-VariantForm
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_VariantForm, Create_mnuDataTree_VariantForm);
+				// mnuDataTree_VariantForm
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForm, Create_mnuDataTree_VariantForm);
 
-				// mnuDataTree-AlternateForm
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_AlternateForm, Create_mnuDataTree_AlternateForm);
+				// mnuDataTree_AlternateForm
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForm, Create_mnuDataTree_AlternateForm);
 
-				// mnuDataTree-VariantForms
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_VariantForms, Create_mnuDataTree_VariantForms);
-				// mnuDataTree-VariantForms-Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
+				// mnuDataTree_VariantForms
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms, Create_mnuDataTree_VariantForms);
+				// mnuDataTree_VariantForms_Hotlinks
+				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
 
-				// mnuDataTree-AlternateForms
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
-				// mnuDataTree-AlternateForms-Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
+				// mnuDataTree_AlternateForms
+				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
+				// mnuDataTree_AlternateForms_Hotlinks
+				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AffixProcess(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AffixProcess(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_AffixProcess, $"Expected argument value of '{mnuDataTree_AffixProcess}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AffixProcess, $"Expected argument value of '{ContextMenuName.mnuDataTree_AffixProcess.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-AffixProcess">
+				// Start: <menu id="mnuDataTree_AffixProcess">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_AffixProcess
+					Name = ContextMenuName.mnuDataTree_AffixProcess.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 
@@ -2083,11 +2063,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				bool visible;
 				using (var imageHolder = new ImageHolder())
 				{
-					// <item command="CmdDataTree-MoveUp-Allomorph"/>
+					// <item command="CmdDataTree_MoveUp_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <item command="CmdDataTree-MoveDown-Allomorph"/>
+					// <item command="CmdDataTree_MoveDown_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -2095,16 +2075,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
+				// <command id="CmdDataTree_Swap_Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
 
 				visible = slice.MyCmObject.ClassID == MoAffixProcessTags.kClassId;
 				if (visible)
 				{
-					// <command id="CmdDataTree-Convert-Allomorph-AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
+					// <command id="CmdDataTree_Convert_Allomorph_AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, AffixAllomorph_Clicked, LexiconResources.Convert_to_Affix_Allomorph);
 				}
 
@@ -2115,14 +2095,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
 
-				// End: <menu id="mnuDataTree-AffixProcess">
+				// End: <menu id="mnuDataTree_AffixProcess">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private void AffixAllomorph_Clicked(object sender, EventArgs e)
 			{
-				// <command id="CmdDataTree-Convert-Allomorph-AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
+				// <command id="CmdDataTree_Convert_Allomorph_AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
 				// <parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
 				var entry = (ILexEntry)_dataTree.Root;
 				var slice = _dataTree.CurrentSlice;
@@ -2144,14 +2124,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForm(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForm(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_VariantForm, $"Expected argument value of '{mnuDataTree_VariantForm}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-VariantForm">
+				// Start: <menu id="mnuDataTree_VariantForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_VariantForm
+					Name = ContextMenuName.mnuDataTree_VariantForm.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
@@ -2165,16 +2145,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (!slice.IsGhostSlice)
 				{
-					// <command id="CmdDataTree-Delete-VariantReference" label="Delete Reference" message="DataTreeDeleteReference" icon="Delete">
+					// <command id="CmdDataTree_Delete_VariantReference" label="Delete Reference" message="DataTreeDeleteReference" icon="Delete">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Delete_VariantReference_Clicked, LexiconResources.Delete_Reference, image: LanguageExplorerResources.Delete);
 					menu.Enabled = slice.NextSlice.MyCmObject is ILexEntryRef && (slice.MyCmObject.ClassID == LexEntryTags.kClassId || slice.MyCmObject.Owner.ClassID == LexEntryTags.kClassId);
 					menu.ImageTransparentColor = Color.Magenta;
 				}
 
-				// <command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-VariantForm">
+				// End: <menu id="mnuDataTree_VariantForm">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -2199,25 +2179,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				});
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_AlternateForm, $"Expected argument value of '{mnuDataTree_AlternateForm}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-AlternateForm">
+				// Start: <menu id="mnuDataTree_AlternateForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_AlternateForm
+					Name = ContextMenuName.mnuDataTree_AlternateForm.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
 				ToolStripMenuItem menu;
 				using (var imageHolder = new ImageHolder())
 				{
-					// <command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					// <command id="CmdDataTree_MoveUp_AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
-					// <command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					// <command id="CmdDataTree_MoveDown_AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -2225,38 +2205,38 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
+				// <command id="CmdDataTree_Merge_AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_AlternateForm_into);
 				menu.Enabled = slice.CanMergeNow;
 
-				// <command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
+				// <command id="CmdDataTree_Delete_AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-AlternateForm">
+				// End: <menu id="mnuDataTree_AlternateForm">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Allomorph(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Allomorph(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_Allomorph, $"Expected argument value of '{mnuDataTree_Allomorph}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Allomorph.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-Allomorph">
+				// Start: <menu id="mnuDataTree_Allomorph">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_VariantForms
+					Name = ContextMenuName.mnuDataTree_VariantForms.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(10);
 
 				ToolStripMenuItem menu;
 				using (var imageHolder = new ImageHolder())
 				{
-					// <item command="CmdDataTree-MoveUp-Allomorph"/>
+					// <item command="CmdDataTree_MoveUp_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					bool visible;
 					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
 
-					// <item command="CmdDataTree-MoveDown-Allomorph"/>
+					// <item command="CmdDataTree_MoveDown_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDown]);
 					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
 				}
@@ -2264,19 +2244,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
+				// <command id="CmdDataTree_Merge_Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Allomorph_into);
 				menu.Enabled = slice.CanMergeNow;
 
-				// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
+				// <command id="CmdDataTree_Delete_Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
+				// <command id="CmdDataTree_Swap_Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
 
 				if (slice.MyCmObject.ClassID == MoAffixAllomorphTags.kClassId)
 				{
-					// <command id="CmdDataTree-Convert-Allomorph-AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
+					// <command id="CmdDataTree_Convert_Allomorph_AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
 					// <parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Convert_MoAffixAllomorph_To_MoAffixProcess_Clicked, LexiconResources.Convert_to_Affix_Process);
 				}
@@ -2288,7 +2268,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
 
-				// End: <menu id="mnuDataTree-Allomorph">
+				// End: <menu id="mnuDataTree_Allomorph">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -2325,60 +2305,60 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				});
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_VariantForms, $"Expected argument value of '{mnuDataTree_VariantForms}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-VariantForms">
+				// Start: <menu id="mnuDataTree_VariantForms">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_VariantForms
+					Name = ContextMenuName.mnuDataTree_VariantForms.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree-Insert-VariantForm"/>
+				// <item command="CmdDataTree_Insert_VariantForm"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Variant_Clicked, LexiconResources.Insert_Variant);
 
-				// End: <menu id="mnuDataTree-VariantForms">
+				// End: <menu id="mnuDataTree_VariantForms">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_VariantForms_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_VariantForms_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_VariantForms_Hotlinks, $"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_VariantForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-				// NB: "CmdDataTree-Insert-VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
+				// NB: "CmdDataTree_Insert_VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
 				// Real work is the same as the Insert Variant Insert menu item.
-				// <item command="CmdDataTree-Insert-VariantForm"/>
+				// <item command="CmdDataTree_Insert_VariantForm"/>
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Variant_Clicked, LexiconResources.Insert_Variant);
 
 				return hotlinksMenuItemList;
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == mnuDataTree_AlternateForms, $"Expected argument value of '{mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-AlternateForms">
+				// Start: <menu id="mnuDataTree_AlternateForms">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = mnuDataTree_AlternateForms
+					Name = ContextMenuName.mnuDataTree_AlternateForms.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
-				// <item command="CmdDataTree-Insert-AlternateForm"/>
+				// <item command="CmdDataTree_Insert_AlternateForm"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph);
 
 				if (((ILexEntry)_recordList.CurrentObject).MorphTypes.FirstOrDefault(mt => mt.IsAffixType) != null)
 				{
 					// It is only visible/enabled for affixes.
-					// <item command="CmdDataTree-Insert-AffixProcess"/>
+					// <item command="CmdDataTree_Insert_AffixProcess"/>
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Affix_Process_Clicked, LexiconResources.Insert_Affix_Process);
 				}
 
-				// End: <menu id="mnuDataTree-AlternateForms">
+				// End: <menu id="mnuDataTree_AlternateForms">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -2388,13 +2368,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_dataTree.CurrentSlice.HandleInsertCommand("AlternateForms", MoAffixProcessTags.kClassName, LexEntryTags.kClassName);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(Slice slice, string hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == mnuDataTree_AlternateForms_Hotlinks, $"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree-Insert-AlternateForm"/>
+				// <item command="CmdDataTree_Insert_AlternateForm"/>
 				ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph);
 
 				return hotlinksMenuItemList;
@@ -2434,11 +2414,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (disposing)
 				{
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 					_rightClickContextMenuManager.Dispose();
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToPreviousInSequence);
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToNextInSequence);
 					_show_DictionaryPubPreviewContextMenu?.Dispose();
+					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_extendedPropertyName = null;
 				_majorFlexComponentParameters = null;
@@ -2446,6 +2429,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_subscriber = null;
 				_publisher = null;
 				_rightClickContextMenuManager = null;
+				_partiallySharedForToolsWideMenuHelper = null;
 				_sharedEventHandlers = null;
 				_dataTree = null;
 				_recordList = null;
@@ -2453,6 +2437,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				InnerMultiPane = null;
 				_mainWnd = null;
 				_show_DictionaryPubPreviewContextMenu = null;
+				_recordBrowseView = null;
 
 				_isDisposed = true;
 			}

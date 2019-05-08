@@ -30,21 +30,22 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Overrides of Slice
 		/// <inheritdoc />
-		internal override string HotlinksMenuId
+		internal override ContextMenuName HotlinksMenuId
 		{
 			get
 			{
 				// Try the normal hotlinks attribute value.
 				var hotlinksMenuId = base.HotlinksMenuId;
-				if (string.IsNullOrEmpty(hotlinksMenuId))
+				if (hotlinksMenuId == ContextMenuName.nullValue)
 				{
 					// Try the ordinary context menu for the CallerNode.
-					hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu");
-					if (string.IsNullOrEmpty(hotlinksMenuId))
+					 var ordinaryMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu");
+					if (string.IsNullOrEmpty(ordinaryMenuId))
 					{
 						// Try the ordinary context menu for the configuation node.
-						hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu");
+						ordinaryMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu");
 					}
+					hotlinksMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), ordinaryMenuId);
 				}
 				return hotlinksMenuId;
 			}

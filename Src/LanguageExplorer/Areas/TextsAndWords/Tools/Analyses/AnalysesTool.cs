@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
@@ -24,9 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
-		private FileExportMenuHelper _fileExportMenuHelper;
-		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private AnalysesToolMenuHelper _toolMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -48,13 +48,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_fileExportMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_fileExportMenuHelper = null;
-			_partiallySharedTextsAndWordsToolsMenuHelper = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -69,17 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
-			_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
-			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
-			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
 			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
 			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);
 			var overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Form");
@@ -91,10 +77,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -171,5 +154,70 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private sealed class AnalysesToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private FileExportMenuHelper _fileExportMenuHelper;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
+
+			internal AnalysesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
+				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+			// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~AnalysesToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

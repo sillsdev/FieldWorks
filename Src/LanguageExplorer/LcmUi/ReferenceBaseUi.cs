@@ -62,7 +62,7 @@ namespace LanguageExplorer.LcmUi
 			m_targetUi.InitializeFlexComponent(flexComponentParameters);
 		}
 
-		protected override string ContextMenuId => AreaServices.mnuReferenceChoices;
+		protected override ContextMenuName ContextMenuId => ContextMenuName.mnuReferenceChoices;
 
 		#endregion
 

@@ -16,11 +16,11 @@ namespace LanguageExplorer.Controls.PaneBar
 	/// </summary>
 	internal class PanelMenu : PanelExtension
 	{
-		private PanelMenuContextMenuFactory _dataTreeMainPanelContextMenuFactory;
+		internal PanelMenuContextMenuFactory DataTreeMainPanelContextMenuFactory { private get; set; }
 		private string _panelMenuId;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _panelMenuContextMenuAndItems;
 
-		public PanelMenu(PanelMenuContextMenuFactory dataTreeMainPanelContextMenuFactory, string panelMenuId)
+		public PanelMenu(string panelMenuId)
 		{
 			Dock = DockStyle.Right;
 			Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -30,8 +30,13 @@ namespace LanguageExplorer.Controls.PaneBar
 			Size = new Size(16, 16);
 			Click += PanelMenu_Click;
 			TabIndex = 0;
-			_dataTreeMainPanelContextMenuFactory = dataTreeMainPanelContextMenuFactory;
 			_panelMenuId = panelMenuId;
+		}
+
+		public PanelMenu(PanelMenuContextMenuFactory dataTreeMainPanelContextMenuFactory, string panelMenuId)
+			: this(panelMenuId)
+		{
+			DataTreeMainPanelContextMenuFactory = dataTreeMainPanelContextMenuFactory;
 		}
 
 		private void PanelMenu_Click(object sender, EventArgs e)
@@ -39,11 +44,12 @@ namespace LanguageExplorer.Controls.PaneBar
 			if (_panelMenuContextMenuAndItems != null)
 			{
 				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
-				_dataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
+				DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 				_panelMenuContextMenuAndItems = null;
+				ContextMenuStrip?.Dispose();
 				ContextMenuStrip = null;
 			}
-			_panelMenuContextMenuAndItems = _dataTreeMainPanelContextMenuFactory.GetPanelMenu(_panelMenuId);
+			_panelMenuContextMenuAndItems = DataTreeMainPanelContextMenuFactory.GetPanelMenu(_panelMenuId);
 			if (_panelMenuContextMenuAndItems != null)
 			{
 				ContextMenuStrip = _panelMenuContextMenuAndItems.Item1;
@@ -66,11 +72,11 @@ namespace LanguageExplorer.Controls.PaneBar
 				if (_panelMenuContextMenuAndItems != null)
 				{
 					// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
-					_dataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
+					DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 				}
 			}
 
-			_dataTreeMainPanelContextMenuFactory = null;
+			DataTreeMainPanelContextMenuFactory = null;
 			_panelMenuContextMenuAndItems = null;
 			_panelMenuId = null;
 			ContextMenuStrip = null;

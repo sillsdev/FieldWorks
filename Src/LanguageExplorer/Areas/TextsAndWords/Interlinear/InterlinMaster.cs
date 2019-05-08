@@ -1311,11 +1311,11 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// the toolName when the data tree is initializing the info tab. The name actually applies to
 		/// the whole interlinear view, but fortunately so far only the Info tab contains a data tree.
 		/// </summary>
-		/// <note>This handles enabling the 'menu item' deffined in the menu PaneBar-ITextContent in the interlinear area configuration file.
-		/// The property name is actually ShowHiddenFields-interlinearEdit but a trick in Choice.GetDisplayProperties allows us
+		/// <note>This handles enabling the 'menu item' defined in the menu PaneBar_ITextContent in the interlinear area configuration file.
+		/// The property name is actually ShowHiddenFields_interlinearEdit but a trick in Choice.GetDisplayProperties allows us
 		/// to have a valid method name with an underscore in it.
 		/// If you are thinking of cleaning up this hack, note that various code in DataTree is aware of a multitude of properties
-		/// starting with "ShowHiddenFields-", and they are persisted in settings.</note>
+		/// starting with "ShowHiddenFields_", and they are persisted in settings.</note>
 		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;

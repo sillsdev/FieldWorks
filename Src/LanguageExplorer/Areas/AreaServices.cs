@@ -118,14 +118,6 @@ namespace LanguageExplorer.Areas
 			internal const string ReversalToolReversalIndexPOSMachineName = "reversalToolReversalIndexPOS";
 		#endregion Lists area
 
-		#region menus
-		internal const string mnuBrowseView = "mnuBrowseView";
-		internal const string mnuEnvChoices = "mnuEnvChoices";
-		internal const string mnuObjectChoices = "mnuObjectChoices";
-		internal const string mnuReferenceChoices = "mnuReferenceChoices";
-		internal const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
-		#endregion menus
-
 		#region commands
 		internal const string JumpToTool = "JumpToTool";
 		internal const string InsertCategory = "InsertCategory";

@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		{
 			_partiallySharedListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
 			// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
-			// <command id="CmdDataTree-Insert-Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+			// <command id="CmdDataTree_Insert_Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 			insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));

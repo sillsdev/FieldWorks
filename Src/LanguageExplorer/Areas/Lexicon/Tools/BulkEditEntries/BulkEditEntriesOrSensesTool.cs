@@ -23,8 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
-		private BulkEditEntriesOrSensesMenuHelper _bulkEditEntriesOrSensesMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private BulkEditEntriesOrSensesMenuHelper _toolMenuHelper;
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -47,11 +46,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose these after the main UI stuff.
-			_bulkEditEntriesOrSensesMenuHelper.Dispose();
-			_browseViewContextMenuFactory.Dispose();
+			_toolMenuHelper.Dispose();
 
-			_bulkEditEntriesOrSensesMenuHelper = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -69,17 +66,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_bulkEditEntriesOrSensesMenuHelper = new BulkEditEntriesOrSensesMenuHelper(majorFlexComponentParameters, this, _recordList);
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
+			_toolMenuHelper = new BulkEditEntriesOrSensesMenuHelper(majorFlexComponentParameters, this, _recordList);
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			_recordBrowseView = new RecordBrowseView(parametersElement, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
@@ -299,6 +291,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: Set up factory method for the browse view.
+#endif
 			}
 
 			#region Implementation of IDisposable

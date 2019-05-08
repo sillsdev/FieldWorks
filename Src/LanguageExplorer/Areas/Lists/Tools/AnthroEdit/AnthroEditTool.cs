@@ -193,30 +193,30 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				insertToolbarDictionary.Add(Command.CmdInsertAnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => CanCmdInsertAnthroCategory));
 
-				// <command id="CmdDataTree-Insert-AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
+				// <command id="CmdDataTree_Insert_AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_AnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, () => CanCmdDataTree_Insert_AnthroCategory));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_AnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, ()=> CanCmdDataTree_Insert_AnthroCategory));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_DeleteQuestion, Create_mnuDataTree_SubAnthroCategory);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_SubAnthroCategory);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubAnthroCategory(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubAnthroCategory(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubAnthroCategory, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubAnthroCategory}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubAnthroCategory, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubAnthroCategory.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubAnthroCategory">
+				// Start: <menu id="mnuDataTree_SubAnthroCategory">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_SubAnthroCategory
+					Name = ContextMenuName.mnuDataTree_SubAnthroCategory.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree-Insert-AnthroCategory" /> // Shared
+				// <item command="CmdDataTree_Insert_AnthroCategory" /> // Shared
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_AnthroCategory_Click, ListResources.Insert_Subcategory, image: AreaResources.AddSubItem.ToBitmap());
 
-				// End: <menu id="mnuDataTree-SubAnthroCategory">
+				// End: <menu id="mnuDataTree_SubAnthroCategory">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}

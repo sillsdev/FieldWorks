@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public ObjectWeight Weight { get; set; } = ObjectWeight.field;
 
-		internal virtual string HotlinksMenuId
+		internal virtual ContextMenuName HotlinksMenuId
 		{
 			get
 			{
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, HotlinksAttributeName, string.Empty);
 				}
-				return hotlinksMenuId; // It may still be string.Empty.
+				return string.IsNullOrWhiteSpace(hotlinksMenuId) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), hotlinksMenuId);
 			}
 		}
 
@@ -110,14 +110,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		internal string ContextMenuMenuId
+		internal ContextMenuName ContextMenuMenuId
 		{
 			get
 			{
-				var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, string.Empty);
-				if (string.IsNullOrWhiteSpace(contextMenuId))
+				var contextMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString()));
+				if (contextMenuId == ContextMenuName.nullValue)
 				{
-					contextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, string.Empty);
+					contextMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString()));
 				}
 				return contextMenuId; // It may still be string.Empty.
 			}
@@ -649,19 +649,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Make a standard SliceTreeNode now.
-				string leftEdgeContextMenuId = null;
+				string idFromXml = null;
 				if (CallerNode != null)
 				{
-					leftEdgeContextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
+					idFromXml = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
 				}
-				if (string.IsNullOrEmpty(leftEdgeContextMenuId))
+				if (string.IsNullOrEmpty(idFromXml))
 				{
 					if (ConfigurationNode != null)
 					{
-						leftEdgeContextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
+						idFromXml = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
 					}
 				}
-				treeNode = new SliceTreeNode(this, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory, leftEdgeContextMenuId);
+				treeNode = new SliceTreeNode(this, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory, string.IsNullOrEmpty(idFromXml) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), idFromXml));
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				SplitCont.Panel1.Controls.Add(treeNode);

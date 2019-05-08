@@ -11,7 +11,7 @@
 		</part>
 		<part id="LexEntry-Detail-CitationFormAllV" type="detail">
 			<slice field="CitationForm" label="Lexeme" editor="multistring" ws="all vernacular" weight="light"
-				   contextMenu="mnuDataTree-CitationFormContext"
+				   contextMenu="mnuDataTree_CitationFormContext"
 				   tooltip="The Citation Form is used to override the Lexeme Form as the headword in the printed dictionary.">
 				<!-- removed per LT-4192 properties>
 					 <bold value="on" />
@@ -21,10 +21,10 @@
 		</part>
 		<part id="LexEntry-Detail-Pronunciations" type="detail">
 			<seq field="Pronunciations" layout="Normal" ghost="Form" ghostWs="pronunciation" ghostLabel="Pronunciation"
-				 menu="mnuDataTree-Pronunciation" />
+				 menu="mnuDataTree_Pronunciation" />
 		</part>
 		<part id="LexEntry-Detail-Etymologies" type="detail">
-			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology" menu="mnuDataTree-Etymology" />
+			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology" menu="mnuDataTree_Etymology" />
 		</part>
 		<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
 			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
@@ -107,7 +107,7 @@
 			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
 		</part>
 		<part id="LexEntry-Detail-AlternateForms" type="Detail">
-			<seq field="AlternateForms" menu="mnuDataTree-AlternateForm" />
+			<seq field="AlternateForms" menu="mnuDataTree_AlternateForm" />
 		</part>
 		<part id="LexEntry-Jt-HeadWordInPara" type="jtview">
 			<para>
@@ -828,10 +828,10 @@
 			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-LexEntry-VariantsSection"/>
 		</part>
 		<part id="LexEntry-Detail-VariantForms" type="Detail">
-			<seq field="VariantFormEntryBackRefs" menu="mnuDataTree-VariantForms" layout="VariantSection"/>
+			<seq field="VariantFormEntryBackRefs" menu="mnuDataTree_VariantForms" layout="VariantSection"/>
 		</part>
 		<part id="LexEntry-Detail-AsVariantForm" type="Detail">
-			<obj field="LexemeForm" layout="AsVariantForm" menu="mnuDataTree-VariantForm"
+			<obj field="LexemeForm" layout="AsVariantForm" menu="mnuDataTree_VariantForm"
 				 ghost="Form" ghostWs="vernacular" ghostLabel="Variant Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />
 		</part>
 		<!--										   -->
@@ -1053,7 +1053,7 @@
 
 	<bin class="LexPronunciation">
 		<part id="LexPronunciation-Detail-FormOnly" type="Detail">
-			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" optionalWs="all vernacular" menu="mnuDataTree-Pronunciation" />
+			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" optionalWs="all vernacular" menu="mnuDataTree_Pronunciation" />
 		</part>
 		<part id="LexPronunciation-Detail-Location" type="Detail">
 			<slice field="Location" label="Location" editor="possAtomicReference" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
@@ -1110,7 +1110,7 @@
 		<part id="LexEntryRef-Detail-VariantEntryTypes" type="Detail">
 			<if field="RefType" intequals="0">
 				<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" indent="true"
-					   menu="mnuDataTree-VariantSpec" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-VariantEntryTypes">
+					   menu="mnuDataTree_VariantSpec" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-VariantEntryTypes">
 					<deParams ws="best analysis" changeRequiresRefresh="true" />
 					<chooserInfo>
 						<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
@@ -1121,7 +1121,7 @@
 		<part id="LexEntryRef-Detail-ComplexEntryTypes" type="Detail">
 <!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
 			<if field="RefType" intequals="1">
-				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" menu="mnuDataTree-ComplexFormSpec">
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" menu="mnuDataTree_ComplexFormSpec">
 					<deParams ws="best analysis" changeRequiresRefresh="true" />
 					<chooserInfo>
 						<chooserLink type="goto" label="Edit the Complex Form Types" tool="complexEntryTypeEdit" />
@@ -1323,10 +1323,10 @@
 
 	<bin class="CmMedia">
 		<part id="CmMedia-Detail-MediaFile" type="Detail">
-			<slice label="Media File" field="MediaFile" editor="audiovisual" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+			<slice label="Media File" field="MediaFile" editor="audiovisual" menu="mnuDataTree_CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="CmMedia-Detail-Label" type="Detail">
-			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree_CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="CmMedia-Jt-MediaFileName" type="jtview">
 			<obj field="MediaFile" layout="MediaFilePath"/>

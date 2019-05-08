@@ -34,28 +34,28 @@ so I can look at that in the develop branch.
     </command>
     <!-- START include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdDataTree-Delete-Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
       <parameters field="Translations" className="CmTranslation" />
     </command>
-    <command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
       <parameters field="Subentries" className="ReversalIndexEntry" />
     </command>
-    <command id="CmdDataTree-MoveUp-ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+    <command id="CmdDataTree_MoveUp_ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
-    <command id="CmdDataTree-MoveDown-ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
+    <command id="CmdDataTree_MoveDown_ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
-    <command id="CmdDataTree-Move-MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
+    <command id="CmdDataTree_Move_MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
-    <command id="CmdDataTree-Promote-ProReversalIndexEntry" label="Promote" message="PromoteReversalindexEntry" icon="MoveLeft">
+    <command id="CmdDataTree_Promote_ProReversalIndexEntry" label="Promote" message="PromoteReversalindexEntry" icon="MoveLeft">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
-    <command id="CmdDataTree-Delete-Subentry" label="Delete this Entry and any Subentries" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Subentry" label="Delete this Entry and any Subentries" message="DataTreeDelete" icon="Delete">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
-    <command id="CmdDataTree-Merge-Subentry" label="Merge Entry into..." message="DataTreeMerge">
+    <command id="CmdDataTree_Merge_Subentry" label="Merge Entry into..." message="DataTreeMerge">
       <parameters field="Subentries" className="ReversalindexEntry" />
     </command>
     <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
@@ -80,26 +80,26 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc" />
     <command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc" />
-    <command id="CmdDataTree-Delete-HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
       <parameters field="Analyses" className="WfiAnalysis" />
     </command>
-    <command id="CmdDataTree-Delete-ParserProducedAnalysis" label="Delete Candidate..." message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_ParserProducedAnalysis" label="Delete Candidate..." message="DataTreeDelete" icon="Delete">
       <parameters field="Analyses" className="WfiAnalysis" />
     </command>
-    <command id="CmdDataTree-Delete-HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
       <parameters field="Analyses" className="WfiAnalysis" />
     </command>
     <command id="CmdAnalysisApprove" label="Approve" message="AnalysisApprove" />
     <command id="CmdAnalysisUnknown" label="Unknown" message="AnalysisUnknown" />
     <command id="CmdAnalysisDisapprove" label="Disapprove" message="AnalysisDisapprove" />
     <command id="CmdShowWordGlossConc" label="Assign Analysis..." message="ShowWordGlossConc" />
-    <command id="CmdDataTree-Merge-WordGloss" label="Merge Gloss..." message="DataTreeMerge">
+    <command id="CmdDataTree_Merge_WordGloss" label="Merge Gloss..." message="DataTreeMerge">
       <parameters field="Meanings" className="WfiGloss" />
     </command>
-    <command id="CmdDataTree-Delete-WordGloss" label="Delete Gloss..." message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_WordGloss" label="Delete Gloss..." message="DataTreeDelete" icon="Delete">
       <parameters field="Meanings" className="WfiGloss" />
     </command>
-    <command id="CmdDataTree-Insert-WordGloss" label="Add Word Gloss" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_WordGloss" label="Add Word Gloss" message="DataTreeInsert">
       <parameters field="Meanings" className="WfiGloss" />
     </command>
     <command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis" a10status="PLACEHOLDER">
@@ -115,111 +115,111 @@ so I can look at that in the develop branch.
     <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
       <parameters tool="notebookEdit" className="RnGenericRec" />
     </command>
-    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
       <parameters field="Members" className="MoAlloAdhocProhib" />
     </command>
-    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
       <parameters field="Members" className="MoMorphAdhocProhib" />
     </command>
-    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Group" label="Insert Nested Group" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Group" label="Insert Nested Group" message="DataTreeInsert">
       <parameters field="Members" className="MoAdhocProhibGr" />
     </command>
-    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
       <parameters field="Members" className="MoAlloAdhocProhib" />
     </command>
-    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
       <parameters field="Members" className="MoMorphAdhocProhib" />
     </command>
-    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
       <parameters field="Members" className="MoAdhocProhibGr" />
     </command>
-    <command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
+    <command id="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
-    <command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
-    <command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_ClosedFeature_Value" label="Insert Feature Value" message="DataTreeInsert">
       <parameters field="Values" className="FsSymFeatVal" />
     </command>
-    <command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
       <parameters field="Values" className="FsSymFeatVal" />
     </command>
-    <command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_POS_AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
       <parameters field="AffixSlots" className="MoInflAffixSlot" />
     </command>
-    <command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_POS_AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
       <parameters field="AffixSlots" className="MoInflAffixSlot" />
     </command>
-    <command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_POS_AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
       <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
+    <command id="CmdDataTree_Copy_POS_AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
       <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_POS_AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
       <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_POS_InflectionClass_Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
       <parameters field="Subclasses" className="MoInflClass" />
     </command>
-    <command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_POS_InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
       <parameters field="InflectionClasses" className="MoInflClass" />
     </command>
-    <command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_POS_InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
       <parameters field="InflectionClasses" className="MoInflClass" />
     </command>
-    <command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_POS_StemName" label="Insert Stem Name" message="DataTreeInsert">
       <parameters field="StemNames" className="MoStemName" />
     </command>
-    <command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_POS_StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
       <parameters field="StemNames" className="MoStemName" />
     </command>
-    <command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_MoStemName_Region" label="Insert Feature Set" message="DataTreeInsert">
       <parameters field="Regions" className="FsFeatStruc" />
     </command>
-    <command id="CmdDataTree-Delete-MoStemName-Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_MoStemName_Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
       <parameters field="Regions" className="FsFeatStruc" />
     </command>
-    <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+    <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
       <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
     </command>
-    <command id="CmdDataTree-Insert-Phoneme-Code" label="Grapheme" message="DataTreeInsert">
+    <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
       <parameters field="Codes" className="PhCode" />
     </command>
-    <command id="CmdDataTree-Delete-Phoneme-Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree_Delete_Phoneme_Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
       <parameters field="Codes" className="PhCode" />
     </command>
-    <command id="CmdDataTree-Insert-Env-Slash" label="Insert Environment slash" message="InsertSlash" />
-    <command id="CmdDataTree-Insert-Env-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
-    <command id="CmdDataTree-Insert-Env-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
-    <command id="CmdDataTree-Insert-Env-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem" />
-    <command id="CmdDataTree-Insert-Env-HashMark" label="Insert Word Boundary" message="InsertHashMark" />
+    <command id="CmdDataTree_Insert_Env_Slash" label="Insert Environment slash" message="InsertSlash" />
+    <command id="CmdDataTree_Insert_Env_Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
+    <command id="CmdDataTree_Insert_Env_NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
+    <command id="CmdDataTree_Insert_Env_OptionalItem" label="Insert Optional Item" message="InsertOptionalItem" />
+    <command id="CmdDataTree_Insert_Env_HashMark" label="Insert Word Boundary" message="InsertHashMark" />
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
     <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
-    <command id="CmdInflAffixTemplate-Help" label="Help..." icon="Help" message="InflAffixTemplateHelp" />
-    <command id="CmdInflAffixTemplate-Insert-Slot-Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
+    <command id="CmdInflAffixTemplate_Help" label="Help..." icon="Help" message="InflAffixTemplateHelp" />
+    <command id="CmdInflAffixTemplate_Insert_Slot_Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Insert-Slot-After" label="Insert Slot after XXX" message="InflTemplateInsertSlotAfter">
+    <command id="CmdInflAffixTemplate_Insert_Slot_After" label="Insert Slot after XXX" message="InflTemplateInsertSlotAfter">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Move-Slot-Left" label="Move XXX back one Slot" message="InflTemplateMoveSlotLeft" icon="Left">
+    <command id="CmdInflAffixTemplate_Move_Slot_Left" label="Move XXX back one Slot" message="InflTemplateMoveSlotLeft" icon="Left">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Move-Slot-Right" label="Move XXX forward one Slot" message="InflTemplateMoveSlotRight" icon="Right">
+    <command id="CmdInflAffixTemplate_Move_Slot_Right" label="Move XXX forward one Slot" message="InflTemplateMoveSlotRight" icon="Right">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Remove-Slot" label="Remove XXX Slot" message="InflTemplateRemoveSlot" icon="Remove">
+    <command id="CmdInflAffixTemplate_Remove_Slot" label="Remove XXX Slot" message="InflTemplateRemoveSlot" icon="Remove">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Toggle-Slot-Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
+    <command id="CmdInflAffixTemplate_Toggle_Slot_Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Add-InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
+    <command id="CmdInflAffixTemplate_Add_InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
       <parameters field="Slots" className="MoInflAffixTemplate" />
     </command>
-    <command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
+    <command id="CmdInflAffixTemplate_Remove_InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
       <parameters field="AffixCategory" className="MoInflAffMsa" />
     </command>
     <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
@@ -294,7 +294,7 @@ so I can look at that in the develop branch.
       <item label="-" translate="do not translate" />
       <!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
     </menu>
-    <menu id="PaneBar-ReversalIndicesMenu">
+    <menu id="PaneBar_ReversalIndicesMenu">
       <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
         <item command="CmdShowAllPublications" />
         <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
@@ -308,144 +308,144 @@ so I can look at that in the develop branch.
       </menu>
     </menu>
     <!-- START include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
-    <menu id="PaneBar-ShowHiddenFields-posEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-posEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_posEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_posEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-compoundRuleAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_compoundRuleAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_compoundRuleAdvancedEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-phonemeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonemeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_phonemeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_phonemeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
     <menu id="PaneBar-ShowHiddenFields-naturalClassEdit" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassEdit" defaultVisible="true" settingsGroup="local" a10status="CASECHG" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_EnvironmentEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_EnvironmentEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_PhonologicalRuleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
     <menu id="PaneBar-ShowHiddenFields-AdhocCoprohibitionRuleEdit" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local" a10status="AUGMENTSPELLING" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_phonologicalFeaturesAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-featuresAdvancedEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featuresAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_featuresAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_featuresAdvancedEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-ProdRestrictEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-ProdRestrictEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_ProdRestrictEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_ProdRestrictEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-lexiconProblems" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconProblems" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_lexiconProblems" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_lexiconProblems" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-rapidDataEntry" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-rapidDataEntry" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    <menu id="PaneBar_ShowHiddenFields_rapidDataEntry" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_rapidDataEntry" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-domainTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-domainTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_domainTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_domainTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-anthroEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-anthroEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_anthroEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_anthroEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-confidenceEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-confidenceEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_confidenceEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_confidenceEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-chartmarkEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-chartmarkEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_chartmarkEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_chartmarkEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-charttempEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_charttempEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_charttempEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-dialectsListEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    <menu id="PaneBar_ShowHiddenFields_dialectsListEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_dialectsListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_educationEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_educationEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-extNoteTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    <menu id="PaneBar_ShowHiddenFields_extNoteTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_extNoteTypeEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-roleEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_roleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_roleEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-genresEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-genresEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_genresEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_genresEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_featureTypesAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-languagesListEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    <menu id="PaneBar_ShowHiddenFields_languagesListEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_languagesListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_lexRefEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_lexRefEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-locationsEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-locationsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_locationsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_locationsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-publicationsEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-publicationsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_publicationsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_publicationsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-complexEntryTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-complexEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_complexEntryTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_complexEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-variantEntryTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-variantEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_variantEntryTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_variantEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-morphTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-morphTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_morphTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_morphTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-peopleEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-peopleEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_peopleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_peopleEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-positionsEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-positionsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_positionsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_positionsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-restrictionsEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-restrictionsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_restrictionsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_restrictionsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-semanticDomainEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-semanticDomainEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_semanticDomainEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_semanticDomainEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-senseTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-senseTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_senseTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_senseTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-statusEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-statusEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_statusEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_statusEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-translationTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-translationTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_translationTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_translationTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-recTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-recTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_recTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_recTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-scrNoteTypesEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-scrNoteTypesEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_scrNoteTypesEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_scrNoteTypesEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-timeOfDayEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-timeOfDayEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_timeOfDayEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_timeOfDayEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-weatherConditionEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-weatherConditionEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_weatherConditionEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_weatherConditionEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-textMarkupTagsEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-textMarkupTagsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_textMarkupTagsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_textMarkupTagsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-usageTypeEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-usageTypeEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_usageTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_usageTypeEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowHiddenFields-reversalToolReversalIndexPOS" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalToolReversalIndexPOS" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowHiddenFields_reversalToolReversalIndexPOS" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_reversalToolReversalIndexPOS" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-WordformDetail" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-WordsEdit" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_WordformDetail" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_WordsEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
     <!-- END include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
     <!-- START include: "Lexicon/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <menu id="PaneBar-Dictionary" label="">
+    <menu id="PaneBar_Dictionary" label="">
       <!-- *** Put any alignment="right" menus in first. *** -->
       <menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
         <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout" />
@@ -459,205 +459,205 @@ so I can look at that in the develop branch.
         <item command="CmdPublicationsJumpToDefault" />
       </menu>
     </menu>
-    <menu id="PaneBar-ReversalEntryDetail" label="">
+    <menu id="PaneBar_ReversalEntryDetail" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" />
     </menu>
-    <menu id="PaneBar-ShowFailingItems-Classified" label="">
-      <item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local" />
+    <menu id="PaneBar_ShowFailingItems_Classified" label="">
+      <item label="Show Unused Items" boolProperty="ShowFailingItems_lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local" />
     </menu>
     <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuDataTree-Examples">
-      <item command="CmdDataTree-Insert-Example" />
+    <menu id="mnuDataTree_Examples">
+      <item command="CmdDataTree_Insert_Example" />
       <item command="CmdFindExampleSentence" />
     </menu>
-    <menu id="mnuDataTree-Translations">
-      <item command="CmdDataTree-Insert-Translation" />
+    <menu id="mnuDataTree_Translations">
+      <item command="CmdDataTree_Insert_Translation" />
     </menu>
-    <menu id="mnuDataTree-Translation">
-      <item command="CmdDataTree-Delete-Translation" />
+    <menu id="mnuDataTree_Translation">
+      <item command="CmdDataTree_Delete_Translation" />
     </menu>
-    <menu id="mnuDataTree-InsertReversalSubentry">
-      <item command="CmdDataTree-Insert-ReversalSubentry" />
+    <menu id="mnuDataTree_InsertReversalSubentry">
+      <item command="CmdDataTree_Insert_ReversalSubentry" />
     </menu>
-    <menu id="mnuDataTree-InsertReversalSubentry-Hotlinks">
-      <item command="CmdDataTree-Insert-ReversalSubentry" />
+    <menu id="mnuDataTree_InsertReversalSubentry_Hotlinks">
+      <item command="CmdDataTree_Insert_ReversalSubentry" />
     </menu>
-    <menu id="mnuDataTree-MoveReversalIndexEntry">
-      <item command="CmdDataTree-MoveUp-ReversalSubentry" />
-      <item command="CmdDataTree-MoveDown-ReversalSubentry" />
+    <menu id="mnuDataTree_MoveReversalIndexEntry">
+      <item command="CmdDataTree_MoveUp_ReversalSubentry" />
+      <item command="CmdDataTree_MoveDown_ReversalSubentry" />
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Move-MoveReversalIndexEntry" />
-      <item command="CmdDataTree-Promote-ProReversalIndexEntry" />
+      <item command="CmdDataTree_Move_MoveReversalIndexEntry" />
+      <item command="CmdDataTree_Promote_ProReversalIndexEntry" />
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Merge-Subentry" />
-      <item command="CmdDataTree-Delete-Subentry" />
+      <item command="CmdDataTree_Merge_Subentry" />
+      <item command="CmdDataTree_Delete_Subentry" />
     </menu>
-    <menu id="mnuDataTree-CmMedia">
+    <menu id="mnuDataTree_CmMedia">
       <item command="CmdDeleteMediaFile" />
     </menu>
     <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
     <!-- END include: "Lexicon/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <menu id="PaneBar-ITextContent" label="">
+    <menu id="PaneBar_ITextContent" label="">
       <item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local" />
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local" />
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_interlinearEdit" defaultVisible="false" settingsGroup="local" />
     </menu>
-    <menu id="mnuDataTree-MainWordform">
+    <menu id="mnuDataTree_MainWordform">
       <item command="CmdShowWordformConc" />
       <item command="CmdRespeller" />
-      <item command="CmdDataTree-Delete-MainWordform" />
+      <item command="CmdDataTree_Delete_MainWordform" />
     </menu>
-    <menu id="mnuDataTree-WordformSpelling">
+    <menu id="mnuDataTree_WordformSpelling">
       <item command="CmdRespeller" />
     </menu>
-    <menu id="mnuDataTree-MainWordform-Hotlinks">
+    <menu id="mnuDataTree_MainWordform_Hotlinks">
       <item command="CmdShowWordformConc" />
     </menu>
-    <menu id="mnuDataTree-HumanApprovedAnalysisSummary">
+    <menu id="mnuDataTree_HumanApprovedAnalysisSummary">
       <item command="CmdInsertHumanApprovedAnalysis" />
     </menu>
-    <menu id="mnuDataTree-HumanApprovedAnalysisSummary-Hotlinks">
+    <menu id="mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks">
       <item command="CmdInsertHumanApprovedAnalysis" />
     </menu>
-    <menu id="mnuDataTree-HumanApprovedAnalysis">
+    <menu id="mnuDataTree_HumanApprovedAnalysis">
       <item command="CmdShowHumanApprovedAnalysisConc" />
       <item command="CmdAnalysisJumpToConcordance" />
-      <menu id="mnuDataTree-HumanApprovedStatus" label="User Opinion">
+      <menu id="mnuDataTree_HumanApprovedStatus" label="User Opinion">
         <item command="CmdAnalysisApprove" />
         <item command="CmdAnalysisUnknown" />
         <item command="CmdAnalysisDisapprove" />
       </menu>
-      <item command="CmdDataTree-Insert-WordGloss" />
+      <item command="CmdDataTree_Insert_WordGloss" />
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Delete-HumanApprovedAnalysis" />
+      <item command="CmdDataTree_Delete_HumanApprovedAnalysis" />
     </menu>
-    <menu id="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
+    <menu id="mnuDataTree_HumanApprovedAnalysis_Hotlinks">
       <item command="CmdShowHumanApprovedAnalysisConc" />
     </menu>
-    <menu id="mnuDataTree-ParserProducedAnalysis">
-      <menu id="mnuDataTree-ParserProducedStatus" label="User Opinion">
+    <menu id="mnuDataTree_ParserProducedAnalysis">
+      <menu id="mnuDataTree_ParserProducedStatus" label="User Opinion">
         <item command="CmdAnalysisApprove" />
         <item command="CmdAnalysisUnknown" />
         <item command="CmdAnalysisDisapprove" />
       </menu>
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Delete-ParserProducedAnalysis" />
+      <item command="CmdDataTree_Delete_ParserProducedAnalysis" />
     </menu>
-    <menu id="mnuDataTree-HumanDisapprovedAnalysis">
-      <menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
+    <menu id="mnuDataTree_HumanDisapprovedAnalysis">
+      <menu id="mnuDataTree_HumanDisapprovedStatus" label="User Opinion">
         <item command="CmdAnalysisApprove" />
         <item command="CmdAnalysisUnknown" />
         <item command="CmdAnalysisDisapprove" />
       </menu>
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Delete-HumanDisapprovedAnalysis" />
+      <item command="CmdDataTree_Delete_HumanDisapprovedAnalysis" />
     </menu>
-    <menu id="mnuDataTree-WordGlossForm">
+    <menu id="mnuDataTree_WordGlossForm">
       <item command="CmdShowWordGlossConc" />
       <item command="CmdWordGlossJumpToConcordance" />
       <item label="-" translate="do not translate" />
-      <item command="CmdDataTree-Merge-WordGloss" />
-      <item command="CmdDataTree-Delete-WordGloss" />
+      <item command="CmdDataTree_Merge_WordGloss" />
+      <item command="CmdDataTree_Delete_WordGloss" />
     </menu>
     <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuDataTree-Text">
+    <menu id="mnuDataTree_Text">
       <item command="CmdJumpToText" />
     </menu>
-    <menu id="mnuTextInfo-Notebook">
+    <menu id="mnuTextInfo_Notebook">
       <item command="CmdJumpToNotebook" />
     </menu>
-    <menu id="mnuDataTree-Adhoc-Group-Members">
-      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" />
-      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" />
-      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Group" />
+    <menu id="mnuDataTree_Adhoc_Group_Members">
+      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" />
+      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" />
+      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Group" />
     </menu>
-    <menu id="mnuDataTree-Delete-Adhoc-Morpheme">
-      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" />
+    <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
+      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Morpheme" />
     </menu>
-    <menu id="mnuDataTree-Delete-Adhoc-Allomorph">
-      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" />
+    <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
+      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Allomorph" />
     </menu>
-    <menu id="mnuDataTree-Delete-Adhoc-Group">
-      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Group" />
+    <menu id="mnuDataTree_Delete_Adhoc_Group">
+      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Group" />
     </menu>
-    <menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
-      <item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" />
-      <item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" />
+    <menu id="mnuDataTree_CompoundRule_LinkerAffixAllomorph">
+      <item command="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" />
+      <item command="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" />
     </menu>
-    <menu id="mnuDataTree-FeatureStructure-Feature">
-      <item command="CmdDataTree-Delete-FeatureStructure-Feature" />
+    <menu id="mnuDataTree_FeatureStructure_Feature">
+      <item command="CmdDataTree_Delete_FeatureStructure_Feature" />
     </menu>
-    <menu id="mnuDataTree-ClosedFeature-Values">
-      <item command="CmdDataTree-Insert-ClosedFeature-Value" />
+    <menu id="mnuDataTree_ClosedFeature_Values">
+      <item command="CmdDataTree_Insert_ClosedFeature_Value" />
     </menu>
-    <menu id="mnuDataTree-ClosedFeature-Value">
-      <item command="CmdDataTree-Delete-ClosedFeature-Value" />
+    <menu id="mnuDataTree_ClosedFeature_Value">
+      <item command="CmdDataTree_Delete_ClosedFeature_Value" />
     </menu>
-    <menu id="mnuDataTree-POS-AffixSlots">
-      <item command="CmdDataTree-Insert-POS-AffixSlot" />
+    <menu id="mnuDataTree_POS_AffixSlots">
+      <item command="CmdDataTree_Insert_POS_AffixSlot" />
     </menu>
-    <menu id="mnuDataTree-POS-AffixSlot">
-      <item command="CmdDataTree-Delete-POS-AffixSlot" />
+    <menu id="mnuDataTree_POS_AffixSlot">
+      <item command="CmdDataTree_Delete_POS_AffixSlot" />
     </menu>
-    <menu id="mnuDataTree-POS-AffixTemplates">
-      <item command="CmdDataTree-Insert-POS-AffixTemplate" />
+    <menu id="mnuDataTree_POS_AffixTemplates">
+      <item command="CmdDataTree_Insert_POS_AffixTemplate" />
     </menu>
-    <menu id="mnuDataTree-POS-AffixTemplate">
-      <item command="CmdDataTree-Delete-POS-AffixTemplate" />
-      <item command="CmdDataTree-Copy-POS-AffixTemplate" />
+    <menu id="mnuDataTree_POS_AffixTemplate">
+      <item command="CmdDataTree_Delete_POS_AffixTemplate" />
+      <item command="CmdDataTree_Copy_POS_AffixTemplate" />
     </menu>
-    <menu id="mnuDataTree-POS-InflectionClass-Subclasses">
-      <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses" />
+    <menu id="mnuDataTree_POS_InflectionClass_Subclasses">
+      <item command="CmdDataTree_Insert_POS_InflectionClass_Subclasses" />
     </menu>
-    <menu id="mnuDataTree-POS-InflectionClasses">
-      <item command="CmdDataTree-Insert-POS-InflectionClass" />
+    <menu id="mnuDataTree_POS_InflectionClasses">
+      <item command="CmdDataTree_Insert_POS_InflectionClass" />
     </menu>
-    <menu id="mnuDataTree-POS-InflectionClass">
-      <item command="CmdDataTree-Delete-POS-InflectionClass" />
+    <menu id="mnuDataTree_POS_InflectionClass">
+      <item command="CmdDataTree_Delete_POS_InflectionClass" />
     </menu>
-    <menu id="mnuDataTree-POS-StemNames">
-      <item command="CmdDataTree-Insert-POS-StemName" />
+    <menu id="mnuDataTree_POS_StemNames">
+      <item command="CmdDataTree_Insert_POS_StemName" />
     </menu>
-    <menu id="mnuDataTree-POS-StemName">
-      <item command="CmdDataTree-Delete-POS-StemName" />
+    <menu id="mnuDataTree_POS_StemName">
+      <item command="CmdDataTree_Delete_POS_StemName" />
     </menu>
-    <menu id="mnuDataTree-MoStemName-Regions">
-      <item command="CmdDataTree-Insert-MoStemName-Region" />
+    <menu id="mnuDataTree_MoStemName_Regions">
+      <item command="CmdDataTree_Insert_MoStemName_Region" />
     </menu>
-    <menu id="mnuDataTree-MoStemName-Region">
-      <item command="CmdDataTree-Delete-MoStemName-Region" />
+    <menu id="mnuDataTree_MoStemName_Region">
+      <item command="CmdDataTree_Delete_MoStemName_Region" />
     </menu>
-    <menu id="mnuDataTree-Phoneme-Codes">
-      <item command="CmdDataTree-Insert-Phoneme-Code" label="Insert Grapheme" />
+    <menu id="mnuDataTree_Phoneme_Codes">
+      <item command="CmdDataTree_Insert_Phoneme_Code" label="Insert Grapheme" />
     </menu>
-    <menu id="mnuDataTree-Phoneme-Code">
-      <item command="CmdDataTree-Delete-Phoneme-Code" />
+    <menu id="mnuDataTree_Phoneme_Code">
+      <item command="CmdDataTree_Delete_Phoneme_Code" />
     </menu>
-    <menu id="mnuDataTree-StringRepresentation-Insert">
-      <item command="CmdDataTree-Insert-Env-Slash" />
-      <item command="CmdDataTree-Insert-Env-Underscore" />
-      <item command="CmdDataTree-Insert-Env-NaturalClass" />
-      <item command="CmdDataTree-Insert-Env-OptionalItem" />
-      <item command="CmdDataTree-Insert-Env-HashMark" />
+    <menu id="mnuDataTree_StringRepresentation_Insert">
+      <item command="CmdDataTree_Insert_Env_Slash" />
+      <item command="CmdDataTree_Insert_Env_Underscore" />
+      <item command="CmdDataTree_Insert_Env_NaturalClass" />
+      <item command="CmdDataTree_Insert_Env_OptionalItem" />
+      <item command="CmdDataTree_Insert_Env_HashMark" />
     </menu>
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
     <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuInflAffixTemplate-Help">
-      <item command="CmdInflAffixTemplate-Help" />
+    <menu id="mnuInflAffixTemplate_Help">
+      <item command="CmdInflAffixTemplate_Help" />
     </menu>
-    <menu id="mnuInflAffixTemplate-TemplateTable">
-      <item command="CmdInflAffixTemplate-Add-InflAffixMsa" />
-      <item command="CmdInflAffixTemplate-Insert-Slot-Before" />
-      <item command="CmdInflAffixTemplate-Insert-Slot-After" />
-      <item command="CmdInflAffixTemplate-Move-Slot-Left" />
-      <item command="CmdInflAffixTemplate-Move-Slot-Right" />
-      <item command="CmdInflAffixTemplate-Toggle-Slot-Optionality" />
-      <item command="CmdInflAffixTemplate-Remove-Slot" />
-      <item command="CmdInflAffixTemplate-Remove-InflAffixMsa" />
+    <menu id="mnuInflAffixTemplate_TemplateTable">
+      <item command="CmdInflAffixTemplate_Add_InflAffixMsa" />
+      <item command="CmdInflAffixTemplate_Insert_Slot_Before" />
+      <item command="CmdInflAffixTemplate_Insert_Slot_After" />
+      <item command="CmdInflAffixTemplate_Move_Slot_Left" />
+      <item command="CmdInflAffixTemplate_Move_Slot_Right" />
+      <item command="CmdInflAffixTemplate_Toggle_Slot_Optionality" />
+      <item command="CmdInflAffixTemplate_Remove_Slot" />
+      <item command="CmdInflAffixTemplate_Remove_InflAffixMsa" />
       <item command="CmdEntryJumpToDefault" />
-      <item command="CmdInflAffixTemplate-Help" />
+      <item command="CmdInflAffixTemplate_Help" />
     </menu>
     <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
@@ -703,7 +703,7 @@ so I can look at that in the develop branch.
       <item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
-      <item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
+      <item id="CmdDataTree_Insert_POS_SubPossibilities">Add a subcategory...</item>
       <!-- Tools menu -->
       <item id="Entries">Show the entries and edit them.</item>
       <item id="Problems">See a list of entries with problems.</item>

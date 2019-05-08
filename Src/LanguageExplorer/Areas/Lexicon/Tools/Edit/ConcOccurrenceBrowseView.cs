@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
 
 		public ConcOccurrenceBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
-			: base(browseViewDefinitions, null, cache, recordList)
+			: base(browseViewDefinitions, cache, recordList)
 		{
 		}
 

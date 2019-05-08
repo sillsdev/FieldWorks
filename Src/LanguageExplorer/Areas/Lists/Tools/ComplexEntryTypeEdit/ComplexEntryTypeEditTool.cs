@@ -184,7 +184,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
-				// <command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+				// <command id="CmdDataTree_Insert_LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
@@ -193,28 +193,28 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubComplexEntryType, Create_mnuDataTree_SubComplexEntryType);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubComplexEntryType, Create_mnuDataTree_SubComplexEntryType);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubComplexEntryType(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubComplexEntryType(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubComplexEntryType, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubComplexEntryType}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubComplexEntryType, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubComplexEntryType}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubComplexEntryType">
+				// Start: <menu id="mnuDataTree_SubComplexEntryType">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_SubComplexEntryType
+					Name = ContextMenuName.mnuDataTree_SubComplexEntryType.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					<item command="CmdDataTree-Insert-LexEntryType" />
+					<item command="CmdDataTree_Insert_LexEntryType" />
 				*/
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_LexEntryType_Click, ListResources.Insert_Subtype, image: AreaResources.AddSubItem.ToBitmap());
 
-				// End: <menu id="mnuDataTree-SubComplexEntryType">
+				// End: <menu id="mnuDataTree_SubComplexEntryType">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}

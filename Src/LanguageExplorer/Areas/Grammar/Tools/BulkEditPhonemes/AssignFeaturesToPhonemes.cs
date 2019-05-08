@@ -21,8 +21,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		}
 
 		/// <summary />
-		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
-			: base(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList, uiWidgetController)
+		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+			: base(browseViewDefinitions, cache, recordList, uiWidgetController)
 		{
 			InitializeComponent();
 		}

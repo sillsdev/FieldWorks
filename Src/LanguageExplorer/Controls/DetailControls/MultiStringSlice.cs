@@ -162,7 +162,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void HandleRightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
 			var contextMenuId = ContextMenuMenuId;
-			if (string.IsNullOrEmpty(contextMenuId))
+			if (contextMenuId == ContextMenuName.nullValue)
 			{
 				return;
 			}
@@ -347,7 +347,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var lastKey = Key[Key.Length - 1] as XElement;
 				// This is a horrible kludge to implement LT-9620 and catch the fact that we are changing the list
 				// of current pronunciation writing systems, and update the database.
-				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree-Pronunciation")
+				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree_Pronunciation")
 				{
 					UpdatePronunciationWritingSystems(wssToDisplay);
 				}

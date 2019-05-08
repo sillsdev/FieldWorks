@@ -20,8 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconBrowseTool : ITool
 	{
-		private LexiconBrowseToolMenuHelper _browseToolMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private LexiconBrowseToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -43,12 +42,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose these after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_browseToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_browseToolMenuHelper = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -63,18 +60,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-			_browseToolMenuHelper = new LexiconBrowseToolMenuHelper(majorFlexComponentParameters, this);
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
+			_toolMenuHelper = new LexiconBrowseToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				_recordBrowseView);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 		}
 
 		/// <summary>
@@ -151,6 +143,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: Set up factory method for the browse view.
+#endif
 			}
 
 			#region Implementation of IDisposable

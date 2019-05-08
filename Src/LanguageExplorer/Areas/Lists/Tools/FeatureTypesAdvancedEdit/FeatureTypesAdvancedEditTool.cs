@@ -30,7 +30,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
 		private FeatureTypesAdvancedEditMenuHelper _toolMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -54,11 +53,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
 			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_browseViewContextMenuFactory = null;
 			_toolMenuHelper = null;
 		}
 
@@ -75,13 +72,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants
 						.RecordListRepository).GetRecordList(FeatureTypes, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root,
-				_browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList,
+				majorFlexComponentParameters.LcmCache, _recordList,
 				majorFlexComponentParameters.UiWidgetController);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
@@ -210,6 +202,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_featureSystem = _majorFlexComponentParameters.LcmCache.LanguageProject.MsFeatureSystemOA;
 				SetupToolUiWidgets(tool);
+#if RANDYTODO
+				// TODO: Set up factory method for the browse view.
+#endif
 			}
 
 			private void SetupToolUiWidgets(ITool tool)

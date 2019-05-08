@@ -187,7 +187,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
-				// <command id="CmdDataTree-Insert-SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
+				// <command id="CmdDataTree_Insert_SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar
 				insertMenuDictionary.Add(Command.CmdInsertSemDom, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> CanCmdInsertSemDom));
 				insertToolbarDictionary.Add(Command.CmdInsertSemDom, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => CanCmdInsertSemDom));
@@ -196,65 +196,65 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 				/*
 					<part id="CmSemanticDomain-Detail-Questions" type="Detail">
-						<slice label="Questions" menu="mnuDataTree-InsertQuestion">
+						<slice label="Questions" menu="mnuDataTree_InsertQuestion">
 						  <seq field="Questions"/>
 						</slice>
 					</part>
 				*/
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_InsertQuestion, Create_mnuDataTree_InsertQuestion);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertQuestion, Create_mnuDataTree_InsertQuestion);
 				/*
 					<part id="CmDomainQ-Detail-QuestionAllA" type="Detail">
-						<slice field="Question" label="Question" editor="multistring" ws="all analysis" menu="mnuDataTree-DeleteQuestion">
+						<slice field="Question" label="Question" editor="multistring" ws="all analysis" menu="mnuDataTree_DeleteQuestion">
 						</slice>
 					</part>
 				*/
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_DeleteQuestion, Create_mnuDataTree_DeleteQuestion);
-				// <menu id="mnuDataTree-SubSemanticDomain">
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubSemanticDomain, Create_mnuDataTree_SubSemanticDomain);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_DeleteQuestion);
+				// <menu id="mnuDataTree_SubSemanticDomain">
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubSemanticDomain, Create_mnuDataTree_SubSemanticDomain);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubSemanticDomain(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubSemanticDomain(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubSemanticDomain, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubSemanticDomain}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubSemanticDomain, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubSemanticDomain.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubSemanticDomain">
+				// Start: <menu id="mnuDataTree_SubSemanticDomain">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_SubSemanticDomain
+					Name = ContextMenuName.mnuDataTree_SubSemanticDomain.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					<item command="CmdDataTree-Insert-SemanticDomain" />
+					<item command="CmdDataTree_Insert_SemanticDomain" />
 				*/
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_SemanticDomain_Click, ListResources.Insert_Subdomain, image: AreaResources.AddSubItem.ToBitmap());
 
-				// End: <menu id="mnuDataTree-SubSemanticDomain">
+				// End: <menu id="mnuDataTree_SubSemanticDomain">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertQuestion(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertQuestion(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_InsertQuestion, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_InsertQuestion}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-InsertQuestion">
+				// Start: <menu id="mnuDataTree_InsertQuestion">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_InsertQuestion
+					Name = ContextMenuName.mnuDataTree_InsertQuestion.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					<command id="CmdDataTree-Insert-Question" label="Insert Question" message="DataTreeInsert" icon="AddSubItem">
+					<command id="CmdDataTree_Insert_Question" label="Insert Question" message="DataTreeInsert" icon="AddSubItem">
 					  <parameters field="Questions" className="CmDomainQ" />
 					</command> // Insert_Question
 				*/
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, InsertQuestion_Clicked, ListResources.Insert_Question, image: AreaResources.AddSubItem.ToBitmap());
 
-				// End: <menu id="mnuDataTree-InsertQuestion">
+				// End: <menu id="mnuDataTree_InsertQuestion">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -269,19 +269,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				});
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteQuestion(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteQuestion(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_DeleteQuestion, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_DeleteQuestion}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 				// Start: <menu id="mnuDataTree-Delete-Question">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_DeleteQuestion
+					Name = ContextMenuName.mnuDataTree_DeleteQuestion.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					<command id="CmdDataTree-Delete-Question" label="Delete Question" message="DataTreeDelete" icon="Delete">
+					<command id="CmdDataTree_Delete_Question" label="Delete Question" message="DataTreeDelete" icon="Delete">
 						<parameters field="Questions" className="CmDomainQ" />
 					</command>
 				*/

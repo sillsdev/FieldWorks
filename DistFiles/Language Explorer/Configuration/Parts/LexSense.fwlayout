@@ -3,7 +3,7 @@
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
   <layout class="LexSense" type="detail" name="Normal">
-	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" >
+	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree_Sense" hotlinks="mnuDataTree_Sense_Hotlinks" >
 		<indent>
 			<part ref="GlossAllA"/>
 			<part ref="ReversalEntries"   visibility="ifdata" />
@@ -40,7 +40,7 @@
 			<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
 			<part ref="PublishIn"   visibility="ifdata" />
 			<part ref="Pictures" param="Normal"/>
-			<part ref="Senses" label="SubSenses" param="Normal" menu="mnuDataTree-Subsenses"/>
+			<part ref="Senses" label="SubSenses" param="Normal" menu="mnuDataTree_Subsenses"/>
 	</indent>
 	</part>
   </layout>
@@ -57,7 +57,7 @@
 	</layout>
 
 	<layout class="LexExtendedNote" type="detail" name="Normal">
-		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-ExtendedNote" hotlinks="mnuDataTree-ExtendedNote-Hotlinks">
+		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree_ExtendedNote" hotlinks="mnuDataTree_ExtendedNote_Hotlinks">
 			<indent>
 				<part ref="Type" label="Type" />
 				<part ref="DiscussionAllA" label="Discussion" />
@@ -67,7 +67,7 @@
 	</layout>
 
 	<layout class="LexExampleSentence" type="detail" name="Notes">
-		<part ref="ExampleAllV" label="Example" expansion="expanded" menu="mnuDataTree-Example">
+		<part ref="ExampleAllV" label="Example" expansion="expanded" menu="mnuDataTree_Example">
 			<indent>
 				<part ref="TranslationsAllA" expansion="expanded" param="Translation"/>
 			</indent>

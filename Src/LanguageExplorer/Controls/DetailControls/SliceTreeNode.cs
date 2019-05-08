@@ -44,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected bool m_inMenuButton = false;
 		private Slice m_myParentSlice;
 		private SliceLeftEdgeContextMenuFactory _sliceLeftEdgeContextMenuFactory;
-		private string _leftEdgeContextMenuId;
+		private ContextMenuName _leftEdgeContextMenuId;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _leftEdgeContextMenu;
 		/// <summary>
 		/// Required designer variable.
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool ShowPlusMinus { get; set; }
 
 		/// <summary />
-		internal SliceTreeNode(Slice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, string leftEdgeContextMenuId)
+		internal SliceTreeNode(Slice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, ContextMenuName leftEdgeContextMenuId)
 		{
 			if (myParentSlice == null)
 			{
@@ -272,7 +272,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			m_myParentSlice = null;
 			_sliceLeftEdgeContextMenuFactory = null;
-			_leftEdgeContextMenuId = null;
 			_leftEdgeContextMenu = null;
 
 			base.Dispose(disposing);

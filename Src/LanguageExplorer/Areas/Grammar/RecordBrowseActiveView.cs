@@ -22,8 +22,8 @@ namespace LanguageExplorer.Areas.Grammar
 	/// </summary>
 	internal class RecordBrowseActiveView : RecordBrowseView
 	{
-		internal RecordBrowseActiveView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
-			: base(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList, uiWidgetController)
+		internal RecordBrowseActiveView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+			: base(browseViewDefinitions, cache, recordList, uiWidgetController)
 		{
 		}
 

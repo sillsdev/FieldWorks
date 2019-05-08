@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -24,7 +26,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class ProdRestrictEditTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private ProdRestrictEditToolMenuHelper _toolMenuHelper;
 		private const string ProdRestrict = "ProdRestrict";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -44,10 +46,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		{
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-			_browseViewContextMenuFactory.Dispose();
+			_toolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -62,18 +64,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ProdRestrict, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			// Do nothing for this tool
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
+			_toolMenuHelper = new ProdRestrictEditToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
@@ -178,6 +171,64 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analorvern"), new RecordFilterParameterObject(allowDeletions: false));
+		}
+
+		private sealed class ProdRestrictEditToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal ProdRestrictEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				// Tool must be added, even when it adds no tool specific handlers.
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// TODO: Set up factory method for the browse view.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~ProdRestrictEditToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

@@ -136,11 +136,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_hotlinksMenuItems = null;
 				}
 				var hotlinksMenuId = m_slice.HotlinksMenuId;
-				m_hotlinksMenuItems = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : MySliceHotlinksMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
+				m_hotlinksMenuItems = hotlinksMenuId == ContextMenuName.nullValue ? null : MySliceHotlinksMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
 				if (m_hotlinksMenuItems == null)
 				{
 					// Try the ordinary menu, but without the core context menus.
-					var leftEdgeMenus = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : MySliceLeftEdgeContextMenuFactory.GetLeftEdgeContextMenu(m_slice, hotlinksMenuId, false);
+					var leftEdgeMenus = hotlinksMenuId == ContextMenuName.nullValue ? null : MySliceLeftEdgeContextMenuFactory.GetLeftEdgeContextMenu(m_slice, hotlinksMenuId, false);
 					if (leftEdgeMenus == null)
 					{
 						return;

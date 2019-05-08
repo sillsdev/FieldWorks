@@ -18,7 +18,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 	{
 		private const string m_contentControlDictionary =
 			@"<control>
-					<parameters PaneBarGroupId='PaneBar-Dictionary'>
+					<parameters PaneBarGroupId='PaneBar_Dictionary'>
 						<control>
 							<parameters area='lexicon' clerk='entries' />
 						</control>

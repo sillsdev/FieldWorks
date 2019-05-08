@@ -3,9 +3,9 @@
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="WfiWordform" type="detail" name="Normal">
-		<part ref="HeavySummary" param="WordformMainSummary" commandVisible="true" expansion="expanded" menu="mnuDataTree-MainWordform" hotlinks="mnuDataTree-MainWordform-Hotlinks"/>
-		<part ref="Spelling" menu="mnuDataTree-WordformSpelling"/>
-		<part ref="HumanApprovedAnalysesSection" expansion="expanded" label="User Approved (Analyses)" menu="mnuDataTree-HumanApprovedAnalysisSummary" hotlinks="mnuDataTree-HumanApprovedAnalysisSummary-Hotlinks">
+		<part ref="HeavySummary" param="WordformMainSummary" commandVisible="true" expansion="expanded" menu="mnuDataTree_MainWordform" hotlinks="mnuDataTree_MainWordform_Hotlinks"/>
+		<part ref="Spelling" menu="mnuDataTree_WordformSpelling"/>
+		<part ref="HumanApprovedAnalysesSection" expansion="expanded" label="User Approved (Analyses)" menu="mnuDataTree_HumanApprovedAnalysisSummary" hotlinks="mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks">
 			<indent indent="true">
 				<part ref="HumanApprovedAnalyses" param="Normal" expansion="expanded"/>
 			</indent>
@@ -22,7 +22,7 @@
 		</part>
 	</layout>
 	<layout class="WfiAnalysis" type="detail" name="Normal">
-		<part ref="HeavySummary" param="HumanApprovedSummary" expansion="expanded" menu="mnuDataTree-HumanApprovedAnalysis" hotlinks="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
+		<part ref="HeavySummary" param="HumanApprovedSummary" expansion="expanded" menu="mnuDataTree_HumanApprovedAnalysis" hotlinks="mnuDataTree_HumanApprovedAnalysis_Hotlinks">
 			<indent>
 				<part ref="InterlinearAnal"/>
 				<part ref="ParserOpinion"/>
@@ -37,7 +37,7 @@
 		</part>
 	</layout>
 	<layout class="WfiAnalysis" type="detail" name="AsParse">
-		<part ref="HeavySummary" param="HumanNoOpinionSummary" expansion="expanded" menu="mnuDataTree-ParserProducedAnalysis">
+		<part ref="HeavySummary" param="HumanNoOpinionSummary" expansion="expanded" menu="mnuDataTree_ParserProducedAnalysis">
 			<indent>
 				<part ref="InterlinearParse"/>
 				<part ref="ParserOpinion"/>
@@ -45,7 +45,7 @@
 		</part>
 	</layout>
 	<layout class="WfiAnalysis" type="detail" name="AsDisapproved">
-		<part ref="HeavySummary" param="HumanDisapprovedSummary" expansion="expanded" menu="mnuDataTree-HumanDisapprovedAnalysis">
+		<part ref="HeavySummary" param="HumanDisapprovedSummary" expansion="expanded" menu="mnuDataTree_HumanDisapprovedAnalysis">
 			<indent>
 				<part ref="InterlinearParse"/>
 				<part ref="ParserOpinion"/>

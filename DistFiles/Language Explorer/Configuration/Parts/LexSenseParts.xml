@@ -569,10 +569,10 @@
 			<slice field="SocioLinguisticsNote" label="Sociolinguistics Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-Examples" type="detail">
-			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex" menu="mnuDataTree-Examples"/>
+			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex" menu="mnuDataTree_Examples"/>
 		</part>
 		<part id="LexSense-Detail-ExtendedNotes" type="detail">
-			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext" menu="mnuDataTree-ExtendedNotes"/>
+			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext" menu="mnuDataTree_ExtendedNotes"/>
 		</part>
 		<part id="LexSense-Jt-HeadWord" type="jtview">
 			<string field="HeadWord"/>
@@ -704,13 +704,13 @@
 		</part>
 		<part id="LexExtendedNote-Detail-Examples" type="detail">
 			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
-				menu="mnuDataTree-ExtendedNote-Examples"/>
+				menu="mnuDataTree_ExtendedNote_Examples"/>
 		</part>
 	</bin>
 	<bin class="LexExampleSentence">
 		<part id="LexExampleSentence-Detail-ExampleAllV" type="Detail">
 			<slice field="Example" label="Example" abrev="eg" editor="multistring" ws="all vernacular"
-				menu="mnuDataTree-Example"></slice>
+				menu="mnuDataTree_Example"></slice>
 		</part>
 		<part id="LexExampleSentence-Detail-TranslationsAllA" type="Detail">
 			<seq field="Translations" ghost="Translation" ghostWs="analysis" ghostLabel="Translation"
@@ -730,7 +730,7 @@
 	</bin>
 	<bin class="CmTranslation">
 		<part id="CmTranslation-Detail-TranslationAllA" type="Detail">
-			<slice field="Translation" label="Translation" editor="multistring" ws="all analysis" menu="mnuDataTree-Translation"
+			<slice field="Translation" label="Translation" editor="multistring" ws="all analysis" menu="mnuDataTree_Translation"
 				weight="light" />
 		</part>
 		<part id="CmTranslation-Detail-Type" type="Detail">
@@ -823,7 +823,7 @@
 	</bin>
 	<bin class="CmFile">
 		<part id="CmFile-Detail-FileName" type="detail">
-			<slice field="InternalPath" label="File" editor="string" ws="analysis" menu="mnuDataTree-Picture" />
+			<slice field="InternalPath" label="File" editor="string" ws="analysis" menu="mnuDataTree_Picture" />
 		</part>
 	</bin>
 	<bin class="CmPicture">
@@ -831,9 +831,9 @@
 			<obj class="CmPicture" field="OwningSense" layout="$fieldName"/>
 		</part>
 		<part id="CmPicture-Detail-FileName" type="detail">
-			<slice label="File" editor="jtview" layout="PathName" editable="no" menu="mnuDataTree-Picture" />
+			<slice label="File" editor="jtview" layout="PathName" editable="no" menu="mnuDataTree_Picture" />
 			<!-- Using this makes the path name editable, which is not appropriate-->
-			<!--slice field="PathNameTSS" label="File" editor="string" menu="mnuDataTree-Picture" /-->
+			<!--slice field="PathNameTSS" label="File" editor="string" menu="mnuDataTree_Picture" /-->
 			<!-- Using this makes Delete command delete the file instead of the picture-->
 			<!--obj field="PictureFile" layout="Normal" /-->
 		</part>
@@ -847,13 +847,13 @@
 			</para>
 		</part>
 		<part id="CmPicture-Detail-CaptionA" type="detail">
-			<slice field="Caption" label="Caption" editor="multistring" ws="vernacular analysis" menu="mnuDataTree-Picture" />
+			<slice field="Caption" label="Caption" editor="multistring" ws="vernacular analysis" menu="mnuDataTree_Picture" />
 		</part>
 		<part id="CmPicture-Detail-Picture" type="detail">
-			<slice label="Picture" editor="picture" menu="mnuDataTree-Picture" />
+			<slice label="Picture" editor="picture" menu="mnuDataTree_Picture" />
 		</part>
 		<part id="CmPicture-Detail-Thumbnail" type="detail">
-			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree-Picture" />
+			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree_Picture" />
 		</part>
 		<part id="CmPicture-Detail-PublishIn" type="detail">
 			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
@@ -981,7 +981,7 @@
 		<part id="LexExtendedNote-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
 			<obj class="LexExtendedNote" field="OwningSense" layout="$fieldName"/>
 		</part>
-		<part id="LexExtendedNote-Jt-Summary" type="jtview" menu="mnuDataTree-ExtendedNote">
+		<part id="LexExtendedNote-Jt-Summary" type="jtview" menu="mnuDataTree_ExtendedNote">
 			<para>
 				<properties>
 					<forecolor value="ControlDarkDark" />
@@ -992,7 +992,7 @@
 				<lit>Extended Note</lit>
 			</para>
 		</part>
-		<part id="LexExtendedNote-Jt-SummaryCollapsed" type="jtview" menu="mnuDataTree-ExtendedNote">
+		<part id="LexExtendedNote-Jt-SummaryCollapsed" type="jtview" menu="mnuDataTree_ExtendedNote">
 			<para>
 				<properties>
 					<forecolor value="ControlDarkDark" />

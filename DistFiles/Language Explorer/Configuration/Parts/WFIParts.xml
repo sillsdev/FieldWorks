@@ -146,7 +146,7 @@
 	</bin>
 	<bin class="WfiGloss">
 		<part id="WfiGloss-Detail-FormAllAnal" type="Detail">
-			<slice field="Form" label="Word Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-WordGlossForm"/>
+			<slice field="Form" label="Word Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree_WordGlossForm"/>
 		</part>
 		<part id="WfiGloss-Jt-Form" type="jtview">
 			<string field="Form"/>

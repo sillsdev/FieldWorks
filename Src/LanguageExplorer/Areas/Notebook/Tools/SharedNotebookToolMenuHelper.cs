@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 		private void Insert_Subsubrecord_Clicked(object sender, EventArgs e)
 		{
 			/*
-				<command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
+				<command id="CmdDataTree_Insert_Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
 					<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
 				</command>
 			*/

@@ -1,2 +1,2 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters persistContext="normalEdit" suppressInfoBar="false" layout="Normal" treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100" />
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters persistContext="normalEdit" suppressInfoBar="false" layout="Normal" treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar_WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100" />

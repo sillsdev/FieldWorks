@@ -4,27 +4,27 @@
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="ReversalIndexEntry" type="detail" name="Normal">
 		<part ref="ChangeHandler"/>
-		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
+		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree_MoveReversalIndexEntry"/>
 		<part ref="PartOfSpeech"/>
 		<part ref="CurrentSenses"/>
-		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree-InsertReversalSubentry" hotlinks="mnuDataTree-InsertReversalSubentry-Hotlinks">
+		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree_InsertReversalSubentry" hotlinks="mnuDataTree_InsertReversalSubentry_Hotlinks">
 			<indent indent="true">
 				<part ref="ReversalSubentries" param="Subentry"/>
 			</indent>
 		</part>
 	</layout>
 	<layout class="ReversalIndexEntry" type="detail" name="Subentry">
-		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
+		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree_MoveReversalIndexEntry"/>
 		<part ref="PartOfSpeech"/>
 		<part ref="CurrentSenses"/>
-		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree-InsertReversalSubentry" hotlinks="mnuDataTree-InsertReversalSubentry-Hotlinks">
+		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree_InsertReversalSubentry" hotlinks="mnuDataTree_InsertReversalSubentry_Hotlinks">
 			<indent indent="true">
 				<part ref="ReversalSubentries" param="Subentry"/>
 			</indent>
 		</part>
 	</layout>
 	<layout class="PartOfSpeech" type="detail" name="Reversal">
-		<part ref="NameRevPOS" menu="mnuDataTree-MoveMainReversalPOS"/>
+		<part ref="NameRevPOS" menu="mnuDataTree_MoveMainReversalPOS"/>
 		<part ref="AbbreviationRevPOS"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">
@@ -34,7 +34,7 @@
 		</part>
 	</layout>
 	<layout class="PartOfSpeech" type="detail" name="ReversalSubcategory">
-		<part ref="NameRevPOS" menu="mnuDataTree-MoveReversalPOS"/>
+		<part ref="NameRevPOS" menu="mnuDataTree_MoveReversalPOS"/>
 		<part ref="AbbreviationRevPOS"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">

@@ -156,7 +156,7 @@
 	</part>
 	<part ref="RelatedDomains">
 	</part>
-	<part ref="SubPossibilities" label="Subdomains" param="nested" menu="mnuDataTree-SubSemanticDomain"/>
+	<part ref="SubPossibilities" label="Subdomains" param="nested" menu="mnuDataTree_SubSemanticDomain"/>
   </layout>
 
   <layout class="CmSemanticDomain" type="detail" name="RDE">
@@ -200,7 +200,7 @@
 	<part ref="Confidence"/>
 	<part ref="Researchers"/>
 	<part ref="Restrictions"/>
-	<part ref="Subtypes" label="Subtypes" param="nested" menu="mnuDataTree-SubComplexEntryType"/>
+	<part ref="Subtypes" label="Subtypes" param="nested" menu="mnuDataTree_SubComplexEntryType"/>
   </layout>
 
   <layout class="LexEntryType" type="detail" name="EditVariant">
@@ -214,15 +214,15 @@
 	<part ref="Confidence"/>
 	<part ref="Researchers"/>
 	<part ref="Restrictions"/>
-	<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree-SubVariantEntryType"/>
+	<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree_SubVariantEntryType"/>
   </layout>
 
   <layout class="LexEntryType" type="detail" name="nestedComplex">
-	<part ref="Summary" label="Complex Form Type" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+	<part ref="Summary" label="Complex Form Type" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
   </layout>
 
   <layout class="LexEntryType" type="detail" name="nestedVariant">
-	<part ref="Summary" label="Variant Type" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+	<part ref="Summary" label="Variant Type" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
   </layout>
 
 	<layout class="LexEntryInflType" type="detail" name="EditVariant">
@@ -240,11 +240,11 @@
 		<part ref="Confidence"/>
 		<part ref="Researchers"/>
 		<part ref="Restrictions"/>
-		<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree-SubVariantEntryType"/>
+		<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree_SubVariantEntryType"/>
 	</layout>
 
 	<layout class="LexEntryInflType" type="detail" name="nestedVariant">
-		<part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+		<part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
 	</layout>
 
 	<layout class="CmAnthroItem" type="detail" name="default">
@@ -264,7 +264,7 @@
 	</part>
 	<part ref="Restrictions">
 	</part>
-	<part ref="SubPossibilities" label="Subcategories" param="nested" menu="mnuDataTree-SubAnthroCategory">
+	<part ref="SubPossibilities" label="Subcategories" param="nested" menu="mnuDataTree_SubAnthroCategory">
 	</part>
   </layout>
 
@@ -334,15 +334,15 @@
   </layout>
 
   <layout class="CmPossibility" type="detail" name="nested">
-	<part ref="Summary" label="Subitem" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+	<part ref="Summary" label="Subitem" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
   </layout>
 
   <layout class="CmSemanticDomain" type="detail" name="nested">
-	<part ref="Summary" label="Subdomain" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+	<part ref="Summary" label="Subdomain" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
   </layout>
 
   <layout class="CmAnthroItem" type="detail" name="nested">
-	<part ref="Summary" label="Subcategory" param="PossibilityName" menu="mnuDataTree-DeletePossibility"/>
+	<part ref="Summary" label="Subcategory" param="PossibilityName" menu="mnuDataTree_DeletePossibility"/>
   </layout>
 
   <layout class="LexRefType" type="detail" name="default">

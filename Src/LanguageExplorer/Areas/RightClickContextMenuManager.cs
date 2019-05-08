@@ -47,9 +47,9 @@ namespace LanguageExplorer.Areas
 			_cache = majorFlexComponentParameters.LcmCache;
 
 			var rightClickPopupMenuFactory = _dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory;
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
 		}
 
 		#region Implementation of IDisposable
@@ -100,15 +100,15 @@ namespace LanguageExplorer.Areas
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuObjectChoices(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuObjectChoices(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == AreaServices.mnuObjectChoices, $"Expected argument value of '{AreaServices.mnuObjectChoices}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuObjectChoices, $"Expected argument value of '{ContextMenuName.mnuObjectChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 			// Start: <menu id="mnuObjectChoices">
 
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = AreaServices.mnuObjectChoices
+				Name = ContextMenuName.mnuObjectChoices.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(19);
 
@@ -293,15 +293,15 @@ namespace LanguageExplorer.Areas
 			((Slice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == AreaServices.mnuReferenceChoices, $"Expected argument value of '{AreaServices.mnuReferenceChoices}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 			// Start: <menu id="mnuReferenceChoices">
 
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = AreaServices.mnuReferenceChoices
+				Name = ContextMenuName.mnuReferenceChoices.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(42);
 			/*
@@ -996,15 +996,15 @@ namespace LanguageExplorer.Areas
 
 		#region "mnuEnvReferenceChoices"
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == AreaServices.mnuEnvReferenceChoices, $"Expected argument value of '{AreaServices.mnuEnvReferenceChoices}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuEnvReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuEnvReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 			// Start: <menu id="mnuEnvReferenceChoices">
 
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = AreaServices.mnuEnvReferenceChoices
+				Name = ContextMenuName.mnuEnvReferenceChoices.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 

@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				insertToolbarDictionary.Add(Command.CmdInsertCustomItem, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, () => CanCmdInsertCustomItem));
 
 				// Goes in Insert menu & Insert toolbar
-				// <command id="CmdDataTree-Insert-CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+				// <command id="CmdDataTree_Insert_CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 				insertMenuDictionary.Add(Command.CmdInsertCustomItem, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
 				insertToolbarDictionary.Add(Command.CmdInsertCustomItem, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
 

@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -21,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class CategoryBrowseTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private CategoryBrowseToolMenuHelper _toolMenuHelper;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
@@ -40,9 +42,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		{
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-			_browseViewContextMenuFactory.Dispose();
+			_toolMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
-			_browseViewContextMenuFactory = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -57,14 +59,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			// Do nothing for this tool
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(this));
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController));
+			_toolMenuHelper = new CategoryBrowseToolMenuHelper(majorFlexComponentParameters, this);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController));
 		}
 
 		/// <summary>
@@ -137,6 +133,64 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
             </clerk>
 			*/
 			return new PossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
+		}
+
+		private sealed class CategoryBrowseToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal CategoryBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				// Tool must be added, even when it adds no tool specific handlers.
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// TODO: Set up factory method for the browse view.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~CategoryBrowseToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

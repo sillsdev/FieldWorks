@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -452,7 +451,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the id of the context menu that should be shown for our object
 		/// </summary>
-		protected virtual string ContextMenuId => AreaServices.mnuObjectChoices;
+		protected virtual ContextMenuName ContextMenuId => ContextMenuName.mnuObjectChoices;
 
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
@@ -520,15 +519,15 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId = null, Action<ContextMenuStrip> adjustMenu = null)
+		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, ContextMenuName menuId = ContextMenuName.nullValue, Action<ContextMenuStrip> adjustMenu = null)
 		{
-			if (string.IsNullOrWhiteSpace(sMenuId))
+			if (menuId == ContextMenuName.nullValue)
 			{
 				// Callers outside of the FooUi classes (e.g.: RuleFormulaControl) supply the menu id,
 				// or they are happy with the FooUi ContextMenuId virtual property value (e.g.: SandboxBase).
 				// In any case, only "hostControl" is of interest to this class, where all other parameters are passed
 				// on to something that handles the context menu.
-				sMenuId = ContextMenuId;
+				menuId = ContextMenuId;
 			}
 			m_hostControl = hostControl;
 			var sHostType = m_hostControl.GetType().Name;
@@ -554,11 +553,11 @@ namespace LanguageExplorer.LcmUi
 					dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
 					_rightClickTuple = null;
 				}
-				_rightClickTuple = dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, sMenuId);
+				_rightClickTuple = dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, menuId);
 				if (_rightClickTuple == null)
 				{
 					// Nobody home (the menu).
-					MessageBox.Show($"Popup menu: '{sMenuId}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
+					MessageBox.Show($"Popup menu: '{menuId}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
 					return true;
 				}
 				if (_rightClickTuple.Item1.Items.Count > 0)

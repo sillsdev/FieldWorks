@@ -27,13 +27,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
 		private RecordBrowseView _recordBrowseView;
-		private IReversalIndexRepository _reversalIndexRepository;
 		private ReversalIndexPosEditMenuHelper _toolMenuHelper;
 		private IReversalIndex _currentReversalIndex;
 		[Import(AreaServices.ListsAreaMachineName)]
@@ -56,14 +53,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
 			_toolMenuHelper.Dispose();
 
 			_cache = null;
 			_recordBrowseView = null;
-			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
-			_browseViewContextMenuFactory = null;
 			_toolMenuHelper = null;
 		}
 
@@ -86,15 +80,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex.PartsOfSpeechOA, _recordList, dataTree);
-			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
+			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex, _recordList, dataTree, _recordBrowseView, showHiddenFieldsPropertyName);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -106,7 +95,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, ReversalIndexPosEditMenuHelper.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -195,40 +184,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
-		{
-			var contextMenuStrip = new ContextMenuStrip();
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-			if (_reversalIndexRepository == null)
-			{
-				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			}
-			var allInstancesinRepository = _reversalIndexRepository.AllInstances().ToDictionary(rei => rei.Guid);
-			foreach (var rei in allInstancesinRepository.Values)
-			{
-				var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ReversalIndex_Menu_Clicked, rei.ChooserNameTS.Text);
-				newMenuItem.Tag = rei;
-			}
-
-			return retVal;
-		}
-
-		private void ReversalIndex_Menu_Clicked(object sender, EventArgs e)
-		{
-			var contextMenuItem = (ToolStripMenuItem)sender;
-			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
-			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-			((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
-			SetCheckedState(contextMenuItem);
-		}
-
-		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
-		{
-			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
-		}
-
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
@@ -258,33 +213,85 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		private sealed class ReversalIndexPosEditMenuHelper : IDisposable
 		{
-			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
-			private readonly ICmPossibilityList _list;
-			private readonly IRecordList _recordList;
-			private readonly DataTree _dataTree;
+			internal const string PanelMenuId = "left";
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private IReversalIndex _currentReversalIndex;
+			private ICmPossibilityList _list;
+			private IRecordList _recordList;
+			private DataTree _dataTree;
+			private LcmCache _cache;
+			private IReversalIndexRepository _reversalIndexRepository;
+			private string _extendedPropertyName;
+			private RecordBrowseView _recordBrowseView;
+			private IPropertyTable _propertyTable;
 
 			private IPropertyTable PropertyTable => _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
-			internal ReversalIndexPosEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			internal ReversalIndexPosEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IReversalIndex currentReversalIndex, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView, string extendedPropertyName)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
-				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(currentReversalIndex, nameof(currentReversalIndex));
 				Guard.AgainstNull(recordList, nameof(recordList));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_list = list;
+				_currentReversalIndex = currentReversalIndex;
+				_list = _currentReversalIndex.PartsOfSpeechOA;
 				_recordList = recordList;
 				_dataTree = dataTree;
+				_cache = _majorFlexComponentParameters.LcmCache;
+				_recordBrowseView = recordBrowseView;
+				_extendedPropertyName = extendedPropertyName;
+				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+
 				SetupToolUiWidgets(tool, dataTree);
+#if RANDYTODO
+				// TODO: Set up browse menu.
+#endif
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
+			{
+				var contextMenuStrip = new ContextMenuStrip();
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+				if (_reversalIndexRepository == null)
+				{
+					_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				}
+				var allInstancesInRepository = _reversalIndexRepository.AllInstances().ToDictionary(rei => rei.Guid);
+				foreach (var rei in allInstancesInRepository.Values)
+				{
+					var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ReversalIndex_Menu_Clicked, rei.ChooserNameTS.Text);
+					newMenuItem.Tag = rei;
+				}
+
+				return retVal;
+			}
+
+			private void ReversalIndex_Menu_Clicked(object sender, EventArgs e)
+			{
+				var contextMenuItem = (ToolStripMenuItem)sender;
+				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
+				_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
+				SetCheckedState(contextMenuItem);
+			}
+
+			private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
+			{
+				var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
+				reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 			}
 
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
-				// <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar for both.
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
@@ -293,31 +300,32 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
+				dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(PanelMenuId, CreateMainPanelContextMenuStrip);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_MoveMainReversalPOS}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveMainReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-MoveMainReversalPOS">
+				// Start: <menu id="mnuDataTree_MoveMainReversalPOS">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_MoveMainReversalPOS
+					Name = ContextMenuName.mnuDataTree_MoveMainReversalPOS.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				/*
-				  <item command="CmdDataTree-Move-MoveReversalPOS" /> // Shared locally
-						<command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
+				  <item command="CmdDataTree_Move_MoveReversalPOS" /> // Shared locally
+						<command id="CmdDataTree_Move_MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
 						  <!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
 						</command>
 				*/
 				var currentPartOfSpeech = _recordList.CurrentObject as IPartOfSpeech;
-				var enabled = CanMergeOrMovePos(currentPartOfSpeech);
+				var enabled = _list.ReallyReallyAllPossibilities.Count > 1;
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReversalPOS_Clicked, ListResources.Move_Category);
 				menu.Enabled = enabled;
 				menu.Tag = currentPartOfSpeech;
@@ -328,69 +336,65 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				/*
-				  <item command="CmdDataTree-Merge-MergeReversalPOS" /> // Shared locally
-					<command id="CmdDataTree-Merge-MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS" />
+				  <item command="CmdDataTree_Merge_MergeReversalPOS" /> // Shared locally
+					<command id="CmdDataTree_Merge_MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS" />
 				*/
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
 				menu.Enabled = enabled;
 				menu.Tag = currentPartOfSpeech;
 
 				/*
-				  <item command="CmdDataTree-Delete-ReversalSubPOS" />
-					<command id="CmdDataTree-Delete-ReversalSubPOS" label="Delete this Category and any Subcategories" message="DataTreeDelete" icon="Delete">
+				  <item command="CmdDataTree_Delete_ReversalSubPOS" />
+					<command id="CmdDataTree_Delete_ReversalSubPOS" label="Delete this Category and any Subcategories" message="DataTreeDelete" icon="Delete">
 					  <parameters field="SubPossibilities" className="PartOfSpeech" />
 					</command> Delete_this_Category_and_any_Subcategories
 				*/
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-MoveMainReversalPOS">
+				// End: <menu id="mnuDataTree_MoveMainReversalPOS">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_MoveReversalPOS}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-MoveReversalPOS">
+				// Start: <menu id="mnuDataTree_MoveReversalPOS">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_MoveReversalPOS
+					Name = ContextMenuName.mnuDataTree_MoveReversalPOS.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
 				/*
-				  <item command="CmdDataTree-Move-MoveReversalPOS" /> // Shared locally
+				  <item command="CmdDataTree_Move_MoveReversalPOS" /> // Shared locally
 				*/
-				var currentPartOfSpeech = _recordList.CurrentObject as IPartOfSpeech;
-				var enabled = CanMergeOrMovePos(currentPartOfSpeech);
+				var enabled = _list.ReallyReallyAllPossibilities.Count > 1;
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReversalPOS_Clicked, ListResources.Move_Category);
-				menu.Enabled = enabled;
-				menu.Tag = currentPartOfSpeech;
+				menu.Enabled = _list.ReallyReallyAllPossibilities.Count > 1;
 
-				using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
+				using (var imageHolder = new DictionaryConfiguration.ImageHolder())
 				{
 					/*
-						<command id="CmdDataTree-Promote-ProReversalSubPOS" label="Promote" message="PromoteReversalSubPOS" icon="MoveLeft">
+						<command id="CmdDataTree_Promote_ProReversalSubPOS" label="Promote" message="PromoteReversalSubPOS" icon="MoveLeft">
 						  <parameters field="SubPossibilities" className="PartOfSpeech" />
 						</command>
 					*/
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_ReversalSubPOS_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeft]);
-					menu.Tag = currentPartOfSpeech;
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_ReversalSubPOS_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeft]);
 				}
 
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-				// <item command="CmdDataTree-Merge-MergeReversalPOS" />
+				// <item command="CmdDataTree_Merge_MergeReversalPOS" />
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
 				menu.Enabled = enabled;
-				menu.Tag = currentPartOfSpeech;
 
-				// <item command="CmdDataTree-Delete-ReversalSubPOS" />
+				// <item command="CmdDataTree_Delete_ReversalSubPOS" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-				// End: <menu id="mnuDataTree-MoveReversalPOS">
+				// End: <menu id="mnuDataTree_MoveReversalPOS">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -407,11 +411,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 					retval.Add((IPartOfSpeech)partOfSpeech);
 				}
 				return retval;
-			}
-
-			private static bool CanMergeOrMovePos(IPartOfSpeech partOfSpeech)
-			{
-				return partOfSpeech.OwningList.ReallyReallyAllPossibilities.Count > 1;
 			}
 
 			private void MoveReversalPOS_Clicked(object sender, EventArgs e)

@@ -189,42 +189,42 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				var insertMenuDictionary = menuItemsDictionary[MainMenu.Insert];
 				var insertToolbarDictionary = toolBarItemsDictionary[ToolBar.Insert];
 				// <item command="CmdInsertLocation" defaultVisible="false" />
-				// <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
+				// <item command="CmdDataTree_Insert_Location" defaultVisible="false" label="Subitem" />
 				insertMenuDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> CanCmdInsertLocation));
 				insertToolbarDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => CanCmdInsertLocation));
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
+				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubLocation(Slice slice, string contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubLocation(Slice slice, ContextMenuName contextMenuId)
 			{
 				/*
 					// Used for CmLocation, but, unexpectedly, also for: LexEntryType
 					// I'm not sure how one can reasonable insert an instance of CmLocation into a list of LexEntryType instance, given that the list should prevent that.
-					<menu id="mnuDataTree-SubLocation">
+					<menu id="mnuDataTree_SubLocation">
 				*/
-				Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubLocation, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubLocation}', but got '{contextMenuId}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubLocation, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubLocation.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree-SubLocation">
+				// Start: <menu id="mnuDataTree_SubLocation">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ListsAreaConstants.mnuDataTree_SubLocation
+					Name = ContextMenuName.mnuDataTree_SubLocation.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				/*
-					  <item command="CmdDataTree-Insert-Location" /> // Shared
-						<command id="CmdDataTree-Insert-Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+					  <item command="CmdDataTree_Insert_Location" /> // Shared
+						<command id="CmdDataTree_Insert_Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 						  <parameters field="SubPossibilities" className="CmLocation" />
 						</command>
 				*/
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Location_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 
-				// End: <menu id="mnuDataTree-SubLocation">
+				// End: <menu id="mnuDataTree_SubLocation">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}

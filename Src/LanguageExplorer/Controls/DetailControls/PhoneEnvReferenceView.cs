@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -966,8 +965,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;
 			}
 			var contextMenuId = m_realEnvs.ContainsKey(hvoDummy)
-				? Cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_rootFlid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices
-				: AreaServices.mnuReferenceChoices : AreaServices.mnuEnvReferenceChoices;
+				? Cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_rootFlid) == PhEnvironmentTags.kClassId ? ContextMenuName.mnuEnvReferenceChoices
+				: ContextMenuName.mnuReferenceChoices : ContextMenuName.mnuEnvReferenceChoices;
 			_contextMenuTuple = _rightClickPopupMenuFactory.GetPopupContextMenu(MySlice, contextMenuId);
 			_contextMenuTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 			return true;

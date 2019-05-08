@@ -281,7 +281,7 @@ namespace LanguageExplorer.Areas
 			}
 			_mnuEnvChoices = new ContextMenuStrip()
 			{
-				Name = AreaServices.mnuEnvChoices
+				Name = ContextMenuName.mnuEnvChoices.ToString()
 			};
 			_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);

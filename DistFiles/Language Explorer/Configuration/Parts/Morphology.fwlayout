@@ -59,7 +59,7 @@
 
 
 	<layout class="MoStemAllomorph" type="detail" name="Normal">
-		<part ref="FormAllV" label="Stem Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
+		<part ref="FormAllV" label="Stem Allomorph" expansion="expanded" menu="mnuDataTree_Allomorph">
 			<indent>
 				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 				<part ref="MorphType"/>
@@ -72,7 +72,7 @@
 	</layout>
 
 	<layout class="MoAffixAllomorph" type="detail" name="Normal">
-		<part ref="FormAllVAffix" label="Affix Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
+		<part ref="FormAllVAffix" label="Affix Allomorph" expansion="expanded" menu="mnuDataTree_Allomorph">
 			<indent>
 				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
 				<part ref="MorphType"/>
@@ -87,7 +87,7 @@
 	</layout>
 
 	<layout class="MoAffixProcess" type="detail" name="Normal">
-		<part ref="FormAllVAffix" label="Affix Allomorph (Process)" expansion="expanded" menu="mnuDataTree-AffixProcess">
+		<part ref="FormAllVAffix" label="Affix Allomorph (Process)" expansion="expanded" menu="mnuDataTree_AffixProcess">
 			<indent>
 				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
 				<part ref="MorphType"/>
@@ -147,21 +147,21 @@
 		</part>
 		<part ref="DescriptionAllA"/>
 
-		<part ref="AffixTemplatesSection" expansion="expanded" label="Affix Templates" menu="mnuDataTree-POS-AffixTemplates">
+		<part ref="AffixTemplatesSection" expansion="expanded" label="Affix Templates" menu="mnuDataTree_POS_AffixTemplates">
 			<indent>
-				<part ref="AffixTemplates" expansion="expanded" label="Affix Templates" menu="mnuDataTree-POS-AffixTemplates"/>
+				<part ref="AffixTemplates" expansion="expanded" label="Affix Templates" menu="mnuDataTree_POS_AffixTemplates"/>
 			</indent>
 		</part>
 
-		<part ref="AffixSlotsSection" expansion="expanded" label="Affix Slots" menu="mnuDataTree-POS-AffixSlots" >
+		<part ref="AffixSlotsSection" expansion="expanded" label="Affix Slots" menu="mnuDataTree_POS_AffixSlots" >
 			<indent>
-				<part ref="AffixSlots" expansion="expanded" label="Affix Slots" menu="mnuDataTree-POS-AffixSlots"/>
+				<part ref="AffixSlots" expansion="expanded" label="Affix Slots" menu="mnuDataTree_POS_AffixSlots"/>
 			</indent>
 		</part>
 
-		<part ref="InflectionClassesSection" label="Inflection Class Info" menu="mnuDataTree-POS-InflectionClasses">
+		<part ref="InflectionClassesSection" label="Inflection Class Info" menu="mnuDataTree_POS_InflectionClasses">
 			<indent >
-				<part ref="InflectionClasses" expansion="expanded" label="Inflection Classes" menu="mnuDataTree-POS-InflectionClasses"/>
+				<part ref="InflectionClasses" expansion="expanded" label="Inflection Classes" menu="mnuDataTree_POS_InflectionClasses"/>
 				<part ref="DefaultInflectionClass" label="Default Inflection Class"/>
 			</indent>
 		</part>
@@ -171,9 +171,9 @@
 			</indent>
 		</part>
 
-		<part ref="StemNamesSection" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames" >
+		<part ref="StemNamesSection" expansion="expanded" label="Stem Names" menu="mnuDataTree_POS_StemNames" >
 			<indent>
-				<part ref="StemNames" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames"/>
+				<part ref="StemNames" expansion="expanded" label="Stem Names" menu="mnuDataTree_POS_StemNames"/>
 			</indent>
 		</part>
 
@@ -190,13 +190,13 @@
 	</layout>
 
 	<layout class="MoInflAffixSlot" type="detail" name="EditSlot">
-		<part ref="NameAllA" label="Slot Name" menu="mnuDataTree-POS-AffixSlot"/>
+		<part ref="NameAllA" label="Slot Name" menu="mnuDataTree_POS_AffixSlot"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="Optional" label = "Optional"/>
 	</layout>
 
 	<layout class="MoInflAffixTemplate" type="detail" name="default">
-		<part ref="NameAllA" label="Template Name"   menu="mnuDataTree-POS-AffixTemplate"/>
+		<part ref="NameAllA" label="Template Name"   menu="mnuDataTree_POS_AffixTemplate"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="Active"/>
 		<part ref="TemplateTable"/>
@@ -205,50 +205,50 @@
 	</layout>
 
 	<layout class="MoStemName" type="detail" name="EditStemName">
-		<part ref="NameAllA" label="Stem Name" menu="mnuDataTree-POS-StemName"/>
+		<part ref="NameAllA" label="Stem Name" menu="mnuDataTree_POS_StemName"/>
 		<part ref="AbbreviationAllA"/>
 		<part ref="DescriptionAllA"/>
-		<part ref="StemNameRegionsSection" expansion="expanded" label="Feature Sets" menu="mnuDataTree-MoStemName-Regions" >
+		<part ref="StemNameRegionsSection" expansion="expanded" label="Feature Sets" menu="mnuDataTree_MoStemName_Regions" >
 			<indent>
-				<part ref="StemNameRegions" expansion="expanded" label="Regions" menu="mnuDataTree-MoStemName-Region"/>
+				<part ref="StemNameRegions" expansion="expanded" label="Regions" menu="mnuDataTree_MoStemName_Region"/>
 			</indent>
 		</part>
 	</layout>
 
 	<layout class="FsFeatStruc" type="detail" name="EditStemNameRegion">
-		<part ref="RegionFeatureSpecs" label="Feature Set" menu="mnuDataTree-MoStemName-Region"/>
+		<part ref="RegionFeatureSpecs" label="Feature Set" menu="mnuDataTree_MoStemName_Region"/>
 	</layout>
 
 	<layout class="FsFeatStruc" type="detail" name="FeatureSpecs">
-		<part ref="FeatureSpecs" label="Features" menu="mnuDataTree-FeatureStructure-Features" visibility="ifdata"/>
+		<part ref="FeatureSpecs" label="Features" menu="mnuDataTree_FeatureStructure_Features" visibility="ifdata"/>
 	</layout>
 
 	<layout class="FsFeatStruc" type="detail" name="MsFeatures">
-		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree_FeatureStructure_Features"/>
 	</layout>
   <layout class="FsFeatStruc" type="detail" name="MsEnvFeatures">
-	<part ref="FeatureSpecs" label="Required Features" menu="mnuDataTree-FeatureStructure-Features"/>
+	<part ref="FeatureSpecs" label="Required Features" menu="mnuDataTree_FeatureStructure_Features"/>
   </layout>
   <layout class="FsFeatStruc" type="detail" name="FromMsFeatures">
-		<part ref="FeatureSpecs" label="From Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+		<part ref="FeatureSpecs" label="From Inflection Features" menu="mnuDataTree_FeatureStructure_Features"/>
 	</layout>
 	<layout class="FsFeatStruc" type="detail" name="ToMsFeatures">
-		<part ref="FeatureSpecs" label="To Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+		<part ref="FeatureSpecs" label="To Inflection Features" menu="mnuDataTree_FeatureStructure_Features"/>
 	</layout>
 	<layout class="FsFeatStruc" type="detail" name="InflFeats">
-		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree_FeatureStructure_Features"/>
 </layout>
 
 	<layout class="FsFeatStruc" type="detail" name="NestedInflFeats">
 		<part ref="Blank" label="Nested Inflection Features">
 			<indent>
-				<part ref="FeatureSpecs" expansion="expanded" label="Features" menu="mnuDataTree-FeatureStructure-Features"/>
+				<part ref="FeatureSpecs" expansion="expanded" label="Features" menu="mnuDataTree_FeatureStructure_Features"/>
 			</indent>
 		</part>
 </layout>
 
 	<layout class="FsFeatStruc" type="detail" name="EditFeatureSpecs">
-		<part ref="FeatureSpecs" label="Features" expansion="expanded" menu="mnuDataTree-FeatureStructure-Features"/>
+		<part ref="FeatureSpecs" label="Features" expansion="expanded" menu="mnuDataTree_FeatureStructure_Features"/>
 	</layout>
 
   <layout class="FsFeatStruc" type="jtview" name="PhonFeats">
@@ -285,15 +285,15 @@
 		<part ref="DescriptionAllA">
 		</part>
 		<part ref="ShowInGloss" label="Use Abbreviation as label"/>
-		<part ref="InflectionFeaturesValuesSection" expansion="expanded" label="Values" menu="mnuDataTree-ClosedFeature-Values" >
+		<part ref="InflectionFeaturesValuesSection" expansion="expanded" label="Values" menu="mnuDataTree_ClosedFeature_Values" >
 			<indent>
-				<part ref="Values" expansion="expanded" menu="mnuDataTree-ClosedFeature-Values"/>
+				<part ref="Values" expansion="expanded" menu="mnuDataTree_ClosedFeature_Values"/>
 			</indent>
 		</part>
 	</layout>
 
 	<layout class="FsSymFeatVal" type="detail" name="EditValue">
-		<part ref="NameAllA" label="Value Name" menu="mnuDataTree-ClosedFeature-Value">
+		<part ref="NameAllA" label="Value Name" menu="mnuDataTree_ClosedFeature_Value">
 		</part>
 		<part ref="AbbreviationAllA">
 		</part>
@@ -309,15 +309,15 @@
 	</part>
 	<part ref="DescriptionAllA">
 	</part>
-	<part ref="ValuesSection" expansion="expanded" label="Values" menu="mnuDataTree-ClosedFeature-Values" >
+	<part ref="ValuesSection" expansion="expanded" label="Values" menu="mnuDataTree_ClosedFeature_Values" >
 	  <indent>
-		<part ref="PhonValues" expansion="expanded" menu="mnuDataTree-ClosedFeature-Values"/>
+		<part ref="PhonValues" expansion="expanded" menu="mnuDataTree_ClosedFeature_Values"/>
 	  </indent>
 	</part>
   </layout>
 
   <layout class="FsSymFeatVal" type="detail" name="PhonEditValue">
-	<part ref="NameAllA" label="Value Name" menu="mnuDataTree-ClosedFeature-Value">
+	<part ref="NameAllA" label="Value Name" menu="mnuDataTree_ClosedFeature_Value">
 	</part>
 	<part ref="AbbreviationAllA">
 	</part>
@@ -334,7 +334,7 @@
 	</layout>
 
 	<layout class="FsClosedValue" type="detail" name="EditFeatureSpec">
-		<part ref="Summary" label="Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
+		<part ref="Summary" label="Feature" param="FeatureSummary" menu="mnuDataTree_FeatureStructure_Feature">
 		<indent>
 		<part ref="Feature"/>
 		<part ref="Value"/>
@@ -343,7 +343,7 @@
 	</layout>
 
 	<layout class="FsComplexValue" type="detail" name="EditFeatureSpec">
-		<part ref="Summary" label="Complex Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
+		<part ref="Summary" label="Complex Feature" param="FeatureSummary" menu="mnuDataTree_FeatureStructure_Feature">
 		<indent>
 		<part ref="Feature"/>
 		<part ref="Value"/>
@@ -418,7 +418,7 @@
 		<part ref="Name"/>
 		<part ref="Description"/>
 		<part ref="Active"/>
-		<part ref="MembersSection" expansion="expanded" label="Members" menu="mnuDataTree-Adhoc-Group-Members">
+		<part ref="MembersSection" expansion="expanded" label="Members" menu="mnuDataTree_Adhoc_Group_Members">
 			<indent>
 						<part ref="Members" expansion="expanded" />
 			</indent>
@@ -426,25 +426,25 @@
 	</layout>
 
 	<layout class="MoAlloAdhocProhib" type="detail" name="EditAdHocGroup">
-		<part ref="FirstAllomorph" menu="mnuDataTree-Delete-Adhoc-Allomorph"/>
+		<part ref="FirstAllomorph" menu="mnuDataTree_Delete_Adhoc_Allomorph"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfAllos"/>
 		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoMorphAdhocProhib" type="detail" name="EditAdHocGroup">
-		<part ref="FirstMorpheme" menu="mnuDataTree-Delete-Adhoc-Morpheme"/>
+		<part ref="FirstMorpheme" menu="mnuDataTree_Delete_Adhoc_Morpheme"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfMorphs"/>
 		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoAdhocProhibGr" type="detail" name="EditAdHocGroup">
-		<part ref="NestedGroupName" label="Nested Group Name" menu="mnuDataTree-Delete-Adhoc-Group">
+		<part ref="NestedGroupName" label="Nested Group Name" menu="mnuDataTree_Delete_Adhoc_Group">
 			<indent indent="true">
 				<part ref="Description" label="Nested Group Description"/>
 				<part ref="Active"/>
-				<part ref="NestedMembersSection" expansion="expanded" label="Nested Group Members" menu="mnuDataTree-Adhoc-Group-Members">
+				<part ref="NestedMembersSection" expansion="expanded" label="Nested Group Members" menu="mnuDataTree_Adhoc_Group_Members">
 					<indent>
 						<part ref="IndentedMembers" expansion="expanded" />
 					</indent>
@@ -454,10 +454,10 @@
 	</layout>
 
    <layout class="MoInflClass" type="detail" name="SubClassesAllA">
-	  <part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
+	  <part ref="NameAllA" label="Subclass Name" menu="mnuDataTree_POS_InflectionClass"/>
 	  <part ref="AbbreviationAllA"/>
 	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree_POS_InflectionClass_Subclasses">
 		 <indent indent="true">
 			<part ref="SubClasses" label="Subclasses"/>
 		 </indent>
@@ -465,10 +465,10 @@
    </layout>
 
    <layout class="MoInflClass" type="detail" name="EditInflectionClass">
-	  <part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
+	  <part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree_POS_InflectionClass"/>
 	  <part ref="AbbreviationAllA"/>
 	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree_POS_InflectionClass_Subclasses">
 		  <indent indent="true">
 			 <part ref="SubClasses" label="Subclasses"/>
 		  </indent>
@@ -526,9 +526,9 @@
 	<part ref="BasicIPASymbol"/>
 		<part ref="DescriptionAllA"/>
 	<part ref="Features" label="Phonological Features"/>
-		<part ref="RepresentationsSection" expansion="expanded" label="In Orthography as" menu="mnuDataTree-Phoneme-Codes" >
+		<part ref="RepresentationsSection" expansion="expanded" label="In Orthography as" menu="mnuDataTree_Phoneme_Codes" >
 			<indent>
-						<part ref="Codes" expansion="expanded" menu="mnuDataTree-Phoneme-Code"/>
+						<part ref="Codes" expansion="expanded" menu="mnuDataTree_Phoneme_Code"/>
 			</indent>
 		</part>
 	</layout>

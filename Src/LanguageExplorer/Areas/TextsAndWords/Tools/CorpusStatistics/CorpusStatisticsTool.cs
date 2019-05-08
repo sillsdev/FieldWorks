@@ -2,8 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
+using SIL.Code;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
@@ -14,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class CorpusStatisticsTool : ITool
 	{
-		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
+		private CorpusStatisticsToolMenuHelper _toolMenuHelper;
 		private StatisticsView _statisticsView;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -35,8 +38,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// Setting "SecondControl" to null will dispose "_statisticsView", so no need to do it here.
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 
+			_toolMenuHelper.Dispose();
 			_statisticsView = null;
-			_partiallySharedTextsAndWordsToolsMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -47,10 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
-			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			_toolMenuHelper = new CorpusStatisticsToolMenuHelper(majorFlexComponentParameters, this);
 			// NB: Create the StatisticsView 'after' adding the tool handler, or you eat an exception for no tool registered.
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'. (The constructor does that.)
 			_statisticsView = new StatisticsView(majorFlexComponentParameters);
@@ -104,5 +105,68 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private sealed class CorpusStatisticsToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
+
+			internal CorpusStatisticsToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				// Tool must be added, even when it adds no tool specific handlers.
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// TODO: Set up factory method for the browse view.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~CorpusStatisticsToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_majorFlexComponentParameters = null;
+				_partiallySharedTextsAndWordsToolsMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

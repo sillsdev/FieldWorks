@@ -49,89 +49,89 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		private void Register_PossibilityList_Slice_Context_Menus()
 		{
 			/*
-			 <part ref="Summary" label="Complex Form Type" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/> class="LexEntryType"
-			 <part ref="Summary" label="Variant Type" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/> class="LexEntryType"
-			 <part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/> class="LexEntryInflType"
-			 <part ref="Summary" label="Subitem" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/> class="CmPossibility"
-			 <part ref="Summary" label="Subdomain" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/> class="CmSemanticDomain"
-			 <part ref="Summary" label="Subcategory" param="PossibilityName" menu="mnuDataTree-DeletePossibility"/> class="CmAnthroItem"
+			 <part ref="Summary" label="Complex Form Type" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="LexEntryType"
+			 <part ref="Summary" label="Variant Type" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="LexEntryType"
+			 <part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="LexEntryInflType"
+			 <part ref="Summary" label="Subitem" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="CmPossibility"
+			 <part ref="Summary" label="Subdomain" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="CmSemanticDomain"
+			 <part ref="Summary" label="Subcategory" param="PossibilityName" menu="mnuDataTree_DeletePossibility"/> class="CmAnthroItem"
 			*/
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_DeletePossibility, Create_mnuDataTree_DeletePossibility);
+			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeletePossibility, Create_mnuDataTree_DeletePossibility);
 
 			/*
-				<slice label="Subitems" menu="mnuDataTree-SubPossibilities">
+				<slice label="Subitems" menu="mnuDataTree_SubPossibilities">
 					<seq field="SubPossibilities"/>
 				</slice>
 			*/
 			// All except FeatureTypesAdvancedEditTool, which isn't a real list anyway.
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_SubPossibilities, Create_mnuDataTree_SubPossibilities);
+			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubPossibilities, Create_mnuDataTree_SubPossibilities);
 
 			// <menu id="mnuDataTree-POS-SubPossibilities">
 			// Shared Reversal (Lists) and Morphology (Grammar) worlds.
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ListsAreaConstants.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
+			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_DeletePossibility, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_DeletePossibility}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeletePossibility, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeletePossibility.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-			// Start: <menu id="mnuDataTree-DeletePossibility">
+			// Start: <menu id="mnuDataTree_DeletePossibility">
 			// This menu and its commands are shared
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ListsAreaConstants.mnuDataTree_DeletePossibility
+				Name = ContextMenuName.mnuDataTree_DeletePossibility.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			/*
-			    <command id="CmdDataTree-Delete-Possibility" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
+			    <command id="CmdDataTree_Delete_Possibility" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
 			      <parameters field="SubPossibilities" className="CmPossibility" />
 			    </command>
 			*/
 			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_subitem_and_its_subitems, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
-			// End: <menu id="mnuDataTree-DeletePossibility">
+			// End: <menu id="mnuDataTree_DeletePossibility">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubPossibilities(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubPossibilities(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_SubPossibilities, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_SubPossibilities}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-			// Start: <menu id="mnuDataTree-SubPossibilities">
+			// Start: <menu id="mnuDataTree_SubPossibilities">
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ListsAreaConstants.mnuDataTree_SubPossibilities
+				Name = ContextMenuName.mnuDataTree_SubPossibilities.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			/*
-			      <item command="CmdDataTree-Insert-Possibility" /> // Shared
+			      <item command="CmdDataTree_Insert_Possibility" /> // Shared
 			*/
 			var currentPossibility = _recordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 			menu.Tag = new List<object> { currentPossibility, _dataTree, _recordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, AreaServices.PopulateForSubitemInsert(_list, currentPossibility, ListResources.Insert_Subitem) };
 
-			// End: <menu id="mnuDataTree-SubPossibilities">
+			// End: <menu id="mnuDataTree_SubPossibilities">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_SubPossibilities(Slice slice, string contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_SubPossibilities(Slice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ListsAreaConstants.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ListsAreaConstants.mnuDataTree_POS_SubPossibilities}', but got '{contextMenuId}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
 			// Start: <menu id="mnuDataTree-POS-SubPossibilities">
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ListsAreaConstants.mnuDataTree_POS_SubPossibilities
+				Name = ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			/*
-			      <item command="CmdDataTree-Insert-POS-SubPossibilities" />
-				    <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+			      <item command="CmdDataTree_Insert_POS_SubPossibilities" />
+				    <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				      <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
 				    </command>
 			*/

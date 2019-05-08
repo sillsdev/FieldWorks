@@ -12,7 +12,6 @@ using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.Xml;
@@ -30,8 +29,6 @@ namespace LanguageExplorer.Areas
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByRecordList;
-		protected BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _browseViewContextMenuTuple;
 		private readonly System.ComponentModel.Container components;
 		private UiWidgetController _uiWidgetController;
 
@@ -42,11 +39,10 @@ namespace LanguageExplorer.Areas
 			Init();
 		}
 
-		internal RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController = null)
+		internal RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController = null)
 			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
-			_browseViewContextMenuFactory = browseViewContextMenuFactory;
 			_uiWidgetController = uiWidgetController;
 		}
 
@@ -167,14 +163,10 @@ namespace LanguageExplorer.Areas
 					BrowseViewer.SelectionDrawingFailure -= OnBrowseSelectionDrawingFailed;
 					BrowseViewer.CheckBoxChanged -= OnCheckBoxChanged;
 					BrowseViewer.SortersCompatible -= AreSortersCompatible;
-					// DisposeBrowseViewContextMenu isn't picky about _browseViewContextMenuTuple not being null, so don't bother checking it for null.
-					_browseViewContextMenuFactory?.DisposeBrowseViewContextMenu(_browseViewContextMenuTuple);
 				}
 				components?.Dispose();
 			}
 			BrowseViewer = null;
-			_browseViewContextMenuFactory = null;
-			_browseViewContextMenuTuple = null;
 			_uiWidgetController = null;
 
 			base.Dispose(disposing);
@@ -302,38 +294,13 @@ namespace LanguageExplorer.Areas
 
 		public void OnFwRightMouseClick(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
-			if (_browseViewContextMenuFactory == null)
-			{
-				// Some browse views don't have a popup menu.
-				return;
-			}
 			var browseView = sender as XmlBrowseView;
 			if (browseView == null)
 			{
+				e.EventHandled = false;
 				return;
 			}
-			if (_browseViewContextMenuTuple != null)
-			{
-				_browseViewContextMenuFactory.DisposeBrowseViewContextMenu(_browseViewContextMenuTuple);
-				_browseViewContextMenuTuple = null;
-			}
-			var sel = e.Selection;
-			var clev = sel.CLevels(false); // anchor
-			int hvoRoot, tag, ihvo, cpropPrevious;
-			IVwPropertyStore vps;
-			sel.PropInfo(false, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
-			// First make the selection so it will be highlighted before the context menu popup.
-			if (browseView.SelectedIndex != ihvo) // No sense in waking up the beast for no reason.
-			{
-				browseView.SelectedIndex = ihvo;
-			}
-			var hvo = browseView.HvoAt(ihvo);
-			if (!Cache.ServiceLocator.IsValidObjectId(hvo))
-			{
-				return;
-			}
-			_browseViewContextMenuTuple = _browseViewContextMenuFactory.GetBrowseViewContextMenu(MyRecordList, AreaServices.mnuBrowseView);
-			_browseViewContextMenuTuple.Item1.Show(browseView, e.MouseLocation);
+			ContextMenuStrip.Show(browseView, e.MouseLocation);
 			e.EventHandled = true;
 		}
 

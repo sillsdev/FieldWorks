@@ -772,6 +772,11 @@ namespace LanguageExplorer
 				}
 			}
 		}
+
+		private sealed class ContextMenuController
+		{
+		}
+
 		#endregion Private controller classes that do the real work
 	}
 }

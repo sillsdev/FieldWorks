@@ -596,10 +596,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 // The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
 // In this case "ui" was the temp colleague:
 // tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
-				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y), tempColleague, null);
+				mainWind.ShowContextMenu("mnuIText_RawText", new Point(Cursor.Position.X, Cursor.Position.Y), tempColleague, null);
 #endif
 				/*
-				    <menu id="mnuIText-RawText">
+				    <menu id="mnuIText_RawText">
 				      <item command="CmdCut" />
 				      <item command="CmdCopy" />
 				      <item command="CmdPaste" />

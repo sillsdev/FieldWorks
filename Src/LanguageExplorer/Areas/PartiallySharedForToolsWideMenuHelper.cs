@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Require.That(s_partiallySharedForToolsWideMenuHelper == null, "Static member '_partiallySharedAreaWideMenuHelper' is not null.");
+			Require.That(s_partiallySharedForToolsWideMenuHelper == null, "Static member 's_partiallySharedForToolsWideMenuHelper' is not null.");
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = recordList;

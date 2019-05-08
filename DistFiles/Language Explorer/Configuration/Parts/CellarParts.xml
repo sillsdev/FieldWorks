@@ -195,10 +195,10 @@
 			</slice>
 		</part>
 		<part id="Text-Detail-Contents" type="Detail">
-			<slice field="Contents" label="Text" editor="sttext" sameObject="true" sameObjectNext="true" menu="mnuDataTree-Text"/>
+			<slice field="Contents" label="Text" editor="sttext" sameObject="true" sameObjectNext="true" menu="mnuDataTree_Text"/>
 		</part>
 		<part id="Text-Detail-NotebookSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo-Notebook"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo_Notebook"/>
 		</part>
 		  <part id="Text-Detail-NotebookFields" type="Detail" >
 			<choice>

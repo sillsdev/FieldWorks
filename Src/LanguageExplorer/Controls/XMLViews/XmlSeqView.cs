@@ -256,7 +256,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.MakeRoot();
 			var fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_specElement, "editable", true);
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-			m_fShowFailingItems = PropertyTable.GetValue("ShowFailingItems-" + toolChoice, false);
+			m_fShowFailingItems = PropertyTable.GetValue(PaneBarContainerFactory.CreateShowFailingItemsPropertyName(toolChoice), false);
 			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
@@ -311,7 +311,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_currentSubscriptionString = "ShowFailingItems-" + PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			m_currentSubscriptionString = PaneBarContainerFactory.CreateShowFailingItemsPropertyName(PropertyTable.GetValue<string>(AreaServices.ToolChoice));
 			Subscriber.Subscribe(m_currentSubscriptionString, ShowFailingItemsForTool_Changed);
 		}
 

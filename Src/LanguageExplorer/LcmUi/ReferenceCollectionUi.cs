@@ -21,6 +21,6 @@ namespace LanguageExplorer.LcmUi
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceCollection);
 		}
 
-		protected override string ContextMenuId => m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices : base.ContextMenuId;
+		protected override ContextMenuName ContextMenuId => m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid) == PhEnvironmentTags.kClassId ? ContextMenuName.mnuEnvReferenceChoices : base.ContextMenuId;
 	}
 }

@@ -307,7 +307,6 @@
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForAreasWideMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
-    <Compile Include="Areas\BrowseViewContextMenuFactory.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
       <SubType>UserControl</SubType>
@@ -336,6 +335,7 @@
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="ContextMenuName.cs" />
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
@@ -356,7 +356,6 @@
     <Compile Include="Areas\Lists\ConfigureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lists\ListsAreaConstants.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />

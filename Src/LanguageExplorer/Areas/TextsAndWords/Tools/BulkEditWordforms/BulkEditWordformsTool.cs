@@ -2,11 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -18,9 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditWordformsTool : ITool
 	{
-		private FileExportMenuHelper _fileExportMenuHelper;
-		private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private BulkEditWordformsToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -42,13 +43,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
-			_fileExportMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_fileExportMenuHelper = null;
-			_browseViewContextMenuFactory = null;
-			_partiallySharedTextsAndWordsToolsMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -63,17 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(this);
-			_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
-			_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
-			_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
-			_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-
+			_toolMenuHelper = new BulkEditWordformsToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(TextAndWordsResources.BulkEditWordformsToolParameters).Root;
 			root.Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			var columns = root.Element("columns");
@@ -88,7 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Attribute("width").Value = "80000";
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 
@@ -148,5 +136,71 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private sealed class BulkEditWordformsToolMenuHelper : IDisposable
+		{
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private FileExportMenuHelper _fileExportMenuHelper;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
+
+			internal BulkEditWordformsToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
+				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+#if RANDYTODO
+				// TODO: Set up factory method for the browse view.
+#endif
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~BulkEditWordformsToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_fileExportMenuHelper.Dispose();
+				}
+				_majorFlexComponentParameters = null;
+				_fileExportMenuHelper = null;
+				_partiallySharedTextsAndWordsToolsMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

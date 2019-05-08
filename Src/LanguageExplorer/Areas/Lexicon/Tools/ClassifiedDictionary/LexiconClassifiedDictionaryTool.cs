@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconClassifiedDictionaryTool : ITool
 	{
-		private LexiconClassifiedDictionaryToolMenuHelper _lexiconClassifiedDictionaryMenuHelper;
+		private LexiconClassifiedDictionaryToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
@@ -46,9 +46,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_lexiconClassifiedDictionaryMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
-			_lexiconClassifiedDictionaryMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -63,8 +63,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, this);
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
+			_toolMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, this);
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowFailingItemsPropertyName(MachineName), LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
 				Dock = DockStyle.Right
 			};
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, xmlDocView, xmlDocViewPaneBar);
 
 			// Too early before now.
-			_lexiconClassifiedDictionaryMenuHelper.DocView = xmlDocView;
+			_toolMenuHelper.DocView = xmlDocView;
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
 		}
 
