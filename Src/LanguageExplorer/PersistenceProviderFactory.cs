@@ -58,14 +58,14 @@ namespace LanguageExplorer
 
 			void IPersistenceProvider.RestoreWindowSettings(string id, Form form)
 			{
-				var state = Get(id, "windowState");
+				var state = Get(id, LanguageExplorerConstants.windowState);
 				//don't bother restoring the program to the minimized state.
 				if (state != null && ((FormWindowState)state) != FormWindowState.Minimized)
 				{
 					form.WindowState = (FormWindowState)state;
 				}
-				var location = Get(id, "windowLocation");
-				var size = Get(id, "windowSize");
+				var location = Get(id, LanguageExplorerConstants.windowLocation);
+				var size = Get(id, LanguageExplorerConstants.windowSize);
 				if (location != null)
 				{
 					form.Location = (Point)location;
@@ -103,17 +103,17 @@ namespace LanguageExplorer
 
 			void IPersistenceProvider.PersistWindowSettings(string id, Form form)
 			{
-				Set(id, "windowState", form.WindowState);
+				Set(id, LanguageExplorerConstants.windowState, form.WindowState);
 				if (form.WindowState == FormWindowState.Normal)
 				{
-					Set(id, "windowSize", form.Size);
+					Set(id, LanguageExplorerConstants.windowSize, form.Size);
 				}
 				//don't bother storing the location if we are maximized or minimized.
 				//if we did, then when the user exits the application and then runs it again,
 				//	then switches to the normal state, we would be switching to 0,0 or something.
 				if (form.WindowState == FormWindowState.Normal)
 				{
-					Set(id, "windowLocation", form.Location);
+					Set(id, LanguageExplorerConstants.windowLocation, form.Location);
 				}
 			}
 

@@ -252,6 +252,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
+				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				_subscriber = _majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 				_publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
@@ -2420,7 +2421,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToPreviousInSequence);
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToNextInSequence);
 					_show_DictionaryPubPreviewContextMenu?.Dispose();
-					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_extendedPropertyName = null;

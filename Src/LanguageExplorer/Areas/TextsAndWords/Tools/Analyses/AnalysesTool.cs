@@ -66,6 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
+			_toolMenuHelper = new AnalysesToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
 			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);
 			var overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Form");

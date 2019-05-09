@@ -60,10 +60,14 @@ namespace LanguageExplorer
 		internal const string RevIndexDir = "ReversalIndex";
 		internal const string App = "App";
 		internal const string cache = "cache";
+		internal const string HomographConfiguration = "HomographConfiguration";
 		internal const string HelpTopicProvider = "HelpTopicProvider";
 		internal const string LinkHandler = "LinkHandler";
 		internal const string MajorFlexComponentParameters = "MajorFlexComponentParameters";
 		internal const string RecordListRepository = "RecordListRepository";
+		internal const string windowSize = "windowSize";
+		internal const string windowLocation = "windowLocation";
+		internal const string windowState = "windowState";
 
 		#endregion Misc
 	}

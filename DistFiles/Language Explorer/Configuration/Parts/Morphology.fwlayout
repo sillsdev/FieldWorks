@@ -177,7 +177,7 @@
 			</indent>
 		</part>
 
-		<part ref="SubCategoriesSection" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">
+		<part ref="SubCategoriesSection" label="Subcategories" menu="mnuDataTree_POS_SubPossibilities">
 			<indent>
 				<part ref="SubPossibilities" label="Subcategories"/>
 			</indent>

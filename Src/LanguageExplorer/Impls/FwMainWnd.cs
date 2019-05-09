@@ -671,12 +671,12 @@ namespace LanguageExplorer.Impls
 				DiscardProperties();
 			}
 			FormWindowState state;
-			if (PropertyTable.TryGetValue("windowState", out state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
+			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowState, out state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
 			{
 				WindowState = state;
 			}
 			Point persistedLocation;
-			if (PropertyTable.TryGetValue("windowLocation", out persistedLocation, SettingsGroup.GlobalSettings))
+			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowLocation, out persistedLocation, SettingsGroup.GlobalSettings))
 			{
 				Location = persistedLocation;
 				//the location restoration only works if the window startposition is set to "manual"
@@ -685,7 +685,7 @@ namespace LanguageExplorer.Impls
 				StartPosition = FormStartPosition.Manual;
 			}
 			Size persistedSize;
-			if (!PropertyTable.TryGetValue("windowSize", out persistedSize, SettingsGroup.GlobalSettings))
+			if (!PropertyTable.TryGetValue(LanguageExplorerConstants.windowSize, out persistedSize, SettingsGroup.GlobalSettings))
 			{
 				return;
 			}
@@ -713,9 +713,9 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			PropertyTable.SetProperty("windowState", WindowState, true, settingsGroup: SettingsGroup.GlobalSettings);
-			PropertyTable.SetProperty("windowLocation", Location, true, settingsGroup: SettingsGroup.GlobalSettings);
-			PropertyTable.SetProperty("windowSize", Size, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetProperty(LanguageExplorerConstants.windowState, WindowState, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetProperty(LanguageExplorerConstants.windowLocation, Location, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetProperty(LanguageExplorerConstants.windowSize, Size, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		/// <summary>
@@ -725,7 +725,7 @@ namespace LanguageExplorer.Impls
 		{
 			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
-			var hcSettings = PropertyTable.GetValue<string>("HomographConfiguration");
+			var hcSettings = PropertyTable.GetValue<string>(LanguageExplorerConstants.HomographConfiguration);
 			if (string.IsNullOrEmpty(hcSettings))
 			{
 				return;
@@ -1023,7 +1023,7 @@ namespace LanguageExplorer.Impls
 			//then switches to the normal state, we would be switching to a bizarre size.
 			if (WindowState == FormWindowState.Normal)
 			{
-				PropertyTable.SetProperty("windowSize", Size, true, settingsGroup: SettingsGroup.GlobalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.windowSize, Size, true, settingsGroup: SettingsGroup.GlobalSettings);
 			}
 		}
 
@@ -1039,7 +1039,7 @@ namespace LanguageExplorer.Impls
 			//then switches to the normal state, we would be switching to 0,0 or something.
 			if (WindowState == FormWindowState.Normal)
 			{
-				PropertyTable.SetProperty("windowLocation", Location, true, settingsGroup: SettingsGroup.GlobalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.windowLocation, Location, true, settingsGroup: SettingsGroup.GlobalSettings);
 			}
 		}
 

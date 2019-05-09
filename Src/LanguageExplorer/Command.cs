@@ -1297,7 +1297,7 @@ namespace LanguageExplorer
     <menu id="mnuDataTree_MoStemName_Region">
       <item command="CmdDataTree_Delete_MoStemName_Region" />
     </menu>
-    <menu id="mnuDataTree-POS-SubPossibilities">
+    <menu id="mnuDataTree_POS_SubPossibilities">
       <item command="CmdDataTree_Insert_POS_SubPossibilities" />
       <!-- <item command="CmdDataTree_Help"/> -->
     </menu>

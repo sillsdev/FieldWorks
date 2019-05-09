@@ -120,9 +120,7 @@ namespace LanguageExplorer.Areas
 
 		#region commands
 		internal const string JumpToTool = "JumpToTool";
-		internal const string InsertCategory = "InsertCategory";
 		internal const string DataTreeDelete = "DataTreeDelete";
-		internal const string CmdDeleteSelectedObject = "CmdDeleteSelectedObject";
 		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
 		internal const string LexiconLookup = "LexiconLookup";
 		#endregion commands

@@ -45,7 +45,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						// Try the ordinary context menu for the configuation node.
 						ordinaryMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu");
 					}
-					hotlinksMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), ordinaryMenuId);
+					hotlinksMenuId = string.IsNullOrEmpty(ordinaryMenuId) ? hotlinksMenuId : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), ordinaryMenuId);
 				}
 				return hotlinksMenuId;
 			}

@@ -35,7 +35,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal const string Entries = "entries";
 		internal const string AllReversalEntries = "AllReversalEntries";
 		internal const string SemanticDomainList_LexiconArea = "SemanticDomainList_LexiconArea";
-		private const string khomographconfiguration = "HomographConfiguration";
 		private bool _hasBeenActivated;
 		[Import]
 		private IPropertyTable _propertyTable;
@@ -86,7 +85,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				// Restore HomographConfiguration settings.
 				string hcSettings;
-				if (_propertyTable.TryGetValue(khomographconfiguration, out hcSettings))
+				if (_propertyTable.TryGetValue(LanguageExplorerConstants.HomographConfiguration, out hcSettings))
 				{
 					var serviceLocator = majorFlexComponentParameters.LcmCache.ServiceLocator;
 					var hc = serviceLocator.GetInstance<HomographConfiguration>();
@@ -124,7 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 			var serviceLocator = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
-			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
+			_propertyTable.SetProperty(LanguageExplorerConstants.HomographConfiguration, hc.PersistData, true);
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 

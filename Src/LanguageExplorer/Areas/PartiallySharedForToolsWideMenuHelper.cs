@@ -79,10 +79,8 @@ namespace LanguageExplorer.Areas
 			_sharedEventKeyNames.AddRange(new[]
 			{
 				AreaServices.JumpToTool,
-				AreaServices.InsertCategory,
 				AreaServices.DataTreeDelete,
 				AreaServices.LexiconLookup,
-				AreaServices.CmdDeleteSelectedObject,
 				AreaServices.DeleteSelectedBrowseViewObject
 			});
 			foreach (var key in _sharedEventKeyNames)
@@ -92,17 +90,11 @@ namespace LanguageExplorer.Areas
 					case AreaServices.JumpToTool:
 						_sharedEventHandlers.Add(key, JumpToTool_Clicked);
 						break;
-					case AreaServices.InsertCategory:
-						_sharedEventHandlers.Add(key, InsertCategory_Clicked);
-						break;
 					case AreaServices.DataTreeDelete:
 						_sharedEventHandlers.Add(key, DataTreeDelete_Clicked);
 						break;
 					case AreaServices.LexiconLookup:
 						_sharedEventHandlers.Add(key, LexiconLookup_Clicked);
-						break;
-					case AreaServices.CmdDeleteSelectedObject:
-						_sharedEventHandlers.Add(key, CmdDeleteSelectedObject_Clicked);
 						break;
 					case AreaServices.DeleteSelectedBrowseViewObject:
 						_sharedEventHandlers.Add(key, DeleteSelectedBrowseViewObject_Clicked);
@@ -356,19 +348,6 @@ namespace LanguageExplorer.Areas
 		{
 			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
 			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], (Guid)tag[2]));
-		}
-
-		private void InsertCategory_Clicked(object sender, EventArgs e)
-		{
-			var tagList = (List<object>)((ToolStripItem)sender).Tag;
-			using (var dlg = new MasterCategoryListDlg())
-			{
-				var recordList = (IRecordList)tagList[1];
-				var selectedCategoryOwner = recordList.CurrentObject?.Owner;
-				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-				dlg.SetDlginfo((ICmPossibilityList)tagList[0], propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
-				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
-			}
 		}
 
 		internal static bool Set_CmdInsertFoo_Enabled_State(LcmCache cache, IVwSelection selection)

@@ -27,7 +27,7 @@
 		<part ref="NameRevPOS" menu="mnuDataTree_MoveMainReversalPOS"/>
 		<part ref="AbbreviationRevPOS"/>
 		<part ref="DescriptionAllA"/>
-		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">
+		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree_POS_SubPossibilities">
 			<indent indent="true">
 				<part ref="SubPossibilitiesReversal" label="Subcategories"/>
 			</indent>
@@ -37,7 +37,7 @@
 		<part ref="NameRevPOS" menu="mnuDataTree_MoveReversalPOS"/>
 		<part ref="AbbreviationRevPOS"/>
 		<part ref="DescriptionAllA"/>
-		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">
+		<part ref="Section" expansion="expanded" label="Subcategories" menu="mnuDataTree_POS_SubPossibilities">
 			<indent indent="true">
 				<part ref="SubPossibilitiesReversal" label="Subcategories"/>
 			</indent>

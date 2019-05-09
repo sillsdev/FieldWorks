@@ -267,9 +267,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				if (disposing)
 				{
 					_fileExportMenuHelper.Dispose();
-					_mainRecordBrowseView.ContextMenuStrip.Dispose();
+					_mainRecordBrowseView.ContextMenuStrip?.Dispose();
 					_mainRecordBrowseView.ContextMenuStrip = null;
-					_nestedRecordBrowseView.ContextMenuStrip.Dispose();
+					_nestedRecordBrowseView.ContextMenuStrip?.Dispose();
 					_nestedRecordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;

@@ -87,7 +87,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		[XmlIgnore]
 		public static List<string> NoteInParaStyles = new List<string> { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
-		[XmlElement("HomographConfiguration")]
+		[XmlElement(LanguageExplorerConstants.HomographConfiguration)]
 		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
 
 		/// <summary>

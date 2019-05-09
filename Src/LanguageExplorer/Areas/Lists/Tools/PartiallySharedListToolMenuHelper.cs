@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists.Tools
@@ -66,7 +67,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			// All except FeatureTypesAdvancedEditTool, which isn't a real list anyway.
 			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubPossibilities, Create_mnuDataTree_SubPossibilities);
 
-			// <menu id="mnuDataTree-POS-SubPossibilities">
+			// <menu id="mnuDataTree_POS_SubPossibilities">
 			// Shared Reversal (Lists) and Morphology (Grammar) worlds.
 			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
 		}
@@ -122,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-			// Start: <menu id="mnuDataTree-POS-SubPossibilities">
+			// Start: <menu id="mnuDataTree_POS_SubPossibilities">
 			var contextMenuStrip = new ContextMenuStrip
 			{
 				Name = ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()
@@ -135,12 +136,22 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				      <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
 				    </command>
 			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertCategory), AreaResources.Insert_Subcategory, image: AreaResources.AddSubItem.ToBitmap());
-			menu.Tag = new List<object> { _list, _recordList };
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, InsertCategory_Clicked, AreaResources.Insert_Subcategory, image: AreaResources.AddSubItem.ToBitmap());
 
-			// End: <menu id="mnuDataTree-POS-SubPossibilities">
+			// End: <menu id="mnuDataTree_POS_SubPossibilities">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void InsertCategory_Clicked(object sender, EventArgs e)
+		{
+			using (var dlg = new MasterCategoryListDlg())
+			{
+				var selectedCategoryOwner = _recordList.CurrentObject?.Owner;
+				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				dlg.SetDlginfo(_list, propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
+				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
+			}
 		}
 
 		/// <summary>
