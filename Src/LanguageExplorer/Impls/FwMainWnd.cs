@@ -76,12 +76,12 @@ namespace LanguageExplorer.Impls
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		private bool _windowIsCopy;
 		private FwLinkArgs _startupLink;
-		// Used to count the number of times we've been asked to suspend Idle processing.
-		private int _countSuspendIdleProcessing;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
+		private const string SidebarWidthGlobal = "SidebarWidthGlobal";
+		private const string AllowInsertLinkToFile = "AllowInsertLinkToFile";
 		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
@@ -241,7 +241,7 @@ namespace LanguageExplorer.Impls
 				{ Command.CmdReplaceText,  CmdReplaceText},
 				{ Command.Separator4,  toolStripEditMenuSeparator4},
 				{ Command.CmdSelectAll,  selectAllToolStripMenuItem},
-				{ Command.CmdDeleteRecord,  selectAllToolStripMenuItem},
+				{ Command.CmdDeleteRecord,  deleteToolStripMenuItem},
 				{ Command.Separator5,  toolStripEditMenuSeparator5},
 				{ Command.CmdGoToReversalEntry,  CmdGoToReversalEntry},
 				{ Command.CmdGoToWfiWordform,  CmdGoToWfiWordform},
@@ -409,9 +409,6 @@ namespace LanguageExplorer.Impls
 					{ Command.CmdConfigureColumns, CmdConfigureColumns },
 					{ Command.CmdConfigHeadwordNumbers, CmdConfigHeadwordNumbers },
 					{ Command.CmdRestoreDefaults, CmdRestoreDefaults },
-					{ Command.Separator1, toolMenuSeparator1 },
-					{ Command.CmdVernacularWritingSystemProperties, CmdVernacularWritingSystemProperties },
-					{ Command.CmdAnalysisWritingSystemProperties, CmdAnalysisWritingSystemProperties },
 					{ Command.CmdAddCustomField, CmdAddCustomField },
 				{ Command.Separator2, toolMenuSeparator2 },
 				{ Command.CmdMergeEntry, CmdMergeEntry },
@@ -530,6 +527,15 @@ namespace LanguageExplorer.Impls
 			};
 		}
 
+		private Dictionary<Command, ToolStripItem> CacheViewToolStrip()
+		{
+			return new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdChooseTexts,  Toolbar_CmdChooseTexts},
+				{ Command.CmdChangeFilterClearAll,  Toolbar_CmdChangeFilterClearAll} // Event handled by main window
+			};
+		}
+
 		private Dictionary<Command, ToolStripItem> CacheInsertToolStrip()
 		{
 			return new Dictionary<Command, ToolStripItem>
@@ -603,15 +609,6 @@ namespace LanguageExplorer.Impls
 				{ Command.CmdInsertMorphemeACP,  Toolbar_CmdInsertMorphemeACP},
 				{ Command.CmdInsertAllomorphACP,  Toolbar_CmdInsertAllomorphACP},
 				{ Command.CmdInsertACPGroup,  Toolbar_CmdInsertACPGroup}
-			};
-		}
-
-		private Dictionary<Command, ToolStripItem> CacheViewToolStrip()
-		{
-			return new Dictionary<Command, ToolStripItem>
-			{
-				{ Command.CmdChooseTexts,  Toolbar_CmdChooseTexts},
-				{ Command.CmdChangeFilterClearAll,  Toolbar_CmdChangeFilterClearAll} // Event handled by main window
 			};
 		}
 
@@ -747,11 +744,11 @@ namespace LanguageExplorer.Impls
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
-			mainContainer.Tag = "SidebarWidthGlobal";
+			mainContainer.Tag = SidebarWidthGlobal;
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
 			mainContainer.Panel1Collapsed = false;
 			mainContainer.Panel2Collapsed = false;
-			var sd = PropertyTable.GetValue<int>("SidebarWidthGlobal", SettingsGroup.GlobalSettings);
+			var sd = PropertyTable.GetValue<int>(SidebarWidthGlobal, SettingsGroup.GlobalSettings);
 			if (!mainContainer.Panel1Collapsed)
 			{
 				SetSplitContainerDistance(mainContainer, sd);
@@ -865,25 +862,25 @@ namespace LanguageExplorer.Impls
 		private void SetDefaultProperties()
 		{
 			// "UseVernSpellingDictionary" Controls checking the global Tools->Spelling->Show Vernacular Spelling Errors menu.
-			PropertyTable.SetDefault("UseVernSpellingDictionary", true, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetDefault(LanguageExplorerConstants.UseVernSpellingDictionary, true, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This "PropertyTableVersion" property will control the behavior of the "ConvertOldPropertiesToNewIfPresent" method.
-			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetDefault(LanguageExplorerConstants.PropertyTableVersion, int.MinValue, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
-			PropertyTable.SetDefault("SidebarWidthGlobal", 140, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetDefault(SidebarWidthGlobal, 140, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the record list/main content pair of controls.
-			PropertyTable.SetDefault("RecordListWidthGlobal", 200, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetDefault(LanguageExplorerConstants.RecordListWidthGlobal, 200, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
-			PropertyTable.SetDefault("CurrentToolbarVersion", 1, true, settingsGroup: SettingsGroup.GlobalSettings);
-			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty);
+			PropertyTable.SetDefault(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
-			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1);
+			PropertyTable.SetDefault(LanguageExplorerConstants.SliceSplitterBaseDistance, -1);
 			// Common to several tools in various areas, so set them here.
-			PropertyTable.SetDefault("AllowInsertLinkToFile", false);
+			PropertyTable.SetDefault(AllowInsertLinkToFile, false);
 			PropertyTable.SetDefault("AllowShowNormalFields", false);
 		}
 
 		private void RemoveObsoleteProperties()
 		{
+			PropertyTable.RemoveProperty("CurrentToolbarVersion", SettingsGroup.GlobalSettings);
 			// Get rid of obsolete properties, if they were restored.
 			PropertyTable.RemoveProperty("ShowHiddenFields", SettingsGroup.LocalSettings);
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
@@ -1143,57 +1140,66 @@ namespace LanguageExplorer.Impls
 			_startupLink = linkArgs; // May be null.
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			SetupCustomStatusBarPanels();
+			/* Moved to SetupUiWidgets. Hopefully, the new ordering won't impact the following stuff.
 			CmdProjectLocation.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			CmdArchiveWithRamp.Enabled = ReapRamp.Installed;
 			_viewHelper = new ActiveViewHelper(this);
 			_linkHandler = new LinkHandler(this, Cache, CmdHistoryBack, CmdHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
 			_linkHandler.InitializeFlexComponent(flexComponentParameters);
+			*/
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
-			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
+			SetupUiWidgets(flexComponentParameters);
+			SetupOutlookBar();
+			SetWindowTitle();
+			SetupWindowSizeIfNeeded(restoreSize);
+			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
+			{
+				File.Delete(CrashOnStartupDetectorPathName);
+			}
+		}
+
+		private void SetupUiWidgets(FlexComponentParameters flexComponentParameters)
+		{
+			_viewHelper = new ActiveViewHelper(this);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, Toolbar_WritingSystemList, WritingSystemMenu);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, Toolbar_CombinedStylesList);
 			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			var mainMenus = new Dictionary<MainMenu, ToolStripMenuItem>
 			{
-				{ MainMenu.File,  _fileToolStripMenuItem},
-				{ MainMenu.SendReceive,  _sendReceiveToolStripMenuItem},
-				{ MainMenu.Edit,  _editToolStripMenuItem},
-				{ MainMenu.View,  _viewToolStripMenuItem},
-				{ MainMenu.Data,  _dataToolStripMenuItem},
-				{ MainMenu.Insert,  _insertToolStripMenuItem},
-				{ MainMenu.Format,  _formatToolStripMenuItem},
-				{ MainMenu.Tools,  _toolsToolStripMenuItem},
-				{ MainMenu.Parser,  _parserToolStripMenuItem},
-				{ MainMenu.Window,  _windowToolStripMenuItem},
-				{ MainMenu.Help,  _helpToolStripMenuItem}
+				{ MainMenu.File, _fileToolStripMenuItem },
+				{ MainMenu.SendReceive, _sendReceiveToolStripMenuItem },
+				{ MainMenu.Edit, _editToolStripMenuItem },
+				{ MainMenu.View, _viewToolStripMenuItem },
+				{ MainMenu.Data, _dataToolStripMenuItem },
+				{ MainMenu.Insert, _insertToolStripMenuItem },
+				{ MainMenu.Format, _formatToolStripMenuItem },
+				{ MainMenu.Tools, _toolsToolStripMenuItem },
+				{ MainMenu.Parser, _parserToolStripMenuItem },
+				{ MainMenu.Window, _windowToolStripMenuItem },
+				{ MainMenu.Help, _helpToolStripMenuItem }
 			};
 			var mainToolBars = new Dictionary<ToolBar, ToolStrip>
 			{
-				{ ToolBar.Standard,  toolStripStandard},
-				{ ToolBar.View,  toolStripView},
-				{ ToolBar.Insert,  toolStripInsert},
-				{ ToolBar.Format,  toolStripFormat}
+				{ ToolBar.Standard, toolStripStandard },
+				{ ToolBar.View, toolStripView },
+				{ ToolBar.Insert, toolStripInsert },
+				{ ToolBar.Format, toolStripFormat }
 			};
 			var uiWidgetHelper = new UiWidgetController(new MainMenusParameterObject(mainMenus, CacheMenuItems()), new MainToolBarsParameterObject(mainToolBars, CacheToolbarItems()));
 			var globalUiWidgetParameterObject = new GlobalUiWidgetParameterObject();
+			_linkHandler = new LinkHandler(this, Cache, globalUiWidgetParameterObject);
+			_linkHandler.InitializeFlexComponent(flexComponentParameters);
 			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], _parserToolStripMenuItem, uiWidgetHelper.ParserMenuDictionary, globalUiWidgetParameterObject);
 			_dataNavigationManager = new DataNavigationManager(globalUiWidgetParameterObject);
-			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, uiWidgetHelper, _statusbar,
-				_parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
+			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, uiWidgetHelper, _statusbar, _parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			SetTemporaryProperties();
 			RecordListServices.Setup(_majorFlexComponentParameters);
-			// Most tools show it, but let them deal with it and its event handler.
-			CmdExport.Visible = false;
-			CmdExport.Enabled = false;
-			Toolbar_CmdDeleteRecord.Click += Edit_Delete_Click;
-			// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
-			// Windows: Enable the menu if we can find the CharMap program.
-			CmdShowCharMap.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			IdleQueue = new IdleQueue();
 			if (_sendReceiveToolStripMenuItem.Enabled)
@@ -1203,22 +1209,94 @@ namespace LanguageExplorer.Impls
 				_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
 			}
 			Cache.DomainDataByFlid.AddNotification(this);
-			CmdUseVernSpellingDictionary.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
+			CmdUseVernSpellingDictionary.Checked = _propertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
 			if (CmdUseVernSpellingDictionary.Checked)
 			{
 				EnableVernacularSpelling();
 			}
 			_macroMenuHandler.Initialize(_majorFlexComponentParameters, globalUiWidgetParameterObject);
+			// Add any other global type items where the event handler is defined in this window.
+			var fileMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.File];
+			fileMenuDictionary.Add(Command.CmdNewLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_New_FieldWorks_Project, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdChooseLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Open, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdProjectProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_FieldWorks_Project_Properties, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Back_up_this_Project, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdRestoreFromBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Restore_a_Project, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdProjectLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Project_Location, () => CanCmdProjectLocation));
+			fileMenuDictionary.Add(Command.CmdDeleteProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Delete_Project, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdCreateProjectShortcut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Create_Shortcut_on_Desktop, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdArchiveWithRamp, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Archive_With_RAMP, () => CanCmdArchiveWithRamp));
+			fileMenuDictionary.Add(Command.CmdUploadToWebonary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(UploadToWebonary_Click, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdImportSFMLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Import_Standard_Format_Marker_Click, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdImportTranslatedLists, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_List_Content, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdClose, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_CloseWindow, () => CanAlwaysSeeAndDo));
+
+			var editMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit];
+			editMenuDictionary.Add(Command.CmdUndo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Undo_Click, () => CanCmdUndo));
+			editMenuDictionary.Add(Command.CmdRedo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Redo_Click, () => CanCmdRedo));
+			editMenuDictionary.Add(Command.CmdCut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Cut, () => CanCmdCut));
+			editMenuDictionary.Add(Command.CmdCopy, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Copy, () => CanCmdCopy));
+			editMenuDictionary.Add(Command.CmdPaste, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Paste, () => CanCmdPaste));
+			editMenuDictionary.Add(Command.CmdSelectAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Select_All, () => CanCmdSelectAll));
+			editMenuDictionary.Add(Command.CmdPasteHyperlink, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Paste_Hyperlink, () => CanCmdPasteHyperlink));
+			editMenuDictionary.Add(Command.CmdDeleteRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Delete_Click, () => CanCmdDeleteRecord));
+
+			var viewMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.View];
+			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
+			InsertPair(standardToolBarDictionary, viewMenuDictionary, Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(View_Refresh, () => CanCmdDeleteRecord));
+
+			var insertMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Insert];
+			insertMenuDictionary.Add(Command.CmdInsertLinkToFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LinkToFileToolStripMenuItem_Click, () => CanCmdInsertLinkToFile));
+			insertMenuDictionary.Add(Command.CmdShowCharMap, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SpecialCharacterToolStripMenuItem_Click, () => CanCmdShowCharMap));
+
+			var formatMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Format];
+			formatMenuDictionary.Add(Command.CmdFormatStyle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Format_Styles_Click, () => CanAlwaysSeeAndDo));
+			formatMenuDictionary.Add(Command.CmdFormatApplyStyle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(applyStyleToolStripMenuItem_Click, () => CanCmdFormatApplyStyle));
+			formatMenuDictionary.Add(Command.CmdVernacularWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdVernacularWritingSystemProperties_Click, () => CanAlwaysSeeAndDo));
+			formatMenuDictionary.Add(Command.CmdAnalysisWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAnalysisWritingSystemProperties_Click, () => CanAlwaysSeeAndDo));
+
+			var toolsMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Tools];
+			toolsMenuDictionary.Add(Command.CmdRestoreDefaults, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(restoreDefaultsToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdUseVernSpellingDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(showVernacularSpellingErrorsToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdProjectUtilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(utilitiesToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdToolsOptions, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Options_Click, () => CanAlwaysSeeAndDo));
+
+			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Window].Add(Command.CmdNewWindow, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NewWindow_Clicked, () => CanAlwaysSeeAndDo));
+
+			var helpMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Help];
+			helpMenuDictionary.Add(Command.CmdHelpLanguageExplorer, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_LanguageExplorer, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpTraining, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpDemoMovies, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_DemoMovies, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpLexicographyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Lexicography_Clicked, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpMorphologyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Parsing_Click, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesSendReceive, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_on_FieldWorks_Send_Receive, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesSFMDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Techinical_Notes_On_SFM_Database_Import_Click, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesLinguaLinksDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_LinguaLinks_Import_Click, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesInterlinearImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_Interlinear_Import_Click, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesWritingSystems, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training_Writing_Systems, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpXLingPap, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_XLingPaper, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpReportBug, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_ReportProblem, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpMakeSuggestion, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Make_a_Suggestion, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpAbout, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_About_Language_Explorer, () => CanAlwaysSeeAndDo));
+
+			// Standard is set, above: var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
+			standardToolBarDictionary.Add(Command.CmdUndo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Undo_Click, () => CanCmdUndo));
+			standardToolBarDictionary.Add(Command.CmdRedo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Redo_Click, () => CanCmdRedo));
+			standardToolBarDictionary.Add(Command.CmdDeleteRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Delete_Click, () => CanCmdDeleteRecord));
+
+			var viewToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.View];
+			viewToolBarDictionary.Add(Command.CmdChangeFilterClearAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(toolStripButtonChangeFilterClearAll_Click, () => CanCmdChangeFilterClearAll));
+
 			uiWidgetHelper.AddGlobalHandlers(globalUiWidgetParameterObject);
-			SetupOutlookBar();
-			SetWindowTitle();
-			SetupWindowSizeIfNeeded(restoreSize);
-			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
-			{
-				File.Delete(CrashOnStartupDetectorPathName);
-			}
-			Application.Idle += Application_Idle;
 		}
+
+		private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
+		{
+			toolBarDictionary.Add(key, currentTuple);
+			menuDictionary.Add(key, currentTuple);
+		}
+
+		private static Tuple<bool, bool> CanAlwaysSeeAndDo => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Gets a Rectangle representing the position and size of the window in its
@@ -1379,18 +1457,12 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SuspendIdleProcessing()
 		{
-			_countSuspendIdleProcessing++;
-			if (_countSuspendIdleProcessing == 1)
-			{
-				Application.Idle -= Application_Idle;
-			}
 			// This bundle of suspend calls *must* (read: it is imperative that) be resumed in the ResumeIdleProcessing() method.
 			_idleProcessingHelpers.Push(new List<IdleProcessingHelper>
 			{
 				new IdleProcessingHelper(IdleQueue),
 				new IdleProcessingHelper(_writingSystemListHandler),
-				new IdleProcessingHelper(_combinedStylesListHandler),
-				new IdleProcessingHelper(_linkHandler),
+				new IdleProcessingHelper(_combinedStylesListHandler)
 			});
 		}
 
@@ -1399,15 +1471,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void ResumeIdleProcessing()
 		{
-			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
-			if (_countSuspendIdleProcessing > 0)
-			{
-				_countSuspendIdleProcessing--;
-				if (_countSuspendIdleProcessing == 0)
-				{
-					Application.Idle += Application_Idle;
-				}
-			}
 			foreach (var idleProcessingHelper in _idleProcessingHelpers.Pop())
 			{
 				idleProcessingHelper.Dispose();
@@ -1457,7 +1520,6 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				Application.Idle -= Application_Idle;
 				Cache.DomainDataByFlid.RemoveNotification(this);
 				foreach (var helper in _idleProcessingHelpers)
 				{
@@ -1467,7 +1529,6 @@ namespace LanguageExplorer.Impls
 					}
 				}
 				_idleProcessingHelpers.Clear();
-				Toolbar_CmdDeleteRecord.Click -= Edit_Delete_Click;
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 				RecordListServices.TearDown(Handle);
@@ -1859,6 +1920,8 @@ namespace LanguageExplorer.Impls
 			_flexApp.FwManager.RestoreProject(_flexApp, this);
 		}
 
+		private static Tuple<bool, bool> CanCmdProjectLocation => new Tuple<bool, bool>(true, FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey());
+
 		private void File_Project_Location(object sender, EventArgs e)
 		{
 			_flexApp.FwManager.FileProjectLocation(_flexApp, this);
@@ -1927,6 +1990,8 @@ namespace LanguageExplorer.Impls
 				link.Save();
 			}
 		}
+
+		private static Tuple<bool, bool> CanCmdArchiveWithRamp => new Tuple<bool, bool>(true, ReapRamp.Installed);
 
 		private void File_Archive_With_RAMP(object sender, EventArgs e)
 		{
@@ -2033,6 +2098,15 @@ namespace LanguageExplorer.Impls
 			});
 		}
 
+		private Tuple<bool, bool> CanCmdCut
+		{
+			get
+			{
+				var editHelper = EditingHelper as RootSiteEditingHelper;
+				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanCut());
+			}
+		}
+
 		private void Edit_Cut(object sender, EventArgs e)
 		{
 			using (new DataUpdateMonitor(this, "EditCut"))
@@ -2041,9 +2115,27 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+		private Tuple<bool, bool> CanCmdCopy
+		{
+			get
+			{
+				var editHelper = EditingHelper as RootSiteEditingHelper;
+				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanCopy());
+			}
+		}
+
 		private void Edit_Copy(object sender, EventArgs e)
 		{
 			_viewHelper.ActiveView.EditingHelper.CopySelection();
+		}
+
+		private Tuple<bool, bool> CanCmdPaste
+		{
+			get
+			{
+				var editHelper = EditingHelper as RootSiteEditingHelper;
+				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanPaste());
+			}
 		}
 
 		private void Edit_Paste(object sender, EventArgs e)
@@ -2099,67 +2191,21 @@ namespace LanguageExplorer.Impls
 			Toolbar_CmdRedo.Enabled = redoEnabled;
 		}
 
-		/// <summary>
-		/// This will set the Enable property on the Edit->Delete menu and the Delete toolbar button,
-		/// and it will set the text of the Edit->Delete menu.
-		/// </summary>
-		private void SetupEditDeleteMenus(IRootSite activeView)
+		private Tuple<bool, bool> CanCmdPasteHyperlink
 		{
-			bool enableDelete;
-			var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
-			var deleteTextBase = FwUtils.ReplaceUnderlineWithAmpersand(LanguageExplorerResources.DeleteMenu);
-			string deleteText;
-			var tooltipText = string.Empty;
-			if (activeRecordList?.CurrentObject == null)
+			get
 			{
-				// "activeRecordList" may be null. If not, then "activeRecordList.CurrentObject" may be null.
-				// Either way, the tool is changing, so disable them.
-				enableDelete = false;
-				// We don't really want to display "Delete Something", so try to find something more meaningful.
-				deleteText = "Delete Something";
-				if (activeRecordList != null)
-				{
-					// Try to dig out the class the hard way from the MDC, if possible.
-					var managedMetaDataCache = Cache.GetManagedMetaDataCache();
-					if (managedMetaDataCache.FieldExists(activeRecordList.OwningFlid))
-					{
-						deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.OwningFlid));
-					}
-					else if (managedMetaDataCache.FieldExists(activeRecordList.VirtualFlid))
-					{
-						deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.VirtualFlid));
-					}
-				}
+				var editHelper = EditingHelper as RootSiteEditingHelper;
+				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanPasteUrl() && editHelper.CanInsertLinkToFile());
 			}
-			else
-			{
-				var userFriendlyClassName = StringTable.Table.GetString(activeRecordList.CurrentObject.ClassName, "ClassNames");
-				tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
-				deleteText = string.Format(deleteTextBase, userFriendlyClassName);
-				// See if a view can do it.
-				if (activeView is XmlDocView)
-				{
-					enableDelete = false;
-				}
-				else if (activeView is XmlBrowseRDEView)
-				{
-					enableDelete = ((XmlBrowseRDEView)activeView).SetupDeleteMenu(deleteTextBase, out deleteText);
-				}
-				else
-				{
-					// Let record list handle it (maybe).
-					enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
-				}
-			}
-			Toolbar_CmdDeleteRecord.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
-			deleteToolStripMenuItem.Text = deleteText;
-			Toolbar_CmdDeleteRecord.ToolTipText = tooltipText;
 		}
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
 			((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).PasteUrl(_stylesheet);
 		}
+
+		private static Tuple<bool, bool> CanCmdSelectAll => new Tuple<bool, bool>(true, !DataUpdateMonitor.IsUpdateInProgress());
 
 		private void Edit_Select_All(object sender, EventArgs e)
 		{
@@ -2247,6 +2293,36 @@ very simple minor adjustments. ;)"
 			}
 		}
 
+		private Tuple<bool, bool> CanCmdUndo
+		{
+			get
+			{
+				// Set basic values on the pessimistic side.
+				var ah = Cache.DomainDataByFlid.GetActionHandler();
+				string rawUndoText;
+				var undoEnabled = ah.UndoableSequenceCount > 0;
+				// Q: Is the focused control an instance of IUndoRedoHandler
+				var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
+				if (asIUndoRedoHandler != null)
+				{
+					// A1: Yes: Let it set up the text and enabled state for both menus.
+					// The handler may opt to not fret about, or or the other,
+					// so this method may need to deal with in the end, after all.
+					rawUndoText = asIUndoRedoHandler.UndoText;
+					undoEnabled = asIUndoRedoHandler.UndoEnabled(undoEnabled);
+				}
+				else
+				{
+					// A2: No: Deal with it here.
+					// Normal undo processing.
+					var baseUndo = undoEnabled ? ah.GetUndoText() : LanguageExplorerResources.Undo;
+					rawUndoText = string.IsNullOrEmpty(baseUndo) ? LanguageExplorerResources.Undo : baseUndo;
+				}
+				undoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawUndoText);
+				return new Tuple<bool, bool>(true, undoEnabled);
+			}
+		}
+
 		private void Edit_Undo_Click(object sender, EventArgs e)
 		{
 			var focusedControl = FocusedControl;
@@ -2282,6 +2358,37 @@ very simple minor adjustments. ;)"
 			}
 		}
 
+		private Tuple<bool, bool> CanCmdRedo
+		{
+			get
+			{
+				// Set basic values on the pessimistic side.
+				var ah = Cache.DomainDataByFlid.GetActionHandler();
+				var redoEnabled = ah.RedoableSequenceCount > 0;
+				string rawRedoText;
+				// Q: Is the focused control an instance of IUndoRedoHandler
+				var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
+				if (asIUndoRedoHandler != null)
+				{
+					// A1: Yes: Let it set up the text and enabled state for both menus.
+					// The handler may opt to not fret about, or or the other,
+					// so this method may need to deal with in the end, after all.
+					rawRedoText = asIUndoRedoHandler.RedoText;
+					redoEnabled = asIUndoRedoHandler.RedoEnabled(redoEnabled);
+				}
+				else
+				{
+					// A2: No: Deal with it here.
+					// Normal undo processing.
+					// Normal Redo processing.
+					var baseRedo = redoEnabled ? ah.GetRedoText() : LanguageExplorerResources.Redo;
+					rawRedoText = string.IsNullOrEmpty(baseRedo) ? LanguageExplorerResources.Redo : baseRedo;
+				}
+				redoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawRedoText);
+				return new Tuple<bool, bool>(true, redoEnabled);
+			}
+		}
+
 		private void Edit_Redo_Click(object sender, EventArgs e)
 		{
 			var focusedControl = FocusedControl;
@@ -2307,105 +2414,6 @@ very simple minor adjustments. ;)"
 					_inUndoRedo = false;
 				}
 			}
-		}
-
-		private void Application_Idle(object sender, EventArgs e)
-		{
-			var activeView = _viewHelper.ActiveView;
-			var hasActiveView = activeView != null;
-			if (hasActiveView)
-			{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"Start 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-				selectAllToolStripMenuItem.Enabled = true;
-				var editingHelper = activeView.EditingHelper;
-				cutToolStripMenuItem.Enabled = editingHelper.CanCut();
-				copyToolStripMenuItem.Enabled = editingHelper.CanCopy();
-				pasteToolStripMenuItem.Enabled = editingHelper.CanPaste();
-				CmdFormatApplyStyle.Enabled = CanApplyStyle(editingHelper);
-				selectAllToolStripMenuItem.Enabled = !DataUpdateMonitor.IsUpdateInProgress();
-				if (editingHelper is RootSiteEditingHelper)
-				{
-					var editingHelperAsRootSiteEditingHelper = (RootSiteEditingHelper)editingHelper;
-					pasteHyperlinkToolStripMenuItem.Enabled = editingHelperAsRootSiteEditingHelper.CanPasteUrl();
-					pasteHyperlinkToolStripMenuItem.Enabled = editingHelperAsRootSiteEditingHelper.CanPasteUrl();
-				}
-				else
-				{
-					pasteHyperlinkToolStripMenuItem.Enabled = false;
-					pasteHyperlinkToolStripMenuItem.Enabled = false;
-				}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"End 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			}
-			else
-			{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"Start 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-				selectAllToolStripMenuItem.Enabled = false;
-				cutToolStripMenuItem.Enabled = false;
-				copyToolStripMenuItem.Enabled = false;
-				pasteToolStripMenuItem.Enabled = false;
-				pasteHyperlinkToolStripMenuItem.Enabled = false;
-				CmdFormatApplyStyle.Enabled = false;
-				pasteHyperlinkToolStripMenuItem.Enabled = false;
-				selectAllToolStripMenuItem.Enabled = false;
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			}
-			Toolbar_CmdChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList?.CanChangeFilterClearAll ?? false;
-			// Enable/disable toolbar buttons.
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"Start 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			SetupEditUndoAndRedoMenus();
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"End 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"Start 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			SetupEditDeleteMenus(activeView);
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-//Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			if (CmdInsertLinkToFile.Visible)
-			{
-				CmdInsertLinkToFile.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
-			}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-		}
-
-		private static bool CanApplyStyle(EditingHelper editingHelper)
-		{
-			var selectionHelper = editingHelper.CurrentSelection;
-			if (selectionHelper == null)
-			{
-				return false;
-			}
-			var rootSite = selectionHelper.RootSite as RootSite;
-			if (rootSite != null)
-			{
-				return rootSite.CanApplyStyle;
-			}
-			var selection = selectionHelper.Selection;
-			return selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara);
 		}
 
 		private void Format_Styles_Click(object sender, EventArgs e)
@@ -2519,6 +2527,30 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			Refresh();
 		}
 
+		private Tuple<bool, bool> CanCmdFormatApplyStyle
+		{
+			get
+			{
+				var helper = EditingHelper;
+				if (helper == null)
+				{
+					return new Tuple<bool, bool>(true, false);
+				}
+				var selectionHelper = helper.CurrentSelection;
+				if (selectionHelper == null)
+				{
+					return new Tuple<bool, bool>(true, false);
+				}
+				var rootSite = selectionHelper.RootSite as RootSite;
+				if (rootSite != null)
+				{
+					return new Tuple<bool, bool>(true, rootSite.CanApplyStyle);
+				}
+				var selection = selectionHelper.Selection;
+				return new Tuple<bool, bool>(true, selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara));
+			}
+		}
+
 		private void applyStyleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			// Disabled if there is no ActiveView and it cannot appy the styles.
@@ -2599,6 +2631,64 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			_flexApp.ReplaceMainWindow(this);
 		}
 
+		private Tuple<bool, bool> CanCmdDeleteRecord
+		{
+			get
+			{
+				var activeView = _viewHelper.ActiveView;
+				bool enableDelete;
+				var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
+				var deleteTextBase = FwUtils.ReplaceUnderlineWithAmpersand(LanguageExplorerResources.DeleteMenu);
+				string deleteText;
+				var tooltipText = string.Empty;
+				if (activeRecordList?.CurrentObject == null)
+				{
+					// "activeRecordList" may be null. If not, then "activeRecordList.CurrentObject" may be null.
+					// Either way, the tool is changing, so disable them.
+					enableDelete = false;
+					// We don't really want to display "Delete Something", so try to find something more meaningful.
+					deleteText = "Delete Something";
+					if (activeRecordList != null)
+					{
+						// Try to dig out the class the hard way from the MDC, if possible.
+						var managedMetaDataCache = Cache.GetManagedMetaDataCache();
+						if (managedMetaDataCache.FieldExists(activeRecordList.OwningFlid))
+						{
+							deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.OwningFlid));
+						}
+						else if (managedMetaDataCache.FieldExists(activeRecordList.VirtualFlid))
+						{
+							deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.VirtualFlid));
+						}
+					}
+				}
+				else
+				{
+					var userFriendlyClassName = StringTable.Table.GetString(activeRecordList.CurrentObject.ClassName, "ClassNames");
+					tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
+					deleteText = string.Format(deleteTextBase, userFriendlyClassName);
+					// See if a view can do it.
+					if (activeView is XmlDocView)
+					{
+						enableDelete = false;
+					}
+					else if (activeView is XmlBrowseRDEView)
+					{
+						enableDelete = ((XmlBrowseRDEView)activeView).SetupDeleteMenu(deleteTextBase, out deleteText);
+					}
+					else
+					{
+						// Let record list handle it (maybe).
+						enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
+					}
+				}
+				Toolbar_CmdDeleteRecord.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
+				deleteToolStripMenuItem.Text = deleteText;
+				Toolbar_CmdDeleteRecord.ToolTipText = tooltipText;
+				return new Tuple<bool, bool>(true, enableDelete);
+			}
+		}
+
 		private void Edit_Delete_Click(object sender, EventArgs e)
 		{
 			var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
@@ -2616,6 +2706,21 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				// Let the record list do it.
 				activeRecordList.DeleteRecord(deleteToolStripMenuItem.Text.Replace("&", null), StatusBarPanelServices.GetStatusBarProgressPanel(_statusbar));
+			}
+		}
+
+		private Tuple<bool, bool> CanCmdInsertLinkToFile
+		{
+			get
+			{
+				var visible = true;
+				var enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanPasteUrl();
+				if (PropertyTable.GetValue(AllowInsertLinkToFile, true))
+				{
+					visible = true;
+					enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
+				}
+				return new Tuple<bool, bool>(visible, enabled);
 			}
 		}
 
@@ -2649,6 +2754,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			helper.ConvertSelToLink(pathname, _stylesheet);
 		}
 
+		/// <summary>
+		/// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
+		/// Windows: Enable the menu if we can find the CharMap program.
+		/// </summary>
+		private static Tuple<bool, bool> CanCmdShowCharMap => new Tuple<bool, bool>(true, MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe")));
+
 		private void SpecialCharacterToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			var program = MiscUtils.IsUnix ? "gucharmap" : "charmap.exe";
@@ -2657,7 +2768,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void showVernacularSpellingErrorsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var checking = !_propertyTable.GetValue<bool>("UseVernSpellingDictionary");
+			var checking = !_propertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
 			if (checking)
 			{
 				EnableVernacularSpelling();
@@ -2667,9 +2778,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 			}
 			CmdUseVernSpellingDictionary.Checked = checking;
-			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
+			_propertyTable.SetProperty(LanguageExplorerConstants.UseVernSpellingDictionary, checking, true);
 			RestartSpellChecking();
 		}
+
+		private Tuple<bool, bool> CanCmdChangeFilterClearAll => new Tuple<bool, bool>(true, _recordListRepositoryForTools.ActiveRecordList?.CanChangeFilterClearAll ?? false);
 
 		private void toolStripButtonChangeFilterClearAll_Click(object sender, EventArgs e)
 		{

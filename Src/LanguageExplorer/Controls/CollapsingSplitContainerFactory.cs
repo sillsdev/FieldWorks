@@ -77,7 +77,7 @@ namespace LanguageExplorer.Controls
 			panelButton.BringToFront();
 			recordBar.BringToFront();
 			panel2ChildControlAsControl.BringToFront();
-			newCollapsingSplitContainer.SplitterDistance = flexComponentParameters.PropertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
+			newCollapsingSplitContainer.SplitterDistance = flexComponentParameters.PropertyTable.GetValue<int>(LanguageExplorerConstants.RecordListWidthGlobal, SettingsGroup.GlobalSettings);
 			mainCollapsingSplitContainer.SecondControl = newCollapsingSplitContainer;
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			recordEditView.FinishInitialization();

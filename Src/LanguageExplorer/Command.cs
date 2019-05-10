@@ -218,8 +218,8 @@ namespace LanguageExplorer
 		CmdFormatStyle,
 		CmdFormatApplyStyle,
 		WritingSystemList,
-		CmdVernacularWritingSystemProperties, // (Also on Tools menu)
-		CmdAnalysisWritingSystemProperties, // (Also on Tools menu)
+		CmdVernacularWritingSystemProperties,
+		CmdAnalysisWritingSystemProperties,
 
 		/// <summary>
 		/// Tools menu
@@ -232,8 +232,6 @@ namespace LanguageExplorer
 			CmdConfigureColumns,
 			CmdConfigHeadwordNumbers,
 			CmdRestoreDefaults,
-			// CmdVernacularWritingSystemProperties (Also on Format menu)
-			// CmdAnalysisWritingSystemProperties (Also on Format menu)
 			CmdAddCustomField,
 		CmdMergeEntry,
 		CmdLexiconLookup,

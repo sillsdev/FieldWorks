@@ -228,8 +228,7 @@ namespace LanguageExplorer.Impls
 		/// <inheritdoc />
 		void IPropertyTable.ConvertOldPropertiesToNewIfPresent()
 		{
-			const string propertyTableVersion = "PropertyTableVersion";
-			if (GetValueInternal(propertyTableVersion, 0) == CurrentPropertyTableVersion)
+			if (GetValueInternal(LanguageExplorerConstants.PropertyTableVersion, 0) == CurrentPropertyTableVersion)
 			{
 				return;
 			}
@@ -304,7 +303,7 @@ namespace LanguageExplorer.Impls
 				}
 				SetPropertyInternal(propertykvp.Value.name, element.ToString(), true, false);
 			}
-			SetPropertyInternal(propertyTableVersion, CurrentPropertyTableVersion, true, false);
+			SetPropertyInternal(LanguageExplorerConstants.PropertyTableVersion, CurrentPropertyTableVersion, true, false);
 			AsIPropertyTable.SaveGlobalSettings();
 			AsIPropertyTable.SaveLocalSettings();
 		}

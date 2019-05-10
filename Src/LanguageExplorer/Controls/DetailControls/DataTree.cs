@@ -1068,13 +1068,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void PersistPreferences()
 		{
-			PersistenceProvder?.SetInfoObject("SliceSplitterBaseDistance", SliceSplitPositionBase);
+			PersistenceProvder?.SetInfoObject(LanguageExplorerConstants.SliceSplitterBaseDistance, SliceSplitPositionBase);
 		}
 
 		private void RestorePreferences()
 		{
 			//TODO: for some reason, this can be set to only a maximum of 177. should have a minimum, not a maximum.
-			SliceSplitPositionBase = (int)PersistenceProvder.GetInfoObject("SliceSplitterBaseDistance", SliceSplitPositionBase);
+			SliceSplitPositionBase = (int)PersistenceProvder.GetInfoObject(LanguageExplorerConstants.SliceSplitterBaseDistance, SliceSplitPositionBase);
 		}
 
 		/// <summary>

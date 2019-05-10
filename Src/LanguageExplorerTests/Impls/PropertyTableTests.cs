@@ -865,7 +865,7 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UpdateAssimilatedProjects()
 		{
-			Assert.That(_propertyTable.GetValue("PropertyTableVersion", 0), Is.EqualTo(0));
+			Assert.That(_propertyTable.GetValue(LanguageExplorerConstants.PropertyTableVersion, 0), Is.EqualTo(0));
 			var lotsOfAssimilatedAssemblies = _propertyTable.GetValue<string>("LotsOfAssimilatedAssemblies");
 			var element = XElement.Parse(lotsOfAssimilatedAssemblies);
 			var before = new Dictionary<string, string>
@@ -894,7 +894,7 @@ namespace LanguageExplorerTests.Impls
 
 			// SUT
 			_propertyTable.ConvertOldPropertiesToNewIfPresent();
-			Assert.That(_propertyTable.GetValue<int>("PropertyTableVersion"), Is.EqualTo(1));
+			Assert.That(_propertyTable.GetValue<int>(LanguageExplorerConstants.PropertyTableVersion), Is.EqualTo(1));
 			lotsOfAssimilatedAssemblies = _propertyTable.GetValue<string>("LotsOfAssimilatedAssemblies");
 			element = XElement.Parse(lotsOfAssimilatedAssemblies);
 			var after = new List<string>

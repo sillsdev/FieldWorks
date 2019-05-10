@@ -19,7 +19,7 @@ namespace LanguageExplorer
 	/// LinkHandler handles Hyper linking and history
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
-	internal sealed class LinkHandler : IFlexComponent, IApplicationIdleEventHandler, IDisposable
+	internal sealed class LinkHandler : IFlexComponent, IDisposable
 	{
 		// Limit the stacks to 50 elements (LT-729).
 		const int kmaxDepth = 50;
@@ -27,9 +27,6 @@ namespace LanguageExplorer
 		private int _countSuspendIdleProcessing;
 		private IFwMainWnd _mainWindow;
 		private LcmCache _cache;
-		private ToolStripButton _toolStripButtonHistoryBack;
-		private ToolStripButton _toolStripButtonHistoryForward;
-		private ToolStripMenuItem _copyLocationAsHyperlinkToolStripMenuItem;
 		private LinkedList<FwLinkArgs> _backStack;
 		private LinkedList<FwLinkArgs> _forwardStack;
 		private bool _followingLink;
@@ -38,40 +35,23 @@ namespace LanguageExplorer
 		private bool _usingHistory;
 
 		/// <summary />
-		internal LinkHandler(IFwMainWnd mainWindow, LcmCache cache, ToolStripButton toolStripButtonHistoryBack, ToolStripButton toolStripButtonHistoryForward, ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem)
+		internal LinkHandler(IFwMainWnd mainWindow, LcmCache cache, GlobalUiWidgetParameterObject globalUiWidgetParameterObject)
 		{
 			Guard.AgainstNull(mainWindow, nameof(mainWindow));
 			Guard.AgainstNull(cache, nameof(cache));
-			Guard.AgainstNull(toolStripButtonHistoryBack, nameof(toolStripButtonHistoryBack));
-			Guard.AgainstNull(toolStripButtonHistoryForward, nameof(toolStripButtonHistoryForward));
-			Guard.AgainstNull(copyLocationAsHyperlinkToolStripMenuItem, nameof(copyLocationAsHyperlinkToolStripMenuItem));
+			Guard.AgainstNull(globalUiWidgetParameterObject, nameof(globalUiWidgetParameterObject));
 
 			_mainWindow = mainWindow;
 			_cache = cache;
-			_toolStripButtonHistoryBack = toolStripButtonHistoryBack;
-			_toolStripButtonHistoryBack.Click += HistoryBack_Clicked;
-			_toolStripButtonHistoryForward = toolStripButtonHistoryForward;
-			_toolStripButtonHistoryForward.Click += HistoryForward_Clicked;
-			_copyLocationAsHyperlinkToolStripMenuItem = copyLocationAsHyperlinkToolStripMenuItem;
-			_copyLocationAsHyperlinkToolStripMenuItem.Click += CopyLocationAsHyperlink_Clicked;
+			// CmdHistoryBack and CmdHistoryForward are on the standard tool strip
+			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
+			standardToolBarDictionary.Add(Command.CmdHistoryBack, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryBack_Clicked, ()=> CanCmdHistoryBack));
+			standardToolBarDictionary.Add(Command.CmdHistoryForward, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryForward_Clicked, () => CanCmdHistoryForward));
+			// CmdCopyLocationAsHyperlink is on the Edit menu.
+			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit].Add(Command.CmdCopyLocationAsHyperlink, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CopyLocationAsHyperlink_Clicked, ()=> CanCmdCopyLocationAsHyperlink));
 			_backStack = new LinkedList<FwLinkArgs>();
 			_forwardStack = new LinkedList<FwLinkArgs>();
 			CurrentContext = null;
-			Application.Idle += Application_Idle;
-		}
-
-		private void Application_Idle(object sender, EventArgs e)
-		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
-			_toolStripButtonHistoryBack.Enabled = _backStack.Any();
-			_toolStripButtonHistoryForward.Enabled = _forwardStack.Any();
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		private static void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)
@@ -89,100 +69,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			stack.RemoveLast();
 			return lnk;
 		}
-
-		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		private bool IsDisposed { get; set; }
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~LinkHandler()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SuppressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		private void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (IsDisposed)
-			{
-				// No need to run it more than once.
-				return;
-			}
-
-			if (disposing)
-			{
-				Application.Idle -= Application_Idle;
-				PropertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
-				Subscriber.Unsubscribe("FollowLink", FollowLink_Handler);
-				_toolStripButtonHistoryBack.Click -= HistoryBack_Clicked;
-				_toolStripButtonHistoryForward.Click -= HistoryForward_Clicked;
-				_copyLocationAsHyperlinkToolStripMenuItem.Click -= CopyLocationAsHyperlink_Clicked;
-				_backStack?.Clear();
-				_forwardStack?.Clear();
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			_toolStripButtonHistoryBack = null;
-			_toolStripButtonHistoryForward = null;
-			_copyLocationAsHyperlinkToolStripMenuItem = null;
-			_backStack = null;
-			_forwardStack = null;
-			CurrentContext = null;
-			_linkActive = null;
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
-
-			IsDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
 
 		/// <summary>
 		/// Return the current link.
@@ -272,6 +158,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			CurrentContext = newHistoryLink;
 		}
 
+		private static Tuple<bool, bool> CanCmdCopyLocationAsHyperlink => new Tuple<bool, bool>(true, true);
+
 		/// <summary>
 		/// Handle the "Copy Location as Hyperlink" menu
 		/// </summary>
@@ -284,6 +172,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var args = new FwAppArgs(_cache.ProjectId.Handle, CurrentContext.ToolName, CurrentContext.TargetGuid);
 			ClipboardUtils.SetDataObject(args.ToString(), true);
 		}
+
+		private Tuple<bool, bool> CanCmdHistoryBack => new Tuple<bool, bool>(true, _backStack.Any());
 
 		/// <summary />
 		private void HistoryBack_Clicked(object sender, EventArgs e)
@@ -300,6 +190,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			_linkActive = Pop(_backStack);
 			FollowActiveLink();
 		}
+
+		private Tuple<bool, bool> CanCmdHistoryForward => new Tuple<bool, bool>(true, _forwardStack.Any());
 
 		/// <summary />
 		private void HistoryForward_Clicked(object sender, EventArgs e)
@@ -401,7 +293,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					// allow tools to skip loading a record if we're planning to jump to one.
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
-					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", $"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
+					PropertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
 
 				var messages = new List<string>();
@@ -468,6 +360,21 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
+		internal static void PublishFollowLinkMessage(IPublisher publisher, FwLinkArgs linkArgsForJump)
+		{
+			var commands = new List<string>
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
+			var parms = new List<object>
+			{
+				null,
+				linkArgsForJump
+			};
+			publisher.Publish(commands, parms);
+		}
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -515,52 +422,91 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		#endregion
 
-		#region Implementation of IApplicationIdleEventHandler
+		#region IDisposable & Co. implementation
+
 		/// <summary>
-		/// Call this for the duration of a block of code where we don't want idle events.
-		/// (Note that various things outside our control may pump events and cause the
-		/// timer that fires the idle events to be triggered when we are not idle, even in the
-		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// See if the object has been disposed.
 		/// </summary>
-		public void SuspendIdleProcessing()
+		private bool IsDisposed { get; set; }
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~LinkHandler()
 		{
-			_countSuspendIdleProcessing++;
-			if (_countSuspendIdleProcessing == 1)
-			{
-				Application.Idle -= Application_Idle;
-			}
+			Dispose(false);
+			// The base class finalizer is called automatically.
 		}
 
 		/// <summary>
-		/// See SuspendIdleProcessing.
+		///
 		/// </summary>
-		public void ResumeIdleProcessing()
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
 		{
-			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
-			if (_countSuspendIdleProcessing > 0)
-			{
-				_countSuspendIdleProcessing--;
-				if (_countSuspendIdleProcessing == 0)
-				{
-					Application.Idle += Application_Idle;
-				}
-			}
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SuppressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
 		}
-		#endregion
 
-		internal static void PublishFollowLinkMessage(IPublisher publisher, FwLinkArgs linkArgsForJump)
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		private void Dispose(bool disposing)
 		{
-			var commands = new List<string>
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
 			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
 			{
-				null,
-				linkArgsForJump
-			};
-			publisher.Publish(commands, parms);
+				PropertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
+				Subscriber.Unsubscribe("FollowLink", FollowLink_Handler);
+				_backStack?.Clear();
+				_forwardStack?.Clear();
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			_backStack = null;
+			_forwardStack = null;
+			CurrentContext = null;
+			_linkActive = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
+			IsDisposed = true;
 		}
+
+		#endregion IDisposable & Co. implementation
 	}
 }

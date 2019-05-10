@@ -17,13 +17,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		protected IProgressDisplayer m_progressBar;
 		private WaitCursor m_wait;
+		private int _percentDone;
 
 		/// <summary/>
 		public ProgressState(IProgressDisplayer progressBar)
 		{
 			m_wait = new WaitCursor(Form.ActiveForm);
 
-			PercentDone = 0;
+			_percentDone = 0;
 			m_progressBar = progressBar;
 			m_progressBar?.SetStateProvider(this);
 		}
@@ -142,7 +143,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// How much the task is done
 		/// </summary>
-		public virtual int PercentDone { get; set; }
+		/// <remarks>
+		/// NB: Don't even think of making this an auto property, since that will hit the NotSupportedException on PredictiveProgressState.
+		/// </remarks>
+		public virtual int PercentDone
+		{
+			get { return _percentDone; }
+			set { _percentDone = value; }
+		}
 
 		/// <summary>
 		/// a label which describes what we are busy doing

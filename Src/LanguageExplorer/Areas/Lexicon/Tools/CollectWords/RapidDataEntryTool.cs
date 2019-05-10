@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.RecordListWidthGlobal, _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 
 #if RANDYTODO
 			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.FirstLabel = AreaResources.ksRecordListLabel;
 			_collapsingSplitContainer.FirstControl = recordBar;
 			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
-			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
+			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>(LanguageExplorerConstants.RecordListWidthGlobal, SettingsGroup.GlobalSettings);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var recordEditViewPaneBar = new PaneBar();
@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.RecordListWidthGlobal, _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		#endregion

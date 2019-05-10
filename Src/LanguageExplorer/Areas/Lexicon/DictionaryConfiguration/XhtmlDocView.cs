@@ -639,7 +639,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
+			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, null)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
 			}

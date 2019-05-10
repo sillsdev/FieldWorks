@@ -478,6 +478,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				get
 				{
 					var currentSlice = _dataTree.CurrentSlice;
+					if (currentSlice == null)
+					{
+						_dataTree.GotoFirstSlice();
+						currentSlice = _dataTree.CurrentSlice;
+					}
 					if (currentSlice.MyCmObject == null)
 					{
 						return false;

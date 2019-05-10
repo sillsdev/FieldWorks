@@ -112,7 +112,7 @@ namespace LanguageExplorer.SendReceive
 		{
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow = (IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (newAppWindow.PropertyTable.GetValue("UseVernSpellingDictionary", true))
+			if (newAppWindow.PropertyTable.GetValue(LanguageExplorerConstants.UseVernSpellingDictionary, true))
 			{
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			}

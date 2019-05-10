@@ -68,6 +68,11 @@ namespace LanguageExplorer
 		internal const string windowSize = "windowSize";
 		internal const string windowLocation = "windowLocation";
 		internal const string windowState = "windowState";
+		internal const string UseVernSpellingDictionary = "UseVernSpellingDictionary";
+		internal const string PropertyTableVersion = "PropertyTableVersion";
+		internal const string RecordListWidthGlobal = "RecordListWidthGlobal";
+		internal const string SuspendLoadingRecordUntilOnJumpToRecord = "SuspendLoadingRecordUntilOnJumpToRecord";
+		internal const string SliceSplitterBaseDistance = "SliceSplitterBaseDistance";
 
 		#endregion Misc
 	}
