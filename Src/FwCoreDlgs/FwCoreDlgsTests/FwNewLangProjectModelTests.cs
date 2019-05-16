@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,29 +11,37 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 
+// ReSharper disable StringIndexOfIsCultureSpecific.1
+// ReSharper disable InconsistentNaming
+
 namespace SIL.FieldWorks.FwCoreDlgs
-{/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for TestFwNewLangProject.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+{
+	/// <summary/>
 	[TestFixture]
 	public class FwNewLangProjectModelTests
 	{
+		private const string DbName = "Maileingwidj2025";
+
+		/// <summary/>
+		[SetUp]
+		public void TestSetup()
+		{
+			// A number of tests rely on this project not existing (most because duplicate names are not valid).
+			if (DbExists(DbName))
+			{
+				DestroyDb(DbName, true);
+			}
+		}
+
 		/// <summary>
 		/// Make sure a new DB gets created
 		/// </summary>
 		[Test]
 		public void FwNewLangProjectModel_VerifyCreateNewLangProject()
 		{
-			const string dbName = "Maileingwij2025";
-
 			LcmCache cache = null;
-			if (DbExists(dbName))
-				DestroyDb(dbName, true);
 
 			var testProject = new FwNewLangProjectModel(true)
 			{
@@ -43,28 +52,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			};
 			try
 			{
-				testProject.ProjectName = dbName;
+				testProject.ProjectName = DbName;
 				testProject.Next();
 				testProject.SetDefaultWs(new LanguageInfo { LanguageTag = "fr" });
 				testProject.Next();
+				testProject.SetDefaultWs(new LanguageInfo { LanguageTag = "de" });
 				using (var threadHelper = new ThreadHelper())
 				{
 					testProject.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
 				}
 
-				Assert.IsTrue(DbExists(dbName));
+				Assert.IsTrue(DbExists(DbName));
 
 				// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 				// we don't need a 'using'
 				cache = LcmCache.CreateCacheFromExistingData(
-					new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyLcmUI(),
+					new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(DbName)), "en", new DummyLcmUI(),
 					FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 				CheckInitialSetOfPartsOfSpeech(cache);
 
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
-				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Count);
-				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.LanguageName);
+				Assert.AreEqual(2, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
+				Assert.AreEqual("German", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
+				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Last().LanguageName);
+				Assert.AreEqual(2, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Count);
+				Assert.AreEqual("German", cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.LanguageName);
+				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Last().LanguageName,
+					"English should be selected as an analysis writing system even if the user tried to remove it");
 				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count);
 				Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.VernacularWritingSystems.First().LanguageName);
 				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count);
@@ -75,7 +88,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Blow away the database to clean things up
 				if (cache != null)
 					cache.Dispose();
-				DestroyDb(dbName, false);
+				DestroyDb(DbName, false);
 			}
 		}
 
@@ -108,14 +121,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void FwNewLangProjectModel_ProjectNameIsUnique()
 		{
-			const string extantDbName = "Maileingwidj2025";
-
 			try
 			{
-				CreateDb(extantDbName);
+				CreateDb(DbName);
 				string errorMessage;
 				Assert.True(FwNewLangProjectModel.CheckForUniqueProjectName("something else"), "unique name should be unique");
-				Assert.False(FwNewLangProjectModel.CheckForUniqueProjectName(extantDbName), "duplicate name should not be unique");
+				Assert.False(FwNewLangProjectModel.CheckForUniqueProjectName(DbName), "duplicate name should not be unique");
 
 				// Creating a new project is expensive (several seconds), so test this property that also checks uniqueness here:
 				var testModel = new FwNewLangProjectModel
@@ -124,13 +135,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					ProjectName = "something new"
 				};
 				Assert.True(testModel.IsProjectNameValid, "unique name should be valid");
-				testModel.ProjectName = extantDbName;
+				testModel.ProjectName = DbName;
 				Assert.False(testModel.IsProjectNameValid, "duplicate name should not be valid");
 			}
 			finally
 			{
 				// Blow away the database to clean things up
-				DestroyDb(extantDbName, false);
+				DestroyDb(DbName, false);
 			}
 		}
 
@@ -248,7 +259,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var model = new FwNewLangProjectModel();
 			model.LoadProjectNameSetup = () => { };
 			model.LoadVernacularSetup = () => { };
-			model.ProjectName = "a";
+			model.ProjectName = DbName;
 			Assert.False(model.CanGoBack());
 			model.Next();
 			Assert.True(model.CanGoBack());
@@ -266,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.LoadVernacularSetup = () => { };
 			model.LoadAnalysisSetup = () => { };
 			model.LoadAnalysisSameAsVernacularWarning = () => { warningIssued = true; };
-			model.ProjectName = "a";
+			model.ProjectName = DbName;
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -291,7 +302,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.LoadAnalysisSetup = () => { };
 			model.LoadAdvancedWsSetup = () => { };
 			model.LoadAnthropologySetup = () => { };
-			model.ProjectName = "a";
+			model.ProjectName = DbName;
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -318,7 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.LoadAnalysisSetup = () => { };
 			model.LoadAdvancedWsSetup = () => { };
 			model.LoadAnthropologySetup = () => { };
-			model.ProjectName = "a";
+			model.ProjectName = DbName;
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -334,7 +345,124 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.False(model.CanFinish());
 		}
 
-		private void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
+		/// <summary/>
+		[Test]
+		public void SetDefaultWs_ReplacesExistingDefault()
+		{
+			var model = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				ProjectName = DbName
+			};
+			model.Next();
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("fr"));
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("en"));
+			model.SetDefaultWs(new LanguageInfo{LanguageTag = "de"});
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(2), "all");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "first should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(2), "current");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"),
+				"default should be German");
+		}
+
+		/// <summary/>
+		[Test]
+		public void SetDefaultWs_ManyExist_OthersArePreservedInOrder()
+		{
+			var model = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				ProjectName = DbName
+			};
+			model.Next();
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("en"));
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("de"));
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("fr"));
+			model.SetDefaultWs(new LanguageInfo{LanguageTag = "de"});
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(3), "all");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "first should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(3), "current");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems[0].LanguageTag, Is.EqualTo("de"), "default should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems[1].LanguageTag, Is.EqualTo("en"), "econd should be English");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems[2].LanguageTag, Is.EqualTo("fr"), "third should be French");
+		}
+
+		/// <summary/>
+		[Test]
+		public void SetDefaultWs_DoesNotDuplicate()
+		{
+			var model = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				ProjectName = DbName
+			};
+			model.Next();
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("de"));
+			model.SetDefaultWs(new LanguageInfo{LanguageTag = "de"});
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(1), "should be only one WS");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(1), "should be only one current");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"),
+				"default should be German");
+		}
+
+		/// <summary/>
+		[Test]
+		public void SetDefaultWs_PreservesCheckState()
+		{
+			var model = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				ProjectName = DbName
+			};
+			model.Next();
+			var french = new CoreWritingSystemDefinition("fr");
+			var esperanto = new CoreWritingSystemDefinition("eo");
+			var english = new CoreWritingSystemDefinition("en");
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(french); // selected
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(esperanto); // selected
+			model.WritingSystemContainer.VernacularWritingSystems.Add(english); // deselected
+			model.SetDefaultWs(new LanguageInfo{LanguageTag = "de"});
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(3), "should be three total");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "first should be German");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Contains(esperanto), "should contain Esperanto");
+			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Contains(english), "should contain English");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(2), "should be two selected");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems[0].LanguageTag, Is.EqualTo("de"), "default should be German");
+			Assert.Contains(esperanto, (ICollection)model.WritingSystemContainer.CurrentVernacularWritingSystems, "Esperanto should be selected");
+		}
+
+		/// <summary/>
+		[Test]
+		public void SetDefaultWs_Analysis()
+		{
+			var model = new FwNewLangProjectModel(true)
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				LoadAnalysisSetup = () => { },
+				ProjectName = DbName
+			};
+			model.Next();
+			model.WritingSystemContainer.AddToCurrentVernacularWritingSystems(new CoreWritingSystemDefinition("fr"));
+			model.Next();
+			// English is the default Analysis WS, so we do not need to set it here.
+			Assert.That(model.WritingSystemContainer.AnalysisWritingSystems.Count, Is.EqualTo(1), "Test setup problem");
+			Assert.That(model.WritingSystemContainer.AnalysisWritingSystems.First().LanguageTag, Is.EqualTo("en"), "Test setup problem");
+			Assert.That(model.WritingSystemContainer.CurrentAnalysisWritingSystems.Count, Is.EqualTo(1), "Test setup problem");
+			Assert.That(model.WritingSystemContainer.CurrentAnalysisWritingSystems.First().LanguageTag, Is.EqualTo("en"), "Test setup problem");
+			model.SetDefaultWs(new LanguageInfo{LanguageTag = "de"});
+			Assert.That(model.WritingSystemContainer.AnalysisWritingSystems.Count, Is.EqualTo(1), "all");
+			Assert.That(model.WritingSystemContainer.AnalysisWritingSystems.First().LanguageTag, Is.EqualTo("de"), "should be German");
+			Assert.That(model.WritingSystemContainer.CurrentAnalysisWritingSystems.Count, Is.EqualTo(1), "current");
+			Assert.That(model.WritingSystemContainer.CurrentAnalysisWritingSystems[0].LanguageTag, Is.EqualTo("de"), "default should be German");
+		}
+
+		private static void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
 		{
 			ILangProject lp = cache.LanguageProject;
 			int iCount = 0;
@@ -373,11 +501,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(fVerbFound, "Did not find Verb CatalogSourceId");
 		}
 
-		private void CreateDb(string dbName, string vernWs = "fr")
+		private static void CreateDb(string dbName, string vernWs = "fr")
 		{
-			if (DbExists(dbName))
-				DestroyDb(dbName, true);
-
 			var testProject = new FwNewLangProjectModel(true)
 			{
 				LoadProjectNameSetup = () => { },
@@ -387,7 +512,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				AnthroModel = new FwChooseAnthroListModel { CurrentList = FwChooseAnthroListModel.ListChoice.UserDef }
 			};
 			testProject.Next();
-			testProject.SetDefaultWs(new LanguageInfo { LanguageTag = "fr" });
+			testProject.SetDefaultWs(new LanguageInfo { LanguageTag = vernWs });
 			testProject.Next();
 			using (var threadHelper = new ThreadHelper())
 			{

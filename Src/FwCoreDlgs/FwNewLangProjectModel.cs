@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					currentList = WritingSystemContainer.CurrentVernacularWritingSystems;
 					allList = WritingSystemContainer.VernacularWritingSystems;
-					SetDefaultWsInCurrentList(selectedLanguage, currentList, allList);
+					SetDefaultWsInLists(selectedLanguage, currentList, allList);
 					LoadVernacularSetup();
 					break;
 				}
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					currentList = WritingSystemContainer.CurrentAnalysisWritingSystems;
 					allList = WritingSystemContainer.AnalysisWritingSystems;
-					SetDefaultWsInCurrentList(selectedLanguage, currentList, allList);
+					SetDefaultWsInLists(selectedLanguage, currentList, allList);
 					if (currentList.First().Equals(WritingSystemContainer.CurrentVernacularWritingSystems.First()))
 					{
 						LoadAnalysisSameAsVernacularWarning();
@@ -419,42 +419,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private static void AddDefaultWsInAllList(CoreWritingSystemDefinition defaultWs, ICollection<CoreWritingSystemDefinition> allList)
-		{
-			var itemInList = allList.FirstOrDefault(ws => ws.LanguageTag == defaultWs.LanguageTag);
-			if (itemInList == null)
-			{
-				var newList = new List<CoreWritingSystemDefinition>(allList);
-				newList.Insert(0, defaultWs);
-				allList.Clear();
-				allList.AddRange(newList);
-			}
-			else
-			{
-				var newList = new List<CoreWritingSystemDefinition>(allList);
-				newList.Remove(itemInList);
-				newList.Insert(0, defaultWs);
-				allList.Clear();
-				allList.AddRange(newList);
-			}
-		}
-
-		private void SetDefaultWsInCurrentList(LanguageInfo selectedLanguage, IList<CoreWritingSystemDefinition> currentList,
+		private void SetDefaultWsInLists(LanguageInfo selectedLanguage, IList<CoreWritingSystemDefinition> currentList,
 			ICollection<CoreWritingSystemDefinition> allList)
 		{
-			var itemInList = currentList.FirstOrDefault(ws => ws.LanguageTag == selectedLanguage.LanguageTag);
+			SetDefaultWsInList(selectedLanguage, currentList);
+
+			var newAllList = new List<CoreWritingSystemDefinition>(allList);
+			SetDefaultWsInList(selectedLanguage, newAllList);
+			allList.Clear();
+			allList.AddRange(newAllList);
+		}
+
+		private void SetDefaultWsInList(LanguageInfo selectedLanguage, IList<CoreWritingSystemDefinition> list)
+		{
+			var itemInList = list.FirstOrDefault(ws => ws.LanguageTag == selectedLanguage.LanguageTag);
 			if (itemInList == null)
 			{
 				WritingSystemManager.GetOrSet(selectedLanguage.LanguageTag, out itemInList);
-				currentList.Insert(0, itemInList);
+				if (list.Any())
+				{
+					// If the user changes the Default in either Default WS step in the New Project Wizard,
+					// don't keep an ever-growing list of old WS's (LT-19718)
+					list.RemoveAt(0);
+				}
 			}
 			else
 			{
-				currentList.Remove(itemInList);
-				currentList.Insert(0, itemInList);
+				// WS exists; simply promote it.
+				list.Remove(itemInList);
 			}
-
-			AddDefaultWsInAllList(itemInList, allList);
+			list.Insert(0, itemInList);
 		}
 	}
 
