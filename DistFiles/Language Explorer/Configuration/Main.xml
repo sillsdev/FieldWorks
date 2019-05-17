@@ -117,8 +117,8 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdVernacularWritingSystemProperties" label="Set up Vernacular Writing Systems..." message="VernWritingSystemProperties"/>
-		<command id="CmdAnalysisWritingSystemProperties" label="Set up Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
+		<command id="CmdVernacularWritingSystemProperties" label="Set up _Vernacular Writing Systems..." message="VernWritingSystemProperties"/>
+		<command id="CmdAnalysisWritingSystemProperties" label="Set up _Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
 		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject"/>
 		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject"/>
 		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
