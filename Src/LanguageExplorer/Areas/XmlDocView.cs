@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas
 		{
 			switch (name)
 			{
-				case "SelectedPublication":
+				case LanguageExplorerConstants.SelectedPublication:
 					var pubDecorator = GetPubDecorator();
 					if (pubDecorator != null)
 					{
@@ -201,7 +201,7 @@ namespace LanguageExplorer.Areas
 			{
 				// We don't want to use GetSelectedPublication here because it supplies a default,
 				// and we want to treat that case specially.
-				var pubName = PropertyTable.GetValue<string>("SelectedPublication");
+				var pubName = PropertyTable.GetValue<string>(LanguageExplorerConstants.SelectedPublication);
 				if (pubName == null)
 				{
 					return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0 ? Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0] : null;
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas
 		private string GetSelectedPublication()
 		{
 			// Sometimes we just want the string value which might be '$$all_entries$$'
-			return PropertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
+			return PropertyTable.GetValue(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication);
 		}
 
 		/// <summary>
@@ -313,7 +313,7 @@ namespace LanguageExplorer.Areas
 			if (match.Success)
 			{
 				string replacement;
-				if (match.Groups[1].Value == "SelectedPublication")
+				if (match.Groups[1].Value == LanguageExplorerConstants.SelectedPublication)
 				{
 					replacement = GetSelectedPublication();
 					if (replacement == LanguageExplorerResources.AllEntriesPublication)

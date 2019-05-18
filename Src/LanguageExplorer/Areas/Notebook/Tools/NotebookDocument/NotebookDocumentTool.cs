@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
-		private NotebookDocumentToolMenuHelper _notebookDocumentToolMenuHelper;
+		private NotebookDocumentToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
@@ -43,9 +43,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			// Dispose after the main UI stuff.
-			_notebookDocumentToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
-			_notebookDocumentToolMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			}
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
 			// NB: This has to be done ahead of XmlDocView, since it registers handlers as a UserControl, which will throw if the tool has been set up yet.
-			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList);
+			_toolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			// NB: XmlDocView adds user control handler.
 			var docView = new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, docView);

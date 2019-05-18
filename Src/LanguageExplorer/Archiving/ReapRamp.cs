@@ -29,7 +29,7 @@ namespace LanguageExplorer.Archiving
 	/// </summary>
 	internal sealed class ReapRamp
 	{
-		private static LocalizationManager s_localizationMgr;
+		private static ILocalizationManager s_localizationMgr;
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
 
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Archiving
 
 			if (s_localizationMgr == null)
 			{
-				s_localizationMgr = LocalizationManager.Create(uiLocale, localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
+				s_localizationMgr = LocalizationManager.Create(TranslationMemory.Tmx, uiLocale, localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
 					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"), Path.Combine(Application.CompanyName, appName), localizationDialogIcon,
 					"FLExDevteam@sil.org", "SIL.Archiving");
 			}

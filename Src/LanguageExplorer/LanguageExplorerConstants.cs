@@ -73,6 +73,8 @@ namespace LanguageExplorer
 		internal const string RecordListWidthGlobal = "RecordListWidthGlobal";
 		internal const string SuspendLoadingRecordUntilOnJumpToRecord = "SuspendLoadingRecordUntilOnJumpToRecord";
 		internal const string SliceSplitterBaseDistance = "SliceSplitterBaseDistance";
+		internal const string SelectedPublication = "SelectedPublication";
+		internal const string ShowHiddenFields = "ShowHiddenFields";
 
 		#endregion Misc
 	}

@@ -44,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// If label width is made wider than this, switch to full labels.
 		/// </summary>
-		const int MaxAbbrevWidth = 60;
+		private const int MaxAbbrevWidth = 60;
 		private const string HotlinksAttributeName = "hotlinks";
 		private const string MenuAttributeName = "menu";
 		private const string ContextMenuAttributeName = "contextMenu";
@@ -97,16 +97,23 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		internal string LeftEdgeMenuId
+		internal ContextMenuName LeftEdgeMenuId
 		{
 			get
 			{
-				var leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, MenuAttributeName, string.Empty);
-				if (string.IsNullOrWhiteSpace(leftEdgeMenuId))
+				string leftEdgeMenuId = null;
+				if (CallerNode != null)
 				{
 					leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, MenuAttributeName, string.Empty);
 				}
-				return leftEdgeMenuId; // It may still be string.Empty.
+				if (string.IsNullOrEmpty(leftEdgeMenuId))
+				{
+					if (ConfigurationNode != null)
+					{
+						leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, MenuAttributeName, string.Empty);
+					}
+				}
+				return string.IsNullOrWhiteSpace(leftEdgeMenuId) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), leftEdgeMenuId);
 			}
 		}
 
@@ -620,7 +627,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice = slice.ParentSlice;
 			}
 		}
-		protected DataTreeStackContextMenuFactory MyDataTreeStackContextMenuFactory { get; private set; }
+
+		protected DataTreeSliceContextMenuParameterObject MyDataTreeSliceContextMenuParameterObject { get; private set; }
 
 		/// <summary />
 		public virtual void Install(DataTree parentDataTree)
@@ -629,7 +637,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 			}
-			MyDataTreeStackContextMenuFactory = parentDataTree.DataTreeStackContextMenuFactory;
+			MyDataTreeSliceContextMenuParameterObject = parentDataTree.DataTreeSliceContextMenuParameterObject;
 			SplitCont.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
 			if (SplitCont.Panel1.AccessibleName == null)
@@ -648,20 +656,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else
 			{
-				// Make a standard SliceTreeNode now.
-				string idFromXml = null;
-				if (CallerNode != null)
-				{
-					idFromXml = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
-				}
-				if (string.IsNullOrEmpty(idFromXml))
-				{
-					if (ConfigurationNode != null)
-					{
-						idFromXml = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
-					}
-				}
-				treeNode = new SliceTreeNode(this, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory, string.IsNullOrEmpty(idFromXml) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), idFromXml));
+				treeNode = new SliceTreeNode(this, MyDataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory, LeftEdgeMenuId);
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				SplitCont.Panel1.Controls.Add(treeNode);

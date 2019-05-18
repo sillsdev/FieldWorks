@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			 <part ref="Summary" label="Subdomain" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/> class="CmSemanticDomain"
 			 <part ref="Summary" label="Subcategory" param="PossibilityName" menu="mnuDataTree_DeletePossibility"/> class="CmAnthroItem"
 			*/
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeletePossibility, Create_mnuDataTree_DeletePossibility);
+			_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeletePossibility, Create_mnuDataTree_DeletePossibility);
 
 			/*
 				<slice label="Subitems" menu="mnuDataTree_SubPossibilities">
@@ -65,11 +65,11 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				</slice>
 			*/
 			// All except FeatureTypesAdvancedEditTool, which isn't a real list anyway.
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubPossibilities, Create_mnuDataTree_SubPossibilities);
+			_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubPossibilities, Create_mnuDataTree_SubPossibilities);
 
 			// <menu id="mnuDataTree_POS_SubPossibilities">
 			// Shared Reversal (Lists) and Morphology (Grammar) worlds.
-			_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
+			_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(Slice slice, ContextMenuName contextMenuId)
@@ -223,13 +223,13 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		{
 			get
 			{
-				var visible = _dataTree.CurrentSlice is StTextSlice;
 				var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(_dataTree);
+				var visible = currentSliceAsStTextSlice != null;
 				var enabled = false;
 				if (currentSliceAsStTextSlice != null)
 				{
 					var currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-					enabled = visible && PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSelection) && _partiallySharedForToolsWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
+					enabled = currentSelection != null && PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSelection) && currentSelection.CanLookupLexicon();
 				}
 				return new Tuple<bool, bool>(visible, enabled);
 			}

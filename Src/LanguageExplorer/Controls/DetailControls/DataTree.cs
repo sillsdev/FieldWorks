@@ -63,7 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal event CurrentSliceChangedEventHandler CurrentSliceChanged;
 
-		internal DataTreeStackContextMenuFactory DataTreeStackContextMenuFactory { get; private set; }
+		internal DataTreeSliceContextMenuParameterObject DataTreeSliceContextMenuParameterObject { get; private set; }
 
 		#region Data members
 
@@ -417,7 +417,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
-			DataTreeStackContextMenuFactory = new DataTreeStackContextMenuFactory();
+			DataTreeSliceContextMenuParameterObject = new DataTreeSliceContextMenuParameterObject();
 			Slices = new List<Slice>();
 			_sharedEventHandlers = sharedEventHandlers;
 		}
@@ -996,7 +996,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				PropertyTable.RemoveProperty("DataTree");
-				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 
 				// Do this first, before setting m_fDisposing to true.
 				m_sda?.RemoveNotification(this);
@@ -1055,9 +1055,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Do after base dispose, since SliceTreeNode needs _dataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory to not be null.
-				DataTreeStackContextMenuFactory?.Dispose();
+				DataTreeSliceContextMenuParameterObject?.Dispose();
 			}
-			DataTreeStackContextMenuFactory = null;
+			DataTreeSliceContextMenuParameterObject = null;
 			_sharedEventHandlers = null;
 		}
 
@@ -3683,7 +3683,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Subscriber = flexComponentParameters.Subscriber;
 
 			PropertyTable.SetProperty("DataTree", this, settingsGroup: SettingsGroup.LocalSettings);
-			Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			if (PersistenceProvder != null)
 			{
 				RestorePreferences();

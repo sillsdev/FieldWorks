@@ -1010,7 +1010,7 @@
     <Compile Include="ISimpleLogger.cs" />
     <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
-    <Compile Include="Controls\DetailControls\DataTreeStackContextMenuFactory.cs" />
+    <Compile Include="Controls\DetailControls\DataTreeSliceContextMenuParameterObject.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">

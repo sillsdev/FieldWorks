@@ -141,7 +141,8 @@ namespace LanguageExplorer.Areas
 		internal const string ClassName = "className";
 		internal const string OwnerClassName = "ownerClassName";
 		internal const string BaseUowMessage = "baseUowMessage";
-		internal const string PanelMenuId = "left";
+		internal const string LeftPanelMenuId = "left";
+		internal const string RightPanelMenuId = "right";
 		internal const string CmdMoveTargetToPreviousInSequence = "MoveTargetDownInSequence_Clicked";
 		internal const string CmdMoveTargetToNextInSequence = "MoveTargetUpInSequence_Clicked";
 		#endregion Random strings

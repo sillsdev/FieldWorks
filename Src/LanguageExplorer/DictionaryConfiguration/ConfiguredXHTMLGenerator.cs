@@ -3287,7 +3287,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				throw new ArgumentException(@"No record list", nameof(activeRecordList));
 			}
-			var currentPublicationString = propertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
+			var currentPublicationString = propertyTable.GetValue(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication);
 			var currentPublication = currentPublicationString == LanguageExplorerResources.AllEntriesPublication ? null : (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item => item.Name.UserDefaultWritingSystem.Text == currentPublicationString)).FirstOrDefault();
 			var decorator = new DictionaryPublicationDecorator(cache, activeRecordList.VirtualListPublisher, activeRecordList.VirtualFlid, currentPublication);
 			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeRecordList.VirtualFlid, dictionaryType);

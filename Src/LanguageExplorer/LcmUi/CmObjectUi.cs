@@ -360,7 +360,7 @@ namespace LanguageExplorer.LcmUi
 				if (_rightClickTuple != null)
 				{
 					var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
-					dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+					dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
 				}
 				// Dispose managed resources here.
 				var disposableVC = m_vc as IDisposable;
@@ -550,14 +550,14 @@ namespace LanguageExplorer.LcmUi
 			{
 				if (_rightClickTuple != null)
 				{
-					dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+					dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
 					_rightClickTuple = null;
 				}
-				_rightClickTuple = dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, menuId);
+				_rightClickTuple = dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, menuId);
 				if (_rightClickTuple == null)
 				{
 					// Nobody home (the menu).
-					MessageBox.Show($"Popup menu: '{menuId}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
+					MessageBox.Show($"Popup menu: '{menuId.ToString()}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
 					return true;
 				}
 				if (_rightClickTuple.Item1.Items.Count > 0)

@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			_propertyTable = flexComponentParameters.PropertyTable;
 			_publisher = flexComponentParameters.Publisher;
 			_subscriber = flexComponentParameters.Subscriber;
-			_subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+			_subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			_image = image;
 			_property = property;
 			_isChecked = _propertyTable.GetValue(_property, false);
@@ -167,7 +167,7 @@ namespace LanguageExplorer.Controls.PaneBar
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
 				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish("ShowHiddenFields", _isChecked);
+				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, _isChecked);
 			}
 		}
 
@@ -187,7 +187,7 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			if (disposing)
 			{
-				_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+				_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			}
 			_propertyTable = null;
 			_publisher = null;
@@ -203,7 +203,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				_isChecked = !_isChecked;
 				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish("ShowHiddenFields", _isChecked);
+				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, _isChecked);
 			}
 		}
 

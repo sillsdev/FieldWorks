@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					var serviceLocator = majorFlexComponentParameters.LcmCache.ServiceLocator;
 					var hc = serviceLocator.GetInstance<HomographConfiguration>();
 					hc.PersistData = hcSettings;
-					_propertyTable.SetDefault("SelectedPublication", "Main Dictionary", true, true);
+					_propertyTable.SetDefault(LanguageExplorerConstants.SelectedPublication, "Main Dictionary", true, true);
 				}
 				_hasBeenActivated = true;
 			}

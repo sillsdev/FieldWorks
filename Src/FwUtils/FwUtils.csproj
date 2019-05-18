@@ -302,6 +302,7 @@
     <Compile Include="StringTable.cs" />
     <Compile Include="TextType.cs" />
     <Compile Include="VersionInfoProvider.cs" />
+    <Compile Include="ViewsExtensions.cs" />
     <Compile Include="WordAndPunct.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">

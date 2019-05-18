@@ -271,7 +271,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 			// Now we have our LexEntry
 			// First deal with whether the active Publication excludes it.
-			var m_currentPublication = PropertyTable.GetValue<string>("SelectedPublication", null);
+			var m_currentPublication = PropertyTable.GetValue<string>(LanguageExplorerConstants.SelectedPublication, null);
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).FirstOrDefault(p => p.NameHierarchyString == m_currentPublication.ToString());
 			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
 			if (publications != null && publications.NameHierarchyString != LanguageExplorerResources.AllEntriesPublication)
@@ -860,7 +860,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			switch (name)
 			{
-				case "SelectedPublication":
+				case LanguageExplorerConstants.SelectedPublication:
 					var pubDecorator = PublicationDecorator;
 					var validConfiguration = SetCurrentDictionaryPublicationLayout();
 					UpdateContent(pubDecorator, validConfiguration);
@@ -876,7 +876,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
-						PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
+						PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, validPublication, true, true);
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
@@ -1025,7 +1025,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
 			if (currentPublication != LanguageExplorerResources.AllEntriesPublication && currentPublication != validPublication)
 			{
-				PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
+				PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, validPublication, true, true);
 			}
 			UpdateContent(PublicationDecorator, currentConfig);
 		}
@@ -1051,7 +1051,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		public bool OnShowAllEntries(object args)
 		{
-			PropertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true, true);
+			PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true, true);
 			return true;
 		}
 
@@ -1126,7 +1126,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		public string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return PropertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
+			return PropertyTable.GetValue(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication);
 		}
 
 		internal string GetCurrentConfiguration(bool fUpdate)

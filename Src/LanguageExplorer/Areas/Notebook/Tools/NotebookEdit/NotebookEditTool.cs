@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(_dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
+			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -191,6 +191,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private RecordBrowseView RecordBrowseView { get; }
 			private IRecordList MyRecordList { get; set; }
 			private ISharedEventHandlers _sharedEventHandlers;
+			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
 			internal NotebookEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView)
 			{
@@ -206,6 +207,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				MyDataTree = dataTree;
 				RecordBrowseView = recordBrowseView;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 				SetupToolUiWidgets();
 			}
 
@@ -251,7 +253,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
-				MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 
 				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
 				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
@@ -270,13 +272,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var enabled = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 					var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
 					{
 						currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-						enabled = _partiallySharedForToolsWideMenuHelper.IsLexiconLookupEnabled(currentSelection);
+						enabled = currentSelection != null && currentSelection.CanLookupLexicon();
 					}
 					SetTagsToSelection(currentSelection);
 					return new Tuple<bool, bool>(true, enabled);
@@ -308,8 +310,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var enabled = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 					var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
 					{
@@ -370,10 +372,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 				if (disposing)
 				{
+					MainPanelMenuContextMenuFactory.Dispose();
 					_sharedNotebookToolMenuHelper?.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_rightClickContextMenuManager?.Dispose();
 				}
+				MainPanelMenuContextMenuFactory = null;
 				_majorFlexComponentParameters = null;
 				_tool = null;
 				_sharedNotebookToolMenuHelper = null;
@@ -462,23 +466,23 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				#region Left edge context menus
 
 				// <menu id="mnuDataTree_Participants">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Participants, Create_mnuDataTree_Participants);
+				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Participants, Create_mnuDataTree_Participants);
 
 				// <menu id="mnuDataTree_SubRecords">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
+				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
 
 				// <menu id="mnuDataTree_SubRecordSummary">
-				MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
+				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
 
 				#endregion Left edge context menus
 
 				#region Hotlinks menus
 
 				// <menu id="mnuDataTree_Subrecord_Hotlinks">
-				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
+				MyDataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
 
 				// <menu id="mnuDataTree_SubRecords_Hotlinks">
-				MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
+				MyDataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
 
 				#endregion Hotlinks menus
 			}

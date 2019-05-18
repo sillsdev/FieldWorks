@@ -36,7 +36,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditTool : ITool
 	{
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
-		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
+		private LexiconEditToolMenuHelper _toolMenuHelper;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
@@ -65,11 +65,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_lexiconEditToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_innerMultiPane = null;
-			_lexiconEditToolMenuHelper = null;
+			_toolMenuHelper = null;
 			MyDataTree = null;
 			_sharedEventHandlers = null;
 		}
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(_sharedEventHandlers);
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, showHiddenFieldsPropertyName);
+			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, showHiddenFieldsPropertyName);
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -139,7 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
 
-			var panelMenu = new PanelMenu(MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
+			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -154,14 +154,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
-			_lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
+			_toolMenuHelper.InnerMultiPane = _innerMultiPane;
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -240,6 +240,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private RecordBrowseView _recordBrowseView;
+			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
 			internal MultiPane InnerMultiPane { get; set; }
 
@@ -263,6 +264,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_mainWnd = majorFlexComponentParameters.MainWindow;
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
@@ -321,7 +323,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Was: LexiconEditToolViewMenuManager
 				// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
-				_subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+				_subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 				var viewMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View];
 				viewMenuDictionary.Add(Command.ShowHiddenFields, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Hidden_Fields_Clicked, () => CanShowHiddenFields));
 				ShowHiddenFields_Handler(_propertyTable.GetValue(_extendedPropertyName, false));
@@ -373,7 +375,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// CitationForm has a right-click menu.
 				Register_CitationForm_Bundle();
 				Register_Forms_Sections_Bundle();
-				_dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 				// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, toolUiWidgetParameterObject.Tool, _dataTree, _recordList);
 			}
@@ -413,7 +415,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menuItem = (ToolStripMenuItem)sender;
 				menuItem.Checked = !menuItem.Checked;
 				_propertyTable.SetProperty(_extendedPropertyName, menuItem.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish("ShowHiddenFields", menuItem.Checked);
+				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, menuItem.Checked);
 				InnerMultiPane.Panel1Collapsed = !menuItem.Checked;
 			}
 
@@ -729,13 +731,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <part ref="ComplexFormEntries" visibility="always"/>
 				// and
 				// <part ref="ComponentLexemes"/>
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuReorderVector, Create_mnuReorderVector);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuReorderVector, Create_mnuReorderVector);
 
 				// <part id="LexEntryRef-Detail-VariantEntryTypes" type="Detail">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantSpec, Create_mnuDataTree_VariantSpec);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantSpec, Create_mnuDataTree_VariantSpec);
 
 				// <part id="LexEntryRef-Detail-ComplexEntryTypes" type="Detail">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ComplexFormSpec, Create_mnuDataTree_ComplexFormSpec);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ComplexFormSpec, Create_mnuDataTree_ComplexFormSpec);
 
 				#endregion left edge menus
 
@@ -869,7 +871,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				// Only one slice has menus, but several have chooser dlgs.
 				// <part ref="Pronunciations" param="Normal" visibility="ifdata"/>
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, ContextMenuName contextMenuId)
@@ -928,10 +930,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void Register_Etymologies_Bundle()
 			{
 				// Register the etymology hotlinks.
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
 
 				// <part ref="Etymologies" param="Normal" visibility="ifdata" />
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 			}
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
@@ -997,10 +999,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// Those two menu factory methods are registered here.
 
 				// "mnuDataTree_DeleteAddLexReference"
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteAddLexReference, Create_mnuDataTree_DeleteAddLexReference);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteAddLexReference, Create_mnuDataTree_DeleteAddLexReference);
 
 				// "mnuDataTree_DeleteReplaceLexReference"
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteReplaceLexReference, Create_mnuDataTree_DeleteReplaceLexReference);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteReplaceLexReference, Create_mnuDataTree_DeleteReplaceLexReference);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(Slice slice, ContextMenuName contextMenuId)
@@ -1253,10 +1255,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void RegisterHotLinkMenus()
 			{
 				// mnuDataTree_ExtendedNote_Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, Create_mnuDataTree_ExtendedNote_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, Create_mnuDataTree_ExtendedNote_Hotlinks);
 
 				// mnuDataTree_Sense_Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
 			}
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_ExtendedNote_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
@@ -1334,26 +1336,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void RegisterSliceLeftEdgeMenus()
 			{
 				// mnuDataTree_Sense
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense, Create_mnuDataTree_Sense);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense, Create_mnuDataTree_Sense);
 
 				// mnuDataTree_Example
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Example, Create_mnuDataTree_Example);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Example, Create_mnuDataTree_Example);
 
 				// <menu id="mnuDataTree_ExtendedNotes">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNotes, Create_mnuDataTree_ExtendedNotes);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNotes, Create_mnuDataTree_ExtendedNotes);
 
 				// <menu id="mnuDataTree_ExtendedNote">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote, Create_mnuDataTree_ExtendedNote);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote, Create_mnuDataTree_ExtendedNote);
 
 				// <menu id="mnuDataTree_ExtendedNote_Examples">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Examples, Create_mnuDataTree_ExtendedNote_Examples);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ExtendedNote_Examples, Create_mnuDataTree_ExtendedNote_Examples);
 
 				// <menu id="mnuDataTree_Picture">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Picture, Create_mnuDataTree_Picture);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Picture, Create_mnuDataTree_Picture);
 
 				// NB: I don't see "SubSenses" in shipping code.
 				// <menu id="mnuDataTree_Subsenses">
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Subsenses, Create_mnuDataTree_Subsenses);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Subsenses, Create_mnuDataTree_Subsenses);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(Slice slice, ContextMenuName contextMenuId)
@@ -1753,10 +1755,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// 1. <part id="MoForm-Detail-AsLexemeForm" type="Detail">
 				//		Needs: menu="mnuDataTree_LexemeForm".
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
 				// 2. <part ref="PhoneEnvBasic" visibility="ifdata"/>
 				//		Needs: menu="mnuDataTree_Environments_Insert".
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Environments_Insert, Create_mnuDataTree_Environments_Insert);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Environments_Insert, Create_mnuDataTree_Environments_Insert);
 
 				#endregion left edge menus
 
@@ -1767,7 +1769,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#region right click popups
 
 				// "mnuDataTree_LexemeFormContext" (right click menu)
-				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_LexemeFormContext, Create_mnuDataTree_LexemeFormContext_RightClick);
+				_dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_LexemeFormContext, Create_mnuDataTree_LexemeFormContext_RightClick);
 
 				#endregion right click popups
 			}
@@ -1997,7 +1999,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#region right click popups
 
 				// <part label="Citation Form" ref="CitationFormAllV"/>
-				_dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_CitationFormContext, Create_mnuDataTree_CitationFormContext);
+				_dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuDataTree_CitationFormContext, Create_mnuDataTree_CitationFormContext);
 
 				#endregion right click popups
 			}
@@ -2032,26 +2034,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void Register_Forms_Sections_Bundle()
 			{
 				// mnuDataTree_Allomorph (shared: MoStemAllomorph & MoAffixAllomorph)
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Allomorph, Create_mnuDataTree_Allomorph);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Allomorph, Create_mnuDataTree_Allomorph);
 
 				// mnuDataTree_AffixProcess
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AffixProcess, Create_mnuDataTree_AffixProcess);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AffixProcess, Create_mnuDataTree_AffixProcess);
 
 				// mnuDataTree_VariantForm
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForm, Create_mnuDataTree_VariantForm);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForm, Create_mnuDataTree_VariantForm);
 
 				// mnuDataTree_AlternateForm
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForm, Create_mnuDataTree_AlternateForm);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForm, Create_mnuDataTree_AlternateForm);
 
 				// mnuDataTree_VariantForms
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms, Create_mnuDataTree_VariantForms);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms, Create_mnuDataTree_VariantForms);
 				// mnuDataTree_VariantForms_Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
 
 				// mnuDataTree_AlternateForms
-				_dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
 				// mnuDataTree_AlternateForms_Hotlinks
-				_dataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AffixProcess(Slice slice, ContextMenuName contextMenuId)
@@ -2420,8 +2422,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (disposing)
 				{
+					MainPanelMenuContextMenuFactory.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
-					_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+					_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 					_rightClickContextMenuManager.Dispose();
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToPreviousInSequence);
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToNextInSequence);
@@ -2429,6 +2432,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
+				MainPanelMenuContextMenuFactory = null;
 				_extendedPropertyName = null;
 				_majorFlexComponentParameters = null;
 				_propertyTable = null;

@@ -23,13 +23,11 @@ namespace LanguageExplorer.Areas
 		private int m_hvoObj;
 		private StringRepSliceVc m_vc;
 		private PhonEnvRecognizer m_validator;
-		private ISharedEventHandlers _sharedEventHandlers;
-		private ContextMenuStrip _mnuEnvChoices;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _menuItems;
+		private SliceRightClickPopupMenuFactory _rightClickPopupMenuFactory;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _mnuEnvChoicesTuple;
 
-		public StringRepSliceView(ISharedEventHandlers sharedEventHandlers, int hvo)
+		public StringRepSliceView(int hvo)
 		{
-			_sharedEventHandlers = sharedEventHandlers;
 			m_hvoObj = hvo;
 		}
 
@@ -263,32 +261,25 @@ namespace LanguageExplorer.Areas
 		#region Handle right click menu
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (_mnuEnvChoices != null)
+			if (_mnuEnvChoicesTuple != null)
 			{
-				// Unwire event handlers.
-				foreach (var popupMenuItemTuple in _menuItems)
-				{
-					popupMenuItemTuple.Item1.Click -= popupMenuItemTuple.Item2;
-				}
-				_menuItems.Clear();
-				_mnuEnvChoices.Dispose();
-				_menuItems = null;
-				_mnuEnvChoices = null;
+				_rightClickPopupMenuFactory.DisposePopupContextMenu(_mnuEnvChoicesTuple);
+				_mnuEnvChoicesTuple = null;
 			}
 			if (m_env == null)
 			{
 				return false;
 			}
-			_mnuEnvChoices = new ContextMenuStrip()
-			{
-				Name = ContextMenuName.mnuEnvChoices.ToString()
-			};
-			_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
-			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
-			PartiallySharedForToolsWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(MySlice, _menuItems, _mnuEnvChoices);
-			_mnuEnvChoices.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+
+			_mnuEnvChoicesTuple = _rightClickPopupMenuFactory.GetPopupContextMenu(MySlice, ContextMenuName.mnuEnvChoices);
+			_mnuEnvChoicesTuple?.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 			return true;
 		}
 		#endregion
+
+		internal void SetRightClickPopupMenuFactory(SliceRightClickPopupMenuFactory rightClickPopupMenuFactory)
+		{
+			_rightClickPopupMenuFactory = rightClickPopupMenuFactory;
+		}
 	}
 }

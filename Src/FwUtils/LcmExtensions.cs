@@ -13,6 +13,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -47,6 +48,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 				modified = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
 			}
 			return $"{created} {modified}";
+		}
+
+		public static int GetWsFromString(this ITsString me, int ichMin, int ichLim)
+		{
+			if (me == null || me.Length == 0 || ichMin >= ichLim)
+			{
+				return 0;
+			}
+			var runMin = me.get_RunAt(ichMin);
+			var runMax = me.get_RunAt(ichLim - 1);
+			var ws = me.get_WritingSystem(runMin);
+			if (runMin == runMax)
+			{
+				return ws;
+			}
+			for (var i = runMin + 1; i <= runMax; ++i)
+			{
+				var wsT = me.get_WritingSystem(i);
+				if (wsT != ws)
+				{
+					return 0;
+				}
+			}
+			return ws;
 		}
 
 		public static bool IsMultilingual(this IFwMetaDataCache me, int flid)

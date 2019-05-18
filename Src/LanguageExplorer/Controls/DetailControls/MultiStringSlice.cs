@@ -170,10 +170,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			e.Selection.Install();
 			if (_contextMenuTuple != null)
 			{
-				MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_contextMenuTuple);
+				MyDataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_contextMenuTuple);
 				_contextMenuTuple = null;
 			}
-			_contextMenuTuple = MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(this, contextMenuId);
+			_contextMenuTuple = MyDataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.GetPopupContextMenu(this, contextMenuId);
 			_contextMenuTuple?.Item1.Show(Control, e.MouseLocation);
 		}
 

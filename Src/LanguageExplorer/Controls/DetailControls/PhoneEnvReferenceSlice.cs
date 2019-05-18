@@ -86,7 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.Install(parentDataTree);
 			// The launcher's view wants the RightClickPopupMenuFactory to get one of two context menus.
-			MyLauncher.SetRightClickPopupMenuFactory(MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory);
+			MyLauncher.SetRightClickPopupMenuFactory(MyDataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory);
 		}
 
 		// JohnT: this is the proper way to detect changes in height that come from editing within the view.

@@ -8,21 +8,19 @@ using System.Diagnostics;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
-	/// <para>Factory class that is given to each Slice, so the Slice can then get the context menu(s) it may need.</para>
+	/// <para>Parameter object class that is given to each Slice, so the Slice can then get the context menu(s) it may need.</para>
 	/// <para>Each slice is responsible to dispose of any context menu it asks the factory to create.
 	/// The slice can pass on the dispose obligation to one of its internal Control instances, or the Slice can do the dispose itself.
 	/// The context menu disposal *must* (read: it is imperative that) unwire the event handlers, which are provided.</para>
 	/// </summary>
-	internal sealed class DataTreeStackContextMenuFactory : IDisposable
+	internal sealed class DataTreeSliceContextMenuParameterObject : IDisposable
 	{
-		internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 		internal SliceLeftEdgeContextMenuFactory LeftEdgeContextMenuFactory { get; private set; }
 		internal SliceRightClickPopupMenuFactory RightClickPopupMenuFactory { get; private set; }
 		internal SliceHotlinksMenuFactory HotlinksMenuFactory { get; private set; }
 
-		internal DataTreeStackContextMenuFactory()
+		internal DataTreeSliceContextMenuParameterObject()
 		{
-			MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 			LeftEdgeContextMenuFactory = new SliceLeftEdgeContextMenuFactory();
 			RightClickPopupMenuFactory = new SliceRightClickPopupMenuFactory();
 			HotlinksMenuFactory = new SliceHotlinksMenuFactory();
@@ -32,7 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private bool _isDisposed;
 
-		~DataTreeStackContextMenuFactory()
+		~DataTreeSliceContextMenuParameterObject()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -61,12 +59,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				MainPanelMenuContextMenuFactory.Dispose();
 				LeftEdgeContextMenuFactory.Dispose();
 				RightClickPopupMenuFactory.Dispose();
 				HotlinksMenuFactory.Dispose();
 			}
-			MainPanelMenuContextMenuFactory = null;
 			LeftEdgeContextMenuFactory = null;
 			RightClickPopupMenuFactory = null;
 			HotlinksMenuFactory = null;

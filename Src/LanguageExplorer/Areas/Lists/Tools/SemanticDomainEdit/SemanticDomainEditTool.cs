@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			// Too early before now.
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -201,16 +201,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 						</slice>
 					</part>
 				*/
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertQuestion, Create_mnuDataTree_InsertQuestion);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertQuestion, Create_mnuDataTree_InsertQuestion);
 				/*
 					<part id="CmDomainQ-Detail-QuestionAllA" type="Detail">
 						<slice field="Question" label="Question" editor="multistring" ws="all analysis" menu="mnuDataTree_DeleteQuestion">
 						</slice>
 					</part>
 				*/
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_DeleteQuestion);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_DeleteQuestion);
 				// <menu id="mnuDataTree_SubSemanticDomain">
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubSemanticDomain, Create_mnuDataTree_SubSemanticDomain);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubSemanticDomain, Create_mnuDataTree_SubSemanticDomain);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

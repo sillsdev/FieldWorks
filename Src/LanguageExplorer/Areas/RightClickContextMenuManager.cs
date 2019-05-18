@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas
 			_recordList = recordList;
 			_cache = majorFlexComponentParameters.LcmCache;
 
-			var rightClickPopupMenuFactory = _dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory;
+			var rightClickPopupMenuFactory = _dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory;
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(ContextMenuName.mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);

@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			// Too early before now.
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubVariantEntryType, Create_mnuDataTree_SubVariantEntryType);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubVariantEntryType, Create_mnuDataTree_SubVariantEntryType);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

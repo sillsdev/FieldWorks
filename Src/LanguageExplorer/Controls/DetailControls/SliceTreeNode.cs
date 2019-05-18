@@ -399,7 +399,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// this control to be selected, in a sense that causes it to be scrolled into
 			// view every time a lazy slice is expanded into a real one. This is the first
 			// successful way I (JT) found to defeat this behavior, and I tried many.
-			if (meArgs.Button.Equals(MouseButtons.Right) || (ShowingContextIcon && meArgs.X < 20))
+			if (meArgs.Button.Equals(MouseButtons.Right) || ShowingContextIcon && meArgs.X < 20)
 			{
 				var mouseLocation = new Point(meArgs.X, meArgs.Y);
 				if (m_myParentSlice.HandleMouseDown(mouseLocation))
@@ -407,7 +407,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (_leftEdgeContextMenu != null)
 					{
 						m_myParentSlice.RemoveOldVisibilityMenus();
-						// Get rid of the old ones, since some slices (e.g., MultiStringSlice) need to rebuild parts of the menu times each time it is shown.
+						// Get rid of the old ones, since some slices (e.g., MultiStringSlice) need to rebuild parts of the menu items each time it is shown.
 						_sliceLeftEdgeContextMenuFactory.DisposeLeftEdgeContextMenu(_leftEdgeContextMenu);
 						_leftEdgeContextMenu = null;
 					}

@@ -16,9 +16,15 @@ namespace LanguageExplorer.Areas
 		/// this other stuff we don't need or use.
 		/// </summary>
 		public PhEnvStrRepresentationSlice(ICmObject obj, IPersistenceProvider persistenceProvider, ISharedEventHandlers sharedEventHandlers)
-			: base(new StringRepSliceView(sharedEventHandlers, obj.Hvo), obj, StringRepSliceVc.Flid)
+			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
 			PersistenceProvider = persistenceProvider;
+		}
+
+		public override void Install(DataTree parentDataTree)
+		{
+			base.Install(parentDataTree);
+			MyStringRepSliceView.SetRightClickPopupMenuFactory(MyDataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory);
 		}
 
 		/// <summary>

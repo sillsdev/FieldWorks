@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	internal sealed class GrammarSketchTool : ITool
 	{
 		private GrammarSketchHtmlViewer _grammarSketchHtmlViewer;
-		private GrammarSketchToolMenuHelper _grammarSketchToolMenuHelper;
+		private GrammarSketchToolMenuHelper _toolMenuHelper;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -36,10 +36,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
-			_grammarSketchToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 			_grammarSketchHtmlViewer = null;
-			_grammarSketchToolMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_grammarSketchToolMenuHelper = new GrammarSketchToolMenuHelper(majorFlexComponentParameters, this);
+			_toolMenuHelper = new GrammarSketchToolMenuHelper(majorFlexComponentParameters, this);
 			_grammarSketchHtmlViewer = new GrammarSketchHtmlViewer
 			{
 				Dock = DockStyle.Fill

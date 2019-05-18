@@ -29,24 +29,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
-		private LexiconDictionaryToolMenuHelper _dictionaryToolMenuHelper;
-		private string _configureObjectName;
-		private IFwMainWnd _fwMainWnd;
-		private LcmCache _cache;
+		private LexiconDictionaryToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		private XhtmlDocView _xhtmlDocView;
-		private DataTreeStackContextMenuFactory _dataTreeStackContextMenuFactory;
-		private const string leftPanelMenuId = "left";
-		private const string rightPanelMenuId = "right";
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
-		[Import]
-		private IPropertyTable _propertyTable;
-		[Import]
-		private IPublisher _publisher;
-		[Import]
-		private ISubscriber _subscriber;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -63,14 +51,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_dictionaryToolMenuHelper.Dispose();
-			_dataTreeStackContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
+			_toolMenuHelper.Dispose();
 
 			_xhtmlDocView = null;
-			_fwMainWnd = null;
-			_cache = null;
-			_dataTreeStackContextMenuFactory = null;
-			_dictionaryToolMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -81,19 +65,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_cache = majorFlexComponentParameters.LcmCache;
-			_dataTreeStackContextMenuFactory = new DataTreeStackContextMenuFactory(); // Make our own, since the tool has no data tree.
-			RegisterContextMenuMethods();
-			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
-			_configureObjectName = root.Attribute("configureObjectName").Value;
+			_toolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this, _recordList, root.Attribute("configureObjectName").Value);
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_dictionaryToolMenuHelper.DocView = _xhtmlDocView;
+			_toolMenuHelper.DocView = _xhtmlDocView;
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -102,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				Width = 10,
 				Dock = DockStyle.Right
 			};
-			var rightPanelMenu = new PanelMenu(_dataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, rightPanelMenuId)
+			var rightPanelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.RightPanelMenuId)
 			{
 				Dock = DockStyle.Right,
 				BackgroundImage = img,
@@ -113,7 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				Width = 10,
 				Dock = DockStyle.Left
 			};
-			var leftPanelMenu = new PanelMenu(_dataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, leftPanelMenuId)
+			var leftPanelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -185,161 +164,172 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 		#endregion
 
-		private void RegisterContextMenuMethods()
+		private sealed class LexiconDictionaryToolMenuHelper : IDisposable
 		{
-			_dataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(leftPanelMenuId, CreateLeftContextMenuStrip);
-			_dataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(rightPanelMenuId, CreateRightContextMenuStrip);
-		}
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private IPropertyTable _propertyTable;
+			private IFwMainWnd _fwMainWnd;
+			private IRecordList _recordList;
+			internal XhtmlDocView DocView { private get; set; }
+			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
+			private string _configureObjectName;
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightContextMenuStrip(string panelMenuId)
-		{
-			var contextMenuStrip = new ContextMenuStrip();
-
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-			ToolStripMenuItem currentToolStripMenuItem;
-
-			// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
-			IDictionary<string, string> hasPub;
-			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), _configureObjectName);
-			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations, _xhtmlDocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
-			// Add menu items that display the configuration name and send PropChanges with
-			// the configuration path.
-			var currentPublication = _propertyTable.GetValue<string>("DictionaryPublicationLayout");
-			foreach (var config in hasPub)
+			internal LexiconDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, string configureObjectName)
 			{
-				// Key is label, value is Tag for config pathname.
-				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
-				currentToolStripMenuItem.Tag = config.Value;
-				currentToolStripMenuItem.Checked = (currentPublication == config.Value);
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNullOrEmptyString(configureObjectName, nameof(configureObjectName));
 
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordList = recordList;
+				_configureObjectName = configureObjectName;
+				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				_fwMainWnd = _majorFlexComponentParameters.MainWindow;
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
+
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateLeftContextMenuStrip);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.RightPanelMenuId, CreateRightContextMenuStrip);
 			}
-			if (doesNotHavePub.Any())
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftContextMenuStrip(string panelMenuId)
 			{
+				Require.That(panelMenuId == AreaServices.LeftPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.LeftPanelMenuId}'.");
+
+				var currentPublication = _propertyTable.GetValue<string>(LanguageExplorerConstants.SelectedPublication);
+				var contextMenuStrip = new ContextMenuStrip();
+
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+
+				var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
+				currentToolStripMenuItem.Tag = "All Entries";
+				currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
+				var pubName = DocView.GetCurrentPublication();
+				currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
+
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-				foreach (var config in doesNotHavePub)
-				{
-					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
-					currentToolStripMenuItem.Tag = config.Value;
-					currentToolStripMenuItem.Checked = (currentPublication == config.Value);
-				}
-			}
 
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
-
-			return retVal;
-		}
-
-		private void Configuration_Clicked(object sender, EventArgs e)
-		{
-			var clickedToolStripMenuItem = (ToolStripMenuItem)sender;
-			if (clickedToolStripMenuItem.Checked)
-			{
-				return; // No change.
-			}
-			var newValue = (string)clickedToolStripMenuItem.Tag;
-			_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
-			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
-		}
-
-		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
-		{
-			bool refreshNeeded;
-			if (DictionaryConfigurationDlg.ShowDialog(new FlexComponentParameters(_propertyTable, _publisher, _subscriber), (Form)_fwMainWnd, _recordList?.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
-			{
-				_fwMainWnd.RefreshAllViews();
-			}
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftContextMenuStrip(string panelMenuId)
-		{
-			var currentPublication = _propertyTable.GetValue<string>("SelectedPublication");
-			var contextMenuStrip = new ContextMenuStrip();
-
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-
-			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
-			currentToolStripMenuItem.Tag = "All Entries";
-			currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
-			var pubName = _xhtmlDocView.GetCurrentPublication();
-			currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
-
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-
-			List<string> inConfig;
-			List<string> notInConfig;
-			_xhtmlDocView.SplitPublicationsByConfiguration(_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-			_xhtmlDocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
-			foreach (var pub in inConfig)
-			{
-				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
-				currentToolStripMenuItem.Tag = pub;
-				currentToolStripMenuItem.Checked = (currentPublication == pub);
-			}
-			if (notInConfig.Any())
-			{
-				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-				foreach (var pub in notInConfig)
+				List<string> inConfig;
+				List<string> notInConfig;
+				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
+					DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
+				foreach (var pub in inConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
 					currentToolStripMenuItem.Tag = pub;
 					currentToolStripMenuItem.Checked = (currentPublication == pub);
 				}
+				if (notInConfig.Any())
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+					foreach (var pub in notInConfig)
+					{
+						currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
+						currentToolStripMenuItem.Tag = pub;
+						currentToolStripMenuItem.Checked = (currentPublication == pub);
+					}
+				}
+
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
+
+				return retVal;
 			}
 
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
-
-			return retVal;
-		}
-
-		private void EditPublications_Clicked(object sender, EventArgs e)
-		{
-			/*
-		<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
-			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
-		</command>
-			 */
-			MessageBox.Show((Form)_fwMainWnd, @"Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
-		}
-
-		private void Publication_Clicked(object sender, EventArgs e)
-		{
-			var clickedToolStripMenuItem = (ToolStripMenuItem)sender;
-			if (clickedToolStripMenuItem.Checked)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightContextMenuStrip(string panelMenuId)
 			{
-				return; // No change.
+				Require.That(panelMenuId == AreaServices.RightPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.RightPanelMenuId}'.");
+
+				var contextMenuStrip = new ContextMenuStrip();
+
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+				ToolStripMenuItem currentToolStripMenuItem;
+
+				// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
+				IDictionary<string, string> hasPub;
+				IDictionary<string, string> doesNotHavePub;
+				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), _configureObjectName);
+				DocView.SplitConfigurationsByPublication(allConfigurations, DocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
+				// Add menu items that display the configuration name and send PropChanges with
+				// the configuration path.
+				var currentPublication = _propertyTable.GetValue<string>("DictionaryPublicationLayout");
+				foreach (var config in hasPub)
+				{
+					// Key is label, value is Tag for config pathname.
+					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
+					currentToolStripMenuItem.Tag = config.Value;
+					currentToolStripMenuItem.Checked = (currentPublication == config.Value);
+
+				}
+				if (doesNotHavePub.Any())
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+					foreach (var config in doesNotHavePub)
+					{
+						currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
+						currentToolStripMenuItem.Tag = config.Value;
+						currentToolStripMenuItem.Checked = (currentPublication == config.Value);
+					}
+				}
+
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
+
+				return retVal;
 			}
-			var newValue = (string)clickedToolStripMenuItem.Tag;
-			_propertyTable.SetProperty("SelectedPublication", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
-			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
-		}
 
-		private void ShowAllPublications_Clicked(object sender, EventArgs e)
-		{
-			_propertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true);
-			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
-		}
-
-		private sealed class LexiconDictionaryToolMenuHelper : IDisposable
-		{
-			private MajorFlexComponentParameters _majorFlexComponentParameters;
-
-			internal XhtmlDocView DocView { get; set; }
-
-			internal LexiconDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			private void Configuration_Clicked(object sender, EventArgs e)
 			{
-				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-				Guard.AgainstNull(tool, nameof(tool));
+				var clickedToolStripMenuItem = (ToolStripMenuItem)sender;
+				if (clickedToolStripMenuItem.Checked)
+				{
+					return; // No change.
+				}
+				var newValue = (string)clickedToolStripMenuItem.Tag;
+				_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
+				DocView.OnPropertyChanged("DictionaryPublicationLayout");
+			}
 
-				_majorFlexComponentParameters = majorFlexComponentParameters;
+			private void ConfigureDictionary_Clicked(object sender, EventArgs e)
+			{
+				bool refreshNeeded;
+				if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)_fwMainWnd, _recordList?.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
+				{
+					_fwMainWnd.RefreshAllViews();
+				}
+			}
 
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			private void EditPublications_Clicked(object sender, EventArgs e)
+			{
+				/*
+			<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+				<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
+			</command>
+				 */
+				MessageBox.Show((Form)_fwMainWnd, @"Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
+			}
+
+			private void Publication_Clicked(object sender, EventArgs e)
+			{
+				var clickedToolStripMenuItem = (ToolStripMenuItem)sender;
+				if (clickedToolStripMenuItem.Checked)
+				{
+					return; // No change.
+				}
+				var newValue = (string)clickedToolStripMenuItem.Tag;
+				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, newValue, true, settingsGroup: SettingsGroup.LocalSettings);
+				DocView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
+			}
+
+			private void ShowAllPublications_Clicked(object sender, EventArgs e)
+			{
+				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true);
+				DocView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
 			}
 
 			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
@@ -381,8 +371,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 				if (disposing)
 				{
+					MainPanelMenuContextMenuFactory.Dispose();
 				}
 				_majorFlexComponentParameters = null;
+				MainPanelMenuContextMenuFactory = null;
 				DocView = null;
 
 				_isDisposed = true;

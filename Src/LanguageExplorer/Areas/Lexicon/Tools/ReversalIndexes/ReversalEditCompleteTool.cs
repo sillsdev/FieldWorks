@@ -29,15 +29,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
-		private ReversalEditCompleteToolMenuHelper _reversalEditCompleteToolMenuHelper;
-		private const string panelMenuId = "left";
+		private ReversalEditCompleteToolMenuHelper _toolMenuHelper;
 		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
 		private XhtmlDocView _xhtmlDocView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
-		private DataTreeStackContextMenuFactory _dataTreeStackContextMenuFactory;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 		[Import]
@@ -59,14 +57,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_reversalEditCompleteToolMenuHelper.Dispose();
+			_toolMenuHelper.Dispose();
 
 			_cache = null;
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_xhtmlDocView = null;
-			_dataTreeStackContextMenuFactory = null;
-			_reversalEditCompleteToolMenuHelper = null;
+			_toolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -91,10 +88,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, _recordList, _xhtmlDocView);
+			_toolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, _recordList, _xhtmlDocView);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
+			_toolMenuHelper.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -106,7 +103,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -131,7 +128,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -230,6 +227,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
 			private XhtmlDocView _docView;
+			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
 			internal ReversalEditCompleteToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, XhtmlDocView docView)
 			{
@@ -246,6 +244,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
 				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
 #endif
@@ -290,8 +289,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 				if (disposing)
 				{
+					MainPanelMenuContextMenuFactory.Dispose();
 					_commonReversalIndexMenuHelper.Dispose();
 				}
+				MainPanelMenuContextMenuFactory = null;
 				_majorFlexComponentParameters = null;
 				_commonReversalIndexMenuHelper = null;
 				_docView = null;

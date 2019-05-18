@@ -882,7 +882,7 @@ namespace LanguageExplorer.Impls
 		{
 			PropertyTable.RemoveProperty("CurrentToolbarVersion", SettingsGroup.GlobalSettings);
 			// Get rid of obsolete properties, if they were restored.
-			PropertyTable.RemoveProperty("ShowHiddenFields", SettingsGroup.LocalSettings);
+			PropertyTable.RemoveProperty(LanguageExplorerConstants.ShowHiddenFields, SettingsGroup.LocalSettings);
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("PreferredUILibrary");
 			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);

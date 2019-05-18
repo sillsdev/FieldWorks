@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas
 
 		private static void HandleDeletion(object sender)
 		{
-			SenderTagAsSlice(sender).HandleDeleteCommand();
+			(((ToolStripMenuItem)sender).Tag as Slice).HandleDeleteCommand();
 		}
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
@@ -223,24 +223,14 @@ namespace LanguageExplorer.Areas
 			SenderTagAsIPhEnvSliceCommon(sender).ShowEnvironmentError();
 		}
 
-		internal static IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
+		private static IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
 		{
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
-		}
-
-		private static Slice SenderTagAsSlice(object sender)
-		{
-			return ((ToolStripMenuItem)sender).Tag as Slice; // May be null.
 		}
 
 		internal static StTextSlice DataTreeCurrentSliceAsStTextSlice(DataTree dataTree)
 		{
 			return dataTree?.CurrentSlice as StTextSlice; // May be null.
-		}
-
-		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
-		{
-			return (IPhEnvSliceCommon)slice;
 		}
 
 		internal static void CreateShowEnvironmentErrorMessageContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
@@ -250,7 +240,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
 			*/
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowEnvironmentError_Clicked, LanguageExplorerResources.Describe_Error_in_Environment);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanShowEnvironmentError;
+			menu.Enabled = ((IPhEnvSliceCommon)slice).CanShowEnvironmentError;
 			menu.Tag = slice;
 		}
 
@@ -268,8 +258,9 @@ namespace LanguageExplorer.Areas
 		      <item command="CmdInsertEnvSlash" />
 					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
 			*/
+			var sliceAsIPhEnvSliceCommon = ((IPhEnvSliceCommon)slice);
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_Slash_Clicked, AreaResources.Insert_Environment_slash);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
+			menu.Enabled = sliceAsIPhEnvSliceCommon.CanInsertSlash;
 			menu.Tag = slice;
 
 			/*
@@ -278,7 +269,7 @@ namespace LanguageExplorer.Areas
 			*/
 
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_Underscore_Clicked, AreaResources.Insert_Environment_bar);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
+			menu.Enabled = sliceAsIPhEnvSliceCommon.CanInsertEnvironmentBar;
 			menu.Tag = slice;
 
 			/*
@@ -286,7 +277,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
 			*/
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_NaturalClass_Clicked, AreaResources.Insert_Natural_Class);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
+			menu.Enabled = sliceAsIPhEnvSliceCommon.CanInsertNaturalClass;
 			menu.Tag = slice;
 
 			/*
@@ -294,7 +285,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
 			*/
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_OptionalItem_Clicked, AreaResources.Insert_Optional_Item);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
+			menu.Enabled = sliceAsIPhEnvSliceCommon.CanInsertOptionalItem;
 			menu.Tag = slice;
 
 			/*
@@ -302,7 +293,7 @@ namespace LanguageExplorer.Areas
 					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
 			*/
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, s_partiallySharedForToolsWideMenuHelper.Insert_HashMark_Clicked, AreaResources.Insert_Word_Boundary);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
+			menu.Enabled = sliceAsIPhEnvSliceCommon.CanInsertHashMark;
 			menu.Tag = slice;
 		}
 
@@ -363,10 +354,10 @@ namespace LanguageExplorer.Areas
 				int tagDummy;
 				int ws;
 				ITsString tss;
-				GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvoDummy, out tagDummy, out ws, out tss);
+				selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out tagDummy, out ws, out tss);
 				if (ws == 0)
 				{
-					ws = GetWsFromString(tss, ichMin, ichLim);
+					ws = tss.GetWsFromString(ichMin, ichLim);
 				}
 				if (ichLim > ichMin && ws == cache.DefaultVernWs)
 				{
@@ -404,10 +395,10 @@ namespace LanguageExplorer.Areas
 			int Dummy;
 			int ws;
 			ITsString tss;
-			GetWordLimitsOfSelection(currentSlice.RootSite.RootBox.Selection, out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
+			currentSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
 			if (ws == 0)
 			{
-				ws = GetWsFromString(tss, ichMin, ichLim);
+				ws = tss.GetWsFromString(ichMin, ichLim);
 			}
 			if (ichLim <= ichMin || ws != _majorFlexComponentParameters.LcmCache.DefaultVernWs)
 			{
@@ -435,67 +426,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private static int GetWsFromString(ITsString tss, int ichMin, int ichLim)
-		{
-			if (tss == null || tss.Length == 0 || ichMin >= ichLim)
-			{
-				return 0;
-			}
-			var runMin = tss.get_RunAt(ichMin);
-			var runMax = tss.get_RunAt(ichLim - 1);
-			var ws = tss.get_WritingSystem(runMin);
-			if (runMin == runMax)
-			{
-				return ws;
-			}
-			for (var i = runMin + 1; i <= runMax; ++i)
-			{
-				var wsT = tss.get_WritingSystem(i);
-				if (wsT != ws)
-				{
-					return 0;
-				}
-			}
-			return ws;
-		}
-
-		private static void GetWordLimitsOfSelection(IVwSelection sel, out int ichMin, out int ichLim, out int hvo, out int tag, out int ws, out ITsString tss)
-		{
-			ichMin = ichLim = hvo = tag = ws = 0;
-			tss = null;
-			IVwSelection wordsel = null;
-			if (sel != null)
-			{
-				var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-				wordsel = sel2?.GrowToWord();
-			}
-			if (wordsel == null)
-			{
-				return;
-			}
-
-			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-		}
-
-		internal bool IsLexiconLookupEnabled(IVwSelection selection)
-		{
-			if (selection == null)
-			{
-				return false;
-			}
-			// Enable the command if the selection exists and we actually have a word.
-			int ichMin;
-			int ichLim;
-			int hvoDummy;
-			int tagDummy;
-			int wsDummy;
-			ITsString tssDummy;
-			GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvoDummy, out tagDummy, out wsDummy, out tssDummy);
-			return ichLim > ichMin;
-		}
-
 		private void LexiconLookup_Clicked(object sender, EventArgs e)
 		{
 			var selection = (IVwSelection)((ToolStripItem)sender).Tag;
@@ -509,7 +439,7 @@ namespace LanguageExplorer.Areas
 			int tag;
 			int ws;
 			ITsString tss;
-			GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>(FwUtils.window), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");

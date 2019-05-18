@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-			m_commandControl = new SummaryCommandControl(this, MyDataTreeStackContextMenuFactory.HotlinksMenuFactory, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory)
+			m_commandControl = new SummaryCommandControl(this, MyDataTreeSliceContextMenuParameterObject.HotlinksMenuFactory, MyDataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory)
 			{
 				Dock = DockStyle.Fill,
 				Visible = XmlUtils.GetOptionalBooleanAttributeValue(CallerNode, "commandVisible", false)

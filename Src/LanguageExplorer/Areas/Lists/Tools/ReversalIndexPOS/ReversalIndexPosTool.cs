@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, ReversalIndexPosEditMenuHelper.PanelMenuId)
+			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
 			}
 		}
 
@@ -213,7 +213,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		private sealed class ReversalIndexPosEditMenuHelper : IDisposable
 		{
-			internal const string PanelMenuId = "left";
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private IReversalIndex _currentReversalIndex;
 			private ICmPossibilityList _list;
@@ -224,6 +223,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			private string _extendedPropertyName;
 			private RecordBrowseView _recordBrowseView;
 			private IPropertyTable _propertyTable;
+			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
 			private IPropertyTable PropertyTable => _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
@@ -246,6 +246,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordBrowseView = recordBrowseView;
 				_extendedPropertyName = extendedPropertyName;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 
 				SetupToolUiWidgets(tool, dataTree);
 #if RANDYTODO
@@ -300,9 +301,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
 
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
-				dataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
-				dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(PanelMenuId, CreateMainPanelContextMenuStrip);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
@@ -564,7 +565,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 				if (disposing)
 				{
+					MainPanelMenuContextMenuFactory.Dispose();
 				}
+				MainPanelMenuContextMenuFactory = null;
 
 				_isDisposed = true;
 			}
