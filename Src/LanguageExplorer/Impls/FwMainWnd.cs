@@ -1243,7 +1243,7 @@ namespace LanguageExplorer.Impls
 
 			var viewMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.View];
 			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
-			InsertPair(standardToolBarDictionary, viewMenuDictionary, Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(View_Refresh, () => CanCmdDeleteRecord));
+			InsertPair(standardToolBarDictionary, viewMenuDictionary, Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(View_Refresh, () => CanCmdRefresh));
 
 			var insertMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Insert];
 			insertMenuDictionary.Add(Command.CmdInsertLinkToFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LinkToFileToolStripMenuItem_Click, () => CanCmdInsertLinkToFile));
@@ -1289,6 +1289,8 @@ namespace LanguageExplorer.Impls
 
 			uiWidgetHelper.AddGlobalHandlers(globalUiWidgetParameterObject);
 		}
+
+		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, _currentTool.MachineName != AreaServices.GrammarSketchMachineName);
 
 		private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
 		{

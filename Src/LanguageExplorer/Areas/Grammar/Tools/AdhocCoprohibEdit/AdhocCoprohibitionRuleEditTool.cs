@@ -113,7 +113,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters,
 				_recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -188,7 +187,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			*/
 			return new RecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.MorphologicalDataOA, "AdhocCoprohibitions", MoMorphDataTags.kflidAdhocCoProhibitions));
+				new VectorPropertyParameterObject(cache.LanguageProject.MorphologicalDataOA, "AdhocCoProhibitions", MoMorphDataTags.kflidAdhocCoProhibitions));
 		}
 
 		private sealed class AdhocCoprohibitionRuleEditToolMenuHelper : IDisposable
@@ -198,6 +197,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			private IRecordList _recordList;
 			private RecordBrowseView _recordBrowseView;
 			private string _extendedPropertyName;
+			private ToolStripMenuItem _menu;
 
 			internal AdhocCoprohibitionRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, string extendedPropertyName)
 			{
@@ -215,9 +215,121 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				_extendedPropertyName = extendedPropertyName;
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				//SetupUiWidgets(toolUiWidgetParameterObject);
+				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				//CreateBrowseViewContextMenu();
+#if RANDYTODO
+				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+#endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				/* On Insert menu & Insert toolbar
+    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
+      <params className="MoMorphAdhocProhib" />
+    </command>
+    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
+      <params className="MoAlloAdhocProhib" />
+    </command>
+    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
+      <params className="MoAdhocProhibGr" />
+    </command>
+				*/
+				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> CanSeeAndDo));
+				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => CanSeeAndDo));
+				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => CanSeeAndDo));
+			}
+
+			private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
+			{
+				toolBarDictionary.Add(key, currentTuple);
+				menuDictionary.Add(key, currentTuple);
+			}
+
+			private static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
+
+			private void CmdInsertMorphemeACP_Click(object sender, EventArgs e)
+			{
+				/*
+    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
+      <params className="MoMorphAdhocProhib" />
+    </command>
+				*/
+				var cache = _majorFlexComponentParameters.LcmCache;
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoMorphAdhocProhib", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				{
+					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAlloAdhocProhibFactory>().Create());
+				});
+			}
+
+			private void CmdInsertAllomorphACP_Click(object sender, EventArgs e)
+			{
+				/*
+    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
+      <params className="MoAlloAdhocProhib" />
+    </command>
+				*/
+				var cache = _majorFlexComponentParameters.LcmCache;
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAlloAdhocProhib", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				{
+					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoMorphAdhocProhibFactory>().Create());
+				});
+			}
+
+			private void CmdInsertACPGroup_Click(object sender, EventArgs e)
+			{
+				/*
+    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
+      <params className="MoAdhocProhibGr" />
+    </command>
+				*/
+				var cache = _majorFlexComponentParameters.LcmCache;
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAdhocProhibGr", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				{
+					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create());
+				});
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, "MoAdhocProhib"));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseView.ContextMenuStrip.Visible)
+				{
+					return;
+				}
+				// Set to correct class
+				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames")));
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+					currentSlice = _dataTree.CurrentSlice;
+				}
+				currentSlice.HandleDeleteCommand();
 			}
 
 			#region IDisposable
@@ -252,8 +364,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 				if (disposing)
 				{
-					_recordBrowseView.ContextMenuStrip?.Dispose();
-					_recordBrowseView.ContextMenuStrip = null;
+					if (_recordBrowseView?.ContextMenuStrip != null)
+					{
+						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseView.ContextMenuStrip.Dispose();
+						_recordBrowseView.ContextMenuStrip = null;
+					}
 				}
 				_majorFlexComponentParameters = null;
 				_dataTree = null;

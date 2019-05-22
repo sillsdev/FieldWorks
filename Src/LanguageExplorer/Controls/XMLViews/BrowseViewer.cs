@@ -662,7 +662,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		private ContextMenuStrip CreateBrowseViewContextMenu()
+		private ContextMenuStrip CreateBrowseViewHeaderContextMenu()
 		{
 			// Start: <menu id="mnuBrowseHeader" >
 			/*
@@ -2019,7 +2019,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;         // Can't sort by this column.
 			}
 			m_icolCurrent = e.Column;
-			_browseViewContextMenu = CreateBrowseViewContextMenu();
+			_browseViewContextMenu = CreateBrowseViewHeaderContextMenu();
 			_browseViewContextMenu.Show(this, e.Location);
 		}
 

@@ -26,44 +26,15 @@ so I can look at that in the develop branch.
     <command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" />
     <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" />
     <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" />
-    <command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
-      <parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
-    </command>
-    <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
-      <parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
-    </command>
     <!-- START include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
     <command id="CmdDataTree_Delete_Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
       <parameters field="Translations" className="CmTranslation" />
     </command>
-    <command id="CmdDataTree_Insert_ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
-      <parameters field="Subentries" className="ReversalIndexEntry" />
-    </command>
-    <command id="CmdDataTree_MoveUp_ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
-    <command id="CmdDataTree_MoveDown_ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
-    <command id="CmdDataTree_Move_MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
-    <command id="CmdDataTree_Promote_ProReversalIndexEntry" label="Promote" message="PromoteReversalindexEntry" icon="MoveLeft">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
-    <command id="CmdDataTree_Delete_Subentry" label="Delete this Entry and any Subentries" message="DataTreeDelete" icon="Delete">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
-    <command id="CmdDataTree_Merge_Subentry" label="Merge Entry into..." message="DataTreeMerge">
-      <parameters field="Subentries" className="ReversalindexEntry" />
-    </command>
     <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries" />
     <command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
       <parameters className="CmMedia" />
     </command>
-    <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary" />
     <!-- END include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include: "Words/areaConfiguration.xml" query="root/commands/*" -->
     <command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
@@ -275,38 +246,6 @@ so I can look at that in the develop branch.
   </commands>
   <!-- ************************ contextMenus *********************** -->
   <contextMenus>
-    <menu id="mnuBrowseView">
-      <item command="CmdEntryJumpToDefault" />
-      <item command="CmdWordformJumpToAnalyses" />
-      <item command="CmdPOSJumpToDefault" />
-      <item command="CmdWordformJumpToConcordance" />
-      <!-- <item command="CmdEntryJumpToConcordance"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
-      <item command="CmdSenseJumpToConcordance" />
-      <item command="CmdPOSJumpToConcordance" />
-      <item command="CmdWordGlossJumpToConcordance" />
-      <item command="CmdWordPOSJumpToConcordance" />
-      <item command="CmdWordPOSJumpToDefault" />
-      <item command="CmdEndoCompoundRuleJumpToDefault" />
-      <item command="CmdExoCompoundRuleJumpToDefault" />
-      <item command="CmdPhonemeJumpToDefault" />
-      <item command="CmdNaturalClassJumpToDefault" />
-      <item command="CmdEnvironmentsJumpToDefault" />
-      <item label="-" translate="do not translate" />
-      <!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
-    </menu>
-    <menu id="PaneBar_ReversalIndicesMenu">
-      <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
-        <item command="CmdShowAllPublications" />
-        <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
-        <item label="-" translate="do not translate" />
-        <item command="CmdPublicationsJumpToDefault" />
-      </menu>
-      <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
-        <menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
-        <item label="-" translate="do not translate" />
-        <item command="CmdConfigureDictionary" />
-      </menu>
-    </menu>
     <!-- START include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
     <menu id="PaneBar_ShowHiddenFields_posEdit" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_posEdit" defaultVisible="true" settingsGroup="local" />
@@ -445,20 +384,6 @@ so I can look at that in the develop branch.
     </menu>
     <!-- END include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
     <!-- START include: "Lexicon/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <menu id="PaneBar_Dictionary" label="">
-      <!-- *** Put any alignment="right" menus in first. *** -->
-      <menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
-        <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout" />
-        <item label="-" translate="do not translate" />
-        <item command="CmdConfigureDictionary" />
-      </menu>
-      <menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
-        <item command="CmdShowAllPublications" />
-        <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
-        <item label="-" translate="do not translate" />
-        <item command="CmdPublicationsJumpToDefault" />
-      </menu>
-    </menu>
     <menu id="PaneBar_ReversalEntryDetail" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" />
     </menu>
@@ -475,22 +400,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuDataTree_Translation">
       <item command="CmdDataTree_Delete_Translation" />
-    </menu>
-    <menu id="mnuDataTree_InsertReversalSubentry">
-      <item command="CmdDataTree_Insert_ReversalSubentry" />
-    </menu>
-    <menu id="mnuDataTree_InsertReversalSubentry_Hotlinks">
-      <item command="CmdDataTree_Insert_ReversalSubentry" />
-    </menu>
-    <menu id="mnuDataTree_MoveReversalIndexEntry">
-      <item command="CmdDataTree_MoveUp_ReversalSubentry" />
-      <item command="CmdDataTree_MoveDown_ReversalSubentry" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Move_MoveReversalIndexEntry" />
-      <item command="CmdDataTree_Promote_ProReversalIndexEntry" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Merge_Subentry" />
-      <item command="CmdDataTree_Delete_Subentry" />
     </menu>
     <menu id="mnuDataTree_CmMedia">
       <item command="CmdDeleteMediaFile" />

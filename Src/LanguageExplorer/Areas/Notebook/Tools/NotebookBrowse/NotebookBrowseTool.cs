@@ -138,7 +138,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
 			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
-			private IRecordList MyRecordList { get; }
+			private IRecordList _recordList;
 			private RecordBrowseView _recordBrowseView;
 
 			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
-				MyRecordList = recordList;
+				_recordList = recordList;
 				SetupToolUiWidgets();
 			}
 
@@ -172,15 +172,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
 			{
-				MyRecordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private void SetupToolUiWidgets()
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList);
+				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, _recordList);
 				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
 			}
 
 			#region Implementation of IDisposable
@@ -216,10 +217,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				if (disposing)
 				{
 					_sharedNotebookToolMenuHelper?.Dispose();
+					_recordBrowseView.ContextMenuStrip?.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
-
 				_majorFlexComponentParameters = null;
 				_tool = null;
+				_recordList = null;
 				_sharedNotebookToolMenuHelper = null;
 
 				_isDisposed = true;

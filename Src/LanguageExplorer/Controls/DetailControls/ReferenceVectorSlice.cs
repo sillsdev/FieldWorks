@@ -3,8 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon;
+using SIL.Code;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -87,6 +91,59 @@ namespace LanguageExplorer.Controls.DetailControls
 			// some initial invalid controls."  Becoming visible when we set the width and
 			// height seems to delay things enough to avoid this visual clutter.
 			vrl.Visible = false;
+		}
+
+		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(ContextMenuName contextMenuId)
+		{
+			Require.That(contextMenuId == ContextMenuName.mnuReorderVector, $"Expected argument value of '{ContextMenuName.mnuReorderVector.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+			// Start: <menu id="mnuReorderVector">
+			// This menu and its commands are shared
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = ContextMenuName.mnuReorderVector.ToString()
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+			ToolStripMenuItem menu;
+			bool visible;
+			var enabled = CanDisplayMoveTargetDownInSequence(out visible);
+			if (visible)
+			{
+				// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, AreaResources.Move_Left);
+				menu.Enabled = enabled;
+			}
+			enabled = CanDisplayMoveTargetUpInSequence(out visible);
+			if (visible)
+			{
+				// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, AreaResources.Move_Right);
+				menu.Enabled = enabled;
+			}
+			if (CanAlphabetize)
+			{
+				// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
+			}
+			// End: <menu id="mnuReorderVector">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void MoveReferencedTargetDownInSequence_Clicked(object sender, EventArgs e)
+		{
+			MyView.MoveItem(false);
+		}
+
+		private void MoveReferencedTargetUpInSequence_Clicked(object sender, EventArgs e)
+		{
+			MyView.MoveItem(true);
+		}
+
+		private void Referenced_AlphabeticalOrder_Clicked(object sender, EventArgs e)
+		{
+			MyView.RemoveOrdering();
 		}
 
 		public void MoveTargetDownInSequence()

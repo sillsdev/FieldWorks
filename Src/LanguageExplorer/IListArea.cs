@@ -32,6 +32,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Change the display name of the list in the Tab.
 		/// </summary>
-		void ModifiedListDisplayName(ITool tool);
+		void UpdateListDisplayName(ITool tool);
 	}
 }

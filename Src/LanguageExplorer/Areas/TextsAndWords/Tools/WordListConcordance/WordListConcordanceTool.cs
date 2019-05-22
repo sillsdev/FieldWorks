@@ -3,12 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -109,7 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _mainRecordBrowseView, "Concordance", new PaneBar(), _nestedMultiPane, "Tabs", new PaneBar());
 
-			_toolMenuHelper.SetupUiWidgets(this, _mainRecordBrowseView, _nestedRecordBrowseView);
+			_toolMenuHelper.SetupUiWidgets(this, _mainRecordBrowseView);
 			// The next method call will add UserControl event handlers.
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
@@ -201,7 +203,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			private IRecordList _subservientRecordList;
 			private FileExportMenuHelper _fileExportMenuHelper;
 			private RecordBrowseView _mainRecordBrowseView;
-			private RecordBrowseView _nestedRecordBrowseView;
 
 			internal WordListConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordListProvidingOwner, IRecordList subservientRecordList)
 			{
@@ -217,21 +218,50 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
 			}
 
-			internal void SetupUiWidgets(ITool tool, RecordBrowseView mainRecordBrowseView, RecordBrowseView nestedRecordBrowseView)
+			internal void SetupUiWidgets(ITool tool, RecordBrowseView mainRecordBrowseView)
 			{
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(mainRecordBrowseView, nameof(mainRecordBrowseView));
-				Guard.AgainstNull(nestedRecordBrowseView, nameof(nestedRecordBrowseView));
 
 				_mainRecordBrowseView = mainRecordBrowseView;
-				_nestedRecordBrowseView = nestedRecordBrowseView;
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: Set up browse views.
-#endif
+				// NB: The nested browse view on the right has no popup menu.
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+				// <item command="CmdWordformJumpToAnalyses"/> AreaServices.AnalysesMachineName
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdWordformJumpToAnalyses_Click, AreaResources.Show_in_Word_Analyses);
+
+				// <item label="-" translate="do not translate"/>
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("WfiWordform", "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_mainRecordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdWordformJumpToAnalyses_Click(object sender, EventArgs e)
+			{
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(AreaServices.AnalysesMachineName, _recordListProvidingOwner.CurrentObject.Guid));
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordListProvidingOwner.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			#region IDisposable
@@ -269,15 +299,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 					_fileExportMenuHelper.Dispose();
 					_mainRecordBrowseView.ContextMenuStrip?.Dispose();
 					_mainRecordBrowseView.ContextMenuStrip = null;
-					_nestedRecordBrowseView.ContextMenuStrip?.Dispose();
-					_nestedRecordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
 				_fileExportMenuHelper = null;
 				_recordListProvidingOwner = null;
 				_subservientRecordList = null;
 				_mainRecordBrowseView = null;
-				_nestedRecordBrowseView = null;
 
 				_isDisposed = true;
 			}

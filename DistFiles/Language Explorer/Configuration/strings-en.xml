@@ -40,6 +40,7 @@
 	<string id="MoMorphType" txt="Morpheme Type"/>
 	<string id="LexEntryType" txt="Entry Type"/>
 	<string id="LexRefType" txt="Lexical Relation"/>
+    <string id="FsOpenFeature" txt="Feature"/>
 	<string id="FsClosedFeature" txt="Feature"/>
 	<string id="FsComplexFeature" txt="Complex Feature"/>
 	<string id="FsClosedValue" txt="Feature"/>
@@ -69,6 +70,7 @@
 	<string id="PhEnvironment" txt="Environment"/>
 	<string id="PhNCFeatures" txt="Natural Class (Features)"/>
 	<string id="PhNCSegments" txt="Natural Class (Phonemes)"/>
+    <string id="PhSegmentRule" txt="Phonological Rule"/>
 	<string id="PhRegularRule" txt="Phonological Rule"/>
 	<string id="PhMetathesisRule" txt="Metathesis Rule"/>
 	<string id="MoInflAffixSlot" txt="Inflectional Affix Slot"/>
@@ -90,7 +92,7 @@
 	<string id="Roles" txt="Role"/>
 	<string id="GenreList" txt="Genre"/>
 	<string id="Languages" txt="Language"/>
-	<string id="ProdRestrict" txt="Exception &quot;Feature&quot;"/>
+	<string id="ProdRestrict" txt='Exception "Feature"'/>
 	<string id="Positions" txt="Position"/>
 	<string id="PublicationTypes" txt="Publication"/>
 	<string id="Restrictions" txt="Restriction"/>
@@ -102,7 +104,7 @@
 	<string id="VariantEntryTypes" txt="Variant Type"/>
 	<string id="People" txt="Person"/>
 	<string id="NoteCategories" txt="Note Category"/>
-	<string id="RecTypes" txt="Notebook Record Type"/>
+    <string id="RecTypes" txt="Notebook Record Type"/>
 	<string id="TextMarkupTags" txt="Text Markup Tag"/>
 	<string id="ChartMarkers" txt="Text Chart Marker"/>
 	<string id="ConstChartTempl" txt="Text Constituent Chart Template"/>

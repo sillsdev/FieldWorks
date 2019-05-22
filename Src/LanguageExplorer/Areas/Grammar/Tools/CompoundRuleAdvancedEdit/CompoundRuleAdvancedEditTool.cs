@@ -63,11 +63,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(CompoundRules, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new CompoundRuleAdvancedEditToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(GrammarResources.CompoundRuleAdvancedEditToolParameters).Root;
 			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_toolMenuHelper = new CompoundRuleAdvancedEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseActiveView, _recordList);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -87,7 +87,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -168,19 +167,70 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		private sealed class CompoundRuleAdvancedEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private DataTree _dataTree;
+			private RecordBrowseActiveView _recordBrowseActiveView;
+			private IRecordList _recordList;
+			private ToolStripMenuItem _menu;
 
-			internal CompoundRuleAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal CompoundRuleAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+				Guard.AgainstNull(recordBrowseActiveView, nameof(recordBrowseActiveView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				// Tool must be added, even when it adds no tool specific handlers.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+				_dataTree = dataTree;
+				_recordBrowseActiveView = recordBrowseActiveView;
+				_recordList = recordList;
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				var currentObject = _recordList.CurrentObject;
+				var lookupName = currentObject == null ? "MoCompoundRule" : currentObject.ClassName;
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(lookupName, "ClassNames")));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseActiveView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseActiveView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseActiveView.ContextMenuStrip.Visible)
+				{
+					return;
+				}
+				// Set to correct class
+				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames")));
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+					currentSlice = _dataTree.CurrentSlice;
+				}
+				currentSlice.HandleDeleteCommand();
 			}
 
 			#region Implementation of IDisposable
@@ -215,8 +265,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 
 				if (disposing)
 				{
+					if (_recordBrowseActiveView?.ContextMenuStrip != null)
+					{
+						_recordBrowseActiveView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseActiveView.ContextMenuStrip.Dispose();
+						_recordBrowseActiveView.ContextMenuStrip = null;
+					}
 				}
 				_majorFlexComponentParameters = null;
+				_dataTree = null;
+				_recordBrowseActiveView = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

@@ -191,11 +191,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateLeftContextMenuStrip);
-				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.RightPanelMenuId, CreateRightContextMenuStrip);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateLeftMainPanelContextMenuStrip);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.RightPanelMenuId, CreateRightMainPanelContextMenuStrip);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftContextMenuStrip(string panelMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftMainPanelContextMenuStrip(string panelMenuId)
 			{
 				Require.That(panelMenuId == AreaServices.LeftPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.LeftPanelMenuId}'.");
 
@@ -204,19 +204,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-
+				// <item command="CmdShowAllPublications" />
 				var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
 				currentToolStripMenuItem.Tag = "All Entries";
 				currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
 				var pubName = DocView.GetCurrentPublication();
 				currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
-
-				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-
+				// // <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
 				List<string> inConfig;
 				List<string> notInConfig;
-				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-					DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
+				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
 				foreach (var pub in inConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
@@ -235,12 +232,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				}
 
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				// <item command="CmdPublicationsJumpToDefault" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
 
 				return retVal;
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightContextMenuStrip(string panelMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightMainPanelContextMenuStrip(string panelMenuId)
 			{
 				Require.That(panelMenuId == AreaServices.RightPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.RightPanelMenuId}'.");
 
@@ -297,7 +295,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 			{
-				bool refreshNeeded;
 				if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)_fwMainWnd, _recordList?.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
 				{
 					_fwMainWnd.RefreshAllViews();
@@ -376,6 +373,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				_majorFlexComponentParameters = null;
 				MainPanelMenuContextMenuFactory = null;
 				DocView = null;
+				_propertyTable = null;
+				_fwMainWnd = null;
+				_recordList = null;
+				_configureObjectName = null;
 
 				_isDisposed = true;
 			}

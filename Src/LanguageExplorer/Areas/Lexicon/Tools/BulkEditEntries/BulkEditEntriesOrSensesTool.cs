@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -66,15 +67,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new BulkEditEntriesOrSensesMenuHelper(majorFlexComponentParameters, this, _recordList);
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
 			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				_recordBrowseView);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
+			_toolMenuHelper = new BulkEditEntriesOrSensesMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 		}
 
 		/// <summary>
@@ -279,21 +278,61 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		private sealed class BulkEditEntriesOrSensesMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
+			private List<ToolStripMenuItem> _jumpMenus;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
-			internal BulkEditEntriesOrSensesMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
+			internal BulkEditEntriesOrSensesMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
 
+				_jumpMenus = new List<ToolStripMenuItem>(3);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: Set up factory method for the browse view.
-#endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+				var publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
+				var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+				// Show Entry in Lexicon: AreaResources.ksShowEntryInLexicon
+				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.ksShowEntryInLexicon);
+				menu.Tag = new List<object> { publisher, AreaServices.LexiconEditMachineName, _recordList };
+				_jumpMenus.Add(menu);
+
+				// Show Entry in Concordance: AreaResources.Show_Entry_In_Concordance
+				// <item command="CmdEntryJumpToConcordance"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.Show_Entry_In_Concordance);
+				menu.Tag = new List<object> { publisher, AreaServices.ConcordanceMachineName, _recordList };
+				_jumpMenus.Add(menu);
+
+				// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.Show_Sense_in_Concordance);
+				menu.Tag = new List<object> { publisher, AreaServices.ConcordanceMachineName, _recordList };
+				_jumpMenus.Add(menu);
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
 			}
 
 			#region Implementation of IDisposable
@@ -327,8 +366,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				}
 				if (disposing)
 				{
+					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+					foreach (var menu in _jumpMenus)
+					{
+						menu.Click -= jumpEventHandler;
+						menu.Dispose();
+					}
+					_jumpMenus.Clear();
+					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
+				_recordBrowseView = null;
+				_recordList = null;
+				_jumpMenus = null;
+				_partiallySharedForToolsWideMenuHelper = null;
 
 				_isDisposed = true;
 			}

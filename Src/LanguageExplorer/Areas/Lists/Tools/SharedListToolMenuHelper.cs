@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			{
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != _possibilityList.Name.BestAnalysisAlternative.Text)
 				{
-					Area.ModifiedListDisplayName(_tool);
+					Area.UpdateListDisplayName(_tool);
 				}
 			}
 		}

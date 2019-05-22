@@ -1661,6 +1661,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Category in Concordance.
+        /// </summary>
+        internal static string Show_Category_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Category_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Concordance of.
         /// </summary>
         internal static string Show_Concordance_of {

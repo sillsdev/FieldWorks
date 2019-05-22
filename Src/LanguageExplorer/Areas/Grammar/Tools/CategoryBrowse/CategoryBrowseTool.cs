@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -26,6 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		private CategoryBrowseToolMenuHelper _toolMenuHelper;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
@@ -45,6 +47,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			_toolMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_toolMenuHelper = null;
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -59,8 +62,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new CategoryBrowseToolMenuHelper(majorFlexComponentParameters, this);
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController));
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
+			_toolMenuHelper = new CategoryBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 		}
 
 		/// <summary>
@@ -138,19 +142,60 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		private sealed class CategoryBrowseToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private ISharedEventHandlers _sharedEventHandlers;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
+			private ToolStripMenuItem _jumpMenu1;
+			private ToolStripMenuItem _jumpMenu2;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
-			internal CategoryBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal CategoryBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
 				// Tool must be added, even when it adds no tool specific handlers.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
+
+				// <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
+				_jumpMenu1 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Category_Edit);
+				_jumpMenu1.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.PosEditMachineName, _recordList };
+				// <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
+				_jumpMenu2 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Category_in_Concordance);
+				_jumpMenu2.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PartOfSpeech", "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			#region Implementation of IDisposable
@@ -185,8 +230,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 				if (disposing)
 				{
+					_jumpMenu1.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu2.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu1.Dispose();
+					_jumpMenu2.Dispose();
+					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
+				_sharedEventHandlers = null;
+				_recordBrowseView = null;
+				_recordList = null;
+				_jumpMenu1 = null;
+				_jumpMenu2 = null;
+				_partiallySharedForToolsWideMenuHelper = null;
 
 				_isDisposed = true;
 			}

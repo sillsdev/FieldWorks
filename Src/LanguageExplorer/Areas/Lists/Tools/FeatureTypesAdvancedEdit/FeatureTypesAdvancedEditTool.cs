@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new FeatureTypesAdvancedEditMenuHelper(majorFlexComponentParameters, this);
+			_toolMenuHelper = new FeatureTypesAdvancedEditMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters),
 				XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree,
@@ -104,7 +104,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 						majorFlexComponentParameters.MainCollapsingSplitContainer,
 						mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 						recordEditView, "Details", paneBar);
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
@@ -175,9 +174,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache,
-			FlexComponentParameters flexComponentParameters, string recordListId,
-			StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == FeatureTypes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{FeatureTypes}'.");
 			/*
@@ -193,18 +190,21 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		{
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly IFsFeatureSystem _featureSystem;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
 
-			internal FeatureTypesAdvancedEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal FeatureTypesAdvancedEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
 				_featureSystem = _majorFlexComponentParameters.LcmCache.LanguageProject.MsFeatureSystemOA;
 				SetupToolUiWidgets(tool);
-#if RANDYTODO
-				// TODO: Set up factory method for the browse view.
-#endif
 			}
 
 			private void SetupToolUiWidgets(ITool tool)
@@ -216,6 +216,35 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, () => CanCmdInsertFeatureType));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("FsFeatStrucType", "ClassNames")));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				_recordBrowseView.ContextMenuStrip.Enabled = _recordBrowseView.ContextMenuStrip.Visible;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private static Tuple<bool, bool> CanCmdInsertFeatureType => new Tuple<bool, bool>(true, true);
@@ -261,6 +290,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 				if (disposing)
 				{
+					if (_recordBrowseView?.ContextMenuStrip != null)
+					{
+						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseView.ContextMenuStrip.Dispose();
+						_recordBrowseView.ContextMenuStrip = null;
+					}
 				}
 
 				_isDisposed = true;

@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Change the display name of the list in the Tab.
 		/// </summary>
-		public void ModifiedListDisplayName(ITool tool)
+		public void UpdateListDisplayName(ITool tool)
 		{
 			_sidePane.SuspendLayout();
 			var isCustomList = false;

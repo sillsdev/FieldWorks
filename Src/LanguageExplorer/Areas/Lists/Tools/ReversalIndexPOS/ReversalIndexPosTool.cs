@@ -113,8 +113,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", browseViewPaneBar, recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -249,9 +247,28 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 
 				SetupToolUiWidgets(tool, dataTree);
-#if RANDYTODO
-				// TODO: Set up browse menu.
-#endif
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PartOfSpeech", "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
@@ -306,6 +323,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, ContextMenuName contextMenuId)
@@ -566,6 +584,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				if (disposing)
 				{
 					MainPanelMenuContextMenuFactory.Dispose();
+					_recordBrowseView.ContextMenuStrip?.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
 				MainPanelMenuContextMenuFactory = null;
 

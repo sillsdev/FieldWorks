@@ -155,7 +155,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			_toolMenuHelper.InnerMultiPane = _innerMultiPane;
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
@@ -288,13 +287,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
-				var currentSlice = _dataTree.CurrentSlice;
-				if (currentSlice == null)
-				{
-					_dataTree.GotoFirstSlice();
-				}
-				menu.Tag = _dataTree.CurrentSlice;
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
@@ -306,6 +299,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				if (currentSlice == null)
 				{
 					_dataTree.GotoFirstSlice();
+					currentSlice = _dataTree.CurrentSlice;
 				}
 				currentSlice.HandleDeleteCommand();
 			}
@@ -746,43 +740,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				#endregion hotlinks
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, ContextMenuName contextMenuId)
+			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuReorderVector, $"Expected argument value of '{ContextMenuName.mnuReorderVector.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(slice is ReferenceVectorSlice, $"Expected Slice class of 'ReferenceVectorSlice', but got on of class '{slice.GetType().Name}'.");
 
-				// Start: <menu id="mnuReorderVector">
-				// This menu and its commands are shared
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = ContextMenuName.mnuReorderVector.ToString()
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
-
-				ToolStripMenuItem menu;
-				var referenceVectorSlice = (ReferenceVectorSlice)slice;
-				bool visible;
-				var enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out visible);
-				if (visible)
-				{
-					// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, AreaResources.Move_Left);
-					menu.Enabled = enabled;
-				}
-				enabled = referenceVectorSlice.CanDisplayMoveTargetUpInSequence(out visible);
-				if (visible)
-				{
-					// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, AreaResources.Move_Right);
-					menu.Enabled = enabled;
-				}
-				if (referenceVectorSlice.CanAlphabetize)
-				{
-					// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
-					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
-				}
-				// End: <menu id="mnuReorderVector">
-
-				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+				return ((ReferenceVectorSlice)slice).Create_mnuReorderVector(contextMenuId);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantSpec(Slice slice, ContextMenuName contextMenuId)
@@ -1154,7 +1116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
 				contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
-				contextMenuItem.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid };
+				contextMenuItem.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				return retVal;
 			}
@@ -1207,11 +1169,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private void MoveReferencedTargetUpInSequence_Clicked(object sender, EventArgs e)
 			{
 				((ReferenceVectorSlice)_dataTree.CurrentSlice).MoveTargetUpInSequence();
-			}
-
-			private void Referenced_AlphabeticalOrder_Clicked(object sender, EventArgs e)
-			{
-				((ReferenceVectorSlice)_dataTree.CurrentSlice).Alphabetize();
 			}
 
 			private void MoveUpObjectInOwningSequence_Clicked(object sender, EventArgs e)
@@ -1639,7 +1596,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Sense_in_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -1789,7 +1746,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/> // NB: Overrides command's label here.
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				if (hasAllomorphs)
 				{
@@ -1954,10 +1911,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <item command="CmdEntryJumpToConcordance"/>
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 				// <item command="CmdLexemeFormJumpToConcordance"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 				// <item command="CmdDataTree_Swap_LexemeForm"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
 
@@ -2101,7 +2058,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" />
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				// End: <menu id="mnuDataTree_AffixProcess">
 
@@ -2145,11 +2102,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.ksShowEntryInLexicon);
-				menu.Tag = new List<object> { _publisher, AreaServices.LexiconEditMachineName, _recordList.CurrentObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.LexiconEditMachineName, _recordList };
 
 				// <item command="CmdEntryJumpToConcordance"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				if (!slice.IsGhostSlice)
 				{
@@ -2274,7 +2231,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" />
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
-				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				// End: <menu id="mnuDataTree_Allomorph">
 

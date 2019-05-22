@@ -945,7 +945,7 @@ namespace LanguageExplorer.Areas
 					wantSeparator = false;
 				}
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject.Guid };
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject };
 			}
 		}
 
@@ -991,7 +991,7 @@ namespace LanguageExplorer.Areas
 				wantSeparator = false;
 			}
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
-			menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject.Guid };
+			menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject };
 		}
 
 		#region "mnuEnvReferenceChoices"
@@ -1017,7 +1017,7 @@ namespace LanguageExplorer.Areas
 						</command>
 				*/
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Environments_list);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, _dataTree.CurrentSlice.MyCmObject.Guid };
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, _dataTree };
 			}
 
 			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(slice, menuItems, contextMenuStrip);

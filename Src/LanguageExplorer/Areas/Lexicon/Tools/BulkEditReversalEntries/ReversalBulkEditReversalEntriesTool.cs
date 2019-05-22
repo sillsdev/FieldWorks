@@ -88,8 +88,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
-			_toolMenuHelper = new ReversalBulkToolMenuHelper(majorFlexComponentParameters, this, _reversalIndexRepository, _currentReversalIndex, _recordList);
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new ReversalBulkToolMenuHelper(majorFlexComponentParameters, this, _reversalIndexRepository, _currentReversalIndex, _recordBrowseView, _recordList);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -169,18 +169,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			private IReversalIndex _currentReversalIndex;
 			private IRecordList _recordList;
 			private IPropertyTable _propertyTable;
+			private RecordBrowseView _recordBrowseView;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
-			internal ReversalBulkToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IReversalIndexRepository reversalIndexRepository, IReversalIndex currentReversalIndex, IRecordList recordList)
+			internal ReversalBulkToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IReversalIndexRepository reversalIndexRepository, IReversalIndex currentReversalIndex, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(reversalIndexRepository, nameof(reversalIndexRepository));
 				Guard.AgainstNull(currentReversalIndex, nameof(currentReversalIndex));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_reversalIndexRepository = reversalIndexRepository;
 				_currentReversalIndex = currentReversalIndex;
+				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
@@ -190,9 +194,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				_mainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory(); // Make our own, since the tool has no data tree.
 				_mainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreatePanelContextMenuStrip);
-#if RANDYTODO
-				// TODO: Set up factory method for the browse view.
-#endif
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("ReversalIndexEntry", "ClassNames")));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreatePanelContextMenuStrip(string panelMenuId)
@@ -278,10 +308,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				{
 					_commonReversalIndexMenuHelper.Dispose();
 					_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
+					if (_recordBrowseView?.ContextMenuStrip != null)
+					{
+						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseView.ContextMenuStrip.Dispose();
+						_recordBrowseView.ContextMenuStrip = null;
+					}
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
 				_commonReversalIndexMenuHelper = null;
 				_mainPanelMenuContextMenuFactory = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_recordBrowseView = null;
+				_recordList = null;
+				_propertyTable = null;
 
 				_isDisposed = true;
 			}

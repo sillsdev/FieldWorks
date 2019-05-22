@@ -200,8 +200,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				// NB: No popup menu on the browse view.
 			}
 
 			#region Implementation of IDisposable

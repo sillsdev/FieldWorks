@@ -113,7 +113,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_multiPane.Panel2MinSize = Math.Max((int)(162000 * gr.DpiX) / MiscUtils.kdzmpInch, CollapsingSplitContainer.kCollapseZone);
 			}
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -222,13 +221,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
-				var currentSlice = MyDataTree.CurrentSlice;
-				if (currentSlice == null)
-				{
-					MyDataTree.GotoFirstSlice();
-				}
-				menu.Tag = MyDataTree.CurrentSlice;
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 			}
@@ -239,6 +232,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (currentSlice == null)
 				{
 					MyDataTree.GotoFirstSlice();
+					currentSlice = MyDataTree.CurrentSlice;
 				}
 				currentSlice.HandleDeleteCommand();
 			}
@@ -376,6 +370,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					_sharedNotebookToolMenuHelper?.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_rightClickContextMenuManager?.Dispose();
+					RecordBrowseView.ContextMenuStrip?.Dispose();
+					RecordBrowseView.ContextMenuStrip = null;
 				}
 				MainPanelMenuContextMenuFactory = null;
 				_majorFlexComponentParameters = null;

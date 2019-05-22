@@ -16,7 +16,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas
 {
@@ -338,7 +337,30 @@ namespace LanguageExplorer.Areas
 		private static void JumpToTool_Clicked(object sender, EventArgs e)
 		{
 			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
-			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], (Guid)tag[2]));
+			Guid jumpToGuid;
+			var guidSupplier = tag[2];
+			if (guidSupplier is Guid)
+			{
+				jumpToGuid = (Guid)guidSupplier;
+			}
+			else if (guidSupplier is IRecordList)
+			{
+				jumpToGuid = ((IRecordList)guidSupplier).CurrentObject.Guid;
+			}
+			else if (guidSupplier is DataTree)
+			{
+				jumpToGuid = ((DataTree)guidSupplier).CurrentSlice.MyCmObject.Guid;
+			}
+			else if (guidSupplier is ICmObject)
+			{
+				jumpToGuid = ((ICmObject)guidSupplier).Guid;
+			}
+			else
+			{
+				MessageBox.Show($"Deal with type of '{guidSupplier.GetType().Name}' in shared 'JumpToTool_Clicked' event handler!");
+				throw new ArgumentException("Who is it?");
+			}
+			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], jumpToGuid));
 		}
 
 		internal static bool Set_CmdInsertFoo_Enabled_State(LcmCache cache, IVwSelection selection)

@@ -64,11 +64,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(PhonologicalRules, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new PhonologicalRuleEditToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(GrammarResources.PhonologicalRuleEditToolParameters).Root;
 			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_toolMenuHelper = new PhonologicalRuleEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseActiveView, _recordList);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -89,7 +89,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -157,6 +156,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			Require.That(recordListId == PhonologicalRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PhonologicalRules}'.");
 			/*
+			 // NB: How can Flex work when the clerk claims the owner is MorphologicalData, but the real world has it PhonologicalDataOA?
             <clerk id="phonologicalRules">
               <recordList owner="MorphologicalData" property="PhonologicalRules" />
             </clerk>
@@ -168,19 +168,62 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		private sealed class PhonologicalRuleEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private DataTree _dataTree;
+			private RecordBrowseActiveView _recordBrowseActiveView;
+			private IRecordList _recordList;
 
-			internal PhonologicalRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal PhonologicalRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+				Guard.AgainstNull(recordBrowseActiveView, nameof(recordBrowseActiveView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_dataTree = dataTree;
+				_recordBrowseActiveView = recordBrowseActiveView;
+				_recordList = recordList;
+
 				// Tool must be added, even when it adds no tool specific handlers.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhSegmentRule", "ClassNames")));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseActiveView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseActiveView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+					currentSlice = _dataTree.CurrentSlice;
+				}
+				currentSlice.HandleDeleteCommand();
 			}
 
 			#region Implementation of IDisposable
@@ -215,8 +258,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 
 				if (disposing)
 				{
-				}
+					if (_recordBrowseActiveView?.ContextMenuStrip != null)
+					{
+						_recordBrowseActiveView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseActiveView.ContextMenuStrip.Dispose();
+						_recordBrowseActiveView.ContextMenuStrip = null;
+					}
+                }
 				_majorFlexComponentParameters = null;
+				_dataTree = null;
+				_recordBrowseActiveView = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

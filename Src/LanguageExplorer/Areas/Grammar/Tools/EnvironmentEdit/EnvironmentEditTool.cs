@@ -64,7 +64,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Environments, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new EnvironmentEditToolMenuHelper(majorFlexComponentParameters, this);
 			var root = XDocument.Parse(GrammarResources.EnvironmentEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
@@ -88,8 +87,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
+			_toolMenuHelper = new EnvironmentEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
@@ -167,19 +166,47 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		private sealed class EnvironmentEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
 
-			internal EnvironmentEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal EnvironmentEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
 				// Tool must be added, even when it adds no tool specific handlers.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(PhEnvironmentTags.kClassName, "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			#region Implementation of IDisposable
@@ -214,8 +241,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 				if (disposing)
 				{
+					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
+				_recordBrowseView = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

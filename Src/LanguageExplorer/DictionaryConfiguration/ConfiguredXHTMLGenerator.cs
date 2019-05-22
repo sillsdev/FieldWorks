@@ -590,7 +590,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var actionCount = individualActions.Count;
 			//Note that our COM classes all implement the STA threading model, while the ThreadPool always uses MTA model threads.
-			//I don't understand why using the ThreadPool sometimes works, but not always.  Expliciting allocating STA model
+			//I don't understand why using the ThreadPool sometimes works, but not always.  Explicitly allocating STA model
 			//threads as done here works in all the cases that have been tried.  (Windows/Linux, program/unit test)  Unfortunately,
 			//the speedup on Linux is minimal.
 			var maxThreadCount = Math.Min(16, (int)(Environment.ProcessorCount * 1.5));

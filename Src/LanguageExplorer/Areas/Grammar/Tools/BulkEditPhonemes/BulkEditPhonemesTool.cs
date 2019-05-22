@@ -3,12 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -67,8 +70,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.StatusBar, GrammarArea.PhonemesFactoryMethod);
 			}
-			_toolMenuHelper = new BulkEditPhonemesToolMenuHelper(majorFlexComponentParameters, this);
 			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new BulkEditPhonemesToolMenuHelper(majorFlexComponentParameters, this, _assignFeaturesToPhonemesView, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _assignFeaturesToPhonemesView);
 		}
 
@@ -131,19 +134,60 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		private sealed class BulkEditPhonemesToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
+			private IRecordList _recordList;
 
-			internal BulkEditPhonemesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal BulkEditPhonemesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, AssignFeaturesToPhonemes assignFeaturesToPhonemes, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(assignFeaturesToPhonemes, nameof(assignFeaturesToPhonemes));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_assignFeaturesToPhonemesView = assignFeaturesToPhonemes;
+				_recordList = recordList;
 				// Tool must be added, even when it adds no tool specific handlers.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
 #endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+				// <command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdPhonemeJumpToDefault_Clicked, AreaResources.Show_in_Phonemes_Editor);
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", "ClassNames")));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_assignFeaturesToPhonemesView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_assignFeaturesToPhonemesView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+			}
+
+			private void CmdPhonemeJumpToDefault_Clicked(object sender, EventArgs e)
+			{
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, _recordList.CurrentObject.Guid));
 			}
 
 			#region Implementation of IDisposable
@@ -178,8 +222,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 				if (disposing)
 				{
+					if (_assignFeaturesToPhonemesView?.ContextMenuStrip != null)
+					{
+						_assignFeaturesToPhonemesView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_assignFeaturesToPhonemesView.ContextMenuStrip.Dispose();
+						_assignFeaturesToPhonemesView.ContextMenuStrip = null;
+					}
 				}
 				_majorFlexComponentParameters = null;
+				_assignFeaturesToPhonemesView = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

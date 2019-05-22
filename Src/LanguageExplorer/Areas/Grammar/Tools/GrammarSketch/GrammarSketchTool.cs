@@ -128,9 +128,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
-				// Refresh not allowed, so use null for the event handler.
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, () => CanCmdRefresh));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Standard].Add(Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, () => CanCmdRefresh));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

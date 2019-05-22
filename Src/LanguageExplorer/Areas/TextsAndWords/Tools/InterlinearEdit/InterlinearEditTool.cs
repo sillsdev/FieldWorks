@@ -3,14 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -65,8 +68,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
-			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
-			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordList);
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -85,6 +86,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
+			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
+			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordBrowseView, _recordList);
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 		}
@@ -154,21 +157,47 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			private ITool _tool;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
 
-			internal InterlinearEditToolMenuHelper(ITool tool, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+			internal InterlinearEditToolMenuHelper(ITool tool, MajorFlexComponentParameters majorFlexComponentParameters, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_tool = tool;
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
+
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				// Do nothing registration is needed, in case there are any user controls that want to register.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: Set up browse menu.
-#endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("StText", "ClassNames")));
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+			{
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			#region Implementation of IDisposable
@@ -204,9 +233,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 				if (disposing)
 				{
+					_recordBrowseView.ContextMenuStrip?.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_tool = null;
 				_majorFlexComponentParameters = null;
+				_recordBrowseView = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

@@ -400,7 +400,7 @@
     <value>_Merge with entry...</value>
   </data>
   <data name="ConfigureDictionary" xml:space="preserve">
-    <value>Configure Dictionary</value>
+    <value>Configure Dictionary...</value>
   </data>
   <data name="AllEntries" xml:space="preserve">
     <value>All Entries</value>
@@ -602,5 +602,8 @@
   </data>
   <data name="ReversalEntry" xml:space="preserve">
     <value>Reversal Entry</value>
+  </data>
+  <data name="ConfigureReversalIndex" xml:space="preserve">
+    <value>Configure Reversal Index...</value>
   </data>
 </root>

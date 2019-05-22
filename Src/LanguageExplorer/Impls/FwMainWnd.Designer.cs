@@ -2036,10 +2036,11 @@ namespace LanguageExplorer.Impls
             this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertAllomorphACP.Text = "Rule to prevent allomorph co-occurrence";
             this.CmdInsertAllomorphACP.Visible = false;
-            // 
-            // CmdInsertACPGroup
-            // 
-            this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
+			// 
+			// CmdInsertACPGroup
+			//
+			this.CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertACPGroup.Image")));
+			this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
             this.CmdInsertACPGroup.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertACPGroup.Text = "Group of ad hoc rules";
             this.CmdInsertACPGroup.Visible = false;

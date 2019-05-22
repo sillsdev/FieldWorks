@@ -22,6 +22,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		private readonly string _checkedLabel;
 		private readonly string _uncheckedLabel;
 		private bool _isChecked;
+		private DataTree _myDataTree;
 
 		/// <summary>
 		/// Constructor
@@ -66,11 +67,6 @@ namespace LanguageExplorer.Controls.PaneBar
 				cb.Checked = _isChecked;
 			}
 		}
-
-		/// <summary>
-		/// Set the DataTree.
-		/// </summary>
-		public DataTree MyDataTree { get; set; }
 
 		private void SetLabel()
 		{

@@ -99,7 +99,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this);
 			var recordBar = new RecordBar(_propertyTable)
 			{
 				IsFlatList = false,
@@ -148,9 +147,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			recordEditView.BringToFront();
 			recordBar.BringToFront();
 
-			panelButton.MyDataTree = recordEditView.MyDataTree;
-
 			// Too early before now.
+			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
@@ -236,21 +234,45 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private sealed class RapidDataEntryToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
+			private ToolStripMenuItem _jumpMenu;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
-			internal RapidDataEntryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal RapidDataEntryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_recordBrowseView = recordBrowseView;
+				_recordList = recordList;
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
-#endif
+				CreateBrowseViewContextMenu();
+			}
+
+			private void CreateBrowseViewContextMenu()
+			{
+				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+				// Start: <menu id="mnuBrowseView" (partial) >
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuBrowseView.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+				// <item command="CmdEntryJumpToDefault" />
+				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.ksShowEntryInLexicon);
+				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.LexiconEditMachineName, _recordList };
+
+				// End: <menu id="mnuBrowseView" (partial) >
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
 			}
 
 			#region Implementation of IDisposable
@@ -284,8 +306,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				}
 				if (disposing)
 				{
+					_jumpMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu.Dispose();
+					_recordBrowseView.ContextMenuStrip.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
+				_jumpMenu = null;
+				_recordBrowseView = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}
