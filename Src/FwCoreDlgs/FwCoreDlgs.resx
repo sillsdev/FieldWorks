@@ -179,6 +179,11 @@
   <data name="kstidCantChangeEnglishWS" xml:space="preserve">
     <value>You cannot change the code "en" of the default writing system because it is used as a fallback when other writing systems are missing text.</value>
   </data>
+  <data name="kstidCantChangeEnglishSRV" xml:space="preserve">
+    <value>You cannot change the script, region, or variant of the default "{0}" (en) writing system because it is used as a fallback when other writing systems are missing text.
+If you would like to create a variant of {0}, click the green plus (+).</value>
+    <comment>{0} is the display name of the Writing System with the code "en" (English)</comment>
+  </data>
   <data name="ksPossibleDataLoss" xml:space="preserve">
     <value>Possible Data Loss</value>
   </data>
@@ -645,10 +650,6 @@ Do you want to remove English now?</value>
     <value>You cannot change the code of this writing system to "{0}" because the "{1}" writing system already exists.</value>
     <comment>{0} is a 2- or 3-letter language code from the Ethnologue. {1} is the name of the language.</comment>
   </data>
-  <data name="kstidDistinguishNewWS" xml:space="preserve">
-    <!-- REVIEW (Hasso) 2019.04: needed? -->
-    <value>The "{0}" writing system already exists. To distinguish the new writing system you are creating from "{0}", add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, "{0}", if it meets your needs.</value>
-  </data>
   <data name="ksWSChangeWarning" xml:space="preserve">
     <value>You are changing the internal code for {0} writing systems related to {1}. This will affect every line of text in this project that uses this writing system.{2}{2}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to stop working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now.</value>
   </data>
@@ -978,9 +979,16 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="ksWhichIsComponent" xml:space="preserve">
     <value>Which item is really a component?</value>
   </data>
-  <data name="WritingSystemList_SelectAtLeastOneTooltip" xml:space="preserve">
+  <data name="FwWritingSystemSetupDlg_InvalidWsList" xml:space="preserve">
+    <value>Invalid writing system list</value>
+  </data>
+  <data name="FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX" xml:space="preserve">
+    <value>There should be no duplicate writing systems. Please remove the duplicate "{0}" or distinguish it by adding script, region, or variant information.</value>
+    <comment>{0} is the name of a writing system.</comment>
+  </data>
+  <data name="WritingSystemList_SelectAtLeastOneWs" xml:space="preserve">
     <value>Select at least one writing system</value>
-    <comment>Tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
+    <comment>Message and tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
   </data>
   <data name="WritingSystemList_NormalTooltip" xml:space="preserve">
     <value>Writing systems with selected checkboxes are always displayed.</value>
@@ -1073,5 +1081,13 @@ that also use the SIL Locale Data Repository</value>
   <data name="FwProjProperties_PickDifferentProjName" xml:space="preserve">
     <value>Pick a different project name</value>
     <comment>This is the title for the dialog that is shown when the user has entered unsupported characters in the project name, or has entered the same name as another project</comment>
+  </data>
+  <data name="xCopy" xml:space="preserve">
+    <value>{0} (Copy)</value>
+    <comment>{0} is an item in a list. It is a copy of another item in the list.</comment>
+  </data>
+  <data name="xOriginal" xml:space="preserve">
+    <value>{0} (Original)</value>
+    <comment>{0} is an item in a list. There is a copy of this item in the list.</comment>
   </data>
 </root>

@@ -106,6 +106,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid writing system list.
+        /// </summary>
+        public static string FwWritingSystemSetupDlg_InvalidWsList {
+            get {
+                return ResourceManager.GetString("FwWritingSystemSetupDlg_InvalidWsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There should be no duplicate writing systems. Please remove the duplicate &quot;{0}&quot; or distinguish it by adding script, region, or variant information..
+        /// </summary>
+        public static string FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX {
+            get {
+                return ResourceManager.GetString("FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bulk Replace Setup.
         /// </summary>
         public static string khtpBulkReplaceTitle {
@@ -1274,6 +1292,16 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cannot change the script, region, or variant of the default &quot;{0}&quot; (en) writing system because it is used as a fallback when other writing systems are missing text.
+        ///If you would like to create a variant of {0}, click the green plus (+)..
+        /// </summary>
+        public static string kstidCantChangeEnglishSRV {
+            get {
+                return ResourceManager.GetString("kstidCantChangeEnglishSRV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You cannot change the code &quot;en&quot; of the default writing system because it is used as a fallback when other writing systems are missing text..
         /// </summary>
         public static string kstidCantChangeEnglishWS {
@@ -1369,15 +1397,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string kstidDestFolderMustBeInLinkedFiles {
             get {
                 return ResourceManager.GetString("kstidDestFolderMustBeInLinkedFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The &quot;{0}&quot; writing system already exists. To distinguish the new writing system you are creating from &quot;{0}&quot;, add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, &quot;{0}&quot;, if it meets your needs..
-        /// </summary>
-        public static string kstidDistinguishNewWS {
-            get {
-                return ResourceManager.GetString("kstidDistinguishNewWS", resourceCulture);
             }
         }
         
@@ -2389,9 +2408,9 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         /// <summary>
         ///   Looks up a localized string similar to Select at least one writing system.
         /// </summary>
-        public static string WritingSystemList_SelectAtLeastOneTooltip {
+        public static string WritingSystemList_SelectAtLeastOneWs {
             get {
-                return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneTooltip", resourceCulture);
+                return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneWs", resourceCulture);
             }
         }
         
@@ -2420,6 +2439,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemSetup_SpecifyValidChars {
             get {
                 return ResourceManager.GetString("WritingSystemSetup_SpecifyValidChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Copy).
+        /// </summary>
+        public static string xCopy {
+            get {
+                return ResourceManager.GetString("xCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Original).
+        /// </summary>
+        public static string xOriginal {
+            get {
+                return ResourceManager.GetString("xOriginal", resourceCulture);
             }
         }
     }

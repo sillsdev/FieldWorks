@@ -213,9 +213,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var ws in model.WorkingList)
 			{
 				var label = ws.WorkingWs.DisplayLabel;
-				while (uniqueLabels.Contains(label))
+				if (uniqueLabels.Contains(label))
 				{
-					label += "(Copy)"; // TODO (Hasso) 2019.05: l10n, p14n
+					if (ws.OriginalWs != null && ws.OriginalWs.DisplayLabel == label)
+					{
+						label = string.Format(FwCoreDlgs.xOriginal, label);
+					}
+					else
+					{
+						do
+						{
+							label = string.Format(FwCoreDlgs.xCopy, label);
+						} while (uniqueLabels.Contains(label));
+					}
+
 				}
 				_writingSystemList.Items.Add(new WsListItem(label, ws.WorkingWs.LanguageTag), ws.InCurrentList);
 				uniqueLabels.Add(label);
@@ -250,7 +261,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool ShowSharedWsChangeWarning(string originalLanguageName)
 		{
 			var caption = FwCoreDlgs.ksPossibleDataLoss;
-			var msg = string.Format(FwCoreDlgs.ksWSChangeWarning, _model.WorkingList.Select(ws => ws.OriginalWs.LanguageName == originalLanguageName),
+			// REVIEW (Hasso) 2019.05: the LanguageName should not be used as the key here; the Code should be used.
+			var msg = string.Format(FwCoreDlgs.ksWSChangeWarning, _model.WorkingList.Select(ws => ws.OriginalWs?.LanguageName == originalLanguageName),
 				originalLanguageName, Environment.NewLine);
 			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
 
@@ -378,7 +390,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (_model != null)
 			{
-				_model.SelectWs(((WsListItem)_writingSystemList.SelectedItem).Code);
+				_model.SelectWs(_writingSystemList.SelectedIndex);
 			}
 		}
 
@@ -404,12 +416,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else
 			{
-				if (!_model.IsListValid)
+				if (!_model.IsAtLeastOneSelected)
 				{
-					_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_SelectAtLeastOneTooltip);
+					_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_SelectAtLeastOneWs);
 					_wsListPanel.Refresh();
-					MessageBox.Show("You must select one writing system, and there should be no duplicates",
-						"Invalid writing system list", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); // TODO (Hasso) 2019.05: L10n
+					MessageBox.Show(FwCoreDlgs.WritingSystemList_SelectAtLeastOneWs,
+						FwCoreDlgs.FwWritingSystemSetupDlg_InvalidWsList, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+				var dupWsName = _model.FirstDuplicateWs;
+				if (!string.IsNullOrEmpty(dupWsName))
+				{
+					MessageBox.Show(string.Format(FwCoreDlgs.FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX, dupWsName),
+						FwCoreDlgs.FwWritingSystemSetupDlg_InvalidWsList, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 				if (!customDigits.AreAllDigitsValid())
 				{
