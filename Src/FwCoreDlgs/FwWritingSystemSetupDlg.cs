@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void BindToModel(FwWritingSystemSetupModel model)
 		{
 			SuspendLayout();
+			model.ShowMessageBox = ShowMessageBox;
 			model.AcceptSharedWsChangeWarning = ShowSharedWsChangeWarning;
 			Text = model.Title;
 			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
@@ -95,9 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void BindHeader(FwWritingSystemSetupModel model)
 		{
 			_languageNameTextbox.TextChanged -= LanguageNameTextboxOnTextChanged;
-			_toolTip.SetToolTip(_shareWithSldrCheckbox,
-				"Sharing data will benefit any other programs" + Environment.NewLine +
-				" that also use the SIL Locale Data Repository");
+			_toolTip.SetToolTip(_shareWithSldrCheckbox, FwCoreDlgs.WritingSystemSetup_SharingDataWithSldr);
 			_shareWithSldrCheckbox.CheckedChanged -= ShareWithSldrCheckboxCheckChanged;
 			_ethnologueLink.Text = model.EthnologueLabel;
 			_languageCode.Text = model.LanguageCode;
@@ -168,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void BindConverterTab(FwWritingSystemSetupModel model)
 		{
-			m_lblEncodingConverter.Text = string.Format("&Encoding converter for importing {0}:", model.WritingSystemName);
+			m_lblEncodingConverter.Text = string.Format(FwCoreDlgs.WritingSystemSetup_EncodingConverterForImporting, model.WritingSystemName);
 			model.ShowModifyEncodingConverters = ShowModifyEncodingConverter;
 
 			BindEncodingConverterCombo(model);
@@ -197,7 +196,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void BindCharactersTab(FwWritingSystemSetupModel model)
 		{
-			m_lblValidCharacters.Text = string.Format("Specify the set of valid characters for {0}.", model.WritingSystemName);
+			m_lblValidCharacters.Text = string.Format(FwCoreDlgs.WritingSystemSetup_SpecifyValidChars, model.WritingSystemName);
 			model.ShowValidCharsEditor = ShowValidCharsEditor;
 		}
 
@@ -216,7 +215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var label = ws.WorkingWs.DisplayLabel;
 				while (uniqueLabels.Contains(label))
 				{
-					label += "(Copy)";
+					label += "(Copy)"; // TODO (Hasso) 2019.05: l10n, p14n
 				}
 				_writingSystemList.Items.Add(new WsListItem(label, ws.WorkingWs.LanguageTag), ws.InCurrentList);
 				uniqueLabels.Add(label);
@@ -243,6 +242,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Delegates (called by presentation model)
+		private void ShowMessageBox(string msg)
+		{
+			MessageBox.Show(msg, Text, MessageBoxButtons.OK);
+		}
+
 		private bool ShowSharedWsChangeWarning(string originalLanguageName)
 		{
 			var caption = FwCoreDlgs.ksPossibleDataLoss;
@@ -405,7 +409,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_toolTip.SetToolTip(_writingSystemList, FwCoreDlgs.WritingSystemList_SelectAtLeastOneTooltip);
 					_wsListPanel.Refresh();
 					MessageBox.Show("You must select one writing system, and there should be no duplicates",
-						"Invalid writing system list", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						"Invalid writing system list", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); // TODO (Hasso) 2019.05: L10n
 				}
 				if (!customDigits.AreAllDigitsValid())
 				{

@@ -1265,20 +1265,20 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot change the full code &quot;{0}&quot; of the default user writing system..
+        ///   Looks up a localized string similar to You cannot change the code of this writing system to &quot;{0}&quot; because the &quot;{1}&quot; writing system already exists..
         /// </summary>
-        public static string kstidCantChangeUserWS {
+        public static string kstidCantCauseDuplicateWS {
             get {
-                return ResourceManager.GetString("kstidCantChangeUserWS", resourceCulture);
+                return ResourceManager.GetString("kstidCantCauseDuplicateWS", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &quot;{0}&quot; writing system already exists. To distinguish the new writing system you are creating from &quot;{0}&quot;, add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, &quot;{0}&quot;, if it meets your needs..
+        ///   Looks up a localized string similar to You cannot change the code &quot;en&quot; of the default writing system because it is used as a fallback when other writing systems are missing text..
         /// </summary>
-        public static string kstidCantCreateDuplicateWS {
+        public static string kstidCantChangeEnglishWS {
             get {
-                return ResourceManager.GetString("kstidCantCreateDuplicateWS", resourceCulture);
+                return ResourceManager.GetString("kstidCantChangeEnglishWS", resourceCulture);
             }
         }
         
@@ -1369,6 +1369,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string kstidDestFolderMustBeInLinkedFiles {
             get {
                 return ResourceManager.GetString("kstidDestFolderMustBeInLinkedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &quot;{0}&quot; writing system already exists. To distinguish the new writing system you are creating from &quot;{0}&quot;, add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, &quot;{0}&quot;, if it meets your needs..
+        /// </summary>
+        public static string kstidDistinguishNewWS {
+            get {
+                return ResourceManager.GetString("kstidDistinguishNewWS", resourceCulture);
             }
         }
         
@@ -1766,15 +1775,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Distinguish New Writing System.
-        /// </summary>
-        public static string kstidNwsCaption {
-            get {
-                return ResourceManager.GetString("kstidNwsCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}, Multiple Writing Systems.
         /// </summary>
         public static string kstidOneStyleMultipleWS {
@@ -2050,15 +2050,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksWhichIsComponent {
             get {
                 return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writing System Already Exists.
-        /// </summary>
-        public static string ksWsAlreadyExists {
-            get {
-                return ResourceManager.GetString("ksWsAlreadyExists", resourceCulture);
             }
         }
         
@@ -2401,6 +2392,34 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemList_SelectAtLeastOneTooltip {
             get {
                 return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Encoding converter for importing {0}:.
+        /// </summary>
+        public static string WritingSystemSetup_EncodingConverterForImporting {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_EncodingConverterForImporting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sharing data will benefit any other programs
+        ///that also use the SIL Locale Data Repository.
+        /// </summary>
+        public static string WritingSystemSetup_SharingDataWithSldr {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_SharingDataWithSldr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify the set of valid characters for {0}..
+        /// </summary>
+        public static string WritingSystemSetup_SpecifyValidChars {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_SpecifyValidChars", resourceCulture);
             }
         }
     }

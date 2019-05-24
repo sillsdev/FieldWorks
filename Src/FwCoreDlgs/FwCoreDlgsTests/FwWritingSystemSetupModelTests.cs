@@ -185,13 +185,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void WritingSystemList_RightClickMenuItems_ChangeWithSelection()
 		{
-			var container = new TestWSContainer(new[] { "en", "fr" });
+			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Delete English" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Delete Spanish" }, menu);
 			testModel.SelectWs("fr");
 			menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
 			CollectionAssert.AreEqual(new[] { "Merge...", "Delete French" }, menu);
+		}
+
+		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, true)]
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, false)]
+		public void WritingSystemList_RightClickMenuItems_CannotMergeOrDeleteEnglishAnalyWs(FwWritingSystemSetupModel.ListType type, bool canDelete)
+		{
+			var container = new TestWSContainer(new[] { "en", "fr" }, new[] { "en", "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, type);
+			var menu = testModel.GetRightClickMenuItems();
+			Assert.That(menu.Count, Is.EqualTo(1));
+			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
+			Assert.That(menu.First().MenuText, Is.StringMatching("Delete English"));
 		}
 
 		[Test]
@@ -282,23 +294,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual(false, testModel.WorkingList[0].InCurrentList);
 		}
 
-		[TestCase("en", new[] { "en" }, false)] // Can't merge if there is no other writing system in the list
+		[TestCase("en", new[] { "fr", "en" }, false)] // Can't merge English
+		[TestCase("fr", new[] { "fr" }, false)] // Can't merge if there is no other writing system in the list
 		[TestCase("fr", new[] { "fr", "en" }, true)] // Can merge if there is more than one
-		public void WritingSystemList_CanMerge(string toMove, string[] options, bool expectedResult)
+		public void WritingSystemList_CanMerge(string toMerge, string[] options, bool expectedResult)
 		{
-			var container = new TestWSContainer(options);
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.SelectWs(toMove);
-			Assert.AreEqual(expectedResult, testModel.CanMerge());
+			foreach(var type in new[] { FwWritingSystemSetupModel.ListType.Analysis, FwWritingSystemSetupModel.ListType.Vernacular })
+			{
+				var container = new TestWSContainer(options, options);
+				var testModel = new FwWritingSystemSetupModel(container, type);
+				testModel.SelectWs(toMerge);
+				Assert.AreEqual(expectedResult, testModel.CanMerge());
+			}
 		}
 
-		[TestCase("en", new[] { "en" }, false)] // Can't delete if there is no other writing system in the list
-		[TestCase("fr", new[] { "fr", "en" }, true)] // Can delete if there is more than one
-		public void WritingSystemList_CanDelete(string toMove, string[] options, bool expectedResult)
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "en", new[] { "fr", "en" }, false)] // Can't delete English from the Analysis list
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "en-GB", new[] { "en-GB", "en" }, true)] // Can delete variants of English
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "en-fonipa", new[] { "en-fonipa", "en" }, true)] // Can delete variants of English
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "en-Zxxx-x-audio", new[] { "en-Zxxx-x-audio", "en" }, true)] // "		"
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "fr", new[] { "fr" }, false)] // Can't delete the only writing system in the list
+		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "fr", new[] { "fr", "en" }, true)] // Can delete if there is more than one
+		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "en", new[] { "fr", "en" }, true)] // Can delete English from the Vernacular list
+		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr", new[] { "fr" }, false)] // Can't delete the only writing system in the list
+		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr", new[] { "fr", "en" }, true)] // Can delete if there is more than one
+		public void WritingSystemList_CanDelete(FwWritingSystemSetupModel.ListType type, string toRemove, string[] options, bool expectedResult)
 		{
-			var container = new TestWSContainer(options);
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.SelectWs(toMove);
+			var container = new TestWSContainer(options, options);
+			var testModel = new FwWritingSystemSetupModel(container, type);
+			testModel.SelectWs(toRemove);
 			Assert.AreEqual(expectedResult, testModel.CanDelete());
 		}
 
@@ -435,9 +458,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
 			mockWsManager.Expect(manager => manager.Replace(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
 
-			var container = new TestWSContainer(new[] { "en", "fr" });
+			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
 			var enWs = container.VernacularWritingSystems.First();
+			testModel.ShowMessageBox = ShowMessageBox;
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			testModel.Save();
@@ -581,9 +605,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void ChangeLanguage_ChangesAllRelated()
 		{
-			var container = new TestWSContainer(new[] { "en", "en-Arab", "en-GB", "en-fonipa", "fr" });
+			var container = new TestWSContainer(new[] { "fr", "fr-Arab", "fr-GB", "fr-fonipa", "es" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.SelectWs("en-GB");
+			testModel.SelectWs("fr-GB");
+			testModel.ShowMessageBox = ShowMessageBox;
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
@@ -592,8 +617,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
 			testModel.SelectWs("auc-Arab");
 			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
-			testModel.SelectWs("fr");
-			Assert.AreEqual("French", testModel.CurrentWsSetupModel.CurrentLanguageName);
+			testModel.SelectWs("es");
+			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
 		}
 
 		[Test]
@@ -602,6 +627,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "en-GB", "en-fonipa", "auc" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("en-GB");
+			testModel.ShowMessageBox = ShowMessageBox;
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.AreEqual("English", testModel.CurrentWsSetupModel.CurrentLanguageName);
@@ -616,11 +642,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var wsManager = Cache.ServiceLocator.WritingSystemManager;
 			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-			ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+			entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
 
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(langProj, FwWritingSystemSetupModel.ListType.Vernacular, wsManager, Cache);
 			testModel.SelectWs("fr");
+			testModel.ShowMessageBox = ShowMessageBox;
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
@@ -628,11 +655,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("auc", langProj.CurVernWss);
 		}
 
-		private bool ShowChangeLanguage(out LanguageInfo info)
+		private static bool ShowChangeLanguage(out LanguageInfo info)
 		{
 			info = new LanguageInfo { DesiredName = "TestName", ThreeLetterTag = "auc", LanguageTag = "auc" };
 			return true;
 		}
+
+		private static void ShowMessageBox(string text) {}
 
 		[Test]
 		public void LanguageCode_ChangesOnSwitch()
@@ -833,7 +862,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_MergeSelected_SaveDoesNotCrashWithNoCache()
 		{
-			var container = new TestWSContainer(new[] { "en", "fr" });
+			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
 			testModel.ConfirmDeleteWritingSystem = label => { return true; };
 			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) => {
