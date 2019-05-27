@@ -606,4 +606,13 @@
   <data name="ConfigureReversalIndex" xml:space="preserve">
     <value>Configure Reversal Index...</value>
   </data>
+  <data name="Delete_Media_Link" xml:space="preserve">
+    <value>Delete Media Link</value>
+  </data>
+  <data name="Delete_this_Media_Link" xml:space="preserve">
+    <value>Delete this Media Link</value>
+  </data>
+  <data name="Delete_Translation" xml:space="preserve">
+    <value>Delete Translation</value>
+  </data>
 </root>

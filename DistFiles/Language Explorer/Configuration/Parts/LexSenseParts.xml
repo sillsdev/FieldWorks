@@ -714,7 +714,7 @@
 		</part>
 		<part id="LexExampleSentence-Detail-TranslationsAllA" type="Detail">
 			<seq field="Translations" ghost="Translation" ghostWs="analysis" ghostLabel="Translation"
-				ghostInitMethod="SetTypeToFreeTrans" />
+				ghostInitMethod="SetTypeToFreeTrans" menu="mnuDataTree_Translations" />
 		</part>
 		<part id="LexExampleSentence-Detail-Reference" type="Detail">
 			<slice field="Reference" label="Reference" editor="String" weight="light" />

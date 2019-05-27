@@ -170,9 +170,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
 		}
 
-		private Tuple<bool, bool> CanCmdParseAllWords => new Tuple<bool, bool>(true, Connection != null && Connection.GetQueueSize(ParserPriority.Low) == 0);
+		private Tuple<bool, bool> CanCmdParseAllWords => new Tuple<bool, bool>(true, Connection == null);
 
-		private Tuple<bool, bool> CanCmdReparseAllWords => new Tuple<bool, bool>(true, Connection == null);
+		private Tuple<bool, bool> CanCmdReparseAllWords => new Tuple<bool, bool>(true, Connection != null && Connection.GetQueueSize(ParserPriority.Low) == 0);
 
 		private Tuple<bool, bool> CanCmdReInitializeParser => new Tuple<bool, bool>(true, Connection != null);
 
@@ -180,11 +180,32 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private Tuple<bool, bool> CanCmdTryAWord => new Tuple<bool, bool>(true, CurrentWordform != null);
 
-		private Tuple<bool, bool> CanCmdParseWordsInCurrentText => new Tuple<bool, bool>(true, CurrentText != null);
+		private Tuple<bool, bool> CanCmdParseWordsInCurrentText
+		{
+			get
+			{
+				var enable = CurrentText != null;
+				return new Tuple<bool, bool>(enable, enable);
+			}
+		}
 
-		private Tuple<bool, bool> CanCmdParseCurrentWord => new Tuple<bool, bool>(true, CurrentWordform != null);
+		private Tuple<bool, bool> CanCmdParseCurrentWord
+		{
+			get
+			{
+				var enable = CurrentWordform != null;
+				return new Tuple<bool, bool>(enable, enable);
+			}
+		}
 
-		private Tuple<bool, bool> CanCmdClearSelectedWordParserAnalyses => new Tuple<bool, bool>(true, CurrentWordform != null);
+		private Tuple<bool, bool> CanCmdClearSelectedWordParserAnalyses
+		{
+			get
+			{
+				var enable = CurrentWordform != null;
+				return new Tuple<bool, bool>(enable, enable);
+			}
+		}
 
 		private Tuple<bool, bool> CanChooseParser => new Tuple<bool, bool>(true, true);
 

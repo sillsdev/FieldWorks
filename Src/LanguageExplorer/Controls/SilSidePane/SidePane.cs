@@ -197,9 +197,13 @@ namespace LanguageExplorer.Controls.SilSidePane
 			TabIndex = 0;
 			ItemAreaStyle = SidePaneItemAreaStyle.List;
 			// Add areas and tools.
+			var currentAreaMenuIdx = 2;
 			foreach (var area in areaRepository.AllAreasInOrder)
 			{
 				var localizedAreaName = StringTable.Table.LocalizeLiteralValue(area.UiName);
+				var currentAreaMenu = (ToolStripMenuItem)viewToolStripMenuItem.DropDownItems[currentAreaMenuIdx++];
+				currentAreaMenu.Text = localizedAreaName;
+				currentAreaMenu.Image = area.Icon;
 				var tab = new Tab(localizedAreaName)
 				{
 					Icon = area.Icon,
@@ -210,9 +214,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 				{
 					((IListArea)area).ListAreaTab = tab;
 				}
-				var currentAreaMenu = new ToolStripMenuItem(localizedAreaName, area.Icon);
-				var insertLocation = viewToolStripMenuItem.DropDownItems.Count - 2;
-				viewToolStripMenuItem.DropDownItems.Insert(insertLocation, currentAreaMenu);
 				AddTab(tab);
 				// Add tools for area.
 				foreach (var tool in area.AllToolsInOrder)

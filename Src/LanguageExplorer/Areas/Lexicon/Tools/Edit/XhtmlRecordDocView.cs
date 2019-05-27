@@ -33,10 +33,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			_uiWidgetController = uiWidgetController;
 			// Add handler stuff.
-			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
-			_uiWidgetController.AddHandlers(userController);
 		}
+
+		#region Overrides of MainUserControl
+		/// <inheritdoc />
+		internal override void RegisterUiWidgets(bool shouldRegister)
+		{
+			if (shouldRegister)
+			{
+				var userController = new UserControlUiWidgetParameterObject(this);
+				// Add handler stuff from this class and possibly from subclasses.
+				userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
+				_uiWidgetController.AddHandlers(userController);
+			}
+			else
+			{
+				_uiWidgetController.RemoveUserControlHandlers(this);
+			}
+		}
+		#endregion
 
 		#region Overrides of RecordView
 		/// <summary />
@@ -132,10 +147,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
-			if (!ContainsFocus)
-			{
-				return;
-			}
 			XhtmlDocView.PrintPage(m_mainView);
 		}
 

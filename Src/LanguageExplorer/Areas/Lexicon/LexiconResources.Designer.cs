@@ -243,6 +243,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Media Link.
+        /// </summary>
+        internal static string Delete_Media_Link {
+            get {
+                return ResourceManager.GetString("Delete_Media_Link", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Picture.
         /// </summary>
         internal static string Delete_Picture {
@@ -279,11 +288,29 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete this Media Link.
+        /// </summary>
+        internal static string Delete_this_Media_Link {
+            get {
+                return ResourceManager.GetString("Delete_this_Media_Link", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Pronunciation.
         /// </summary>
         internal static string Delete_this_Pronunciation {
             get {
                 return ResourceManager.GetString("Delete_this_Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Translation.
+        /// </summary>
+        internal static string Delete_Translation {
+            get {
+                return ResourceManager.GetString("Delete_Translation", resourceCulture);
             }
         }
         

@@ -274,18 +274,18 @@ namespace LanguageExplorer
 
 		private sealed class MainMenusController
 		{
-			private readonly IReadOnlyDictionary<MainMenu, Dictionary<Command, ToolStripItem>> _supportedMenuItems;
+			private readonly IReadOnlyDictionary<MainMenu, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>> _supportedMenuItems;
 			private readonly IReadOnlyDictionary<MainMenu, MainMenuController> _mainMenuControllers;
 
 			internal MainMenusController(MainMenusParameterObject mainMenusParameterObject)
 			{
 				_supportedMenuItems = mainMenusParameterObject.SupportedMenuItems;
-				_mainMenuControllers = mainMenusParameterObject.MainMenus.ToDictionary(mainMenuKvp => mainMenuKvp.Key, mainMenuKvp => new MainMenuController(mainMenuKvp.Value, _supportedMenuItems[mainMenuKvp.Key]));
+				_mainMenuControllers = mainMenusParameterObject.MainMenus.ToDictionary(mainMenuKvp => mainMenuKvp.Key, mainMenuKvp => new MainMenuController(mainMenuKvp.Value, _supportedMenuItems[mainMenuKvp.Key].Item1, _supportedMenuItems[mainMenuKvp.Key].Item2));
 			}
 
 			internal IReadOnlyDictionary<Command, ToolStripItem> GetMenuCommands(MainMenu mainMenu)
 			{
-				return _supportedMenuItems[mainMenu];
+				return _supportedMenuItems[mainMenu].Item1;
 			}
 
 			internal void AddGlobalHandlers(IReadOnlyDictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalMenuItems)
@@ -348,41 +348,32 @@ namespace LanguageExplorer
 			{
 				private readonly ToolStripMenuItem _mainMenu;
 				private readonly IReadOnlyDictionary<Command, ToolStripItem> _supportedMenuItems;
+				private readonly List<ISeparatorMenuBundle> _separatorMenuBundles;
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _globalCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _commandsForArea;
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _commandsForTool;
 				private readonly List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>> _commandsForUserControls = new List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>>();
 				private readonly Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _combinedCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
 
-				internal MainMenuController(ToolStripMenuItem mainMenu, IReadOnlyDictionary<Command, ToolStripItem> supportedMenuItems)
+				internal MainMenuController(ToolStripMenuItem mainMenu, IReadOnlyDictionary<Command, ToolStripItem> supportedMenuItems, List<ISeparatorMenuBundle> separatorMenuBundles)
 				{
 					_mainMenu = mainMenu;
-					_supportedMenuItems = supportedMenuItems;
-				}
-
-				private void ConditionallyAddDropDownHandler()
-				{
-					if (_combinedCommands.Any())
-					{
-						// Already added it.
-						return;
-					}
 					_mainMenu.DropDownOpening += MainMenu_DropDownOpening;
-				}
-
-				private void ConditionallyRemoveDropDownHandler()
-				{
-					if (_combinedCommands.Any())
+					_mainMenu.DropDownOpened += MainMenu_DropDownOpened;
+					_supportedMenuItems = supportedMenuItems;
+					_separatorMenuBundles = separatorMenuBundles;
+					foreach (var item in _supportedMenuItems.Values)
 					{
-						// Can't remove it, while there are still commands.
-						return;
+						var itemAsToolStripDropDownItem = item as ToolStripDropDownItem;
+						if (itemAsToolStripDropDownItem != null && itemAsToolStripDropDownItem.HasDropDownItems)
+						{
+							((ToolStripDropDownItem)item).DropDownOpened += MainMenu_DropDownOpened;
+						}
 					}
-					_mainMenu.DropDownOpening -= MainMenu_DropDownOpening;
 				}
 
 				internal void AddGlobalHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					ConditionallyAddDropDownHandler();
 					foreach (var commandKvp in commands)
 					{
 						var commandKey = commandKvp.Key;
@@ -397,7 +388,6 @@ namespace LanguageExplorer
 
 				internal void AddAreaHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					ConditionallyAddDropDownHandler();
 					_commandsForArea = commands;
 					foreach (var commandKvp in _commandsForArea)
 					{
@@ -410,7 +400,6 @@ namespace LanguageExplorer
 
 				internal void AddToolHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					ConditionallyAddDropDownHandler();
 					_commandsForTool = commands;
 					foreach (var commandKvp in _commandsForTool)
 					{
@@ -423,7 +412,6 @@ namespace LanguageExplorer
 
 				internal void AddUserControlHandlers(UserControl userControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					ConditionallyAddDropDownHandler();
 					_commandsForUserControls.Add(new Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>(userControl, commands));
 					foreach (var commandKvp in commands)
 					{
@@ -450,7 +438,6 @@ namespace LanguageExplorer
 						currentSubmenuOfMainMenu.Enabled = false;
 						currentSubmenuOfMainMenu.Tag = null;
 					}
-					ConditionallyRemoveDropDownHandler();
 				}
 
 				internal void RemoveToolHandlers()
@@ -469,7 +456,6 @@ namespace LanguageExplorer
 						currentSubmenuOfMainMenu.Enabled = false;
 						currentSubmenuOfMainMenu.Tag = null;
 					}
-					ConditionallyRemoveDropDownHandler();
 				}
 
 				internal void RemoveUserControlHandlers(UserControl userControl)
@@ -490,7 +476,6 @@ namespace LanguageExplorer
 						currentSubmenuOfMainMenu.Enabled = false;
 						currentSubmenuOfMainMenu.Tag = null;
 					}
-					ConditionallyRemoveDropDownHandler();
 				}
 
 				private void MainMenu_DropDownOpening(object sender, EventArgs e)
@@ -503,44 +488,37 @@ namespace LanguageExplorer
 						currentMenuItem.Visible = canDo.Item1;
 						currentMenuItem.Enabled = canDo.Item2;
 					}
+				}
+
+				private void MainMenu_DropDownOpened(object sender, EventArgs e)
+				{
 					// Make separators visible, if there are any visible (even if disabled) menus prior to the given separator.
-					var separatorShouldBeVisible = false;
-					foreach (ToolStripItem menuItem in _mainMenu.DropDownItems)
+					if (!_separatorMenuBundles.Any())
 					{
-						if (menuItem is ToolStripSeparator)
+						// Nothing to do.
+						return;
+					}
+					foreach (var separatorMenuBundle in _separatorMenuBundles)
+					{
+						var hasPrecedingVisible = false;
+						foreach (var precedingItem in separatorMenuBundle.PrecedingItems)
 						{
-							menuItem.Visible = separatorShouldBeVisible;
-							separatorShouldBeVisible = false;
-						}
-						else
-						{
-							var asToolStripMenuItem = (ToolStripMenuItem)menuItem;
-							if (asToolStripMenuItem.Visible)
+							if (precedingItem.Visible)
 							{
-								separatorShouldBeVisible = true;
-							}
-							// Checkout nested menus.
-							if (asToolStripMenuItem.DropDownItems.Count > 0)
-							{
-								var nestedSeparatorShouldBeVisible = false;
-								foreach (ToolStripItem nestedMenuItem in asToolStripMenuItem.DropDownItems)
-								{
-									if (nestedMenuItem is ToolStripSeparator)
-									{
-										nestedMenuItem.Visible = nestedSeparatorShouldBeVisible;
-										nestedSeparatorShouldBeVisible = false;
-									}
-									else
-									{
-										var asNestedToolStripMenuItem = (ToolStripMenuItem)nestedMenuItem;
-										if (asNestedToolStripMenuItem.Visible)
-										{
-											nestedSeparatorShouldBeVisible = true;
-										}
-									}
-								}
+								hasPrecedingVisible = true;
+								break;
 							}
 						}
+						var hasFollowingVisible = false;
+						foreach (var followingItem in separatorMenuBundle.FollowingItems)
+						{
+							if (followingItem.Visible)
+							{
+								hasFollowingVisible = true;
+								break;
+							}
+						}
+						separatorMenuBundle.Separator.Visible = hasPrecedingVisible && hasFollowingVisible;
 					}
 				}
 			}
@@ -548,18 +526,18 @@ namespace LanguageExplorer
 
 		private sealed class ToolBarsController
 		{
-			private readonly IReadOnlyDictionary<ToolBar, Dictionary<Command, ToolStripItem>> _supportedToolBarItems;
+			private readonly IReadOnlyDictionary<ToolBar, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>> _supportedToolBarItems;
 			private readonly IReadOnlyDictionary<ToolBar, ToolBarController> _toolBarControllers;
 
 			internal ToolBarsController(MainToolBarsParameterObject mainToolBarsParameterObject)
 			{
 				_supportedToolBarItems = mainToolBarsParameterObject.SupportedToolBarItems;
-				_toolBarControllers = mainToolBarsParameterObject.MainToolBar.ToDictionary(mainToolBarKvp => mainToolBarKvp.Key, mainToolBarKvp => new ToolBarController(mainToolBarKvp.Value, _supportedToolBarItems[mainToolBarKvp.Key]));
+				_toolBarControllers = mainToolBarsParameterObject.MainToolBar.ToDictionary(mainToolBarKvp => mainToolBarKvp.Key, mainToolBarKvp => new ToolBarController(mainToolBarKvp.Value, _supportedToolBarItems[mainToolBarKvp.Key].Item1, _supportedToolBarItems[mainToolBarKvp.Key].Item2));
 			}
 
 			internal IReadOnlyDictionary<Command, ToolStripItem> GetToolBarCommands(ToolBar toolBar)
 			{
-				return _supportedToolBarItems[toolBar];
+				return _supportedToolBarItems[toolBar].Item1;
 			}
 
 			internal void AddGlobalHandlers(IReadOnlyDictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>> globalToolBarItems)
@@ -622,16 +600,18 @@ namespace LanguageExplorer
 			{
 				private readonly ToolStrip _toolStrip;
 				private readonly IReadOnlyDictionary<Command, ToolStripItem> _supportedToolBarItems;
+				private readonly List<ISeparatorToolStripBundle> _separatorToolStripBundles;
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _globalCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _commandsForArea;
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _commandsForTool;
 				private readonly List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>> _commandsForUserControls = new List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>>();
 				private readonly Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _combinedCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
 
-				internal ToolBarController(ToolStrip toolStrip, IReadOnlyDictionary<Command, ToolStripItem> supportedToolBarItems)
+				internal ToolBarController(ToolStrip toolStrip, IReadOnlyDictionary<Command, ToolStripItem> supportedToolBarItems, List<ISeparatorToolStripBundle> separatorToolStripBundles)
 				{
 					_toolStrip = toolStrip;
 					_supportedToolBarItems = supportedToolBarItems;
+					_separatorToolStripBundles = separatorToolStripBundles;
 				}
 
 				internal void AddGlobalHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
@@ -753,21 +733,32 @@ namespace LanguageExplorer
 						currentToolStripItem.Enabled = canDo.Item2;
 					}
 					// Make separators visible, if there are any visible (even if disabled) buttons prior to the given separator.
-					var separatorShouldBeVisible = false;
-					foreach (ToolStripItem menuItem in _toolStrip.Items)
+					if (!_separatorToolStripBundles.Any())
 					{
-						if (menuItem is ToolStripSeparator)
+						// Nothing to do.
+						return;
+					}
+					foreach (var separatorMenuBundle in _separatorToolStripBundles)
+					{
+						var hasPrecedingVisible = false;
+						foreach (var precedingItem in separatorMenuBundle.PrecedingItems)
 						{
-							menuItem.Visible = separatorShouldBeVisible;
-							separatorShouldBeVisible = false;
-						}
-						else
-						{
-							if (menuItem.Visible)
+							if (precedingItem.Visible)
 							{
-								separatorShouldBeVisible = true;
+								hasPrecedingVisible = true;
+								break;
 							}
 						}
+						var hasFollowingVisible = false;
+						foreach (var followingItem in separatorMenuBundle.FollowingItems)
+						{
+							if (followingItem.Visible)
+							{
+								hasFollowingVisible = true;
+								break;
+							}
+						}
+						separatorMenuBundle.Separator.Visible = hasPrecedingVisible && hasFollowingVisible;
 					}
 				}
 			}

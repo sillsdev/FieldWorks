@@ -144,9 +144,9 @@ namespace LanguageExplorer.Impls
 
 		#region Cache main menu items
 
-		private Dictionary<MainMenu, Dictionary<Command, ToolStripItem>> CacheMenuItems()
+		private Dictionary<MainMenu, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>> CacheMenuItems()
 		{
-			return new Dictionary<MainMenu, Dictionary<Command, ToolStripItem>>
+			return new Dictionary<MainMenu, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>>
 			{
 				{ MainMenu.File,  CacheFileMenuItems()},
 				{ MainMenu.SendReceive,  CacheSendReceiveMenuItems()},
@@ -162,9 +162,24 @@ namespace LanguageExplorer.Impls
 			};
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheFileMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheFileMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripFileMenuSeparator1, new List<ToolStripMenuItem> { CmdNewLangProject, CmdChooseLangProject }, new List<ToolStripMenuItem> { projectManagementToolStripMenuItem });
+			var separatorCache3 = new SeparatorMenuBundle(toolStripFileMenuSeparator3, separatorCache1, new List<ToolStripMenuItem> { CmdArchiveWithRamp, CmdUploadToWebonary });
+			var separatorCache4 = new SeparatorMenuBundle(toolStripFileMenuSeparator4, separatorCache3, new List<ToolStripMenuItem> { CmdPrint });
+			var separatorCache5 = new SeparatorMenuBundle(toolStripFileMenuSeparator5, separatorCache4, new List<ToolStripMenuItem> { ImportMenu, CmdExport, CmdExportInterlinear, CmdExportDiscourseChart });
+			var separatorCache6 = new SeparatorMenuBundle(toolStripFileMenuSeparator6, separatorCache5, new List<ToolStripMenuItem> { CmdClose });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				// Sub-menus
+				new StandAloneSeparatorMenuBundle(toolStripFileMenuSeparator2, new List<ToolStripMenuItem> { CmdProjectProperties, CmdBackup, CmdRestoreFromBackup }, new List<ToolStripMenuItem> { CmdProjectLocation, CmdDeleteProject, CmdCreateProjectShortcut }),
+				separatorCache3,
+				separatorCache4,
+				separatorCache5,
+				separatorCache6
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{ Command.CmdNewLangProject, CmdNewLangProject },
 				{ Command.CmdChooseLangProject, CmdChooseLangProject },
@@ -198,11 +213,27 @@ namespace LanguageExplorer.Impls
 				{ Command.Separator6, toolStripFileMenuSeparator6 },
 				{ Command.CmdClose, CmdClose }
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheSendReceiveMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheSendReceiveMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripSendReceiveMenuSeparator1,
+				new List<ToolStripMenuItem> { CmdFLExBridge, CmdViewMessages, CmdLiftBridge, CmdViewLiftMessages },
+				new List<ToolStripMenuItem> { CmdObtainAnyFlexBridgeProject, CmdObtainLiftProject });
+			var separatorCache2 = new SeparatorMenuBundle(toolStripSendReceiveMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { CmdObtainFirstFlexBridgeProject, CmdObtainFirstLiftProject });
+			var separatorCache3 = new SeparatorMenuBundle(toolStripSendReceiveMenuSeparator3,
+				separatorCache2,
+				new List<ToolStripMenuItem> { CmdHelpChorus, CmdCheckForFlexBridgeUpdates, CmdHelpAboutFLEXBridge });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2,
+				separatorCache3
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdFLExBridge, CmdFLExBridge},
 				{Command.CmdViewMessages, CmdViewMessages},
@@ -219,41 +250,79 @@ namespace LanguageExplorer.Impls
 				{Command.CmdCheckForFlexBridgeUpdates, CmdCheckForFlexBridgeUpdates},
 				{Command.CmdHelpAboutFLEXBridge, CmdHelpAboutFLEXBridge}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheEditMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheEditMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripEditMenuSeparator1,
+				new List<ToolStripMenuItem> { undoToolStripMenuItem, redoToolStripMenuItem },
+				new List<ToolStripMenuItem> { cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem });
+			var separatorCache2 = new SeparatorMenuBundle(toolStripEditMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { pasteHyperlinkToolStripMenuItem, copyLocationAsHyperlinkToolStripMenuItem });
+			var separatorCache3 = new SeparatorMenuBundle(toolStripEditMenuSeparator3,
+				separatorCache2,
+				new List<ToolStripMenuItem> { CmdGoToEntry, CmdGoToRecord, CmdFindAndReplaceText, CmdReplaceText });
+			var separatorCache4 = new SeparatorMenuBundle(toolStripEditMenuSeparator4,
+				separatorCache3,
+				new List<ToolStripMenuItem> { selectAllToolStripMenuItem, deleteToolStripMenuItem });
+			var separatorCache5 = new SeparatorMenuBundle(toolStripEditMenuSeparator5,
+				separatorCache4,
+				new List<ToolStripMenuItem> { CmdGoToReversalEntry, CmdGoToWfiWordform, CmdDeleteCustomList });
+			var separatorCaches = new List<ISeparatorMenuBundle>
 			{
-				{ Command.CmdUndo,  undoToolStripMenuItem},
-				{ Command.CmdRedo,  redoToolStripMenuItem},
-				{ Command.Separator1,  toolStripEditMenuSeparator1},
-				{ Command.CmdCut,  cutToolStripMenuItem},
-				{ Command.CmdCopy,  copyToolStripMenuItem},
-				{ Command.CmdPaste,  pasteToolStripMenuItem},
-				{ Command.Separator2,  toolStripEditMenuSeparator2},
-				{ Command.CmdPasteHyperlink,  pasteHyperlinkToolStripMenuItem},
-				{ Command.CmdCopyLocationAsHyperlink,  copyLocationAsHyperlinkToolStripMenuItem},
-				{ Command.Separator3,  toolStripEditMenuSeparator3},
-				{ Command.CmdGoToEntry,  CmdGoToEntry},
-				{ Command.CmdGoToRecord,  CmdGoToRecord},
-				{ Command.CmdFindAndReplaceText,  CmdFindAndReplaceText},
-				{ Command.CmdReplaceText,  CmdReplaceText},
-				{ Command.Separator4,  toolStripEditMenuSeparator4},
-				{ Command.CmdSelectAll,  selectAllToolStripMenuItem},
-				{ Command.CmdDeleteRecord,  deleteToolStripMenuItem},
-				{ Command.Separator5,  toolStripEditMenuSeparator5},
-				{ Command.CmdGoToReversalEntry,  CmdGoToReversalEntry},
-				{ Command.CmdGoToWfiWordform,  CmdGoToWfiWordform},
-				{ Command.CmdDeleteCustomList,  CmdDeleteCustomList}
+				separatorCache1,
+				separatorCache2,
+				separatorCache3,
+				separatorCache4,
+				separatorCache5
 			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdUndo, undoToolStripMenuItem},
+				{ Command.CmdRedo, redoToolStripMenuItem},
+				{ Command.Separator1, toolStripEditMenuSeparator1},
+				{ Command.CmdCut, cutToolStripMenuItem},
+				{ Command.CmdCopy, copyToolStripMenuItem},
+				{ Command.CmdPaste, pasteToolStripMenuItem},
+				{ Command.Separator2, toolStripEditMenuSeparator2},
+				{ Command.CmdPasteHyperlink, pasteHyperlinkToolStripMenuItem},
+				{ Command.CmdCopyLocationAsHyperlink, copyLocationAsHyperlinkToolStripMenuItem},
+				{ Command.Separator3, toolStripEditMenuSeparator3},
+				{ Command.CmdGoToEntry, CmdGoToEntry},
+				{ Command.CmdGoToRecord, CmdGoToRecord},
+				{ Command.CmdFindAndReplaceText, CmdFindAndReplaceText},
+				{ Command.CmdReplaceText, CmdReplaceText},
+				{ Command.Separator4, toolStripEditMenuSeparator4},
+				{ Command.CmdSelectAll, selectAllToolStripMenuItem},
+				{ Command.CmdDeleteRecord, deleteToolStripMenuItem},
+				{ Command.Separator5, toolStripEditMenuSeparator5},
+				{ Command.CmdGoToReversalEntry, CmdGoToReversalEntry},
+				{ Command.CmdGoToWfiWordform, CmdGoToWfiWordform},
+				{ Command.CmdDeleteCustomList, CmdDeleteCustomList}
+			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheViewMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheViewMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripViewMenuSeparator1,
+				new List<ToolStripMenuItem> { refreshToolStripMenuItem },
+				new List<ToolStripMenuItem> { LexicalToolsList, WordToolsList, GrammarToolsList, NotebookToolsList, ListsToolsList, ShowInvisibleSpaces,
+					Show_DictionaryPubPreview, ShowHiddenFields });
+			var separatorCache2 = new SeparatorMenuBundle(toolStripViewMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { filtersToolStripMenuItem, CmdChooseTexts });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdRefresh, refreshToolStripMenuItem},
+				{Command.Separator1, toolStripViewMenuSeparator1},
 				{Command.LexicalToolsList, LexicalToolsList},
 				{Command.WordToolsList, WordToolsList},
 				{Command.GrammarToolsList, GrammarToolsList},
@@ -267,11 +336,24 @@ namespace LanguageExplorer.Impls
 					{Command.NoFilter, noFilterToolStripMenuItem},
 				{Command.CmdChooseTexts, CmdChooseTexts}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheDataMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheDataMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(dataMenuSeparator1,
+				new List<ToolStripMenuItem> { _data_First, _data_Previous, _data_Next, _data_Last },
+				new List<ToolStripMenuItem> { CmdApproveAndMoveNext, CmdApproveForWholeTextAndMoveNext, CmdNextIncompleteBundle, CmdApprove, ApproveAnalysisMovementMenu,
+					BrowseMovementMenu, CmdMakePhrase, CmdBreakPhrase });
+			var separatorCache2 = new SeparatorMenuBundle(dataMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { CmdRepeatLastMoveLeft, CmdRepeatLastMoveRight, CmdApproveAll });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdFirstRecord, _data_First},
 				{Command.CmdPreviousRecord, _data_Previous},
@@ -299,11 +381,66 @@ namespace LanguageExplorer.Impls
 				{Command.CmdRepeatLastMoveRight, CmdRepeatLastMoveRight},
 				{Command.CmdApproveAll, CmdApproveAll}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheInsertMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheInsertMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(insertMenuSeparator1,
+				new List<ToolStripMenuItem> { CmdInsertLexEntry, CmdInsertSense, CmdInsertVariant, CmdDataTree_Insert_AlternateForm, CmdInsertReversalEntry,
+					CmdDataTree_Insert_Pronunciation, CmdInsertMediaFile, CmdDataTree_Insert_Etymology },
+				new List<ToolStripMenuItem> { CmdInsertSubsense, CmdInsertPicture, CmdInsertExtNote, CmdInsertText });
+			var separatorCache2 = new SeparatorMenuBundle(insertMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { CmdAddNote, CmdAddWordGlossesToFreeTrans, ClickInsertsInvisibleSpace, CmdGuessWordBreaks });
+			var separatorCache3 = new SeparatorMenuBundle(insertMenuSeparator3,
+				separatorCache2,
+				new List<ToolStripMenuItem>
+				{
+					CmdImportWordSet, CmdInsertHumanApprovedAnalysis, CmdInsertRecord, CmdInsertSubrecord, CmdInsertSubsubrecord, CmdAddToLexicon, CmdInsertSemDom,
+					CmdDataTree_Insert_SemanticDomain, CmdInsertAnnotationDef, CmdInsertPossibility, CmdInsertCustomItem, CmdInsertMorphType, CmdInsertLexEntryInflType, CmdInsertLexEntryType,
+					CmdDataTree_Insert_LexEntryInflType, CmdDataTree_Insert_LexEntryType, CmdInsertAnthroCategory, CmdDataTree_Insert_AnthroCategory, CmdInsertPerson, CmdInsertLocation,
+					CmdDataTree_Insert_Location, CmdInsertLexRefType, CmdInsertFeatureType, CmdDataTree_Insert_Possibility, CmdDataTree_Insert_CustomItem
+				});
+			var separatorCache4 = new SeparatorMenuBundle(insertMenuSeparator4,
+				separatorCache3,
+				new List<ToolStripMenuItem> { CmdAddCustomList, CmdInsertPOS, CmdDataTree_Insert_POS_SubPossibilities, CmdDataTree_Insert_POS_AffixTemplate, CmdDataTree_Insert_POS_AffixSlot, CmdDataTree_Insert_POS_InflectionClass });
+			var separatorCache5 = new SeparatorMenuBundle(insertMenuSeparator5,
+				separatorCache4,
+				new List<ToolStripMenuItem> { CmdInsertEndocentricCompound, CmdInsertExocentricCompound, CmdInsertExceptionFeature, CmdInsertPhonologicalClosedFeature, CmdInsertClosedFeature, CmdInsertComplexFeature, CmdDataTree_Insert_ClosedFeature_Value });
+			var separatorCache6 = new SeparatorMenuBundle(insertMenuSeparator6,
+				separatorCache5,
+				new List<ToolStripMenuItem> { CmdInsertPhoneme, CmdDataTree_Insert_Phoneme_Code });
+			var separatorCache7 = new SeparatorMenuBundle(insertMenuSeparator7,
+				separatorCache6,
+				new List<ToolStripMenuItem> { CmdInsertSegmentNaturalClasses, CmdInsertFeatureNaturalClasses });
+			var separatorCache8 = new SeparatorMenuBundle(insertMenuSeparator8,
+				separatorCache7,
+				new List<ToolStripMenuItem> { CmdInsertPhEnvironment });
+			var separatorCache9 = new SeparatorMenuBundle(insertMenuSeparator9,
+				separatorCache8,
+				new List<ToolStripMenuItem> { CmdInsertPhRegularRule, CmdInsertPhMetathesisRule });
+			var separatorCache10 = new SeparatorMenuBundle(insertMenuSeparator10,
+				separatorCache9,
+				new List<ToolStripMenuItem> { CmdInsertMorphemeACP, CmdInsertAllomorphACP, CmdInsertACPGroup });
+			var separatorCache11 = new SeparatorMenuBundle(insertMenuSeparator11,
+				separatorCache10,
+				new List<ToolStripMenuItem> { CmdShowCharMap, CmdInsertLinkToFile });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2,
+				separatorCache3,
+				separatorCache4,
+				separatorCache5,
+				separatorCache6,
+				separatorCache7,
+				separatorCache8,
+				separatorCache9,
+				separatorCache10,
+				separatorCache11
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdInsertLexEntry, CmdInsertLexEntry},
 				{Command.CmdInsertSense, CmdInsertSense},
@@ -383,11 +520,12 @@ namespace LanguageExplorer.Impls
 				{Command.CmdShowCharMap, CmdShowCharMap},
 				{Command.CmdInsertLinkToFile, CmdInsertLinkToFile}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheFormatMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheFormatMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdFormatStyle, CmdFormatStyle},
 				{Command.CmdFormatApplyStyle, CmdFormatApplyStyle},
@@ -395,11 +533,32 @@ namespace LanguageExplorer.Impls
 				{Command.CmdVernacularWritingSystemProperties, CmdVernacularWritingSystemProperties},
 				{Command.CmdAnalysisWritingSystemProperties, CmdAnalysisWritingSystemProperties}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, new List<ISeparatorMenuBundle>());
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheToolsMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheToolsMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolMenuSeparator1,
+				new List<ToolStripMenuItem> { configureToolStripMenuItem },
+				new List<ToolStripMenuItem> { CmdMergeEntry, CmdLexiconLookup, ITexts_AddWordsToLexicon });
+			var separatorCache2 = new SeparatorMenuBundle(toolMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { ToolsMenu_SpellingMenu, CmdProjectUtilities });
+			var separatorCache4 = new SeparatorMenuBundle(toolMenuSeparator4,
+				separatorCache2,
+				new List<ToolStripMenuItem> { CmdToolsOptions, CmdMacroF2, CmdMacroF3, CmdMacroF4, CmdMacroF6, CmdMacroF7, CmdMacroF8, CmdMacroF9, CmdMacroF10, CmdMacroF11, CmdMacroF12 });
+
+			var separatorCache3 = new StandAloneSeparatorMenuBundle(toolMenuSeparator3,
+				new List<ToolStripMenuItem> { CmdEditSpellingStatus, CmdViewIncorrectWords, CmdUseVernSpellingDictionary },
+				new List<ToolStripMenuItem> { CmdChangeSpelling });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2,
+				separatorCache3,
+				separatorCache4
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{ Command.Configure, configureToolStripMenuItem },
 					{ Command.CmdConfigureDictionary, CmdConfigureDictionary },
@@ -410,19 +569,19 @@ namespace LanguageExplorer.Impls
 					{ Command.CmdConfigHeadwordNumbers, CmdConfigHeadwordNumbers },
 					{ Command.CmdRestoreDefaults, CmdRestoreDefaults },
 					{ Command.CmdAddCustomField, CmdAddCustomField },
-				{ Command.Separator2, toolMenuSeparator2 },
+				{ Command.Separator1, toolMenuSeparator1 },
 				{ Command.CmdMergeEntry, CmdMergeEntry },
 				{ Command.CmdLexiconLookup, CmdLexiconLookup },
 				{ Command.ITexts_AddWordsToLexicon, ITexts_AddWordsToLexicon },
-				{ Command.Separator3, toolMenuSeparator3 },
+				{ Command.Separator2, toolMenuSeparator2 },
 				{ Command.Spelling, ToolsMenu_SpellingMenu },
 					{ Command.CmdEditSpellingStatus, CmdEditSpellingStatus },
 					{ Command.CmdViewIncorrectWords, CmdViewIncorrectWords },
 					{ Command.CmdUseVernSpellingDictionary, CmdUseVernSpellingDictionary },
-					{ Command.Separator4, toolMenuSeparator4 },
+					{ Command.Separator3, toolMenuSeparator3 },
 					{ Command.CmdChangeSpelling, CmdChangeSpelling },
 				{ Command.CmdProjectUtilities, CmdProjectUtilities },
-				{ Command.Separator5, toolMenuSeparator5 },
+				{ Command.Separator4, toolMenuSeparator4 },
 				{ Command.CmdToolsOptions, CmdToolsOptions },
 				{ Command.CmdMacroF2, CmdMacroF2 },
 				{ Command.CmdMacroF3, CmdMacroF3 },
@@ -435,11 +594,23 @@ namespace LanguageExplorer.Impls
 				{ Command.CmdMacroF11, CmdMacroF11 },
 				{ Command.CmdMacroF12, CmdMacroF12 }
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheParserMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheParserMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripParserMenuSeparator1,
+				new List<ToolStripMenuItem> { CmdParseAllWords, CmdReparseAllWords, CmdReInitializeParser, CmdStopParser },
+				new List<ToolStripMenuItem> { CmdTryAWord, CmdParseWordsInCurrentText, CmdParseCurrentWord, CmdClearSelectedWordParserAnalyses });
+			var separatorCache2 = new SeparatorMenuBundle(toolStripParserMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { ChooseParserMenu, CmdEditParserParameters });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdParseAllWords, CmdParseAllWords},
 				{Command.CmdReparseAllWords, CmdReparseAllWords},
@@ -456,20 +627,33 @@ namespace LanguageExplorer.Impls
 					{Command.CmdChooseHCParser, CmdChooseHCParser},
 				{Command.CmdEditParserParameters, CmdEditParserParameters}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheWindowMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheWindowMenuItems()
 		{
 			// An ordinary event handler on the window does this.
-			return new Dictionary<Command, ToolStripItem>
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdNewWindow,  newWindowToolStripMenuItem}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, new List<ISeparatorMenuBundle>());
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheHelpMenuItems()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheHelpMenuItems()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripHelpMenuSeparator1,
+				new List<ToolStripMenuItem> { CmdHelpLanguageExplorer, CmdHelpTraining, HelpMenu_ResourcesMenu },
+				new List<ToolStripMenuItem> { CmdHelpReportBug, CmdHelpMakeSuggestion });
+			var separatorCache2 = new SeparatorMenuBundle(toolStripHelpMenuSeparator2,
+				separatorCache1,
+				new List<ToolStripMenuItem> { CmdHelpAbout });
+			var separatorCaches = new List<ISeparatorMenuBundle>
+			{
+				separatorCache1,
+				separatorCache2
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdHelpLanguageExplorer,  CmdHelpLanguageExplorer},
 				{Command.CmdHelpTraining,  CmdHelpTraining},
@@ -489,15 +673,16 @@ namespace LanguageExplorer.Impls
 				{Command.Separator2,  toolStripHelpMenuSeparator2},
 				{Command.CmdHelpAbout, CmdHelpAbout }
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>>(commandMap, separatorCaches);
 		}
 
 		#endregion Cache main menu items
 
 		#region Cache tool bar items
 
-		private Dictionary<ToolBar, Dictionary<Command, ToolStripItem>> CacheToolbarItems()
+		private Dictionary<ToolBar, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>> CacheToolbarItems()
 		{
-			return new Dictionary<ToolBar, Dictionary<Command, ToolStripItem>>
+			return new Dictionary<ToolBar, Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>>
 			{
 				{ ToolBar.Standard,  CacheStandardToolStrip()},
 				{ ToolBar.View,  CacheViewToolStrip()},
@@ -506,9 +691,22 @@ namespace LanguageExplorer.Impls
 			};
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheStandardToolStrip()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>> CacheStandardToolStrip()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorToolStripBundle(standardToolStripSeparator1, new List<ToolStripItem> { CmdHistoryBack, CmdHistoryForward }, new List<ToolStripItem> { Toolbar_CmdDeleteRecord });
+			var separatorCache2 = new SeparatorToolStripBundle(standardToolStripSeparator2, separatorCache1, new List<ToolStripItem> { Toolbar_CmdUndo, Toolbar_CmdRedo, Toolbar_CmdRefresh });
+			var separatorCache3 = new SeparatorToolStripBundle(standardToolStripSeparator3, separatorCache2, new List<ToolStripItem>
+			{
+				Toolbar_CmdFirstRecord, Toolbar_CmdPreviousRecord,
+				Toolbar_CmdNextRecord, Toolbar_CmdLastRecord, Toolbar_CmdFLExLiftBridge
+			});
+			var separatorCaches = new List<ISeparatorToolStripBundle>
+			{
+				separatorCache1,
+				separatorCache2,
+				separatorCache3
+			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{Command.CmdHistoryBack, CmdHistoryBack},
 				{Command.CmdHistoryForward, CmdHistoryForward},
@@ -525,100 +723,149 @@ namespace LanguageExplorer.Impls
 				{Command.CmdLastRecord, Toolbar_CmdLastRecord},
 				{Command.CmdFLExLiftBridge, Toolbar_CmdFLExLiftBridge}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheViewToolStrip()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>> CacheViewToolStrip()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{ Command.CmdChooseTexts,  Toolbar_CmdChooseTexts},
 				{ Command.CmdChangeFilterClearAll,  Toolbar_CmdChangeFilterClearAll} // Event handled by main window
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>(commandMap, new List<ISeparatorToolStripBundle>());
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheInsertToolStrip()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>> CacheInsertToolStrip()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var separatorCache1 = new StandAloneSeparatorToolStripBundle(insertToolStripSeparator1,
+				new List<ToolStripItem> { Toolbar_CmdInsertLexEntry, Toolbar_CmdGoToEntry, Toolbar_CmdInsertReversalEntry, Toolbar_CmdGoToReversalEntry, Toolbar_CmdInsertText },
+				new List<ToolStripItem>
+				{
+					Toolbar_CmdAddNote, Toolbar_CmdApproveAllButton, Toolbar_CmdInsertHumanApprovedAnalysis, Toolbar_CmdGoToWfiWordform,
+					Toolbar_CmdFindAndReplaceText, Toolbar_CmdBreakPhraseButton, Toolbar_CmdInsertRecord, Toolbar_CmdGoToRecord
+				});
+			var separatorCache2 = new SeparatorToolStripBundle(insertToolStripSeparator2, separatorCache1, new List<ToolStripItem>
 			{
-				{ Command.CmdInsertLexEntry,  Toolbar_CmdInsertLexEntry},
-				{ Command.CmdGoToEntry,  Toolbar_CmdGoToEntry},
-				{ Command.CmdInsertReversalEntry,  Toolbar_CmdInsertReversalEntry},
-				{ Command.CmdGoToReversalEntry,  Toolbar_CmdGoToReversalEntry},
-				{ Command.CmdInsertText,  Toolbar_CmdInsertText},
-				{ Command.Separator1,  insertToolStripSeparator1},
-				{ Command.CmdAddNote,  Toolbar_CmdAddNote},
-				{ Command.CmdApproveAll,  Toolbar_CmdApproveAllButton}, // Image is locked in InterlinearImageHolder
-				{ Command.CmdInsertHumanApprovedAnalysis,  Toolbar_CmdInsertHumanApprovedAnalysis},
-				{ Command.CmdGoToWfiWordform,  Toolbar_CmdGoToWfiWordform},
-				{ Command.CmdFindAndReplaceText,  Toolbar_CmdFindAndReplaceText},
-				{ Command.CmdBreakPhrase,  Toolbar_CmdBreakPhraseButton},
-				{ Command.CmdInsertRecord,  Toolbar_CmdInsertRecord},
-				{ Command.CmdGoToRecord,  Toolbar_CmdGoToRecord},
-				{ Command.Separator2,  insertToolStripSeparator2},
-				{ Command.CmdAddToLexicon,  Toolbar_CmdAddToLexicon},
-				{ Command.CmdLexiconLookup,  Toolbar_CmdLexiconLookup},
-				{ Command.CmdInsertSemDom,  Toolbar_CmdInsertSemDom},
-				{ Command.CmdDataTree_Insert_SemanticDomain,  Toolbar_CmdDataTree_Insert_SemanticDomain},
-				{ Command.CmdInsertAnnotationDef,  Toolbar_CmdInsertAnnotationDef},
-				{ Command.CmdInsertPossibility,  Toolbar_CmdInsertPossibility},
-				{ Command.CmdInsertCustomItem,  Toolbar_CmdInsertCustomItem},
-				{ Command.CmdInsertMorphType,  Toolbar_CmdInsertMorphType},
-				{ Command.CmdInsertLexEntryInflType,  Toolbar_CmdInsertLexEntryInflType},
-				{ Command.CmdInsertLexEntryType,  Toolbar_CmdInsertLexEntryType},
-				{ Command.CmdDataTree_Insert_LexEntryInflType,  Toolbar_CmdDataTree_Insert_LexEntryInflType},
-				{ Command.CmdDataTree_Insert_LexEntryType,  Toolbar_CmdDataTree_Insert_LexEntryType},
-				{ Command.CmdInsertAnthroCategory,  Toolbar_CmdInsertAnthroCategory},
-				{ Command.CmdDataTree_Insert_AnthroCategory,  Toolbar_CmdDataTree_Insert_AnthroCategory},
-				{ Command.CmdInsertPerson,  Toolbar_CmdInsertPerson},
-				{ Command.CmdInsertLocation,  Toolbar_CmdInsertLocation},
-				{ Command.CmdDataTree_Insert_Location,  Toolbar_CmdDataTree_Insert_Location},
-				{ Command.CmdInsertLexRefType,  Toolbar_CmdInsertLexRefType},
-				{ Command.CmdInsertFeatureType,  Toolbar_CmdInsertFeatureType},
-				{ Command.CmdDataTree_Insert_Possibility,  Toolbar_CmdDataTree_Insert_Possibility},
-				{ Command.CmdDataTree_Insert_CustomItem,  Toolbar_CmdDataTree_Insert_CustomItem},
-				{ Command.CmdDuplicateSemDom,  Toolbar_CmdDuplicateSemDom},
-				{ Command.CmdDuplicateAnnotationDef,  Toolbar_CmdDuplicateAnnotationDef},
-				{ Command.CmdDuplicatePossibility,  Toolbar_CmdDuplicatePossibility},
-				{ Command.CmdDuplicateCustomItem,  Toolbar_CmdDuplicateCustomItem},
-				{ Command.CmdDuplicateMorphType,  Toolbar_CmdDuplicateMorphType},
-				{ Command.CmdDuplicateAnthroCategory,  Toolbar_CmdDuplicateAnthroCategory},
-				{ Command.CmdDuplicatePerson,  Toolbar_CmdDuplicatePerson},
-				{ Command.CmdDuplicateLocation,  Toolbar_CmdDuplicateLocation},
-				{ Command.CmdDuplicateLexRefType,  Toolbar_CmdDuplicateLexRefType},
-				{ Command.CmdDuplicateFeatureType,  Toolbar_CmdDuplicateFeatureType},
-				{ Command.CmdInsertPOS,  Toolbar_CmdInsertPOS},
-				{ Command.CmdDataTree_Insert_POS_SubPossibilities,  Toolbar_CmdDataTree_Insert_POS_SubPossibilities},
-				{ Command.Separator3,  insertToolStripSeparator3},
-				{ Command.CmdInsertEndocentricCompound,  Toolbar_CmdInsertEndocentricCompound},
-				{ Command.CmdInsertExocentricCompound,  Toolbar_CmdInsertExocentricCompound},
-				{ Command.CmdInsertExceptionFeature,  Toolbar_CmdInsertExceptionFeature},
-				{ Command.CmdInsertPhonologicalClosedFeature,  Toolbar_CmdInsertPhonologicalClosedFeature},
-				{ Command.CmdInsertClosedFeature,  Toolbar_CmdInsertClosedFeature},
-				{ Command.CmdInsertComplexFeature,  Toolbar_CmdInsertComplexFeature},
-				{ Command.Separator4,  insertToolStripSeparator4},
-				{ Command.CmdInsertPhoneme,  Toolbar_CmdInsertPhoneme},
-				{ Command.Separator5,  insertToolStripSeparator5},
-				{ Command.CmdInsertSegmentNaturalClasses,  Toolbar_CmdInsertSegmentNaturalClasses},
-				{ Command.CmdInsertFeatureNaturalClasses,  Toolbar_CmdInsertFeatureNaturalClasses},
-				{ Command.Separator6,  insertToolStripSeparator6},
-				{ Command.CmdInsertPhEnvironment,  Toolbar_CmdInsertPhEnvironment},
-				{ Command.Separator7,  insertToolStripSeparator7},
-				{ Command.CmdInsertPhRegularRule,  Toolbar_CmdInsertPhRegularRule},
-				{ Command.CmdInsertPhMetathesisRule,  Toolbar_CmdInsertPhMetathesisRule},
-				{ Command.Separator8,  insertToolStripSeparator8},
-				{ Command.CmdInsertMorphemeACP,  Toolbar_CmdInsertMorphemeACP},
-				{ Command.CmdInsertAllomorphACP,  Toolbar_CmdInsertAllomorphACP},
-				{ Command.CmdInsertACPGroup,  Toolbar_CmdInsertACPGroup}
+				Toolbar_CmdAddToLexicon, Toolbar_CmdLexiconLookup, Toolbar_CmdInsertSemDom, Toolbar_CmdDataTree_Insert_SemanticDomain, Toolbar_CmdInsertAnnotationDef, Toolbar_CmdInsertPossibility,
+				Toolbar_CmdInsertCustomItem, Toolbar_CmdInsertMorphType, Toolbar_CmdInsertLexEntryInflType, Toolbar_CmdInsertLexEntryType, Toolbar_CmdDataTree_Insert_LexEntryInflType,
+				Toolbar_CmdDataTree_Insert_LexEntryType, Toolbar_CmdInsertAnthroCategory, Toolbar_CmdDataTree_Insert_AnthroCategory, Toolbar_CmdInsertPerson, Toolbar_CmdInsertLocation,
+				Toolbar_CmdDataTree_Insert_Location, Toolbar_CmdInsertLexRefType, Toolbar_CmdInsertFeatureType, Toolbar_CmdDataTree_Insert_Possibility, Toolbar_CmdDataTree_Insert_CustomItem,
+				Toolbar_CmdDuplicateSemDom, Toolbar_CmdDuplicateAnnotationDef, Toolbar_CmdDuplicatePossibility, Toolbar_CmdDuplicateCustomItem, Toolbar_CmdDuplicateMorphType,
+				Toolbar_CmdDuplicateAnthroCategory, Toolbar_CmdDuplicatePerson, Toolbar_CmdDuplicateLocation, Toolbar_CmdDuplicateLexRefType, Toolbar_CmdDuplicateFeatureType,
+				Toolbar_CmdInsertPOS, Toolbar_CmdDataTree_Insert_POS_SubPossibilities
+			});
+			var separatorCache3 = new SeparatorToolStripBundle(insertToolStripSeparator3, separatorCache2, new List<ToolStripItem>
+			{
+				Toolbar_CmdInsertEndocentricCompound, Toolbar_CmdInsertExocentricCompound, Toolbar_CmdInsertExceptionFeature, Toolbar_CmdInsertPhonologicalClosedFeature,
+				Toolbar_CmdInsertClosedFeature, Toolbar_CmdInsertComplexFeature
+			});
+			var separatorCache4 = new SeparatorToolStripBundle(insertToolStripSeparator4, separatorCache3, new List<ToolStripItem> { Toolbar_CmdInsertPhoneme });
+			var separatorCache5 = new SeparatorToolStripBundle(insertToolStripSeparator5, separatorCache4, new List<ToolStripItem>
+			{
+				Toolbar_CmdInsertSegmentNaturalClasses, Toolbar_CmdInsertFeatureNaturalClasses
+			});
+			var separatorCache6 = new SeparatorToolStripBundle(insertToolStripSeparator6, separatorCache5, new List<ToolStripItem> { Toolbar_CmdInsertPhEnvironment });
+			var separatorCache7 = new SeparatorToolStripBundle(insertToolStripSeparator7, separatorCache6, new List<ToolStripItem> { Toolbar_CmdInsertPhRegularRule, Toolbar_CmdInsertPhMetathesisRule });
+			var separatorCache8 = new SeparatorToolStripBundle(insertToolStripSeparator8, separatorCache7, new List<ToolStripItem>
+			{
+				Toolbar_CmdInsertMorphemeACP, Toolbar_CmdInsertAllomorphACP, Toolbar_CmdInsertACPGroup
+			});
+
+			var separatorCaches = new List<ISeparatorToolStripBundle>
+			{
+				separatorCache1,
+				separatorCache2,
+				separatorCache3,
+				separatorCache4,
+				separatorCache5,
+				separatorCache6,
+				separatorCache7,
+				separatorCache8
 			};
+			var commandMap = new Dictionary<Command, ToolStripItem>
+			{
+				{ Command.CmdInsertLexEntry, Toolbar_CmdInsertLexEntry},
+				{ Command.CmdGoToEntry, Toolbar_CmdGoToEntry},
+				{ Command.CmdInsertReversalEntry, Toolbar_CmdInsertReversalEntry},
+				{ Command.CmdGoToReversalEntry, Toolbar_CmdGoToReversalEntry},
+				{ Command.CmdInsertText, Toolbar_CmdInsertText},
+				{ Command.Separator1, insertToolStripSeparator1},
+				{ Command.CmdAddNote, Toolbar_CmdAddNote},
+				{ Command.CmdApproveAll, Toolbar_CmdApproveAllButton}, // Image is locked in InterlinearImageHolder
+				{ Command.CmdInsertHumanApprovedAnalysis, Toolbar_CmdInsertHumanApprovedAnalysis},
+				{ Command.CmdGoToWfiWordform, Toolbar_CmdGoToWfiWordform},
+				{ Command.CmdFindAndReplaceText, Toolbar_CmdFindAndReplaceText},
+				{ Command.CmdBreakPhrase, Toolbar_CmdBreakPhraseButton},
+				{ Command.CmdInsertRecord, Toolbar_CmdInsertRecord},
+				{ Command.CmdGoToRecord, Toolbar_CmdGoToRecord},
+				{ Command.Separator2, insertToolStripSeparator2},
+				{ Command.CmdAddToLexicon, Toolbar_CmdAddToLexicon},
+				{ Command.CmdLexiconLookup, Toolbar_CmdLexiconLookup},
+				{ Command.CmdInsertSemDom, Toolbar_CmdInsertSemDom},
+				{ Command.CmdDataTree_Insert_SemanticDomain, Toolbar_CmdDataTree_Insert_SemanticDomain},
+				{ Command.CmdInsertAnnotationDef, Toolbar_CmdInsertAnnotationDef},
+				{ Command.CmdInsertPossibility, Toolbar_CmdInsertPossibility},
+				{ Command.CmdInsertCustomItem, Toolbar_CmdInsertCustomItem},
+				{ Command.CmdInsertMorphType, Toolbar_CmdInsertMorphType},
+				{ Command.CmdInsertLexEntryInflType, Toolbar_CmdInsertLexEntryInflType},
+				{ Command.CmdInsertLexEntryType, Toolbar_CmdInsertLexEntryType},
+				{ Command.CmdDataTree_Insert_LexEntryInflType, Toolbar_CmdDataTree_Insert_LexEntryInflType},
+				{ Command.CmdDataTree_Insert_LexEntryType, Toolbar_CmdDataTree_Insert_LexEntryType},
+				{ Command.CmdInsertAnthroCategory, Toolbar_CmdInsertAnthroCategory},
+				{ Command.CmdDataTree_Insert_AnthroCategory, Toolbar_CmdDataTree_Insert_AnthroCategory},
+				{ Command.CmdInsertPerson, Toolbar_CmdInsertPerson},
+				{ Command.CmdInsertLocation, Toolbar_CmdInsertLocation},
+				{ Command.CmdDataTree_Insert_Location, Toolbar_CmdDataTree_Insert_Location},
+				{ Command.CmdInsertLexRefType, Toolbar_CmdInsertLexRefType},
+				{ Command.CmdInsertFeatureType, Toolbar_CmdInsertFeatureType},
+				{ Command.CmdDataTree_Insert_Possibility, Toolbar_CmdDataTree_Insert_Possibility},
+				{ Command.CmdDataTree_Insert_CustomItem, Toolbar_CmdDataTree_Insert_CustomItem},
+				{ Command.CmdDuplicateSemDom, Toolbar_CmdDuplicateSemDom},
+				{ Command.CmdDuplicateAnnotationDef, Toolbar_CmdDuplicateAnnotationDef},
+				{ Command.CmdDuplicatePossibility, Toolbar_CmdDuplicatePossibility},
+				{ Command.CmdDuplicateCustomItem, Toolbar_CmdDuplicateCustomItem},
+				{ Command.CmdDuplicateMorphType, Toolbar_CmdDuplicateMorphType},
+				{ Command.CmdDuplicateAnthroCategory, Toolbar_CmdDuplicateAnthroCategory},
+				{ Command.CmdDuplicatePerson, Toolbar_CmdDuplicatePerson},
+				{ Command.CmdDuplicateLocation, Toolbar_CmdDuplicateLocation},
+				{ Command.CmdDuplicateLexRefType, Toolbar_CmdDuplicateLexRefType},
+				{ Command.CmdDuplicateFeatureType, Toolbar_CmdDuplicateFeatureType},
+				{ Command.CmdInsertPOS, Toolbar_CmdInsertPOS},
+				{ Command.CmdDataTree_Insert_POS_SubPossibilities, Toolbar_CmdDataTree_Insert_POS_SubPossibilities},
+				{ Command.Separator3, insertToolStripSeparator3},
+				{ Command.CmdInsertEndocentricCompound, Toolbar_CmdInsertEndocentricCompound},
+				{ Command.CmdInsertExocentricCompound, Toolbar_CmdInsertExocentricCompound},
+				{ Command.CmdInsertExceptionFeature, Toolbar_CmdInsertExceptionFeature},
+				{ Command.CmdInsertPhonologicalClosedFeature, Toolbar_CmdInsertPhonologicalClosedFeature},
+				{ Command.CmdInsertClosedFeature, Toolbar_CmdInsertClosedFeature},
+				{ Command.CmdInsertComplexFeature, Toolbar_CmdInsertComplexFeature},
+				{ Command.Separator4, insertToolStripSeparator4},
+				{ Command.CmdInsertPhoneme, Toolbar_CmdInsertPhoneme},
+				{ Command.Separator5, insertToolStripSeparator5},
+				{ Command.CmdInsertSegmentNaturalClasses, Toolbar_CmdInsertSegmentNaturalClasses},
+				{ Command.CmdInsertFeatureNaturalClasses, Toolbar_CmdInsertFeatureNaturalClasses},
+				{ Command.Separator6, insertToolStripSeparator6},
+				{ Command.CmdInsertPhEnvironment, Toolbar_CmdInsertPhEnvironment},
+				{ Command.Separator7, insertToolStripSeparator7},
+				{ Command.CmdInsertPhRegularRule, Toolbar_CmdInsertPhRegularRule},
+				{ Command.CmdInsertPhMetathesisRule, Toolbar_CmdInsertPhMetathesisRule},
+				{ Command.Separator8, insertToolStripSeparator8},
+				{ Command.CmdInsertMorphemeACP, Toolbar_CmdInsertMorphemeACP},
+				{ Command.CmdInsertAllomorphACP, Toolbar_CmdInsertAllomorphACP},
+				{ Command.CmdInsertACPGroup, Toolbar_CmdInsertACPGroup}
+			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>(commandMap, separatorCaches);
 		}
 
-		private Dictionary<Command, ToolStripItem> CacheFormatToolStrip()
+		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>> CacheFormatToolStrip()
 		{
-			return new Dictionary<Command, ToolStripItem>
+			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
 				{ Command.WritingSystemList,  Toolbar_WritingSystemList},
 				{ Command.CombinedStylesList,  Toolbar_CombinedStylesList}
 			};
+			return new Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorToolStripBundle>>(commandMap, new List<ISeparatorToolStripBundle>());
 		}
 
 		#endregion Cache tool bar items
@@ -1142,13 +1389,6 @@ namespace LanguageExplorer.Impls
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			SetupCustomStatusBarPanels();
-			/* Moved to SetupUiWidgets. Hopefully, the new ordering won't impact the following stuff.
-			CmdProjectLocation.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
-			CmdArchiveWithRamp.Enabled = ReapRamp.Installed;
-			_viewHelper = new ActiveViewHelper(this);
-			_linkHandler = new LinkHandler(this, Cache, CmdHistoryBack, CmdHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
-			_linkHandler.InitializeFlexComponent(flexComponentParameters);
-			*/
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();

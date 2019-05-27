@@ -70,6 +70,8 @@ namespace LanguageExplorer.Areas
 			// Add handler stuff.
 			var userController = new UserControlUiWidgetParameterObject(this);
 			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => CanCmdConfigureXmlDocView));
+			_uiWidgetController.ToolsMenuDictionary[Command.CmdConfigureXmlDocView].Text = LanguageExplorerResources.ConfigureDocument;
+
 			_uiWidgetController.AddHandlers(userController);
 		}
 

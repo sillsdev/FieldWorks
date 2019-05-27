@@ -293,12 +293,6 @@
   <data name="ksRedoVisibleComplexForm" xml:space="preserve">
     <value>Redo Referenced Complex Forms</value>
   </data>
-  <data name="ksUndoDeleteMediaLink" xml:space="preserve">
-    <value>Undo Delete Media Link</value>
-  </data>
-  <data name="ksRedoDeleteMediaLink" xml:space="preserve">
-    <value>Redo Delete Media Link</value>
-  </data>
   <data name="ksParsing" xml:space="preserve">
     <value>Processing</value>
     <comment>Label used in progress bar</comment>

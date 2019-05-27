@@ -76,26 +76,22 @@ namespace LanguageExplorer.Areas
 
 		#region Overrides of MainUserControl
 		/// <inheritdoc />
-		protected override void RegisterUiWidgets(bool shouldRegister)
+		internal override void RegisterUiWidgets(bool shouldRegister)
 		{
-			if (_uiWidgetController != null)
+			if (shouldRegister)
 			{
-				if (shouldRegister)
-				{
-					var userController = new UserControlUiWidgetParameterObject(this);
-					// Add handler stuff from this class and possibly from subclasses.
-					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
-					_uiWidgetController.AddHandlers(userController);
-				}
-				else
-				{
-					_uiWidgetController.RemoveUserControlHandlers(this);
-				}
+				var userController = new UserControlUiWidgetParameterObject(this);
+				// Add handler stuff from this class and possibly from subclasses.
+				userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
+				_uiWidgetController.AddHandlers(userController);
+			}
+			else
+			{
+				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 		}
 		#endregion
 
-		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of ViewBase
 
@@ -513,6 +509,8 @@ namespace LanguageExplorer.Areas
 		}
 
 		#region Print methods
+
+		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{

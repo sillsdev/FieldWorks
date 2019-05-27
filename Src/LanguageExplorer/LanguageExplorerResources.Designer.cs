@@ -206,6 +206,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Document....
+        /// </summary>
+        internal static string ConfigureDocument {
+            get {
+                return ResourceManager.GetString("ConfigureDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon DefaultIcon {

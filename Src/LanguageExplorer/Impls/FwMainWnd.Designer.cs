@@ -227,19 +227,19 @@ namespace LanguageExplorer.Impls
             this.CmdConfigHeadwordNumbers = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdRestoreDefaults = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdAddCustomField = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolMenuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.CmdMergeEntry = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdLexiconLookup = new System.Windows.Forms.ToolStripMenuItem();
             this.ITexts_AddWordsToLexicon = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolsMenu_SpellingMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdEditSpellingStatus = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdViewIncorrectWords = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdUseVernSpellingDictionary = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.CmdChangeSpelling = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdProjectUtilities = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolMenuSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolMenuSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.CmdToolsOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdMacroF2 = new System.Windows.Forms.ToolStripMenuItem();
             this.CmdMacroF3 = new System.Windows.Forms.ToolStripMenuItem();
@@ -310,6 +310,9 @@ namespace LanguageExplorer.Impls
             this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
             this.statusBarPanelArea = new System.Windows.Forms.StatusBarPanel();
             this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
+            this.toolStripView = new System.Windows.Forms.ToolStrip();
+            this.Toolbar_CmdChooseTexts = new System.Windows.Forms.ToolStripButton();
+            this.Toolbar_CmdChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
             this.toolStripInsert = new System.Windows.Forms.ToolStrip();
             this.Toolbar_CmdInsertLexEntry = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdGoToEntry = new System.Windows.Forms.ToolStripButton();
@@ -380,9 +383,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertMorphemeACP = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertAllomorphACP = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertACPGroup = new System.Windows.Forms.ToolStripButton();
-            this.toolStripView = new System.Windows.Forms.ToolStrip();
-            this.Toolbar_CmdChooseTexts = new System.Windows.Forms.ToolStripButton();
-            this.Toolbar_CmdChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
             this.toolStripFormat = new System.Windows.Forms.ToolStrip();
             this.Toolbar_WritingSystemList = new System.Windows.Forms.ToolStripComboBox();
             this.Toolbar_CombinedStylesList = new System.Windows.Forms.ToolStripComboBox();
@@ -399,8 +399,8 @@ namespace LanguageExplorer.Impls
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).BeginInit();
-            this.toolStripInsert.SuspendLayout();
             this.toolStripView.SuspendLayout();
+            this.toolStripInsert.SuspendLayout();
             this.toolStripFormat.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -849,7 +849,7 @@ namespace LanguageExplorer.Impls
             this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.undoToolStripMenuItem.Text = "&Undo";
             this.undoToolStripMenuItem.ToolTipText = "Undo previous actions.";
             // 
@@ -859,14 +859,14 @@ namespace LanguageExplorer.Impls
             this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.redoToolStripMenuItem.Text = "&Redo";
             this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
             // 
             // toolStripEditMenuSeparator1
             // 
             this.toolStripEditMenuSeparator1.Name = "toolStripEditMenuSeparator1";
-            this.toolStripEditMenuSeparator1.Size = new System.Drawing.Size(216, 6);
+            this.toolStripEditMenuSeparator1.Size = new System.Drawing.Size(220, 6);
             // 
             // cutToolStripMenuItem
             // 
@@ -874,7 +874,7 @@ namespace LanguageExplorer.Impls
             this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.cutToolStripMenuItem.Text = "Cu&t";
             this.cutToolStripMenuItem.ToolTipText = "Cut";
             // 
@@ -884,7 +884,7 @@ namespace LanguageExplorer.Impls
             this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.copyToolStripMenuItem.Text = "&Copy";
             this.copyToolStripMenuItem.ToolTipText = "Copy";
             // 
@@ -894,39 +894,39 @@ namespace LanguageExplorer.Impls
             this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.pasteToolStripMenuItem.Text = "&Paste";
             this.pasteToolStripMenuItem.ToolTipText = "Paste";
             // 
             // toolStripEditMenuSeparator2
             // 
             this.toolStripEditMenuSeparator2.Name = "toolStripEditMenuSeparator2";
-            this.toolStripEditMenuSeparator2.Size = new System.Drawing.Size(216, 6);
+            this.toolStripEditMenuSeparator2.Size = new System.Drawing.Size(220, 6);
             // 
             // pasteHyperlinkToolStripMenuItem
             // 
             this.pasteHyperlinkToolStripMenuItem.Name = "pasteHyperlinkToolStripMenuItem";
-            this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.pasteHyperlinkToolStripMenuItem.Text = "Paste &Hyperlink";
             this.pasteHyperlinkToolStripMenuItem.ToolTipText = "Paste clipboard content as hyperlink.";
             // 
             // copyLocationAsHyperlinkToolStripMenuItem
             // 
             this.copyLocationAsHyperlinkToolStripMenuItem.Name = "copyLocationAsHyperlinkToolStripMenuItem";
-            this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
             this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
             // 
             // toolStripEditMenuSeparator3
             // 
             this.toolStripEditMenuSeparator3.Name = "toolStripEditMenuSeparator3";
-            this.toolStripEditMenuSeparator3.Size = new System.Drawing.Size(216, 6);
+            this.toolStripEditMenuSeparator3.Size = new System.Drawing.Size(220, 6);
             // 
             // CmdGoToEntry
             // 
             this.CmdGoToEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToEntry.Image")));
             this.CmdGoToEntry.Name = "CmdGoToEntry";
-            this.CmdGoToEntry.Size = new System.Drawing.Size(219, 22);
+            this.CmdGoToEntry.Size = new System.Drawing.Size(223, 26);
             this.CmdGoToEntry.Text = "&Find lexical Entry...";
             this.CmdGoToEntry.Visible = false;
             // 
@@ -934,16 +934,17 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdGoToRecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToRecord.Image")));
             this.CmdGoToRecord.Name = "CmdGoToRecord";
-            this.CmdGoToRecord.Size = new System.Drawing.Size(219, 22);
+            this.CmdGoToRecord.Size = new System.Drawing.Size(223, 26);
             this.CmdGoToRecord.Text = "&Find Record...";
             this.CmdGoToRecord.Visible = false;
             // 
             // CmdFindAndReplaceText
             // 
+            this.CmdFindAndReplaceText.Image = ((System.Drawing.Image)(resources.GetObject("CmdFindAndReplaceText.Image")));
             this.CmdFindAndReplaceText.Name = "CmdFindAndReplaceText";
             this.CmdFindAndReplaceText.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.F)));
-            this.CmdFindAndReplaceText.Size = new System.Drawing.Size(219, 22);
+            this.CmdFindAndReplaceText.Size = new System.Drawing.Size(223, 26);
             this.CmdFindAndReplaceText.Text = "Find...";
             this.CmdFindAndReplaceText.ToolTipText = "Find and Replace Text";
             // 
@@ -951,19 +952,19 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdReplaceText.Name = "CmdReplaceText";
             this.CmdReplaceText.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.CmdReplaceText.Size = new System.Drawing.Size(219, 22);
+            this.CmdReplaceText.Size = new System.Drawing.Size(223, 26);
             this.CmdReplaceText.Text = "Replace...";
             // 
             // toolStripEditMenuSeparator4
             // 
             this.toolStripEditMenuSeparator4.Name = "toolStripEditMenuSeparator4";
-            this.toolStripEditMenuSeparator4.Size = new System.Drawing.Size(216, 6);
+            this.toolStripEditMenuSeparator4.Size = new System.Drawing.Size(220, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
             // deleteToolStripMenuItem
@@ -972,20 +973,20 @@ namespace LanguageExplorer.Impls
             this.deleteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // toolStripEditMenuSeparator5
             // 
             this.toolStripEditMenuSeparator5.Name = "toolStripEditMenuSeparator5";
-            this.toolStripEditMenuSeparator5.Size = new System.Drawing.Size(216, 6);
+            this.toolStripEditMenuSeparator5.Size = new System.Drawing.Size(220, 6);
             this.toolStripEditMenuSeparator5.Visible = false;
             // 
             // CmdGoToReversalEntry
             // 
             this.CmdGoToReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToReversalEntry.Image")));
             this.CmdGoToReversalEntry.Name = "CmdGoToReversalEntry";
-            this.CmdGoToReversalEntry.Size = new System.Drawing.Size(219, 22);
+            this.CmdGoToReversalEntry.Size = new System.Drawing.Size(223, 26);
             this.CmdGoToReversalEntry.Text = "&Find reversal entry...";
             this.CmdGoToReversalEntry.Visible = false;
             // 
@@ -993,14 +994,14 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdGoToWfiWordform.Image = ((System.Drawing.Image)(resources.GetObject("CmdGoToWfiWordform.Image")));
             this.CmdGoToWfiWordform.Name = "CmdGoToWfiWordform";
-            this.CmdGoToWfiWordform.Size = new System.Drawing.Size(219, 22);
+            this.CmdGoToWfiWordform.Size = new System.Drawing.Size(223, 26);
             this.CmdGoToWfiWordform.Text = "&Find Wordform...";
             this.CmdGoToWfiWordform.Visible = false;
             // 
             // CmdDeleteCustomList
             // 
             this.CmdDeleteCustomList.Name = "CmdDeleteCustomList";
-            this.CmdDeleteCustomList.Size = new System.Drawing.Size(219, 22);
+            this.CmdDeleteCustomList.Size = new System.Drawing.Size(223, 26);
             this.CmdDeleteCustomList.Text = "Delete Custom &List";
             this.CmdDeleteCustomList.Visible = false;
             // 
@@ -2036,11 +2037,11 @@ namespace LanguageExplorer.Impls
             this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertAllomorphACP.Text = "Rule to prevent allomorph co-occurrence";
             this.CmdInsertAllomorphACP.Visible = false;
-			// 
-			// CmdInsertACPGroup
-			//
-			this.CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertACPGroup.Image")));
-			this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
+            // 
+            // CmdInsertACPGroup
+            // 
+            this.CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertACPGroup.Image")));
+            this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
             this.CmdInsertACPGroup.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertACPGroup.Text = "Group of ad hoc rules";
             this.CmdInsertACPGroup.Visible = false;
@@ -2118,14 +2119,14 @@ namespace LanguageExplorer.Impls
             // 
             this._toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.configureToolStripMenuItem,
-            this.toolMenuSeparator2,
+            this.toolMenuSeparator1,
             this.CmdMergeEntry,
             this.CmdLexiconLookup,
             this.ITexts_AddWordsToLexicon,
-            this.toolMenuSeparator3,
+            this.toolMenuSeparator2,
             this.ToolsMenu_SpellingMenu,
             this.CmdProjectUtilities,
-            this.toolMenuSeparator5,
+            this.toolMenuSeparator4,
             this.CmdToolsOptions,
             this.CmdMacroF2,
             this.CmdMacroF3,
@@ -2214,10 +2215,10 @@ namespace LanguageExplorer.Impls
             this.CmdAddCustomField.ToolTipText = "Add or edit custom fields.";
             this.CmdAddCustomField.Visible = false;
             // 
-            // toolMenuSeparator2
+            // toolMenuSeparator1
             // 
-            this.toolMenuSeparator2.Name = "toolMenuSeparator2";
-            this.toolMenuSeparator2.Size = new System.Drawing.Size(187, 6);
+            this.toolMenuSeparator1.Name = "toolMenuSeparator1";
+            this.toolMenuSeparator1.Size = new System.Drawing.Size(187, 6);
             // 
             // CmdMergeEntry
             // 
@@ -2241,11 +2242,11 @@ namespace LanguageExplorer.Impls
             this.ITexts_AddWordsToLexicon.Text = "Add Words to Lexicon";
             this.ITexts_AddWordsToLexicon.Visible = false;
             // 
-            // toolMenuSeparator3
+            // toolMenuSeparator2
             // 
-            this.toolMenuSeparator3.Name = "toolMenuSeparator3";
-            this.toolMenuSeparator3.Size = new System.Drawing.Size(187, 6);
-            this.toolMenuSeparator3.Visible = false;
+            this.toolMenuSeparator2.Name = "toolMenuSeparator2";
+            this.toolMenuSeparator2.Size = new System.Drawing.Size(187, 6);
+            this.toolMenuSeparator2.Visible = false;
             // 
             // ToolsMenu_SpellingMenu
             // 
@@ -2253,7 +2254,7 @@ namespace LanguageExplorer.Impls
             this.CmdEditSpellingStatus,
             this.CmdViewIncorrectWords,
             this.CmdUseVernSpellingDictionary,
-            this.toolMenuSeparator4,
+            this.toolMenuSeparator3,
             this.CmdChangeSpelling});
             this.ToolsMenu_SpellingMenu.Name = "ToolsMenu_SpellingMenu";
             this.ToolsMenu_SpellingMenu.Size = new System.Drawing.Size(190, 22);
@@ -2280,11 +2281,11 @@ namespace LanguageExplorer.Impls
             this.CmdUseVernSpellingDictionary.Text = "Show Vernacular Spelling Errors";
             this.CmdUseVernSpellingDictionary.Visible = false;
             // 
-            // toolMenuSeparator4
+            // toolMenuSeparator3
             // 
-            this.toolMenuSeparator4.Name = "toolMenuSeparator4";
-            this.toolMenuSeparator4.Size = new System.Drawing.Size(236, 6);
-            this.toolMenuSeparator4.Visible = false;
+            this.toolMenuSeparator3.Name = "toolMenuSeparator3";
+            this.toolMenuSeparator3.Size = new System.Drawing.Size(236, 6);
+            this.toolMenuSeparator3.Visible = false;
             // 
             // CmdChangeSpelling
             // 
@@ -2300,10 +2301,10 @@ namespace LanguageExplorer.Impls
             this.CmdProjectUtilities.Text = "&Utilities...";
             this.CmdProjectUtilities.ToolTipText = "Run some special utilities to process your data.";
             // 
-            // toolMenuSeparator5
+            // toolMenuSeparator4
             // 
-            this.toolMenuSeparator5.Name = "toolMenuSeparator5";
-            this.toolMenuSeparator5.Size = new System.Drawing.Size(187, 6);
+            this.toolMenuSeparator4.Name = "toolMenuSeparator4";
+            this.toolMenuSeparator4.Size = new System.Drawing.Size(187, 6);
             // 
             // CmdToolsOptions
             // 
@@ -2822,8 +2823,8 @@ namespace LanguageExplorer.Impls
             // 
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this._menuStrip);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripStandard);
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripView);
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
             // 
             // mainContainer
@@ -2914,6 +2915,39 @@ namespace LanguageExplorer.Impls
             this.statusBarPanelRecordNumber.Text = "RecordNumber";
             this.statusBarPanelRecordNumber.Width = 91;
             // 
+            // toolStripView
+            // 
+            this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Toolbar_CmdChooseTexts,
+            this.Toolbar_CmdChangeFilterClearAll});
+            this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.toolStripView.Location = new System.Drawing.Point(273, 24);
+            this.toolStripView.Name = "toolStripView";
+            this.toolStripView.Size = new System.Drawing.Size(35, 25);
+            this.toolStripView.TabIndex = 5;
+            // 
+            // Toolbar_CmdChooseTexts
+            // 
+            this.Toolbar_CmdChooseTexts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.Toolbar_CmdChooseTexts.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChooseTexts.Image")));
+            this.Toolbar_CmdChooseTexts.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdChooseTexts.Name = "Toolbar_CmdChooseTexts";
+            this.Toolbar_CmdChooseTexts.Size = new System.Drawing.Size(23, 22);
+            this.Toolbar_CmdChooseTexts.ToolTipText = "Choose texts to display and use.";
+            this.Toolbar_CmdChooseTexts.Visible = false;
+            // 
+            // Toolbar_CmdChangeFilterClearAll
+            // 
+            this.Toolbar_CmdChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.Toolbar_CmdChangeFilterClearAll.Enabled = false;
+            this.Toolbar_CmdChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChangeFilterClearAll.Image")));
+            this.Toolbar_CmdChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdChangeFilterClearAll.Name = "Toolbar_CmdChangeFilterClearAll";
+            this.Toolbar_CmdChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
+            this.Toolbar_CmdChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
+            this.Toolbar_CmdChangeFilterClearAll.ToolTipText = "Turn off all filters";
+            // 
             // toolStripInsert
             // 
             this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
@@ -2988,10 +3022,10 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertAllomorphACP,
             this.Toolbar_CmdInsertACPGroup});
             this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripInsert.Location = new System.Drawing.Point(273, 24);
+            this.toolStripInsert.Location = new System.Drawing.Point(308, 24);
             this.toolStripInsert.Name = "toolStripInsert";
             this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
-            this.toolStripInsert.TabIndex = 4;
+            this.toolStripInsert.TabIndex = 3;
             // 
             // Toolbar_CmdInsertLexEntry
             // 
@@ -3640,39 +3674,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertACPGroup.ToolTipText = "Create a group of ad hoc rules.";
             this.Toolbar_CmdInsertACPGroup.Visible = false;
             // 
-            // toolStripView
-            // 
-            this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Toolbar_CmdChooseTexts,
-            this.Toolbar_CmdChangeFilterClearAll});
-            this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripView.Location = new System.Drawing.Point(386, 24);
-            this.toolStripView.Name = "toolStripView";
-            this.toolStripView.Size = new System.Drawing.Size(35, 25);
-            this.toolStripView.TabIndex = 5;
-            // 
-            // Toolbar_CmdChooseTexts
-            // 
-            this.Toolbar_CmdChooseTexts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdChooseTexts.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChooseTexts.Image")));
-            this.Toolbar_CmdChooseTexts.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Toolbar_CmdChooseTexts.Name = "Toolbar_CmdChooseTexts";
-            this.Toolbar_CmdChooseTexts.Size = new System.Drawing.Size(23, 22);
-            this.Toolbar_CmdChooseTexts.ToolTipText = "Choose texts to display and use.";
-            this.Toolbar_CmdChooseTexts.Visible = false;
-            // 
-            // Toolbar_CmdChangeFilterClearAll
-            // 
-            this.Toolbar_CmdChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdChangeFilterClearAll.Enabled = false;
-            this.Toolbar_CmdChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdChangeFilterClearAll.Image")));
-            this.Toolbar_CmdChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Toolbar_CmdChangeFilterClearAll.Name = "Toolbar_CmdChangeFilterClearAll";
-            this.Toolbar_CmdChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
-            this.Toolbar_CmdChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
-            this.Toolbar_CmdChangeFilterClearAll.ToolTipText = "Turn off all filters";
-            // 
             // toolStripFormat
             // 
             this.toolStripFormat.Dock = System.Windows.Forms.DockStyle.None;
@@ -3680,10 +3681,10 @@ namespace LanguageExplorer.Impls
             this.Toolbar_WritingSystemList,
             this.Toolbar_CombinedStylesList});
             this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripFormat.Location = new System.Drawing.Point(422, 24);
+            this.toolStripFormat.Location = new System.Drawing.Point(419, 24);
             this.toolStripFormat.Name = "toolStripFormat";
             this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
-            this.toolStripFormat.TabIndex = 3;
+            this.toolStripFormat.TabIndex = 4;
             // 
             // Toolbar_WritingSystemList
             // 
@@ -3728,10 +3729,10 @@ namespace LanguageExplorer.Impls
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).EndInit();
-            this.toolStripInsert.ResumeLayout(false);
-            this.toolStripInsert.PerformLayout();
             this.toolStripView.ResumeLayout(false);
             this.toolStripView.PerformLayout();
+            this.toolStripInsert.ResumeLayout(false);
+            this.toolStripInsert.PerformLayout();
             this.toolStripFormat.ResumeLayout(false);
             this.toolStripFormat.PerformLayout();
             this.ResumeLayout(false);
@@ -3816,7 +3817,7 @@ namespace LanguageExplorer.Impls
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
 		private Panel _rightPanel;
 		private Controls.SilSidePane.SidePane _sidePane;
-		private ToolStripSeparator toolMenuSeparator2;
+		private ToolStripSeparator toolMenuSeparator1;
 		private ToolStripMenuItem CmdProjectUtilities;
 		private ToolStripMenuItem _parserToolStripMenuItem;
 		private ToolStripMenuItem CmdParseAllWords;
@@ -3858,7 +3859,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripComboBox Toolbar_CombinedStylesList;
 		private ToolStripMenuItem CmdImportSFMLexicon;
 		private ToolStripMenuItem CmdUploadToWebonary;
-		private ToolStripSeparator toolMenuSeparator5;
+		private ToolStripSeparator toolMenuSeparator4;
 		private ToolStripMenuItem CmdToolsOptions;
 		private ToolStripMenuItem CmdFormatStyle;
 		private ToolStripMenuItem CmdFormatApplyStyle;
@@ -4031,10 +4032,10 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem CmdMergeEntry;
 		private ToolStripMenuItem CmdLexiconLookup;
 		private ToolStripMenuItem ITexts_AddWordsToLexicon;
-		private ToolStripSeparator toolMenuSeparator3;
+		private ToolStripSeparator toolMenuSeparator2;
 		private ToolStripMenuItem CmdEditSpellingStatus;
 		private ToolStripMenuItem CmdViewIncorrectWords;
-		private ToolStripSeparator toolMenuSeparator4;
+		private ToolStripSeparator toolMenuSeparator3;
 		private ToolStripMenuItem CmdChangeSpelling;
 		private ToolStripMenuItem CmdMacroF2;
 		private ToolStripMenuItem CmdMacroF3;

@@ -37,18 +37,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
 		private LexiconEditToolMenuHelper _toolMenuHelper;
-		private ISharedEventHandlers _sharedEventHandlers;
 		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
+		private XhtmlRecordDocView _xhtmlRecordDocView;
 		private MultiPane _innerMultiPane;
 		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
-		[Import]
-		private IPublisher _publisher;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -71,7 +69,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_innerMultiPane = null;
 			_toolMenuHelper = null;
 			MyDataTree = null;
-			_sharedEventHandlers = null;
 		}
 
 		/// <summary>
@@ -84,7 +81,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			_propertyTable.SetDefault(Show_DictionaryPubPreview, true, true);
 			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
@@ -101,13 +97,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
-
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			MyDataTree = new DataTree(_sharedEventHandlers);
-			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, showHiddenFieldsPropertyName);
-
+			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_xhtmlRecordDocView = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, _xhtmlRecordDocView, showHiddenFieldsPropertyName);
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
@@ -118,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController),
+					Control = _xhtmlRecordDocView,
 					Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
@@ -239,17 +233,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private RecordBrowseView _recordBrowseView;
+			private XhtmlRecordDocView _xhtmlRecordDocView;
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
 			internal MultiPane InnerMultiPane { get; set; }
 
-			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, string extendedPropertyName)
+			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, XhtmlRecordDocView xhtmlRecordDocView, string extendedPropertyName)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 				Guard.AgainstNull(recordList, nameof(recordList));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(xhtmlRecordDocView, nameof(xhtmlRecordDocView));
 				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
@@ -260,6 +256,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				_recordList = recordList;
 				_recordBrowseView = recordBrowseView;
+				_xhtmlRecordDocView = xhtmlRecordDocView;
 				_mainWnd = majorFlexComponentParameters.MainWindow;
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
@@ -268,6 +265,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				_xhtmlRecordDocView.RegisterUiWidgets(true);
 				CreateBrowseViewContextMenu();
 			}
 
@@ -350,8 +348,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Was: LexiconEditToolToolsMenuManager
 				var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
-				// <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
+				// <command id="CmdConfigureDictionary" label="{0}" message="ConfigureDictionary"/>
 				toolsMenuDictionary.Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => CanCmdConfigureDictionary));
+				_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdConfigureDictionary].Text = AreaResources.ConfigureDictionary;
 				// <item command="CmdMergeEntry" defaultVisible="false"/>
 				toolsMenuDictionary.Add(Command.CmdMergeEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Merge_With_Entry_Clicked, () => CanCmdMergeEntry));
 
@@ -1292,6 +1291,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void RegisterSliceLeftEdgeMenus()
 			{
+				// mnuDataTree_CmMedia
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_CmMedia, Create_mnuDataTree_CmMedia);
+
+				// mnuDataTree_Translation
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Translation, Create_mnuDataTree_Translation);
+
+				// mnuDataTree_Translations
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Translations, Create_mnuDataTree_Translations);
+
+				// mnuDataTree_Examples
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Examples, Create_mnuDataTree_Examples);
+
 				// mnuDataTree_Sense
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Sense, Create_mnuDataTree_Sense);
 
@@ -1313,6 +1324,103 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// NB: I don't see "SubSenses" in shipping code.
 				// <menu id="mnuDataTree_Subsenses">
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Subsenses, Create_mnuDataTree_Subsenses);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CmMedia(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CmMedia, $"Expected argument value of '{ContextMenuName.mnuDataTree_CmMedia.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_CmMedia">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_CmMedia.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+
+				// <command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Translation, DeleteMediaFile_Clicked);
+
+				// End: <menu id="mnuDataTree_CmMedia">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void DeleteMediaFile_Clicked(object sender, EventArgs e)
+			{
+				var cache = _majorFlexComponentParameters.LcmCache;
+				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LexiconResources.Delete_Media_Link, cache.ActionHandlerAccessor, () =>
+				{
+					var media = (ICmMedia)_dataTree.CurrentSlice.MyCmObject;
+					if (CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, _propertyTable))
+					{
+						cache.DomainDataByFlid.DeleteObj(media.Hvo);
+					}
+				});
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Translation(Slice slice, ContextMenuName contextMenuId)
+			{
+				// <menu id="mnuDataTree_Translation">
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translation, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translation.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Translations">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Translations.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+
+				// <command id="CmdDataTree_Delete_Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_this_Media_Link, Delete_this_Foo_Clicked);
+
+				// End: <menu id="mnuDataTree_Translations">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Translations(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translations, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translations.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Translations">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Translations.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+
+				// <command id="CmdDataTree_Insert_Translation" label="Insert Translation" message="DataTreeInsert">
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Translation_Clicked, LexiconResources.Insert_Translation);
+
+				// End: <menu id="mnuDataTree_Translations">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Examples(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_Examples.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Examples">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Examples.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+
+				//<command id="CmdDataTree_Insert_Example" label="Insert _Example" message="DataTreeInsert">
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Example_Clicked, LexiconResources.Insert_Example);
+
+				// <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, FindExampleSentence_Clicked, LexiconResources.Find_example_sentence);
+
+				// End: <menu id="mnuDataTree_Examples">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(Slice slice, ContextMenuName contextMenuId)
@@ -2379,6 +2487,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (disposing)
 				{
+					_majorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(_xhtmlRecordDocView);
 					MainPanelMenuContextMenuFactory.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
@@ -2405,6 +2514,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_mainWnd = null;
 				_show_DictionaryPubPreviewContextMenu = null;
 				_recordBrowseView = null;
+				_xhtmlRecordDocView = null;
+				_xhtmlRecordDocView = null;
 
 				_isDisposed = true;
 			}

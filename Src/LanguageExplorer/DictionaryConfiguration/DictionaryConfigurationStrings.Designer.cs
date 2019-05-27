@@ -664,15 +664,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Media Link.
-        /// </summary>
-        internal static string ksRedoDeleteMediaLink {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteMediaLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Duplicate {0}.
         /// </summary>
         internal static string ksRedoDuplicate {
@@ -885,15 +876,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         internal static string ksUnableToStartGnomeCharMap {
             get {
                 return ResourceManager.GetString("ksUnableToStartGnomeCharMap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Media Link.
-        /// </summary>
-        internal static string ksUndoDeleteMediaLink {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteMediaLink", resourceCulture);
             }
         }
         

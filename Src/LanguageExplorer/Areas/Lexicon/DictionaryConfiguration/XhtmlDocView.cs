@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		#region Overrides of MainUserControl
 		/// <inheritdoc />
-		protected override void RegisterUiWidgets(bool shouldRegister)
+		internal override void RegisterUiWidgets(bool shouldRegister)
 		{
 			if (_uiWidgetController != null)
 			{
@@ -63,8 +63,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 		}
 		#endregion
-
-		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		#region Overrides of ViewBase
 		/// <summary>
@@ -731,6 +729,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
+
+		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)

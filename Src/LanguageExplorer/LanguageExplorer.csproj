@@ -385,6 +385,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpTopicPaths.resx</DependentUpon>
     </Compile>
+    <Compile Include="ISeparatorMenuBundle.cs" />
+    <Compile Include="ISeparatorToolStripBundle.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -394,6 +396,8 @@
     <Compile Include="MainMenusParameterObject.cs" />
     <Compile Include="MainToolBarsParameterObject.cs" />
     <Compile Include="MainUiWidget.cs" />
+    <Compile Include="SeparatorMenuBundle.cs" />
+    <Compile Include="SeparatorToolStripBundle.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
     <Compile Include="Controls\ProgressHandler.cs" />
@@ -1283,6 +1287,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="StandAloneSeparatorMenuBundle.cs" />
+    <Compile Include="StandAloneSeparatorToolStripBundle.cs" />
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

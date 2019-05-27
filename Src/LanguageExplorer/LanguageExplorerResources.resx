@@ -1479,4 +1479,7 @@ This version of the program requires version {1}.</value>
   <data name="ShowFailingItems" xml:space="preserve">
     <value>ShowFailingItems</value>
   </data>
+  <data name="ConfigureDocument" xml:space="preserve">
+    <value>Document...</value>
+  </data>
 </root>
