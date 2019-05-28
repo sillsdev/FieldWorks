@@ -128,9 +128,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
 			private SharedNotebookToolsUiWidgetMenuHelper _sharedNotebookToolsUiWidgetMenuHelper;
-			private ToolStripButton _insertRecordToolStripButton;
-			private ToolStripButton _insertFindRecordToolStripButton;
-			private IRecordList MyRecordList { get; }
+			private IRecordList _recordList;
 
 			internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList)
 			{
@@ -140,7 +138,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
-				MyRecordList = recordList;
+				_recordList = recordList;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				SetupToolUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -148,7 +146,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, MyRecordList);
+				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, _recordList);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 				_sharedNotebookToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdExport, Command.CmdInsertRecord, Command.CmdInsertSubrecord, Command.CmdInsertSubsubrecord });
@@ -194,14 +192,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				if (disposing)
 				{
 					_sharedNotebookToolsUiWidgetMenuHelper?.Dispose();
-					_insertRecordToolStripButton?.Dispose();
-					_insertFindRecordToolStripButton?.Dispose();
 				}
 				_majorFlexComponentParameters = null;
 				_tool = null;
-				_insertRecordToolStripButton = null;
-				_insertFindRecordToolStripButton = null;
 				_sharedNotebookToolsUiWidgetMenuHelper = null;
+				_recordList = null;
 
 				_isDisposed = true;
 			}

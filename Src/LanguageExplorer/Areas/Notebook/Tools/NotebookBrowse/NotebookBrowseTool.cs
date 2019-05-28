@@ -7,10 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -28,8 +26,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
-		private ISharedEventHandlers _sharedEventHandlers;
-		private MajorFlexComponentParameters _majorFlexComponentParameters;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -50,7 +46,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			_recordBrowseView = null;
 			_toolMenuHelper = null;
-			_majorFlexComponentParameters = null;
 		}
 
 		/// <summary>
@@ -61,13 +56,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_majorFlexComponentParameters = majorFlexComponentParameters;
 			if (_recordList == null)
 			{
 				// Try getting it from the notebook area.
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
-			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
@@ -155,29 +148,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				SetupToolUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				CreateBrowseViewContextMenu();
-			}
-
-			private void CreateBrowseViewContextMenu()
-			{
-				// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
-				// Start: <menu id="mnuBrowseView" (partial) >
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteSelectedBrowseViewObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
-
-				// End: <menu id="mnuBrowseView" (partial) >
-				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
-			}
-
-			private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
-			{
-				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+				_recordBrowseView.ContextMenuStrip = _sharedNotebookToolsUiWidgetMenuHelper.CreateBrowseViewContextMenu();
 			}
 
 			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
@@ -225,6 +196,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_majorFlexComponentParameters = null;
 				_tool = null;
 				_recordList = null;
+				_recordBrowseView = null;
 				_sharedNotebookToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;

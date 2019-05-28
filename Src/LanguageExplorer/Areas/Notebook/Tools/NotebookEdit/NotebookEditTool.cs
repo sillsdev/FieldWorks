@@ -185,9 +185,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private SharedNotebookToolsUiWidgetMenuHelper _sharedNotebookToolsUiWidgetMenuHelper;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private RightClickContextMenuManager _rightClickContextMenuManager;
-			private DataTree MyDataTree { get; set; }
-			private RecordBrowseView RecordBrowseView { get; }
-			private IRecordList MyRecordList { get; set; }
+			private DataTree _dataTree;
+			private IRecordList _recordList;
+			private RecordBrowseView _recordBrowseView;
 			private ISharedEventHandlers _sharedEventHandlers;
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
@@ -201,30 +201,30 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
-				MyRecordList = recordList;
-				MyDataTree = dataTree;
-				RecordBrowseView = recordBrowseView;
+				_recordList = recordList;
+				_dataTree = dataTree;
+				_recordBrowseView = recordBrowseView;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
 				SetupToolUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				CreateBrowseViewContextMenu();
+				_recordBrowseView.ContextMenuStrip = _sharedNotebookToolsUiWidgetMenuHelper.CreateBrowseViewContextMenu();
 			}
 
 			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, MyRecordList, MyDataTree);
+				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, _recordList);
 				_sharedNotebookToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdExport, Command.CmdInsertRecord, Command.CmdInsertSubrecord, Command.CmdInsertSubsubrecord });
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
-				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, _dataTree, _recordList);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 
 				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
-				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
+				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, _dataTree);
 				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
-				menuItem.Tag = MyDataTree;
+				menuItem.Tag = _dataTree;
 
 				// <item command="CmdLexiconLookup" defaultVisible="false" />
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
@@ -234,40 +234,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				SetupSliceMenus();
 			}
 
-			private void CreateBrowseViewContextMenu()
-			{
-				// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
-				// Start: <menu id="mnuBrowseView" (partial) >
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
-
-				// End: <menu id="mnuBrowseView" (partial) >
-
-				RecordBrowseView.ContextMenuStrip = contextMenuStrip;
-			}
-
-			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
-			{
-				var currentSlice = MyDataTree.CurrentSlice;
-				if (currentSlice == null)
-				{
-					MyDataTree.GotoFirstSlice();
-					currentSlice = MyDataTree.CurrentSlice;
-				}
-				currentSlice.HandleDeleteCommand();
-			}
-
 			private Tuple<bool, bool> CanCmdAddToLexicon
 			{
 				get
 				{
-					var currentSliceAsStTextSlice = MyDataTree?.CurrentSliceAsStTextSlice;
+					var currentSliceAsStTextSlice = _dataTree?.CurrentSliceAsStTextSlice;
 					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
@@ -284,7 +255,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var currentSliceAsStTextSlice = MyDataTree?.CurrentSliceAsStTextSlice;
+					var currentSliceAsStTextSlice = _dataTree?.CurrentSliceAsStTextSlice;
 					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
@@ -299,7 +270,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void CmdLexiconLookup_Click(object sender, EventArgs e)
 			{
-				var currentSliceAsStTextSlice = MyDataTree.CurrentSliceAsStTextSlice;
+				var currentSliceAsStTextSlice = _dataTree.CurrentSliceAsStTextSlice;
 				int ichMin, ichLim, hvo, tag, ws;
 				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out hvo, out tag, out ws, out ichMin, out ichLim))
 				{
@@ -341,7 +312,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var root = MyDataTree.Root;
+					var root = _dataTree.Root;
 					return root.Owner is IRnResearchNbk && (root.Owner as IRnResearchNbk).RecordsOC.Count > 1;
 				}
 			}
@@ -354,7 +325,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					</command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
-				var record = (IRnGenericRec)MyDataTree.Root;
+				var record = (IRnGenericRec)_dataTree.Root;
 				IRnGenericRec newOwner;
 				if (record.Owner is IRnResearchNbk)
 				{
@@ -380,30 +351,30 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				});
 			}
 
-			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, MyDataTree?.CurrentSliceAsStTextSlice != null);
+			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, _dataTree?.CurrentSliceAsStTextSlice != null);
 
 			private void SetupSliceMenus()
 			{
 				#region Left edge context menus
 
 				// <menu id="mnuDataTree_Participants">
-				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Participants, Create_mnuDataTree_Participants);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Participants, Create_mnuDataTree_Participants);
 
 				// <menu id="mnuDataTree_SubRecords">
-				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords, Create_mnuDataTree_SubRecords);
 
 				// <menu id="mnuDataTree_SubRecordSummary">
-				MyDataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecordSummary, Create_mnuDataTree_SubRecordSummary);
 
 				#endregion Left edge context menus
 
 				#region Hotlinks menus
 
 				// <menu id="mnuDataTree_Subrecord_Hotlinks">
-				MyDataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_Subrecord_Hotlinks, Create_mnuDataTree_Subrecord_Hotlinks);
 
 				// <menu id="mnuDataTree_SubRecords_Hotlinks">
-				MyDataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
+				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_SubRecords_Hotlinks, Create_mnuDataTree_SubRecords_Hotlinks);
 
 				#endregion Hotlinks menus
 			}
@@ -430,7 +401,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void Delete_Participants_Clicked(object sender, EventArgs e)
 			{
-				var slice = MyDataTree.CurrentSlice;
+				var slice = _dataTree.CurrentSlice;
 				var parentSlice = slice.ParentSlice;
 				var roledPartic = slice.MyCmObject as IRnRoledPartic ?? parentSlice.MyCmObject as IRnRoledPartic;
 				if (roledPartic == null)
@@ -534,7 +505,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var currentSliceObject = MyDataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
+					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
 					var recordOwner = currentSliceObject?.Owner as IRnGenericRec;
 					return currentSliceObject != null && recordOwner != null && currentSliceObject.OwnOrd > 0;
 				}
@@ -542,7 +513,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void MoveRecordUp_Clicked(object sender, EventArgs e)
 			{
-				var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
+				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
 				var recordOwner = (IRnGenericRec)record.Owner;
 				var idxOrig = record.OwnOrd;
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveUp, record.Cache.ActionHandlerAccessor, () =>
@@ -558,7 +529,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var currentSliceObject = MyDataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
+					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
 					var recordOwner = currentSliceObject?.Owner as IRnGenericRec;
 					return currentSliceObject != null && recordOwner != null && currentSliceObject.OwnOrd < recordOwner.SubRecordsOS.Count - 1;
 				}
@@ -566,7 +537,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void MoveRecordDown_Clicked(object sender, EventArgs e)
 			{
-				var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
+				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
 				var recordOwner = (IRnGenericRec)record.Owner;
 				var idxOrig = record.OwnOrd;
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LanguageExplorerResources.MoveDown, record.Cache.ActionHandlerAccessor, () =>
@@ -580,7 +551,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var slice = MyDataTree.CurrentSlice;
+					var slice = _dataTree.CurrentSlice;
 					var currentSliceObject = slice.MyCmObject as IRnGenericRec;
 					return currentSliceObject != null && currentSliceObject.Owner is IRnGenericRec;
 				}
@@ -588,7 +559,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void PromoteSubitemInVector_Clicked(object sender, EventArgs e)
 			{
-				var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
+				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
 				var recordOwner = record.Owner as IRnGenericRec;
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(AreaResources.Promote, record.Cache.ActionHandlerAccessor, () =>
 				{
@@ -619,7 +590,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				get
 				{
-					var currentSliceObject = MyDataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
+					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
 					return currentSliceObject?.Owner is IRnGenericRec && (currentSliceObject.Owner as IRnGenericRec).SubRecordsOS.Count > 1;
 				}
 			}
@@ -627,7 +598,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private void DemoteSubrecord_Clicked(object sender, EventArgs e)
 			{
 				var cache = _majorFlexComponentParameters.LcmCache;
-				var record = (IRnGenericRec)MyDataTree.CurrentSlice.MyCmObject;
+				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
 				IRnGenericRec newOwner;
 				var recordOwner = record.Owner as IRnGenericRec;
 				if (recordOwner.SubRecordsOS.Count == 2)
@@ -743,8 +714,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					_sharedNotebookToolsUiWidgetMenuHelper?.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_rightClickContextMenuManager?.Dispose();
-					RecordBrowseView.ContextMenuStrip?.Dispose();
-					RecordBrowseView.ContextMenuStrip = null;
+					_recordBrowseView.ContextMenuStrip?.Dispose();
+					_recordBrowseView.ContextMenuStrip = null;
 				}
 				MainPanelMenuContextMenuFactory = null;
 				_majorFlexComponentParameters = null;
@@ -752,9 +723,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_sharedNotebookToolsUiWidgetMenuHelper = null;
 				_partiallySharedForToolsWideMenuHelper = null;
 				_rightClickContextMenuManager = null;
-				MyDataTree = null;
-				MyRecordList = null;
+				_dataTree = null;
+				_recordList = null;
 				_sharedEventHandlers = null;
+				_recordBrowseView = null;
 
 				_isDisposed = true;
 			}

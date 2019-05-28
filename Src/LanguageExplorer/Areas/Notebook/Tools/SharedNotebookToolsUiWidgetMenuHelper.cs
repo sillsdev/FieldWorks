@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -20,23 +20,45 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private DataTree _dataTree;
 		private IRecordList _recordList;
 		private ITool _tool;
 
-		internal SharedNotebookToolsUiWidgetMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, DataTree dataTree = null)
+		internal SharedNotebookToolsUiWidgetMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_dataTree = dataTree;
 			_recordList = recordList;
 
 			// Add handlers that are shared in places, such as context menus.
 			_sharedEventHandlers.Add(Command.CmdInsertSubrecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subrecord_Clicked, () => CanCmdInsertSubrecord));
 			_sharedEventHandlers.Add(Command.CmdInsertSubsubrecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsubrecord_Clicked, () => CanCmdInsertSubsubrecord));
+		}
+
+		internal ContextMenuStrip CreateBrowseViewContextMenu()
+		{
+			Require.That(_tool == null || _tool.MachineName != AreaServices.NotebookDocumentToolMachineName, "The Notebook Document tool is not expected to call this method.");
+
+			// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
+			// Start: <menu id="mnuBrowseView" (partial) >
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = ContextMenuName.mnuBrowseView.ToString()
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteSelectedBrowseViewObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+
+			// End: <menu id="mnuBrowseView" (partial) >
+			return contextMenuStrip;
+		}
+
+		private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
+		{
+			_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 		}
 
 		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject, HashSet<Command> commands)
@@ -188,7 +210,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			_majorFlexComponentParameters = null;
 			_tool = null;
 			_sharedEventHandlers = null;
-			_dataTree = null;
 			_recordList = null;
 
 			_isDisposed = true;
