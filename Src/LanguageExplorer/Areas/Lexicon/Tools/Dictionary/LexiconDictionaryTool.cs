@@ -172,6 +172,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			private IRecordList _recordList;
 			internal XhtmlDocView DocView { private get; set; }
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
+			private SharedLexiconToolsUiWidgetHelper _sharedLexiconToolsUiWidgetHelper;
 			private string _configureObjectName;
 
 			internal LexiconDictionaryToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, string configureObjectName)
@@ -187,12 +188,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				_fwMainWnd = _majorFlexComponentParameters.MainWindow;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
+				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateLeftMainPanelContextMenuStrip);
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.RightPanelMenuId, CreateRightMainPanelContextMenuStrip);
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftMainPanelContextMenuStrip(string panelMenuId)
@@ -368,10 +376,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 				if (disposing)
 				{
+					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					MainPanelMenuContextMenuFactory.Dispose();
 				}
 				_majorFlexComponentParameters = null;
 				MainPanelMenuContextMenuFactory = null;
+				_sharedLexiconToolsUiWidgetHelper = null;
 				DocView = null;
 				_propertyTable = null;
 				_fwMainWnd = null;

@@ -615,4 +615,7 @@
   <data name="Delete_Translation" xml:space="preserve">
     <value>Delete Translation</value>
   </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index...</value>
+  </data>
 </root>

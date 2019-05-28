@@ -282,6 +282,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			private IRecordList _recordList;
 			private List<ToolStripMenuItem> _jumpMenus;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private SharedLexiconToolsUiWidgetHelper _sharedLexiconToolsUiWidgetHelper;
 
 			internal BulkEditEntriesOrSensesMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
@@ -294,12 +295,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
+				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
 
 				_jumpMenus = new List<ToolStripMenuItem>(3);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
+				SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdGoToEntry, Command.CmdInsertLexEntry });
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -366,6 +373,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				}
 				if (disposing)
 				{
+					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
 					foreach (var menu in _jumpMenus)
 					{
@@ -382,6 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				_recordList = null;
 				_jumpMenus = null;
 				_partiallySharedForToolsWideMenuHelper = null;
+				_sharedLexiconToolsUiWidgetHelper = null;
 
 				_isDisposed = true;
 			}

@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -232,6 +231,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			private ToolStripMenuItem _show_DictionaryPubPreviewContextMenu;
 			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private SharedLexiconToolsUiWidgetHelper _sharedLexiconToolsUiWidgetHelper;
 			private RecordBrowseView _recordBrowseView;
 			private XhtmlRecordDocView _xhtmlRecordDocView;
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
@@ -261,7 +261,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -308,14 +309,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
 				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
 
-				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				// Was: LexiconEditToolEditMenuManager
-				// <item command="CmdGoToEntry" />
-				InsertPair(insertToolBarDictionary, toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit], Command.CmdGoToEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToEntry_Clicked, () => CanCmdGoToEntry));
-
 				// Was: LexiconEditToolViewMenuManager
 				// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
 				_subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
+				// Various tool level shared handlers for within the Lexicon area.
+				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
+
 				var viewMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View];
 				viewMenuDictionary.Add(Command.ShowHiddenFields, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Hidden_Fields_Clicked, () => CanShowHiddenFields));
 				ShowHiddenFields_Handler(_propertyTable.GetValue(_extendedPropertyName, false));
@@ -325,8 +324,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Was: LexiconEditToolInsertMenuManager
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				// <item command="CmdInsertLexEntry" defaultVisible="false" />
-				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertLexEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Entry_Clicked, () => CanCmdInsertLexEntry));
 				// <item command="CmdInsertSense" defaultVisible="false" />;
 				insertMenuDictionary.Add(Command.CmdInsertSense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sense_Clicked, () => CanCmdInsertSense));
 				// <item command="CmdInsertSubsense" defaultVisible="false" />
@@ -348,9 +345,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Was: LexiconEditToolToolsMenuManager
 				var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
-				// <command id="CmdConfigureDictionary" label="{0}" message="ConfigureDictionary"/>
-				toolsMenuDictionary.Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => CanCmdConfigureDictionary));
-				_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdConfigureDictionary].Text = AreaResources.ConfigureDictionary;
 				// <item command="CmdMergeEntry" defaultVisible="false"/>
 				toolsMenuDictionary.Add(Command.CmdMergeEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Merge_With_Entry_Clicked, () => CanCmdMergeEntry));
 
@@ -371,34 +365,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 				// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, toolUiWidgetParameterObject.Tool, _dataTree, _recordList);
-			}
-
-			private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
-			{
-				toolBarDictionary.Add(key, currentTuple);
-				menuDictionary.Add(key, currentTuple);
-			}
-
-			private static readonly Tuple<bool, bool> CanCmdGoToEntry = new Tuple<bool, bool>(true, true);
-
-			private void GoToEntry_Clicked(object sender, EventArgs e)
-			{
-				using (var dlg = new EntryGoDlg())
-				{
-					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					var windowParameters = new WindowParams
-					{
-						m_btnText = FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.Go),
-						m_label = FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.Go_To),
-						m_title = LexiconResources.Go_To_Entry_Dlg_Title
-					};
-					dlg.SetDlgInfo(_cache, windowParameters);
-					dlg.SetHelpTopic("khtpFindLexicalEntry");
-					if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
-					{
-						_recordList.JumpToRecord(dlg.SelectedObject.Hvo);
-					}
-				}
 			}
 
 			private static Tuple<bool, bool> CanShowHiddenFields => new Tuple<bool, bool>(true, true);
@@ -438,27 +404,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				var currentSlice = _dataTree.CurrentSlice;
 				currentSlice.HandleSplitCommand();
-			}
-
-			private static Tuple<bool, bool> CanCmdInsertLexEntry => new Tuple<bool, bool>(true, true);
-
-			private void Insert_Entry_Clicked(object sender, EventArgs e)
-			{
-				using (var dlg = new InsertEntryDlg())
-				{
-					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					dlg.SetDlgInfo(_cache, PersistenceProviderFactory.CreatePersistenceProvider(_propertyTable));
-					if (dlg.ShowDialog((Form)_mainWnd) != DialogResult.OK)
-					{
-						return;
-					}
-					ILexEntry entry;
-					bool newby;
-					dlg.GetDialogInfo(out entry, out newby);
-					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-					_mainWnd.RefreshAllViews();
-					_recordList.JumpToRecord(entry.Hvo);
-				}
 			}
 
 			private static Tuple<bool, bool> CanCmdInsertSense => new Tuple<bool, bool>(true, true);
@@ -655,16 +600,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// If we didn't create any ICmMedia instances, then roll back the UOW, even if it created a new ILexPronunciation.
 						unitOfWorkHelper.RollBack = !createdMediaFile;
 					}
-				}
-			}
-
-			private static Tuple<bool, bool> CanCmdConfigureDictionary => new Tuple<bool, bool>(true, true);
-
-			private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
-			{
-				if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)_mainWnd, _recordList.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
-				{
-					_mainWnd.RefreshAllViews();
 				}
 			}
 
@@ -2489,6 +2424,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					_majorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(_xhtmlRecordDocView);
 					MainPanelMenuContextMenuFactory.Dispose();
+					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 					_rightClickContextMenuManager.Dispose();
@@ -2506,6 +2442,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_publisher = null;
 				_rightClickContextMenuManager = null;
 				_partiallySharedForToolsWideMenuHelper = null;
+				_sharedLexiconToolsUiWidgetHelper = null;
 				_sharedEventHandlers = null;
 				_dataTree = null;
 				_recordList = null;

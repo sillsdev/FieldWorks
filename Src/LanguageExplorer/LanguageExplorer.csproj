@@ -343,7 +343,7 @@
     <Compile Include="Areas\IPhEnvSliceCommon.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
-    <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolsUiWidgetHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">

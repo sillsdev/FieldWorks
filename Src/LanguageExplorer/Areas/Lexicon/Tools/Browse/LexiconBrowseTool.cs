@@ -139,6 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			private IRecordList _recordList;
 			private ToolStripMenuItem _jumpMenu;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private SharedLexiconToolsUiWidgetHelper _sharedLexiconToolsUiWidgetHelper;
 
 			internal LexiconBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
@@ -152,11 +153,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				SetupUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				// Various tool level shared handlers for within the Lexicon area.
+				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -225,6 +233,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				}
 				if (disposing)
 				{
+					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					_jumpMenu.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
 					_jumpMenu.Dispose();
 					_recordBrowseView.ContextMenuStrip.Dispose();
@@ -234,6 +243,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				_majorFlexComponentParameters = null;
 				_tool = null;
 				_partiallySharedForToolsWideMenuHelper = null;
+				_sharedLexiconToolsUiWidgetHelper = null;
 				_jumpMenu = null;
 				_recordBrowseView = null;
 				_sharedEventHandlers = null;

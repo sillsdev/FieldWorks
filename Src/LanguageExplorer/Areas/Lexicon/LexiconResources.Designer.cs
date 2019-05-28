@@ -1440,6 +1440,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversal Index....
+        /// </summary>
+        internal static string ReversalIndex {
+            get {
+                return ResourceManager.GetString("ReversalIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Sense.
         /// </summary>
         internal static string Sense {

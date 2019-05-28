@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -24,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
+			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = recordList;
 		}
 
@@ -38,6 +40,20 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			// <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, () => CanCmdInsertReversalEntry));
 			insertToolBarDictionary.Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, ()=> CanCmdInsertReversalEntry));
+			// <command id="CmdConfigureDictionary" label="{0}" message="ConfigureDictionary"/>
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => CanCmdConfigureDictionary));
+			_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdConfigureDictionary].Text = LexiconResources.ReversalIndex;
+		}
+
+		private static Tuple<bool, bool> CanCmdConfigureDictionary => new Tuple<bool, bool>(true, true);
+
+		private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
+		{
+			var mainWnd = _majorFlexComponentParameters.MainWindow;
+			if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)mainWnd, _recordList.CurrentObject, "khtpConfigReversalIndex", LanguageExplorerResources.ReversalIndex))
+			{
+				mainWnd.RefreshAllViews();
+			}
 		}
 
 		private static Tuple<bool, bool> CanCmdInsertReversalEntry => new Tuple<bool, bool>(true, true);
