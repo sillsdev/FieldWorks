@@ -146,11 +146,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				SetupUiWidgets(toolUiWidgetParameterObject);
+				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
 				var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
-				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, ()=> CanCmdFindAndReplaceText));
+				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
 				editMenuDictionary.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdCmdReplaceText_Click, () => CanCmdCmdReplaceText));
-				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
 			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);

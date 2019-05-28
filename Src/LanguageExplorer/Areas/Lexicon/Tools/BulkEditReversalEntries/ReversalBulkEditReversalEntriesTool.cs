@@ -39,10 +39,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
-		[Import]
-		private IPublisher _publisher;
-		[Import]
-		private ISubscriber _subscriber;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -187,15 +183,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
+				SetupUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, _recordList);
 				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
-				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				_mainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory(); // Make our own, since the tool has no data tree.
 				_mainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreatePanelContextMenuStrip);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-				CreateBrowseViewContextMenu();
 			}
 
 			private void CreateBrowseViewContextMenu()

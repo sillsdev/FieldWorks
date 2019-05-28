@@ -260,12 +260,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_mainWnd = majorFlexComponentParameters.MainWindow;
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
-				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
+
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				// Doc view must be done 'after' the tool is registered.
 				_xhtmlRecordDocView.RegisterUiWidgets(true);
 				CreateBrowseViewContextMenu();
 			}
@@ -305,6 +304,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
+				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
+
 				// Both used by RightClickContextMenuManager
 				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
 				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
