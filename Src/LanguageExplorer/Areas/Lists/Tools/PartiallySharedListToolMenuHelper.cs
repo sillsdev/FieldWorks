@@ -223,7 +223,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		{
 			get
 			{
-				var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(_dataTree);
+				var currentSliceAsStTextSlice = _dataTree?.CurrentSliceAsStTextSlice;
 				var visible = currentSliceAsStTextSlice != null;
 				var enabled = false;
 				if (currentSliceAsStTextSlice != null)

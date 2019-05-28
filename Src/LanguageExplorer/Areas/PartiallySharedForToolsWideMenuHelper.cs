@@ -227,11 +227,6 @@ namespace LanguageExplorer.Areas
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
 		}
 
-		internal static StTextSlice DataTreeCurrentSliceAsStTextSlice(DataTree dataTree)
-		{
-			return dataTree?.CurrentSlice as StTextSlice; // May be null.
-		}
-
 		internal static void CreateShowEnvironmentErrorMessageContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
 		{
 			/*
@@ -336,9 +331,9 @@ namespace LanguageExplorer.Areas
 
 		private static void JumpToTool_Clicked(object sender, EventArgs e)
 		{
-			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
+			var tagList = (List<object>)((ToolStripMenuItem)sender).Tag;
 			Guid jumpToGuid;
-			var guidSupplier = tag[2];
+			var guidSupplier = tagList[2];
 			if (guidSupplier is Guid)
 			{
 				jumpToGuid = (Guid)guidSupplier;
@@ -360,7 +355,7 @@ namespace LanguageExplorer.Areas
 				MessageBox.Show($"Deal with type of '{guidSupplier.GetType().Name}' in shared 'JumpToTool_Clicked' event handler!");
 				throw new ArgumentException("Who is it?");
 			}
-			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], jumpToGuid));
+			LinkHandler.PublishFollowLinkMessage((IPublisher)tagList[0], new FwLinkArgs((string)tagList[1], jumpToGuid));
 		}
 
 		internal static bool Set_CmdInsertFoo_Enabled_State(LcmCache cache, IVwSelection selection)
@@ -404,13 +399,15 @@ namespace LanguageExplorer.Areas
 		{
 			// CmdAddToLexicon goes on Insert menu & Insert toolbar
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));
+			_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon].Tag = dataTree;
 			toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));
+			_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdAddToLexicon].Tag = dataTree;
 		}
 
 		private void CmdAddToLexicon_Clicked(object sender, EventArgs e)
 		{
 			var dataTree = (DataTree)((ToolStripItem)sender).Tag;
-			var currentSlice = DataTreeCurrentSliceAsStTextSlice(dataTree);
+			var currentSlice = dataTree.CurrentSliceAsStTextSlice;
 			int ichMin;
 			int ichLim;
 			int hvoDummy;

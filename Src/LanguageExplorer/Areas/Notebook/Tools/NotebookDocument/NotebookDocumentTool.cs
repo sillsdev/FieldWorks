@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -126,7 +127,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
-			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
+			private SharedNotebookToolsUiWidgetMenuHelper _sharedNotebookToolsUiWidgetMenuHelper;
 			private ToolStripButton _insertRecordToolStripButton;
 			private ToolStripButton _insertFindRecordToolStripButton;
 			private IRecordList MyRecordList { get; }
@@ -140,17 +141,17 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
 				MyRecordList = recordList;
-				SetupToolUiWidgets();
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private void SetupToolUiWidgets()
+			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList);
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, MyRecordList);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
-				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				_sharedNotebookToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdExport, Command.CmdInsertRecord, Command.CmdInsertSubrecord, Command.CmdInsertSubsubrecord });
 			}
 
 			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
@@ -192,7 +193,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 				if (disposing)
 				{
-					_sharedNotebookToolMenuHelper?.Dispose();
+					_sharedNotebookToolsUiWidgetMenuHelper?.Dispose();
 					_insertRecordToolStripButton?.Dispose();
 					_insertFindRecordToolStripButton?.Dispose();
 				}
@@ -200,7 +201,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				_tool = null;
 				_insertRecordToolStripButton = null;
 				_insertFindRecordToolStripButton = null;
-				_sharedNotebookToolMenuHelper = null;
+				_sharedNotebookToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

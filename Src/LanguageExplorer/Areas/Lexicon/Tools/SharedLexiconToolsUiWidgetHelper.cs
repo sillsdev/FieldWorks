@@ -35,7 +35,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 		{
 			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 			var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
-
 			var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 
 			foreach (var command in commands)

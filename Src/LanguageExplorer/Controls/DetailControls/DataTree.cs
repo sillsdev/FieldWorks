@@ -423,6 +423,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
+		/// Get the current slice as StTextSlice, or null if the is no current slice or it isn't a StTextSlice.
+		/// </summary>
+		internal StTextSlice CurrentSliceAsStTextSlice => CurrentSlice as StTextSlice;
+
+		/// <summary>
 		/// Get the root layout name.
 		/// </summary>
 		public string RootLayoutName { get; protected set; } = "default";

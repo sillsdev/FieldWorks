@@ -63,5 +63,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
 			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 		}
+
+		public static bool GetSelectedWordPos(this IVwSelection me, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
+		{
+			var sel2 = me.EndBeforeAnchor ? me.EndPoint(true) : me.EndPoint(false);
+			var wordsel = sel2?.GrowToWord();
+			if (wordsel == null)
+			{
+				hvo = tag = ws = 0;
+				ichMin = ichLim = -1;
+				return false;
+			}
+			ITsString tss;
+			bool fAssocPrev;
+			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			return ichLim > 0;
+		}
 	}
 }

@@ -43,8 +43,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			if (_panelMenuContextMenuAndItems != null)
 			{
-				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
-				DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 				_panelMenuContextMenuAndItems = null;
 				ContextMenuStrip?.Dispose();
 				ContextMenuStrip = null;
@@ -69,13 +67,12 @@ namespace LanguageExplorer.Controls.PaneBar
 			if (disposing)
 			{
 				Click -= PanelMenu_Click;
+				ContextMenuStrip?.Dispose();
 				if (_panelMenuContextMenuAndItems != null)
 				{
-					// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
 					DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 				}
 			}
-
 			DataTreeMainPanelContextMenuFactory = null;
 			_panelMenuContextMenuAndItems = null;
 			_panelMenuId = null;

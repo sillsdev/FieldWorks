@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
@@ -15,7 +16,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 	/// <summary>
 	/// Handle setting up UI for Notebook area tools.
 	/// </summary>
-	internal sealed class SharedNotebookToolMenuHelper : IDisposable
+	internal sealed class SharedNotebookToolsUiWidgetMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -23,7 +24,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 		private IRecordList _recordList;
 		private ITool _tool;
 
-		internal SharedNotebookToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, DataTree dataTree = null)
+		internal SharedNotebookToolsUiWidgetMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, DataTree dataTree = null)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(recordList, nameof(recordList));
@@ -38,22 +39,37 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			_sharedEventHandlers.Add(Command.CmdInsertSubsubrecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsubrecord_Clicked, () => CanCmdInsertSubsubrecord));
 		}
 
-		internal void CollectUiWidgetsForNotebookTool(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject, HashSet<Command> commands)
 		{
 			Guard.AgainstNull(toolUiWidgetParameterObject, nameof(toolUiWidgetParameterObject));
 
 			_tool = toolUiWidgetParameterObject.Tool;
 
-			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
-
-			var cmdInsertRecordTuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Record_Clicked, () => CanCmdInsertRecord);
 			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-			insertMenuDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
-			insertMenuDictionary.Add(Command.CmdInsertSubrecord, _sharedEventHandlers.Get(Command.CmdInsertSubrecord));
-			insertMenuDictionary.Add(Command.CmdInsertSubsubrecord, _sharedEventHandlers.Get(Command.CmdInsertSubsubrecord));
-
 			var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-			insertToolBarDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
+
+			foreach (var command in commands)
+			{
+				switch (command)
+				{
+					case Command.CmdExport:
+						toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+						break;
+					case Command.CmdInsertRecord:
+						var cmdInsertRecordTuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Record_Clicked, () => CanCmdInsertRecord);
+						insertMenuDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
+						insertToolBarDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
+						break;
+					case Command.CmdInsertSubrecord:
+						insertMenuDictionary.Add(Command.CmdInsertSubrecord, _sharedEventHandlers.Get(Command.CmdInsertSubrecord));
+						break;
+					case Command.CmdInsertSubsubrecord:
+						insertMenuDictionary.Add(Command.CmdInsertSubsubrecord, _sharedEventHandlers.Get(Command.CmdInsertSubsubrecord));
+						break;
+					default:
+						throw new ArgumentOutOfRangeException($"Dont know how to process command: '{command.ToString()}'");
+				}
+			}
 		}
 
 		private Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, !_majorFlexComponentParameters.LcmCache.GetManagedMetaDataCache().AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }));
@@ -67,14 +83,21 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			}
 		}
 
-		private Tuple<bool, bool> CanCmdInsertRecord => new Tuple<bool, bool>(true, PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(_dataTree) != null);
+		private Tuple<bool, bool> CanCmdInsertRecord => new Tuple<bool, bool>(true, true);
 
 		private void Insert_Record_Clicked(object sender, EventArgs e)
 		{
 			InsertRecord_Common();
 		}
 
-		private Tuple<bool, bool> CanCmdInsertSubrecord { get; }
+		private Tuple<bool, bool> CanCmdInsertSubrecord
+		{
+			get
+			{
+				var visible = _recordList.CurrentObject != null && _recordList.CurrentObject.OwningFlid == RnResearchNbkTags.kflidRecords;
+				return new Tuple<bool, bool>(visible, visible);
+			}
+		}
 
 		private void Insert_Subrecord_Clicked(object sender, EventArgs e)
 		{
@@ -85,10 +108,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 		{
 			get
 			{
-				var visible = _recordList.CurrentObject != null && _recordList.CurrentObject.OwningFlid == RnGenericRecTags.kflidSubRecords;
-				var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(_dataTree);
-				var enabled = visible && currentSliceAsStTextSlice != null && PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
-				return new Tuple<bool, bool>(visible, enabled);
+				var enabled = _recordList.CurrentObject != null && _recordList.CurrentObject.OwningFlid == RnGenericRecTags.kflidSubRecords;
+				return new Tuple<bool, bool>(true, enabled);
 			}
 		}
 
@@ -132,7 +153,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 		#region Implementation of IDisposable
 		private bool _isDisposed;
 
-		~SharedNotebookToolMenuHelper()
+		~SharedNotebookToolsUiWidgetMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);

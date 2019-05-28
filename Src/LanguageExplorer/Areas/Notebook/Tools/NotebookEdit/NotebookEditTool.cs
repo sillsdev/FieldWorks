@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
@@ -183,7 +182,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
-			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
+			private SharedNotebookToolsUiWidgetMenuHelper _sharedNotebookToolsUiWidgetMenuHelper;
 			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private RightClickContextMenuManager _rightClickContextMenuManager;
 			private DataTree MyDataTree { get; set; }
@@ -207,7 +206,32 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				RecordBrowseView = recordBrowseView;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
-				SetupToolUiWidgets();
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, MyRecordList, MyDataTree);
+				_sharedNotebookToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdExport, Command.CmdInsertRecord, Command.CmdInsertSubrecord, Command.CmdInsertSubsubrecord });
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
+				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
+				// <item command="CmdConfigureColumns" defaultVisible="false" />
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
+
+				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
+				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
+				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
+				menuItem.Tag = MyDataTree;
+
+				// <item command="CmdLexiconLookup" defaultVisible="false" />
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
+
+				// Slice menus don't need to add anything to: toolUiWidgetParameterObject.
+				SetupSliceMenus();
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -224,6 +248,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
 
 				// End: <menu id="mnuBrowseView" (partial) >
+
+				RecordBrowseView.ContextMenuStrip = contextMenuStrip;
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
@@ -237,36 +263,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				currentSlice.HandleDeleteCommand();
 			}
 
-			private void SetupToolUiWidgets()
-			{
-				// Slice menus don't need to add anything to: toolUiWidgetParameterObject.
-				SetupSliceMenus();
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, MyRecordList, MyDataTree);
-				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, MyRecordList);
-				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, MyDataTree, MyRecordList);
-				// <item command="CmdConfigureColumns" defaultVisible="false" />
-				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
-
-				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
-				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, MyDataTree);
-				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
-				menuItem.Tag = MyDataTree;
-
-				// <item command="CmdLexiconLookup" defaultVisible="false" />
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
-
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				CreateBrowseViewContextMenu();
-			}
-
 			private Tuple<bool, bool> CanCmdAddToLexicon
 			{
 				get
 				{
-					var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+					var currentSliceAsStTextSlice = MyDataTree?.CurrentSliceAsStTextSlice;
 					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
@@ -279,32 +280,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				}
 			}
 
-			private static bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
-			{
-				IVwSelection wordsel = null;
-				if (sel != null)
-				{
-					var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-					wordsel = sel2?.GrowToWord();
-				}
-				if (wordsel == null)
-				{
-					hvo = tag = ws = 0;
-					ichMin = ichLim = -1;
-					return false;
-				}
-				ITsString tss;
-				bool fAssocPrev;
-				wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-				wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-				return ichLim > 0;
-			}
-
 			private Tuple<bool, bool> CanCmdLexiconLookup
 			{
 				get
 				{
-					var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+					var currentSliceAsStTextSlice = MyDataTree?.CurrentSliceAsStTextSlice;
 					var enabled = currentSliceAsStTextSlice != null;
 					IVwSelection currentSelection = null;
 					if (currentSliceAsStTextSlice != null)
@@ -319,9 +299,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			private void CmdLexiconLookup_Click(object sender, EventArgs e)
 			{
-				var currentSliceAsStTextSlice = PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+				var currentSliceAsStTextSlice = MyDataTree.CurrentSliceAsStTextSlice;
 				int ichMin, ichLim, hvo, tag, ws;
-				if (GetSelectedWordPos(currentSliceAsStTextSlice.RootSite.RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
+				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out hvo, out tag, out ws, out ichMin, out ichLim))
 				{
 					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.FlexComponentParameters.Subscriber, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 				}
@@ -333,59 +313,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdLexiconLookup].Tag = currentSelection;
 				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdLexiconLookup].Tag = currentSelection;
 			}
-
-			#region Implementation of IDisposable
-			private bool _isDisposed;
-
-			~NotebookEditToolMenuHelper()
-			{
-				// The base class finalizer is called automatically.
-				Dispose(false);
-			}
-
-			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-			public void Dispose()
-			{
-				Dispose(true);
-				// This object will be cleaned up by the Dispose method.
-				// Therefore, you should call GC.SuppressFinalize to
-				// take this object off the finalization queue
-				// and prevent finalization code for this object
-				// from executing a second time.
-				GC.SuppressFinalize(this);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-				if (_isDisposed)
-				{
-					// No need to run it more than once.
-					return;
-				}
-
-				if (disposing)
-				{
-					MainPanelMenuContextMenuFactory.Dispose();
-					_sharedNotebookToolMenuHelper?.Dispose();
-					_partiallySharedForToolsWideMenuHelper.Dispose();
-					_rightClickContextMenuManager?.Dispose();
-					RecordBrowseView.ContextMenuStrip?.Dispose();
-					RecordBrowseView.ContextMenuStrip = null;
-				}
-				MainPanelMenuContextMenuFactory = null;
-				_majorFlexComponentParameters = null;
-				_tool = null;
-				_sharedNotebookToolMenuHelper = null;
-				_partiallySharedForToolsWideMenuHelper = null;
-				_rightClickContextMenuManager = null;
-				MyDataTree = null;
-				MyRecordList = null;
-				_sharedEventHandlers = null;
-
-				_isDisposed = true;
-			}
-			#endregion
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 			{
@@ -453,9 +380,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				});
 			}
 
-			private Tuple<bool, bool> CanCmdInsertRecord => new Tuple<bool, bool>(true, PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null);
-
-			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, PartiallySharedForToolsWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null);
+			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, MyDataTree?.CurrentSliceAsStTextSlice != null);
 
 			private void SetupSliceMenus()
 			{
@@ -781,6 +706,59 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 				return hotlinksMenuItemList;
 			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~NotebookEditToolMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					MainPanelMenuContextMenuFactory.Dispose();
+					_sharedNotebookToolsUiWidgetMenuHelper?.Dispose();
+					_partiallySharedForToolsWideMenuHelper.Dispose();
+					_rightClickContextMenuManager?.Dispose();
+					RecordBrowseView.ContextMenuStrip?.Dispose();
+					RecordBrowseView.ContextMenuStrip = null;
+				}
+				MainPanelMenuContextMenuFactory = null;
+				_majorFlexComponentParameters = null;
+				_tool = null;
+				_sharedNotebookToolsUiWidgetMenuHelper = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_rightClickContextMenuManager = null;
+				MyDataTree = null;
+				MyRecordList = null;
+				_sharedEventHandlers = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

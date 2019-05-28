@@ -304,7 +304,7 @@
     <Compile Include="Areas\Lists\Tools\PartiallySharedListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedForPlainVanillaListToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\SharedListToolMenuHelper.cs" />
-    <Compile Include="Areas\Notebook\Tools\SharedNotebookToolMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForAreasWideMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
     <Compile Include="Areas\ConcMdc.cs" />

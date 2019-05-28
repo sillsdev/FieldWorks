@@ -137,20 +137,25 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private ITool _tool;
-			private SharedNotebookToolMenuHelper _sharedNotebookToolMenuHelper;
-			private IRecordList _recordList;
+			private SharedNotebookToolsUiWidgetMenuHelper _sharedNotebookToolsUiWidgetMenuHelper;
 			private RecordBrowseView _recordBrowseView;
+			private IRecordList _recordList;
 
 			internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
+				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				SetupToolUiWidgets();
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				CreateBrowseViewContextMenu();
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -175,13 +180,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
-			private void SetupToolUiWidgets()
+			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_sharedNotebookToolMenuHelper = new SharedNotebookToolMenuHelper(_majorFlexComponentParameters, _recordList);
-				_sharedNotebookToolMenuHelper.CollectUiWidgetsForNotebookTool(toolUiWidgetParameterObject);
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				CreateBrowseViewContextMenu();
+				_sharedNotebookToolsUiWidgetMenuHelper = new SharedNotebookToolsUiWidgetMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedNotebookToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdExport, Command.CmdInsertRecord, Command.CmdInsertSubrecord, Command.CmdInsertSubsubrecord });
 			}
 
 			#region Implementation of IDisposable
@@ -216,14 +218,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 				if (disposing)
 				{
-					_sharedNotebookToolMenuHelper?.Dispose();
+					_sharedNotebookToolsUiWidgetMenuHelper?.Dispose();
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
 				_tool = null;
 				_recordList = null;
-				_sharedNotebookToolMenuHelper = null;
+				_sharedNotebookToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}
