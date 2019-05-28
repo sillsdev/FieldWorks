@@ -200,6 +200,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
 				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 			}
 

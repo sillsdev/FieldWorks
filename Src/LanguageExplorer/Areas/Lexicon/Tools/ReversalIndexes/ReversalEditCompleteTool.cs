@@ -213,6 +213,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				ReversalServices.EnsureReversalIndicesExist(_cache, _propertyTable);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
 				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

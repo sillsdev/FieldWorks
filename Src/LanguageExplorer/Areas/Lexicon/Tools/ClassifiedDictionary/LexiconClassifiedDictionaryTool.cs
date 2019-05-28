@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			var xmlDocViewPaneBar = new PaneBar();
 			xmlDocViewPaneBar.AddControls(new List<Control> { panelButton });
 			// NB: XmlDocView adds user control handler.
-			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController, LexiconResources.Classified_Dictionary);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, xmlDocView, xmlDocViewPaneBar);
 
 			// Too early before now.
@@ -148,6 +148,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
 				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, ()=> CanCmdFindAndReplaceText));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
 				editMenuDictionary.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdCmdReplaceText_Click, () => CanCmdCmdReplaceText));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

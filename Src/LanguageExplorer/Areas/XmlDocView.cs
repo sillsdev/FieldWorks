@@ -63,14 +63,14 @@ namespace LanguageExplorer.Areas
 			AccNameDefault = "XmlDocView";
 		}
 
-		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController, string configureText = null)
 			: base(configurationParametersElement, cache, recordList)
 		{
 			_uiWidgetController = uiWidgetController;
 			// Add handler stuff.
 			var userController = new UserControlUiWidgetParameterObject(this);
 			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => CanCmdConfigureXmlDocView));
-			_uiWidgetController.ToolsMenuDictionary[Command.CmdConfigureXmlDocView].Text = LanguageExplorerResources.ConfigureDocument;
+			_uiWidgetController.ToolsMenuDictionary[Command.CmdConfigureXmlDocView].Text = string.IsNullOrWhiteSpace(configureText) ? LanguageExplorerResources.ConfigureDocument : configureText;
 
 			_uiWidgetController.AddHandlers(userController);
 		}
