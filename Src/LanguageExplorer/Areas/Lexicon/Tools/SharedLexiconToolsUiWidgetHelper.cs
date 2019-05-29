@@ -154,6 +154,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			if (disposing)
 			{
 			}
+			_majorFlexComponentParameters = null;
+			_recordList = null;
 
 			_isDisposed = true;
 		}

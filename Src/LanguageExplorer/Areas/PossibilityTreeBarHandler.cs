@@ -82,8 +82,8 @@ namespace LanguageExplorer.Areas
 			if (MyRecordList.OwningObject is ICmPossibilityList && !(MyRecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
-				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveUp));
-				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveDown));
+				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveUp){Name = AreaServices.MoveUp2 });
+				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveDown) { Name = AreaServices.MoveDown2 });
 			}
 			return menu;
 		}

@@ -20,9 +20,9 @@ namespace SIL.FieldWorks.Common.Controls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			//System.Diagnostics.Debug.WriteLine(string.Format("Start of ProgressDialogImpl.Dispose({0}) ({1})",
 			//	disposing, System.Threading.Thread.CurrentThread.Name));
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 			//System.Diagnostics.Debug.WriteLine(string.Format("End of ProgressDialogImpl.Dispose({0}) ({1} - {2:x})",

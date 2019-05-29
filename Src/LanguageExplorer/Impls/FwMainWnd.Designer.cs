@@ -1464,28 +1464,28 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertLexEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntry.Image")));
             this.CmdInsertLexEntry.Name = "CmdInsertLexEntry";
-            this.CmdInsertLexEntry.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLexEntry.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLexEntry.Text = "&Entry...";
             this.CmdInsertLexEntry.Visible = false;
             // 
             // CmdInsertSense
             // 
             this.CmdInsertSense.Name = "CmdInsertSense";
-            this.CmdInsertSense.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSense.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSense.Text = "&Sense";
             this.CmdInsertSense.Visible = false;
             // 
             // CmdInsertVariant
             // 
             this.CmdInsertVariant.Name = "CmdInsertVariant";
-            this.CmdInsertVariant.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertVariant.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertVariant.Text = "&Variant";
             this.CmdInsertVariant.Visible = false;
             // 
             // CmdDataTree_Insert_AlternateForm
             // 
             this.CmdDataTree_Insert_AlternateForm.Name = "CmdDataTree_Insert_AlternateForm";
-            this.CmdDataTree_Insert_AlternateForm.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_AlternateForm.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_AlternateForm.Text = "A&llomorph";
             this.CmdDataTree_Insert_AlternateForm.Visible = false;
             // 
@@ -1493,55 +1493,55 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertReversalEntry.Image")));
             this.CmdInsertReversalEntry.Name = "CmdInsertReversalEntry";
-            this.CmdInsertReversalEntry.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertReversalEntry.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertReversalEntry.Text = "Reversal Entry";
             this.CmdInsertReversalEntry.Visible = false;
             // 
             // CmdDataTree_Insert_Pronunciation
             // 
             this.CmdDataTree_Insert_Pronunciation.Name = "CmdDataTree_Insert_Pronunciation";
-            this.CmdDataTree_Insert_Pronunciation.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_Pronunciation.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_Pronunciation.Text = "&Pronunciation";
             this.CmdDataTree_Insert_Pronunciation.Visible = false;
             // 
             // CmdInsertMediaFile
             // 
             this.CmdInsertMediaFile.Name = "CmdInsertMediaFile";
-            this.CmdInsertMediaFile.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertMediaFile.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertMediaFile.Text = "&Sound or Movie";
             this.CmdInsertMediaFile.Visible = false;
             // 
             // CmdDataTree_Insert_Etymology
             // 
             this.CmdDataTree_Insert_Etymology.Name = "CmdDataTree_Insert_Etymology";
-            this.CmdDataTree_Insert_Etymology.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_Etymology.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_Etymology.Text = "&Etymology";
             this.CmdDataTree_Insert_Etymology.Visible = false;
             // 
             // insertMenuSeparator1
             // 
             this.insertMenuSeparator1.Name = "insertMenuSeparator1";
-            this.insertMenuSeparator1.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator1.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator1.Visible = false;
             // 
             // CmdInsertSubsense
             // 
             this.CmdInsertSubsense.Name = "CmdInsertSubsense";
-            this.CmdInsertSubsense.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSubsense.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSubsense.Text = "Subsense (in sense)";
             this.CmdInsertSubsense.Visible = false;
             // 
             // CmdInsertPicture
             // 
             this.CmdInsertPicture.Name = "CmdInsertPicture";
-            this.CmdInsertPicture.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPicture.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPicture.Text = "&Picture";
             this.CmdInsertPicture.Visible = false;
             // 
             // CmdInsertExtNote
             // 
             this.CmdInsertExtNote.Name = "CmdInsertExtNote";
-            this.CmdInsertExtNote.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertExtNote.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertExtNote.Text = "&Extended Note";
             this.CmdInsertExtNote.Visible = false;
             // 
@@ -1550,14 +1550,14 @@ namespace LanguageExplorer.Impls
             this.CmdInsertText.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertText.Image")));
             this.CmdInsertText.Name = "CmdInsertText";
             this.CmdInsertText.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.CmdInsertText.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertText.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertText.Text = "New &Text";
             this.CmdInsertText.Visible = false;
             // 
             // insertMenuSeparator2
             // 
             this.insertMenuSeparator2.Name = "insertMenuSeparator2";
-            this.insertMenuSeparator2.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator2.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator2.Visible = false;
             // 
             // CmdAddNote
@@ -1565,14 +1565,14 @@ namespace LanguageExplorer.Impls
             this.CmdAddNote.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddNote.Image")));
             this.CmdAddNote.Name = "CmdAddNote";
             this.CmdAddNote.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.CmdAddNote.Size = new System.Drawing.Size(296, 22);
+            this.CmdAddNote.Size = new System.Drawing.Size(300, 26);
             this.CmdAddNote.Text = "&Note";
             this.CmdAddNote.Visible = false;
             // 
             // CmdAddWordGlossesToFreeTrans
             // 
             this.CmdAddWordGlossesToFreeTrans.Name = "CmdAddWordGlossesToFreeTrans";
-            this.CmdAddWordGlossesToFreeTrans.Size = new System.Drawing.Size(296, 22);
+            this.CmdAddWordGlossesToFreeTrans.Size = new System.Drawing.Size(300, 26);
             this.CmdAddWordGlossesToFreeTrans.Text = "&Word Glosses";
             this.CmdAddWordGlossesToFreeTrans.Visible = false;
             // 
@@ -1581,7 +1581,7 @@ namespace LanguageExplorer.Impls
             this.ClickInsertsInvisibleSpace.CheckOnClick = true;
             this.ClickInsertsInvisibleSpace.Image = ((System.Drawing.Image)(resources.GetObject("ClickInsertsInvisibleSpace.Image")));
             this.ClickInsertsInvisibleSpace.Name = "ClickInsertsInvisibleSpace";
-            this.ClickInsertsInvisibleSpace.Size = new System.Drawing.Size(296, 22);
+            this.ClickInsertsInvisibleSpace.Size = new System.Drawing.Size(300, 26);
             this.ClickInsertsInvisibleSpace.Text = "Click Inserts Invisible Space";
             this.ClickInsertsInvisibleSpace.ToolTipText = "Turn on mode in which a click inserts an invisible, zero-width space.";
             this.ClickInsertsInvisibleSpace.Visible = false;
@@ -1589,7 +1589,7 @@ namespace LanguageExplorer.Impls
             // CmdGuessWordBreaks
             // 
             this.CmdGuessWordBreaks.Name = "CmdGuessWordBreaks";
-            this.CmdGuessWordBreaks.Size = new System.Drawing.Size(296, 22);
+            this.CmdGuessWordBreaks.Size = new System.Drawing.Size(300, 26);
             this.CmdGuessWordBreaks.Text = "&Guess Word Breaks";
             this.CmdGuessWordBreaks.ToolTipText = "Have Language Explorer insert invisible, zero-width spaces as word breaks accordi" +
     "ng to the word list and lexical entries.";
@@ -1598,13 +1598,13 @@ namespace LanguageExplorer.Impls
             // insertMenuSeparator3
             // 
             this.insertMenuSeparator3.Name = "insertMenuSeparator3";
-            this.insertMenuSeparator3.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator3.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator3.Visible = false;
             // 
             // CmdImportWordSet
             // 
             this.CmdImportWordSet.Name = "CmdImportWordSet";
-            this.CmdImportWordSet.Size = new System.Drawing.Size(296, 22);
+            this.CmdImportWordSet.Size = new System.Drawing.Size(300, 26);
             this.CmdImportWordSet.Text = "&Import Word Set...";
             this.CmdImportWordSet.Visible = false;
             // 
@@ -1612,7 +1612,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertHumanApprovedAnalysis.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertHumanApprovedAnalysis.Image")));
             this.CmdInsertHumanApprovedAnalysis.Name = "CmdInsertHumanApprovedAnalysis";
-            this.CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertHumanApprovedAnalysis.Text = "Add Approved Analysis...";
             this.CmdInsertHumanApprovedAnalysis.Visible = false;
             // 
@@ -1621,7 +1621,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertRecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertRecord.Image")));
             this.CmdInsertRecord.Name = "CmdInsertRecord";
             this.CmdInsertRecord.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertRecord.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertRecord.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertRecord.Text = "Record";
             this.CmdInsertRecord.Visible = false;
             // 
@@ -1629,7 +1629,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertSubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubrecord.Image")));
             this.CmdInsertSubrecord.Name = "CmdInsertSubrecord";
-            this.CmdInsertSubrecord.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSubrecord.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSubrecord.Text = "Subrecord";
             this.CmdInsertSubrecord.Visible = false;
             // 
@@ -1637,7 +1637,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertSubsubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubsubrecord.Image")));
             this.CmdInsertSubsubrecord.Name = "CmdInsertSubsubrecord";
-            this.CmdInsertSubsubrecord.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSubsubrecord.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSubsubrecord.Text = "Subrecord of subrecord";
             this.CmdInsertSubsubrecord.Visible = false;
             // 
@@ -1645,142 +1645,141 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdAddToLexicon.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddToLexicon.Image")));
             this.CmdAddToLexicon.Name = "CmdAddToLexicon";
-            this.CmdAddToLexicon.Size = new System.Drawing.Size(296, 22);
+            this.CmdAddToLexicon.Size = new System.Drawing.Size(300, 26);
             this.CmdAddToLexicon.Text = "Add to Dictionary...";
             this.CmdAddToLexicon.Visible = false;
             // 
             // CmdInsertSemDom
             // 
-            this.CmdInsertSemDom.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSemDom.Image")));
-            this.CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertSemDom.Name = "CmdInsertSemDom";
-            this.CmdInsertSemDom.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSemDom.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSemDom.Text = "&Semantic Domain";
             this.CmdInsertSemDom.Visible = false;
             // 
             // CmdDataTree_Insert_SemanticDomain
             // 
-            this.CmdDataTree_Insert_SemanticDomain.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_SemanticDomain.Image")));
-            this.CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_SemanticDomain.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_SemanticDomain.Name = "CmdDataTree_Insert_SemanticDomain";
-            this.CmdDataTree_Insert_SemanticDomain.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_SemanticDomain.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_SemanticDomain.Text = "Insert subdomain";
             this.CmdDataTree_Insert_SemanticDomain.Visible = false;
             // 
             // CmdInsertAnnotationDef
             // 
             this.CmdInsertAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAnnotationDef.Image")));
-            this.CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertAnnotationDef.Name = "CmdInsertAnnotationDef";
-            this.CmdInsertAnnotationDef.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertAnnotationDef.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertAnnotationDef.Text = "&Annotation Definition";
             this.CmdInsertAnnotationDef.Visible = false;
             // 
             // CmdInsertPossibility
             // 
             this.CmdInsertPossibility.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPossibility.Image")));
-            this.CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertPossibility.Name = "CmdInsertPossibility";
-            this.CmdInsertPossibility.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPossibility.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPossibility.Text = "&Item";
             this.CmdInsertPossibility.Visible = false;
             // 
             // CmdInsertCustomItem
             // 
             this.CmdInsertCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertCustomItem.Image")));
-            this.CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertCustomItem.Name = "CmdInsertCustomItem";
-            this.CmdInsertCustomItem.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertCustomItem.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertCustomItem.Text = "&Item";
             this.CmdInsertCustomItem.Visible = false;
             // 
             // CmdInsertMorphType
             // 
             this.CmdInsertMorphType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertMorphType.Image")));
-            this.CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertMorphType.Name = "CmdInsertMorphType";
-            this.CmdInsertMorphType.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertMorphType.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertMorphType.Text = "&Morph Type";
             this.CmdInsertMorphType.Visible = false;
             // 
             // CmdInsertLexEntryInflType
             // 
             this.CmdInsertLexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntryInflType.Image")));
-            this.CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertLexEntryInflType.Name = "CmdInsertLexEntryInflType";
-            this.CmdInsertLexEntryInflType.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLexEntryInflType.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLexEntryInflType.Text = "&Type";
             this.CmdInsertLexEntryInflType.Visible = false;
             // 
             // CmdInsertLexEntryType
             // 
             this.CmdInsertLexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntryType.Image")));
-            this.CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertLexEntryType.Name = "CmdInsertLexEntryType";
-            this.CmdInsertLexEntryType.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLexEntryType.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLexEntryType.Text = "&Type";
             this.CmdInsertLexEntryType.Visible = false;
             // 
             // CmdDataTree_Insert_LexEntryInflType
             // 
-            this.CmdDataTree_Insert_LexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_LexEntryInflType.Image")));
-            this.CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_LexEntryInflType.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_LexEntryInflType.Name = "CmdDataTree_Insert_LexEntryInflType";
-            this.CmdDataTree_Insert_LexEntryInflType.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_LexEntryInflType.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_LexEntryInflType.Text = "Insert Subtype";
             this.CmdDataTree_Insert_LexEntryInflType.Visible = false;
             // 
             // CmdDataTree_Insert_LexEntryType
             // 
-            this.CmdDataTree_Insert_LexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_LexEntryType.Image")));
-            this.CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_LexEntryType.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_LexEntryType.Name = "CmdDataTree_Insert_LexEntryType";
-            this.CmdDataTree_Insert_LexEntryType.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_LexEntryType.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_LexEntryType.Text = "Insert Subtype";
             this.CmdDataTree_Insert_LexEntryType.Visible = false;
             // 
             // CmdInsertAnthroCategory
             // 
             this.CmdInsertAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAnthroCategory.Image")));
-            this.CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertAnthroCategory.Name = "CmdInsertAnthroCategory";
-            this.CmdInsertAnthroCategory.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertAnthroCategory.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertAnthroCategory.Text = "Anthropology &Category";
             this.CmdInsertAnthroCategory.Visible = false;
             // 
             // CmdDataTree_Insert_AnthroCategory
             // 
-            this.CmdDataTree_Insert_AnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_AnthroCategory.Image")));
-            this.CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_AnthroCategory.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_AnthroCategory.Name = "CmdDataTree_Insert_AnthroCategory";
-            this.CmdDataTree_Insert_AnthroCategory.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_AnthroCategory.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_AnthroCategory.Text = "Insert subcategory";
             this.CmdDataTree_Insert_AnthroCategory.Visible = false;
             // 
             // CmdInsertPerson
             // 
             this.CmdInsertPerson.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPerson.Image")));
-            this.CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertPerson.Name = "CmdInsertPerson";
-            this.CmdInsertPerson.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPerson.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPerson.Text = "&Person";
             this.CmdInsertPerson.Visible = false;
             // 
             // CmdInsertLocation
             // 
             this.CmdInsertLocation.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLocation.Image")));
-            this.CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertLocation.Name = "CmdInsertLocation";
-            this.CmdInsertLocation.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLocation.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLocation.Text = "&Location";
             this.CmdInsertLocation.Visible = false;
             // 
             // CmdDataTree_Insert_Location
             // 
-            this.CmdDataTree_Insert_Location.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_Location.Image")));
-            this.CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_Location.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_Location.Name = "CmdDataTree_Insert_Location";
-            this.CmdDataTree_Insert_Location.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_Location.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_Location.Text = "Insert subitem";
             this.CmdDataTree_Insert_Location.Visible = false;
             // 
@@ -1789,47 +1788,47 @@ namespace LanguageExplorer.Impls
             this.CmdInsertLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexRefType.Image")));
             this.CmdInsertLexRefType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.CmdInsertLexRefType.Name = "CmdInsertLexRefType";
-            this.CmdInsertLexRefType.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLexRefType.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLexRefType.Text = "&Lexical Reference Type";
             this.CmdInsertLexRefType.Visible = false;
             // 
             // CmdInsertFeatureType
             // 
             this.CmdInsertFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertFeatureType.Image")));
-            this.CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertFeatureType.Name = "CmdInsertFeatureType";
-            this.CmdInsertFeatureType.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertFeatureType.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertFeatureType.Text = "&Feature Type";
             this.CmdInsertFeatureType.Visible = false;
             // 
             // CmdDataTree_Insert_Possibility
             // 
-            this.CmdDataTree_Insert_Possibility.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_Possibility.Image")));
+            this.CmdDataTree_Insert_Possibility.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
             this.CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.CmdDataTree_Insert_Possibility.Name = "CmdDataTree_Insert_Possibility";
-            this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(296, 22);
-            this.CmdDataTree_Insert_Possibility.Text = "Insert subitem";
+            this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_Possibility.Text = "Subitem";
             this.CmdDataTree_Insert_Possibility.Visible = false;
             // 
             // CmdDataTree_Insert_CustomItem
             // 
-            this.CmdDataTree_Insert_CustomItem.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_CustomItem.Image")));
-            this.CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.CmdDataTree_Insert_CustomItem.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdDataTree_Insert_CustomItem.Name = "CmdDataTree_Insert_CustomItem";
-            this.CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_CustomItem.Text = "Insert subitem";
             this.CmdDataTree_Insert_CustomItem.Visible = false;
             // 
             // insertMenuSeparator4
             // 
             this.insertMenuSeparator4.Name = "insertMenuSeparator4";
-            this.insertMenuSeparator4.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator4.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator4.Visible = false;
             // 
             // CmdAddCustomList
             // 
             this.CmdAddCustomList.Name = "CmdAddCustomList";
-            this.CmdAddCustomList.Size = new System.Drawing.Size(296, 22);
+            this.CmdAddCustomList.Size = new System.Drawing.Size(300, 26);
             this.CmdAddCustomList.Text = "Custom &List...";
             this.CmdAddCustomList.Visible = false;
             // 
@@ -1839,7 +1838,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPOS.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.CmdInsertPOS.Name = "CmdInsertPOS";
             this.CmdInsertPOS.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertPOS.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPOS.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPOS.Text = "Category";
             this.CmdInsertPOS.Visible = false;
             // 
@@ -1848,42 +1847,42 @@ namespace LanguageExplorer.Impls
             this.CmdDataTree_Insert_POS_SubPossibilities.Image = ((System.Drawing.Image)(resources.GetObject("CmdDataTree_Insert_POS_SubPossibilities.Image")));
             this.CmdDataTree_Insert_POS_SubPossibilities.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.CmdDataTree_Insert_POS_SubPossibilities.Name = "CmdDataTree_Insert_POS_SubPossibilities";
-            this.CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_POS_SubPossibilities.Text = "Insert Subcategory...";
             this.CmdDataTree_Insert_POS_SubPossibilities.Visible = false;
             // 
             // CmdDataTree_Insert_POS_AffixTemplate
             // 
             this.CmdDataTree_Insert_POS_AffixTemplate.Name = "CmdDataTree_Insert_POS_AffixTemplate";
-            this.CmdDataTree_Insert_POS_AffixTemplate.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_POS_AffixTemplate.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_POS_AffixTemplate.Text = "Insert Affix Template";
             this.CmdDataTree_Insert_POS_AffixTemplate.Visible = false;
             // 
             // CmdDataTree_Insert_POS_AffixSlot
             // 
             this.CmdDataTree_Insert_POS_AffixSlot.Name = "CmdDataTree_Insert_POS_AffixSlot";
-            this.CmdDataTree_Insert_POS_AffixSlot.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_POS_AffixSlot.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_POS_AffixSlot.Text = "Insert Affix Slot";
             this.CmdDataTree_Insert_POS_AffixSlot.Visible = false;
             // 
             // CmdDataTree_Insert_POS_InflectionClass
             // 
             this.CmdDataTree_Insert_POS_InflectionClass.Name = "CmdDataTree_Insert_POS_InflectionClass";
-            this.CmdDataTree_Insert_POS_InflectionClass.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_POS_InflectionClass.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_POS_InflectionClass.Text = "Insert Inflection Class";
             this.CmdDataTree_Insert_POS_InflectionClass.Visible = false;
             // 
             // insertMenuSeparator5
             // 
             this.insertMenuSeparator5.Name = "insertMenuSeparator5";
-            this.insertMenuSeparator5.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator5.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator5.Visible = false;
             // 
             // CmdInsertEndocentricCompound
             // 
             this.CmdInsertEndocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertEndocentricCompound.Image")));
             this.CmdInsertEndocentricCompound.Name = "CmdInsertEndocentricCompound";
-            this.CmdInsertEndocentricCompound.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertEndocentricCompound.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertEndocentricCompound.Text = "Headed Compound";
             this.CmdInsertEndocentricCompound.Visible = false;
             // 
@@ -1891,7 +1890,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertExocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExocentricCompound.Image")));
             this.CmdInsertExocentricCompound.Name = "CmdInsertExocentricCompound";
-            this.CmdInsertExocentricCompound.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertExocentricCompound.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertExocentricCompound.Text = "Non-headed Compound";
             this.CmdInsertExocentricCompound.Visible = false;
             // 
@@ -1899,7 +1898,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExceptionFeature.Image")));
             this.CmdInsertExceptionFeature.Name = "CmdInsertExceptionFeature";
-            this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertExceptionFeature.Text = "&Exception Feature...";
             this.CmdInsertExceptionFeature.Visible = false;
             // 
@@ -1907,7 +1906,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertPhonologicalClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhonologicalClosedFeature.Image")));
             this.CmdInsertPhonologicalClosedFeature.Name = "CmdInsertPhonologicalClosedFeature";
-            this.CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPhonologicalClosedFeature.Text = "&Phonological Feature...";
             this.CmdInsertPhonologicalClosedFeature.Visible = false;
             // 
@@ -1915,7 +1914,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertClosedFeature.Image")));
             this.CmdInsertClosedFeature.Name = "CmdInsertClosedFeature";
-            this.CmdInsertClosedFeature.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertClosedFeature.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertClosedFeature.Text = "&Feature...";
             this.CmdInsertClosedFeature.Visible = false;
             // 
@@ -1923,21 +1922,21 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertComplexFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertComplexFeature.Image")));
             this.CmdInsertComplexFeature.Name = "CmdInsertComplexFeature";
-            this.CmdInsertComplexFeature.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertComplexFeature.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertComplexFeature.Text = "&Complex Feature...";
             this.CmdInsertComplexFeature.Visible = false;
             // 
             // CmdDataTree_Insert_ClosedFeature_Value
             // 
             this.CmdDataTree_Insert_ClosedFeature_Value.Name = "CmdDataTree_Insert_ClosedFeature_Value";
-            this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_ClosedFeature_Value.Text = "Insert Feature Value";
             this.CmdDataTree_Insert_ClosedFeature_Value.Visible = false;
             // 
             // insertMenuSeparator6
             // 
             this.insertMenuSeparator6.Name = "insertMenuSeparator6";
-            this.insertMenuSeparator6.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator6.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator6.Visible = false;
             // 
             // CmdInsertPhoneme
@@ -1945,21 +1944,21 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPhoneme.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhoneme.Image")));
             this.CmdInsertPhoneme.Name = "CmdInsertPhoneme";
             this.CmdInsertPhoneme.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertPhoneme.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPhoneme.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPhoneme.Text = "Phoneme";
             this.CmdInsertPhoneme.Visible = false;
             // 
             // CmdDataTree_Insert_Phoneme_Code
             // 
             this.CmdDataTree_Insert_Phoneme_Code.Name = "CmdDataTree_Insert_Phoneme_Code";
-            this.CmdDataTree_Insert_Phoneme_Code.Size = new System.Drawing.Size(296, 22);
+            this.CmdDataTree_Insert_Phoneme_Code.Size = new System.Drawing.Size(300, 26);
             this.CmdDataTree_Insert_Phoneme_Code.Text = "Grapheme";
             this.CmdDataTree_Insert_Phoneme_Code.Visible = false;
             // 
             // insertMenuSeparator7
             // 
             this.insertMenuSeparator7.Name = "insertMenuSeparator7";
-            this.insertMenuSeparator7.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator7.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator7.Visible = false;
             // 
             // CmdInsertSegmentNaturalClasses
@@ -1967,7 +1966,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertSegmentNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSegmentNaturalClasses.Image")));
             this.CmdInsertSegmentNaturalClasses.Name = "CmdInsertSegmentNaturalClasses";
             this.CmdInsertSegmentNaturalClasses.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertSegmentNaturalClasses.Text = "Natural Class (Phonemes)";
             this.CmdInsertSegmentNaturalClasses.Visible = false;
             // 
@@ -1975,14 +1974,14 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertFeatureNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertFeatureNaturalClasses.Image")));
             this.CmdInsertFeatureNaturalClasses.Name = "CmdInsertFeatureNaturalClasses";
-            this.CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertFeatureNaturalClasses.Text = "Natural Class (Features)";
             this.CmdInsertFeatureNaturalClasses.Visible = false;
             // 
             // insertMenuSeparator8
             // 
             this.insertMenuSeparator8.Name = "insertMenuSeparator8";
-            this.insertMenuSeparator8.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator8.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator8.Visible = false;
             // 
             // CmdInsertPhEnvironment
@@ -1990,21 +1989,21 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPhEnvironment.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhEnvironment.Image")));
             this.CmdInsertPhEnvironment.Name = "CmdInsertPhEnvironment";
             this.CmdInsertPhEnvironment.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertPhEnvironment.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPhEnvironment.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPhEnvironment.Text = "Environment";
             this.CmdInsertPhEnvironment.Visible = false;
             // 
             // insertMenuSeparator9
             // 
             this.insertMenuSeparator9.Name = "insertMenuSeparator9";
-            this.insertMenuSeparator9.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator9.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator9.Visible = false;
             // 
             // CmdInsertPhRegularRule
             // 
             this.CmdInsertPhRegularRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhRegularRule.Image")));
             this.CmdInsertPhRegularRule.Name = "CmdInsertPhRegularRule";
-            this.CmdInsertPhRegularRule.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPhRegularRule.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPhRegularRule.Text = "Phonological Rule";
             this.CmdInsertPhRegularRule.Visible = false;
             // 
@@ -2012,21 +2011,21 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertPhMetathesisRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhMetathesisRule.Image")));
             this.CmdInsertPhMetathesisRule.Name = "CmdInsertPhMetathesisRule";
-            this.CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertPhMetathesisRule.Text = "Metathesis Rule";
             this.CmdInsertPhMetathesisRule.Visible = false;
             // 
             // insertMenuSeparator10
             // 
             this.insertMenuSeparator10.Name = "insertMenuSeparator10";
-            this.insertMenuSeparator10.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator10.Size = new System.Drawing.Size(297, 6);
             this.insertMenuSeparator10.Visible = false;
             // 
             // CmdInsertMorphemeACP
             // 
             this.CmdInsertMorphemeACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertMorphemeACP.Image")));
             this.CmdInsertMorphemeACP.Name = "CmdInsertMorphemeACP";
-            this.CmdInsertMorphemeACP.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertMorphemeACP.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertMorphemeACP.Text = "Rule to prevent morpheme co-occurrence";
             this.CmdInsertMorphemeACP.Visible = false;
             // 
@@ -2034,7 +2033,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertAllomorphACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAllomorphACP.Image")));
             this.CmdInsertAllomorphACP.Name = "CmdInsertAllomorphACP";
-            this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertAllomorphACP.Text = "Rule to prevent allomorph co-occurrence";
             this.CmdInsertAllomorphACP.Visible = false;
             // 
@@ -2042,14 +2041,14 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertACPGroup.Image")));
             this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
-            this.CmdInsertACPGroup.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertACPGroup.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertACPGroup.Text = "Group of ad hoc rules";
             this.CmdInsertACPGroup.Visible = false;
             // 
             // insertMenuSeparator11
             // 
             this.insertMenuSeparator11.Name = "insertMenuSeparator11";
-            this.insertMenuSeparator11.Size = new System.Drawing.Size(293, 6);
+            this.insertMenuSeparator11.Size = new System.Drawing.Size(297, 6);
             // 
             // CmdShowCharMap
             // 
@@ -2057,7 +2056,7 @@ namespace LanguageExplorer.Impls
             this.CmdShowCharMap.Image = ((System.Drawing.Image)(resources.GetObject("CmdShowCharMap.Image")));
             this.CmdShowCharMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CmdShowCharMap.Name = "CmdShowCharMap";
-            this.CmdShowCharMap.Size = new System.Drawing.Size(296, 22);
+            this.CmdShowCharMap.Size = new System.Drawing.Size(300, 26);
             this.CmdShowCharMap.Text = "Special &character...";
             this.CmdShowCharMap.ToolTipText = "Start the Character Map utility.";
             // 
@@ -2067,7 +2066,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertLinkToFile.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLinkToFile.Image")));
             this.CmdInsertLinkToFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CmdInsertLinkToFile.Name = "CmdInsertLinkToFile";
-            this.CmdInsertLinkToFile.Size = new System.Drawing.Size(296, 22);
+            this.CmdInsertLinkToFile.Size = new System.Drawing.Size(300, 26);
             this.CmdInsertLinkToFile.Text = "L&ink to File...";
             this.CmdInsertLinkToFile.ToolTipText = "Insert a link to an external file.";
             // 
@@ -2154,7 +2153,7 @@ namespace LanguageExplorer.Impls
             this.CmdRestoreDefaults,
             this.CmdAddCustomField});
             this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-            this.configureToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.configureToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.configureToolStripMenuItem.Text = "Configure";
             // 
             // CmdConfigureDictionary
@@ -2218,12 +2217,12 @@ namespace LanguageExplorer.Impls
             // toolMenuSeparator1
             // 
             this.toolMenuSeparator1.Name = "toolMenuSeparator1";
-            this.toolMenuSeparator1.Size = new System.Drawing.Size(191, 6);
+            this.toolMenuSeparator1.Size = new System.Drawing.Size(187, 6);
             // 
             // CmdMergeEntry
             // 
             this.CmdMergeEntry.Name = "CmdMergeEntry";
-            this.CmdMergeEntry.Size = new System.Drawing.Size(194, 26);
+            this.CmdMergeEntry.Size = new System.Drawing.Size(190, 22);
             this.CmdMergeEntry.Text = "&Merge with entry...";
             this.CmdMergeEntry.Visible = false;
             // 
@@ -2231,21 +2230,21 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdLexiconLookup.Image = ((System.Drawing.Image)(resources.GetObject("CmdLexiconLookup.Image")));
             this.CmdLexiconLookup.Name = "CmdLexiconLookup";
-            this.CmdLexiconLookup.Size = new System.Drawing.Size(194, 26);
+            this.CmdLexiconLookup.Size = new System.Drawing.Size(190, 22);
             this.CmdLexiconLookup.Text = "Find in &Dictionary...";
             this.CmdLexiconLookup.Visible = false;
             // 
             // ITexts_AddWordsToLexicon
             // 
             this.ITexts_AddWordsToLexicon.Name = "ITexts_AddWordsToLexicon";
-            this.ITexts_AddWordsToLexicon.Size = new System.Drawing.Size(194, 26);
+            this.ITexts_AddWordsToLexicon.Size = new System.Drawing.Size(190, 22);
             this.ITexts_AddWordsToLexicon.Text = "Add Words to Lexicon";
             this.ITexts_AddWordsToLexicon.Visible = false;
             // 
             // toolMenuSeparator2
             // 
             this.toolMenuSeparator2.Name = "toolMenuSeparator2";
-            this.toolMenuSeparator2.Size = new System.Drawing.Size(191, 6);
+            this.toolMenuSeparator2.Size = new System.Drawing.Size(187, 6);
             this.toolMenuSeparator2.Visible = false;
             // 
             // ToolsMenu_SpellingMenu
@@ -2257,7 +2256,7 @@ namespace LanguageExplorer.Impls
             this.toolMenuSeparator3,
             this.CmdChangeSpelling});
             this.ToolsMenu_SpellingMenu.Name = "ToolsMenu_SpellingMenu";
-            this.ToolsMenu_SpellingMenu.Size = new System.Drawing.Size(194, 26);
+            this.ToolsMenu_SpellingMenu.Size = new System.Drawing.Size(190, 22);
             this.ToolsMenu_SpellingMenu.Text = "Spelling";
             // 
             // CmdEditSpellingStatus
@@ -2297,26 +2296,26 @@ namespace LanguageExplorer.Impls
             // CmdProjectUtilities
             // 
             this.CmdProjectUtilities.Name = "CmdProjectUtilities";
-            this.CmdProjectUtilities.Size = new System.Drawing.Size(194, 26);
+            this.CmdProjectUtilities.Size = new System.Drawing.Size(190, 22);
             this.CmdProjectUtilities.Text = "&Utilities...";
             this.CmdProjectUtilities.ToolTipText = "Run some special utilities to process your data.";
             // 
             // toolMenuSeparator4
             // 
             this.toolMenuSeparator4.Name = "toolMenuSeparator4";
-            this.toolMenuSeparator4.Size = new System.Drawing.Size(191, 6);
+            this.toolMenuSeparator4.Size = new System.Drawing.Size(187, 6);
             // 
             // CmdToolsOptions
             // 
             this.CmdToolsOptions.Name = "CmdToolsOptions";
-            this.CmdToolsOptions.Size = new System.Drawing.Size(194, 26);
+            this.CmdToolsOptions.Size = new System.Drawing.Size(190, 22);
             this.CmdToolsOptions.Text = "&Options...";
             // 
             // CmdMacroF2
             // 
             this.CmdMacroF2.Name = "CmdMacroF2";
             this.CmdMacroF2.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.CmdMacroF2.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF2.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF2.Text = "F2";
             this.CmdMacroF2.Visible = false;
             // 
@@ -2324,7 +2323,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF3.Name = "CmdMacroF3";
             this.CmdMacroF3.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.CmdMacroF3.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF3.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF3.Text = "F3";
             this.CmdMacroF3.Visible = false;
             // 
@@ -2332,7 +2331,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF4.Name = "CmdMacroF4";
             this.CmdMacroF4.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.CmdMacroF4.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF4.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF4.Text = "F4";
             this.CmdMacroF4.Visible = false;
             // 
@@ -2340,7 +2339,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF6.Name = "CmdMacroF6";
             this.CmdMacroF6.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.CmdMacroF6.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF6.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF6.Text = "F6";
             this.CmdMacroF6.Visible = false;
             // 
@@ -2348,7 +2347,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF7.Name = "CmdMacroF7";
             this.CmdMacroF7.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.CmdMacroF7.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF7.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF7.Text = "F7";
             this.CmdMacroF7.Visible = false;
             // 
@@ -2356,7 +2355,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF8.Name = "CmdMacroF8";
             this.CmdMacroF8.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.CmdMacroF8.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF8.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF8.Text = "F8";
             this.CmdMacroF8.Visible = false;
             // 
@@ -2364,7 +2363,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF9.Name = "CmdMacroF9";
             this.CmdMacroF9.ShortcutKeys = System.Windows.Forms.Keys.F9;
-            this.CmdMacroF9.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF9.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF9.Text = "F9";
             this.CmdMacroF9.Visible = false;
             // 
@@ -2372,7 +2371,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF10.Name = "CmdMacroF10";
             this.CmdMacroF10.ShortcutKeys = System.Windows.Forms.Keys.F10;
-            this.CmdMacroF10.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF10.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF10.Text = "F10";
             this.CmdMacroF10.Visible = false;
             // 
@@ -2380,7 +2379,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF11.Name = "CmdMacroF11";
             this.CmdMacroF11.ShortcutKeys = System.Windows.Forms.Keys.F11;
-            this.CmdMacroF11.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF11.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF11.Text = "F11";
             this.CmdMacroF11.Visible = false;
             // 
@@ -2388,7 +2387,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdMacroF12.Name = "CmdMacroF12";
             this.CmdMacroF12.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.CmdMacroF12.Size = new System.Drawing.Size(194, 26);
+            this.CmdMacroF12.Size = new System.Drawing.Size(190, 22);
             this.CmdMacroF12.Text = "F12";
             this.CmdMacroF12.Visible = false;
             // 
@@ -3193,7 +3192,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertSemDom.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertSemDom.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertSemDom.Image")));
-            this.Toolbar_CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertSemDom.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertSemDom.Name = "Toolbar_CmdInsertSemDom";
             this.Toolbar_CmdInsertSemDom.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertSemDom.ToolTipText = "Create a new semantic domain.";
@@ -3202,8 +3201,8 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_SemanticDomain
             // 
             this.Toolbar_CmdDataTree_Insert_SemanticDomain.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_SemanticDomain.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_SemanticDomain.Image")));
-            this.Toolbar_CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_SemanticDomain.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_SemanticDomain.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_SemanticDomain.Name = "Toolbar_CmdDataTree_Insert_SemanticDomain";
             this.Toolbar_CmdDataTree_Insert_SemanticDomain.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_SemanticDomain.ToolTipText = "Insert a subdomain in this semantic domain.";
@@ -3213,7 +3212,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertAnnotationDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAnnotationDef.Image")));
-            this.Toolbar_CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertAnnotationDef.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertAnnotationDef.Name = "Toolbar_CmdInsertAnnotationDef";
             this.Toolbar_CmdInsertAnnotationDef.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertAnnotationDef.ToolTipText = "Create a new annotation definition.";
@@ -3223,7 +3222,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertPossibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertPossibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPossibility.Image")));
-            this.Toolbar_CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertPossibility.Name = "Toolbar_CmdInsertPossibility";
             this.Toolbar_CmdInsertPossibility.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPossibility.ToolTipText = "Create a new {0}.";
@@ -3233,7 +3232,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertCustomItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertCustomItem.Image")));
-            this.Toolbar_CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertCustomItem.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertCustomItem.Name = "Toolbar_CmdInsertCustomItem";
             this.Toolbar_CmdInsertCustomItem.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertCustomItem.ToolTipText = "Create a new {0}.";
@@ -3243,7 +3242,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertMorphType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertMorphType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertMorphType.Image")));
-            this.Toolbar_CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertMorphType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertMorphType.Name = "Toolbar_CmdInsertMorphType";
             this.Toolbar_CmdInsertMorphType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertMorphType.ToolTipText = "Create a new morpheme type.";
@@ -3253,7 +3252,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertLexEntryInflType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertLexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexEntryInflType.Image")));
-            this.Toolbar_CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertLexEntryInflType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertLexEntryInflType.Name = "Toolbar_CmdInsertLexEntryInflType";
             this.Toolbar_CmdInsertLexEntryInflType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertLexEntryInflType.Visible = false;
@@ -3262,7 +3261,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertLexEntryType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertLexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexEntryType.Image")));
-            this.Toolbar_CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertLexEntryType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertLexEntryType.Name = "Toolbar_CmdInsertLexEntryType";
             this.Toolbar_CmdInsertLexEntryType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertLexEntryType.ToolTipText = "Create a new {0}.";
@@ -3271,8 +3270,8 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_LexEntryInflType
             // 
             this.Toolbar_CmdDataTree_Insert_LexEntryInflType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_LexEntryInflType.Image")));
-            this.Toolbar_CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_LexEntryInflType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Name = "Toolbar_CmdDataTree_Insert_LexEntryInflType";
             this.Toolbar_CmdDataTree_Insert_LexEntryInflType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_LexEntryInflType.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -3281,8 +3280,8 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_LexEntryType
             // 
             this.Toolbar_CmdDataTree_Insert_LexEntryType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_LexEntryType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_LexEntryType.Image")));
-            this.Toolbar_CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_LexEntryType.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_LexEntryType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_LexEntryType.Name = "Toolbar_CmdDataTree_Insert_LexEntryType";
             this.Toolbar_CmdDataTree_Insert_LexEntryType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_LexEntryType.ToolTipText = "Insert a new subtype in this type.";
@@ -3292,7 +3291,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertAnthroCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAnthroCategory.Image")));
-            this.Toolbar_CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertAnthroCategory.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertAnthroCategory.Name = "Toolbar_CmdInsertAnthroCategory";
             this.Toolbar_CmdInsertAnthroCategory.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertAnthroCategory.ToolTipText = "Create a new anthropology category.";
@@ -3301,8 +3300,8 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_AnthroCategory
             // 
             this.Toolbar_CmdDataTree_Insert_AnthroCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_AnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_AnthroCategory.Image")));
-            this.Toolbar_CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_AnthroCategory.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_AnthroCategory.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_AnthroCategory.Name = "Toolbar_CmdDataTree_Insert_AnthroCategory";
             this.Toolbar_CmdDataTree_Insert_AnthroCategory.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_AnthroCategory.ToolTipText = "Insert a subcategory in this anthropology category.";
@@ -3312,7 +3311,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertPerson.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertPerson.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPerson.Image")));
-            this.Toolbar_CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertPerson.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertPerson.Name = "Toolbar_CmdInsertPerson";
             this.Toolbar_CmdInsertPerson.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPerson.ToolTipText = "Add a new person.";
@@ -3322,7 +3321,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertLocation.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLocation.Image")));
-            this.Toolbar_CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertLocation.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertLocation.Name = "Toolbar_CmdInsertLocation";
             this.Toolbar_CmdInsertLocation.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertLocation.ToolTipText = "Create a new location.";
@@ -3331,8 +3330,8 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_Location
             // 
             this.Toolbar_CmdDataTree_Insert_Location.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_Location.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_Location.Image")));
-            this.Toolbar_CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_Location.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_Location.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_Location.Name = "Toolbar_CmdDataTree_Insert_Location";
             this.Toolbar_CmdDataTree_Insert_Location.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_Location.ToolTipText = "Insert a subitem in this location.";
@@ -3342,7 +3341,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertLexRefType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertLexRefType.Image")));
-            this.Toolbar_CmdInsertLexRefType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertLexRefType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertLexRefType.Name = "Toolbar_CmdInsertLexRefType";
             this.Toolbar_CmdInsertLexRefType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertLexRefType.ToolTipText = "Create a new lexical relation.";
@@ -3352,7 +3351,7 @@ namespace LanguageExplorer.Impls
             // 
             this.Toolbar_CmdInsertFeatureType.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertFeatureType.Image")));
-            this.Toolbar_CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertFeatureType.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertFeatureType.Name = "Toolbar_CmdInsertFeatureType";
             this.Toolbar_CmdInsertFeatureType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertFeatureType.ToolTipText = "Create a new feature type.";
@@ -3361,20 +3360,20 @@ namespace LanguageExplorer.Impls
             // Toolbar_CmdDataTree_Insert_Possibility
             // 
             this.Toolbar_CmdDataTree_Insert_Possibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_Possibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_Possibility.Image")));
-            this.Toolbar_CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_Possibility.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_Possibility.Name = "Toolbar_CmdDataTree_Insert_Possibility";
-            this.Toolbar_CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(23, 20);
-            this.Toolbar_CmdDataTree_Insert_Possibility.ToolTipText = "Insert a subitem in this item.";
+            this.Toolbar_CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(23, 22);
+            this.Toolbar_CmdDataTree_Insert_Possibility.ToolTipText = "Subitem";
             this.Toolbar_CmdDataTree_Insert_Possibility.Visible = false;
             // 
             // Toolbar_CmdDataTree_Insert_CustomItem
             // 
             this.Toolbar_CmdDataTree_Insert_CustomItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_CustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_CustomItem.Image")));
-            this.Toolbar_CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_CustomItem.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_CustomItem.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_CustomItem.Name = "Toolbar_CmdDataTree_Insert_CustomItem";
-            this.Toolbar_CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDataTree_Insert_CustomItem.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_CustomItem.ToolTipText = "Insert a subitem in this item.";
             this.Toolbar_CmdDataTree_Insert_CustomItem.Visible = false;
             // 
@@ -3384,7 +3383,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateSemDom.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateSemDom.Image")));
             this.Toolbar_CmdDuplicateSemDom.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateSemDom.Name = "Toolbar_CmdDuplicateSemDom";
-            this.Toolbar_CmdDuplicateSemDom.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateSemDom.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateSemDom.Visible = false;
             // 
             // Toolbar_CmdDuplicateAnnotationDef
@@ -3393,7 +3392,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateAnnotationDef.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateAnnotationDef.Image")));
             this.Toolbar_CmdDuplicateAnnotationDef.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateAnnotationDef.Name = "Toolbar_CmdDuplicateAnnotationDef";
-            this.Toolbar_CmdDuplicateAnnotationDef.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateAnnotationDef.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateAnnotationDef.Visible = false;
             // 
             // Toolbar_CmdDuplicatePossibility
@@ -3402,7 +3401,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicatePossibility.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicatePossibility.Image")));
             this.Toolbar_CmdDuplicatePossibility.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicatePossibility.Name = "Toolbar_CmdDuplicatePossibility";
-            this.Toolbar_CmdDuplicatePossibility.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicatePossibility.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicatePossibility.Visible = false;
             // 
             // Toolbar_CmdDuplicateCustomItem
@@ -3411,7 +3410,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateCustomItem.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateCustomItem.Image")));
             this.Toolbar_CmdDuplicateCustomItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateCustomItem.Name = "Toolbar_CmdDuplicateCustomItem";
-            this.Toolbar_CmdDuplicateCustomItem.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateCustomItem.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateCustomItem.Visible = false;
             // 
             // Toolbar_CmdDuplicateMorphType
@@ -3420,7 +3419,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateMorphType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateMorphType.Image")));
             this.Toolbar_CmdDuplicateMorphType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateMorphType.Name = "Toolbar_CmdDuplicateMorphType";
-            this.Toolbar_CmdDuplicateMorphType.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateMorphType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateMorphType.Visible = false;
             // 
             // Toolbar_CmdDuplicateAnthroCategory
@@ -3429,7 +3428,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateAnthroCategory.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateAnthroCategory.Image")));
             this.Toolbar_CmdDuplicateAnthroCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateAnthroCategory.Name = "Toolbar_CmdDuplicateAnthroCategory";
-            this.Toolbar_CmdDuplicateAnthroCategory.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateAnthroCategory.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateAnthroCategory.Visible = false;
             // 
             // Toolbar_CmdDuplicatePerson
@@ -3438,7 +3437,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicatePerson.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicatePerson.Image")));
             this.Toolbar_CmdDuplicatePerson.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicatePerson.Name = "Toolbar_CmdDuplicatePerson";
-            this.Toolbar_CmdDuplicatePerson.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicatePerson.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicatePerson.Visible = false;
             // 
             // Toolbar_CmdDuplicateLocation
@@ -3447,7 +3446,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateLocation.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateLocation.Image")));
             this.Toolbar_CmdDuplicateLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateLocation.Name = "Toolbar_CmdDuplicateLocation";
-            this.Toolbar_CmdDuplicateLocation.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateLocation.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateLocation.Visible = false;
             // 
             // Toolbar_CmdDuplicateLexRefType
@@ -3456,7 +3455,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateLexRefType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateLexRefType.Image")));
             this.Toolbar_CmdDuplicateLexRefType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateLexRefType.Name = "Toolbar_CmdDuplicateLexRefType";
-            this.Toolbar_CmdDuplicateLexRefType.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateLexRefType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateLexRefType.Visible = false;
             // 
             // Toolbar_CmdDuplicateFeatureType
@@ -3465,26 +3464,26 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDuplicateFeatureType.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDuplicateFeatureType.Image")));
             this.Toolbar_CmdDuplicateFeatureType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdDuplicateFeatureType.Name = "Toolbar_CmdDuplicateFeatureType";
-            this.Toolbar_CmdDuplicateFeatureType.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDuplicateFeatureType.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDuplicateFeatureType.Visible = false;
             // 
             // Toolbar_CmdInsertPOS
             // 
             this.Toolbar_CmdInsertPOS.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Toolbar_CmdInsertPOS.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPOS.Image")));
-            this.Toolbar_CmdInsertPOS.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdInsertPOS.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdInsertPOS.Name = "Toolbar_CmdInsertPOS";
-            this.Toolbar_CmdInsertPOS.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPOS.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPOS.ToolTipText = "Add a new category.";
             this.Toolbar_CmdInsertPOS.Visible = false;
             // 
             // Toolbar_CmdDataTree_Insert_POS_SubPossibilities
             // 
             this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Image")));
-            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
+            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Name = "Toolbar_CmdDataTree_Insert_POS_SubPossibilities";
-            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.ToolTipText = "Add a subcategory...";
             this.Toolbar_CmdDataTree_Insert_POS_SubPossibilities.Visible = false;
             // 
@@ -3500,7 +3499,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertEndocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertEndocentricCompound.Image")));
             this.Toolbar_CmdInsertEndocentricCompound.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertEndocentricCompound.Name = "Toolbar_CmdInsertEndocentricCompound";
-            this.Toolbar_CmdInsertEndocentricCompound.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertEndocentricCompound.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertEndocentricCompound.ToolTipText = "Create a new headed compound.";
             this.Toolbar_CmdInsertEndocentricCompound.Visible = false;
             // 
@@ -3510,7 +3509,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertExocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertExocentricCompound.Image")));
             this.Toolbar_CmdInsertExocentricCompound.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertExocentricCompound.Name = "Toolbar_CmdInsertExocentricCompound";
-            this.Toolbar_CmdInsertExocentricCompound.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertExocentricCompound.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertExocentricCompound.ToolTipText = "Create a new non-headed compound.";
             this.Toolbar_CmdInsertExocentricCompound.Visible = false;
             // 
@@ -3520,7 +3519,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertExceptionFeature.Image")));
             this.Toolbar_CmdInsertExceptionFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertExceptionFeature.Name = "Toolbar_CmdInsertExceptionFeature";
-            this.Toolbar_CmdInsertExceptionFeature.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertExceptionFeature.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertExceptionFeature.ToolTipText = "Create a new {0}.";
             this.Toolbar_CmdInsertExceptionFeature.Visible = false;
             // 
@@ -3530,7 +3529,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhonologicalClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhonologicalClosedFeature.Image")));
             this.Toolbar_CmdInsertPhonologicalClosedFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertPhonologicalClosedFeature.Name = "Toolbar_CmdInsertPhonologicalClosedFeature";
-            this.Toolbar_CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhonologicalClosedFeature.ToolTipText = "Add a phonological feature.";
             this.Toolbar_CmdInsertPhonologicalClosedFeature.Visible = false;
             // 
@@ -3540,7 +3539,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertClosedFeature.Image")));
             this.Toolbar_CmdInsertClosedFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertClosedFeature.Name = "Toolbar_CmdInsertClosedFeature";
-            this.Toolbar_CmdInsertClosedFeature.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertClosedFeature.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertClosedFeature.ToolTipText = "Add a feature.";
             this.Toolbar_CmdInsertClosedFeature.Visible = false;
             // 
@@ -3550,7 +3549,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertComplexFeature.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertComplexFeature.Image")));
             this.Toolbar_CmdInsertComplexFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertComplexFeature.Name = "Toolbar_CmdInsertComplexFeature";
-            this.Toolbar_CmdInsertComplexFeature.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertComplexFeature.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertComplexFeature.ToolTipText = "Add a complex feature.";
             this.Toolbar_CmdInsertComplexFeature.Visible = false;
             // 
@@ -3566,7 +3565,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhoneme.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhoneme.Image")));
             this.Toolbar_CmdInsertPhoneme.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertPhoneme.Name = "Toolbar_CmdInsertPhoneme";
-            this.Toolbar_CmdInsertPhoneme.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPhoneme.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhoneme.ToolTipText = "Create a new phoneme.";
             this.Toolbar_CmdInsertPhoneme.Visible = false;
             // 
@@ -3582,7 +3581,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertSegmentNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertSegmentNaturalClasses.Image")));
             this.Toolbar_CmdInsertSegmentNaturalClasses.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertSegmentNaturalClasses.Name = "Toolbar_CmdInsertSegmentNaturalClasses";
-            this.Toolbar_CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertSegmentNaturalClasses.ToolTipText = "Create a new natural class, defined by listing phonemes.";
             this.Toolbar_CmdInsertSegmentNaturalClasses.Visible = false;
             // 
@@ -3592,7 +3591,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertFeatureNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertFeatureNaturalClasses.Image")));
             this.Toolbar_CmdInsertFeatureNaturalClasses.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertFeatureNaturalClasses.Name = "Toolbar_CmdInsertFeatureNaturalClasses";
-            this.Toolbar_CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertFeatureNaturalClasses.ToolTipText = "Create a new natural class, defined by features.";
             this.Toolbar_CmdInsertFeatureNaturalClasses.Visible = false;
             // 
@@ -3608,7 +3607,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhEnvironment.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhEnvironment.Image")));
             this.Toolbar_CmdInsertPhEnvironment.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertPhEnvironment.Name = "Toolbar_CmdInsertPhEnvironment";
-            this.Toolbar_CmdInsertPhEnvironment.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPhEnvironment.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhEnvironment.ToolTipText = "Create a new environment.";
             this.Toolbar_CmdInsertPhEnvironment.Visible = false;
             // 
@@ -3624,7 +3623,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhRegularRule.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhRegularRule.Image")));
             this.Toolbar_CmdInsertPhRegularRule.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertPhRegularRule.Name = "Toolbar_CmdInsertPhRegularRule";
-            this.Toolbar_CmdInsertPhRegularRule.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPhRegularRule.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhRegularRule.ToolTipText = "Create a new phonological rule.";
             this.Toolbar_CmdInsertPhRegularRule.Visible = false;
             // 
@@ -3634,7 +3633,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhMetathesisRule.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertPhMetathesisRule.Image")));
             this.Toolbar_CmdInsertPhMetathesisRule.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertPhMetathesisRule.Name = "Toolbar_CmdInsertPhMetathesisRule";
-            this.Toolbar_CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhMetathesisRule.ToolTipText = "Create a new metathesis rule.";
             this.Toolbar_CmdInsertPhMetathesisRule.Visible = false;
             // 
@@ -3650,7 +3649,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertMorphemeACP.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertMorphemeACP.Image")));
             this.Toolbar_CmdInsertMorphemeACP.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertMorphemeACP.Name = "Toolbar_CmdInsertMorphemeACP";
-            this.Toolbar_CmdInsertMorphemeACP.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertMorphemeACP.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertMorphemeACP.ToolTipText = "Create a rule to prevent morphemes from co-occurring.";
             this.Toolbar_CmdInsertMorphemeACP.Visible = false;
             // 
@@ -3660,7 +3659,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertAllomorphACP.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertAllomorphACP.Image")));
             this.Toolbar_CmdInsertAllomorphACP.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertAllomorphACP.Name = "Toolbar_CmdInsertAllomorphACP";
-            this.Toolbar_CmdInsertAllomorphACP.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertAllomorphACP.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertAllomorphACP.ToolTipText = "Create a rule to prevent allomorphs from co-occurring.";
             this.Toolbar_CmdInsertAllomorphACP.Visible = false;
             // 
@@ -3670,7 +3669,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("Toolbar_CmdInsertACPGroup.Image")));
             this.Toolbar_CmdInsertACPGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Toolbar_CmdInsertACPGroup.Name = "Toolbar_CmdInsertACPGroup";
-            this.Toolbar_CmdInsertACPGroup.Size = new System.Drawing.Size(23, 20);
+            this.Toolbar_CmdInsertACPGroup.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertACPGroup.ToolTipText = "Create a group of ad hoc rules.";
             this.Toolbar_CmdInsertACPGroup.Visible = false;
             // 
@@ -3681,7 +3680,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_WritingSystemList,
             this.Toolbar_CombinedStylesList});
             this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripFormat.Location = new System.Drawing.Point(419, 24);
+            this.toolStripFormat.Location = new System.Drawing.Point(422, 24);
             this.toolStripFormat.Name = "toolStripFormat";
             this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
             this.toolStripFormat.TabIndex = 4;

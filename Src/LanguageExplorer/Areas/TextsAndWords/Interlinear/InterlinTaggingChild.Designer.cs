@@ -26,9 +26,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				m_taggingContextMenu?.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

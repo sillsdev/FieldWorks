@@ -301,9 +301,7 @@
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\CustomFieldsMenuHelper.cs" />
     <Compile Include="Areas\FileExportMenuHelper.cs" />
-    <Compile Include="Areas\Lists\Tools\PartiallySharedListToolMenuHelper.cs" />
-    <Compile Include="Areas\Lists\Tools\SharedForPlainVanillaListToolMenuHelper.cs" />
-    <Compile Include="Areas\Lists\Tools\SharedListToolMenuHelper.cs" />
+    <Compile Include="Areas\Lists\Tools\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForAreasWideMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
@@ -3804,6 +3802,8 @@
     <Content Include="images\Morphology\Insert Feature.ico" />
     <Content Include="images\Morphology\Insert Sub-Cat.ico" />
     <EmbeddedResource Include="images\Morphology\ME.ico" />
+    <None Include="images\Morphology\Insert_Cat.bmp" />
+    <None Include="images\Morphology\Insert_Sub_Cat.bmp" />
     <Content Include="images\Morphology\Metathesis.ico" />
     <Content Include="images\Lists.ico" />
     <Content Include="images\LT.png" />

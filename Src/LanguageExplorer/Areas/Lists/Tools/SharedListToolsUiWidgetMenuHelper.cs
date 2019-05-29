@@ -14,37 +14,133 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists.Tools
 {
-	/// <summary>
-	/// This is shared among all List area tools, EXCEPT FeatureTypesAdvancedEditTool (which isn't actually a possibility list tool).
-	/// Closed lists may not want any of this stuff either. (Major Entry Types seems to be the only closed one, and it has no tool.)
-	/// </summary>
-	/// <remarks>
-	/// Tools that only contain instances of ICmPossibility should create "SharedForPlainVanillaListToolMenuHelper", which  creates one of these.
-	/// </remarks>
-	internal sealed class PartiallySharedListToolMenuHelper : IDisposable
+	internal sealed class SharedListToolsUiWidgetMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private ITool _tool;
 		private ICmPossibilityList _list;
 		private IRecordList _recordList;
 		private DataTree _dataTree;
-		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 		private ISharedEventHandlers _sharedEventHandlers;
+		private FileExportMenuHelper _fileExportMenuHelper;
+		private IListArea Area => (IListArea)_tool.Area;
+		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 
-		internal PartiallySharedListToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, PartiallySharedForToolsWideMenuHelper partiallySharedForToolsWideMenuHelper, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+		internal SharedListToolsUiWidgetMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(partiallySharedForToolsWideMenuHelper, nameof(partiallySharedForToolsWideMenuHelper));
+			Guard.AgainstNull(tool, nameof(tool));
 			Guard.AgainstNull(list, nameof(list));
 			Guard.AgainstNull(recordList, nameof(recordList));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
+			_tool = tool;
 			_list = list;
 			_recordList = recordList;
 			_dataTree = dataTree;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_partiallySharedForToolsWideMenuHelper = partiallySharedForToolsWideMenuHelper;
+			_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 			Register_PossibilityList_Slice_Context_Menus();
+		}
+
+		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject, Dictionary<string, string> names = null, HashSet<Command> commands = null)
+		{
+			if (names == null)
+			{
+				names = new Dictionary<string, string>()
+				{
+					{ AreaServices.List_Item, ListResources.Item },
+					{ AreaServices.Subitem, ListResources.Subitem }
+				};
+			}
+			if (commands == null)
+			{
+				// NB: Only the lists that contain CmPossibility instances (e.g., no sub-classes) can have a null option for 'commands'.
+				var plainVanillaToolNames = new HashSet<string>
+				{
+					AreaServices.ChartmarkEditMachineName,
+					AreaServices.CharttempEditMachineName,
+					AreaServices.ConfidenceEditMachineName,
+					AreaServices.DialectsListEditMachineName,
+					AreaServices.DomainTypeEditMachineName,
+					AreaServices.EducationEditMachineName,
+					AreaServices.ExtNoteTypeEditMachineName,
+					AreaServices.GenresEditMachineName,
+					AreaServices.LanguagesListEditMachineName,
+					AreaServices.PositionsEditMachineName,
+					AreaServices.PublicationsEditMachineName,
+					AreaServices.RecTypeEditMachineName,
+					AreaServices.RestrictionsEditMachineName,
+					AreaServices.RoleEditMachineName,
+					AreaServices.SenseTypeEditMachineName,
+					AreaServices.StatusEditMachineName,
+					AreaServices.TextMarkupTagsEditMachineName,
+					AreaServices.TimeOfDayEditMachineName,
+					AreaServices.TranslationTypeEditMachineName,
+					AreaServices.UsageTypeEditMachineName
+				};
+				Require.That(plainVanillaToolNames.Contains(_tool.MachineName));
+				commands = new HashSet<Command>
+				{
+					Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList, Command.CmdInsertPossibility, Command.CmdDataTree_Insert_Possibility
+				};
+			}
+			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+			var insertMenuItemsDictionary = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary;
+			var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
+			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+			var insertToolbarItemsDictionary = _majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary;
+			// Goes in Insert menu for all List Area tools.
+			// <item command="CmdAddCustomList" defaultVisible="false" />
+			insertMenuDictionary.Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => CanCmdAddCustomList));
+			foreach (var command in commands)
+			{
+				switch (command)
+				{
+					case Command.CmdAddToLexicon:
+						_partiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
+						break;
+					case Command.CmdExport:
+						// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
+						_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+						break;
+					case Command.CmdConfigureList:
+						// <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
+						toolsMenuDictionary.Add(Command.CmdConfigureList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureList_Click, () => CanCmdConfigureList));
+						break;
+					case Command.CmdInsertPossibility: // Add to Hashset
+						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
+						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
+						insertMenuItemsDictionary[Command.CmdInsertPossibility].Text = names[AreaServices.List_Item];
+						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
+						insertToolbarItemsDictionary[Command.CmdInsertPossibility].ToolTipText = names[AreaServices.List_Item];
+						break;
+					case Command.CmdDataTree_Insert_Possibility: // Add to Hashset
+						// <command id="CmdDataTree_Insert_Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+						insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
+						insertMenuItemsDictionary[Command.CmdDataTree_Insert_Possibility].ToolTipText = names[AreaServices.Subitem];
+						insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
+						insertToolbarItemsDictionary[Command.CmdDataTree_Insert_Possibility].ToolTipText = names[AreaServices.Subitem];
+						break;
+					default:
+						throw new ArgumentOutOfRangeException($"Don't know how to process command: '{command.ToString()}'");
+				}
+			}
+		}
+
+		private static Tuple<bool, bool> CanCmdAddCustomList => new Tuple<bool, bool>(true, true);
+
+		private void AddCustomList_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new AddCustomListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache))
+			{
+				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
+				{
+					Area.AddCustomList(dlg.NewList);
+				}
+			}
 		}
 
 		private void Register_PossibilityList_Slice_Context_Menus()
@@ -111,8 +207,8 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			      <item command="CmdDataTree_Insert_Possibility" /> // Shared
 			*/
 			var currentPossibility = _recordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.AddNewSubPossibilityListItem), ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
-			menu.Tag = new List<object> { currentPossibility, _dataTree, _recordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, AreaServices.PopulateForSubitemInsert(_list, currentPossibility, ListResources.Insert_Subitem) };
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Possibility_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+			//menu.Tag = new List<object> { currentPossibility, _dataTree, _recordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, AreaServices.PopulateForSubitemInsert(_list, currentPossibility, ListResources.Insert_Subitem) };
 
 			// End: <menu id="mnuDataTree_SubPossibilities">
 
@@ -154,13 +250,14 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			}
 		}
 
+#if RANDYTODO
+		// TODO: Needs to wait until I can actually see what is happening with these in 9.0.7, before I can enable them.
 		/// <summary>
 		/// Call method if list tool supports a CmdDuplicateFoo command on the insert tool bar
 		/// </summary>
 		internal void SetupSharedDuplicateMainPossibility(ToolUiWidgetParameterObject toolUiWidgetParameterObject, Command command)
 		{
-#if RANDYTODO
-			// TODO: Needs to wait until I can actually see what is happening with these in 9.0.7, before I can enable them.
+		}
 
 		private void AddInsertToolbarItems()
 		{
@@ -208,16 +305,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
 			}
 		}
-#else
-			MessageBox.Show("One of these days, I can get this to work.");
 #endif
-		}
-
-		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
-		{
-			_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, ()=> CanCmdAddToLexicon);
-			_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, _dataTree);
-		}
 
 		private Tuple<bool, bool> CanCmdAddToLexicon
 		{
@@ -235,10 +323,54 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			}
 		}
 
+		private static Tuple<bool, bool> CanCmdInsertPossibility => new Tuple<bool, bool>(true, true);
+
+		private void CmdInsertPossibility_Click(object sender, EventArgs e)
+		{
+			ICmPossibility newPossibility = null;
+			UowHelpers.UndoExtension(ListResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+			{
+				newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), _list);
+			});
+			if (newPossibility != null)
+			{
+				_recordList.UpdateRecordTreeBar();
+			}
+		}
+
+		private Tuple<bool, bool> CanCmdDataTree_Insert_Possibility => new Tuple<bool, bool>(true, _list.Depth > 1 && _recordList.CurrentObject != null);
+
+		private void CmdDataTree_Insert_Possibility_Click(object sender, EventArgs e)
+		{
+			ICmPossibility newSubPossibility = null;
+			UowHelpers.UndoExtension(ListResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+			{
+				newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), (ICmPossibility)_recordList.CurrentObject);
+			});
+			if (newSubPossibility != null)
+			{
+				_recordList.UpdateRecordTreeBar();
+			}
+		}
+
+		private static Tuple<bool, bool> CanCmdConfigureList => new Tuple<bool, bool>(true, true);
+
+		private void ConfigureList_Click(object sender, EventArgs e)
+		{
+			var originalUiName = _list.Name.BestAnalysisAlternative.Text;
+			using (var dlg = new ConfigureListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache, _list))
+			{
+				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != _list.Name.BestAnalysisAlternative.Text)
+				{
+					Area.UpdateListDisplayName(_tool);
+				}
+			}
+		}
+
 		#region Implementation of IDisposable
 		private bool _isDisposed;
 
-		~PartiallySharedListToolMenuHelper()
+		~SharedListToolsUiWidgetMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -267,14 +399,18 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			if (disposing)
 			{
+				_fileExportMenuHelper.Dispose();
 				_partiallySharedForToolsWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
+			_tool = null;
 			_list = null;
 			_recordList = null;
 			_dataTree = null;
+			_fileExportMenuHelper = null;
 			_partiallySharedForToolsWideMenuHelper = null;
 			_sharedEventHandlers = null;
+
 
 			_isDisposed = true;
 		}

@@ -162,8 +162,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		private sealed class SenseMenuHelper : IDisposable
 		{
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
-			private SharedListToolMenuHelper _sharedListToolMenuHelper;
-			private SharedForPlainVanillaListToolMenuHelper _sharedForPlainVanillaListToolMenuHelper;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal SenseMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -174,8 +173,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
-				_sharedForPlainVanillaListToolMenuHelper = new SharedForPlainVanillaListToolMenuHelper(_majorFlexComponentParameters, new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList), tool, list, recordList, dataTree);
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 
 				SetupToolUiWidgets(tool);
 			}
@@ -183,8 +181,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 			private void SetupToolUiWidgets(ITool tool)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
-				_sharedForPlainVanillaListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -220,11 +217,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 
 				if (disposing)
 				{
-					_sharedListToolMenuHelper.Dispose();
-					_sharedForPlainVanillaListToolMenuHelper.Dispose();
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
-				_sharedListToolMenuHelper = null;
-				_sharedForPlainVanillaListToolMenuHelper = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

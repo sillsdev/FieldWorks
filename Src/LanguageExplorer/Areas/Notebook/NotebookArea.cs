@@ -55,6 +55,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
+			_notebookAreaMenuHelper.Dispose();
 			_notebookAreaMenuHelper = null;
 		}
 

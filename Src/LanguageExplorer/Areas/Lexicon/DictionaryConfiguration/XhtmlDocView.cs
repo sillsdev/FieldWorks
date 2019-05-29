@@ -522,6 +522,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var localizedName = DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
 			var label = string.Format(AreaResources.ksConfigure, localizedName);
+			s_contextMenu?.Dispose();
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
@@ -560,20 +561,12 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private static void DisposeContextMenu(object sender, EventArgs e)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			Application.Idle -= DisposeContextMenu;
 			if (s_contextMenu != null)
 			{
 				s_contextMenu.Dispose();
 				s_contextMenu = null;
 			}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		// Context menu exists just for one invocation (until idle).

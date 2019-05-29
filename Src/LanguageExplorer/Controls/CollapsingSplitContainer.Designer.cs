@@ -28,9 +28,7 @@ namespace LanguageExplorer.Controls
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-
+				components?.Dispose();
 				if (m_expandSplitterIcons != null)
 				{
 					for (int i = 0; i < m_expandSplitterIcons.Length; ++i)

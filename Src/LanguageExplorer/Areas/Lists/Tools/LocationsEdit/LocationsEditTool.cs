@@ -233,7 +233,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 
 			private void CmdInsertLocation_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), _list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Location, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), _list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
@@ -244,8 +248,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 
 			private void CmdDataTree_Insert_Location_Click(object sender, EventArgs e)
 			{
-				var newSubItem = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), (ICmLocation)_recordList.CurrentObject);
-				if (newSubItem != null)
+				ICmPossibility newSubPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Location, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(Guid.NewGuid(), (ICmLocation)_recordList.CurrentObject);
+				});
+				if (newSubPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
 				}

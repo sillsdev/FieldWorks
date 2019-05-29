@@ -20,8 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 			components = null;
 			base.Dispose(disposing);

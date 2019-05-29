@@ -554,20 +554,12 @@ namespace LanguageExplorer.Areas
 
 		private void DisposeContextMenu(object sender, EventArgs e)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
 			{
 				m_contextMenu.Dispose();
 				m_contextMenu = null;
 			}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		// Context menu exists just for one invocation (until idle).

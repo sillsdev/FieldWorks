@@ -317,6 +317,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// This time test seems to be the only way to find out whether this click closed the last one.
 				if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
 				{
+					m_taggingContextMenu?.Dispose();
 					m_taggingContextMenu = MakeContextMenu();
 					m_taggingContextMenu.Closed += m_taggingContextMenu_Closed;
 					m_taggingContextMenu.Show(this, e.X, e.Y);

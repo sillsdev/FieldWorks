@@ -32,7 +32,7 @@
 <!-- Lists -->
 	<string id="CmSemanticDomain" txt="Semantic Domain"/>
 	<string id="CmPossibility" txt="List Item"/>
-	<string id="CmCustomItem" txt="List Item"/>
+	<string id="CmCustomItem" txt="Custom Item"/>
 	<string id="CmPerson" txt="Person"/>
 	<string id="CmLocation" txt="Location"/>
 	<string id="CmAnnotationDefn" txt="Annotation Definition"/>

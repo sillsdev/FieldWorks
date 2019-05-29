@@ -220,9 +220,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, _tool, _dataTree, _recordList);
 				// <item command="CmdConfigureColumns" defaultVisible="false" />
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
-
-				_partiallySharedForToolsWideMenuHelper.StartSharing(Command.CmdAddToLexicon, () => CanCmdAddToLexicon);
-				_partiallySharedForToolsWideMenuHelper.SetupAddToLexicon(toolUiWidgetParameterObject, _dataTree);
+				_partiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
 				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
 				menuItem.Tag = _dataTree;
 

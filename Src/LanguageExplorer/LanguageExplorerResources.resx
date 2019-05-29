@@ -117,888 +117,53 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Grammar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Grammar.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ksCannotLaunchX" xml:space="preserve">
-    <value>Sorry, could not launch {0}.</value>
-  </data>
-  <data name="ksChartTemplateWarning" xml:space="preserve">
-    <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
-  </data>
-  <data name="ksCreatingCustomGramCategory" xml:space="preserve">
-    <value>You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the "Back" button on the toolbar to return to where you were working. The new category will then be available for you to choose.</value>
-  </data>
-  <data name="ksCreatingCustomLexRefType" xml:space="preserve">
-    <value>You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the "Back" button on the toolbar to return to where you were working. The new type will then be available for you to choose.</value>
-  </data>
-  <data name="ksCreatingWindowForX" xml:space="preserve">
-    <value>Creating window for {0} Project...</value>
-  </data>
-  <data name="ksError" xml:space="preserve">
-    <value>Error</value>
-    <comment>caption for message box</comment>
-  </data>
-  <data name="ksErrorLoadingResourceStrings" xml:space="preserve">
-    <value>Error loading resource strings: {0}</value>
-  </data>
-  <data name="ksInformation" xml:space="preserve">
-    <value>Information</value>
-    <comment>caption for message box</comment>
-  </data>
-  <data name="ksInitializingLayouts_" xml:space="preserve">
-    <value>Initializing Layouts...</value>
-  </data>
-  <data name="ksInitializingMessageDialogs_" xml:space="preserve">
-    <value>Initializing Message Dialogs...</value>
-    <comment>message for splash screen</comment>
-  </data>
-  <data name="ksLoading_" xml:space="preserve">
-    <value>Loading...</value>
-    <comment>message for splash screen</comment>
-  </data>
-  <data name="ksShowingSemanticClassification" xml:space="preserve">
-    <value>This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses.</value>
-  </data>
-  <data name="kstidOpenSampleDbMsg" xml:space="preserve">
-    <value>Do you want to study the training materials for Language Explorer?
-
-If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
-Alternatively, point to Demo Movies and choose an option.
-	- Play All gives a half-hour overview of Language Explorer.
-	- You may also choose specific demo movie topics.
-
-If you click No, you will see various options for starting work in Language Explorer.</value>
-    <comment>note the embedded newlines in this message.</comment>
-  </data>
-  <data name="kstidSupportEmail" xml:space="preserve">
-    <value>FlexErrors@sil.org</value>
-    <comment>Email address for sending bug reports to</comment>
-  </data>
-  <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
-    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net</value>
-  </data>
-  <data name="Lexicon32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Lexicon32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Lists" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Lists.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Notebook" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Notebook.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Text_And_Words" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Text_And_Words.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
-    <value>Total number of sentences (segments):</value>
-  </data>
-  <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
-    <value>Total word count (tokens):</value>
-  </data>
-  <data name="ksStatisticsViewTotalWordTypesText" xml:space="preserve">
-    <value>Total number of unique words (types):</value>
-  </data>
-  <data name="ksStatisticsView_HeaderText" xml:space="preserve">
-    <value>Texts &amp; Words Statistics (using chosen texts)</value>
-  </data>
-  <data name="ksTextAreaStatisticsViewName" xml:space="preserve">
-    <value>Statistics</value>
-  </data>
-  <data name="AddScripture" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\AddScripture.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ksAdvancedDlgMenuItem" xml:space="preserve">
-    <value>Advanced...</value>
-    <comment>Subitem in Mark as Post/Preposed from...</comment>
-  </data>
-  <data name="ksAdvDlgMainPostText" xml:space="preserve">
-    <value>Select the row and column to mark this cell's content as postposed from.</value>
-  </data>
-  <data name="ksAdvDlgMainPreText" xml:space="preserve">
-    <value>Select the row and column to mark this cell's content as preposed from.</value>
-  </data>
-  <data name="ksAdvDlgPartialPost" xml:space="preserve">
-    <value>Select the words to be marked as postposed.</value>
-  </data>
-  <data name="ksAdvDlgPartialPre" xml:space="preserve">
-    <value>Select the words to be marked as preposed.</value>
-  </data>
-  <data name="ksAdvDlgPostposeCaption" xml:space="preserve">
-    <value>Mark as Postposed -- Advanced options</value>
-  </data>
-  <data name="ksAdvDlgPreposeCaption" xml:space="preserve">
-    <value>Mark as Preposed -- Advanced options</value>
-    <comment>AdvDlg = AdvancedDialog</comment>
-  </data>
-  <data name="ksBackMenuItem" xml:space="preserve">
-    <value>Back</value>
-    <comment>Submenu of ksMoveMenuItem or ksMoveWordMenuItem</comment>
-  </data>
-  <data name="ksChooseDifferentColumn" xml:space="preserve">
-    <value>Please choose a different column to insert this displaced word(s)</value>
-    <comment>When user chose wrong column for Chart Orphan (temporary?)</comment>
-  </data>
-  <data name="ksClearFromHereOnMenuItem" xml:space="preserve">
-    <value>Clear Chart from here on</value>
-  </data>
-  <data name="ksDelRowWarning" xml:space="preserve">
-    <value>This will delete {0} rows of data from your chart! Are you sure?</value>
-    <comment>Dialog warning. Responses are Yes/No.</comment>
-  </data>
-  <data name="ksExportDiscourse" xml:space="preserve">
-    <value>Export Discourse Chart</value>
-  </data>
-  <data name="ksExportErrorMsg" xml:space="preserve">
-    <value>An error occurred while exporting your data.  This is probably a bug in the FieldWorks code. Details: {0}</value>
-  </data>
-  <data name="ksExtension" xml:space="preserve">
-    <value>Extension</value>
-  </data>
-  <data name="ksFormat" xml:space="preserve">
-    <value>Format</value>
-  </data>
-  <data name="ksForwardMenuItem" xml:space="preserve">
-    <value>Forward</value>
-    <comment>Submenu of ksMoveMenuItem or ksMoveWordMenuItem</comment>
-  </data>
-  <data name="ksFoundAndFixingInvalidDataCells" xml:space="preserve">
-    <value>The program has detected invalid data (cells out of order or not in any column) within this
-chart.  This can be caused by deleting or re-ordering columns in the template.
-
-The program will attempt to repair the links within the data.  You may need to do additional
-editing, or you may prefer to start over if the resulting chart is too different from what
-you expect.</value>
-    <comment>The newlines (\r\n) in the string are to make the display lines be a reasonable length.  The double newline (\r\n\r\n) serves to provide a paragraph break in the message.</comment>
-  </data>
-  <data name="ksInsertRowMenuItem" xml:space="preserve">
-    <value>Insert Row Below</value>
-  </data>
-  <data name="ksInvalidInternalConstituentChartData" xml:space="preserve">
-    <value>Invalid Internal Constituent Chart Data</value>
-  </data>
-  <data name="ksMakeDepClauseMenuItem" xml:space="preserve">
-    <value>Make a Dependent Clause out of</value>
-    <comment>Menu item that appears in empty cell in chart.</comment>
-  </data>
-  <data name="ksMakeSongClauseMenuItem" xml:space="preserve">
-    <value>Make a Song Clause out of</value>
-  </data>
-  <data name="ksMakeSpeechClauseMenuItem" xml:space="preserve">
-    <value>Make a Speech Clause out of</value>
-  </data>
-  <data name="ksMarkMenuItemFormat" xml:space="preserve">
-    <value>Mark {0}</value>
-    <comment>Used to format top-level marker menu items, e.g., "Mark TenseAspectMood".</comment>
-  </data>
-  <data name="ksMarkMissingItem" xml:space="preserve">
-    <value>Mark as Missing</value>
-  </data>
-  <data name="ksMergeAfterMenuItem" xml:space="preserve">
-    <value>Merge with Cell after this</value>
-    <comment>Causes this cell to merge with empty cell to right to save space</comment>
-  </data>
-  <data name="ksMergeBeforeMenuItem" xml:space="preserve">
-    <value>Merge with Cell before this</value>
-    <comment>Causes this cell to merge with empty cell to left to save space</comment>
-  </data>
-  <data name="ksMissingMarker" xml:space="preserve">
-    <value>---</value>
-    <comment>Marker for missing items.</comment>
-  </data>
-  <data name="ksMovedFromMenuItem" xml:space="preserve">
-    <value>Insert as Moved from</value>
-  </data>
-  <data name="ksMovedTextAfter" xml:space="preserve">
-    <value>&gt;&gt;</value>
-    <comment>Marker inserted to indicate a moved object to the right of the marker.</comment>
-  </data>
-  <data name="ksMovedTextBefore" xml:space="preserve">
-    <value>&lt;&lt;</value>
-    <comment>Marker inserted to indicate a moved object to the left of the marker.</comment>
-  </data>
-  <data name="ksMoveHereInNewClause" xml:space="preserve">
-    <value>Insert into new Row</value>
-  </data>
-  <data name="ksMoveHereToolTip" xml:space="preserve">
-    <value>Insert selected text into the {0} column.</value>
-  </data>
-  <data name="ksMoveMenuItem" xml:space="preserve">
-    <value>Move Cell</value>
-    <comment>Combines with submenus forward/back/ eventually up/down</comment>
-  </data>
-  <data name="ksMoveWordMenuItem" xml:space="preserve">
-    <value>Move Word</value>
-    <comment>Combines with submenu Forward/Backward, maybe enentually up/down</comment>
-  </data>
-  <data name="ksNextClauseMenuItem" xml:space="preserve">
-    <value>Next Clause</value>
-  </data>
-  <data name="ksNextNClausesMenuItem" xml:space="preserve">
-    <value>Next {0} Clauses</value>
-    <comment>{0} is a small integer (3-9 at most, probably)</comment>
-  </data>
-  <data name="ksNextTwoClausesMenuItem" xml:space="preserve">
-    <value>Next Two Clauses</value>
-  </data>
-  <data name="ksNoColumns" xml:space="preserve">
-    <value>Your discourse chart template is missing or has no columns. You can fix this by adding some in Lists/Text constituent chart templates.</value>
-    <comment>Warning message that appears when the text chart is displayed and there are no columns in the template.</comment>
-  </data>
-  <data name="ksNotesColumnHeader" xml:space="preserve">
-    <value>Notes</value>
-    <comment>Appears as header of the final, Notes column.</comment>
-  </data>
-  <data name="ksNoWordformsMsg" xml:space="preserve">
-    <value>No wordforms are selected to move</value>
-    <comment>Used when a Move button is pressed in the Constituent chart and nothing is selected.</comment>
-  </data>
-  <data name="ksOnlyOneTemplateAllowed" xml:space="preserve">
-    <value>The text charting mechanism can only handle one template at this point. Only the first template will be used.</value>
-    <comment>Warning message that appears when the text chart is displayed and there are more than one template defined.</comment>
-  </data>
-  <data name="ksOtherMenuItem" xml:space="preserve">
-    <value>Other...</value>
-    <comment>Subitem in Make dependent clause of...</comment>
-  </data>
-  <data name="ksPostposeFromMenuItem" xml:space="preserve">
-    <value>Mark as Postposed from</value>
-    <comment>Mark the current cell as moved from a cell that comes BEFORE it.</comment>
-  </data>
-  <data name="ksPreposeFromMenuItem" xml:space="preserve">
-    <value>Mark as Preposed from</value>
-    <comment>Mark the current cell as moved from a cell that comes AFTER it.</comment>
-  </data>
-  <data name="ksPreviousClauseMenuItem" xml:space="preserve">
-    <value>Previous Clause</value>
-  </data>
-  <data name="ksRedoAddMarker" xml:space="preserve">
-    <value>Redo Add Marker</value>
-  </data>
-  <data name="ksRedoClearChart" xml:space="preserve">
-    <value>Redo clear chart</value>
-  </data>
-  <data name="ksRedoInsertRow" xml:space="preserve">
-    <value>Redo Insert Row</value>
-  </data>
-  <data name="ksRedoLastRowInPara" xml:space="preserve">
-    <value>Redo Last Row in Paragraph</value>
-  </data>
-  <data name="ksRedoLastRowInSent" xml:space="preserve">
-    <value>Redo Last Row in Sentence</value>
-  </data>
-  <data name="ksRedoMakeDepClause" xml:space="preserve">
-    <value>Redo Make Dependent Clause</value>
-  </data>
-  <data name="ksRedoMakeMoved" xml:space="preserve">
-    <value>Redo Insert as Moved</value>
-  </data>
-  <data name="ksRedoMakeNewRow" xml:space="preserve">
-    <value>Redo Make New Row</value>
-  </data>
-  <data name="ksRedoMarkMissing" xml:space="preserve">
-    <value>Redo Mark as Missing</value>
-  </data>
-  <data name="ksRedoMergeCells" xml:space="preserve">
-    <value>Redo Merge Cells</value>
-  </data>
-  <data name="ksRedoMoveCellBack" xml:space="preserve">
-    <value>Redo Move Cell Back</value>
-  </data>
-  <data name="ksRedoMoveCellForward" xml:space="preserve">
-    <value>Redo Move Cell Forward</value>
-  </data>
-  <data name="ksRedoMoveWord" xml:space="preserve">
-    <value>Redo Move Word</value>
-  </data>
-  <data name="ksRedoMoveWordToColumn" xml:space="preserve">
-    <value>Redo Move Here</value>
-    <comment>Part of the Redo item</comment>
-  </data>
-  <data name="ksRedoPostposeFrom" xml:space="preserve">
-    <value>Redo Postpose From</value>
-  </data>
-  <data name="ksRedoPreposeFrom" xml:space="preserve">
-    <value>Redo Prepose From</value>
-  </data>
-  <data name="ksRedoRemoveClauseMarker" xml:space="preserve">
-    <value>Redo Remove Clause Marker</value>
-  </data>
-  <data name="ksRedoRemoveMarker" xml:space="preserve">
-    <value>Redo Remove Marker</value>
-  </data>
-  <data name="ksRemoveDependentMarkerMenuItem" xml:space="preserve">
-    <value>Remove Clause Marker</value>
-  </data>
-  <data name="ksRowEndsParaMenuItem" xml:space="preserve">
-    <value>Last Row in Paragraph</value>
-    <comment>Check mark item in row menu.</comment>
-  </data>
-  <data name="ksRowEndsSentMenuItem" xml:space="preserve">
-    <value>Last Row in Sentence</value>
-    <comment>Check mark item in row menu.</comment>
-  </data>
-  <data name="ksTextEditWarning" xml:space="preserve">
-    <value>The underlying text for this chart appears to have changed. The program has attempted to repair things, but you may just need to start over.</value>
-  </data>
-  <data name="ksUndoAddMarker" xml:space="preserve">
-    <value>Undo Add Marker</value>
-  </data>
   <data name="ksUndoClearChart" xml:space="preserve">
     <value>Undo clear chart</value>
-  </data>
-  <data name="ksUndoInsertRow" xml:space="preserve">
-    <value>Undo Insert Row</value>
-  </data>
-  <data name="ksUndoLastRowInPara" xml:space="preserve">
-    <value>Undo Last Row in Paragraph</value>
-  </data>
-  <data name="ksUndoLastRowInSent" xml:space="preserve">
-    <value>Undo Last Row in Sentence</value>
-  </data>
-  <data name="ksUndoMakeDepClause" xml:space="preserve">
-    <value>Undo Make Dependent Clause</value>
-  </data>
-  <data name="ksUndoMakeMoved" xml:space="preserve">
-    <value>Undo Insert as Moved</value>
-  </data>
-  <data name="ksUndoMakeNewRow" xml:space="preserve">
-    <value>Undo Make New Row</value>
-  </data>
-  <data name="ksUndoMarkMissing" xml:space="preserve">
-    <value>Undo Mark as Missing</value>
-  </data>
-  <data name="ksUndoMergeCells" xml:space="preserve">
-    <value>Undo Merge Cells</value>
-  </data>
-  <data name="ksUndoMoveCellBack" xml:space="preserve">
-    <value>Undo Move Cell Back</value>
-  </data>
-  <data name="ksUndoMoveCellForward" xml:space="preserve">
-    <value>Undo Move Cell Forward</value>
-  </data>
-  <data name="ksUndoMoveWord" xml:space="preserve">
-    <value>Undo Move Word</value>
-  </data>
-  <data name="ksUndoMoveWordToColumn" xml:space="preserve">
-    <value>Undo Move Here</value>
-    <comment>Part of the Undo menu item</comment>
-  </data>
-  <data name="ksUndoPostposeFrom" xml:space="preserve">
-    <value>Undo Postpose From</value>
-  </data>
-  <data name="ksUndoPreposeFrom" xml:space="preserve">
-    <value>Undo Prepose From</value>
-  </data>
-  <data name="ksUndoRemoveClauseMarker" xml:space="preserve">
-    <value>Undo Remove Clause Marker</value>
-  </data>
-  <data name="ksUndoRemoveMarker" xml:space="preserve">
-    <value>Undo Remove Marker</value>
-  </data>
-  <data name="ksWarning" xml:space="preserve">
-    <value>Warning</value>
-    <comment>Used as dialog box caption</comment>
-  </data>
-  <data name="FLExBridgeListener_UndoExport_Error_exporting_LIFT" xml:space="preserve">
-    <value>Error exporting LIFT data; could not complete Send/Receive</value>
-    <comment>Message displayed if an error occurred during "Send/Receive Lexicon" while the export of the LIFT data was going on.</comment>
-  </data>
-  <data name="FLExBridgeListener_UndoExport_LIFT_Export_failed_Title" xml:space="preserve">
-    <value>LIFT Export failed</value>
-    <comment>Title of message box displayed if an error occurred during the Send/Receive lift while the export of the LIFT data was going on.</comment>
-  </data>
-  <data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
-    <value>Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced.</value>
-    <comment>Message box content for when the utility found GUIDs and changed them.</comment>
-  </data>
-  <data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
-    <value>GUIDs changed</value>
-    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found some.</comment>
-  </data>
-  <data name="GoldEticGuidFixer_Label" xml:space="preserve">
-    <value>Use standard Part of Speech GUIDs</value>
-    <comment>Label shown in the Tools:Utilities dialog for the POS GUID utility.</comment>
-  </data>
-  <data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
-    <value>No changes were necessary.</value>
-    <comment>Message box content for when the POS GUID utility found nothing to change.</comment>
-  </data>
-  <data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
-    <value>No GUIDs changed</value>
-    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found nothing.</comment>
-  </data>
-  <data name="kBasicFailureFileContents" xml:space="preserve">
-    <value>basic</value>
-  </data>
-  <data name="kBasicImportFailureMessage" xml:space="preserve">
-    <value>FLEx was not able to do the initial import. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the initial import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive.</value>
-  </data>
-  <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
-    <value>Second Get and Merge not possible</value>
-  </data>
-  <data name="kFlexImportFailureTitle" xml:space="preserve">
-    <value>FLEx Import failure</value>
-  </data>
-  <data name="kFlexStandardImportFailureMessage" xml:space="preserve">
-    <value>FLEx was not able to import the changes received. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive.</value>
-  </data>
-  <data name="kProblemImportWhileMerging" xml:space="preserve">
-    <value>FieldWorks was unable to import the LIFT file {0} that resulted from merging remote changes. Remote changes have NOT been received into this project. This may indicate corruption of the LIFT file, or possibly a bug in Language Explorer. The following message may provide more details of what went wrong: {1}</value>
-  </data>
-  <data name="kProblemMerging" xml:space="preserve">
-    <value>Problem merging remote changes</value>
-    <comment>Dialog caption</comment>
-  </data>
-  <data name="kProjectAlreadyHasLiftRepo" xml:space="preserve">
-    <value>This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository.</value>
-  </data>
-  <data name="ksAddAComplexForm" xml:space="preserve">
-    <value>Add a Complex Form...</value>
-  </data>
-  <data name="ksAddAComponent" xml:space="preserve">
-    <value>Add a Component...</value>
-  </data>
-  <data name="ksAddParticipants" xml:space="preserve">
-    <value>Add {0}</value>
-  </data>
-  <data name="ksAlternateForms" xml:space="preserve">
-    <value>Alternate Forms</value>
-  </data>
-  <data name="ksAlwaysVisible" xml:space="preserve">
-    <value>Always visible</value>
-    <comment>menu item</comment>
-  </data>
-  <data name="ksCannotRedoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
-  </data>
-  <data name="ksCannotRedoConvertVariants" xml:space="preserve">
-    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
-  </data>
-  <data name="ksChooseSubentries" xml:space="preserve">
-    <value>Choose Subentries to display in Root-based views</value>
-  </data>
-  <data name="ksChooseVisibleComplexForms" xml:space="preserve">
-    <value>Choose Complex Forms to display in Lexeme-based views</value>
-  </data>
-  <data name="ksChooseWhereToShowSubentry" xml:space="preserve">
-    <value>Choose where to show subentry</value>
-  </data>
-  <data name="ksConvertFormLoseCaption" xml:space="preserve">
-    <value>Warning!</value>
-  </data>
-  <data name="ksConvertFormLoseEnv" xml:space="preserve">
-    <value>The environment will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvGramInfo" xml:space="preserve">
-    <value>The environment and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
-    <value>The environment and infix position will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvInfixLocGramInfo" xml:space="preserve">
-    <value>The environment, infix position, and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseGramInfo" xml:space="preserve">
-    <value>Some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseInfixLoc" xml:space="preserve">
-    <value>The infix position will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
-    <value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseRule" xml:space="preserve">
-    <value>The affix process rule will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>Convert variant types to irregularly inflected form variant types</value>
-  </data>
-  <data name="ksConvertVariants" xml:space="preserve">
-    <value>Convert irregularly inflected form variant types to variant types</value>
-  </data>
-  <data name="ksCreateLexRefType_" xml:space="preserve">
-    <value>Create New Lexical Relation...</value>
-    <comment>menu item</comment>
-  </data>
-  <data name="ksCreateReversal" xml:space="preserve">
-    <value>Create Reversal</value>
-  </data>
-  <data name="ksDeleteEntriesSenses" xml:space="preserve">
-    <value>Delete Entries and Senses that are not used in interlinear</value>
-  </data>
-  <data name="ksDeleteEntriesSensesDoes" xml:space="preserve">
-    <value>After a confirmation warning, this will delete all entries and senses that are not referenced in the current set of filtered interlinear texts.</value>
-  </data>
-  <data name="ksDeleteEntriesSensesWarning" xml:space="preserve">
-    <value>Always back up your project before using this. This will delete all of your entries and senses if you have not done any interlinearization, and can delete a large number if you have done minimal interlinearization. It cannot be undone. It will warn you about the number of entries that will be deleted and give you a chance to stop without deletions.</value>
-  </data>
-  <data name="ksDeleteEntriesSensesWhen" xml:space="preserve">
-    <value>Use this when you want to have a lexicon that is limited to entries and senses that are used in one or more filtered interlinear texts.</value>
-  </data>
-  <data name="ksDeleteEntrySenseConfirmText" xml:space="preserve">
-    <value>You are about to delete {0} lexical entries. Do you want to continue?</value>
-  </data>
-  <data name="ksDeleteEntrySenseConfirmTitle" xml:space="preserve">
-    <value>Delete Entries Confirmation</value>
-  </data>
-  <data name="ksDeleteLexTree" xml:space="preserve">
-    <value>Note: this will remove this entire {0} reference set tree.</value>
-    <comment>{0} is a line feed</comment>
-  </data>
-  <data name="ksDeleteSequenceCollectionA" xml:space="preserve">
-    <value>Note: the listed references will still be {0} related in a</value>
-    <comment>{0} is a line feed.</comment>
-  </data>
-  <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
-    <value>relation.</value>
-  </data>
-  <data name="ksDeletingThisRevIndex" xml:space="preserve">
-    <value>You are deleting the following Reversal Index:</value>
-  </data>
-  <data name="ksEditX" xml:space="preserve">
-    <value>Edit {0}</value>
-  </data>
-  <data name="ksExistingProjectName" xml:space="preserve">
-    <value>That project already exists. Please choose a different name in Project Properties.</value>
   </data>
   <data name="ksFieldVisibility" xml:space="preserve">
     <value>Field Visibility</value>
     <comment>menu item</comment>
   </data>
-  <data name="ksGenericUtilityCannotUndo" xml:space="preserve">
-    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
-  </data>
-  <data name="ksHelp" xml:space="preserve">
-    <value>Help...</value>
-    <comment>menu item</comment>
-  </data>
-  <data name="ksHiddenUnlessData" xml:space="preserve">
-    <value>Normally hidden, unless non-empty</value>
-    <comment>menu item</comment>
-  </data>
-  <data name="ksIdentifyRecord" xml:space="preserve">
-    <value>Add Reference</value>
-  </data>
-  <data name="ksIdentifySense" xml:space="preserve">
-    <value>Identify sense</value>
-  </data>
-  <data name="ksIdentifyXLexEntry" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksIdentifyXLexEntryOrSense" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksIdentifyXSense" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksLexRelation2" xml:space="preserve">
-    <value>{0}/{1} relation</value>
-    <comment>{0}/{1} Parts/Whole names for a tree relation</comment>
-  </data>
-  <data name="ksMakeComponentOf" xml:space="preserve">
-    <value>Select</value>
-    <comment>Replaces text of "OK" button in choose entry dialog when choosing a lex entry to make this one a component of. Should be short enough to fit in standard button.</comment>
-  </data>
-  <data name="ksMoveRevEntry" xml:space="preserve">
-    <value>Move Reversal Entry</value>
-  </data>
-  <data name="ksMustSelectOne" xml:space="preserve">
-    <value>You must select one to create.</value>
-  </data>
-  <data name="ksNormallyHidden" xml:space="preserve">
-    <value>Normally hidden</value>
-    <comment>menu item</comment>
-  </data>
-  <data name="ksReallyWantToDeleteRevIndex" xml:space="preserve">
-    <value>Do you really want to delete this Reversal Index?</value>
-  </data>
-  <data name="ksReassignHomographs" xml:space="preserve">
-    <value>Reassign Homographs</value>
-  </data>
-  <data name="ksReassignHomographsCaution" xml:space="preserve">
-    <value>The homograph numbers are currently based on {0}. Do you want to update the homograph numbers to be based on the current default vernacular writing system, {1}?</value>
-  </data>
-  <data name="ksRecreateReversal" xml:space="preserve">
-    <value>Recreate Reversal</value>
-  </data>
-  <data name="ksRedoAddComplexForm" xml:space="preserve">
-    <value>Undo Add Complex Form</value>
-  </data>
-  <data name="ksRedoAddComponent" xml:space="preserve">
-    <value>Redo Add Component</value>
-  </data>
-  <data name="ksRedoAddExamples" xml:space="preserve">
-    <value>Redo Add Examples</value>
-  </data>
-  <data name="ksRedoAddParticipants" xml:space="preserve">
-    <value>Redo Add {0}</value>
-  </data>
-  <data name="ksRedoAddRef" xml:space="preserve">
-    <value>Redo Add Reference</value>
-  </data>
-  <data name="ksRedoAddRevToSense" xml:space="preserve">
-    <value>Redo Add Reversal Entry to Sense</value>
-  </data>
-  <data name="ksRedoBulkEditRevPOS" xml:space="preserve">
-    <value>Redo Bulk Edit Reversal Entry POS</value>
-  </data>
-  <data name="ksRedoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>Redo Convert variant types to irregularly inflected form variant types</value>
-  </data>
-  <data name="ksRedoConvertVariants" xml:space="preserve">
-    <value>Redo Convert irregularly inflected form variant types to variant types</value>
-  </data>
-  <data name="ksRedoCreateReversalIndex" xml:space="preserve">
-    <value>Redo Create Reversal Index</value>
-  </data>
-  <data name="ksRedoCreatingEntry" xml:space="preserve">
-    <value>Redo Creating Entry</value>
-  </data>
-  <data name="ksRedoDeleteRevFromSense" xml:space="preserve">
-    <value>Redo Delete Reversal Entry from Sense</value>
-  </data>
-  <data name="ksRedoDemote" xml:space="preserve">
-    <value>Redo Demote</value>
-  </data>
-  <data name="ksRedoEditFunction" xml:space="preserve">
-    <value>Redo Edit Function</value>
-  </data>
-  <data name="ksRedoHomographWs" xml:space="preserve">
-    <value>Redo Reassign Homographs</value>
-  </data>
-  <data name="ksRedoInsertLexRefType" xml:space="preserve">
-    <value>Redo Insert Lexical Reference Type</value>
-  </data>
-  <data name="ksRedoMoveRevEntry" xml:space="preserve">
-    <value>Redo Move Reversal Entry</value>
-  </data>
-  <data name="ksRedoSetRevEntries" xml:space="preserve">
-    <value>Redo Set Reversal Entries</value>
-  </data>
-  <data name="ksRedoVariantOf" xml:space="preserve">
-    <value>Redo Variant Of</value>
-  </data>
-  <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
-    <value>Send/Receive not permitted</value>
-  </data>
-  <data name="ksSendReceiveNotPermittedMultipleAppsText" xml:space="preserve">
-    <value>Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing.</value>
-  </data>
-  <data name="ksSenses" xml:space="preserve">
-    <value>Senses</value>
-  </data>
-  <data name="ksSetReversal" xml:space="preserve">
-    <value>Set Reversal</value>
-    <comment>button label</comment>
-  </data>
-  <data name="ksShowInReversalIndex" xml:space="preserve">
-    <value>Show in Reversal Index (Ctrl-Click)</value>
-  </data>
-  <data name="ksStars" xml:space="preserve">
-    <value>***</value>
-    <comment>signals missing/unknown value</comment>
-  </data>
-  <data name="ksSwapLexWithAllo" xml:space="preserve">
-    <value>Swap Lexeme Form with Allomorph</value>
-  </data>
-  <data name="ksSwapXWithY" xml:space="preserve">
-    <value>Swap: "{0}"{2}With: "{1}"</value>
-  </data>
-  <data name="kStandardFailureFileContents" xml:space="preserve">
-    <value>standard</value>
-  </data>
-  <data name="ksUndoAddComplexForm" xml:space="preserve">
-    <value>Undo Add Complex Form</value>
-  </data>
-  <data name="ksUndoAddComponent" xml:space="preserve">
-    <value>Undo Add Component</value>
-  </data>
-  <data name="ksUndoAddExamples" xml:space="preserve">
-    <value>Undo Add Examples</value>
-  </data>
-  <data name="ksUndoAddParticipants" xml:space="preserve">
-    <value>Undo Add {0}</value>
-  </data>
-  <data name="ksUndoAddRef" xml:space="preserve">
-    <value>Undo Add Reference</value>
-  </data>
-  <data name="ksUndoAddRevToSense" xml:space="preserve">
-    <value>Undo Add Reversal Entry to Sense</value>
-  </data>
-  <data name="ksUndoBulkEditRevPOS" xml:space="preserve">
-    <value>Undo Bulk Edit Reversal Entry POS</value>
-  </data>
-  <data name="ksUndoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>Undo Convert variant types to irregularly inflected form variant types</value>
-  </data>
-  <data name="ksUndoConvertVariants" xml:space="preserve">
-    <value>Undo Convert irregularly inflected form variant types to variant types</value>
-  </data>
-  <data name="ksUndoCreateReversalIndex" xml:space="preserve">
-    <value>Undo Create Reversal Index</value>
-  </data>
-  <data name="ksUndoCreatingEntry" xml:space="preserve">
-    <value>Undo Creating Entry</value>
-  </data>
-  <data name="ksUndoDeleteRevFromSense" xml:space="preserve">
-    <value>Undo Delete Reversal Entry from Sense</value>
-  </data>
-  <data name="ksUndoDemote" xml:space="preserve">
-    <value>Undo Demote</value>
-  </data>
-  <data name="ksUndoEditFunction" xml:space="preserve">
-    <value>Undo Edit Function</value>
-  </data>
-  <data name="ksUndoHomographWs" xml:space="preserve">
-    <value>Undo Reassign Homographs</value>
-  </data>
-  <data name="ksUndoInsertLexRefType" xml:space="preserve">
-    <value>Undo Insert Lexical Reference Type</value>
-  </data>
-  <data name="ksUndoMoveRevEntry" xml:space="preserve">
-    <value>Undo Move Reversal Entry</value>
-  </data>
-  <data name="ksUndoSetRevEntries" xml:space="preserve">
-    <value>Undo Set Reversal Entries</value>
-  </data>
-  <data name="ksUndoVariantOf" xml:space="preserve">
-    <value>Undo Variant Of</value>
-  </data>
-  <data name="ksWhatIsConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types.</value>
-  </data>
-  <data name="ksWhatIsConvertVariants" xml:space="preserve">
-    <value>This utility allows you to select which irregularly inflected form variant types should be converted to variant types (irregularly inflected form variant types are a special sub-kind of variant types).</value>
-  </data>
-  <data name="ksWhatIsReassignHomographs" xml:space="preserve">
-    <value>This utility cleans up the homographs numbers of lexical entries. It preserves the current relative order of homographs, so you won't lose any ordering you have done.</value>
-  </data>
-  <data name="ksWhatIsSetPartOfSpeechGUIDsToGold" xml:space="preserve">
-    <value>This utility will make the Part of Speech GUIDs for the project match the GOLD standard.</value>
-  </data>
-  <data name="ksWhenToConvertIrregularlyInflectedFormVariants" xml:space="preserve">
-    <value>Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
-  </data>
-  <data name="ksWhenToConvertVariants" xml:space="preserve">
-    <value>Run this utility when you need to convert one or more of your existing irregularly inflected form variant types to be variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
-  </data>
-  <data name="ksWhenToReassignHomographs" xml:space="preserve">
-    <value>Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences.</value>
-  </data>
-  <data name="ksWhenToSetPartOfSpeechGUIDsToGold" xml:space="preserve">
-    <value>If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs).</value>
-  </data>
-  <data name="ks_Add" xml:space="preserve">
-    <value>&amp;Add</value>
-    <comment>button label</comment>
-  </data>
-  <data name="ks_MoveEntry" xml:space="preserve">
-    <value>&amp;Move Entry</value>
-  </data>
-  <data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
-    <value>Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work.</value>
-  </data>
-  <data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
-    <value>Failed LIFT S/R Detected</value>
-  </data>
-  <data name="CannotFindToolNamed0" xml:space="preserve">
-    <value>Could not locate the tool named '{0}'.</value>
-  </data>
-  <data name="ksAnalysisX" xml:space="preserve">
-    <value>Analysis {0}</value>
-    <comment>{0} is a number ("Analysis 1" for first, etc)</comment>
-  </data>
-  <data name="ksCannotMergeWordformsYet" xml:space="preserve">
-    <value>Merging wordforms needs serious definition, before it can be done. Sorry.</value>
-  </data>
-  <data name="ksFiltered" xml:space="preserve">
-    <value>ksFiltered</value>
-  </data>
-  <data name="ksNoAnalysis" xml:space="preserve">
-    <value>no analysis</value>
-  </data>
-  <data name="ksNoRecords" xml:space="preserve">
-    <value>No Records</value>
-  </data>
-  <data name="ksRedoAssignAnalyses" xml:space="preserve">
-    <value>Redo Assign Analyses</value>
-  </data>
-  <data name="ksRedoChangingApprovalStatus" xml:space="preserve">
-    <value>Redo Changing Approval Status</value>
-  </data>
-  <data name="ksTodo_WordformEditing" xml:space="preserve">
-    <value>TODO: Basic wordform editing happens here.</value>
-  </data>
-  <data name="ksUndoAssignAnalyses" xml:space="preserve">
-    <value>Undo Assign Analyses</value>
+  <data name="ksYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ErrorReadingXMLFile0" xml:space="preserve">
+    <value>There was an error while reading in the XML file: {0}.</value>
   </data>
   <data name="ksUndoChangingApprovalStatus" xml:space="preserve">
     <value>Undo Changing Approval Status</value>
   </data>
-  <data name="ksChangeTo" xml:space="preserve">
-    <value>Choose Value:</value>
+  <data name="ksInvalidResourceFileVersion" xml:space="preserve">
+    <value>Invalid version attribute in {0}</value>
+    <comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
   </data>
-  <data name="ksListChoiceDesc" xml:space="preserve">
-    <value>Select a feature and a value to change it to</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Notebook" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Notebook.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ksTargetFeature" xml:space="preserve">
-    <value>Choose Feature:</value>
+  <data name="ksSwapXWithY" xml:space="preserve">
+    <value>Swap: "{0}"{2}With: "{1}"</value>
+  </data>
+  <data name="ZeroWidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\ZeroWidth.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kFlexStandardImportFailureMessage" xml:space="preserve">
+    <value>FLEx was not able to import the changes received. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive.</value>
+  </data>
+  <data name="ksSwapLexWithAllo" xml:space="preserve">
+    <value>Swap Lexeme Form with Allomorph</value>
+  </data>
+  <data name="ksLexicalRelationTypes" xml:space="preserve">
+    <value>Lexical Relation Types:</value>
+  </data>
+  <data name="DeleteRecordTooltip" xml:space="preserve">
+    <value>Delete this {0}.</value>
+  </data>
+  <data name="Arrow_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Arrow_Up.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ksClose" xml:space="preserve">
     <value>&amp;Close</value>
-  </data>
-  <data name="ksWhatIsSortReversalSubentries" xml:space="preserve">
-    <value>This utility will sort the reversal subentries in your data alphabetically.</value>
-  </data>
-  <data name="ksWhenToSortReversalSubentries" xml:space="preserve">
-    <value>Run this utility when you want your reversal subentries to be sorted alphabetically (in contrast to a manually chosen order, such as by frequency of use).</value>
-  </data>
-  <data name="ksWarningSortReversalSubentries" xml:space="preserve">
-    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.</value>
-  </data>
-  <data name="SortReversalSubentries_Label" xml:space="preserve">
-    <value>Sort Reversal Subentries</value>
-  </data>
-  <data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
-    <value>All reversal subentries are now sorted.</value>
-  </data>
-  <data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
-    <value>Reversal subentry sorting is completed</value>
-  </data>
-  <data name="ksHideFields" xml:space="preserve">
-    <value>Hide Fields</value>
-  </data>
-  <data name="ksShowHiddenFields" xml:space="preserve">
-    <value>Show Hidden Fields</value>
-  </data>
-  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
-    <value>Also removing empty Complex Form Info from {0}</value>
-  </data>
-  <data name="ksBreakCircularRefs" xml:space="preserve">
-    <value>Remove circular references to complex forms</value>
-  </data>
-  <data name="ksCircularRefsFixed" xml:space="preserve">
-    <value>Circular Reference Fixed</value>
-  </data>
-  <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
-    <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
-  </data>
-  <data name="ksFoundNCircularReferences" xml:space="preserve">
-    <value>Found {0} circular references in {1} entry references</value>
-  </data>
-  <data name="ksWhatAreCircularRefs" xml:space="preserve">
-    <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
-  </data>
-  <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
-    <value>Removing {0} as component lexeme for {1}</value>
-  </data>
-  <data name="SomethingWentWrongLastTime" xml:space="preserve">
-    <value>Something went wrong the last time this program was run. Click 'Yes' to revert to 'factory settings', 'No' to see if you can preserve your settings without crashing again.</value>
-  </data>
-  <data name="MenuWidget" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\MenuWidget.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SendReceiveForTheFirstTimeContent" xml:space="preserve">
     <value>&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html&amp;gt;&amp;lt;body style='font-family:"Microsoft Sans Serif","sans-serif";font-size:9.5pt'&amp;gt;
@@ -1017,293 +182,681 @@ you expect.</value>
 &amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</value>
     <comment>HTML used to display instructions for users when the Send/Receive for the first time menu item is used</comment>
   </data>
-  <data name="FWFirstArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\NavigationImages\FWFirstArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FWLastArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\NavigationImages\FWLastArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FWLeftArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\NavigationImages\FWLeftArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FWRightArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\NavigationImages\FWRightArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ksCautions" xml:space="preserve">
-    <value>Cautions:</value>
-  </data>
-  <data name="ksDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="ksHelpForUtiltiesDlg" xml:space="preserve">
-    <value>Help</value>
-  </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
-  </data>
-  <data name="ksRunUtilities" xml:space="preserve">
-    <value>&amp;Run Checked Utilities Now</value>
-  </data>
-  <data name="ksUtilities" xml:space="preserve">
-    <value>Utilities</value>
-  </data>
-  <data name="ksWhatItDoes" xml:space="preserve">
-    <value>What it does:</value>
-  </data>
-  <data name="ksWhenToUse" xml:space="preserve">
-    <value>When to use:</value>
-  </data>
-  <data name="ks_Close" xml:space="preserve">
-    <value>&amp;Close</value>
-  </data>
-  <data name="ksErrorFixerUtilityAttemptsTo" xml:space="preserve">
-    <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
-  </data>
-  <data name="ksErrorsFoundOrFixed" xml:space="preserve">
-    <value>Errors found or fixed</value>
-  </data>
-  <data name="ksFindAndFixErrors" xml:space="preserve">
-    <value>Find and fix errors in a FieldWorks data (XML) file.</value>
-  </data>
-  <data name="ksUseErrorFixerWhen" xml:space="preserve">
-    <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
-  </data>
-  <data name="ksWhatIsWriteAllObjects" xml:space="preserve">
-    <value>This utility writes all CmObjects out fresh, as if they had all been modified.</value>
-  </data>
-  <data name="ksWhenToWriteAllObjects" xml:space="preserve">
-    <value>Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file.</value>
-  </data>
-  <data name="ksWriteAllObjectsUndo" xml:space="preserve">
-    <value>This operation cannot be undone, since it makes no changes.</value>
-  </data>
-  <data name="Arrow_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Arrow_Down.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Arrow_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Arrow_Up.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\DefaultIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DropDown2003" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\DropDown2003.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DropDown2007" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\DropDown2007.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Grip2003" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Grip2003.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Grip2007" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Grip2007.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Add_New_Analysis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Add New Analysis.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DeleteMenu" xml:space="preserve">
-    <value>_Delete {0}...</value>
-  </data>
-  <data name="ErrorReadingXMLFile0" xml:space="preserve">
-    <value>There was an error while reading in the XML file: {0}.</value>
-  </data>
-  <data name="Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\LexTextImages\Delete.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ShowAllRightNow" xml:space="preserve">
-    <value>Show all right now</value>
-  </data>
-  <data name="WritingSystems" xml:space="preserve">
-    <value>Writing Systems</value>
-  </data>
-  <data name="Configure" xml:space="preserve">
-    <value>Configure...</value>
-  </data>
-  <data name="ProblemRestoringSettings" xml:space="preserve">
-    <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
-  </data>
-  <data name="Redo" xml:space="preserve">
-    <value>_Redo</value>
-  </data>
-  <data name="Undo" xml:space="preserve">
-    <value>_Undo</value>
-  </data>
-  <data name="ksNo" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="ksYes" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="ADeletedObject" xml:space="preserve">
-    <value>A deleted object</value>
-  </data>
-  <data name="DeletedObjectDetected" xml:space="preserve">
-    <value>Deleted object detected</value>
-  </data>
-  <data name="DeletingTheObject" xml:space="preserve">
-    <value>Deleting the object</value>
-  </data>
-  <data name="Filtered" xml:space="preserve">
-    <value>Filtered</value>
-  </data>
-  <data name="ksErrorCaption" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="ksInvalidFieldInFilterOrSorter" xml:space="preserve">
-    <value>FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence.</value>
-  </data>
-  <data name="ksRedoInsert0" xml:space="preserve">
-    <value>Redo Insert {0}</value>
-  </data>
-  <data name="ksSorting" xml:space="preserve">
-    <value>Sorting</value>
-    <comment>Label used in progress bar</comment>
-  </data>
-  <data name="ksUndoInsert0" xml:space="preserve">
-    <value>Undo Insert {0}</value>
-  </data>
-  <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
-    <value>What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?</value>
-  </data>
-  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
-    <value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
-  </data>
-  <data name="SortedBy0" xml:space="preserve">
-    <value>Sorted by {0}</value>
-  </data>
-  <data name="TargetNotFound" xml:space="preserve">
-    <value>Cannot show normally</value>
-  </data>
-  <data name="AllEntriesPublication" xml:space="preserve">
-    <value>$$all_entries$$</value>
-    <comment>Do Not Translate</comment>
-  </data>
-  <data name="BeginCompressingDataForWebonary" xml:space="preserve">
-    <value>Compressing data before sending to Webonary.</value>
-    <comment>Displayed in the log box of UploadToWebonaryDlg when data is being zipped up.</comment>
-  </data>
-  <data name="Dictionary" xml:space="preserve">
-    <value>Dictionary</value>
-  </data>
-  <data name="ExportingEntriesToWebonary" xml:space="preserve">
-    <value>Exporting entries for the {0} publication using the {1} view</value>
-    <comment>Displayed in the log box when exporting to Webonary.  Arguments are: name of publication, name of configured view</comment>
-  </data>
-  <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
-    <value>Export of lexicon completed.</value>
-    <comment>Displayed in the log box when exporting to Webonary after all entries are exported.</comment>
-  </data>
-  <data name="ExportingReversalsToWebonary" xml:space="preserve">
-    <value>Exporting entries for {0} reversal.</value>
-  </data>
-  <data name="ExportingReversalsToWebonaryCompleted" xml:space="preserve">
-    <value>Export of reversal completed.</value>
-  </data>
-  <data name="FailedJump" xml:space="preserve">
-    <value>Failed Jump</value>
-  </data>
-  <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
-    <value>Compression complete.</value>
-    <comment>Displayed in the UploadToWebonaryDlg log box</comment>
-  </data>
-  <data name="ksCantJumpCaption" xml:space="preserve">
-    <value>Cannot follow link</value>
-    <comment>Caption for any of the ksCantJump message boxes</comment>
-  </data>
-  <data name="ksCantJumpToLangProj" xml:space="preserve">
-    <value>You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it.</value>
-    <comment>Displayed when following a hot link, e.g., from a conflict report about a property of LangProject or LexDb (suc as one about conflicting changes to active writing systems).</comment>
+  <data name="ksNoColumns" xml:space="preserve">
+    <value>Your discourse chart template is missing or has no columns. You can fix this by adding some in Lists/Text constituent chart templates.</value>
+    <comment>Warning message that appears when the text chart is displayed and there are no columns in the template.</comment>
   </data>
   <data name="ksCantJumpToObject" xml:space="preserve">
     <value>Sorry, FLEx does not know how to jump to this kind of object (a {0}).</value>
     <comment>Displayed when following a hot link (e.g., from a conflict report).</comment>
   </data>
-  <data name="ksCantJumpToScripture" xml:space="preserve">
-    <value>Sorry, FLEx does not yet know how to jump to a particular location in Scripture.</value>
-    <comment>Displayed when following a hot link to somewhere in Scripture. Not sure this can actually happen.</comment>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move Down</value>
   </data>
-  <data name="ksCharacterStyleForContent" xml:space="preserve">
-    <value>Character Style for Content:</value>
+  <data name="FLExBridgeListener_UndoExport_LIFT_Export_failed_Title" xml:space="preserve">
+    <value>LIFT Export failed</value>
+    <comment>Title of message box displayed if an error occurred during the Send/Receive lift while the export of the LIFT data was going on.</comment>
+  </data>
+  <data name="ksRedoAddComponent" xml:space="preserve">
+    <value>Redo Add Component</value>
+  </data>
+  <data name="FWFirstArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWFirstArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUndoMergeCells" xml:space="preserve">
+    <value>Undo Merge Cells</value>
+  </data>
+  <data name="ksRedoBulkEditRevPOS" xml:space="preserve">
+    <value>Redo Bulk Edit Reversal Entry POS</value>
+  </data>
+  <data name="ksWhatIsWriteAllObjects" xml:space="preserve">
+    <value>This utility writes all CmObjects out fresh, as if they had all been modified.</value>
+  </data>
+  <data name="ksInitializingLayouts_" xml:space="preserve">
+    <value>Initializing Layouts...</value>
+  </data>
+  <data name="ksRedoAssignAnalyses" xml:space="preserve">
+    <value>Redo Assign Analyses</value>
+  </data>
+  <data name="ksUseErrorFixerWhen" xml:space="preserve">
+    <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
+  </data>
+  <data name="ksConvertVariants" xml:space="preserve">
+    <value>Convert irregularly inflected form variant types to variant types</value>
+  </data>
+  <data name="Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\LexTextImages\Delete.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksWhenToSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs).</value>
+  </data>
+  <data name="ksChartTemplateWarning" xml:space="preserve">
+    <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
+  </data>
+  <data name="ShowFailingItems" xml:space="preserve">
+    <value>ShowFailingItems</value>
+  </data>
+  <data name="ksChooseWhereToShowSubentry" xml:space="preserve">
+    <value>Choose where to show subentry</value>
+  </data>
+  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
+    <value>Also removing empty Complex Form Info from {0}</value>
+  </data>
+  <data name="ksUndoAddExamples" xml:space="preserve">
+    <value>Undo Add Examples</value>
+  </data>
+  <data name="ksUndoPreposeFrom" xml:space="preserve">
+    <value>Undo Prepose From</value>
   </data>
   <data name="ksComplexFormTypes" xml:space="preserve">
     <value>Complex Form Types:</value>
   </data>
-  <data name="ksCurrentReversal" xml:space="preserve">
-    <value>Current Reversal Index</value>
+  <data name="ksWhenToUse" xml:space="preserve">
+    <value>When to use:</value>
   </data>
-  <data name="ksDefaultAnalysis" xml:space="preserve">
-    <value>Default Analysis</value>
+  <data name="ksRedoMoveRevEntry" xml:space="preserve">
+    <value>Redo Move Reversal Entry</value>
   </data>
-  <data name="ksDefaultPronunciation" xml:space="preserve">
-    <value>Default Pronunciation</value>
+  <data name="ksUndoPostposeFrom" xml:space="preserve">
+    <value>Undo Postpose From</value>
   </data>
-  <data name="ksDefaultVernacular" xml:space="preserve">
-    <value>Default Vernacular</value>
+  <data name="ksStars" xml:space="preserve">
+    <value>***</value>
+    <comment>signals missing/unknown value</comment>
   </data>
-  <data name="ksErrorNoViewOnPublication" xml:space="preserve">
-    <value>No view was found.</value>
-    <comment>Message displayed in Upload to Webonary dialog to inform user about No view was found</comment>
+  <data name="Insert_0" xml:space="preserve">
+    <value>Insert {0}</value>
   </data>
-  <data name="ksLexicalRelationTypes" xml:space="preserve">
-    <value>Lexical Relation Types:</value>
+  <data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
+    <value>Failed LIFT S/R Detected</value>
   </data>
-  <data name="ksMinorEntryTypes" xml:space="preserve">
-    <value>Minor Entry Types:</value>
+  <data name="ksIdentifyXLexEntry" xml:space="preserve">
+    <value>Add Reference ({0})</value>
   </data>
-  <data name="ksNoComplexFormType" xml:space="preserve">
-    <value>No Complex Form Type</value>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move Up</value>
+    <comment>action on a tree view item</comment>
   </data>
-  <data name="ksNoVariantType" xml:space="preserve">
-    <value>No Variant Type</value>
+  <data name="DropDown2003" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\DropDown2003.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ksParagraphStyleForContent" xml:space="preserve">
-    <value>Paragraph Style for Content:</value>
+  <data name="ksErrorCaption" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ksRedoPostposeFrom" xml:space="preserve">
+    <value>Redo Postpose From</value>
   </data>
   <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
     <value>{0} uses the same configuration for subfields as
 {1}.</value>
     <comment>{0} and {1} are both configuration nodes</comment>
   </data>
-  <data name="ksVariantTypes" xml:space="preserve">
-    <value>Variant Types:</value>
+  <data name="GoldEticGuidFixer_Label" xml:space="preserve">
+    <value>Use standard Part of Speech GUIDs</value>
+    <comment>Label shown in the Tools:Utilities dialog for the POS GUID utility.</comment>
   </data>
-  <data name="MoveUp" xml:space="preserve">
-    <value>Move Up</value>
-    <comment>action on a tree view item</comment>
+  <data name="ksConvertFormLoseGramInfo" xml:space="preserve">
+    <value>Some grammatical information will be lost! Do you still want to continue?</value>
   </data>
-  <data name="PublicationEntriesLabel" xml:space="preserve">
-    <value>Clicking Submit will send {0} dictionary entries{1} to Webonary.</value>
-    <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
+  <data name="TargetNotFound" xml:space="preserve">
+    <value>Cannot show normally</value>
   </data>
-  <data name="ReversalEntries" xml:space="preserve">
-    <value>, {0} {1} reversal entries</value>
-    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+  <data name="ksNotesColumnHeader" xml:space="preserve">
+    <value>Notes</value>
+    <comment>Appears as header of the final, Notes column.</comment>
   </data>
-  <data name="ReversalEntries_Last" xml:space="preserve">
-    <value>, and {0} {1} reversal entries</value>
-    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+  <data name="ksDeletingThisRevIndex" xml:space="preserve">
+    <value>You are deleting the following Reversal Index:</value>
   </data>
-  <data name="ReversalEntries_Only" xml:space="preserve">
-    <value>and {0} {1} reversal entries</value>
-    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
+  <data name="ksRedoDeleteRevFromSense" xml:space="preserve">
+    <value>Redo Delete Reversal Entry from Sense</value>
   </data>
-  <data name="ReversalIndex" xml:space="preserve">
-    <value>Reversal Index</value>
+  <data name="DeleteMenu" xml:space="preserve">
+    <value>_Delete {0}...</value>
+  </data>
+  <data name="ksInitializingMessageDialogs_" xml:space="preserve">
+    <value>Initializing Message Dialogs...</value>
+    <comment>message for splash screen</comment>
+  </data>
+  <data name="ksRedoAddMarker" xml:space="preserve">
+    <value>Redo Add Marker</value>
+  </data>
+  <data name="ksRedoRemoveClauseMarker" xml:space="preserve">
+    <value>Redo Remove Clause Marker</value>
+  </data>
+  <data name="ksIdentifySense" xml:space="preserve">
+    <value>Identify sense</value>
+  </data>
+  <data name="ksDeleteSequenceCollectionA" xml:space="preserve">
+    <value>Note: the listed references will still be {0} related in a</value>
+    <comment>{0} is a line feed.</comment>
+  </data>
+  <data name="ExportingReversalsToWebonaryCompleted" xml:space="preserve">
+    <value>Export of reversal completed.</value>
+  </data>
+  <data name="ksAdvDlgPreposeCaption" xml:space="preserve">
+    <value>Mark as Preposed -- Advanced options</value>
+    <comment>AdvDlg = AdvancedDialog</comment>
+  </data>
+  <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
+    <value>Second Get and Merge not possible</value>
+  </data>
+  <data name="ksCreatingCustomLexRefType" xml:space="preserve">
+    <value>You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the "Back" button on the toolbar to return to where you were working. The new type will then be available for you to choose.</value>
+  </data>
+  <data name="ksUndoDemote" xml:space="preserve">
+    <value>Undo Demote</value>
   </data>
   <data name="toApplyForWebonaryAccountExplanation" xml:space="preserve">
     <value>To apply for an account at Webonary, please visit {0}.</value>
     <comment>Text at the top of the Upload to Webonary dialog. 0 will be the URL in toApplyForWebonaryAccountLink</comment>
   </data>
-  <data name="toApplyForWebonaryAccountLink" xml:space="preserve">
-    <value>http://www.webonary.org/</value>
-    <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
+  <data name="ksHiddenUnlessData" xml:space="preserve">
+    <value>Normally hidden, unless non-empty</value>
+    <comment>menu item</comment>
+  </data>
+  <data name="Lexicon32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Lexicon32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUndoDeleteRevFromSense" xml:space="preserve">
+    <value>Undo Delete Reversal Entry from Sense</value>
+  </data>
+  <data name="ksMoveMenuItem" xml:space="preserve">
+    <value>Move Cell</value>
+    <comment>Combines with submenus forward/back/ eventually up/down</comment>
+  </data>
+  <data name="ksMoveHereToolTip" xml:space="preserve">
+    <value>Insert selected text into the {0} column.</value>
+  </data>
+  <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
+    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net</value>
+  </data>
+  <data name="ksPreposeFromMenuItem" xml:space="preserve">
+    <value>Mark as Preposed from</value>
+    <comment>Mark the current cell as moved from a cell that comes AFTER it.</comment>
+  </data>
+  <data name="ksShowInReversalIndex" xml:space="preserve">
+    <value>Show in Reversal Index (Ctrl-Click)</value>
+  </data>
+  <data name="ksUnknownAttrUnits" xml:space="preserve">
+    <value>Unrecognized units specified for '{0}' attribute of {1} style in {2}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksCharacterStyleForContent" xml:space="preserve">
+    <value>Character Style for Content:</value>
+  </data>
+  <data name="ksShowingSemanticClassification" xml:space="preserve">
+    <value>This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses.</value>
+  </data>
+  <data name="ksInsertRowMenuItemAbove" xml:space="preserve">
+    <value>Insert Row Above</value>
+  </data>
+  <data name="ksRedoMoveWordToColumn" xml:space="preserve">
+    <value>Redo Move Here</value>
+    <comment>Part of the Redo item</comment>
+  </data>
+  <data name="Filtered" xml:space="preserve">
+    <value>Filtered</value>
+  </data>
+  <data name="Grip2007" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Grip2007.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksRedoMoveCellForward" xml:space="preserve">
+    <value>Redo Move Cell Forward</value>
+  </data>
+  <data name="ksUnknownAlignmentValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'alignment' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksUndoConvertVariants" xml:space="preserve">
+    <value>Undo Convert irregularly inflected form variant types to variant types</value>
+  </data>
+  <data name="ExportingEntriesToWebonary" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} view</value>
+    <comment>Displayed in the log box when exporting to Webonary.  Arguments are: name of publication, name of configured view</comment>
+  </data>
+  <data name="ksRedoMoveWord" xml:space="preserve">
+    <value>Redo Move Word</value>
+  </data>
+  <data name="ksUndoRemoveMarker" xml:space="preserve">
+    <value>Undo Remove Marker</value>
+  </data>
+  <data name="ksReassignHomographsCaution" xml:space="preserve">
+    <value>The homograph numbers are currently based on {0}. Do you want to update the homograph numbers to be based on the current default vernacular writing system, {1}?</value>
   </data>
   <data name="UnableToFollowLink" xml:space="preserve">
     <value>The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link.</value>
   </data>
+  <data name="SortedBy0" xml:space="preserve">
+    <value>Sorted by {0}</value>
+  </data>
+  <data name="Text_And_Words" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Text_And_Words.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksRedoMakeMoved" xml:space="preserve">
+    <value>Redo Insert as Moved</value>
+  </data>
+  <data name="ksRedoMoveCellBack" xml:space="preserve">
+    <value>Redo Move Cell Back</value>
+  </data>
+  <data name="ksUndoInsertRow" xml:space="preserve">
+    <value>Undo Insert Row</value>
+  </data>
+  <data name="ksFormat" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="ksRedoInsert0" xml:space="preserve">
+    <value>Redo Insert {0}</value>
+  </data>
+  <data name="Add_New_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add New Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUnknownNextStyle" xml:space="preserve">
+    <value>Unrecognized next style for {0} style in {2}: {1}</value>
+  </data>
+  <data name="ksWhatIsReassignHomographs" xml:space="preserve">
+    <value>This utility cleans up the homographs numbers of lexical entries. It preserves the current relative order of homographs, so you won't lose any ordering you have done.</value>
+  </data>
+  <data name="ksRedoVariantOf" xml:space="preserve">
+    <value>Redo Variant Of</value>
+  </data>
+  <data name="kFlexImportFailureTitle" xml:space="preserve">
+    <value>FLEx Import failure</value>
+  </data>
+  <data name="ksUtilities" xml:space="preserve">
+    <value>Utilities</value>
+  </data>
+  <data name="DropDown2007" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\DropDown2007.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksIdentifyXLexEntryOrSense" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksDelChartWarning" xml:space="preserve">
+    <value>This will delete all of the data from your chart! Are you sure?</value>
+    <comment>Dialog warning. Responses are Yes/No.</comment>
+  </data>
+  <data name="ADeletedObject" xml:space="preserve">
+    <value>A deleted object</value>
+  </data>
+  <data name="ksNoVariantType" xml:space="preserve">
+    <value>No Variant Type</value>
+  </data>
+  <data name="ksRedoClearChart" xml:space="preserve">
+    <value>Redo clear chart</value>
+  </data>
+  <data name="ksRowEndsParaMenuItem" xml:space="preserve">
+    <value>Last Row in Paragraph</value>
+    <comment>Check mark item in row menu.</comment>
+  </data>
+  <data name="ksDefaultAnalysis" xml:space="preserve">
+    <value>Default Analysis</value>
+  </data>
+  <data name="ksAddParticipants" xml:space="preserve">
+    <value>Add {0}</value>
+  </data>
+  <data name="ksUndoInsertLexRefType" xml:space="preserve">
+    <value>Undo Insert Lexical Reference Type</value>
+  </data>
+  <data name="ksUndoChangeTemplate" xml:space="preserve">
+    <value>Undo Change Template</value>
+  </data>
+  <data name="ksWhenToSortReversalSubentries" xml:space="preserve">
+    <value>Run this utility when you want your reversal subentries to be sorted alphabetically (in contrast to a manually chosen order, such as by frequency of use).</value>
+  </data>
+  <data name="ksRedoConvertVariants" xml:space="preserve">
+    <value>Redo Convert irregularly inflected form variant types to variant types</value>
+  </data>
+  <data name="ksCantJumpCaption" xml:space="preserve">
+    <value>Cannot follow link</value>
+    <comment>Caption for any of the ksCantJump message boxes</comment>
+  </data>
+  <data name="ksDelRowWarning" xml:space="preserve">
+    <value>This will delete {0} rows of data from your chart! Are you sure?</value>
+    <comment>Dialog warning. Responses are Yes/No.</comment>
+  </data>
+  <data name="CannotFindToolNamed0" xml:space="preserve">
+    <value>Could not locate the tool named '{0}'.</value>
+  </data>
+  <data name="ksRedoSetRevEntries" xml:space="preserve">
+    <value>Redo Set Reversal Entries</value>
+  </data>
+  <data name="ksCannotLoadFile" xml:space="preserve">
+    <value>File {0} could not be loaded.
+{1}</value>
+  </data>
+  <data name="ksUndoAddMarker" xml:space="preserve">
+    <value>Undo Add Marker</value>
+  </data>
+  <data name="ksOtherMenuItem" xml:space="preserve">
+    <value>Other...</value>
+    <comment>Subitem in Make dependent clause of...</comment>
+  </data>
+  <data name="ksDefaultVernacular" xml:space="preserve">
+    <value>Default Vernacular</value>
+  </data>
+  <data name="ksGenericUtilityCannotUndo" xml:space="preserve">
+    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
+  </data>
+  <data name="ksWhenToWriteAllObjects" xml:space="preserve">
+    <value>Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file.</value>
+  </data>
+  <data name="Grammar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Grammar.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUndoAssignAnalyses" xml:space="preserve">
+    <value>Undo Assign Analyses</value>
+  </data>
+  <data name="ksCantJumpToScripture" xml:space="preserve">
+    <value>Sorry, FLEx does not yet know how to jump to a particular location in Scripture.</value>
+    <comment>Displayed when following a hot link to somewhere in Scripture. Not sure this can actually happen.</comment>
+  </data>
+  <data name="ksMakeDepClauseMenuItem" xml:space="preserve">
+    <value>Make a Dependent Clause out of</value>
+    <comment>Menu item that appears in empty cell in chart.</comment>
+  </data>
+  <data name="ksMarkMenuItemFormat" xml:space="preserve">
+    <value>Mark {0}</value>
+    <comment>Used to format top-level marker menu items, e.g., "Mark TenseAspectMood".</comment>
+  </data>
+  <data name="ksRemoveDependentMarkerMenuItem" xml:space="preserve">
+    <value>Remove Clause Marker</value>
+  </data>
+  <data name="ksNormallyHidden" xml:space="preserve">
+    <value>Normally hidden</value>
+    <comment>menu item</comment>
+  </data>
+  <data name="ksConvertFormLoseInfixLoc" xml:space="preserve">
+    <value>The infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="BeginCompressingDataForWebonary" xml:space="preserve">
+    <value>Compressing data before sending to Webonary.</value>
+    <comment>Displayed in the log box of UploadToWebonaryDlg when data is being zipped up.</comment>
+  </data>
+  <data name="ksUndoAddParticipants" xml:space="preserve">
+    <value>Undo Add {0}</value>
+  </data>
+  <data name="ksNoBasedOnSelf" xml:space="preserve">
+    <value>Style {0} cannot be based on itself (as defined in {1}).</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksEditX" xml:space="preserve">
+    <value>Edit {0}</value>
+  </data>
+  <data name="ksRowEndsSentMenuItem" xml:space="preserve">
+    <value>Last Row in Sentence</value>
+    <comment>Check mark item in row menu.</comment>
+  </data>
+  <data name="ksConvertFormLoseEnvGramInfo" xml:space="preserve">
+    <value>The environment and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksCreateLexRefType_" xml:space="preserve">
+    <value>Create New Lexical Relation...</value>
+    <comment>menu item</comment>
+  </data>
+  <data name="ksWhenToConvertVariants" xml:space="preserve">
+    <value>Run this utility when you need to convert one or more of your existing irregularly inflected form variant types to be variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
+  </data>
+  <data name="ksUndoVariantOf" xml:space="preserve">
+    <value>Undo Variant Of</value>
+  </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index</value>
+  </data>
+  <data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
+    <value>No GUIDs changed</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found nothing.</comment>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>_Redo</value>
+  </data>
+  <data name="ksConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>Convert variant types to irregularly inflected form variant types</value>
+  </data>
+  <data name="ksErrorNoViewOnPublication" xml:space="preserve">
+    <value>No view was found.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about No view was found</comment>
+  </data>
+  <data name="ksExportDiscourse" xml:space="preserve">
+    <value>Export Discourse Chart</value>
+  </data>
+  <data name="ksRedoMakeDepClause" xml:space="preserve">
+    <value>Redo Make Dependent Clause</value>
+  </data>
+  <data name="FLExBridgeListener_UndoExport_Error_exporting_LIFT" xml:space="preserve">
+    <value>Error exporting LIFT data; could not complete Send/Receive</value>
+    <comment>Message displayed if an error occurred during "Send/Receive Lexicon" while the export of the LIFT data was going on.</comment>
+  </data>
+  <data name="ksRedoChangingApprovalStatus" xml:space="preserve">
+    <value>Redo Changing Approval Status</value>
+  </data>
+  <data name="ksDeleteEntriesSenses" xml:space="preserve">
+    <value>Delete Entries and Senses that are not used in interlinear</value>
+  </data>
+  <data name="kProblemMerging" xml:space="preserve">
+    <value>Problem merging remote changes</value>
+    <comment>Dialog caption</comment>
+  </data>
+  <data name="Insert_Note" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Insert Note.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksStatisticsViewTotalWordTypesText" xml:space="preserve">
+    <value>Total number of unique words (types):</value>
+  </data>
+  <data name="ksWhatIsSortReversalSubentries" xml:space="preserve">
+    <value>This utility will sort the reversal subentries in your data alphabetically.</value>
+  </data>
+  <data name="kstidOpenSampleDbMsg" xml:space="preserve">
+    <value>Do you want to study the training materials for Language Explorer?
+
+If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
+Alternatively, point to Demo Movies and choose an option.
+	- Play All gives a half-hour overview of Language Explorer.
+	- You may also choose specific demo movie topics.
+
+If you click No, you will see various options for starting work in Language Explorer.</value>
+    <comment>note the embedded newlines in this message.</comment>
+  </data>
+  <data name="ksDeleteEntriesSensesWhen" xml:space="preserve">
+    <value>Use this when you want to have a lexicon that is limited to entries and senses that are used in one or more filtered interlinear texts.</value>
+  </data>
+  <data name="WritingSystems" xml:space="preserve">
+    <value>Writing Systems</value>
+  </data>
+  <data name="ks_Add" xml:space="preserve">
+    <value>&amp;Add</value>
+    <comment>button label</comment>
+  </data>
+  <data name="password_reveal_eye_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\password-reveal-eye-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
+    <value>Removing {0} as component lexeme for {1}</value>
+  </data>
+  <data name="ksCircularRefsFixed" xml:space="preserve">
+    <value>Circular Reference Fixed</value>
+  </data>
+  <data name="ksCantJumpToLangProj" xml:space="preserve">
+    <value>You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it.</value>
+    <comment>Displayed when following a hot link, e.g., from a conflict report about a property of LangProject or LexDb (suc as one about conflicting changes to active writing systems).</comment>
+  </data>
+  <data name="ksAdvDlgPostposeCaption" xml:space="preserve">
+    <value>Mark as Postposed -- Advanced options</value>
+  </data>
+  <data name="ksWhatAreCircularRefs" xml:space="preserve">
+    <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
+  </data>
+  <data name="LinkWords" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\LinkWords.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksHelp" xml:space="preserve">
+    <value>Help...</value>
+    <comment>menu item</comment>
+  </data>
+  <data name="SomethingWentWrongLastTime" xml:space="preserve">
+    <value>Something went wrong the last time this program was run. Click 'Yes' to revert to 'factory settings', 'No' to see if you can preserve your settings without crashing again.</value>
+  </data>
+  <data name="ksAddAComponent" xml:space="preserve">
+    <value>Add a Component...</value>
+  </data>
+  <data name="ksUnknownUnderlineColor" xml:space="preserve">
+    <value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksCannotShowX" xml:space="preserve">
+    <value>Sorry, could not show {0}.</value>
+  </data>
+  <data name="Add_Free_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add Free Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksRedoPreposeFrom" xml:space="preserve">
+    <value>Redo Prepose From</value>
+  </data>
+  <data name="ks_Close" xml:space="preserve">
+    <value>&amp;Close</value>
+  </data>
+  <data name="ksMakeSongClauseMenuItem" xml:space="preserve">
+    <value>Make a Song Clause out of</value>
+  </data>
+  <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+    <value>Export of lexicon completed.</value>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported.</comment>
+  </data>
+  <data name="ksCannotRedoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
+  </data>
+  <data name="ksTargetFeature" xml:space="preserve">
+    <value>Choose Feature:</value>
+  </data>
+  <data name="ksDeleteEntriesSensesDoes" xml:space="preserve">
+    <value>After a confirmation warning, this will delete all entries and senses that are not referenced in the current set of filtered interlinear texts.</value>
+  </data>
+  <data name="ksRedoCreateReversalIndex" xml:space="preserve">
+    <value>Redo Create Reversal Index</value>
+  </data>
+  <data name="Find_and_Replace_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Find and Replace Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksChooseSubentries" xml:space="preserve">
+    <value>Choose Subentries to display in Root-based views</value>
+  </data>
+  <data name="ksAdvDlgMainPreText" xml:space="preserve">
+    <value>Select the row and column to mark this cell's content as preposed from.</value>
+  </data>
+  <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
+    <value>Total number of sentences (segments):</value>
+  </data>
+  <data name="ksRecreateReversal" xml:space="preserve">
+    <value>Recreate Reversal</value>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
+    <value>The environment and infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksUndoBulkEditRevPOS" xml:space="preserve">
+    <value>Undo Bulk Edit Reversal Entry POS</value>
+  </data>
+  <data name="ksNegativeLineSpacing" xml:space="preserve">
+    <value>Negative value is not valid for paragraph 'lineSpacing' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksLoading_" xml:space="preserve">
+    <value>Loading...</value>
+    <comment>message for splash screen</comment>
+  </data>
+  <data name="ksTextEditWarning" xml:space="preserve">
+    <value>The underlying text for this chart appears to have changed. The program has attempted to repair things, but you may just need to start over.</value>
+  </data>
+  <data name="ksCannotLaunchX" xml:space="preserve">
+    <value>Sorry, could not launch {0}.</value>
+  </data>
+  <data name="ksUndoMoveWordToColumn" xml:space="preserve">
+    <value>Undo Move Here</value>
+    <comment>Part of the Undo menu item</comment>
+  </data>
+  <data name="ksMinorEntryTypes" xml:space="preserve">
+    <value>Minor Entry Types:</value>
+  </data>
+  <data name="BrowseAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\BrowseAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksPreviousClauseMenuItem" xml:space="preserve">
+    <value>Previous Clause</value>
+  </data>
+  <data name="Lists" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Lists.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksFoundNCircularReferences" xml:space="preserve">
+    <value>Found {0} circular references in {1} entry references</value>
+  </data>
+  <data name="ksLexRelation2" xml:space="preserve">
+    <value>{0}/{1} relation</value>
+    <comment>{0}/{1} Parts/Whole names for a tree relation</comment>
+  </data>
+  <data name="ksInvalidFieldInFilterOrSorter" xml:space="preserve">
+    <value>FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence.</value>
+  </data>
+  <data name="ksUndoSetRevEntries" xml:space="preserve">
+    <value>Undo Set Reversal Entries</value>
+  </data>
+  <data name="ksClearFromHereOnMenuItem" xml:space="preserve">
+    <value>Clear Chart from here on</value>
+  </data>
+  <data name="ksConvertFormLoseCaption" xml:space="preserve">
+    <value>Warning!</value>
+  </data>
+  <data name="kBasicFailureFileContents" xml:space="preserve">
+    <value>basic</value>
+  </data>
+  <data name="ksErrorLoadingResourceStrings" xml:space="preserve">
+    <value>Error loading resource strings: {0}</value>
+  </data>
+  <data name="AddScripture" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\AddScripture.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksDeleteEntrySenseConfirmTitle" xml:space="preserve">
+    <value>Delete Entries Confirmation</value>
+  </data>
+  <data name="ksUnknownLineSpacingValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'lineSpacingType' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksRedoInsertLexRefType" xml:space="preserve">
+    <value>Redo Insert Lexical Reference Type</value>
+  </data>
+  <data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
+    <value>No changes were necessary.</value>
+    <comment>Message box content for when the POS GUID utility found nothing to change.</comment>
+  </data>
+  <data name="kstidSupportEmail" xml:space="preserve">
+    <value>FlexErrors@sil.org</value>
+    <comment>Email address for sending bug reports to</comment>
+  </data>
+  <data name="ksRedoLastRowInPara" xml:space="preserve">
+    <value>Redo Last Row in Paragraph</value>
+  </data>
+  <data name="ksMergeBeforeMenuItem" xml:space="preserve">
+    <value>Merge with Cell before this</value>
+    <comment>Causes this cell to merge with empty cell to left to save space</comment>
+  </data>
   <data name="UnableToFollowLink0" xml:space="preserve">
     <value>The application was not able to follow that link. ({0})</value>
     <comment>{0} is an error message</comment>
+  </data>
+  <data name="ksRedoMakeNewRow" xml:space="preserve">
+    <value>Redo Make New Row</value>
+  </data>
+  <data name="ksRedoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>Redo Convert variant types to irregularly inflected form variant types</value>
+  </data>
+  <data name="ksCautions" xml:space="preserve">
+    <value>Cautions:</value>
+  </data>
+  <data name="ksFindAndFixErrors" xml:space="preserve">
+    <value>Find and fix errors in a FieldWorks data (XML) file.</value>
+  </data>
+  <data name="ks_MoveEntry" xml:space="preserve">
+    <value>&amp;Move Entry</value>
+  </data>
+  <data name="ksFiltered" xml:space="preserve">
+    <value>ksFiltered</value>
   </data>
   <data name="kstidMemoryDiskUsageInformation" xml:space="preserve">
     <value>Memory and disk usage information.</value>
@@ -1313,173 +866,626 @@ you expect.</value>
     <value>Unable to start {0}.</value>
     <comment>Error message if user clicks link in About box to open the System Monitor in Linux, but the program is not able to start, probably because it isn't installed. Program name is {0}.</comment>
   </data>
-  <data name="password_reveal_eye_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\password-reveal-eye-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksDeleteEntrySenseConfirmText" xml:space="preserve">
+    <value>You are about to delete {0} lexical entries. Do you want to continue?</value>
   </data>
-  <data name="DeleteRecordTooltip" xml:space="preserve">
-    <value>Delete this {0}.</value>
+  <data name="ksOnlyOneTemplateAllowed" xml:space="preserve">
+    <value>The text charting mechanism can only handle one template at this point. Only the first template will be used.</value>
+    <comment>Warning message that appears when the text chart is displayed and there are more than one template defined.</comment>
   </data>
-  <data name="FWFilterBasic_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\FWFilterBasic-Small.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksRedoHomographWs" xml:space="preserve">
+    <value>Redo Reassign Homographs</value>
   </data>
-  <data name="Redo_0" xml:space="preserve">
-    <value>Redo {0}</value>
+  <data name="Add_a_Literal_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\Add a Literal Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Undo_0" xml:space="preserve">
-    <value>Undo {0}</value>
+  <data name="FWLastArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWLastArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ksCreateNewTemplate" xml:space="preserve">
-    <value>Add a New Template</value>
-  </data>
-  <data name="ksDelChartWarning" xml:space="preserve">
-    <value>This will delete all of the data from your chart! Are you sure?</value>
-    <comment>Dialog warning. Responses are Yes/No.</comment>
-  </data>
-  <data name="ksInsertRowMenuItemAbove" xml:space="preserve">
-    <value>Insert Row Above</value>
-  </data>
-  <data name="ksInsertRowMenuItemBelow" xml:space="preserve">
-    <value>Insert Row Below</value>
-  </data>
-  <data name="ksNewTemplateLink" xml:space="preserve">
-    <value>charttempEdit</value>
+  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
+    <value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
   </data>
   <data name="ksRedoChangeTemplate" xml:space="preserve">
     <value>Redo Change Template</value>
   </data>
-  <data name="ksUndoChangeTemplate" xml:space="preserve">
-    <value>Undo Change Template</value>
+  <data name="ksUndoRemoveClauseMarker" xml:space="preserve">
+    <value>Undo Remove Clause Marker</value>
+  </data>
+  <data name="ksMissingMarker" xml:space="preserve">
+    <value>---</value>
+    <comment>Marker for missing items.</comment>
+  </data>
+  <data name="ksRedoLastRowInSent" xml:space="preserve">
+    <value>Redo Last Row in Sentence</value>
+  </data>
+  <data name="ksTodo_WordformEditing" xml:space="preserve">
+    <value>TODO: Basic wordform editing happens here.</value>
+  </data>
+  <data name="ksNextNClausesMenuItem" xml:space="preserve">
+    <value>Next {0} Clauses</value>
+    <comment>{0} is a small integer (3-9 at most, probably)</comment>
+  </data>
+  <data name="ksSenses" xml:space="preserve">
+    <value>Senses</value>
+  </data>
+  <data name="ApprAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\ApprAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksAdvancedDlgMenuItem" xml:space="preserve">
+    <value>Advanced...</value>
+    <comment>Subitem in Mark as Post/Preposed from...</comment>
   </data>
   <data name="Describe_Error_in_Environment" xml:space="preserve">
     <value>_Describe Error in Environment</value>
   </data>
-  <data name="Insert_0" xml:space="preserve">
-    <value>Insert {0}</value>
+  <data name="ksStatisticsView_HeaderText" xml:space="preserve">
+    <value>Texts &amp; Words Statistics (using chosen texts)</value>
   </data>
-  <data name="MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+  <data name="ksWhatIsConvertVariants" xml:space="preserve">
+    <value>This utility allows you to select which irregularly inflected form variant types should be converted to variant types (irregularly inflected form variant types are a special sub-kind of variant types).</value>
   </data>
-  <data name="ksCannotCreateShortcut" xml:space="preserve">
-    <value>FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}</value>
+  <data name="ksWarning" xml:space="preserve">
+    <value>Warning</value>
+    <comment>Used as dialog box caption</comment>
   </data>
-  <data name="ksCannotCreateShortcutCaption" xml:space="preserve">
-    <value>Cannot create shortcut</value>
+  <data name="ksConvertFormLoseEnv" xml:space="preserve">
+    <value>The environment will be lost! Do you still want to continue?</value>
   </data>
-  <data name="ksCannotLoadFile" xml:space="preserve">
-    <value>File {0} could not be loaded.
-{1}</value>
+  <data name="ksBreakCircularRefs" xml:space="preserve">
+    <value>Remove circular references to complex forms</value>
   </data>
-  <data name="ksCannotRedefineFactoryStyle" xml:space="preserve">
-    <value>Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="ksRedoCreatingEntry" xml:space="preserve">
+    <value>Redo Creating Entry</value>
   </data>
-  <data name="ksCannotReplaceXwithY" xml:space="preserve">
-    <value>Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}.</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="kStandardFailureFileContents" xml:space="preserve">
+    <value>standard</value>
   </data>
-  <data name="ksCannotShowX" xml:space="preserve">
-    <value>Sorry, could not show {0}.</value>
+  <data name="ksIdentifyRecord" xml:space="preserve">
+    <value>Add Reference</value>
   </data>
-  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  <data name="AllEntriesPublication" xml:space="preserve">
+    <value>$$all_entries$$</value>
+    <comment>Do Not Translate</comment>
+  </data>
+  <data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
+    <value>Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced.</value>
+    <comment>Message box content for when the utility found GUIDs and changed them.</comment>
+  </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsText" xml:space="preserve">
+    <value>Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing.</value>
+  </data>
+  <data name="kProblemImportWhileMerging" xml:space="preserve">
+    <value>FieldWorks was unable to import the LIFT file {0} that resulted from merging remote changes. Remote changes have NOT been received into this project. This may indicate corruption of the LIFT file, or possibly a bug in Language Explorer. The following message may provide more details of what went wrong: {1}</value>
+  </data>
+  <data name="ksPostposeFromMenuItem" xml:space="preserve">
+    <value>Mark as Postposed from</value>
+    <comment>Mark the current cell as moved from a cell that comes BEFORE it.</comment>
+  </data>
+  <data name="ksUndoMakeDepClause" xml:space="preserve">
+    <value>Undo Make Dependent Clause</value>
+  </data>
+  <data name="ksWhenToReassignHomographs" xml:space="preserve">
+    <value>Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences.</value>
+  </data>
+  <data name="ksUnknownStyleAttribute" xml:space="preserve">
+    <value>Unrecognized '{0}' attribute for style {1} in {2}</value>
+  </data>
+  <data name="ksAdvDlgMainPostText" xml:space="preserve">
+    <value>Select the row and column to mark this cell's content as postposed from.</value>
+  </data>
+  <data name="ksUndoMarkMissing" xml:space="preserve">
+    <value>Undo Mark as Missing</value>
+  </data>
+  <data name="ksUndoLastRowInPara" xml:space="preserve">
+    <value>Undo Last Row in Paragraph</value>
+  </data>
+  <data name="ksUndoMakeMoved" xml:space="preserve">
+    <value>Undo Insert as Moved</value>
+  </data>
+  <data name="FWRightArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWRightArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksNoComplexFormType" xml:space="preserve">
+    <value>No Complex Form Type</value>
+  </data>
+  <data name="ksWhenToConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
   </data>
   <data name="ksInvalidFirstLineHanging" xml:space="preserve">
     <value>Illegal specification of both 'firstLine' and 'hanging' attributes for {0} style in {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="ksInvalidResourceFileVersion" xml:space="preserve">
-    <value>Invalid version attribute in {0}</value>
-    <comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
+  <data name="ksRedoInsertRow" xml:space="preserve">
+    <value>Redo Insert Row</value>
   </data>
-  <data name="ksMissingBasedOnStyle" xml:space="preserve">
-    <value>The basedOn style for {0} style must be specified in {1}</value>
+  <data name="ksRedoMergeCells" xml:space="preserve">
+    <value>Redo Merge Cells</value>
+  </data>
+  <data name="ksCannotMergeWordformsYet" xml:space="preserve">
+    <value>Merging wordforms needs serious definition, before it can be done. Sorry.</value>
+  </data>
+  <data name="ksRedoDemote" xml:space="preserve">
+    <value>Redo Demote</value>
+  </data>
+  <data name="ksMarkMissingItem" xml:space="preserve">
+    <value>Mark as Missing</value>
+  </data>
+  <data name="Grip2003" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Grip2003.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConfigureDocument" xml:space="preserve">
+    <value>Document...</value>
+  </data>
+  <data name="ksWhatIsConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types.</value>
+  </data>
+  <data name="ksRedoAddComplexForm" xml:space="preserve">
+    <value>Undo Add Complex Form</value>
+  </data>
+  <data name="ksUndoLastRowInSent" xml:space="preserve">
+    <value>Undo Last Row in Sentence</value>
+  </data>
+  <data name="ksUnknownBasedOnStyle" xml:space="preserve">
+    <value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="ksMissingParagraphElement" xml:space="preserve">
-    <value>Paragraph style {0} must have a paragraph element in {1}</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="ksExportErrorMsg" xml:space="preserve">
+    <value>An error occurred while exporting your data.  This is probably a bug in the FieldWorks code. Details: {0}</value>
   </data>
-  <data name="ksNegativeLineSpacing" xml:space="preserve">
-    <value>Negative value is not valid for paragraph 'lineSpacing' attribute of {0} style in {1}</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+    <value>Compression complete.</value>
+    <comment>Displayed in the UploadToWebonaryDlg log box</comment>
   </data>
-  <data name="ksNoBasedOnSelf" xml:space="preserve">
-    <value>Style {0} cannot be based on itself (as defined in {1}).</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="ksParagraphStyleForContent" xml:space="preserve">
+    <value>Paragraph Style for Content:</value>
+  </data>
+  <data name="ksChangeTo" xml:space="preserve">
+    <value>Choose Value:</value>
+  </data>
+  <data name="ksUnknownBulNumSchemeValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+    <value>???</value>
+  </data>
+  <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
+    <value>relation.</value>
+  </data>
+  <data name="BreakPhrase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Interlinear\BreakPhrase.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kBasicImportFailureMessage" xml:space="preserve">
+    <value>FLEx was not able to do the initial import. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the initial import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive.</value>
+  </data>
+  <data name="ShowAllRightNow" xml:space="preserve">
+    <value>Show all right now</value>
+  </data>
+  <data name="Redo_0" xml:space="preserve">
+    <value>Redo {0}</value>
   </data>
   <data name="kstidIncompatibleDTDVersion" xml:space="preserve">
     <value>{0} conforms to a DTD which is incompatible with this version of the program.
 This version of the program requires version {1}.</value>
     <comment>Error message when processing an XML file to create factory settings (styles, publications, etc.).</comment>
   </data>
-  <data name="ksUnknownAlignmentValue" xml:space="preserve">
-    <value>Unrecognized value for paragraph 'alignment' attribute of {0} style in {1}</value>
+  <data name="ksUndoAddComponent" xml:space="preserve">
+    <value>Undo Add Component</value>
+  </data>
+  <data name="FWLeftArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWLeftArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksCurrentReversal" xml:space="preserve">
+    <value>Current Reversal Index</value>
+  </data>
+  <data name="ksCannotRedoConvertVariants" xml:space="preserve">
+    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
+  </data>
+  <data name="ksMoveRevEntry" xml:space="preserve">
+    <value>Move Reversal Entry</value>
+  </data>
+  <data name="ksVariantTypes" xml:space="preserve">
+    <value>Variant Types:</value>
+  </data>
+  <data name="DeletedObjectDetected" xml:space="preserve">
+    <value>Deleted object detected</value>
+  </data>
+  <data name="ksUndoAddComplexForm" xml:space="preserve">
+    <value>Undo Add Complex Form</value>
+  </data>
+  <data name="ksMovedTextAfter" xml:space="preserve">
+    <value>&gt;&gt;</value>
+    <comment>Marker inserted to indicate a moved object to the right of the marker.</comment>
+  </data>
+  <data name="ksSorting" xml:space="preserve">
+    <value>Sorting</value>
+    <comment>Label used in progress bar</comment>
+  </data>
+  <data name="ProblemRestoringSettings" xml:space="preserve">
+    <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>_Undo</value>
+  </data>
+  <data name="ksUndoMoveCellBack" xml:space="preserve">
+    <value>Undo Move Cell Back</value>
+  </data>
+  <data name="ksError" xml:space="preserve">
+    <value>Error</value>
+    <comment>caption for message box</comment>
+  </data>
+  <data name="ksRedoEditFunction" xml:space="preserve">
+    <value>Redo Edit Function</value>
+  </data>
+  <data name="Add_New_Analysis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Add New Analysis.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksMissingBasedOnStyle" xml:space="preserve">
+    <value>The basedOn style for {0} style must be specified in {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="ksUnknownAttrUnits" xml:space="preserve">
-    <value>Unrecognized units specified for '{0}' attribute of {1} style in {2}</value>
+  <data name="ksMustSelectOne" xml:space="preserve">
+    <value>You must select one to create.</value>
+  </data>
+  <data name="ksCannotRedefineFactoryStyle" xml:space="preserve">
+    <value>Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="ksUnknownBasedOnStyle" xml:space="preserve">
-    <value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
-    <comment>Error message when processing an XML file to create factory styles.</comment>
+  <data name="ksSetReversal" xml:space="preserve">
+    <value>Set Reversal</value>
+    <comment>button label</comment>
+  </data>
+  <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
+    <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
+  </data>
+  <data name="ksDefaultPronunciation" xml:space="preserve">
+    <value>Default Pronunciation</value>
+  </data>
+  <data name="ksDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ReversalEntries_Only" xml:space="preserve">
+    <value>and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
+  </data>
+  <data name="ksMovedFromMenuItem" xml:space="preserve">
+    <value>Insert as Moved from</value>
+  </data>
+  <data name="ksNewTemplateLink" xml:space="preserve">
+    <value>charttempEdit</value>
+  </data>
+  <data name="SortReversalSubentries_Label" xml:space="preserve">
+    <value>Sort Reversal Subentries</value>
+  </data>
+  <data name="ksMakeComponentOf" xml:space="preserve">
+    <value>Select</value>
+    <comment>Replaces text of "OK" button in choose entry dialog when choosing a lex entry to make this one a component of. Should be short enough to fit in standard button.</comment>
+  </data>
+  <data name="ksRedoAddRef" xml:space="preserve">
+    <value>Redo Add Reference</value>
+  </data>
+  <data name="ksRedoAddParticipants" xml:space="preserve">
+    <value>Redo Add {0}</value>
+  </data>
+  <data name="ksRedoAddExamples" xml:space="preserve">
+    <value>Redo Add Examples</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
+    <value>All reversal subentries are now sorted.</value>
+  </data>
+  <data name="ksMakeSpeechClauseMenuItem" xml:space="preserve">
+    <value>Make a Speech Clause out of</value>
+  </data>
+  <data name="ksMoveWordMenuItem" xml:space="preserve">
+    <value>Move Word</value>
+    <comment>Combines with submenu Forward/Backward, maybe enentually up/down</comment>
+  </data>
+  <data name="ksHideFields" xml:space="preserve">
+    <value>Hide Fields</value>
+  </data>
+  <data name="Undo_0" xml:space="preserve">
+    <value>Undo {0}</value>
+  </data>
+  <data name="ksWhatItDoes" xml:space="preserve">
+    <value>What it does:</value>
+  </data>
+  <data name="FWFilterBasic_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\FWFilterBasic-Small.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksMovedTextBefore" xml:space="preserve">
+    <value>&lt;&lt;</value>
+    <comment>Marker inserted to indicate a moved object to the left of the marker.</comment>
+  </data>
+  <data name="DefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\DefaultIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUndoAddRevToSense" xml:space="preserve">
+    <value>Undo Add Reversal Entry to Sense</value>
+  </data>
+  <data name="ksListChoiceDesc" xml:space="preserve">
+    <value>Select a feature and a value to change it to</value>
+  </data>
+  <data name="ksAlwaysVisible" xml:space="preserve">
+    <value>Always visible</value>
+    <comment>menu item</comment>
+  </data>
+  <data name="ksCannotCreateShortcut" xml:space="preserve">
+    <value>FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}</value>
+  </data>
+  <data name="ksUndoMoveCellForward" xml:space="preserve">
+    <value>Undo Move Cell Forward</value>
+  </data>
+  <data name="ksCreateNewTemplate" xml:space="preserve">
+    <value>Add a New Template</value>
+  </data>
+  <data name="ksUndoHomographWs" xml:space="preserve">
+    <value>Undo Reassign Homographs</value>
+  </data>
+  <data name="ksBackMenuItem" xml:space="preserve">
+    <value>Back</value>
+    <comment>Submenu of ksMoveMenuItem or ksMoveWordMenuItem</comment>
+  </data>
+  <data name="ReversalEntries" xml:space="preserve">
+    <value>, {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+  </data>
+  <data name="ksChooseVisibleComplexForms" xml:space="preserve">
+    <value>Choose Complex Forms to display in Lexeme-based views</value>
+  </data>
+  <data name="FailedJump" xml:space="preserve">
+    <value>Failed Jump</value>
+  </data>
+  <data name="ksUndoMoveRevEntry" xml:space="preserve">
+    <value>Undo Move Reversal Entry</value>
+  </data>
+  <data name="ksReassignHomographs" xml:space="preserve">
+    <value>Reassign Homographs</value>
+  </data>
+  <data name="DeletingTheObject" xml:space="preserve">
+    <value>Deleting the object</value>
+  </data>
+  <data name="ksInvalidInternalConstituentChartData" xml:space="preserve">
+    <value>Invalid Internal Constituent Chart Data</value>
+  </data>
+  <data name="ksCreatingCustomGramCategory" xml:space="preserve">
+    <value>You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the "Back" button on the toolbar to return to where you were working. The new category will then be available for you to choose.</value>
+  </data>
+  <data name="ksRunUtilities" xml:space="preserve">
+    <value>&amp;Run Checked Utilities Now</value>
+  </data>
+  <data name="ksHelpForUtiltiesDlg" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
+    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  </data>
+  <data name="ksCreatingWindowForX" xml:space="preserve">
+    <value>Creating window for {0} Project...</value>
+  </data>
+  <data name="kProjectAlreadyHasLiftRepo" xml:space="preserve">
+    <value>This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository.</value>
+  </data>
+  <data name="ksWriteAllObjectsUndo" xml:space="preserve">
+    <value>This operation cannot be undone, since it makes no changes.</value>
+  </data>
+  <data name="ksErrorsFoundOrFixed" xml:space="preserve">
+    <value>Errors found or fixed</value>
+  </data>
+  <data name="ksUnknownBulNumStartAtValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'bulNumStartAt' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksErrorFixerUtilityAttemptsTo" xml:space="preserve">
+    <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
+  </data>
+  <data name="ksNextClauseMenuItem" xml:space="preserve">
+    <value>Next Clause</value>
+  </data>
+  <data name="ksNoWordformsMsg" xml:space="preserve">
+    <value>No wordforms are selected to move</value>
+    <comment>Used when a Move button is pressed in the Constituent chart and nothing is selected.</comment>
+  </data>
+  <data name="ksShowHiddenFields" xml:space="preserve">
+    <value>Show Hidden Fields</value>
+  </data>
+  <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
+    <value>Total word count (tokens):</value>
+  </data>
+  <data name="ksUndoMoveWord" xml:space="preserve">
+    <value>Undo Move Word</value>
+  </data>
+  <data name="ksNoRecords" xml:space="preserve">
+    <value>No Records</value>
+  </data>
+  <data name="ksMoveHereInNewClause" xml:space="preserve">
+    <value>Insert into new Row</value>
+  </data>
+  <data name="ksConvertFormLoseRule" xml:space="preserve">
+    <value>The affix process rule will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
+    <value>Send/Receive not permitted</value>
+  </data>
+  <data name="ksExistingProjectName" xml:space="preserve">
+    <value>That project already exists. Please choose a different name in Project Properties.</value>
+  </data>
+  <data name="ksWarningSortReversalSubentries" xml:space="preserve">
+    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.</value>
+  </data>
+  <data name="ksAdvDlgPartialPost" xml:space="preserve">
+    <value>Select the words to be marked as postposed.</value>
+  </data>
+  <data name="MenuWidget" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\MenuWidget.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksUndoAddRef" xml:space="preserve">
+    <value>Undo Add Reference</value>
+  </data>
+  <data name="ksChooseDifferentColumn" xml:space="preserve">
+    <value>Please choose a different column to insert this displaced word(s)</value>
+    <comment>When user chose wrong column for Chart Orphan (temporary?)</comment>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Configure...</value>
+  </data>
+  <data name="ksAdvDlgPartialPre" xml:space="preserve">
+    <value>Select the words to be marked as preposed.</value>
+  </data>
+  <data name="ksWhatIsSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>This utility will make the Part of Speech GUIDs for the project match the GOLD standard.</value>
+  </data>
+  <data name="ksAddAComplexForm" xml:space="preserve">
+    <value>Add a Complex Form...</value>
+  </data>
+  <data name="ksInformation" xml:space="preserve">
+    <value>Information</value>
+    <comment>caption for message box</comment>
+  </data>
+  <data name="ksInsertRowMenuItem" xml:space="preserve">
+    <value>Insert Row Below</value>
+  </data>
+  <data name="ExportingReversalsToWebonary" xml:space="preserve">
+    <value>Exporting entries for {0} reversal.</value>
+  </data>
+  <data name="ksRedoRemoveMarker" xml:space="preserve">
+    <value>Redo Remove Marker</value>
+  </data>
+  <data name="ksAlternateForms" xml:space="preserve">
+    <value>Alternate Forms</value>
+  </data>
+  <data name="ksDeleteLexTree" xml:space="preserve">
+    <value>Note: this will remove this entire {0} reference set tree.</value>
+    <comment>{0} is a line feed</comment>
   </data>
   <data name="ksUnknownBorderValue" xml:space="preserve">
     <value>Unrecognized value for paragraph 'border' attribute of {0} style in {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="ksUnknownBulNumSchemeValue" xml:space="preserve">
-    <value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
+  <data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
+    <value>GUIDs changed</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found some.</comment>
   </data>
-  <data name="ksUnknownBulNumStartAtValue" xml:space="preserve">
-    <value>Unrecognized value for paragraph 'bulNumStartAt' attribute of {0} style in {1}</value>
+  <data name="ksInsertRowMenuItemBelow" xml:space="preserve">
+    <value>Insert Row Below</value>
   </data>
-  <data name="ksUnknownLineSpacingValue" xml:space="preserve">
-    <value>Unrecognized value for paragraph 'lineSpacingType' attribute of {0} style in {1}</value>
+  <data name="ksRedoAddRevToSense" xml:space="preserve">
+    <value>Redo Add Reversal Entry to Sense</value>
   </data>
-  <data name="ksUnknownNextStyle" xml:space="preserve">
-    <value>Unrecognized next style for {0} style in {2}: {1}</value>
+  <data name="ksTextAreaStatisticsViewName" xml:space="preserve">
+    <value>Statistics</value>
   </data>
-  <data name="ksUnknownStyleAttribute" xml:space="preserve">
-    <value>Unrecognized '{0}' attribute for style {1} in {2}</value>
+  <data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
+    <value>Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work.</value>
   </data>
-  <data name="ksUnknownUnderlineColor" xml:space="preserve">
-    <value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
+  <data name="ksUndoInsert0" xml:space="preserve">
+    <value>Undo Insert {0}</value>
   </data>
-  <data name="Add_a_Literal_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\Add a Literal Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
+    <value>Reversal subentry sorting is completed</value>
   </data>
-  <data name="Add_Free_Translation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\Add Free Translation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksUndoEditFunction" xml:space="preserve">
+    <value>Undo Edit Function</value>
   </data>
-  <data name="Add_New_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\Add New Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksUndoCreateReversalIndex" xml:space="preserve">
+    <value>Undo Create Reversal Index</value>
   </data>
-  <data name="ApprAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\ApprAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksMissingParagraphElement" xml:space="preserve">
+    <value>Paragraph style {0} must have a paragraph element in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
-  <data name="BreakPhrase" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\BreakPhrase.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Arrow_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Arrow_Down.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BrowseAndMoveNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\BrowseAndMoveNext.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksNoAnalysis" xml:space="preserve">
+    <value>no analysis</value>
   </data>
-  <data name="Find_and_Replace_Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\Find and Replace Text.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksUndoMakeNewRow" xml:space="preserve">
+    <value>Undo Make New Row</value>
   </data>
-  <data name="Insert_Note" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\Insert Note.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
+    <value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
   </data>
-  <data name="LinkWords" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\LinkWords.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksCreateReversal" xml:space="preserve">
+    <value>Create Reversal</value>
   </data>
-  <data name="ZeroWidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>images\Interlinear\ZeroWidth.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ksUndoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+    <value>Undo Convert variant types to irregularly inflected form variant types</value>
   </data>
-  <data name="ShowFailingItems" xml:space="preserve">
-    <value>ShowFailingItems</value>
+  <data name="ksRedoMarkMissing" xml:space="preserve">
+    <value>Redo Mark as Missing</value>
   </data>
-  <data name="ConfigureDocument" xml:space="preserve">
-    <value>Document...</value>
+  <data name="ksForwardMenuItem" xml:space="preserve">
+    <value>Forward</value>
+    <comment>Submenu of ksMoveMenuItem or ksMoveWordMenuItem</comment>
+  </data>
+  <data name="ksFoundAndFixingInvalidDataCells" xml:space="preserve">
+    <value>The program has detected invalid data (cells out of order or not in any column) within this
+chart.  This can be caused by deleting or re-ordering columns in the template.
+
+The program will attempt to repair the links within the data.  You may need to do additional
+editing, or you may prefer to start over if the resulting chart is too different from what
+you expect.</value>
+    <comment>The newlines (\r\n) in the string are to make the display lines be a reasonable length.  The double newline (\r\n\r\n) serves to provide a paragraph break in the message.</comment>
+  </data>
+  <data name="ksAnalysisX" xml:space="preserve">
+    <value>Analysis {0}</value>
+    <comment>{0} is a number ("Analysis 1" for first, etc)</comment>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLocGramInfo" xml:space="preserve">
+    <value>The environment, infix position, and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="PublicationEntriesLabel" xml:space="preserve">
+    <value>Clicking Submit will send {0} dictionary entries{1} to Webonary.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
+  </data>
+  <data name="ksReallyWantToDeleteRevIndex" xml:space="preserve">
+    <value>Do you really want to delete this Reversal Index?</value>
+  </data>
+  <data name="ksNextTwoClausesMenuItem" xml:space="preserve">
+    <value>Next Two Clauses</value>
+  </data>
+  <data name="ksCannotCreateShortcutCaption" xml:space="preserve">
+    <value>Cannot create shortcut</value>
+  </data>
+  <data name="ksIdentifyXSense" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksMergeAfterMenuItem" xml:space="preserve">
+    <value>Merge with Cell after this</value>
+    <comment>Causes this cell to merge with empty cell to right to save space</comment>
+  </data>
+  <data name="ksNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ksUndoCreatingEntry" xml:space="preserve">
+    <value>Undo Creating Entry</value>
+  </data>
+  <data name="ReversalEntries_Last" xml:space="preserve">
+    <value>, and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+  </data>
+  <data name="ksCannotReplaceXwithY" xml:space="preserve">
+    <value>Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}.</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
+    <value>What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?</value>
+  </data>
+  <data name="ksExtension" xml:space="preserve">
+    <value>Extension</value>
+  </data>
+  <data name="toApplyForWebonaryAccountLink" xml:space="preserve">
+    <value>http://www.webonary.org/</value>
+    <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
+  </data>
+  <data name="ksDeleteEntriesSensesWarning" xml:space="preserve">
+    <value>Always back up your project before using this. This will delete all of your entries and senses if you have not done any interlinearization, and can delete a large number if you have done minimal interlinearization. It cannot be undone. It will warn you about the number of entries that will be deleted and give you a chance to stop without deletions.</value>
+  </data>
+  <data name="Insert_Cat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Morphology\Insert_Cat.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Insert_Sub_Cat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Morphology\Insert_Sub_Cat.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

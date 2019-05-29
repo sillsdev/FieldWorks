@@ -155,7 +155,15 @@ namespace LanguageExplorer.Areas
 			m_tree.MouseMove -= tree_MouseMove;
 			m_tree.DragDrop -= tree_DragDrop;
 			m_tree.DragOver -= tree_DragOver;
-			m_tree.GiveFeedback -= tree_GiveFeedback;
+			if (m_tree.ContextMenuStrip != null && m_tree.ContextMenuStrip.Items.Count > 0)
+			{
+				// This prevents some DisposableToolStripMenuItem from not being disposed properly,
+				// resulting in this write line for it/them" "Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");"
+				m_tree.ContextMenuStrip.MouseClick -= Tree_ContextMenu_MouseClicked;
+				m_tree.ContextMenuStrip.Opened -= ContextMenuStrip_Opened;
+				m_tree.ContextMenuStrip?.Dispose();
+				m_tree.ContextMenuStrip = null;
+			}
 		}
 
 		#endregion IRecordBarHandler implementation
@@ -223,12 +231,16 @@ namespace LanguageExplorer.Areas
 			{
 				// Dispose managed resources here.
 				m_hvoToTreeNodeTable?.Clear();
-				m_tree?.Dispose();
+				if (m_tree != null)
+				{
+					m_tree.ContextMenuStrip?.Dispose();
+					m_tree.Dispose();
+				}
 			}
-
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_hvoToTreeNodeTable = null;
 			m_cache = null;
+			m_tree = null;
 
 			_isDisposed = true;
 		}
@@ -256,63 +268,65 @@ namespace LanguageExplorer.Areas
 			}
 			using (new WaitCursor((Form)window))
 			{
-				var tree = window.TreeStyleRecordList;
+				ReleaseRecordBar(); // Called on old m_tree
+				m_tree = window.TreeStyleRecordList;
+				ReleaseRecordBar(); // Called on new m_tree
 				var expandedItems = new HashSet<int>();
 				if (m_tree != null && !m_expand)
 				{
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				}
-
-				if (m_tree == tree)
-				{
-					// This prevents some DisposableToolStripMenuItem from nt being disposed properly,
-					// resulting in this write line for it/them" "Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");"
-					tree.ContextMenuStrip?.Dispose();
-					// Removing the handlers first seems to be necessary because multiple tree handlers are
-					// working with one treeview. Only this active one should have handlers connected.
-					// If we fail to do this, switching to a different list causes drag and drop to stop working.
-					ReleaseRecordBar();
-				}
-				m_tree = tree;
-				tree.NodeMouseClick += tree_NodeMouseClick;
+				m_tree.NodeMouseClick += tree_NodeMouseClick;
 				if (editable)
 				{
-					tree.MouseDown += tree_MouseDown;
-					tree.MouseMove += tree_MouseMove;
-					tree.DragDrop += tree_DragDrop;
-					tree.DragOver += tree_DragOver;
-					tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
-					tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-					tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
+					m_tree.MouseDown += tree_MouseDown;
+					m_tree.MouseMove += tree_MouseMove;
+					m_tree.DragDrop += tree_DragDrop;
+					m_tree.DragOver += tree_DragOver;
+					m_tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
+					m_tree.ContextMenuStrip.MouseClick += Tree_ContextMenu_MouseClicked;
+					m_tree.ContextMenuStrip.Opened += ContextMenuStrip_Opened;
 				}
 				else
 				{
-					tree.ContextMenuStrip = new ContextMenuStrip();
+					m_tree.ContextMenuStrip = new ContextMenuStrip();
 				}
-				tree.AllowDrop = editable;
-				tree.BeginUpdate();
+				m_tree.AllowDrop = editable;
+				m_tree.BeginUpdate();
 				recordBarControl.Clear();
 				m_hvoToTreeNodeTable.Clear();
 				// type size must be set before AddTreeNodes is called
 				m_typeSize = recordList.TypeSize;
-				AddTreeNodes(recordList.SortedObjects, tree);
-				tree.Font = new Font(recordList.FontName, m_typeSize);
-				tree.ShowRootLines = m_hierarchical;
+				AddTreeNodes(recordList.SortedObjects, m_tree);
+				m_tree.Font = new Font(recordList.FontName, m_typeSize);
+				m_tree.ShowRootLines = m_hierarchical;
 				if (m_expand)
 				{
-					tree.ExpandAll();
+					m_tree.ExpandAll();
 				}
 				else
 				{
-					tree.CollapseAll();
-					ExpandItems(tree.Nodes, expandedItems);
+					m_tree.CollapseAll();
+					ExpandItems(m_tree.Nodes, expandedItems);
 				}
 				// Set the selection after expanding/collapsing the tree.  This allows the true
 				// selection to be visible even when the tree is collapsed but the selection is
 				// an internal node.  (See LT-4508.)
 				UpdateSelection(recordList.CurrentObject);
-				tree.EndUpdate();
+				m_tree.EndUpdate();
 			}
+		}
+
+		private void ContextMenuStrip_Opened(object sender, EventArgs e)
+		{
+			var clickedHvo = ClickObject;
+			if (clickedHvo == 0)
+			{
+				return;
+			}
+			var clickedPossibility = m_objRepo.GetObject(clickedHvo);
+			var ownerOfClicked = clickedPossibility.Owner;
+			m_tree.ContextMenuStrip.Items[AreaServices.Promote].Enabled = ownerOfClicked.ClassID != CmPossibilityListTags.kClassId;
 		}
 
 		/// <summary>
@@ -353,7 +367,10 @@ namespace LanguageExplorer.Areas
 
 		protected virtual ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			var promoteMenuItem = new DisposableToolStripMenuItem(AreaResources.Promote);
+			var promoteMenuItem = new DisposableToolStripMenuItem(AreaResources.Promote)
+			{
+				Name = AreaServices.Promote
+			};
 			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;
@@ -362,10 +379,6 @@ namespace LanguageExplorer.Areas
 		private void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			m_clickNode = e.Node;
-		}
-
-		private void tree_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-		{
 		}
 
 		private void ClearDragHilite()
@@ -389,7 +402,7 @@ namespace LanguageExplorer.Areas
 			MoveItem(m_tree, destNode, source);
 		}
 
-		private void tree_MouseClicked(object sender, MouseEventArgs e)
+		private void Tree_ContextMenu_MouseClicked(object sender, MouseEventArgs e)
 		{
 			// LT-5664  This event handler was set up to ensure the user does not
 			// accidentally select the Promote command with a right mouse click.
@@ -398,23 +411,21 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var item = m_tree.ContextMenuStrip.GetItemAt(e.X, e.Y);
-			if (item == null)
+			if (item == null || !item.Enabled)
 			{
 				return;
 			}
-
-			var itemSelected = item.Text;
-			if (itemSelected.Equals(AreaResources.Promote))
+			switch (item.Name)
 			{
-				tree_Promote();
-			}
-			else if (itemSelected.Equals(LanguageExplorerResources.MoveDown))
-			{
-				tree_moveDown();
-			}
-			else if (itemSelected.Equals(LanguageExplorerResources.MoveUp))
-			{
-				tree_moveUp();
+				case AreaServices.Promote:
+					tree_Promote();
+					break;
+				case AreaServices.MoveUp2:
+					tree_moveUp();
+					break;
+				case AreaServices.MoveDown2:
+					tree_moveDown();
+					break;
 			}
 		}
 

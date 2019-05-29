@@ -223,7 +223,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 
 			private void CmdInsertLexEntryType_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create(_list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Type, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create(_list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
@@ -234,8 +238,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 
 			private void CmdDataTree_Insert_LexEntryType_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create((ILexEntryType)_recordList.CurrentObject);
-				if (newPossibility != null)
+				ICmPossibility newSubPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Type, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create((ILexEntryType)_recordList.CurrentObject);
+				});
+				if (newSubPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
 				}

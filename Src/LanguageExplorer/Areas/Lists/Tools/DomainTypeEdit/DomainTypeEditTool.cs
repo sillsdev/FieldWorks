@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -163,8 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		private sealed class DomainTypeMenuHelper : IDisposable
 		{
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
-			private SharedListToolMenuHelper _sharedListToolMenuHelper;
-			private SharedForPlainVanillaListToolMenuHelper _sharedForPlainVanillaListToolMenuHelper;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal DomainTypeMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -175,8 +175,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
-				_sharedForPlainVanillaListToolMenuHelper = new SharedForPlainVanillaListToolMenuHelper(_majorFlexComponentParameters, new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList), tool, list, recordList, dataTree);
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 
 				SetupToolUiWidgets(tool);
 			}
@@ -184,8 +183,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 			private void SetupToolUiWidgets(ITool tool)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
-				_sharedForPlainVanillaListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new Dictionary<string, string>
+				{
+					{AreaServices.List_Item, ListResources.Academic_Domain},
+					{AreaServices.Subitem, ListResources.Subitem }
+				});
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -222,12 +224,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 
 				if (disposing)
 				{
-					_sharedListToolMenuHelper.Dispose();
-					_sharedForPlainVanillaListToolMenuHelper.Dispose();
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
 
-				_sharedListToolMenuHelper = null;
-				_sharedForPlainVanillaListToolMenuHelper = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

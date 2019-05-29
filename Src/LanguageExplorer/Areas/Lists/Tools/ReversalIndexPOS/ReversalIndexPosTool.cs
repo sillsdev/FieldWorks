@@ -587,6 +587,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
+				_majorFlexComponentParameters = null;
+				_currentReversalIndex = null;
+				_list = null;
+				_recordList = null;
+				_dataTree = null;
+				_cache = null;
+				_reversalIndexRepository = null;
+				_extendedPropertyName = null;
+				_recordBrowseView = null;
+				_propertyTable = null;
 				MainPanelMenuContextMenuFactory = null;
 
 				_isDisposed = true;

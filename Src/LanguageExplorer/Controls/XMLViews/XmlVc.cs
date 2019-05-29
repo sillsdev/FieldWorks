@@ -1405,7 +1405,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					case "lit":
 						{
 							// Default to UI writing system.
-							var literal = string.Concat(frag.Elements());
+							var literal = string.Concat(frag.GetInnerText());
 							var sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
 							if (sTranslate.Trim().ToLower() != "do not translate")
 							{

@@ -145,6 +145,11 @@ namespace LanguageExplorer.Areas
 		internal const string RightPanelMenuId = "right";
 		internal const string CmdMoveTargetToPreviousInSequence = "MoveTargetDownInSequence_Clicked";
 		internal const string CmdMoveTargetToNextInSequence = "MoveTargetUpInSequence_Clicked";
+		internal const string MoveUp2 = "MoveUp";
+		internal const string MoveDown2 = "MoveDown";
+		internal const string Promote = "Promote";
+		internal const string List_Item = "List Item";
+		internal const string Subitem = "Subitem";
 		#endregion Random strings
 
 		/// <summary>

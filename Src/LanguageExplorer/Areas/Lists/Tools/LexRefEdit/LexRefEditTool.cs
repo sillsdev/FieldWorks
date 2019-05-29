@@ -194,7 +194,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 
 			private void CmdInsertLexRefType_click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create(_list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Lexical_Reference_Type, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create(_list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();

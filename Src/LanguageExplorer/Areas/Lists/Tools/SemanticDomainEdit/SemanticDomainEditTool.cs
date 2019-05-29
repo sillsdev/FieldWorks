@@ -296,7 +296,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 			private void CmdInsertSemDom_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create(Guid.NewGuid(), _list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create(Guid.NewGuid(), _list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
@@ -307,8 +311,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 			private void CmdDataTree_Insert_SemanticDomain_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create(Guid.NewGuid(), (ICmSemanticDomain)_recordList.CurrentObject);
-				if (newPossibility != null)
+				ICmPossibility newSubPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create(Guid.NewGuid(), (ICmSemanticDomain)_recordList.CurrentObject);
+				});
+				if (newSubPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
 				}

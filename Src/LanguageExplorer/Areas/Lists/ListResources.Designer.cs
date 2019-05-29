@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Academic Domain.
+        /// </summary>
+        internal static string Academic_Domain {
+            get {
+                return ResourceManager.GetString("Academic_Domain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom _List....
         /// </summary>
         internal static string AddCustomList {
@@ -153,6 +162,15 @@ namespace LanguageExplorer.Areas.Lists {
             get {
                 object obj = ResourceManager.GetObject("Copy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Item.
+        /// </summary>
+        internal static string Custom_Item {
+            get {
+                return ResourceManager.GetString("Custom_Item", resourceCulture);
             }
         }
         
@@ -398,6 +416,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string Insert_Type {
             get {
                 return ResourceManager.GetString("Insert_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item.
+        /// </summary>
+        internal static string Item {
+            get {
+                return ResourceManager.GetString("Item", resourceCulture);
             }
         }
         

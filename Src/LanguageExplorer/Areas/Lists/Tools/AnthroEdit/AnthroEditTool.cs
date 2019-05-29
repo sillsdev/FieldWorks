@@ -165,7 +165,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
-			private SharedListToolMenuHelper _sharedListToolMenuHelper;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal AnthroEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -178,14 +178,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
-				_sharedListToolMenuHelper = new SharedListToolMenuHelper(majorFlexComponentParameters, new FileExportMenuHelper(majorFlexComponentParameters), tool, list);
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 				SetupToolUiWidgets(tool, dataTree);
 			}
 
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// Both insert menu & Insert tool bar.
 				// <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
@@ -225,7 +225,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 
 			private void CmdInsertAnthroCategory_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(Guid.NewGuid(), _list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Anthropology_Category, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(Guid.NewGuid(), _list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
@@ -236,8 +240,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 
 			private void CmdDataTree_Insert_AnthroCategory_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(Guid.NewGuid(), (ICmAnthroItem)_recordList.CurrentObject);
-				if (newPossibility != null)
+				ICmPossibility newSubPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Anthropology_Category, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(Guid.NewGuid(), (ICmAnthroItem)_recordList.CurrentObject);
+				});
+				if (newSubPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();
 				}
@@ -275,9 +283,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 
 				if (disposing)
 				{
-					_sharedListToolMenuHelper.Dispose();
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
-				_sharedListToolMenuHelper = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

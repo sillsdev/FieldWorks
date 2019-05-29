@@ -412,6 +412,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					icol = LogicalFromDisplay(icol);
 					var cell = new ChartLocation(chart.RowsOS[irow], icol);
+					m_cellContextMenu?.Dispose();
 					m_cellContextMenu = Logic.MakeCellContextMenu(cell);
 					m_cellContextMenu.Show(this, e.X, e.Y);
 					return; // Don't call the base method, we don't want to make a selection.

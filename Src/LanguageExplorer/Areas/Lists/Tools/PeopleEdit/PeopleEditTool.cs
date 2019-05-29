@@ -196,7 +196,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 
 			private void CmdInsertPerson_Click(object sender, EventArgs e)
 			{
-				var newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(Guid.NewGuid(), _list);
+				ICmPossibility newPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Person, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(Guid.NewGuid(), _list);
+				});
 				if (newPossibility != null)
 				{
 					_recordList.UpdateRecordTreeBar();

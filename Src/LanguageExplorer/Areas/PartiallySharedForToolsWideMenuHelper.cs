@@ -299,7 +299,12 @@ namespace LanguageExplorer.Areas
 			}
 			if (currentObject is IWfiWordform)
 			{
-				return _concordanceTools.Contains(targetToolMachineNameForJump);
+				var concordanceTools = new HashSet<string>
+				{
+					AreaServices.WordListConcordanceMachineName,
+					AreaServices.ConcordanceMachineName
+				};
+				return concordanceTools.Contains(targetToolMachineNameForJump);
 			}
 			// Do it the hard way.
 			var specifiedClsid = 0;
@@ -322,12 +327,6 @@ namespace LanguageExplorer.Areas
 			// Visible & enabled are the same at this point.
 			return cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentObject.ClassID) == specifiedClsid;
 		}
-
-		private static readonly HashSet<string> _concordanceTools = new HashSet<string>
-		{
-			AreaServices.WordListConcordanceMachineName,
-			AreaServices.ConcordanceMachineName
-		};
 
 		private static void JumpToTool_Clicked(object sender, EventArgs e)
 		{
@@ -384,19 +383,10 @@ namespace LanguageExplorer.Areas
 			return enabled;
 		}
 
-		internal void StartSharing(Command command, Func<Tuple<bool, bool>> seeAndDo)
+		internal void SetupCmdAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
 		{
-			switch (command)
-			{
-				case Command.CmdAddToLexicon:
-					_eventuallySharedCommands.Add(command);
-					_sharedEventHandlers.Add(command, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddToLexicon_Clicked, seeAndDo));
-					break;
-			}
-		}
-
-		internal void SetupAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree)
-		{
+			_eventuallySharedCommands.Add(Command.CmdAddToLexicon);
+			_sharedEventHandlers.Add(Command.CmdAddToLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddToLexicon_Clicked, seeAndDo));
 			// CmdAddToLexicon goes on Insert menu & Insert toolbar
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdAddToLexicon, _sharedEventHandlers.Get(Command.CmdAddToLexicon));
 			_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon].Tag = dataTree;

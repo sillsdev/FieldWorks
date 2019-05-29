@@ -412,4 +412,13 @@ Are you sure you want to delete this list?</value>
   <data name="CustomList" xml:space="preserve">
     <value>Custom List</value>
   </data>
+  <data name="Academic_Domain" xml:space="preserve">
+    <value>Academic Domain</value>
+  </data>
+  <data name="Custom_Item" xml:space="preserve">
+    <value>Custom Item</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Item</value>
+  </data>
 </root>

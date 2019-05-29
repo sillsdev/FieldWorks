@@ -28,16 +28,15 @@ namespace LanguageExplorer.images.Morphology
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
