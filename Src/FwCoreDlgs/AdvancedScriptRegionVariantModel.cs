@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					yield return new VariantListItem(variant);
 				}
-				else if (variant.Prefixes.All(p => Code.EndsWith(p)))
+				else if (variant.Prefixes.All(p => Code.EndsWith(p) || Code.StartsWith(p)))
 				{
 					yield return new VariantListItem(variant);
 				}

@@ -269,6 +269,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		[Test]
+		public void GetStandardVariants_ListsLanguageSpecificWithVariants()
+		{
+			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-x-extra" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
+			CollectionAssert.Contains(model.GetStandardVariants().Select(v => v.Name), "Early Modern French");
+		}
+
+		/// <summary/>
+		[Test]
 		public void GetScriptList_ContainsQaaa()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
