@@ -325,17 +325,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CollectionAssert.AreEqual(new[] { "en", "fr" }, testModel.WorkingList.Select(ws => ws.WorkingWs.LanguageTag));
 		}
 
-		[Test]
-		public void WritingSystemList_ChangeCurrentStatus_StatusChanged()
-		{
-			var container = new TestWSContainer(new[] { "fr", "en" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			Assert.AreEqual(true, testModel.WorkingList[0].InCurrentList);
-			// SUT
-			testModel.ChangeCurrentStatus();
-			Assert.AreEqual(false, testModel.WorkingList[0].InCurrentList);
-		}
-
 		[TestCase("en", new[] { "fr", "en" }, false)] // Can't merge English
 		[TestCase("fr", new[] { "fr" }, false)] // Can't merge if there is no other writing system in the list
 		[TestCase("fr", new[] { "fr", "en" }, true)] // Can merge if there is more than one
@@ -400,7 +389,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ChangeCurrentStatus();
+			testModel.ToggleInCurrentList();
 			Assert.IsFalse(testModel.IsListValid);
 		}
 
@@ -425,7 +414,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ChangeCurrentStatus();
+			testModel.ToggleInCurrentList();
 			Assert.IsFalse(testModel.IsAtLeastOneSelected);
 		}
 
@@ -1016,7 +1005,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
-			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var warningShown = false;
@@ -1031,7 +1019,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndDoesNotSetOnNo()
 		{
 			SetupHomographLanguagesInCache();
-			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var warningShown = false;
@@ -1046,7 +1033,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_TopVernIsHomographWs_MovedDownWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
-			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var warningShown = false;
@@ -1061,7 +1047,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_TopVernIsHomographWs_NewWsAddedAbove_WarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
-			Cache.LangProject.HomographWs = "en";
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			var warningShown = false;
@@ -1097,8 +1082,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_CurrentVernacularList_ToggleSaved()
 		{
-			SetupHomographLanguagesInCache(); // adds fr and en to the current
-			Cache.LangProject.HomographWs = "en"; // set to en so the homograph writing system won't be updated when we remove fr from current
+			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			testModel.SelectWs("fr");
@@ -1110,8 +1094,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void CurrentWsListChanged_CurrentVernacularList_ToggleSavedWithOtherChange()
 		{
-			SetupHomographLanguagesInCache(); // adds fr and en to the current
-			Cache.LangProject.HomographWs = "en"; // set to en so the homograph writing system won't be updated when we remove fr from current
+			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			testModel.SelectWs("fr");
@@ -1121,25 +1104,49 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("en"), "French should have been removed from the CurrentVernacular list on Save");
 		}
 
+		[Test]
+		public void Save_LastWsStaysUnselected_ChangesAreSaved()
+		{
+			SetupHomographLanguagesInCache();
+			var it = GetOrCreateWs("it");
+			Cache.LangProject.VernacularWritingSystems.Add(it); // available, but not selected
+			Cache.LangProject.HomographWs = "fr"; // so that the HomographWs doesn't change when we deselect en
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			CollectionAssert.AreEqual(new[] { "en", "fr", "it" }, testModel.WorkingList.Select(ws => ws.OriginalWs.LanguageTag));
+			CollectionAssert.AreEqual(new[] { true, true, false }, testModel.WorkingList.Select(ws => ws.InCurrentList));
+			testModel.ToggleInCurrentList();
+			CollectionAssert.AreEqual(new[] { false, true, false }, testModel.WorkingList.Select(ws => ws.InCurrentList));
+			// SUT
+			testModel.Save();
+			Assert.AreEqual("fr", Cache.LangProject.CurVernWss, "Only French should remain selected after save");
+		}
+
+		/// <summary>
+		/// Adds en and fr to Current Vernacular and sets en as Homograph WS.
+		/// The client must call <c>Cache.ActionHandlerAccessor.EndUndoTask()</c> after this and any additional setup.
+		/// </summary>
 		private void SetupHomographLanguagesInCache()
 		{
-			CoreWritingSystemDefinition fr;
-			CoreWritingSystemDefinition en;
-			if (!Cache.ServiceLocator.WritingSystemManager.TryGet("fr", out fr))
-			{
-				fr = Cache.ServiceLocator.WritingSystemManager.Create("fr");
-			}
-			if (!Cache.ServiceLocator.WritingSystemManager.TryGet("en", out en))
-			{
-				en = Cache.ServiceLocator.WritingSystemManager.Create("en");
-			}
-			Cache.ServiceLocator.WritingSystemManager.Set(fr);
-			Cache.ServiceLocator.WritingSystemManager.Set(en);
+			var en = GetOrCreateWs("en");
+			var fr = GetOrCreateWs("fr");
 			Cache.LangProject.CurrentVernacularWritingSystems.Clear();
 			Cache.LangProject.CurrentVernacularWritingSystems.Add(en);
 			Cache.LangProject.CurrentVernacularWritingSystems.Add(fr);
 			Cache.LangProject.VernacularWritingSystems.Clear();
 			Cache.LangProject.VernacularWritingSystems.AddRange(Cache.LangProject.CurrentVernacularWritingSystems);
+			Cache.LangProject.HomographWs = "en";
+		}
+
+		private CoreWritingSystemDefinition GetOrCreateWs(string code)
+		{
+			CoreWritingSystemDefinition ws;
+			if (!Cache.ServiceLocator.WritingSystemManager.TryGet(code, out ws))
+			{
+				ws = Cache.ServiceLocator.WritingSystemManager.Create(code);
+			}
+			Cache.ServiceLocator.WritingSystemManager.Set(ws);
+			return ws;
 		}
 
 		private bool TestShowModifyConverters(string originalconverter, out string selectedconverter)

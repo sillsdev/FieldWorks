@@ -401,15 +401,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void ChangeCurrentStatus()
-		{
-			var currentItem = WorkingList.Find(item => item.WorkingWs.LanguageTag == _currentWs.LanguageTag);
-			var currentIndex = WorkingList.IndexOf(currentItem);
-			WorkingList.Remove(currentItem);
-			WorkingList.Insert(currentIndex, new WSListItemModel(!currentItem.InCurrentList, currentItem.OriginalWs, currentItem.WorkingWs));
-		}
-
-		/// <summary/>
 		public bool IsListValid
 		{
 			get
@@ -698,7 +689,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 						else if(!wsListItem.InCurrentList)
 						{
-							atLeastOneChange = SafelyRemoveFromList(currentWritingSystems, wsListItem);
+							var deletedWritingSystem = SafelyRemoveFromList(currentWritingSystems, wsListItem);
+							atLeastOneChange = atLeastOneChange || deletedWritingSystem;
 						}
 					}
 				}
@@ -708,7 +700,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					atLeastOneChange = true;
 					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
 				}
-				atLeastOneChange = atLeastOneChange || deletedSomeWritingSystems;
 				// Save all the changes to the current writing systems
 				_wsManager.Save();
 				foreach (var newWs in newWritingSystems)
