@@ -189,13 +189,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				// Both insert menu & Insert tool bar.
 				// <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertAnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, ()=> CanCmdInsertAnthroCategory));
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertToolbarDictionary.Add(Command.CmdInsertAnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => CanCmdInsertAnthroCategory));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, ()=> CanCmdInsertAnthroCategory));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => CanCmdInsertAnthroCategory));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Anthropology_Category);
 
 				// <command id="CmdDataTree_Insert_AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_AnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, () => CanCmdDataTree_Insert_AnthroCategory));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_AnthroCategory, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, ()=> CanCmdDataTree_Insert_AnthroCategory));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, () => CanCmdDataTree_Insert_AnthroCategory));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, ()=> CanCmdDataTree_Insert_AnthroCategory));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subcategory);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_SubAnthroCategory);
 

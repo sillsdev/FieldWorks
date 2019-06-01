@@ -166,6 +166,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal SemanticDomainEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -178,21 +179,25 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 				SetupToolUiWidgets(tool, dataTree);
 			}
 
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
 				// <command id="CmdDataTree_Insert_SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar
-				insertMenuDictionary.Add(Command.CmdInsertSemDom, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> CanCmdInsertSemDom));
-				insertToolbarDictionary.Add(Command.CmdInsertSemDom, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => CanCmdInsertSemDom));
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_SemanticDomain, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_SemanticDomain, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> CanCmdInsertSemDom));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => CanCmdInsertSemDom));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Semantic_Domain);
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subdomain);
 
 				/*
 					<part id="CmSemanticDomain-Detail-Questions" type="Detail">
@@ -354,7 +359,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

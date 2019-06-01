@@ -222,6 +222,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			private RecordBrowseView _recordBrowseView;
 			private IPropertyTable _propertyTable;
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			private IPropertyTable PropertyTable => _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
@@ -242,6 +243,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_dataTree = dataTree;
 				_cache = _majorFlexComponentParameters.LcmCache;
 				_recordBrowseView = recordBrowseView;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, _list, recordList, dataTree);
 				_extendedPropertyName = extendedPropertyName;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
@@ -308,15 +310,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
 				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar for both.
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertPOS, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				insertToolbarDictionary.Add(Command.CmdInsertPOS, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_POS_SubPossibilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
+
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subcategory);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
@@ -583,6 +589,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 					MainPanelMenuContextMenuFactory.Dispose();
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
@@ -598,6 +605,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordBrowseView = null;
 				_propertyTable = null;
 				MainPanelMenuContextMenuFactory = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

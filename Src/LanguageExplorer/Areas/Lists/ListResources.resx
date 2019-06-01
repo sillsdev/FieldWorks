@@ -421,4 +421,7 @@ Are you sure you want to delete this list?</value>
   <data name="Item" xml:space="preserve">
     <value>Item</value>
   </data>
+  <data name="List_Item" xml:space="preserve">
+    <value>List Item</value>
+  </data>
 </root>

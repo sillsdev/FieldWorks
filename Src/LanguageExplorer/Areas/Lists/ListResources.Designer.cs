@@ -595,6 +595,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List Item.
+        /// </summary>
+        internal static string List_Item {
+            get {
+                return ResourceManager.GetString("List_Item", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;!-- this file this special instructions for XDE nodes. Currently, all that you are allowed to say is
         ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE

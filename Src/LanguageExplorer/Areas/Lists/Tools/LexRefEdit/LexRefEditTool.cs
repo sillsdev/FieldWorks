@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -164,6 +165,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal LexRefEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -176,16 +178,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 				SetupToolUiWidgets(tool);
 			}
 
 			private void SetupToolUiWidgets(ITool tool)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// Both insert menu & Insert tool bar. (No sub-item, since they are not nested.)
 				// <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertLexRefType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, ()=> CanCmdInsertLexRefType));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertLexRefType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, () => CanCmdInsertLexRefType));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, ()=> CanCmdInsertLexRefType));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, () => CanCmdInsertLexRefType));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Lexical_Relation);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
@@ -237,7 +242,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

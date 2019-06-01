@@ -88,11 +88,9 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				};
 			}
 			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-			var insertMenuItemsDictionary = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary;
 			var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
 			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-			var insertToolbarItemsDictionary = _majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary;
-			// Goes in Insert menu for all List Area tools.
+			// Goes in Insert menu for all honest List Area tools.
 			// <item command="CmdAddCustomList" defaultVisible="false" />
 			insertMenuDictionary.Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => CanCmdAddCustomList));
 			foreach (var command in commands)
@@ -113,21 +111,37 @@ namespace LanguageExplorer.Areas.Lists.Tools
 					case Command.CmdInsertPossibility: // Add to Hashset
 						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
 						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
-						insertMenuItemsDictionary[Command.CmdInsertPossibility].Text = names[AreaServices.List_Item];
 						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
-						insertToolbarItemsDictionary[Command.CmdInsertPossibility].ToolTipText = names[AreaServices.List_Item];
+						ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item]);
 						break;
 					case Command.CmdDataTree_Insert_Possibility: // Add to Hashset
 						// <command id="CmdDataTree_Insert_Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 						insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
-						insertMenuItemsDictionary[Command.CmdDataTree_Insert_Possibility].ToolTipText = names[AreaServices.Subitem];
 						insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
-						insertToolbarItemsDictionary[Command.CmdDataTree_Insert_Possibility].ToolTipText = names[AreaServices.Subitem];
+						ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Subitem]);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException($"Don't know how to process command: '{command.ToString()}'");
 				}
 			}
+		}
+
+		internal void ResetMainPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText)
+		{
+			ResetInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdInsertPossibility],
+				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdInsertPossibility], newText);
+		}
+
+		internal void ResetSubitemPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText)
+		{
+			ResetInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdDataTree_Insert_Possibility],
+				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], newText);
+		}
+
+		private static void ResetInsertUiWidgetsText(ToolStripItem menu, ToolStripItem toolBarButton, string newText)
+		{
+			menu.Text = newText;
+			toolBarButton.ToolTipText = newText;
 		}
 
 		private static Tuple<bool, bool> CanCmdAddCustomList => new Tuple<bool, bool>(true, true);
@@ -249,63 +263,6 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
 			}
 		}
-
-#if RANDYTODO
-		// TODO: Needs to wait until I can actually see what is happening with these in 9.0.7, before I can enable them.
-		/// <summary>
-		/// Call method if list tool supports a CmdDuplicateFoo command on the insert tool bar
-		/// </summary>
-		internal void SetupSharedDuplicateMainPossibility(ToolUiWidgetParameterObject toolUiWidgetParameterObject, Command command)
-		{
-		}
-
-		private void AddInsertToolbarItems()
-		{
-			const string duplicateMainItem = "duplicateMainItem";
-			var toolsThatSupportItemDuplication = new HashSet<string>
-			{
-				AreaServices.ChartmarkEditMachineName,
-				AreaServices.CharttempEditMachineName,
-				AreaServices.TextMarkupTagsEditMachineName
-			};
-			// Default in switch
-			if (toolsThatSupportItemDuplication.Contains(activeListTool.MachineName) || activeListTool.MachineName.StartsWith("CustomList"))
-			{
-				// Add support for the duplicate main item button.
-				toolbarButtonCreationData.Add(duplicateMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(Duplicate_Item_Clicked, ListResources.Duplicate_Item, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Duplicate_Item)));
-			}
-		}
-
-		private void Duplicate_Item_Clicked(object sender, EventArgs e)
-		{
-			// NB: This will not be enabled if a sub-item is the current record in the record list.
-			var tag = (List<object>)((ToolStripItem)sender).Tag;
-			var possibilityList = (ICmPossibilityList)tag[0];
-			var recordList = (IRecordList)tag[2];
-			var otherOptions = (Dictionary<string, string>)tag[4];
-			var currentPossibility = (ICmPossibility)recordList.CurrentObject;
-			UowHelpers.UndoExtension(otherOptions[AreaServices.BaseUowMessage], possibilityList.Cache.ActionHandlerAccessor, () =>
-			{
-				if (currentPossibility is ICmCustomItem)
-				{
-					((ICmCustomItem)currentPossibility).Clone();
-				}
-				else
-				{
-					// NB: This will throw, if 'currentPossibility' is a subclass of ICmPossibility, since we don't support duplicating those.
-					currentPossibility.Clone();
-				}
-			});
-		}
-
-		private void ApplicationOnIdle(object sender, EventArgs e)
-		{
-			if (_duplicateItemToolStripButton != null)
-			{
-				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
-			}
-		}
-#endif
 
 		private Tuple<bool, bool> CanCmdAddToLexicon
 		{

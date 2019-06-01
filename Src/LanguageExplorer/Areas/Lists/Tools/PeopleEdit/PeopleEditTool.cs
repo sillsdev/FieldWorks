@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -165,6 +166,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 			private readonly ITool _tool;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 			private IListArea Area => (IListArea)_tool.Area;
 
 			internal PeopleEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
@@ -179,17 +181,21 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 				_tool = tool;
 				_list = list;
 				_recordList = recordList;
-				SetupToolUiWidgets();
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
 			}
 
-			private void SetupToolUiWidgets()
+			private void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// <item command="CmdInsertPerson" defaultVisible="false" />
 				// Insert menu & Insert tool bar (but no sub-person).
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPerson, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, ()=> CanCmdInsertPerson));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPerson, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, () => CanCmdInsertPerson));
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, ()=> CanCmdInsertPerson));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, () => CanCmdInsertPerson));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Person);
 			}
 
 			private static Tuple<bool, bool> CanCmdInsertPerson => new Tuple<bool, bool>(true, true);
@@ -239,7 +245,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

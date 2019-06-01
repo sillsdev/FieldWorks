@@ -166,6 +166,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal VariantEntryTypeEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -178,14 +179,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 				SetupToolUiWidgets(tool, dataTree);
 			}
 
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// NB: Inserts one of two class options:
-				//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance.
+				//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance. (Thus, it can never be inserted at the top level of the list.)
 				//		2) It will only insert LexEntryType at the top or nested in other LexEntryType instances.
 				// <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
 				// <command id="CmdDataTree_Insert_LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem"> CmdDataTree_Insert_LexEntryType
@@ -193,12 +196,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				// Insert menu & tool bar
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertLexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
-				insertToolbarDictionary.Add(Command.CmdInsertLexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_LexEntryInflType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryInflType_Click, () => CanCmdDataTree_Insert_LexEntryInflType));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Variant_Type);
+
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntrySubitem_Click, () => CanCmdDataTree_Insert_LexEntrySubitem));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntrySubitem_Click, () => CanCmdDataTree_Insert_LexEntrySubitem));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subtype);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubVariantEntryType, Create_mnuDataTree_SubVariantEntryType);
 
@@ -226,21 +230,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<bool, bool> CanCmdDataTree_Insert_LexEntryInflType => new Tuple<bool, bool>(true, _recordList.CurrentObject is ILexEntryInflType);
-
-			private void CmdDataTree_Insert_LexEntryInflType_Click(object sender, EventArgs e)
-			{
-				ICmPossibility newSubPossibility = null;
-				UowHelpers.UndoExtension(ListResources.Insert_Type, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
-				{
-					newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create((ILexEntryInflType)_recordList.CurrentObject);
-				});
-				if (newSubPossibility != null)
-				{
-					_recordList.UpdateRecordTreeBar();
-				}
-			}
-
 			private static Tuple<bool, bool> CanCmdInsertLexEntryType => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertLexEntryType_Click(object sender, EventArgs e)
@@ -256,7 +245,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				}
 			}
 
-			private Tuple<bool, bool> CanCmdDataTree_Insert_LexEntryType => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+			private Tuple<bool, bool> CanCmdDataTree_Insert_LexEntrySubitem => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+
+			private void CmdDataTree_Insert_LexEntrySubitem_Click(object sender, EventArgs e)
+			{
+				ICmPossibility newSubPossibility = null;
+				UowHelpers.UndoExtension(ListResources.Insert_Type, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newSubPossibility = _recordList.CurrentObject is ILexEntryInflType ? _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create((ILexEntryInflType)_recordList.CurrentObject) : _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create((ILexEntryType)_recordList.CurrentObject);
+				});
+				if (newSubPossibility != null)
+				{
+					_recordList.UpdateRecordTreeBar();
+				}
+			}
 
 			private void CmdDataTree_Insert_LexEntryType_Click(object sender, EventArgs e)
 			{
@@ -303,7 +305,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}

@@ -214,6 +214,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				// <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, ()=> CanCmdInsertFeatureType));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, () => CanCmdInsertFeatureType));
+				// Change Text.
+				_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdInsertFeatureType].Text = ListResources.Feature_Type;
+				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdInsertFeatureType].ToolTipText = ListResources.Feature_Type;
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();

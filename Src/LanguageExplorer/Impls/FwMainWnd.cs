@@ -386,59 +386,20 @@ namespace LanguageExplorer.Impls
 
 		private Tuple<Dictionary<Command, ToolStripItem>, List<ISeparatorMenuBundle>> CacheInsertMenuItems()
 		{
-			var separatorCache1 = new StandAloneSeparatorMenuBundle(insertMenuSeparator1,
-				new List<ToolStripMenuItem> { CmdInsertLexEntry, CmdInsertSense, CmdInsertVariant, CmdDataTree_Insert_AlternateForm, CmdInsertReversalEntry,
-					CmdDataTree_Insert_Pronunciation, CmdInsertMediaFile, CmdDataTree_Insert_Etymology },
-				new List<ToolStripMenuItem> { CmdInsertSubsense, CmdInsertPicture, CmdInsertExtNote, CmdInsertText });
-			var separatorCache2 = new SeparatorMenuBundle(insertMenuSeparator2,
-				separatorCache1,
-				new List<ToolStripMenuItem> { CmdAddNote, CmdAddWordGlossesToFreeTrans, ClickInsertsInvisibleSpace, CmdGuessWordBreaks });
-			var separatorCache3 = new SeparatorMenuBundle(insertMenuSeparator3,
-				separatorCache2,
-				new List<ToolStripMenuItem>
-				{
-					CmdImportWordSet, CmdInsertHumanApprovedAnalysis, CmdInsertRecord, CmdInsertSubrecord, CmdInsertSubsubrecord, CmdAddToLexicon, CmdInsertSemDom,
-					CmdDataTree_Insert_SemanticDomain, CmdInsertAnnotationDef, CmdInsertPossibility, CmdInsertCustomItem, CmdInsertMorphType, CmdInsertLexEntryInflType, CmdInsertLexEntryType,
-					CmdDataTree_Insert_LexEntryInflType, CmdDataTree_Insert_LexEntryType, CmdInsertAnthroCategory, CmdDataTree_Insert_AnthroCategory, CmdInsertPerson, CmdInsertLocation,
-					CmdDataTree_Insert_Location, CmdInsertLexRefType, CmdInsertFeatureType, CmdDataTree_Insert_Possibility, CmdDataTree_Insert_CustomItem
-				});
-			var separatorCache4 = new SeparatorMenuBundle(insertMenuSeparator4,
-				separatorCache3,
-				new List<ToolStripMenuItem> { CmdAddCustomList, CmdInsertPOS, CmdDataTree_Insert_POS_SubPossibilities, CmdDataTree_Insert_POS_AffixTemplate, CmdDataTree_Insert_POS_AffixSlot, CmdDataTree_Insert_POS_InflectionClass });
-			var separatorCache5 = new SeparatorMenuBundle(insertMenuSeparator5,
-				separatorCache4,
-				new List<ToolStripMenuItem> { CmdInsertEndocentricCompound, CmdInsertExocentricCompound, CmdInsertExceptionFeature, CmdInsertPhonologicalClosedFeature, CmdInsertClosedFeature, CmdInsertComplexFeature, CmdDataTree_Insert_ClosedFeature_Value });
-			var separatorCache6 = new SeparatorMenuBundle(insertMenuSeparator6,
-				separatorCache5,
-				new List<ToolStripMenuItem> { CmdInsertPhoneme, CmdDataTree_Insert_Phoneme_Code });
-			var separatorCache7 = new SeparatorMenuBundle(insertMenuSeparator7,
-				separatorCache6,
-				new List<ToolStripMenuItem> { CmdInsertSegmentNaturalClasses, CmdInsertFeatureNaturalClasses });
-			var separatorCache8 = new SeparatorMenuBundle(insertMenuSeparator8,
-				separatorCache7,
-				new List<ToolStripMenuItem> { CmdInsertPhEnvironment });
-			var separatorCache9 = new SeparatorMenuBundle(insertMenuSeparator9,
-				separatorCache8,
-				new List<ToolStripMenuItem> { CmdInsertPhRegularRule, CmdInsertPhMetathesisRule });
-			var separatorCache10 = new SeparatorMenuBundle(insertMenuSeparator10,
-				separatorCache9,
-				new List<ToolStripMenuItem> { CmdInsertMorphemeACP, CmdInsertAllomorphACP, CmdInsertACPGroup });
-			var separatorCache11 = new SeparatorMenuBundle(insertMenuSeparator11,
-				separatorCache10,
+			var separatorCache = new StandAloneSeparatorMenuBundle(insertMenuSeparator1,
+				new List<ToolStripMenuItem> { CmdInsertLexEntry, CmdInsertSense, CmdInsertVariant, CmdDataTree_Insert_AlternateForm, CmdInsertReversalEntry, CmdDataTree_Insert_Pronunciation,
+					CmdInsertMediaFile, CmdDataTree_Insert_Etymology, CmdInsertSubsense, CmdInsertPicture, CmdInsertExtNote, CmdInsertText, CmdAddNote, CmdAddWordGlossesToFreeTrans,
+					ClickInsertsInvisibleSpace, CmdGuessWordBreaks, CmdImportWordSet, CmdInsertHumanApprovedAnalysis, CmdInsertRecord, CmdInsertSubrecord, CmdInsertSubsubrecord, CmdAddToLexicon,
+					CmdInsertPossibility, CmdDataTree_Insert_Possibility, CmdAddCustomList, CmdDataTree_Insert_POS_AffixTemplate, CmdDataTree_Insert_POS_AffixSlot,
+					CmdDataTree_Insert_POS_InflectionClass, CmdInsertEndocentricCompound, CmdInsertExocentricCompound, CmdInsertExceptionFeature, CmdInsertPhonologicalClosedFeature,
+					CmdInsertClosedFeature, CmdInsertComplexFeature, CmdDataTree_Insert_ClosedFeature_Value, CmdInsertPhoneme, CmdDataTree_Insert_Phoneme_Code, CmdInsertSegmentNaturalClasses,
+					CmdInsertFeatureNaturalClasses, CmdInsertPhEnvironment, CmdInsertPhRegularRule, CmdInsertPhMetathesisRule,
+					CmdInsertMorphemeACP, CmdInsertAllomorphACP, CmdInsertACPGroup
+				},
 				new List<ToolStripMenuItem> { CmdShowCharMap, CmdInsertLinkToFile });
 			var separatorCaches = new List<ISeparatorMenuBundle>
 			{
-				separatorCache1,
-				separatorCache2,
-				separatorCache3,
-				separatorCache4,
-				separatorCache5,
-				separatorCache6,
-				separatorCache7,
-				separatorCache8,
-				separatorCache9,
-				separatorCache10,
-				separatorCache11
+				separatorCache
 			};
 			var commandMap = new Dictionary<Command, ToolStripItem>
 			{
@@ -450,50 +411,27 @@ namespace LanguageExplorer.Impls
 				{Command.CmdDataTree_Insert_Pronunciation, CmdDataTree_Insert_Pronunciation},
 				{Command.CmdInsertMediaFile, CmdInsertMediaFile},
 				{Command.CmdDataTree_Insert_Etymology, CmdDataTree_Insert_Etymology},
-				{Command.Separator1, insertMenuSeparator1},
 				{Command.CmdInsertSubsense, CmdInsertSubsense},
 				{Command.CmdInsertPicture, CmdInsertPicture},
 				{Command.CmdInsertExtNote, CmdInsertExtNote},
 				{Command.CmdInsertText, CmdInsertText},
-				{Command.Separator2, insertMenuSeparator2},
 				{Command.CmdAddNote, CmdAddNote},
 				{Command.CmdAddWordGlossesToFreeTrans, CmdAddWordGlossesToFreeTrans},
 				{Command.ClickInvisibleSpace, ClickInsertsInvisibleSpace},
 				{Command.CmdGuessWordBreaks, CmdGuessWordBreaks},
-				{Command.Separator3, insertMenuSeparator3},
 				{Command.CmdImportWordSet, CmdImportWordSet},
 				{Command.CmdInsertHumanApprovedAnalysis, CmdInsertHumanApprovedAnalysis},
 				{Command.CmdInsertRecord, CmdInsertRecord},
 				{Command.CmdInsertSubrecord, CmdInsertSubrecord},
 				{Command.CmdInsertSubsubrecord, CmdInsertSubsubrecord},
 				{Command.CmdAddToLexicon, CmdAddToLexicon},
-				{Command.CmdInsertSemDom, CmdInsertSemDom},
-				{Command.CmdDataTree_Insert_SemanticDomain, CmdDataTree_Insert_SemanticDomain},
-				{Command.CmdInsertAnnotationDef, CmdInsertAnnotationDef},
 				{Command.CmdInsertPossibility, CmdInsertPossibility},
-				{Command.CmdInsertCustomItem, CmdInsertCustomItem},
-				{Command.CmdInsertMorphType, CmdInsertMorphType},
-				{Command.CmdInsertLexEntryInflType, CmdInsertLexEntryInflType},
-				{Command.CmdInsertLexEntryType, CmdInsertLexEntryType},
-				{Command.CmdDataTree_Insert_LexEntryInflType, CmdDataTree_Insert_LexEntryInflType},
-				{Command.CmdDataTree_Insert_LexEntryType, CmdDataTree_Insert_LexEntryType},
-				{Command.CmdInsertAnthroCategory, CmdInsertAnthroCategory},
-				{Command.CmdDataTree_Insert_AnthroCategory, CmdDataTree_Insert_AnthroCategory},
-				{Command.CmdInsertPerson, CmdInsertPerson},
-				{Command.CmdInsertLocation, CmdInsertLocation},
-				{Command.CmdDataTree_Insert_Location, CmdDataTree_Insert_Location},
-				{Command.CmdInsertLexRefType, CmdInsertLexRefType},
-				{Command.CmdInsertFeatureType, CmdInsertFeatureType},
+				{Command.CmdInsertFeatureType, CmdInsertPossibility},
 				{Command.CmdDataTree_Insert_Possibility, CmdDataTree_Insert_Possibility},
-				{Command.CmdDataTree_Insert_CustomItem, CmdDataTree_Insert_CustomItem},
-				{Command.Separator4, insertMenuSeparator4},
 				{Command.CmdAddCustomList, CmdAddCustomList},
-				{Command.CmdInsertPOS, CmdInsertPOS},
-				{Command.CmdDataTree_Insert_POS_SubPossibilities, CmdDataTree_Insert_POS_SubPossibilities},
 				{Command.CmdDataTree_Insert_POS_AffixTemplate, CmdDataTree_Insert_POS_AffixTemplate},
 				{Command.CmdDataTree_Insert_POS_AffixSlot, CmdDataTree_Insert_POS_AffixSlot},
 				{Command.CmdDataTree_Insert_POS_InflectionClass, CmdDataTree_Insert_POS_InflectionClass},
-				{Command.Separator5, insertMenuSeparator5},
 				{Command.CmdInsertEndocentricCompound, CmdInsertEndocentricCompound},
 				{Command.CmdInsertExocentricCompound, CmdInsertExocentricCompound},
 				{Command.CmdInsertExceptionFeature, CmdInsertExceptionFeature},
@@ -501,22 +439,17 @@ namespace LanguageExplorer.Impls
 				{Command.CmdInsertClosedFeature, CmdInsertClosedFeature},
 				{Command.CmdInsertComplexFeature, CmdInsertComplexFeature},
 				{Command.CmdDataTree_Insert_ClosedFeature_Value, CmdDataTree_Insert_ClosedFeature_Value},
-				{Command.Separator6, insertMenuSeparator6},
 				{Command.CmdInsertPhoneme, CmdInsertPhoneme},
 				{Command.CmdDataTree_Insert_Phoneme_Code, CmdDataTree_Insert_Phoneme_Code},
-				{Command.Separator7, insertMenuSeparator7},
 				{Command.CmdInsertSegmentNaturalClasses, CmdInsertSegmentNaturalClasses},
 				{Command.CmdInsertFeatureNaturalClasses, CmdInsertFeatureNaturalClasses},
-				{Command.Separator8, insertMenuSeparator8},
 				{Command.CmdInsertPhEnvironment, CmdInsertPhEnvironment},
-				{Command.Separator9, insertMenuSeparator9},
 				{Command.CmdInsertPhRegularRule, CmdInsertPhRegularRule},
 				{Command.CmdInsertPhMetathesisRule, CmdInsertPhMetathesisRule},
-				{Command.Separator10, insertMenuSeparator10},
 				{Command.CmdInsertMorphemeACP, CmdInsertMorphemeACP},
 				{Command.CmdInsertAllomorphACP, CmdInsertAllomorphACP},
 				{Command.CmdInsertACPGroup, CmdInsertACPGroup},
-				{Command.Separator11, insertMenuSeparator11},
+				{Command.Separator1, insertMenuSeparator1},
 				{Command.CmdShowCharMap, CmdShowCharMap},
 				{Command.CmdInsertLinkToFile, CmdInsertLinkToFile}
 			};
@@ -747,13 +680,7 @@ namespace LanguageExplorer.Impls
 				});
 			var separatorCache2 = new SeparatorToolStripBundle(insertToolStripSeparator2, separatorCache1, new List<ToolStripItem>
 			{
-				Toolbar_CmdAddToLexicon, Toolbar_CmdLexiconLookup, Toolbar_CmdInsertSemDom, Toolbar_CmdDataTree_Insert_SemanticDomain, Toolbar_CmdInsertAnnotationDef, Toolbar_CmdInsertPossibility,
-				Toolbar_CmdInsertCustomItem, Toolbar_CmdInsertMorphType, Toolbar_CmdInsertLexEntryInflType, Toolbar_CmdInsertLexEntryType, Toolbar_CmdDataTree_Insert_LexEntryInflType,
-				Toolbar_CmdDataTree_Insert_LexEntryType, Toolbar_CmdInsertAnthroCategory, Toolbar_CmdDataTree_Insert_AnthroCategory, Toolbar_CmdInsertPerson, Toolbar_CmdInsertLocation,
-				Toolbar_CmdDataTree_Insert_Location, Toolbar_CmdInsertLexRefType, Toolbar_CmdInsertFeatureType, Toolbar_CmdDataTree_Insert_Possibility, Toolbar_CmdDataTree_Insert_CustomItem,
-				Toolbar_CmdDuplicateSemDom, Toolbar_CmdDuplicateAnnotationDef, Toolbar_CmdDuplicatePossibility, Toolbar_CmdDuplicateCustomItem, Toolbar_CmdDuplicateMorphType,
-				Toolbar_CmdDuplicateAnthroCategory, Toolbar_CmdDuplicatePerson, Toolbar_CmdDuplicateLocation, Toolbar_CmdDuplicateLexRefType, Toolbar_CmdDuplicateFeatureType,
-				Toolbar_CmdInsertPOS, Toolbar_CmdDataTree_Insert_POS_SubPossibilities
+				Toolbar_CmdAddToLexicon, Toolbar_CmdLexiconLookup, Toolbar_CmdInsertPossibility, Toolbar_CmdDataTree_Insert_Possibility
 			});
 			var separatorCache3 = new SeparatorToolStripBundle(insertToolStripSeparator3, separatorCache2, new List<ToolStripItem>
 			{
@@ -802,37 +729,9 @@ namespace LanguageExplorer.Impls
 				{ Command.Separator2, insertToolStripSeparator2},
 				{ Command.CmdAddToLexicon, Toolbar_CmdAddToLexicon},
 				{ Command.CmdLexiconLookup, Toolbar_CmdLexiconLookup},
-				{ Command.CmdInsertSemDom, Toolbar_CmdInsertSemDom},
-				{ Command.CmdDataTree_Insert_SemanticDomain, Toolbar_CmdDataTree_Insert_SemanticDomain},
-				{ Command.CmdInsertAnnotationDef, Toolbar_CmdInsertAnnotationDef},
 				{ Command.CmdInsertPossibility, Toolbar_CmdInsertPossibility},
-				{ Command.CmdInsertCustomItem, Toolbar_CmdInsertCustomItem},
-				{ Command.CmdInsertMorphType, Toolbar_CmdInsertMorphType},
-				{ Command.CmdInsertLexEntryInflType, Toolbar_CmdInsertLexEntryInflType},
-				{ Command.CmdInsertLexEntryType, Toolbar_CmdInsertLexEntryType},
-				{ Command.CmdDataTree_Insert_LexEntryInflType, Toolbar_CmdDataTree_Insert_LexEntryInflType},
-				{ Command.CmdDataTree_Insert_LexEntryType, Toolbar_CmdDataTree_Insert_LexEntryType},
-				{ Command.CmdInsertAnthroCategory, Toolbar_CmdInsertAnthroCategory},
-				{ Command.CmdDataTree_Insert_AnthroCategory, Toolbar_CmdDataTree_Insert_AnthroCategory},
-				{ Command.CmdInsertPerson, Toolbar_CmdInsertPerson},
-				{ Command.CmdInsertLocation, Toolbar_CmdInsertLocation},
-				{ Command.CmdDataTree_Insert_Location, Toolbar_CmdDataTree_Insert_Location},
-				{ Command.CmdInsertLexRefType, Toolbar_CmdInsertLexRefType},
-				{ Command.CmdInsertFeatureType, Toolbar_CmdInsertFeatureType},
+				{ Command.CmdInsertFeatureType, Toolbar_CmdInsertPossibility},
 				{ Command.CmdDataTree_Insert_Possibility, Toolbar_CmdDataTree_Insert_Possibility},
-				{ Command.CmdDataTree_Insert_CustomItem, Toolbar_CmdDataTree_Insert_CustomItem},
-				{ Command.CmdDuplicateSemDom, Toolbar_CmdDuplicateSemDom},
-				{ Command.CmdDuplicateAnnotationDef, Toolbar_CmdDuplicateAnnotationDef},
-				{ Command.CmdDuplicatePossibility, Toolbar_CmdDuplicatePossibility},
-				{ Command.CmdDuplicateCustomItem, Toolbar_CmdDuplicateCustomItem},
-				{ Command.CmdDuplicateMorphType, Toolbar_CmdDuplicateMorphType},
-				{ Command.CmdDuplicateAnthroCategory, Toolbar_CmdDuplicateAnthroCategory},
-				{ Command.CmdDuplicatePerson, Toolbar_CmdDuplicatePerson},
-				{ Command.CmdDuplicateLocation, Toolbar_CmdDuplicateLocation},
-				{ Command.CmdDuplicateLexRefType, Toolbar_CmdDuplicateLexRefType},
-				{ Command.CmdDuplicateFeatureType, Toolbar_CmdDuplicateFeatureType},
-				{ Command.CmdInsertPOS, Toolbar_CmdInsertPOS},
-				{ Command.CmdDataTree_Insert_POS_SubPossibilities, Toolbar_CmdDataTree_Insert_POS_SubPossibilities},
 				{ Command.Separator3, insertToolStripSeparator3},
 				{ Command.CmdInsertEndocentricCompound, Toolbar_CmdInsertEndocentricCompound},
 				{ Command.CmdInsertExocentricCompound, Toolbar_CmdInsertExocentricCompound},
@@ -1389,6 +1288,14 @@ namespace LanguageExplorer.Impls
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			SetupCustomStatusBarPanels();
+#if RANDYTODO
+			// TODO: Moved to SetupUiWidgets. Hopefully, the new ordering won't impact the following stuff.
+			CmdProjectLocation.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
+			CmdArchiveWithRamp.Enabled = ReapRamp.Installed;
+			_viewHelper = new ActiveViewHelper(this);
+			_linkHandler = new LinkHandler(this, Cache, CmdHistoryBack, CmdHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
+			_linkHandler.InitializeFlexComponent(flexComponentParameters);
+#endif
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();

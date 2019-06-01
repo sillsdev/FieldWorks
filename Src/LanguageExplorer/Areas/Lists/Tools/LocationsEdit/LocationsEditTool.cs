@@ -165,6 +165,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 
 			internal LocationsEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{
@@ -177,12 +178,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_list = list;
 				_recordList = recordList;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
 				SetupToolUiWidgets(tool, dataTree);
 			}
 
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
 				// Goes in Insert menu & Insert toolbar;
 				var menuItemsDictionary = toolUiWidgetParameterObject.MenuItemsForTool;
 				var toolBarItemsDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool;
@@ -190,10 +193,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				var insertToolbarDictionary = toolBarItemsDictionary[ToolBar.Insert];
 				// <item command="CmdInsertLocation" defaultVisible="false" />
 				// <item command="CmdDataTree_Insert_Location" defaultVisible="false" label="Subitem" />
-				insertMenuDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> CanCmdInsertLocation));
-				insertToolbarDictionary.Add(Command.CmdInsertLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => CanCmdInsertLocation));
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Location, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> CanCmdInsertLocation));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => CanCmdInsertLocation));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Location);
+
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
 

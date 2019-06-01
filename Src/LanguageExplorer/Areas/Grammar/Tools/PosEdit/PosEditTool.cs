@@ -169,6 +169,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 #if RANDYTODO
 				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
+				// Use common: CmdInsertPossibility & CmdDataTree_Insert_Possibility, rather than the now removed as obsolete: CmdInsertPOS & CmdDataTree_Insert_POS_SubPossibilities
 #endif
 			}
 
