@@ -290,7 +290,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertReversalEntry = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdGoToReversalEntry = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertText = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdAddNote = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdApproveAllButton = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertHumanApprovedAnalysis = new System.Windows.Forms.ToolStripButton();
@@ -299,29 +298,22 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdBreakPhraseButton = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertRecord = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdGoToRecord = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdAddToLexicon = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdLexiconLookup = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertPossibility = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdDataTree_Insert_Possibility = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertEndocentricCompound = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertExocentricCompound = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertExceptionFeature = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertPhonologicalClosedFeature = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertClosedFeature = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertComplexFeature = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertPhoneme = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertSegmentNaturalClasses = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertFeatureNaturalClasses = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertPhEnvironment = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertPhRegularRule = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertPhMetathesisRule = new System.Windows.Forms.ToolStripButton();
-            this.insertToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.Toolbar_CmdInsertMorphemeACP = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertAllomorphACP = new System.Windows.Forms.ToolStripButton();
             this.Toolbar_CmdInsertACPGroup = new System.Windows.Forms.ToolStripButton();
@@ -1377,28 +1369,28 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertLexEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLexEntry.Image")));
             this.CmdInsertLexEntry.Name = "CmdInsertLexEntry";
-            this.CmdInsertLexEntry.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertLexEntry.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertLexEntry.Text = "&Entry...";
             this.CmdInsertLexEntry.Visible = false;
             // 
             // CmdInsertSense
             // 
             this.CmdInsertSense.Name = "CmdInsertSense";
-            this.CmdInsertSense.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertSense.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertSense.Text = "&Sense";
             this.CmdInsertSense.Visible = false;
             // 
             // CmdInsertVariant
             // 
             this.CmdInsertVariant.Name = "CmdInsertVariant";
-            this.CmdInsertVariant.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertVariant.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertVariant.Text = "&Variant";
             this.CmdInsertVariant.Visible = false;
             // 
             // CmdDataTree_Insert_AlternateForm
             // 
             this.CmdDataTree_Insert_AlternateForm.Name = "CmdDataTree_Insert_AlternateForm";
-            this.CmdDataTree_Insert_AlternateForm.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_AlternateForm.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_AlternateForm.Text = "A&llomorph";
             this.CmdDataTree_Insert_AlternateForm.Visible = false;
             // 
@@ -1406,49 +1398,49 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertReversalEntry.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertReversalEntry.Image")));
             this.CmdInsertReversalEntry.Name = "CmdInsertReversalEntry";
-            this.CmdInsertReversalEntry.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertReversalEntry.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertReversalEntry.Text = "Reversal Entry";
             this.CmdInsertReversalEntry.Visible = false;
             // 
             // CmdDataTree_Insert_Pronunciation
             // 
             this.CmdDataTree_Insert_Pronunciation.Name = "CmdDataTree_Insert_Pronunciation";
-            this.CmdDataTree_Insert_Pronunciation.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_Pronunciation.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_Pronunciation.Text = "&Pronunciation";
             this.CmdDataTree_Insert_Pronunciation.Visible = false;
             // 
             // CmdInsertMediaFile
             // 
             this.CmdInsertMediaFile.Name = "CmdInsertMediaFile";
-            this.CmdInsertMediaFile.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertMediaFile.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertMediaFile.Text = "&Sound or Movie";
             this.CmdInsertMediaFile.Visible = false;
             // 
             // CmdDataTree_Insert_Etymology
             // 
             this.CmdDataTree_Insert_Etymology.Name = "CmdDataTree_Insert_Etymology";
-            this.CmdDataTree_Insert_Etymology.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_Etymology.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_Etymology.Text = "&Etymology";
             this.CmdDataTree_Insert_Etymology.Visible = false;
             // 
             // CmdInsertSubsense
             // 
             this.CmdInsertSubsense.Name = "CmdInsertSubsense";
-            this.CmdInsertSubsense.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertSubsense.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertSubsense.Text = "Subsense (in sense)";
             this.CmdInsertSubsense.Visible = false;
             // 
             // CmdInsertPicture
             // 
             this.CmdInsertPicture.Name = "CmdInsertPicture";
-            this.CmdInsertPicture.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPicture.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPicture.Text = "&Picture";
             this.CmdInsertPicture.Visible = false;
             // 
             // CmdInsertExtNote
             // 
             this.CmdInsertExtNote.Name = "CmdInsertExtNote";
-            this.CmdInsertExtNote.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertExtNote.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertExtNote.Text = "&Extended Note";
             this.CmdInsertExtNote.Visible = false;
             // 
@@ -1457,7 +1449,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertText.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertText.Image")));
             this.CmdInsertText.Name = "CmdInsertText";
             this.CmdInsertText.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.CmdInsertText.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertText.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertText.Text = "New &Text";
             this.CmdInsertText.Visible = false;
             // 
@@ -1466,14 +1458,14 @@ namespace LanguageExplorer.Impls
             this.CmdAddNote.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddNote.Image")));
             this.CmdAddNote.Name = "CmdAddNote";
             this.CmdAddNote.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.CmdAddNote.Size = new System.Drawing.Size(300, 26);
+            this.CmdAddNote.Size = new System.Drawing.Size(296, 22);
             this.CmdAddNote.Text = "&Note";
             this.CmdAddNote.Visible = false;
             // 
             // CmdAddWordGlossesToFreeTrans
             // 
             this.CmdAddWordGlossesToFreeTrans.Name = "CmdAddWordGlossesToFreeTrans";
-            this.CmdAddWordGlossesToFreeTrans.Size = new System.Drawing.Size(300, 26);
+            this.CmdAddWordGlossesToFreeTrans.Size = new System.Drawing.Size(296, 22);
             this.CmdAddWordGlossesToFreeTrans.Text = "&Word Glosses";
             this.CmdAddWordGlossesToFreeTrans.Visible = false;
             // 
@@ -1482,7 +1474,7 @@ namespace LanguageExplorer.Impls
             this.ClickInsertsInvisibleSpace.CheckOnClick = true;
             this.ClickInsertsInvisibleSpace.Image = ((System.Drawing.Image)(resources.GetObject("ClickInsertsInvisibleSpace.Image")));
             this.ClickInsertsInvisibleSpace.Name = "ClickInsertsInvisibleSpace";
-            this.ClickInsertsInvisibleSpace.Size = new System.Drawing.Size(300, 26);
+            this.ClickInsertsInvisibleSpace.Size = new System.Drawing.Size(296, 22);
             this.ClickInsertsInvisibleSpace.Text = "Click Inserts Invisible Space";
             this.ClickInsertsInvisibleSpace.ToolTipText = "Turn on mode in which a click inserts an invisible, zero-width space.";
             this.ClickInsertsInvisibleSpace.Visible = false;
@@ -1490,7 +1482,7 @@ namespace LanguageExplorer.Impls
             // CmdGuessWordBreaks
             // 
             this.CmdGuessWordBreaks.Name = "CmdGuessWordBreaks";
-            this.CmdGuessWordBreaks.Size = new System.Drawing.Size(300, 26);
+            this.CmdGuessWordBreaks.Size = new System.Drawing.Size(296, 22);
             this.CmdGuessWordBreaks.Text = "&Guess Word Breaks";
             this.CmdGuessWordBreaks.ToolTipText = "Have Language Explorer insert invisible, zero-width spaces as word breaks accordi" +
     "ng to the word list and lexical entries.";
@@ -1499,7 +1491,7 @@ namespace LanguageExplorer.Impls
             // CmdImportWordSet
             // 
             this.CmdImportWordSet.Name = "CmdImportWordSet";
-            this.CmdImportWordSet.Size = new System.Drawing.Size(300, 26);
+            this.CmdImportWordSet.Size = new System.Drawing.Size(296, 22);
             this.CmdImportWordSet.Text = "&Import Word Set...";
             this.CmdImportWordSet.Visible = false;
             // 
@@ -1507,7 +1499,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertHumanApprovedAnalysis.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertHumanApprovedAnalysis.Image")));
             this.CmdInsertHumanApprovedAnalysis.Name = "CmdInsertHumanApprovedAnalysis";
-            this.CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertHumanApprovedAnalysis.Text = "Add Approved Analysis...";
             this.CmdInsertHumanApprovedAnalysis.Visible = false;
             // 
@@ -1516,7 +1508,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertRecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertRecord.Image")));
             this.CmdInsertRecord.Name = "CmdInsertRecord";
             this.CmdInsertRecord.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertRecord.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertRecord.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertRecord.Text = "Record";
             this.CmdInsertRecord.Visible = false;
             // 
@@ -1524,7 +1516,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertSubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubrecord.Image")));
             this.CmdInsertSubrecord.Name = "CmdInsertSubrecord";
-            this.CmdInsertSubrecord.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertSubrecord.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertSubrecord.Text = "Subrecord";
             this.CmdInsertSubrecord.Visible = false;
             // 
@@ -1532,7 +1524,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertSubsubrecord.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSubsubrecord.Image")));
             this.CmdInsertSubsubrecord.Name = "CmdInsertSubsubrecord";
-            this.CmdInsertSubsubrecord.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertSubsubrecord.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertSubsubrecord.Text = "Subrecord of subrecord";
             this.CmdInsertSubsubrecord.Visible = false;
             // 
@@ -1540,7 +1532,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdAddToLexicon.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddToLexicon.Image")));
             this.CmdAddToLexicon.Name = "CmdAddToLexicon";
-            this.CmdAddToLexicon.Size = new System.Drawing.Size(300, 26);
+            this.CmdAddToLexicon.Size = new System.Drawing.Size(296, 22);
             this.CmdAddToLexicon.Text = "Add to Dictionary...";
             this.CmdAddToLexicon.Visible = false;
             // 
@@ -1549,7 +1541,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPossibility.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPossibility.Image")));
             this.CmdInsertPossibility.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.CmdInsertPossibility.Name = "CmdInsertPossibility";
-            this.CmdInsertPossibility.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPossibility.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPossibility.Text = "&Item";
             this.CmdInsertPossibility.Visible = false;
             // 
@@ -1558,35 +1550,35 @@ namespace LanguageExplorer.Impls
             this.CmdDataTree_Insert_Possibility.Image = global::LanguageExplorer.LanguageExplorerResources.Insert_Sub_Cat;
             this.CmdDataTree_Insert_Possibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
             this.CmdDataTree_Insert_Possibility.Name = "CmdDataTree_Insert_Possibility";
-            this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_Possibility.Text = "Subitem";
             this.CmdDataTree_Insert_Possibility.Visible = false;
             // 
             // CmdAddCustomList
             // 
             this.CmdAddCustomList.Name = "CmdAddCustomList";
-            this.CmdAddCustomList.Size = new System.Drawing.Size(300, 26);
+            this.CmdAddCustomList.Size = new System.Drawing.Size(296, 22);
             this.CmdAddCustomList.Text = "Custom &List...";
             this.CmdAddCustomList.Visible = false;
             // 
             // CmdDataTree_Insert_POS_AffixTemplate
             // 
             this.CmdDataTree_Insert_POS_AffixTemplate.Name = "CmdDataTree_Insert_POS_AffixTemplate";
-            this.CmdDataTree_Insert_POS_AffixTemplate.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_POS_AffixTemplate.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_POS_AffixTemplate.Text = "Insert Affix Template";
             this.CmdDataTree_Insert_POS_AffixTemplate.Visible = false;
             // 
             // CmdDataTree_Insert_POS_AffixSlot
             // 
             this.CmdDataTree_Insert_POS_AffixSlot.Name = "CmdDataTree_Insert_POS_AffixSlot";
-            this.CmdDataTree_Insert_POS_AffixSlot.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_POS_AffixSlot.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_POS_AffixSlot.Text = "Insert Affix Slot";
             this.CmdDataTree_Insert_POS_AffixSlot.Visible = false;
             // 
             // CmdDataTree_Insert_POS_InflectionClass
             // 
             this.CmdDataTree_Insert_POS_InflectionClass.Name = "CmdDataTree_Insert_POS_InflectionClass";
-            this.CmdDataTree_Insert_POS_InflectionClass.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_POS_InflectionClass.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_POS_InflectionClass.Text = "Insert Inflection Class";
             this.CmdDataTree_Insert_POS_InflectionClass.Visible = false;
             // 
@@ -1594,7 +1586,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertEndocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertEndocentricCompound.Image")));
             this.CmdInsertEndocentricCompound.Name = "CmdInsertEndocentricCompound";
-            this.CmdInsertEndocentricCompound.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertEndocentricCompound.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertEndocentricCompound.Text = "Headed Compound";
             this.CmdInsertEndocentricCompound.Visible = false;
             // 
@@ -1602,7 +1594,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertExocentricCompound.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExocentricCompound.Image")));
             this.CmdInsertExocentricCompound.Name = "CmdInsertExocentricCompound";
-            this.CmdInsertExocentricCompound.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertExocentricCompound.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertExocentricCompound.Text = "Non-headed Compound";
             this.CmdInsertExocentricCompound.Visible = false;
             // 
@@ -1610,7 +1602,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExceptionFeature.Image")));
             this.CmdInsertExceptionFeature.Name = "CmdInsertExceptionFeature";
-            this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertExceptionFeature.Text = "&Exception Feature...";
             this.CmdInsertExceptionFeature.Visible = false;
             // 
@@ -1618,7 +1610,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertPhonologicalClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhonologicalClosedFeature.Image")));
             this.CmdInsertPhonologicalClosedFeature.Name = "CmdInsertPhonologicalClosedFeature";
-            this.CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPhonologicalClosedFeature.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPhonologicalClosedFeature.Text = "&Phonological Feature...";
             this.CmdInsertPhonologicalClosedFeature.Visible = false;
             // 
@@ -1626,7 +1618,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertClosedFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertClosedFeature.Image")));
             this.CmdInsertClosedFeature.Name = "CmdInsertClosedFeature";
-            this.CmdInsertClosedFeature.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertClosedFeature.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertClosedFeature.Text = "&Feature...";
             this.CmdInsertClosedFeature.Visible = false;
             // 
@@ -1634,14 +1626,14 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertComplexFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertComplexFeature.Image")));
             this.CmdInsertComplexFeature.Name = "CmdInsertComplexFeature";
-            this.CmdInsertComplexFeature.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertComplexFeature.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertComplexFeature.Text = "&Complex Feature...";
             this.CmdInsertComplexFeature.Visible = false;
             // 
             // CmdDataTree_Insert_ClosedFeature_Value
             // 
             this.CmdDataTree_Insert_ClosedFeature_Value.Name = "CmdDataTree_Insert_ClosedFeature_Value";
-            this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_ClosedFeature_Value.Text = "Insert Feature Value";
             this.CmdDataTree_Insert_ClosedFeature_Value.Visible = false;
             // 
@@ -1650,14 +1642,14 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPhoneme.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhoneme.Image")));
             this.CmdInsertPhoneme.Name = "CmdInsertPhoneme";
             this.CmdInsertPhoneme.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertPhoneme.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPhoneme.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPhoneme.Text = "Phoneme";
             this.CmdInsertPhoneme.Visible = false;
             // 
             // CmdDataTree_Insert_Phoneme_Code
             // 
             this.CmdDataTree_Insert_Phoneme_Code.Name = "CmdDataTree_Insert_Phoneme_Code";
-            this.CmdDataTree_Insert_Phoneme_Code.Size = new System.Drawing.Size(300, 26);
+            this.CmdDataTree_Insert_Phoneme_Code.Size = new System.Drawing.Size(296, 22);
             this.CmdDataTree_Insert_Phoneme_Code.Text = "Grapheme";
             this.CmdDataTree_Insert_Phoneme_Code.Visible = false;
             // 
@@ -1666,7 +1658,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertSegmentNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertSegmentNaturalClasses.Image")));
             this.CmdInsertSegmentNaturalClasses.Name = "CmdInsertSegmentNaturalClasses";
             this.CmdInsertSegmentNaturalClasses.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertSegmentNaturalClasses.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertSegmentNaturalClasses.Text = "Natural Class (Phonemes)";
             this.CmdInsertSegmentNaturalClasses.Visible = false;
             // 
@@ -1674,7 +1666,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertFeatureNaturalClasses.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertFeatureNaturalClasses.Image")));
             this.CmdInsertFeatureNaturalClasses.Name = "CmdInsertFeatureNaturalClasses";
-            this.CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertFeatureNaturalClasses.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertFeatureNaturalClasses.Text = "Natural Class (Features)";
             this.CmdInsertFeatureNaturalClasses.Visible = false;
             // 
@@ -1683,7 +1675,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertPhEnvironment.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhEnvironment.Image")));
             this.CmdInsertPhEnvironment.Name = "CmdInsertPhEnvironment";
             this.CmdInsertPhEnvironment.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.CmdInsertPhEnvironment.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPhEnvironment.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPhEnvironment.Text = "Environment";
             this.CmdInsertPhEnvironment.Visible = false;
             // 
@@ -1691,7 +1683,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertPhRegularRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhRegularRule.Image")));
             this.CmdInsertPhRegularRule.Name = "CmdInsertPhRegularRule";
-            this.CmdInsertPhRegularRule.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPhRegularRule.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPhRegularRule.Text = "Phonological Rule";
             this.CmdInsertPhRegularRule.Visible = false;
             // 
@@ -1699,7 +1691,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertPhMetathesisRule.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertPhMetathesisRule.Image")));
             this.CmdInsertPhMetathesisRule.Name = "CmdInsertPhMetathesisRule";
-            this.CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertPhMetathesisRule.Text = "Metathesis Rule";
             this.CmdInsertPhMetathesisRule.Visible = false;
             // 
@@ -1707,7 +1699,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertMorphemeACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertMorphemeACP.Image")));
             this.CmdInsertMorphemeACP.Name = "CmdInsertMorphemeACP";
-            this.CmdInsertMorphemeACP.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertMorphemeACP.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertMorphemeACP.Text = "Rule to prevent morpheme co-occurrence";
             this.CmdInsertMorphemeACP.Visible = false;
             // 
@@ -1715,7 +1707,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertAllomorphACP.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertAllomorphACP.Image")));
             this.CmdInsertAllomorphACP.Name = "CmdInsertAllomorphACP";
-            this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertAllomorphACP.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertAllomorphACP.Text = "Rule to prevent allomorph co-occurrence";
             this.CmdInsertAllomorphACP.Visible = false;
             // 
@@ -1723,14 +1715,14 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdInsertACPGroup.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertACPGroup.Image")));
             this.CmdInsertACPGroup.Name = "CmdInsertACPGroup";
-            this.CmdInsertACPGroup.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertACPGroup.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertACPGroup.Text = "Group of ad hoc rules";
             this.CmdInsertACPGroup.Visible = false;
             // 
             // insertMenuSeparator1
             // 
             this.insertMenuSeparator1.Name = "insertMenuSeparator1";
-            this.insertMenuSeparator1.Size = new System.Drawing.Size(297, 6);
+            this.insertMenuSeparator1.Size = new System.Drawing.Size(293, 6);
             // 
             // CmdShowCharMap
             // 
@@ -1738,7 +1730,7 @@ namespace LanguageExplorer.Impls
             this.CmdShowCharMap.Image = ((System.Drawing.Image)(resources.GetObject("CmdShowCharMap.Image")));
             this.CmdShowCharMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CmdShowCharMap.Name = "CmdShowCharMap";
-            this.CmdShowCharMap.Size = new System.Drawing.Size(300, 26);
+            this.CmdShowCharMap.Size = new System.Drawing.Size(296, 22);
             this.CmdShowCharMap.Text = "Special &character...";
             this.CmdShowCharMap.ToolTipText = "Start the Character Map utility.";
             // 
@@ -1748,7 +1740,7 @@ namespace LanguageExplorer.Impls
             this.CmdInsertLinkToFile.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertLinkToFile.Image")));
             this.CmdInsertLinkToFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CmdInsertLinkToFile.Name = "CmdInsertLinkToFile";
-            this.CmdInsertLinkToFile.Size = new System.Drawing.Size(300, 26);
+            this.CmdInsertLinkToFile.Size = new System.Drawing.Size(296, 22);
             this.CmdInsertLinkToFile.Text = "L&ink to File...";
             this.CmdInsertLinkToFile.ToolTipText = "Insert a link to an external file.";
             // 
@@ -2638,7 +2630,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertReversalEntry,
             this.Toolbar_CmdGoToReversalEntry,
             this.Toolbar_CmdInsertText,
-            this.insertToolStripSeparator1,
             this.Toolbar_CmdAddNote,
             this.Toolbar_CmdApproveAllButton,
             this.Toolbar_CmdInsertHumanApprovedAnalysis,
@@ -2647,29 +2638,22 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdBreakPhraseButton,
             this.Toolbar_CmdInsertRecord,
             this.Toolbar_CmdGoToRecord,
-            this.insertToolStripSeparator2,
             this.Toolbar_CmdAddToLexicon,
             this.Toolbar_CmdLexiconLookup,
             this.Toolbar_CmdInsertPossibility,
             this.Toolbar_CmdDataTree_Insert_Possibility,
-            this.insertToolStripSeparator3,
             this.Toolbar_CmdInsertEndocentricCompound,
             this.Toolbar_CmdInsertExocentricCompound,
             this.Toolbar_CmdInsertExceptionFeature,
             this.Toolbar_CmdInsertPhonologicalClosedFeature,
             this.Toolbar_CmdInsertClosedFeature,
             this.Toolbar_CmdInsertComplexFeature,
-            this.insertToolStripSeparator4,
             this.Toolbar_CmdInsertPhoneme,
-            this.insertToolStripSeparator5,
             this.Toolbar_CmdInsertSegmentNaturalClasses,
             this.Toolbar_CmdInsertFeatureNaturalClasses,
-            this.insertToolStripSeparator6,
             this.Toolbar_CmdInsertPhEnvironment,
-            this.insertToolStripSeparator7,
             this.Toolbar_CmdInsertPhRegularRule,
             this.Toolbar_CmdInsertPhMetathesisRule,
-            this.insertToolStripSeparator8,
             this.Toolbar_CmdInsertMorphemeACP,
             this.Toolbar_CmdInsertAllomorphACP,
             this.Toolbar_CmdInsertACPGroup});
@@ -2728,12 +2712,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertText.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertText.ToolTipText = "Add a new text to the corpus.";
             this.Toolbar_CmdInsertText.Visible = false;
-            // 
-            // insertToolStripSeparator1
-            // 
-            this.insertToolStripSeparator1.Name = "insertToolStripSeparator1";
-            this.insertToolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator1.Visible = false;
             // 
             // Toolbar_CmdAddNote
             // 
@@ -2814,12 +2792,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdGoToRecord.ToolTipText = "Find a Record in your Notebook.";
             this.Toolbar_CmdGoToRecord.Visible = false;
             // 
-            // insertToolStripSeparator2
-            // 
-            this.insertToolStripSeparator2.Name = "insertToolStripSeparator2";
-            this.insertToolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator2.Visible = false;
-            // 
             // Toolbar_CmdAddToLexicon
             // 
             this.Toolbar_CmdAddToLexicon.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -2860,12 +2832,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdDataTree_Insert_Possibility.ToolTipText = "Subitem";
             this.Toolbar_CmdDataTree_Insert_Possibility.Visible = false;
-            // 
-            // insertToolStripSeparator3
-            // 
-            this.insertToolStripSeparator3.Name = "insertToolStripSeparator3";
-            this.insertToolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator3.Visible = false;
             // 
             // Toolbar_CmdInsertEndocentricCompound
             // 
@@ -2927,12 +2893,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertComplexFeature.ToolTipText = "Add a complex feature.";
             this.Toolbar_CmdInsertComplexFeature.Visible = false;
             // 
-            // insertToolStripSeparator4
-            // 
-            this.insertToolStripSeparator4.Name = "insertToolStripSeparator4";
-            this.insertToolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator4.Visible = false;
-            // 
             // Toolbar_CmdInsertPhoneme
             // 
             this.Toolbar_CmdInsertPhoneme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -2942,12 +2902,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhoneme.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhoneme.ToolTipText = "Create a new phoneme.";
             this.Toolbar_CmdInsertPhoneme.Visible = false;
-            // 
-            // insertToolStripSeparator5
-            // 
-            this.insertToolStripSeparator5.Name = "insertToolStripSeparator5";
-            this.insertToolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator5.Visible = false;
             // 
             // Toolbar_CmdInsertSegmentNaturalClasses
             // 
@@ -2969,12 +2923,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertFeatureNaturalClasses.ToolTipText = "Create a new natural class, defined by features.";
             this.Toolbar_CmdInsertFeatureNaturalClasses.Visible = false;
             // 
-            // insertToolStripSeparator6
-            // 
-            this.insertToolStripSeparator6.Name = "insertToolStripSeparator6";
-            this.insertToolStripSeparator6.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator6.Visible = false;
-            // 
             // Toolbar_CmdInsertPhEnvironment
             // 
             this.Toolbar_CmdInsertPhEnvironment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -2984,12 +2932,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhEnvironment.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhEnvironment.ToolTipText = "Create a new environment.";
             this.Toolbar_CmdInsertPhEnvironment.Visible = false;
-            // 
-            // insertToolStripSeparator7
-            // 
-            this.insertToolStripSeparator7.Name = "insertToolStripSeparator7";
-            this.insertToolStripSeparator7.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator7.Visible = false;
             // 
             // Toolbar_CmdInsertPhRegularRule
             // 
@@ -3010,12 +2952,6 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdInsertPhMetathesisRule.Size = new System.Drawing.Size(23, 22);
             this.Toolbar_CmdInsertPhMetathesisRule.ToolTipText = "Create a new metathesis rule.";
             this.Toolbar_CmdInsertPhMetathesisRule.Visible = false;
-            // 
-            // insertToolStripSeparator8
-            // 
-            this.insertToolStripSeparator8.Name = "insertToolStripSeparator8";
-            this.insertToolStripSeparator8.Size = new System.Drawing.Size(6, 25);
-            this.insertToolStripSeparator8.Visible = false;
             // 
             // Toolbar_CmdInsertMorphemeACP
             // 
@@ -3054,7 +2990,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_WritingSystemList,
             this.Toolbar_CombinedStylesList});
             this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripFormat.Location = new System.Drawing.Point(421, 24);
+            this.toolStripFormat.Location = new System.Drawing.Point(420, 24);
             this.toolStripFormat.Name = "toolStripFormat";
             this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
             this.toolStripFormat.TabIndex = 4;
@@ -3276,7 +3212,6 @@ namespace LanguageExplorer.Impls
 		private ToolStripButton Toolbar_CmdInsertReversalEntry;
 		private ToolStripButton Toolbar_CmdGoToReversalEntry;
 		private ToolStripButton Toolbar_CmdInsertText;
-		private ToolStripSeparator insertToolStripSeparator1;
 		private ToolStripButton Toolbar_CmdAddNote;
 		private ToolStripButton Toolbar_CmdInsertHumanApprovedAnalysis;
 		private ToolStripButton Toolbar_CmdApproveAllButton;
@@ -3393,29 +3328,22 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem CmdMacroF12;
 		private ToolStripButton Toolbar_CmdInsertRecord;
 		private ToolStripButton Toolbar_CmdGoToRecord;
-		private ToolStripSeparator insertToolStripSeparator2;
 		private ToolStripButton Toolbar_CmdAddToLexicon;
 		private ToolStripButton Toolbar_CmdLexiconLookup;
 		private ToolStripButton Toolbar_CmdInsertPossibility;
 		private ToolStripButton Toolbar_CmdDataTree_Insert_Possibility;
-		private ToolStripSeparator insertToolStripSeparator3;
 		private ToolStripButton Toolbar_CmdInsertEndocentricCompound;
 		private ToolStripButton Toolbar_CmdInsertExocentricCompound;
 		private ToolStripButton Toolbar_CmdInsertExceptionFeature;
 		private ToolStripButton Toolbar_CmdInsertPhonologicalClosedFeature;
 		private ToolStripButton Toolbar_CmdInsertClosedFeature;
 		private ToolStripButton Toolbar_CmdInsertComplexFeature;
-		private ToolStripSeparator insertToolStripSeparator4;
 		private ToolStripButton Toolbar_CmdInsertPhoneme;
-		private ToolStripSeparator insertToolStripSeparator5;
 		private ToolStripButton Toolbar_CmdInsertSegmentNaturalClasses;
 		private ToolStripButton Toolbar_CmdInsertFeatureNaturalClasses;
-		private ToolStripSeparator insertToolStripSeparator6;
 		private ToolStripButton Toolbar_CmdInsertPhEnvironment;
-		private ToolStripSeparator insertToolStripSeparator7;
 		private ToolStripButton Toolbar_CmdInsertPhRegularRule;
 		private ToolStripButton Toolbar_CmdInsertPhMetathesisRule;
-		private ToolStripSeparator insertToolStripSeparator8;
 		private ToolStripButton Toolbar_CmdInsertMorphemeACP;
 		private ToolStripButton Toolbar_CmdInsertAllomorphACP;
 		private ToolStripButton Toolbar_CmdInsertACPGroup;

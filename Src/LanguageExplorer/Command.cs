@@ -19,8 +19,6 @@ namespace LanguageExplorer
 		Separator4,
 		Separator5,
 		Separator6,
-		Separator7,
-		Separator8,
 		#endregion Shared separator values.
 
 		#region Menus
@@ -68,10 +66,13 @@ namespace LanguageExplorer
 		CmdViewMessages,
 		CmdLiftBridge,
 		CmdViewLiftMessages,
+		// Separator1 goes here
 		CmdObtainAnyFlexBridgeProject,
 		CmdObtainLiftProject,
+		// Separator2 goes here
 		CmdObtainFirstFlexBridgeProject,
 		CmdObtainFirstLiftProject,
+		// Separator3 goes here
 		CmdHelpChorus,
 		CmdCheckForFlexBridgeUpdates,
 		CmdHelpAboutFLEXBridge,
@@ -81,17 +82,22 @@ namespace LanguageExplorer
 		/// </summary>
 		CmdUndo,
 		CmdRedo,
+		// Separator1 goes here
 		CmdCut,
 		CmdCopy,
 		CmdPaste,
+		// Separator2 goes here
 		CmdPasteHyperlink,
 		CmdCopyLocationAsHyperlink,
+		// Separator3 goes here
 		CmdGoToEntry,
 		CmdGoToRecord,
 		CmdFindAndReplaceText,
 		CmdReplaceText,
+		// Separator4 goes here
 		CmdSelectAll,
 		CmdDeleteRecord,
+		// Separator5 goes here
 		CmdGoToReversalEntry,
 		CmdGoToWfiWordform,
 		CmdDeleteCustomList,
@@ -100,6 +106,7 @@ namespace LanguageExplorer
 		/// View menu
 		/// </summary>
 		CmdRefresh,
+		// Separator1 goes here
 		LexicalToolsList,
 		WordToolsList,
 		GrammarToolsList,
@@ -108,6 +115,7 @@ namespace LanguageExplorer
 		ShowInvisibleSpaces,
 		Show_DictionaryPubPreview,
 		ShowHiddenFields,
+		// Separator2 goes here
 		FiltersList,
 			NoFilter,
 		CmdChooseTexts,
@@ -119,6 +127,7 @@ namespace LanguageExplorer
 		CmdPreviousRecord,
 		CmdNextRecord,
 		CmdLastRecord,
+		// Separator1 goes here
 		CmdApproveAndMoveNext,
 		CmdApproveForWholeTextAndMoveNext,
 		CmdNextIncompleteBundle,
@@ -135,6 +144,7 @@ namespace LanguageExplorer
 		CmdMoveFocusBoxLeftNc,
 		CmdMakePhrase,
 		CmdBreakPhrase,
+		// Separator2 goes here
 		CmdRepeatLastMoveLeft,
 		CmdRepeatLastMoveRight,
 		CmdApproveAll,
@@ -188,11 +198,13 @@ namespace LanguageExplorer
 		CmdInsertMorphemeACP,
 		CmdInsertAllomorphACP,
 		CmdInsertACPGroup,
+		// Separator1 goes here
 		CmdShowCharMap,
 		CmdInsertLinkToFile,
 
 		/// <summary>
 		/// Format menu
+		/// (No separators.)
 		/// </summary>
 		CmdFormatStyle,
 		CmdFormatApplyStyle,
@@ -212,15 +224,19 @@ namespace LanguageExplorer
 			CmdConfigHeadwordNumbers,
 			CmdRestoreDefaults,
 			CmdAddCustomField,
+		// Separator1 goes here
 		CmdMergeEntry,
 		CmdLexiconLookup,
 		ITexts_AddWordsToLexicon,
+		// Separator2 goes here
 		Spelling, // Menu that contains sub-menus.
 			CmdEditSpellingStatus,
 			CmdViewIncorrectWords,
 			CmdUseVernSpellingDictionary,
+			// Separator3 goes here
 			CmdChangeSpelling,
 		CmdProjectUtilities,
+		// Separator4 goes here
 		CmdToolsOptions,
 		CmdMacroF2,
 		CmdMacroF3,
@@ -240,10 +256,12 @@ namespace LanguageExplorer
 		CmdReparseAllWords,
 		CmdReInitializeParser,
 		CmdStopParser,
+		// Separator1 goes here
 		CmdTryAWord,
 		CmdParseWordsInCurrentText,
 		CmdParseCurrentWord,
 		CmdClearSelectedWordParserAnalyses,
+		// Separator2 goes here
 		ChooseParserMenu,
 		CmdChooseXAmpleParser,
 		CmdChooseHCParser,
@@ -251,6 +269,7 @@ namespace LanguageExplorer
 
 		/// <summary>
 		/// Window menu
+		/// (No separators.)
 		/// </summary>
 		CmdNewWindow,
 
@@ -269,8 +288,10 @@ namespace LanguageExplorer
 			CmdHelpNotesInterlinearImport,
 			CmdHelpNotesWritingSystems,
 			CmdHelpXLingPap,
+		// Separator1 goes here
 		CmdHelpReportBug,
 		CmdHelpMakeSuggestion,
+		// Separator2 goes here
 		CmdHelpAbout,
 
 		#endregion  Menus
@@ -279,12 +300,14 @@ namespace LanguageExplorer
 
 		/// <summary>
 		/// Format toolbar
+		/// (No separators.)
 		/// </summary>
 		// WritingSystemList, Also on Format menu
 		CombinedStylesList,
 
 		/// <summary>
 		/// Insert toolbar
+		/// (No separators.)
 		/// </summary>
 		// CmdInsertLexEntry,
 		// CmdGoToEntry,
@@ -324,6 +347,7 @@ namespace LanguageExplorer
 
 		/// <summary>
 		/// View ToolBar
+		/// (No separators.)
 		/// </summary>
 		// CmdChooseTexts,
 		CmdChangeFilterClearAll,
@@ -333,10 +357,13 @@ namespace LanguageExplorer
 		/// </summary>
 		CmdHistoryBack,
 		CmdHistoryForward,
+		// Separator1 goes here
 		// CmdDeleteRecord,
+		// Separator2 goes here
 		// CmdUndo,
 		// CmdRedo,
 		// CmdRefresh,
+		// Separator3 goes here
 		// CmdFirstRecord,
 		// CmdPreviousRecord,
 		// CmdNextRecord,
