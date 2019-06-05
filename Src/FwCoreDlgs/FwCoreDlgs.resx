@@ -995,16 +995,16 @@ Delete the existing relationship before trying to add this one again.</value>
     <comment>Tooltip for the writing system list in the writing system setup dialog</comment>
   </data>
   <data name="WritingSystemList_AddIpa" xml:space="preserve">
-    <value>Add IPA input system for {0}</value>
+    <value>Add IPA for {0}</value>
     <comment>Menu item for adding an IPA writing system for the current writing system</comment>
   </data>
   <data name="WritingSystemList_AddAudio" xml:space="preserve">
-    <value>Add Audio input system for {0}</value>
+    <value>Add Audio for {0}</value>
     <comment>Menu item text for adding an audio input system for the selected writing system</comment>
   </data>
   <data name="WritingSystemList_AddDialect" xml:space="preserve">
-    <value>Add new dialect of {0}</value>
-    <comment>Menu item text for adding a new dialect of the current writing system</comment>
+    <value>Add variation of {0}</value>
+    <comment>Menu item text for adding a variation (dialect, script, ect.) of the current writing system</comment>
   </data>
   <data name="WritingSystemList_AddNewLanguage" xml:space="preserve">
     <value>Add new language...</value>

@@ -2343,7 +2343,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Audio input system for {0}.
+        ///   Looks up a localized string similar to Add Audio for {0}.
         /// </summary>
         public static string WritingSystemList_AddAudio {
             get {
@@ -2352,7 +2352,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add new dialect of {0}.
+        ///   Looks up a localized string similar to Add variation of {0}.
         /// </summary>
         public static string WritingSystemList_AddDialect {
             get {
@@ -2361,7 +2361,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add IPA input system for {0}.
+        ///   Looks up a localized string similar to Add IPA for {0}.
         /// </summary>
         public static string WritingSystemList_AddIpa {
             get {

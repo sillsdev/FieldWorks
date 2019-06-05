@@ -265,19 +265,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new [] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var addMenu = testModel.GetAddMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new [] { "Add IPA input system for English", "Add Audio input system for English", "Add new dialect of English", "Add new language..." }, addMenu);
+			CollectionAssert.AreEqual(new [] { "Add IPA for English", "Add Audio for English", "Add variation of English", "Add new language..." }, addMenu);
 			testModel.SelectWs("fr");
 			addMenu = testModel.GetAddMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Add IPA input system for French", "Add Audio input system for French", "Add new dialect of French", "Add new language..." }, addMenu);
+			CollectionAssert.AreEqual(new[] { "Add IPA for French", "Add Audio for French", "Add variation of French", "Add new language..." }, addMenu);
 		}
 
 		[Test]
 		public void WritingSystemList_AddMenuItems_DoesNotOfferExistingOption()
 		{
-			var container = new TestWSContainer(new[] { "en", "en-fonipa", "en-Zxxx-x-audio" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var container = new TestWSContainer(new [] { "auc" }, new[] { "en", "en-fonipa", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis);
 			var addMenu = testModel.GetAddMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Add new dialect of English", "Add new language..." }, addMenu);
+			CollectionAssert.AreEqual(new[] { "Add variation of English", "Add new language..." }, addMenu);
 		}
 
 		[Test]
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en-fonipa", "en", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var addMenu = testModel.GetAddMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Add new dialect of English", "Add new language..." }, addMenu);
+			CollectionAssert.AreEqual(new[] { "Add variation of English", "Add new language..." }, addMenu);
 		}
 
 		[Test]
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void WritingSystemList_CanMerge_CantMergeNewWs(
 			[Values(FwWritingSystemSetupModel.ListType.Analysis, FwWritingSystemSetupModel.ListType.Vernacular)]
 			FwWritingSystemSetupModel.ListType listType,
-			[Values("Audio", "dialect")] string variantType) // test only Audio and Dialect because IPA requires the Cache
+			[Values("Audio", "variation")] string variantType) // test only Audio and Variation because IPA requires the Cache
 		{
 			var wss = new[] { "de" };
 			var container = new TestWSContainer(wss, wss);
@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(wss, wss);
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis);
 			var addMenuItems = testModel.GetAddMenuItems();
-			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
+			addMenuItems.First(item => item.MenuText.Contains("variation")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.AreEqual("en", testModel.CurrentWsSetupModel.CurrentLanguageTag);
 			Assert.AreEqual(true, testModel.CanDelete(), "should be able to delete the newly-created English [in]variant");
 			testModel.SelectWs(0);
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void WritingSystemList_AddItems_AddDialect_CustomNameUsed()
+		public void WritingSystemList_AddItems_AddVariation_CustomNameUsed()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
@@ -490,22 +490,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
 			// SUT
-			// Add a dialect writing system because it doesn't currently require a cache to create properly
-			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
+			// Add a variation writing system because it doesn't currently require a cache to create properly
+			addMenuItems.First(item => item.MenuText.Contains("variation")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.Not.EqualTo(origEnIndex));
 			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
 		}
 
 		[Test]
-		public void WritingSystemList_AddItems_AddDialect_AddAfterSelected()
+		public void WritingSystemList_AddItems_AddVariation_AddAfterSelected()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
 			// SUT
-			// Creating an IPA WS currently requires a Cache. Test "Create a new dialect"
-			addMenuItems.First(item => item.MenuText.Contains("dialect")).ClickHandler.Invoke(this, new EventArgs());
+			// Creating an IPA WS currently requires a Cache. Test "Create a new variation"
+			addMenuItems.First(item => item.MenuText.Contains("variation")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.EqualTo(origEnIndex + 1));
 		}
 
