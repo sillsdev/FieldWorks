@@ -306,6 +306,12 @@
     <Compile Include="AddNewUserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.Designer.cs">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -580,6 +586,9 @@
     <EmbeddedResource Include="AddNewUserDlg.resx">
       <DependentUpon>AddNewUserDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddNewVernLangWarningDlg.resx">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdvancedEncProps.resx">
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>

@@ -45,6 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			SuspendLayout();
 			model.ShowMessageBox = ShowMessageBox;
 			model.AcceptSharedWsChangeWarning = ShowSharedWsChangeWarning;
+			model.AddNewVernacularLanguageWarning = ShowAddNewVernWarning;
 			Text = model.Title;
 			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
 			model.CurrentWsSetupModel.CurrentItemUpdated -= OnCurrentItemUpdated;
@@ -61,6 +62,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.OnCurrentWritingSystemChanged += OnCurrentWritingSystemChangedHandler;
 			model.CurrentWsSetupModel.CurrentItemUpdated += OnCurrentItemUpdated;
 			ResumeLayout();
+		}
+
+		private bool ShowAddNewVernWarning()
+		{
+			using (var warningDlg = new AddNewVernLangWarningDlg(_helpTopicProvider))
+			{
+				var result = warningDlg.ShowDialog();
+				if (result == DialogResult.Yes)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private void BindNumbersTab(WritingSystemSetupModel model)

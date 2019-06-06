@@ -272,6 +272,43 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void WritingSystemList_AddMenuItems_AddLanguageWarnsForVernacular()
+		{
+			bool warned = false;
+			var container = new TestWSContainer(new[] { "en" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.AddNewVernacularLanguageWarning = () =>
+			{
+				warned = true;
+				return false;
+			};
+			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
+			addLanguageMenu.ClickHandler.Invoke(null, null); // 'click' on the menu item
+			Assert.IsTrue(warned, "Warning not displayed.");
+		}
+
+		[Test]
+		public void WritingSystemList_AddMenuItems_AddLanguageDoesNotWarnForAnalysis()
+		{
+			bool warned = false;
+			var container = new TestWSContainer(new[] { "en" }, new []{ "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis);
+			testModel.AddNewVernacularLanguageWarning = () =>
+			{
+				warned = true;
+				return false;
+			};
+			testModel.ShowChangeLanguage = (out LanguageInfo info) =>
+			{
+				info = null;
+				return false;
+			};
+			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
+			addLanguageMenu.ClickHandler.Invoke(null, null); // 'click' on the menu item
+			Assert.IsFalse(warned, "Warning incorrectly displayed.");
+		}
+
+		[Test]
 		public void WritingSystemList_AddMenuItems_DoesNotOfferExistingOption()
 		{
 			var container = new TestWSContainer(new [] { "auc" }, new[] { "en", "en-fonipa", "en-Zxxx-x-audio" });

@@ -102,6 +102,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public delegate bool SharedWsChangeDelegate(string originalLanguage);
 
 		/// <summary/>
+		public delegate bool AddNewVernacularLanguageDelegate();
+
+		/// <summary/>
 		public delegate bool ChangeHomographWs(string newHomographWs);
 
 		/// <summary/>
@@ -124,6 +127,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public SharedWsChangeDelegate AcceptSharedWsChangeWarning;
+
+		/// <summary/>
+		public AddNewVernacularLanguageDelegate AddNewVernacularLanguageWarning;
 
 		/// <summary/>
 		public ChangeHomographWs ShouldChangeHomographWs;
@@ -928,6 +934,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void AddNewLanguageHandler(object sender, EventArgs e)
 		{
+			if (_listType == ListType.Vernacular && !AddNewVernacularLanguageWarning())
+			{
+				return;
+			}
+
 			LanguageInfo langInfo;
 			if (ShowChangeLanguage(out langInfo))
 			{
