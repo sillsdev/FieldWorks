@@ -324,6 +324,10 @@
     <value>Advanced_Tasks/Customizing_Styles/Customized_Styles_not_Updated.htm</value>
     <comment>help topic for Modified Styles dialog</comment>
   </data>
+  <data name="khtpAddAnotherVernacular" xml:space="preserve">
+    <value>Advanced_Tasks/Writing_Systems/Add_a_new_writing_system/About_vernacular_writing_systems.htm</value>
+    <comment>help topic from warning dialog about adding extra vernacular writing systems</comment>
+  </data>
   <data name="kstidBulletsAndNumberingSelectFont" xml:space="preserve">
     <value>User_Interface/Menus/Format/Font.htm</value>
     <comment>help topic ID for Format:Styles:Bullets and Numbering: select Font</comment>
