@@ -6,13 +6,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using Icu;
 using SilEncConverters40;
 using SIL.Code;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Keyboarding;
 using SIL.LCModel;
+using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -1109,6 +1112,58 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <remarks>We are not currently attempting to set back to false if a user undoes some work</remarks>
 		public bool CurrentWsListChanged { get; private set; }
+
+		/// <summary/>
+		public SpellingDictionaryItem SpellingDictionary
+		{
+			get
+			{
+				return string.IsNullOrEmpty(_currentWs?.SpellCheckingId)
+					? new SpellingDictionaryItem(null, null)
+					: new SpellingDictionaryItem(_currentWs.SpellCheckingId.Replace('_', '-'), _currentWs.SpellCheckingId);
+			}
+			set
+			{
+				if (_currentWs != null)
+				{
+					_currentWs.SpellCheckingId = value?.Id;
+				}
+			}
+		}
+
+		/// <summary/>
+		public SpellingDictionaryItem[] GetSpellingDictionaryComboBoxItems()
+		{
+			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, FwCoreDlgs.kstidNone) };
+
+			string spellCheckingDictionary = _currentWs.SpellCheckingId;
+			if (string.IsNullOrEmpty(spellCheckingDictionary))
+			{
+				dictionaries.Add(new SpellingDictionaryItem(_currentWs.LanguageTag, _currentWs.LanguageTag.Replace('-', '_')));
+			}
+
+			bool fDictionaryExistsForLanguage = false;
+			bool fAlternateDictionaryExistsForLanguage = false;
+			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
+			{
+				dictionaries.Add(new SpellingDictionaryItem(GetDictionaryName(languageId), languageId));
+			}
+
+			return dictionaries.ToArray();
+		}
+
+		private static string GetDictionaryName(string languageId)
+		{
+			var locale = new Locale(languageId);
+			var country = locale.GetDisplayCountry("en");
+			var languageName = locale.GetDisplayLanguage("en");
+			var languageAndCountry = new StringBuilder(languageName);
+			if (!string.IsNullOrEmpty(country))
+				languageAndCountry.AppendFormat(" ({0})", country);
+			if (languageName != languageId)
+				languageAndCountry.AppendFormat(" [{0}]", languageId);
+			return languageAndCountry.ToString();
+		}
 	}
 
 	/// <summary>
@@ -1156,6 +1211,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override string ToString()
 		{
 			return WorkingWs.DisplayLabel;
+		}
+	}
+
+	/// <summary/>
+	public class SpellingDictionaryItem : Tuple<string, string>
+	{
+		/// <summary/>
+		public SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
+		{
+		}
+
+		/// <summary/>
+		public string Name => Item1;
+
+		/// <summary/>
+		public string Id => Item2;
+
+		/// <summary/>
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 }

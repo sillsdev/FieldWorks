@@ -1159,6 +1159,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("fr", Cache.LangProject.CurVernWss, "Only French should remain selected after save");
 		}
 
+		[Test]
+		public void SpellingDictionary_DefaultIdGenerated()
+		{
+			var container = new TestWSContainer(new[] {"auc-Latn-PR"});
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
+			var spellingDict = testModel.SpellingDictionary;
+			Assert.IsNullOrEmpty(spellingDict.Id);
+		}
+
+		[Test]
+		public void SpellingDictionary_CanSetToEmpty()
+		{
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
+			Assert.DoesNotThrow(() => testModel.SpellingDictionary = null);
+			Assert.IsNullOrEmpty(testModel.SpellingDictionary.Id);
+		}
+
+		[Test]
+		public void GetSpellingDictionaryComboBoxItems_HasDefaultForWs()
+		{
+			var container = new TestWSContainer(new[] { "auc-Latn-PR" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
+			var menuItems = testModel.GetSpellingDictionaryComboBoxItems();
+			var constructedItem = menuItems.FirstOrDefault(item => item.Id == "auc_Latn_PR");
+			Assert.NotNull(constructedItem, "A default item matching the ws id should be in the list.");
+		}
+
 		/// <summary>
 		/// Adds en and fr to Current Vernacular and sets en as Homograph WS.
 		/// The client must call <c>Cache.ActionHandlerAccessor.EndUndoTask()</c> after this and any additional setup.
@@ -1256,12 +1284,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			public void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws)
 			{
-				throw new System.NotImplementedException();
+				throw new NotImplementedException();
 			}
 
 			public void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws)
 			{
-				throw new System.NotImplementedException();
+				throw new NotImplementedException();
 			}
 
 			public IEnumerable<CoreWritingSystemDefinition> AllWritingSystems { get; }

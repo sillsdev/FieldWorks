@@ -135,10 +135,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 			m_FullCode.Text = model.CurrentWsSetupModel.CurrentLanguageTag;
+			_spellingCombo.SelectedIndexChanged -= SpellingDictionaryChanged;
 			_spellingCombo.Items.Clear();
 			// ReSharper disable once CoVariantArrayConversion -- No writes occur in AddRange
-			_spellingCombo.Items.AddRange(model.CurrentWsSetupModel.GetSpellCheckComboBoxItems().ToArray());
-			_spellingCombo.SelectedItem = model.CurrentWsSetupModel.CurrentSpellChecker;
+			_spellingCombo.Items.AddRange(model.GetSpellingDictionaryComboBoxItems());
+			_spellingCombo.SelectedItem = model.SpellingDictionary;
+			_spellingCombo.SelectedIndexChanged += SpellingDictionaryChanged;
 			_rightToLeftCheckbox.CheckedChanged -= RightToLeftCheckChanged;
 			_rightToLeftCheckbox.Checked = model.CurrentWsSetupModel.CurrentRightToLeftScript;
 			_rightToLeftCheckbox.CheckedChanged += RightToLeftCheckChanged;
@@ -167,6 +169,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_enableAdvanced.Visible = model.ShowAdvancedScriptRegionVariantCheckBox;
 			_enableAdvanced.Checked = model.ShowAdvancedScriptRegionVariantView;
 			_enableAdvanced.CheckedChanged += EnableAdvancedOnCheckedChanged;
+		}
+
+		private void SpellingDictionaryChanged(object sender, EventArgs e)
+		{
+			_model.SpellingDictionary = (SpellingDictionaryItem)_spellingCombo.SelectedValue;
 		}
 
 		private void EnableAdvancedOnCheckedChanged(object sender, EventArgs e)
