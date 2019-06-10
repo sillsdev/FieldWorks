@@ -193,6 +193,10 @@
     <value>User_Interface/Menus/File/Project_Properties/Project_Properties_General_tab.htm</value>
     <comment>help topic ID for project properties-general tab</comment>
   </data>
+  <data name="khtpProjectProperties_Sharing" xml:space="preserve">
+    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_Sharing_tab.htm</value>
+    <comment>help topic ID for project properties-sharing tab</comment>
+  </data>
   <data name="khtpWsGeneral" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_General_tab.htm</value>
     <comment>help topic ID for ws properties/name tab</comment>
@@ -262,7 +266,7 @@
     <comment>help topic ID for project properties dialog-writing system tab</comment>
   </data>
   <data name="khtpProjectProperties_ExternalLinks" xml:space="preserve">
-    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_External_Links_tab.htm</value>
+    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_Linked_Files_tab.htm</value>
     <comment>help topic ID for project properties dialog-Linked Files tab</comment>
   </data>
   <data name="khtpWsPUACharacters" xml:space="preserve">

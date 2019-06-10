@@ -343,5 +343,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			Close();
 		}
+
+		private void OnHelpBtnClicked(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpFwNewLangProjHelpTopic");
+		}
 	}
 }

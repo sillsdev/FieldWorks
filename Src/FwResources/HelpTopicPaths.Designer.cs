@@ -347,29 +347,44 @@ namespace SIL.FieldWorks.Resources {
                 return ResourceManager.GetString("khtpProjectProperties_ExternalLinks", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User_Interface/Menus/File/Project_Properties/Project_Properties_General_tab.htm.
-        /// </summary>
-        internal static string khtpProjectProperties_General {
-            get {
-                return ResourceManager.GetString("khtpProjectProperties_General", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User_Interface/Menus/File/Project_Properties/Project_Properties_Writing_Systems_tab.htm.
-        /// </summary>
-        internal static string khtpProjectProperties_WritingSystem {
-            get {
-                return ResourceManager.GetString("khtpProjectProperties_WritingSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User_Interface/Menus/File/Publish_to_Webonary.htm.
-        /// </summary>
-        internal static string khtpUploadToWebonary {
+
+	    /// <summary>
+	    ///   Looks up a localized string similar to User_Interface/Menus/File/Project_Properties/Project_Properties_General_tab.htm.
+	    /// </summary>
+	    internal static string khtpProjectProperties_General
+	    {
+		    get
+		    {
+			    return ResourceManager.GetString("khtpProjectProperties_General", resourceCulture);
+		    }
+	    }
+
+		/// <summary>
+		///   Looks up a localized string similar to User_Interface/Menus/File/Project_Properties/Project_Properties_Sharing_tab.htm.
+		/// </summary>
+		internal static string khtpProjectProperties_Sharing
+		{
+			get
+			{
+				return ResourceManager.GetString("khtpProjectProperties_Sharing", resourceCulture);
+			}
+		}
+
+	    /// <summary>
+	    ///   Looks up a localized string similar to User_Interface/Menus/File/Project_Properties/Project_Properties_Writing_Systems_tab.htm.
+	    /// </summary>
+	    internal static string khtpProjectProperties_WritingSystem
+	    {
+		    get
+		    {
+			    return ResourceManager.GetString("khtpProjectProperties_WritingSystem", resourceCulture);
+		    }
+	    }
+
+		/// <summary>
+		///   Looks up a localized string similar to User_Interface/Menus/File/Publish_to_Webonary.htm.
+		/// </summary>
+		internal static string khtpUploadToWebonary {
             get {
                 return ResourceManager.GetString("khtpUploadToWebonary", resourceCulture);
             }

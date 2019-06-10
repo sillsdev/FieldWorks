@@ -32,10 +32,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public event EventHandler ProjectPropertiesChanged;
 
 		#region Data members
-		/// <summary>Index of the tab for user properties account</summary>
+		/// <summary>Index of the tab for general settings (project name, description</summary>
 		protected const int kGeneralTab = 0;
-		/// <summary>Index of the tab for user properties account</summary>
-		protected const int kExternalLinksTab = 2;
+		/// <summary>Index of the tab for linked files settings</summary>
+		protected const int kExternalLinksTab = 1;
+		/// <summary>Index of the tab for sharing settings</summary>
+		protected const int kSharingTab = 2;
 
 		private LcmCache m_cache;
 		private readonly ILangProject m_langProj;
@@ -63,9 +65,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>A change in the project name has changed which may affect
 		/// title bars.</summary>
 		protected bool m_fProjNameChanged;
-
-		private readonly HashSet<CoreWritingSystemDefinition> m_deletedWritingSystems = new HashSet<CoreWritingSystemDefinition>();
-		private readonly Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition> m_mergedWritingSystems = new Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition>();
 
 		private HelpProvider helpProvider1;
 		private TabControl m_tabControl;
@@ -823,6 +822,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 				case kExternalLinksTab:
 					topicKey = "khtpProjectProperties_ExternalLinks";
+					break;
+				case kSharingTab:
+					topicKey = "khtpProjectProperties_Sharing";
 					break;
 			}
 

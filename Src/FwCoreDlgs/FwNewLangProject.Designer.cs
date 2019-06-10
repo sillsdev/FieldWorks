@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.btnHelp, "btnHelp");
 			this.btnHelp.Name = "btnHelp";
 			this.helpProvider1.SetShowHelp(this.btnHelp, ((bool)(resources.GetObject("btnHelp.ShowHelp"))));
+			this.btnHelp.Click += new System.EventHandler(this.OnHelpBtnClicked);
 			// 
 			// btnOK
 			// 
