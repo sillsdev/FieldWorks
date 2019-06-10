@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void SpellingDictionaryChanged(object sender, EventArgs e)
 		{
-			_model.SpellingDictionary = (SpellingDictionaryItem)_spellingCombo.SelectedValue;
+			_model.SpellingDictionary = (SpellingDictionaryItem)_spellingCombo.SelectedItem;
 		}
 
 		private void EnableAdvancedOnCheckedChanged(object sender, EventArgs e)

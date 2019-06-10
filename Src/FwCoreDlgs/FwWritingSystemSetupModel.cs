@@ -1215,7 +1215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	}
 
 	/// <summary/>
-	public class SpellingDictionaryItem : Tuple<string, string>
+	public class SpellingDictionaryItem : Tuple<string, string>, IEquatable<SpellingDictionaryItem>
 	{
 		/// <summary/>
 		public SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
@@ -1232,6 +1232,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override string ToString()
 		{
 			return Name;
+		}
+
+		/// <summary/>
+		public bool Equals(SpellingDictionaryItem other)
+		{
+			return Id.Equals(other?.Id);
+		}
+
+		/// <summary/>
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((SpellingDictionaryItem) obj);
+		}
+
+		/// <summary/>
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode();
 		}
 	}
 }
