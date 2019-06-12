@@ -635,78 +635,58 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Track the new writing systems for importing translated lists
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				// Adjust the homograph writing system after possibly interacting with the user
-				var atLeastOneChange = HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
+				HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
 
 				// Handle any deleted writing systems
-				var deletedSomeWritingSystems = DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
-				atLeastOneChange = atLeastOneChange || deletedSomeWritingSystems;
+				DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
 
 				for (int workinglistIndex = 0, curIndex = 0; workinglistIndex < WorkingList.Count; ++workinglistIndex)
 				{
 					var wsListItem = WorkingList[workinglistIndex];
 					var workingWs = wsListItem.WorkingWs;
-					var origWS = wsListItem.OriginalWs;
+					var origWs = wsListItem.OriginalWs;
 
 					if (IsNew(wsListItem))
 					{
-						// Create the new writing system overwriting any existing ws of the same id
-						_wsManager.Replace(workingWs);
-						newWritingSystems.Add(workingWs);
-						atLeastOneChange = true;
-						AddOrMoveInList(allWritingSystems, workinglistIndex, workingWs);
-						if (wsListItem.InCurrentList)
-						{
-							AddOrMoveInList(currentWritingSystems, curIndex, workingWs);
-							++curIndex;
-						}
+						// origWs is used to update the order
+						origWs = workingWs;
+						// Create the new writing system, overwriting any existing ws of the same id
+						_wsManager.Replace(origWs);
+						newWritingSystems.Add(origWs);
 					}
 					else if (workingWs.IsChanged)
 					{
-						var oldId = origWS.Id;
-						var oldHandle = origWS.Handle;
+						var oldId = origWs.Id;
+						var oldHandle = origWs.Handle;
 						// copy the working writing system content into the original writing system
-						origWS.Copy(workingWs);
-						AddOrMoveInList(allWritingSystems, workinglistIndex, origWS);
-						if (wsListItem.InCurrentList)
-						{
-							AddOrMoveInList(currentWritingSystems, curIndex, origWS);
-							++curIndex;
-						}
-						else
-						{
-							SafelyRemoveFromList(currentWritingSystems, wsListItem);
-						}
+						origWs.Copy(workingWs);
 						if (string.IsNullOrEmpty(oldId) || !IetfLanguageTag.AreTagsEquivalent(oldId, workingWs.LanguageTag))
 						{
 							// update the ID
-							_wsManager.Replace(origWS);
+							_wsManager.Replace(origWs);
 							if (uowHelper != null)
 							{
-								WritingSystemServices.UpdateWritingSystemId(Cache, origWS, oldHandle, oldId);
+								WritingSystemServices.UpdateWritingSystemId(Cache, origWs, oldHandle, oldId);
 							}
 						}
-						atLeastOneChange = true;
-						_mediator?.SendMessage("WritingSystemUpdated", origWS.Id);
+						_mediator?.SendMessage("WritingSystemUpdated", origWs.Id);
 					}
-					else // Writing system is not new or changed, but we might have added or removed from the current list
+
+					// whether or not the WS was created or changed, its list position may have changed (LT-19788)
+					AddOrMoveInList(allWritingSystems, workinglistIndex, origWs);
+					if (wsListItem.InCurrentList)
 					{
-						if (wsListItem.InCurrentList && !currentWritingSystems.Contains(origWS))
-						{
-							AddOrMoveInList(currentWritingSystems, curIndex, origWS);
-							++curIndex;
-							atLeastOneChange = true;
-						}
-						else if(!wsListItem.InCurrentList)
-						{
-							var deletedWritingSystem = SafelyRemoveFromList(currentWritingSystems, wsListItem);
-							atLeastOneChange = atLeastOneChange || deletedWritingSystem;
-						}
+						AddOrMoveInList(currentWritingSystems, curIndex, origWs);
+						++curIndex;
+					}
+					else
+					{
+						SafelyRemoveFromList(currentWritingSystems, wsListItem);
 					}
 				}
 				// Handle any merged writing systems
 				foreach (var mergedWs in _mergedWritingSystems)
 				{
-					atLeastOneChange = true;
 					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
 				}
 				// Save all the changes to the current writing systems
@@ -717,7 +697,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 
 				_projectLexiconSettingsDataMapper?.Write(_projectLexiconSettings);
-				if (atLeastOneChange && uowHelper != null)
+				if (uowHelper != null)
 				{
 					uowHelper.RollBack = false;
 				}
@@ -733,7 +713,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void AddOrMoveInList(ICollection<CoreWritingSystemDefinition> allWritingSystems, int desiredIndex, CoreWritingSystemDefinition workingWs)
+		private static void AddOrMoveInList(ICollection<CoreWritingSystemDefinition> allWritingSystems, int desiredIndex, CoreWritingSystemDefinition workingWs)
 		{
 			// copy original contents into a list
 			var updatedList = new List<CoreWritingSystemDefinition>(allWritingSystems);
@@ -759,14 +739,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Remove the writing system associated with this list item from the given list (unless it didn't exist there before)
 		/// </summary>
 		/// <returns>true if item was removed</returns>
-		private bool SafelyRemoveFromList(IList<CoreWritingSystemDefinition> currentWritingSystems, WSListItemModel wsListItem)
+		private static void SafelyRemoveFromList(IList<CoreWritingSystemDefinition> currentWritingSystems, WSListItemModel wsListItem)
 		{
 			if (wsListItem.OriginalWs != null)
 			{
-				return currentWritingSystems.Remove(wsListItem.OriginalWs);
+				currentWritingSystems.Remove(wsListItem.OriginalWs);
 			}
-
-			return false;
 		}
 
 		private bool HandleHomographWsChanges(bool homographWsWasTopVern, List<WSListItemModel> workingList, string homographWs, bool wasSelected)

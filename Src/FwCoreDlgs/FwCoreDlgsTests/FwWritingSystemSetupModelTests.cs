@@ -362,6 +362,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CollectionAssert.AreEqual(new[] { "en", "fr" }, testModel.WorkingList.Select(ws => ws.WorkingWs.LanguageTag));
 		}
 
+		[Test]
+		public void MoveItem_NewOrderSaved()
+		{
+			SetupHomographLanguagesInCache();
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var langProj = Cache.LangProject;
+			Assert.AreEqual("en fr", langProj.VernWss, "setup problem");
+			var testModel = new FwWritingSystemSetupModel(langProj, FwWritingSystemSetupModel.ListType.Vernacular,
+				Cache.ServiceLocator.WritingSystemManager, Cache)
+				{ ShouldChangeHomographWs = ws => true };
+			testModel.MoveDown();
+			testModel.Save();
+			Assert.AreEqual("fr en", langProj.CurVernWss, "current");
+			Assert.AreEqual("fr en", langProj.VernWss, "all");
+		}
+
 		[TestCase("en", new[] { "fr", "en" }, false)] // Can't merge English
 		[TestCase("fr", new[] { "fr" }, false)] // Can't merge if there is no other writing system in the list
 		[TestCase("fr", new[] { "fr", "en" }, true)] // Can merge if there is more than one
