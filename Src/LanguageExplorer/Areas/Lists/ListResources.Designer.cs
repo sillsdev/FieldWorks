@@ -184,6 +184,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Academic Domain....
+        /// </summary>
+        internal static string Delete_Academic_Domain {
+            get {
+                return ResourceManager.GetString("Delete_Academic_Domain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Question.
         /// </summary>
         internal static string Delete_Question {

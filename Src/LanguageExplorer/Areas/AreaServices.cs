@@ -126,10 +126,10 @@ namespace LanguageExplorer.Areas
 		#endregion commands
 
 		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
-		internal const int MoveUp = 12;
-		internal const int MoveRight = 13;
-		internal const int MoveDown = 14;
-		internal const int MoveLeft = 15;
+		internal const int MoveUpIndex = 12;
+		internal const int MoveRightIndex = 13;
+		internal const int MoveDownIndex = 14;
+		internal const int MoveLeftIndex = 15;
 		#endregion LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
 
 		#region Random strings
@@ -145,8 +145,8 @@ namespace LanguageExplorer.Areas
 		internal const string RightPanelMenuId = "right";
 		internal const string CmdMoveTargetToPreviousInSequence = "MoveTargetDownInSequence_Clicked";
 		internal const string CmdMoveTargetToNextInSequence = "MoveTargetUpInSequence_Clicked";
-		internal const string MoveUp2 = "MoveUp";
-		internal const string MoveDown2 = "MoveDown";
+		internal const string MoveUp = "MoveUp";
+		internal const string MoveDown = "MoveDown";
 		internal const string Promote = "Promote";
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";

@@ -123,8 +123,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 
 		/// <summary>
 		/// User-visible localizable component name.
-		/// </summary>
-		public string UiName => "People";
 		#endregion
 
 		#region Implementation of ITool
@@ -138,6 +136,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+		/// </summary>
+		public string UiName => "People";
+
+		/// <summary>
+		/// Get User-visible localizable name for class of object being deleted.
+		/// </summary>
+		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
 
 		#endregion
 

@@ -24,13 +24,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class LcmExtensions
 	{
+		/// <summary>
+		/// Get a message suitable for display in a status bar.
+		/// </summary>
 		public static string ToStatusBar(this ICmObject me)
 		{
 			if (!me.IsValidObject)
 			{
 				return FwUtilsStrings.ksDeletedObject;
 			}
-			const string dateFomat = "dd/MMM/yyyy";
+			const string dateFormat = "dd/MMM/yyyy";
 			DateTime dt;
 			var created = string.Empty;
 			var modified = string.Empty;
@@ -39,20 +42,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (pi != null)
 			{
 				dt = (DateTime)pi.GetValue(me, null);
-				created = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
+				created = dt.ToString(dateFormat, DateTimeFormatInfo.InvariantInfo);
 			}
 			pi = myType.GetProperty("DateModified");
 			if (pi != null)
 			{
 				dt = (DateTime)pi.GetValue(me, null);
-				modified = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
+				modified = dt.ToString(dateFormat, DateTimeFormatInfo.InvariantInfo);
 			}
 			return $"{created} {modified}";
 		}
 
+		/// <summary>
+		/// Try to get the WS from a selection range.
+		/// </summary>
+		/// <returns>Return '0' if:
+		/// 1) there is not text at all, 2) <paramref name="ichMin"/> is not less than <paramref name="ichLim"/>
+		/// 2) the selected text is multilingual.
+		/// Otherwise, return the WS of the entire text.</returns>
 		public static int GetWsFromString(this ITsString me, int ichMin, int ichLim)
 		{
-			if (me == null || me.Length == 0 || ichMin >= ichLim)
+			if (me.Length == 0 || ichMin >= ichLim)
 			{
 				return 0;
 			}

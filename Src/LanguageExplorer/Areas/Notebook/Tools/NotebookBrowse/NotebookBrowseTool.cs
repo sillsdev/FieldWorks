@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Controls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -120,6 +121,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
+
+		/// <summary>
+		/// Get User-visible localizable name for class of object being deleted.
+		/// </summary>
+		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
 
 		#endregion
 

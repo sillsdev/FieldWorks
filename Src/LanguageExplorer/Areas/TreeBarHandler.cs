@@ -420,10 +420,10 @@ namespace LanguageExplorer.Areas
 				case AreaServices.Promote:
 					tree_Promote();
 					break;
-				case AreaServices.MoveUp2:
+				case AreaServices.MoveUp:
 					tree_moveUp();
 					break;
-				case AreaServices.MoveDown2:
+				case AreaServices.MoveDown:
 					tree_moveDown();
 					break;
 			}

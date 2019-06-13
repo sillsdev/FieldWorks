@@ -180,6 +180,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
+		/// <summary>
+		/// Get User-visible localizable name for class of object being deleted.
+		/// </summary>
+		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
+
 		#endregion
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -406,7 +411,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 						  <parameters field="SubPossibilities" className="PartOfSpeech" />
 						</command>
 					*/
-					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_ReversalSubPOS_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeft]);
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_ReversalSubPOS_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveLeftIndex]);
 				}
 
 				// <item label="-" translate="do not translate" />

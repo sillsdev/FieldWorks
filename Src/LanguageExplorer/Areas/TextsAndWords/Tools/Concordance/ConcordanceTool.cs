@@ -151,7 +151,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Concordance";
-
 		#endregion
 
 		#region Implementation of ITool
@@ -165,6 +164,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+
+		/// <summary>
+		/// Get User-visible localizable name for class of object being deleted.
+		/// </summary>
+		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
+
 
 		#endregion
 

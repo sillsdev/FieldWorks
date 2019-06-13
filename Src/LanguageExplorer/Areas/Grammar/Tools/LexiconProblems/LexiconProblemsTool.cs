@@ -113,8 +113,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		/// <summary>
 		/// User-visible localizable component name.
-		/// </summary>
-		public string UiName => "Problems";
 
 		#endregion
 
@@ -129,6 +127,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+		/// </summary>
+		public string UiName => "Problems";
+
+		/// <summary>
+		/// Get User-visible localizable name for class of object being deleted.
+		/// </summary>
+		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
 
 		#endregion
 

@@ -40,7 +40,7 @@
 	<string id="MoMorphType" txt="Morpheme Type"/>
 	<string id="LexEntryType" txt="Entry Type"/>
 	<string id="LexRefType" txt="Lexical Relation"/>
-    <string id="FsOpenFeature" txt="Feature"/>
+	<string id="FsOpenFeature" txt="Feature"/>
 	<string id="FsClosedFeature" txt="Feature"/>
 	<string id="FsComplexFeature" txt="Complex Feature"/>
 	<string id="FsClosedValue" txt="Feature"/>

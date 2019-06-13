@@ -2765,7 +2765,7 @@ very simple minor adjustments. ;)"
 				}
 				else
 				{
-					var userFriendlyClassName = StringTable.Table.GetString(activeRecordList.CurrentObject.ClassName, "ClassNames");
+					var userFriendlyClassName = _currentTool.UiDeleteObjectName;
 					tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
 					deleteText = string.Format(deleteTextBase, userFriendlyClassName);
 					// See if a view can do it.
