@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2017 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				m_gridWordForming = gridWf;
 				m_gridOther = gridOther;
-				m_validChars = ValidCharacters.Load(ws, LoadException);
+				m_validChars = ValidCharacters.Load(ws);
 
 				RefreshCharacterGrids(ValidCharacterType.All);
 			}
@@ -386,18 +386,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			#endregion
 
 			#region Event handlers
-			/// ---------------------------------------------------------------------------------
-			/// <summary>
-			/// Reports a load exception in the scrDataSource.
-			/// </summary>
-			/// <param name="e">The exception.</param>
-			/// ---------------------------------------------------------------------------------
-			void LoadException(ArgumentException e)
-			{
-				ErrorReporter.ReportException(e, m_app.SettingsKey, m_app.SupportEmailAddress,
-					m_currGrid != null ? m_currGrid.FindForm() : null, false);
-			}
-
 			/// ---------------------------------------------------------------------------------
 			/// <summary>
 			/// Display a context menu when the user clicks on one of the valid character grids.

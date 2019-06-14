@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get
 			{
 				var wsToLoad = m_wsContainer == null ? m_ws : m_wsContainer.DefaultVernacularWritingSystem;
-				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException);
+				return ValidCharacters.Load(wsToLoad);
 			}
 		}
 
@@ -331,18 +331,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Event handlers and helper methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a load exception in the scrDataSource.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, m_app.SettingsKey,
-				m_app.SupportEmailAddress, ParentForm, false);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust the width of the columns so they just fit inside the client area of the grid.
