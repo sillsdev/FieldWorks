@@ -173,21 +173,18 @@ namespace LexTextControlsTests
 		/// <summary>
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
-		/// <param name="wsObj"></param>
 		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
 			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
-				validChars.AddCharacter("-");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "-" }), true);
+				validChars.AddCharacter("-", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!validChars.IsWordForming('\''))
 			{
-				validChars.AddCharacter("'");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "'" }), true);
+				validChars.AddCharacter("'", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!fChangedSomething)

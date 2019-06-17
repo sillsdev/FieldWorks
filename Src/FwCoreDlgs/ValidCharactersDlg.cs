@@ -27,7 +27,6 @@ using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.LCModel.Utils;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -54,7 +53,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			private CharacterGrid m_gridOther;
 			private CharacterGrid m_currGrid;
 
-			private IApp m_app;
 			private ValidCharacters m_validChars;
 			private CoreWritingSystemDefinition m_ws;
 			private readonly ContextMenuStrip m_cmnu;
@@ -94,7 +92,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CoreWritingSystemDefinition ws, IApp app)
 			{
 				m_ws = ws;
-				m_app = app;
 
 				gridWf.Font = new Font(ws.DefaultFontName, gridWf.Font.Size);
 				gridOther.Font = new Font(ws.DefaultFontName, gridOther.Font.Size);
