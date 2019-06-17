@@ -80,6 +80,7 @@ public:
 
 	static float GetAdvanceX(const void* appFontHandle, gr_uint16 glyphid);
 	static float GetAdvanceY(const void* appFontHandle, gr_uint16 glyphid);
+	static int ConvertGraphiteCharIndexToUtf16Index(StrUni& u16str, int utf32Index);
 
 protected:
 	static int Round(const float n)

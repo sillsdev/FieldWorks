@@ -159,7 +159,7 @@ protected:
 	}
 
 	void InterpretChrp(LgCharRenderProps& chrp);
-	void InitializeGlyphs(gr_segment* segment, gr_font* font);
+	void InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_font* font);
 	void Compute(int ichBase, IVwGraphics* pvg);
 	bool CanDrawIP(int ich, ComBool fAssocPrev);
 	bool CheckForOrcUs(int ich);

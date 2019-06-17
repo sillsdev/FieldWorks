@@ -354,8 +354,11 @@ STDMETHODIMP VwSimpleTxtSrc::GetCharProps(int ich, LgCharRenderProps * pchrp,
 	int irun = 0;
 	ITsTextPropsPtr qttp;
 	CachedProps * pchrp2 = GetCharPropInfo(ich, pichMin, pichLim, &isbt, &irun, &qttp);
-	// Copy the relevant part of the CachedProps
-	CopyBytes(pchrp2, pchrp, isizeof(LgCharRenderProps));
+	if(pchrp2 != NULL)
+	{
+		// Copy the relevant part of the CachedProps
+		CopyBytes(pchrp2, pchrp, isizeof(LgCharRenderProps));
+	}
 
 	END_COM_METHOD(g_fact, IID_IVwTextSource);
 }

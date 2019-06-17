@@ -1087,8 +1087,10 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	segStr.SetSize(segmentLen + 1, &pchNfd);
 	CheckHr(m_qts->Fetch(m_ichMin, m_ichLim, pchNfd));
 	pchNfd[segmentLen] = '\0';
-
-	gr_segment* segment = gr_make_seg(font, m_qgre->Face(), 0, m_qgre->FeatureValues(), gr_utf16, segStr, segmentLen, IsRtl() ? gr_rtl : 0);
+	const void * error = 0;
+	int usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
+	Assert(!error || usvCount > 0); // Something went wrong trying to count the characters, maybe a bad surrogate pair in the data?
+	gr_segment* segment = gr_make_seg(font, m_qgre->Face(), 0, m_qgre->FeatureValues(), gr_utf16, segStr, usvCount, IsRtl() ? gr_rtl : 0);
 	if (m_stretch > 0)
 	{
 		int width = 0;
@@ -1096,7 +1098,7 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 			width = Max(width, Round(gr_slot_origin_X(s) + gr_slot_advance_X(s, m_qgre->Face(), font)));
 		gr_seg_justify(segment, gr_seg_first_slot(segment), font, width + m_stretch, gr_justCompleteLine, NULL, NULL);
 	}
-	InitializeGlyphs(segment, font);
+	InitializeGlyphs(segStr, segment, font);
 
 	int fontAscent, fontDescent;
 	CheckHr(pvg->get_FontAscent(&fontAscent));
@@ -1112,7 +1114,7 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	Retrieves glyph positioning information from the Graphite2 segment and identifies clusters.
 	The clustering algorithm used below is adapted from the algorithm in the Graphite2 manual.
 ----------------------------------------------------------------------------------------------*/
-void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
+void GraphiteSegment::InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_font* font)
 {
 	m_glyphs.clear();
 	m_clusters.clear();
@@ -1148,8 +1150,8 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 	m_clusters.push_back(Cluster(m_ichMin, 0, gi, 0, beforeX));
 	for (s = gr_seg_first_slot(segment); s != NULL; s = gr_slot_next_in_segment(s))
 	{
-		int before = m_ichMin + (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
-		int after = m_ichMin + (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_after(s)));
+		int before = m_ichMin + GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_before(s));
+		int after = m_ichMin + GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_after(s));
 
 		while (m_clusters.size() > 1 && m_clusters.back().ichBase > before)
 		{

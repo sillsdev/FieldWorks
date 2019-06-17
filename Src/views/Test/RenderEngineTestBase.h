@@ -174,7 +174,7 @@ namespace TestViews
 			break;
 		case 3:
 			m_stu.Assign(
-				L"This is an input text with hard breaks.\tThis was a tab.\rThis was a return. "
+				L"This is input\xd804\xdf3c text with hard breaks.\tThis was a tab\xd804\xdf3c.\rThis was a return. "
 				L"\x2028 This is a hard line break.\nThis was a new line."
 				L"\xfffc This was a object."
 				);
