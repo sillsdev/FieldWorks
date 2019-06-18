@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,7 +50,6 @@ using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using SIL.Lexicon;
 
 namespace SIL.FieldWorks
 {
@@ -3457,6 +3456,9 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
+			var processArch = Environment.Is64BitProcess ? 64 : 32;
+			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
+			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
 			ulong diskSize;
 			ulong diskFree;
 			int cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);

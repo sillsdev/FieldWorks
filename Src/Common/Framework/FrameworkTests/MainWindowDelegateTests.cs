@@ -1,14 +1,14 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2010-11-12 MainWindowDelegateTests.cs
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -148,6 +148,25 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 		}
 
+		/// <remarks>
+		/// Disposing (closing) a registry key handle in Mono's UnixRegistryApi drops the key (this is a Mono bug).
+		/// Because of this, after we read the Projects directory from the registry (part of FwApp construction, in
+		/// FwRegistrySettings.AddErrorReportingInfo), we cannot write the TotalAppRuntime (part of FwApp disposal)
+		/// to the same key, because it has been marked for deletion.
+		/// This is not a problem when running FLEx because TotalAppRuntime is written to the subkey "Language Explorer".
+		/// Creating this subkey keeps tests from crashing until Mono fixes the real problem (https://github.com/mono/mono/issues/15427).
+		/// </remarks>
+		public override RegistryKey SettingsKey
+		{
+			get
+			{
+				using (var regKey = base.SettingsKey)
+				{
+					return regKey.CreateSubKey("DropMeBabyOneMoreTime");
+				}
+			}
+		}
+
 		#region abstract members of SIL.FieldWorks.Common.Framework.FwApp
 		/// <summary/>
 		public override bool InitCacheForApp(IThreadedProgress progressDlg)
@@ -210,6 +229,22 @@ namespace SIL.FieldWorks.Common.Framework
 			m_fileOs.ExistingDirectories.Add(pathDesktop);
 			m_fileOs.ExistingDirectories.Add(pathTmp.TrimEnd(
 				new char[] {Path.DirectorySeparatorChar}));
+		}
+
+		/// <summary/>
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
+		}
+
+		/// <summary/>
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			FwRegistryHelper.Manager.Reset();
+			base.FixtureTeardown();
 		}
 
 		#region CreateShortcut tests
