@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			const string titleId = "SemanticDomain-Plural";
 			string titleStr;
-			XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
+			XmlViewsUtils.TryFindString(StringTable.AlternativeTitles, titleId, out titleStr);
 			// if they specified an altTitleId, but it wasn't found, they need to do something,
 			// so just return *titleId*
 			if (titleStr == null)

@@ -140,11 +140,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

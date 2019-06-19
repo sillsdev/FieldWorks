@@ -332,8 +332,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var contextMenuStrip = new ContextMenuStrip();
 			m_refTypesAvailable.Clear();
 			m_rgfReversedRefType.Clear();
-			var formatName = StringTable.Table.GetString("InsertSymmetricReference", "LexiconTools");
-			var formatNameWithReverse = StringTable.Table.GetString("InsertAsymmetricReference", "LexiconTools");
+			var formatName = StringTable.Table.GetString("InsertSymmetricReference", StringTable.LexiconTools);
+			var formatNameWithReverse = StringTable.Table.GetString("InsertAsymmetricReference", StringTable.LexiconTools);
 			foreach (var lrt in Cache.LanguageProject.LexDbOA.ReferencesOA.PossibilitiesOS.Cast<ILexRefType>())
 			{
 				if (MyCmObject is ILexEntry)

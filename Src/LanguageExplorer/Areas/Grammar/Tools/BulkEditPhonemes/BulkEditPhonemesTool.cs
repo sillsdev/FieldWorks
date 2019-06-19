@@ -129,11 +129,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </summary>
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private sealed class BulkEditPhonemesToolMenuHelper : IDisposable
@@ -173,7 +168,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdPhonemeJumpToDefault_Clicked, AreaResources.Show_in_Phonemes_Editor);
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", "ClassNames")));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -187,7 +182,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
 			{
-				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", "ClassNames")), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+				_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", StringTable.ClassNames)), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			private void CmdPhonemeJumpToDefault_Clicked(object sender, EventArgs e)

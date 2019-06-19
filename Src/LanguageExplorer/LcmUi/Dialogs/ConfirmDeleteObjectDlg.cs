@@ -120,7 +120,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.MyCmObject != null);
-			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass);
+			Text = string.Format(LcmUiStrings.ksDeleteX, obj.MyCmObject.DisplayNameOfClass(cache));
 			// Set the s_helpTopic based on the window title and rearrange the buttons if necessary
 			switch (obj.ClassName)
 			{

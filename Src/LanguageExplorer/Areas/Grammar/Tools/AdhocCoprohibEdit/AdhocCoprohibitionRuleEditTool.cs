@@ -175,11 +175,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -264,7 +259,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
     </command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
-				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoMorphAdhocProhib", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoMorphAdhocProhib", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
 				{
 					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAlloAdhocProhibFactory>().Create());
 				});
@@ -278,7 +273,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
     </command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
-				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAlloAdhocProhib", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAlloAdhocProhib", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
 				{
 					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoMorphAdhocProhibFactory>().Create());
 				});
@@ -292,7 +287,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
     </command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
-				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAdhocProhibGr", "ClassNames")}", cache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAdhocProhibGr", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
 				{
 					cache.LanguageProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create());
 				});
@@ -323,7 +318,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 					return;
 				}
 				// Set to correct class
-				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames")));
+				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, StringTable.ClassNames)));
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)

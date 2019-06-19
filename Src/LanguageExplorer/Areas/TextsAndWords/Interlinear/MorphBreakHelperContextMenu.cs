@@ -42,8 +42,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(out m_mmtStem, out m_mmtPrefix, out m_mmtSuffix, out m_mmtInfix, out m_mmtBoundStem, out m_mmtProclitic, out m_mmtEnclitic, out m_mmtSimulfix, out m_mmtSuprafix);
 
-			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
-			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
+			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", StringTable.DialogStrings);
+			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", StringTable.DialogStrings);
 			var lbl_stemExample = string.Format(sStemExample, m_mmtStem.Prefix ?? string.Empty, m_mmtStem.Postfix ?? string.Empty);
 			var lbl_boundStemExample = string.Format(sStemExample, m_mmtBoundStem.Prefix ?? string.Empty, m_mmtBoundStem.Postfix ?? string.Empty);
 			var lbl_prefixExample = string.Format(sAffixExample, m_mmtPrefix.Prefix == null ? string.Empty : " " + m_mmtPrefix.Prefix, m_mmtPrefix.Postfix == null ? string.Empty : m_mmtPrefix.Postfix + " ");

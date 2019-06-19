@@ -114,6 +114,7 @@
   <group id="AlternativeTypeNames">
 	<string id="Feature-Phonological" txt="Phonological Feature"/>
 	<string id="Feature Structure-MoStemName" txt="Feature Set"/>
+    <string id="Feature-List" txt="Feature Type"/>
   </group>
   <group id="AlternativeTitles">
 <!-- Grammar Browse Views -->

@@ -103,10 +103,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var morphTypeRepo = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 			morphTypeRepo.GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix, out mmtBoundStem, out mmtProclitic, out mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
 			// Format the labels according to the MoMorphType Prefix/Postfix values.
-			var sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", "DialogStrings");
-			var sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", "DialogStrings");
-			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
-			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
+			var sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", StringTable.DialogStrings);
+			var sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", StringTable.DialogStrings);
+			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", StringTable.DialogStrings);
+			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", StringTable.DialogStrings);
 			m_lblHelp2Example1.Text = string.Format(sExample1, mmtStem.Prefix ?? string.Empty, mmtStem.Postfix ?? string.Empty);
 			m_lblHelp2Example2.Text = string.Format(sExample2, mmtSuffix.Prefix ?? string.Empty, mmtSuffix.Postfix ?? string.Empty);
 			m_lblBreakStemExample.Text = string.Format(sStemExample, mmtStem.Prefix ?? string.Empty, mmtStem.Postfix ?? string.Empty);

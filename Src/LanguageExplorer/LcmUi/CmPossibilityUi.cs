@@ -113,33 +113,6 @@ namespace LanguageExplorer.LcmUi
 		}
 #endif
 
-		public static string GetPossibilityDisplayName(ICmPossibilityList list)
-		{
-			var listName = list.Owner != null ? list.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(list.OwningFlid) : list.Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
-			if (itemsTypeName != $"*{listName}*")
-			{
-				return itemsTypeName;
-			}
-			return list.PossibilitiesOS.Count > 0 ? StringTable.Table.GetString(list.PossibilitiesOS[0].GetType().Name, "ClassNames") : itemsTypeName;
-		}
-
-		public override string DisplayNameOfClass
-		{
-			get
-			{
-				var poss = (ICmPossibility)MyCmObject;
-				var owningList = poss.OwningList;
-				if (owningList.OwningFlid == 0)
-				{
-					return StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
-				}
-				var owningFieldName = m_cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
-				var itemsTypeName = GetPossibilityDisplayName(owningList);
-				return itemsTypeName != $"*{owningFieldName}*" ? itemsTypeName : StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
-			}
-		}
-
 		/// <summary>
 		/// Check whether it is OK to add a possibility to the specified item. If not, report the
 		/// problem to the user and return true.

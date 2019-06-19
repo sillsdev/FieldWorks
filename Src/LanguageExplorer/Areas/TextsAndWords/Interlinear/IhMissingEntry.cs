@@ -682,7 +682,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						entryForm = ITextStrings.ksNoForm;
 					}
-					var sNoMorphType = StringTable.Table.GetString("NoMorphType", "DialogStrings");
+					var sNoMorphType = StringTable.Table.GetString("NoMorphType", StringTable.DialogStrings);
 					var sTypeLe = mmtLe != null ? mmtLe.Name.BestAnalysisAlternative.Text : sNoMorphType;
 					var sTypeNew = mmtNew.Name.BestAnalysisAlternative.Text;
 					var msg1 = string.Format(ITextStrings.ksSelectedLexEntryXisaY, entryForm, sTypeLe);

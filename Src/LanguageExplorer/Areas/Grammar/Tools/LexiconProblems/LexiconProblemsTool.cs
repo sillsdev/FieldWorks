@@ -127,13 +127,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
-		/// </summary>
-		public string UiName => "Problems";
 
 		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
+		/// Get the image for the area.
 		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
+		public string UiName => "Problems";
 
 		#endregion
 

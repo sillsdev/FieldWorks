@@ -156,9 +156,6 @@
   <data name="ksLexicalRelationTypes" xml:space="preserve">
     <value>Lexical Relation Types:</value>
   </data>
-  <data name="DeleteRecordTooltip" xml:space="preserve">
-    <value>Delete this {0}.</value>
-  </data>
   <data name="Arrow_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Arrow_Up.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

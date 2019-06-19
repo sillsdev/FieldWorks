@@ -1229,7 +1229,6 @@
     </Compile>
     <Compile Include="LcmUi\BulkPosEditorBase.cs" />
     <Compile Include="LcmUi\CmAnalObjectVc.cs" />
-    <Compile Include="LcmUi\CmCustomItemUi.cs" />
     <Compile Include="LcmUi\CmNameAbbrObjVc.cs" />
     <Compile Include="LcmUi\CmNamedObjVc.cs" />
     <Compile Include="LcmUi\CmObjectUi.cs" />

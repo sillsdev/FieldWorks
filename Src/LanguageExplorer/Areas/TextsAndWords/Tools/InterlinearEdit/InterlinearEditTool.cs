@@ -148,11 +148,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		/// <summary>
@@ -194,7 +189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("StText", "ClassNames")));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("StText", StringTable.ClassNames)));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;

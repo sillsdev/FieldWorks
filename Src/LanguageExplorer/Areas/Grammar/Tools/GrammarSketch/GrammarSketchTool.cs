@@ -111,11 +111,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </summary>
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => string.Empty;
-
 		#endregion
 		/// <summary>
 		/// Handle creation and use of the grammar sketch tool menus.

@@ -2587,7 +2587,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Otherwise, see if we can map the label to an abbreviation in the StringTable
 			if (label != null)
 			{
-				abbr = StringTable.Table.GetString(label, "LabelAbbreviations");
+				abbr = StringTable.Table.GetString(label, StringTable.LabelAbbreviations);
 				if (abbr == "*" + label + "*")
 				{
 					abbr = null;    // couldn't find it in the StringTable, reset it to null.

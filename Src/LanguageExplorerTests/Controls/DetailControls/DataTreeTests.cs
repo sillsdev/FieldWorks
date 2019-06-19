@@ -176,12 +176,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// 1) Test that labels that are not in "LabelAbbreviations" stringTable
 			//		are abbreviated by being truncated to 4 characters.
 			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			var abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
+			var abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, StringTable.LabelAbbreviations);
 			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");   // verify it's not in the table.
 			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);       // verify truncation took place.
 																						// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
 			Assert.AreEqual("Citation Form", (m_dtree.Controls[1] as Slice).Label);
-			var abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
+			var abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, StringTable.LabelAbbreviations);
 			Assert.IsFalse(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*"); // verify it IS in the table
 			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);        // should be identical
 																						// 3) Test that a label with an "abbr" attribute overrides default abbreviation.

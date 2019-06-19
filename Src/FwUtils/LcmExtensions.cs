@@ -53,6 +53,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return $"{created} {modified}";
 		}
 
+		public static string DisplayNameOfClass(this ICmObject me, LcmCache cache)
+		{
+			var className = me.ClassName;
+			var displayNameOfClass = StringTable.Table.GetString(className, StringTable.ClassNames);
+			if (me is ICmCustomItem)
+			{
+				return displayNameOfClass;
+			}
+			if (me is ICmPossibility)
+			{
+				return ((ICmPossibility)me).ItemTypeName();
+			}
+			if (displayNameOfClass == $"*{className}*")
+			{
+				displayNameOfClass = className;
+			}
+			string alternateDisplayName;
+			var featureSystem = me.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
+			if (featureSystem != null)
+			{
+				var searchSpace = featureSystem.OwningFlid == LangProjectTags.kflidPhFeatureSystem ? "Phonological" : "List";
+				alternateDisplayName = StringTable.Table.GetString($"Feature-{searchSpace}", StringTable.AlternativeTypeNames);
+				if (alternateDisplayName != $"*Feature-{searchSpace}*")
+				{
+					return alternateDisplayName;
+				}
+			}
+			switch (me.OwningFlid)
+			{
+				case MoStemNameTags.kflidRegions:
+					alternateDisplayName = StringTable.Table.GetString($"{className}-MoStemName", StringTable.AlternativeTypeNames);
+					if (alternateDisplayName != $"*{className}-MoStemName*")
+					{
+						return alternateDisplayName;
+					}
+					break;
+			}
+			return displayNameOfClass;
+		}
+
 		/// <summary>
 		/// Try to get the WS from a selection range.
 		/// </summary>
@@ -141,7 +181,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string ItemTypeName(this ICmPossibility me)
 		{
 			// This is the code that method did for ICmPossibility.
-			var stringTableName = StringTable.Table.GetString(me.GetType().Name, "ClassNames");
+			var stringTableName = StringTable.Table.GetString(me.GetType().Name, StringTable.ClassNames);
 			var owningList = me.OwningList;
 			if (owningList.OwningFlid == 0)
 			{
@@ -157,11 +197,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var listName = me.Owner != null
 				? me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(me.OwningFlid)
 				: me.Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
+			var itemsTypeName = StringTable.Table.GetString(listName, StringTable.PossibilityListItemTypeNames);
 			return itemsTypeName != AddAsteriskBrackets(listName)
 				? itemsTypeName
 				: (me.PossibilitiesOS.Any()
-					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, "ClassNames")
+					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, StringTable.ClassNames)
 					: itemsTypeName);
 		}
 
@@ -178,6 +218,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 			return allPossibilities;
+		}
+
+		public static string GetPossibilityDisplayName(this ICmPossibilityList me)
+		{
+			var listName = me.Owner != null ? me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(me.OwningFlid) : me.Name.BestAnalysisVernacularAlternative.Text;
+			var itemsTypeName = StringTable.Table.GetString(listName, StringTable.PossibilityListItemTypeNames);
+			if (itemsTypeName != $"*{listName}*")
+			{
+				return itemsTypeName;
+			}
+			return me.PossibilitiesOS.Count > 0 ? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, StringTable.ClassNames) : itemsTypeName;
 		}
 
 		private static List<ICmPossibility> AllPossibilities(this ICmPossibility me)
@@ -202,7 +253,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public static string ItemTypeName(this ICmCustomItem me)
 		{
-			return StringTable.Table.GetString(me.GetType().Name, "ClassNames");
+			return StringTable.Table.GetString(me.GetType().Name, StringTable.ClassNames);
 		}
 
 		public static bool AreCustomFieldsAProblem(this IFwMetaDataCacheManaged me, int[] clsids)

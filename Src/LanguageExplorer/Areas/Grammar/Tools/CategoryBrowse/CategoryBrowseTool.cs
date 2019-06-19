@@ -120,11 +120,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </summary>
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -192,7 +187,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				_jumpMenu2.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PartOfSpeech", "ClassNames")));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PartOfSpeech", StringTable.ClassNames)));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;

@@ -253,15 +253,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete this {0}..
-        /// </summary>
-        internal static string DeleteRecordTooltip {
-            get {
-                return ResourceManager.GetString("DeleteRecordTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Deleting the object.
         /// </summary>
         internal static string DeletingTheObject {

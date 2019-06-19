@@ -2765,8 +2765,8 @@ very simple minor adjustments. ;)"
 				}
 				else
 				{
-					var userFriendlyClassName = _currentTool.UiDeleteObjectName;
-					tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
+					var userFriendlyClassName = activeRecordList.CurrentObject.DisplayNameOfClass(Cache);
+					tooltipText = string.Format(FwUtils.RemoveUnderline(LanguageExplorerResources.DeleteMenu), userFriendlyClassName);
 					deleteText = string.Format(deleteTextBase, userFriendlyClassName);
 					// See if a view can do it.
 					if (activeView is XmlDocView)

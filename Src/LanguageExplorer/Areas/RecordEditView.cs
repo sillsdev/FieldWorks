@@ -376,7 +376,7 @@ namespace LanguageExplorer.Areas
 			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 			{
-				m_titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
+				m_titleStr = StringTable.Table.GetString(titleId, StringTable.AlternativeTitles);
 			}
 			m_printLayout = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "printLayout");
 		}

@@ -299,7 +299,7 @@ namespace LanguageExplorer.Areas
 			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 			{
-				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
+				titleStr = StringTable.Table.GetString(titleId, StringTable.AlternativeTitles);
 				if (MyRecordList.OwningObject != null && XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable the Reversal Index title bar to show
@@ -372,7 +372,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var className = StringTable.Table.GetString("No Record", "Misc");
+			var className = StringTable.Table.GetString("No Record", StringTable.Misc);
 			if (MyRecordList.CurrentObject != null)
 			{
 				var typeName = MyRecordList.CurrentObject.GetType().Name;
@@ -383,7 +383,7 @@ namespace LanguageExplorer.Areas
 				}
 				else
 				{
-					className = StringTable.Table.GetString(typeName, "ClassNames");
+					className = StringTable.Table.GetString(typeName, StringTable.ClassNames);
 				}
 				if (className == "*" + typeName + "*")
 				{
@@ -396,7 +396,7 @@ namespace LanguageExplorer.Areas
 				if (!string.IsNullOrEmpty(emptyTitleId))
 				{
 					string titleStr;
-					XmlViewsUtils.TryFindString("EmptyTitles", emptyTitleId, out titleStr);
+					XmlViewsUtils.TryFindString(StringTable.EmptyTitles, emptyTitleId, out titleStr);
 					if (titleStr != "*" + emptyTitleId + "*")
 					{
 						className = titleStr;

@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas
 				{
 					sliceForDeletionOperation = slice.ParentSlice;
 				}
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteAnalysis_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(WfiAnalysisTags.kClassName, "ClassNames")));
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteAnalysis_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(WfiAnalysisTags.kClassName, StringTable.ClassNames)));
 				menu.Tag = sliceForDeletionOperation;
 			}
 

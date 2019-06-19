@@ -269,7 +269,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				string sFxtOutputPath;
 				PerformRetrieval(out sFxtOutputPath, dlg);
 				PerformTransformations(sFxtOutputPath, dlg);
-				UpdateProgress(StringTable.Table.GetString("Complete", "DocumentGeneration"), dlg);
+				UpdateProgress(StringTable.Table.GetString("Complete", StringTable.DocumentGeneration), dlg);
 				dlg.Close();
 			}
 			ShowSketch();

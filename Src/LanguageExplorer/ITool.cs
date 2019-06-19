@@ -20,10 +20,5 @@ namespace LanguageExplorer
 		/// Get the image for the area.
 		/// </summary>
 		Image Icon { get; }
-
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		string UiDeleteObjectName { get; }
 	}
 }

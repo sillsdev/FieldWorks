@@ -125,11 +125,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </summary>
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		/// <summary>
@@ -191,7 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", StringTable.ClassNames)));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;

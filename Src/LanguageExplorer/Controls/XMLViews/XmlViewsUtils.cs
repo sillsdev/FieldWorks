@@ -58,7 +58,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var flidName = mdc.GetFieldName(owningFlid);
 			if (!string.IsNullOrEmpty(flidName))
 			{
-				if (TryFindString("AlternativeTitles", flidName, out titleStr))
+				if (TryFindString(StringTable.AlternativeTitles, flidName, out titleStr))
 				{
 					return true;
 				}
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static bool TryFindPluralFormFromClassId(IFwMetaDataCache mdc, int clsId, out string titleStr)
 		{
 			titleStr = null;
-			return clsId != 0 && TryFindString("AlternativeTitles", $"{mdc.GetClassName(clsId)}-Plural", out titleStr);
+			return clsId != 0 && TryFindString(StringTable.AlternativeTitles, $"{mdc.GetClassName(clsId)}-Plural", out titleStr);
 		}
 
 		/// <summary />

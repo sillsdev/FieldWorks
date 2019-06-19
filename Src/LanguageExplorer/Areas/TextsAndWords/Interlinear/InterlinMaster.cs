@@ -245,7 +245,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sAltTitle = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 				if (!string.IsNullOrEmpty(sAltTitle))
 				{
-					var sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
+					var sTitle = StringTable.Table.GetString(sAltTitle, StringTable.AlternativeTitles);
 					if (!string.IsNullOrEmpty(sTitle))
 					{
 						((IPaneBar)m_informationBar).Text = sTitle;

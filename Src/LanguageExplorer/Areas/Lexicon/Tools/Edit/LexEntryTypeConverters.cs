@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var contents = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Where(lexEntryType => lexEntryType.ClassID == classId);
 			var persistProvider = m_dlg.PropertyTable.GetValue<IPersistenceProvider>("persistProvider");
-			var fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
+			var fieldName = StringTable.Table.GetString("VariantEntryTypes", StringTable.PossibilityListItemTypeNames);
 			return new SimpleListChooser(persistProvider, labels, fieldName, m_cache, contents, m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 

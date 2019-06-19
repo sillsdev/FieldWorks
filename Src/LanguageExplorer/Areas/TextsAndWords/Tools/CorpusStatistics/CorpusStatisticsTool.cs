@@ -104,11 +104,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </summary>
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => string.Empty;
-
 		#endregion
 
 		private sealed class CorpusStatisticsToolMenuHelper : IDisposable

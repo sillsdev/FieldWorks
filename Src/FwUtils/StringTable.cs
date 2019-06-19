@@ -18,6 +18,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class StringTable
 	{
+		public const string Misc = "Misc";
+		public const string ClassNames = "ClassNames";
+		public const string PossibilityListItemTypeNames = "PossibilityListItemTypeNames";
+		public const string AlternativeTypeNames = "AlternativeTypeNames";
+		public const string AlternativeTitles = "AlternativeTitles";
+		public const string EmptyTitles = "EmptyTitles";
+		public const string DialogStrings = "DialogStrings";
+		public const string DocumentGeneration = "DocumentGeneration";
+		public const string LexiconTools = "LexiconTools";
+		public const string LabelAbbreviations = "LabelAbbreviations";
 		private static StringTable s_singletonStringTable;
 		private readonly string m_baseDirectory;
 		private StringTable m_parent;
@@ -308,7 +318,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// get a string which is embedded in a group (or in a group inside of a group...)
 		/// </summary>
 		/// <example>
-		///		GetStringInGroup("LexMajorEntry", "ClassNames");
+		///		GetStringInGroup("LexMajorEntry", ClassNames);
 		/// </example>
 		/// <example>
 		///		get one out of a group within a group:

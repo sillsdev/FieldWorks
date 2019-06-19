@@ -1430,7 +1430,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InitializeConcordanceSearch(ICmObject cmo, ITsString tssObj)
 		{
 			var sType = cmo.GetType().Name;
-			var sTag = StringTable.Table.GetString(sType, "ClassNames");
+			var sTag = StringTable.Table.GetString(sType, StringTable.ClassNames);
 			SetDefaultVisibilityOfItems(false, sTag);
 			m_fObjectConcorded = true;
 			m_hvoMatch = cmo.Hvo;

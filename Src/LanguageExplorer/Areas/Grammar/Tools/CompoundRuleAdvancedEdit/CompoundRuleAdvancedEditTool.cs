@@ -149,11 +149,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -209,7 +204,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
 				var currentObject = _recordList.CurrentObject;
 				var lookupName = currentObject == null ? "MoCompoundRule" : currentObject.ClassName;
-				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(lookupName, "ClassNames")));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(lookupName, StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -224,7 +219,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 					return;
 				}
 				// Set to correct class
-				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames")));
+				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, StringTable.ClassNames)));
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)

@@ -138,11 +138,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private static string GetMachineName(ICmPossibilityList customList)

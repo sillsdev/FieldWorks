@@ -237,9 +237,6 @@ namespace LanguageExplorer.LcmUi
 					case WfiGlossTags.kClassId:
 						result = new WfiGlossUi();
 						break;
-					case CmCustomItemTags.kClassId:
-						result = new CmCustomItemUi();
-						break;
 					default:
 						realClsid = mdc.GetBaseClsId(realClsid);
 						break;
@@ -600,45 +597,6 @@ namespace LanguageExplorer.LcmUi
 			return true;
 		}
 #endif
-
-		public virtual string DisplayNameOfClass
-		{
-			get
-			{
-				var poss = MyCmObject as ICmPossibility;
-				if (poss != null)
-				{
-					return poss.ItemTypeName();
-				}
-				var typeName = MyCmObject.GetType().Name;
-				var className = StringTable.Table.GetString(typeName, "ClassNames");
-				if (className == $"*{typeName}*")
-				{
-					className = typeName;
-				}
-				string altName;
-				var featsys = MyCmObject.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
-				if (featsys?.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
-				{
-					altName = StringTable.Table.GetString($"{className}-Phonological", "AlternativeTypeNames");
-					if (altName != $"*{className}-Phonological*")
-					{
-						return altName;
-					}
-				}
-				switch (MyCmObject.OwningFlid)
-				{
-					case MoStemNameTags.kflidRegions:
-						altName = StringTable.Table.GetString($"{className}-MoStemName", "AlternativeTypeNames");
-						if (altName != $"*{className}-MoStemName*")
-						{
-							return altName;
-						}
-						break;
-				}
-				return className;
-			}
-		}
 
 		public virtual bool CanDelete(out string cannotDeleteMsg)
 		{

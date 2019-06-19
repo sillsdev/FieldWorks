@@ -439,7 +439,7 @@ namespace LanguageExplorer.Areas
 			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 			{
-				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
+				XmlViewsUtils.TryFindString(StringTable.AlternativeTitles, titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
 				if (MyRecordList.OwningObject != null && titleId.StartsWith("Reversal") && XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))

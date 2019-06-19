@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas
 
 		protected override void UpdateStatusBarForRecordBar()
 		{
-			UpdateStatusBarRecordNumber(StringTable.Table.GetString("No Records", "Misc"));
+			UpdateStatusBarRecordNumber(StringTable.Table.GetString("No Records", StringTable.Misc));
 		}
 
 		protected override void UpdateSelectionForRecordBar()

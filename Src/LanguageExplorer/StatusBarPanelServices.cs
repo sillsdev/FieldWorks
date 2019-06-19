@@ -52,7 +52,7 @@ namespace LanguageExplorer
 			SetStatusPanelMessage(statusBar, string.Empty);
 			SetStatusBarPanelSort(statusBar, string.Empty);
 			SetStatusBarPanelFilter(statusBar, string.Empty);
-			SetStatusPanelRecordNumber(statusBar, StringTable.Table.GetString("No Records", "Misc"));
+			SetStatusPanelRecordNumber(statusBar, StringTable.Table.GetString("No Records", StringTable.Misc));
 		}
 	}
 }

@@ -181,7 +181,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					break;
 			}
 			var sClassRaw = mdc.GetClassName(m_clidDst);
-			var sClass = StringTable.Table.GetString(sClassRaw, "ClassNames");
+			var sClass = StringTable.Table.GetString(sClassRaw, StringTable.ClassNames);
 			var sUndo = string.Format(DetailControlsStrings.ksUndoCreate0, sClass);
 			var sRedo = string.Format(DetailControlsStrings.ksRedoCreate0, sClass);
 			var hvoNewObj = 0;

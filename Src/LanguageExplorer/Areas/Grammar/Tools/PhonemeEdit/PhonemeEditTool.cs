@@ -159,11 +159,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		/// <summary>
-		/// Get User-visible localizable name for class of object being deleted.
-		/// </summary>
-		public string UiDeleteObjectName => StringTable.Table.GetString(_recordList.CurrentObject.ClassName, "ClassNames");
-
 		#endregion
 
 		private sealed class PhonemeEditToolMenuHelper : IDisposable
@@ -200,7 +195,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", "ClassNames")));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
