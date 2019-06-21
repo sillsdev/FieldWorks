@@ -42,17 +42,17 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Lexicon area has tools in the right order.
 		/// </summary>
-		[TestCase(0, AreaServices.LexiconEditMachineName)]
-		[TestCase(1, AreaServices.LexiconBrowseMachineName)]
-		[TestCase(2, AreaServices.LexiconDictionaryMachineName)]
-		[TestCase(3, AreaServices.RapidDataEntryMachineName)]
-		[TestCase(4, AreaServices.LexiconClassifiedDictionaryMachineName)]
-		[TestCase(5, AreaServices.BulkEditEntriesOrSensesMachineName)]
-		[TestCase(6, AreaServices.ReversalEditCompleteMachineName)]
-		[TestCase(7, AreaServices.ReversalBulkEditReversalEntriesMachineName)]
-		public void AreaRepositoryHasAllLexiconToolsInCorrectOrder(int idx, string expectedMachineName)
+		[TestCase(AreaServices.LexiconEditUiName, 0, AreaServices.LexiconEditMachineName)]
+		[TestCase(AreaServices.LexiconBrowseUiName, 1, AreaServices.LexiconBrowseMachineName)]
+		[TestCase(AreaServices.LexiconDictionaryUiName, 2, AreaServices.LexiconDictionaryMachineName)]
+		[TestCase(AreaServices.RapidDataEntryUiName, 3, AreaServices.RapidDataEntryMachineName)]
+		[TestCase(AreaServices.LexiconClassifiedDictionaryUiName, 4, AreaServices.LexiconClassifiedDictionaryMachineName)]
+		[TestCase(AreaServices.BulkEditEntriesOrSensesUiName, 5, AreaServices.BulkEditEntriesOrSensesMachineName)]
+		[TestCase(AreaServices.ReversalEditCompleteUiName, 6, AreaServices.ReversalEditCompleteMachineName)]
+		[TestCase(AreaServices.ReversalBulkEditReversalEntriesUiName, 7, AreaServices.ReversalBulkEditReversalEntriesMachineName)]
+		public void AreaRepositoryHasAllLexiconToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
-			DoTests(idx, expectedMachineName);
+			DoTests(uiName, idx, expectedMachineName);
 		}
 	}
 }

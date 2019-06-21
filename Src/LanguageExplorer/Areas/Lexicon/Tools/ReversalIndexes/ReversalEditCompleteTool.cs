@@ -167,7 +167,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "BUGGY: Reversal Indexes";
+		public string UiName => AreaServices.ReversalEditCompleteUiName;
 		#endregion
 
 		#region Implementation of ITool

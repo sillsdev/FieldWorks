@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Category Edit";
+		public string UiName => AreaServices.PosEditUiName;
 
 		#endregion
 

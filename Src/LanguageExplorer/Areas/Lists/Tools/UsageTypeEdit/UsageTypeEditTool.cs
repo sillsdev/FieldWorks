@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Usages";
+		public string UiName => AreaServices.UsageTypeEditUiName;
 
 		#endregion
 

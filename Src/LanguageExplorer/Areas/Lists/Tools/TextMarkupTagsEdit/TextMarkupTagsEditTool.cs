@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Text Markup Tags";
+		public string UiName => AreaServices.TextMarkupTagsEditUiName;
 		#endregion
 
 		#region Implementation of ITool

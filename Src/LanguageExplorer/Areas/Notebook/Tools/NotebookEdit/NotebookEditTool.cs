@@ -158,7 +158,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Record Edit";
+		public string UiName => AreaServices.NotebookEditToolUiName;
 		#endregion
 
 		#region Implementation of ITool

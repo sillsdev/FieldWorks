@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Time Of Day";
+		public string UiName => AreaServices.TimeOfDayEditUiName;
 		#endregion
 
 		#region Implementation of ITool

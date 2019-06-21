@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Concordance";
+		public string UiName => AreaServices.ConcordanceUiName;
 		#endregion
 
 		#region Implementation of ITool

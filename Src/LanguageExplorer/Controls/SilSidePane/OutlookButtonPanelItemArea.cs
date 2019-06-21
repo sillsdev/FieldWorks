@@ -38,6 +38,16 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Items.Add(item);
 		}
 
+		public void Remove(Item item)
+		{
+			var widget = (ToolStripButton)item.UnderlyingWidget;
+			item.UnderlyingWidget = null;
+			widget.Click -= HandleWidgetClick;
+			base.Items.Remove(widget);
+			widget.Dispose();
+			Items.Remove(item);
+		}
+
 		/// <summary />
 		public new List<Item> Items { get; } = new List<Item>();
 

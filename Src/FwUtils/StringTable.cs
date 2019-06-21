@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			try
 			{
 				// Always load the neutral English strings first so that every string has a
+
 				// fallback definition.
 				string path;
 				if (m_sWsLoaded != "en")
@@ -181,7 +182,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// choose the best string file we can find for the given writing system/language.
 		/// </summary>
-		protected string ChooseStringFile(string baseDirectory, string sWs)
+		private string ChooseStringFile(string baseDirectory, string sWs)
 		{
 			var path = Path.Combine(baseDirectory, $"strings-{sWs}.xml");
 			if (File.Exists(path))
@@ -366,10 +367,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// creat an XPATH for use with GetString, based on a simpler notation
+		/// create an XPATH for use with GetString, based on a simpler notation
 		/// </summary>
 		/// <param name="simplePath">e.g. "linguistics/morphology" </param>
-		protected string GetXPathFragmentFromSimpleNotation(string simplePath)
+		private string GetXPathFragmentFromSimpleNotation(string simplePath)
 		{
 			if (string.IsNullOrWhiteSpace(simplePath))
 			{

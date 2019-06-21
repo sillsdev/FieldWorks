@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Bulk Edit Phoneme Features";
+		public string UiName => AreaServices.BulkEditPhonemesUiName;
 
 		#endregion
 

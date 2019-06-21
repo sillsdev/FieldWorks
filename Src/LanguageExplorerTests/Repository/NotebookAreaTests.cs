@@ -42,12 +42,12 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Notebook area has tools in the right order.
 		/// </summary>
-		[TestCase(0, AreaServices.NotebookEditToolMachineName)]
-		[TestCase(1, AreaServices.NotebookBrowseToolMachineName)]
-		[TestCase(2, AreaServices.NotebookDocumentToolMachineName)]
-		public void AreaRepositoryHasAllNotebookToolsInCorrectOrder(int idx, string expectedMachineName)
+		[TestCase(AreaServices.NotebookEditToolUiName, 0, AreaServices.NotebookEditToolMachineName)]
+		[TestCase(AreaServices.NotebookBrowseToolUiName, 1, AreaServices.NotebookBrowseToolMachineName)]
+		[TestCase(AreaServices.NotebookDocumentToolUiName, 2, AreaServices.NotebookDocumentToolMachineName)]
+		public void AreaRepositoryHasAllNotebookToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
-			DoTests(idx, expectedMachineName);
+			DoTests(uiName, idx, expectedMachineName);
 		}
 	}
 }

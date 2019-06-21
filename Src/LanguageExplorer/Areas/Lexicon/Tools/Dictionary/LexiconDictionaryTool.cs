@@ -146,7 +146,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "BUGGY: Dictionary";
+		public string UiName => AreaServices.LexiconDictionaryUiName;
 
 		#endregion
 

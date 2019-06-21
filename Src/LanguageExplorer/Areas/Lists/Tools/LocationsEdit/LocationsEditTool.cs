@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Locations";
+		public string UiName => AreaServices.LocationsEditUiName;
 		#endregion
 
 		#region Implementation of ITool

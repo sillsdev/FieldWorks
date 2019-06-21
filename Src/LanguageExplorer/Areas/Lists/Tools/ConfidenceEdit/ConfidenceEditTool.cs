@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Confidence Levels";
+		public string UiName => AreaServices.ConfidenceEditUiName;
 		#endregion
 
 		#region Implementation of ITool

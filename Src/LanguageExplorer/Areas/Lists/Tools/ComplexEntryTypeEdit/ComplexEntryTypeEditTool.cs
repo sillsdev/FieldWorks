@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Complex Form Types";
+		public string UiName => AreaServices.ComplexEntryTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

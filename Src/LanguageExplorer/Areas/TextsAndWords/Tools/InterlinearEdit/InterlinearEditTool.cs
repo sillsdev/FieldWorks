@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Interlinear Texts";
+		public string UiName => AreaServices.InterlinearEditUiName;
 
 		#endregion
 

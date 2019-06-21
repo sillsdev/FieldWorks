@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Roles";
+		public string UiName => AreaServices.RoleEditUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Extended Note Types";
+		public string UiName => AreaServices.ExtNoteTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

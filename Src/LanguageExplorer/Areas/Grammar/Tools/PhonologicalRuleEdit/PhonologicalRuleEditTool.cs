@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Phonological Rules";
+		public string UiName => AreaServices.PhonologicalRuleEditUiName;
 		#endregion
 
 		#region Implementation of ITool

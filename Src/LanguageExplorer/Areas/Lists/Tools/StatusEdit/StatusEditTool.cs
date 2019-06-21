@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Status";
+		public string UiName => AreaServices.StatusEditUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Categories Browse";
+		public string UiName => AreaServices.CategoryBrowseUiName;
 
 		#endregion
 

@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Dialect Labels";
+		public string UiName => AreaServices.DialectsListEditUiName;
 
 		#endregion
 

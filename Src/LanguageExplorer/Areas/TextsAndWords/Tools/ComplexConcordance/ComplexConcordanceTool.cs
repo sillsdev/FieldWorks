@@ -153,7 +153,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Complex Concordance";
+		public string UiName => AreaServices.ComplexConcordanceUiName;
 		#endregion
 
 		#region Implementation of ITool

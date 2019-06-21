@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Natural Classes";
+		public string UiName => AreaServices.NaturalClassEditUiName;
 
 		#endregion
 

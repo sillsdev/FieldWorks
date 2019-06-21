@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Text Constituent Chart Templates";
+		public string UiName => AreaServices.CharttempEditUiName;
 		#endregion
 
 		#region Implementation of ITool

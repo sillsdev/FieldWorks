@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Positions";
+		public string UiName => AreaServices.PositionsEditUiName;
 		#endregion
 
 		#region Implementation of ITool

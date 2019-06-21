@@ -139,7 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Bulk Edit Reversal Entries";
+		public string UiName => AreaServices.ReversalBulkEditReversalEntriesUiName;
 		#endregion
 
 		#region Implementation of ITool

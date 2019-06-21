@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Browse";
+		public string UiName => AreaServices.LexiconBrowseUiName;
 		#endregion
 
 		#region Implementation of ITool

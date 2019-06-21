@@ -123,6 +123,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 
 		/// <summary>
 		/// User-visible localizable component name.
+		/// </summary>
+		public string UiName => AreaServices.PeopleEditUiName;
 		#endregion
 
 		#region Implementation of ITool
@@ -136,11 +138,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
-
-		/// <summary>
-		/// User-visible localizable component name.
-		/// </summary>
-		public string UiName => "People";
 
 		#endregion
 

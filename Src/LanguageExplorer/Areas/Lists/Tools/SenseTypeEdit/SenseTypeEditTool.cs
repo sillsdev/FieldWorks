@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Sense Types";
+		public string UiName => AreaServices.SenseTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

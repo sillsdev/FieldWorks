@@ -2,12 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using LanguageExplorer.Areas.Lists.Tools.CustomListEdit;
-using LanguageExplorer.Controls.SilSidePane;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -20,13 +20,11 @@ namespace LanguageExplorer.Areas.Lists
 	{
 		[ImportMany(AreaServices.ListsAreaMachineName)]
 		private IEnumerable<ITool> _myBuiltinTools;
-		private const string MyUiName = "Lists";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		[Import]
 		private IPropertyTable _propertyTable;
-		private readonly SortedList<string, ITool> _sortedListOfCustomTools = new SortedList<string, ITool>();
-		private SidePane _sidePane;
-		private HashSet<ITool> _allTools;
+		private SortedDictionary<string, ITool> _sortedDictionaryOfAllTools;
+		private event EventHandler ListAreaToolsChanged;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -41,7 +39,6 @@ namespace LanguageExplorer.Areas.Lists
 			// This will also remove any event handlers set up by the active tool,
 			// and any of the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveAreaHandlers();
-			_sidePane = null;
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
@@ -56,7 +53,6 @@ namespace LanguageExplorer.Areas.Lists
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, true);
-			_sidePane = majorFlexComponentParameters.SidePane;
 			// Do nothing registration, but required, before a list tool can be registered.
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(new AreaUiWidgetParameterObject(this));
 		}
@@ -85,7 +81,8 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
-			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
+			var toolToPersist = ActiveTool ?? _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == AreaServices.ListsAreaDefaultToolMachineName);
+			toolToPersist.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -101,7 +98,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => MyUiName;
+		public string UiName => AreaServices.ListsAreaUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -115,67 +112,42 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			get
 			{
-				var persistedToolName = _propertyTable.GetValue(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName);
-				return _allTools.First(tool => tool.MachineName == persistedToolName);
+				var propertyNameForToolName = PropertyNameForToolName;
+				var propertyValue = _propertyTable.GetValue(propertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName);
+				var retVal = _sortedDictionaryOfAllTools.Values.FirstOrDefault(tool => tool.MachineName == propertyValue);
+				if (retVal != null)
+				{
+					return retVal;
+				}
+				// How can this be? I've seen a case where the Guid in the name is not in any custom tool.
+				propertyValue = AreaServices.ListsAreaDefaultToolMachineName;
+				return _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == propertyValue);
 			}
 		}
 
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IReadOnlyList<ITool> AllToolsInOrder
+		public IReadOnlyDictionary<string, ITool> AllToolsInOrder
 		{
 			get
 			{
-				var myToolsInOrder = new List<string>
+				if (_sortedDictionaryOfAllTools == null)
 				{
-					AreaServices.DomainTypeEditMachineName,
-					AreaServices.AnthroEditMachineName,
-					AreaServices.ComplexEntryTypeEditMachineName,
-					AreaServices.ConfidenceEditMachineName,
-					AreaServices.DialectsListEditMachineName,
-					AreaServices.EducationEditMachineName,
-					AreaServices.ExtNoteTypeEditMachineName,
-					AreaServices.FeatureTypesAdvancedEditMachineName,
-					AreaServices.GenresEditMachineName,
-					AreaServices.LanguagesListEditMachineName,
-					AreaServices.LexRefEditMachineName,
-					AreaServices.LocationsEditMachineName,
-					AreaServices.MorphTypeEditMachineName,
-					AreaServices.RecTypeEditMachineName,
-					AreaServices.PeopleEditMachineName,
-					AreaServices.PositionsEditMachineName,
-					AreaServices.PublicationsEditMachineName,
-					AreaServices.RestrictionsEditMachineName,
-					AreaServices.ReversalToolReversalIndexPOSMachineName,
-					AreaServices.RoleEditMachineName,
-					AreaServices.SemanticDomainEditMachineName,
-					AreaServices.SenseTypeEditMachineName,
-					AreaServices.StatusEditMachineName,
-					AreaServices.ChartmarkEditMachineName,
-					AreaServices.CharttempEditMachineName,
-					AreaServices.TextMarkupTagsEditMachineName,
-					AreaServices.TimeOfDayEditMachineName,
-					AreaServices.TranslationTypeEditMachineName,
-					AreaServices.UsageTypeEditMachineName,
-					AreaServices.VariantEntryTypeEditMachineName
-				};
-				var retval = myToolsInOrder.Select(toolName => _myBuiltinTools.First(tool => tool.MachineName == toolName)).ToList();
-				_allTools = new HashSet<ITool>(_myBuiltinTools);
-				// Load tools for custom lists.
-				var cache = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
-				var customLists = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null).ToList();
-				if (!_sortedListOfCustomTools.Any())
-				{
-					foreach (var customList in customLists)
+					var cache = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+					var coreWritingSystemDefinition = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
+					_sortedDictionaryOfAllTools = new SortedDictionary<string, ITool>(coreWritingSystemDefinition.DefaultCollation.Collator);
+					foreach (var builtinTool in _myBuiltinTools)
+					{
+						_sortedDictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(builtinTool.UiName), builtinTool);
+					}
+					foreach (var customList in cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null))
 					{
 						var customTool = new CustomListEditTool(this, customList);
-						_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
+						_sortedDictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(customTool.UiName), customTool);
 					}
-					_allTools.UnionWith(_sortedListOfCustomTools.Values);
 				}
-				retval.AddRange(_sortedListOfCustomTools.Values);
-				return retval;
+				return _sortedDictionaryOfAllTools;
 			}
 		}
 
@@ -193,72 +165,57 @@ namespace LanguageExplorer.Areas.Lists
 
 		#region Implementation of IListArea
 
-		/// <summary>
-		/// Set the list area sidebar tab, so it can be updated as custom lists gets added/removed, or get names changed.
-		/// </summary>
-		public Tab ListAreaTab { get; set; }
+		/// <inheritdoc />
+		event EventHandler IListArea.ListAreaToolsChanged
+		{
+			add { ListAreaToolsChanged += value; }
+			remove { ListAreaToolsChanged -= value; }
+		}
 
 		/// <summary>
 		/// Add a new custom list to the area, and to the Tab.
 		/// </summary>
-		public void AddCustomList(ICmPossibilityList newList)
+		void IListArea.OnAddCustomList(ICmPossibilityList customList)
 		{
-			Guard.AgainstNull(newList, nameof(newList));
-
-			// Theory has it that the client ensures the name is unique, so we don't have to worry about that here.
-			// Create new tool and add it to sorted list.
-			var customTool = new CustomListEditTool(this, newList);
-			_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
-			_allTools.Add(customTool);
-			// Add it to the sidebar.
-			var item = new Item(StringTable.Table.LocalizeLiteralValue(customTool.UiName))
-			{
-				Icon = customTool.Icon,
-				Tag = customTool,
-				Name = customTool.MachineName
-			};
-			_sidePane.SuspendLayout();
-			_sidePane.AddItem(ListAreaTab, item);
-			_sidePane.ResumeLayout();
+			AddCustomTool(customList);
+			ListAreaToolsChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Remove a custom list's tool from the area and from the Tab
 		/// </summary>
-		public void RemoveCustomListTool(ITool gonerTool)
+		void IListArea.OnRemoveCustomListTool(ITool gonerTool)
 		{
-			_sortedListOfCustomTools.Remove(gonerTool.MachineName);
-			_allTools.Remove(gonerTool);
-			_sidePane.SuspendLayout();
-			_sidePane.RemoveItem(ListAreaTab, gonerTool);
-			_sidePane.ResumeLayout();
+			RemoveCustomTool(gonerTool);
+			ListAreaToolsChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Change the display name of the list in the Tab.
 		/// </summary>
-		public void UpdateListDisplayName(ITool tool)
+		void IListArea.OnUpdateListDisplayName(ITool gonerTool, ICmPossibilityList customList)
 		{
-			_sidePane.SuspendLayout();
-			var isCustomList = false;
-			foreach (var kvp in _sortedListOfCustomTools)
-			{
-				if (tool != kvp.Value)
-				{
-					continue;
-				}
-				isCustomList = true;
-				_sortedListOfCustomTools.Remove(kvp.Key);
-				break;
-			}
-			if (isCustomList)
-			{
-				_sortedListOfCustomTools.Add(tool.MachineName, tool);
-			}
-			_sidePane.RenameItem(ListAreaTab, tool, tool.UiName);
-			_sidePane.ResumeLayout();
+			RemoveCustomTool(gonerTool);
+			AddCustomTool(customList);
+			ListAreaToolsChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		#endregion
+
+		private void AddCustomTool(ICmPossibilityList customList)
+		{
+			Guard.AgainstNull(customList, nameof(customList));
+
+			var customTool = new CustomListEditTool(this, customList);
+			_sortedDictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(customTool.UiName), customTool);
+		}
+
+		private void RemoveCustomTool(ITool gonerTool)
+		{
+			Guard.AgainstNull(gonerTool, nameof(gonerTool));
+
+			var toolKvp = _sortedDictionaryOfAllTools.First(kvp => kvp.Value == gonerTool);
+			_sortedDictionaryOfAllTools.Remove(toolKvp.Key);
+		}
 	}
 }

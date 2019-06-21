@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		[ImportMany(AreaServices.TextAndWordsAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		private const string MyUiName = "Texts & Words";
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string InterlinearTexts = "interlinearTexts";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
@@ -33,6 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private bool _hasBeenActivated;
 		[Import]
 		private IPropertyTable _propertyTable;
+		private Dictionary<string, ITool> _dictionaryOfAllTools;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => MyUiName;
+		public string UiName => AreaServices.TextAndWordsAreaUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -133,26 +133,35 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IReadOnlyList<ITool> AllToolsInOrder
+		public IReadOnlyDictionary<string, ITool> AllToolsInOrder
 		{
 			get
 			{
-				var myToolsInOrder = new List<string>
+				if (_dictionaryOfAllTools == null)
 				{
-					AreaServices.InterlinearEditMachineName,
-					AreaServices.ConcordanceMachineName,
-					AreaServices.ComplexConcordanceMachineName,
-					AreaServices.WordListConcordanceMachineName,
-					AreaServices.AnalysesMachineName,
-					AreaServices.BulkEditWordformsMachineName,
-					AreaServices.CorpusStatisticsMachineName
-				};
-				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
+					_dictionaryOfAllTools = new Dictionary<string, ITool>();
+					var myToolsInOrder = new List<string>
+					{
+						AreaServices.InterlinearEditMachineName,
+						AreaServices.ConcordanceMachineName,
+						AreaServices.ComplexConcordanceMachineName,
+						AreaServices.WordListConcordanceMachineName,
+						AreaServices.AnalysesMachineName,
+						AreaServices.BulkEditWordformsMachineName,
+						AreaServices.CorpusStatisticsMachineName
+					};
+					foreach (var toolName in myToolsInOrder)
+					{
+						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+					}
+				}
+				return _dictionaryOfAllTools;
 			}
 		}
 

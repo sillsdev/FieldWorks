@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Bulk Edit Wordforms";
+		public string UiName => AreaServices.BulkEditWordformsUiName;
 		#endregion
 
 		#region Implementation of ITool

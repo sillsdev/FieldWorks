@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Classified Dictionary";
+		public string UiName => AreaServices.LexiconClassifiedDictionaryUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -23,11 +23,11 @@ namespace LanguageExplorer.Areas.Grammar
 	{
 		[ImportMany(AreaServices.GrammarAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		private const string MyUiName = "Grammar";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		internal const string Phonemes = "phonemes";
 		[Import]
 		private IPropertyTable _propertyTable;
+		private Dictionary<string, ITool> _dictionaryOfAllTools;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => MyUiName;
+		public string UiName => AreaServices.GrammarAreaUiName;
 
 		#endregion
 
@@ -111,33 +111,42 @@ namespace LanguageExplorer.Areas.Grammar
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IReadOnlyList<ITool> AllToolsInOrder
+		public IReadOnlyDictionary<string, ITool> AllToolsInOrder
 		{
 			get
 			{
-				var myToolsInOrder = new List<string>
+				if (_dictionaryOfAllTools == null)
 				{
-					AreaServices.PosEditMachineName,
-					AreaServices.CategoryBrowseMachineName,
-					AreaServices.CompoundRuleAdvancedEditMachineName,
-					AreaServices.PhonemeEditMachineName,
-					AreaServices.PhonologicalFeaturesAdvancedEditMachineName,
-					AreaServices.BulkEditPhonemesMachineName,
-					AreaServices.NaturalClassEditMachineName,
-					AreaServices.EnvironmentEditMachineName,
-					AreaServices.PhonologicalRuleEditMachineName,
-					AreaServices.AdhocCoprohibitionRuleEditMachineName,
-					AreaServices.FeaturesAdvancedEditMachineName,
-					AreaServices.ProdRestrictEditMachineName,
-					AreaServices.GrammarSketchMachineName,
-					AreaServices.LexiconProblemsMachineName
-				};
-				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
+					_dictionaryOfAllTools = new Dictionary<string, ITool>();
+					var myToolsInOrder = new List<string>
+					{
+						AreaServices.PosEditMachineName,
+						AreaServices.CategoryBrowseMachineName,
+						AreaServices.CompoundRuleAdvancedEditMachineName,
+						AreaServices.PhonemeEditMachineName,
+						AreaServices.PhonologicalFeaturesAdvancedEditMachineName,
+						AreaServices.BulkEditPhonemesMachineName,
+						AreaServices.NaturalClassEditMachineName,
+						AreaServices.EnvironmentEditMachineName,
+						AreaServices.PhonologicalRuleEditMachineName,
+						AreaServices.AdhocCoprohibitionRuleEditMachineName,
+						AreaServices.FeaturesAdvancedEditMachineName,
+						AreaServices.ProdRestrictEditMachineName,
+						AreaServices.GrammarSketchMachineName,
+						AreaServices.LexiconProblemsMachineName
+					};
+					foreach (var toolName in myToolsInOrder)
+					{
+						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+					}
+				}
+				return _dictionaryOfAllTools;
 			}
 		}
 

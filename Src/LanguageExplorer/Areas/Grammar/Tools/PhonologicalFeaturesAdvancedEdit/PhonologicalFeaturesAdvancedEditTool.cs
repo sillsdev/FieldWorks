@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Phonological Features";
+		public string UiName => AreaServices.PhonologicalFeaturesAdvancedEditUiName;
 
 		#endregion
 

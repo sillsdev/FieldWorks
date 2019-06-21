@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			{
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
 				{
-					Area.AddCustomList(dlg.NewList);
+					Area.OnAddCustomList(dlg.NewList);
 				}
 			}
 		}
@@ -319,7 +319,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			{
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != _list.Name.BestAnalysisAlternative.Text)
 				{
-					Area.UpdateListDisplayName(_tool);
+					Area.OnUpdateListDisplayName(_tool, _list);
 				}
 			}
 		}

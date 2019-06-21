@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Text Chart Markers";
+		public string UiName => AreaServices.ChartmarkEditUiName;
 		#endregion
 
 		#region Implementation of ITool

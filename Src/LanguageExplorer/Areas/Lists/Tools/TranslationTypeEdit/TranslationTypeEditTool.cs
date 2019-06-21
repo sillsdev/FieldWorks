@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Translation Types";
+		public string UiName => AreaServices.TranslationTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

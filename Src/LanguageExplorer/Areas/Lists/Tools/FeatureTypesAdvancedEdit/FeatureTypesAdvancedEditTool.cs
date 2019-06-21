@@ -157,7 +157,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Feature Types";
+		public string UiName => AreaServices.FeatureTypesAdvancedEditUiName;
 		#endregion
 
 		#region Implementation of ITool

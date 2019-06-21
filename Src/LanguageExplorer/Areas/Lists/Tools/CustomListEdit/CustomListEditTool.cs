@@ -37,6 +37,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 
 			_area = area;
 			_customList = customList;
+			MachineName = $"CustomList_{_customList.Guid}_Edit";
 		}
 
 		#region Implementation of IMajorFlexComponent
@@ -109,20 +110,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		{
 		}
 
-		#endregion
+        #endregion
 
-		#region Implementation of IMajorFlexUiComponent
+        #region Implementation of IMajorFlexUiComponent
 
-		/// <summary>
-		/// Get the internal name of the component.
-		/// </summary>
-		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => GetMachineName(_customList);
+        /// <summary>
+        /// Get the internal name of the component.
+        /// </summary>
+        /// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
+        public string MachineName { get; }
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => GetUIName(_customList);
+		public string UiName => _customList.Name.BestAnalysisAlternative.Text;
 
 		#endregion
 
@@ -140,20 +141,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 
 		#endregion
 
-		private static string GetMachineName(ICmPossibilityList customList)
+		private IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			return $"CustomList_{customList.Guid}_Edit";
-		}
-
-		private static string GetUIName(ICmPossibilityList customList)
-		{
-			return customList.Name.BestAnalysisAlternative.Text;
-		}
-
-		private static IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			var customListRecordListName = GetMachineName(customList);
-			Require.That(recordListId == customListRecordListName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListRecordListName}'.");
+			Require.That(recordListId == MachineName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{MachineName}'.");
 
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				customList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
@@ -215,7 +205,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			private void DeleteCustomList_Click(object sender, EventArgs e)
 			{
 				UowHelpers.UndoExtension(ListResources.CustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run(_list));
-				Area.RemoveCustomListTool(_tool);
+				Area.OnRemoveCustomListTool(_tool);
 			}
 
 			private static Tuple<bool, bool> CanCmdInsertCustomItem => new Tuple<bool, bool>(true, true);

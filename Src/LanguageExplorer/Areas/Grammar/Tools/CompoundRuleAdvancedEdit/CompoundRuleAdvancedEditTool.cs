@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Compound Rules";
+		public string UiName => AreaServices.CompoundRuleAdvancedEditUiName;
 
 		#endregion
 

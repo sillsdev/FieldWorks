@@ -195,7 +195,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Lexicon Edit";
+		public string UiName => AreaServices.LexiconEditUiName;
 
 		#endregion
 

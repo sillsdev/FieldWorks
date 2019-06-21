@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Anthropology Categories";
+		public string UiName => AreaServices.AnthroEditUiName;
 		#endregion
 
 		#region Implementation of ITool

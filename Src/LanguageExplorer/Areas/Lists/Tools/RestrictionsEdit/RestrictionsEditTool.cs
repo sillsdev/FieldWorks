@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Restrictions";
+		public string UiName => AreaServices.RestrictionsEditUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -140,7 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Word Analyses";
+		public string UiName => AreaServices.AnalysesUiName;
 		#endregion
 
 		#region Implementation of ITool

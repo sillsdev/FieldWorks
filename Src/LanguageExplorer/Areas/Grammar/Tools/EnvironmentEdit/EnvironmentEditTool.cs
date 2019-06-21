@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Environments";
+		public string UiName => AreaServices.EnvironmentEditUiName;
 		#endregion
 
 		#region Implementation of ITool

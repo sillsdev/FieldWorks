@@ -42,16 +42,16 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Text and Words area has tools in the right order.
 		/// </summary>
-		[TestCase(0, AreaServices.InterlinearEditMachineName)]
-		[TestCase(1, AreaServices.ConcordanceMachineName)]
-		[TestCase(2, AreaServices.ComplexConcordanceMachineName)]
-		[TestCase(3, AreaServices.WordListConcordanceMachineName)]
-		[TestCase(4, AreaServices.AnalysesMachineName)]
-		[TestCase(5, AreaServices.BulkEditWordformsMachineName)]
-		[TestCase(6, AreaServices.CorpusStatisticsMachineName)]
-		public void AreaRepositoryHasAllTextAndWordsToolsInCorrectOrder(int idx, string expectedMachineName)
+		[TestCase(AreaServices.InterlinearEditUiName, 0, AreaServices.InterlinearEditMachineName)]
+		[TestCase(AreaServices.ConcordanceUiName, 1, AreaServices.ConcordanceMachineName)]
+		[TestCase(AreaServices.ComplexConcordanceUiName, 2, AreaServices.ComplexConcordanceMachineName)]
+		[TestCase(AreaServices.WordListConcordanceUiName, 3, AreaServices.WordListConcordanceMachineName)]
+		[TestCase(AreaServices.AnalysesUiName, 4, AreaServices.AnalysesMachineName)]
+		[TestCase(AreaServices.BulkEditWordformsUiName, 5, AreaServices.BulkEditWordformsMachineName)]
+		[TestCase(AreaServices.CorpusStatisticsUiName, 6, AreaServices.CorpusStatisticsMachineName)]
+		public void AreaRepositoryHasAllTextAndWordsToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
-			DoTests(idx, expectedMachineName);
+			DoTests(uiName, idx, expectedMachineName);
 		}
 	}
 }

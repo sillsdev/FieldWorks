@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Variant Types";
+		public string UiName => AreaServices.VariantEntryTypeEditUiName;
 
 		#endregion
 

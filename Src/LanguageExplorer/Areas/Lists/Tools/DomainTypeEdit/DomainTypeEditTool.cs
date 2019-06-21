@@ -125,7 +125,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Academic Domains";
+		public string UiName => AreaServices.DomainTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

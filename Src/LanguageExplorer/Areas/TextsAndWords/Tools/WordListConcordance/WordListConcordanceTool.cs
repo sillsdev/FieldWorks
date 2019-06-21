@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Word List Concordance";
+		public string UiName => AreaServices.WordListConcordanceUiName;
 
 		#endregion
 

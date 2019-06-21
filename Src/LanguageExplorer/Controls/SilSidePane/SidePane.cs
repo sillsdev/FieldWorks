@@ -47,6 +47,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private Banner _banner; // Header banner at top
 		// If an item should be automatically selected when a tab is selected
 		private bool _generateItemEvents;
+		private IListArea _listArea;
+		private ToolStripMenuItem _listAreaToolStripMenuItem;
+		private Tab _listAreaTab;
+		private EventHandler _viewAreaToolClicked;
+		private List<Item> _listAreaItems;
 
 		/// <summary>
 		/// Notifies listeners when an item is clicked.
@@ -189,15 +194,20 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Set up area tabs, tool items, and View Area/Tool menus.
 		/// </summary>
-		internal void Initalize(IAreaRepository areaRepository, ToolStripMenuItem viewToolStripMenuItem, EventHandler view_Area_Tool_Clicked)
+		internal void Initalize(IAreaRepository areaRepository, ToolStripMenuItem viewToolStripMenuItem, EventHandler viewAreaToolClicked)
 		{
 			Guard.AgainstNull(areaRepository, nameof(areaRepository));
+			Guard.AgainstNull(viewToolStripMenuItem, nameof(viewToolStripMenuItem));
+			Guard.AgainstNull(viewAreaToolClicked, nameof(viewAreaToolClicked));
 
+			_viewAreaToolClicked = viewAreaToolClicked;
 			TabStop = true;
 			TabIndex = 0;
 			ItemAreaStyle = SidePaneItemAreaStyle.List;
 			// Add areas and tools.
 			var currentAreaMenuIdx = 2;
+			var isListArea = false;
+			_listAreaItems = new List<Item>();
 			foreach (var area in areaRepository.AllAreasInOrder)
 			{
 				var localizedAreaName = StringTable.Table.LocalizeLiteralValue(area.UiName);
@@ -212,27 +222,78 @@ namespace LanguageExplorer.Controls.SilSidePane
 				};
 				if (area.MachineName == AreaServices.ListsAreaMachineName)
 				{
-					((IListArea)area).ListAreaTab = tab;
+					isListArea = true;
+					_listAreaTab = tab;
+					_listArea = (IListArea)area;
+					_listAreaToolStripMenuItem = currentAreaMenu;
+					_listArea.ListAreaToolsChanged += SidePane_ListAreaToolsChanged;
 				}
 				AddTab(tab);
 				// Add tools for area.
-				foreach (var tool in area.AllToolsInOrder)
+				foreach (var toolKvp in area.AllToolsInOrder)
 				{
-					var localizedToolName = StringTable.Table.LocalizeLiteralValue(tool.UiName);
+					var localizedToolName = toolKvp.Key;
+					var tool = toolKvp.Value;
 					var item = new Item(localizedToolName)
 					{
 						Icon = tool.Icon,
 						Tag = tool,
 						Name = tool.MachineName
 					};
-					var currentToolMenu = new ToolStripMenuItem(localizedToolName, tool.Icon, view_Area_Tool_Clicked)
+					if (isListArea)
+					{
+						_listAreaItems.Add(item);
+					}
+					AddItem(tab, item);
+					var currentToolMenu = new ToolStripMenuItem(localizedToolName, tool.Icon, _viewAreaToolClicked)
 					{
 						Tag = new Tuple<Tab, ITool>(tab, tool)
 					};
 					currentAreaMenu.DropDownItems.Add(currentToolMenu);
-					AddItem(tab, item);
 				}
 			}
+		}
+
+		private void SidePane_ListAreaToolsChanged(object sender, EventArgs e)
+		{
+			SuspendLayout();
+			// Remove all of the old ones.
+			foreach (var item in _listAreaItems)
+			{
+				RemoveItem(_listAreaTab, item);
+			}
+			_listAreaItems.Clear();
+			var goners = new List<ToolStripMenuItem>(_listAreaToolStripMenuItem.DropDownItems.Count);
+			foreach (ToolStripMenuItem menuItem in _listAreaToolStripMenuItem.DropDownItems)
+			{
+				goners.Add(menuItem);
+			}
+			foreach (var goner in goners)
+			{
+				_listAreaToolStripMenuItem.DropDownItems.Remove(goner);
+				goner.Dispose();
+			}
+
+			// Add current ones.
+			foreach (var toolKvp in _listArea.AllToolsInOrder)
+			{
+				var localizedToolName = toolKvp.Key;
+				var tool = toolKvp.Value;
+				var item = new Item(localizedToolName)
+				{
+					Icon = tool.Icon,
+					Tag = tool,
+					Name = tool.MachineName
+				};
+				_listAreaItems.Add(item);
+				var currentToolMenu = new ToolStripMenuItem(localizedToolName, tool.Icon, _viewAreaToolClicked)
+				{
+					Tag = new Tuple<Tab, ITool>(_listAreaTab, tool)
+				};
+				_listAreaToolStripMenuItem.DropDownItems.Add(currentToolMenu);
+				AddItem(_listAreaTab, item);
+			}
+			ResumeLayout();
 		}
 
 		/// <remarks>Cannot add the same tab more than once. Cannot add a tab with the same name as
@@ -306,7 +367,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Remove item from targetTab that has itemTag as its Tag.
 		/// </summary>
-		internal void RemoveItem(Tab targetTab, object itemTag)
+		internal void RemoveItem(Tab targetTab, Item itemTag)
 		{
 			Guard.AgainstNull(targetTab, nameof(targetTab));
 			Guard.AgainstNull(itemTag, nameof(itemTag));
@@ -315,15 +376,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
-			var itemArea = _itemAreas[targetTab];
-			foreach (var item in itemArea.Items)
-			{
-				if (ReferenceEquals(item.Tag, itemTag))
-				{
-					itemArea.Items.Remove(item);
-					break;
-				}
-			}
+			_itemAreas[targetTab].Remove(itemTag);
 		}
 
 		/// <summary>

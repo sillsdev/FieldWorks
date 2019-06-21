@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Publications";
+		public string UiName => AreaServices.PublicationsEditUiName;
 		#endregion
 
 		#region Implementation of ITool

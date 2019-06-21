@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "CRASHES: Collect Words";
+		public string UiName => AreaServices.RapidDataEntryUiName;
 
 		#endregion
 

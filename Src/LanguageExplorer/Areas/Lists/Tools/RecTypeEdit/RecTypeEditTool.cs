@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Notebook Record Types";
+		public string UiName => AreaServices.RecTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

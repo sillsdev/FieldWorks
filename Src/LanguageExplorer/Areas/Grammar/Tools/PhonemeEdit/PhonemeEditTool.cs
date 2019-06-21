@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Phonemes";
+		public string UiName => AreaServices.PhonemeEditUiName;
 
 		#endregion
 

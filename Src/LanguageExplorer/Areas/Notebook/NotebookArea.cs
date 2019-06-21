@@ -24,9 +24,9 @@ namespace LanguageExplorer.Areas.Notebook
 		[ImportMany(AreaServices.NotebookAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		internal const string Records = "records";
-		private const string MyUiName = "Notebook";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		private Dictionary<string, ITool> _dictionaryOfAllTools;
 		[Import]
 		private IPropertyTable _propertyTable;
 
@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => MyUiName;
+		public string UiName => AreaServices.NotebookAreaUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -125,22 +125,31 @@ namespace LanguageExplorer.Areas.Notebook
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IReadOnlyList<ITool> AllToolsInOrder
+		public IReadOnlyDictionary<string, ITool> AllToolsInOrder
 		{
 			get
 			{
-				var myToolsInOrder = new List<string>
+				if (_dictionaryOfAllTools == null)
 				{
-					AreaServices.NotebookEditToolMachineName,
-					AreaServices.NotebookBrowseToolMachineName,
-					AreaServices.NotebookDocumentToolMachineName
-				};
-				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
+					_dictionaryOfAllTools = new Dictionary<string, ITool>();
+					var myToolsInOrder = new List<string>
+					{
+						AreaServices.NotebookEditToolMachineName,
+						AreaServices.NotebookBrowseToolMachineName,
+						AreaServices.NotebookDocumentToolMachineName
+					};
+					foreach (var toolName in myToolsInOrder)
+					{
+						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+					}
+				}
+				return _dictionaryOfAllTools;
 			}
 		}
 

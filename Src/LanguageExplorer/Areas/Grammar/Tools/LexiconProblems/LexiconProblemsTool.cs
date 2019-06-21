@@ -113,6 +113,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		/// <summary>
 		/// User-visible localizable component name.
+		/// </summary>
+		public string UiName => AreaServices.LexiconProblemsUiName;
 
 		#endregion
 
@@ -127,11 +129,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
-
-		/// <summary>
-		/// Get the image for the area.
-		/// </summary>
-		public string UiName => "Problems";
 
 		#endregion
 

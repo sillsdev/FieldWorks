@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "CRASHES: Bulk Edit Entries";
+		public string UiName => AreaServices.BulkEditEntriesOrSensesUiName;
 		#endregion
 
 		#region Implementation of ITool

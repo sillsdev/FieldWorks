@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Morpheme Types";
+		public string UiName => AreaServices.MorphTypeEditUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -27,7 +27,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : ITool
 	{
-		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
 		private RecordBrowseView _recordBrowseView;
@@ -55,7 +54,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 
-			_cache = null;
 			_recordBrowseView = null;
 			_currentReversalIndex = null;
 			_toolMenuHelper = null;
@@ -69,7 +67,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_cache = majorFlexComponentParameters.LcmCache;
 			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -165,7 +162,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Reversal Index Categories";
+		public string UiName => AreaServices.ReversalToolReversalIndexPOSUiName;
 		#endregion
 
 		#region Implementation of ITool

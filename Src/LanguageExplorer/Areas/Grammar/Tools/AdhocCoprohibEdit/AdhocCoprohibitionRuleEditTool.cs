@@ -159,7 +159,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Ad hoc Rules";
+		public string UiName => AreaServices.AdhocCoprohibitionRuleEditUiName;
 
 		#endregion
 

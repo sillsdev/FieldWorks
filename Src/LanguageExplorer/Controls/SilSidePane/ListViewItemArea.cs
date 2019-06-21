@@ -73,6 +73,12 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Items.Add(item);
 		}
 
+		public void Remove(Item item)
+		{
+			base.Items.Remove((ListViewItem)item.UnderlyingWidget);
+			Items.Remove(item);
+		}
+
 		/// <summary>
 		/// Get a list of Items
 		/// </summary>

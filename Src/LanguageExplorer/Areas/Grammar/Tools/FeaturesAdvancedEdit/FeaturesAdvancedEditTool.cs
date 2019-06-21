@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Inflection Features";
+		public string UiName => AreaServices.FeaturesAdvancedEditUiName;
 		#endregion
 
 		#region Implementation of ITool

@@ -29,6 +29,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		void Add(Item item);
 
 		/// <summary>
+		/// Remove item from this item area.
+		/// </summary>
+		void Remove(Item item);
+
+		/// <summary>
 		/// Items in this item area
 		/// </summary>
 		List<Item> Items { get; }

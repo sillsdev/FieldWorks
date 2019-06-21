@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Education Levels";
+		public string UiName => AreaServices.EducationEditUiName;
 		#endregion
 
 		#region Implementation of ITool

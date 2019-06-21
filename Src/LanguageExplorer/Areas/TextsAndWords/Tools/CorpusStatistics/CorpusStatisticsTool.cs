@@ -89,7 +89,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Statistics";
+		public string UiName => AreaServices.CorpusStatisticsUiName;
 		#endregion
 
 		#region Implementation of ITool

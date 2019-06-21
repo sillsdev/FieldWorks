@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Filters;
 using LanguageExplorer.LIFT;
@@ -30,7 +29,6 @@ namespace LanguageExplorer.Areas.Lexicon
 	{
 		[ImportMany(AreaServices.LexiconAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		private const string MyUiName = "Lexical Tools";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		internal const string Entries = "entries";
 		internal const string AllReversalEntries = "AllReversalEntries";
@@ -39,6 +37,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		[Import]
 		private IPropertyTable _propertyTable;
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private Dictionary<string, ITool> _dictionaryOfAllTools;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -51,7 +50,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => MyUiName;
+		public string UiName => AreaServices.LexiconAreaUiName;
 
 		/// <summary>
 		/// Deactivate the component.
@@ -136,27 +135,36 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IReadOnlyList<ITool> AllToolsInOrder
+		public IReadOnlyDictionary<string, ITool> AllToolsInOrder
 		{
 			get
 			{
-				var myToolsInOrder = new List<string>
+				if (_dictionaryOfAllTools == null)
 				{
-					AreaServices.LexiconEditMachineName,
-					AreaServices.LexiconBrowseMachineName,
-					AreaServices.LexiconDictionaryMachineName,
-					AreaServices.RapidDataEntryMachineName,
-					AreaServices.LexiconClassifiedDictionaryMachineName,
-					AreaServices.BulkEditEntriesOrSensesMachineName,
-					AreaServices.ReversalEditCompleteMachineName,
-					AreaServices.ReversalBulkEditReversalEntriesMachineName
-				};
-				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
+					_dictionaryOfAllTools = new Dictionary<string, ITool>();
+					var myToolsInOrder = new List<string>
+					{
+						AreaServices.LexiconEditMachineName,
+						AreaServices.LexiconBrowseMachineName,
+						AreaServices.LexiconDictionaryMachineName,
+						AreaServices.RapidDataEntryMachineName,
+						AreaServices.LexiconClassifiedDictionaryMachineName,
+						AreaServices.BulkEditEntriesOrSensesMachineName,
+						AreaServices.ReversalEditCompleteMachineName,
+						AreaServices.ReversalBulkEditReversalEntriesMachineName
+					};
+					foreach (var toolName in myToolsInOrder)
+					{
+						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+					}
+				}
+				return _dictionaryOfAllTools;
 			}
 		}
 

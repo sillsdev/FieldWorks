@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Genres";
+		public string UiName => AreaServices.GenresEditUiName;
 		#endregion
 
 		#region Implementation of ITool

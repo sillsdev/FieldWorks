@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Grammar Sketch";
+		public string UiName => AreaServices.GrammarSketchUiName;
 
 		#endregion
 

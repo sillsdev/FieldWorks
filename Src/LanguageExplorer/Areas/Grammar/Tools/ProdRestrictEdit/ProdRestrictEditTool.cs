@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Exception \"Features\"";
+		public string UiName => AreaServices.ProdRestrictEditUiName;
 
 		#endregion
 

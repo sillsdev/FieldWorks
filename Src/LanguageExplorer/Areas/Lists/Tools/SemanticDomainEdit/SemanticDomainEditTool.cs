@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Semantic Domains";
+		public string UiName => AreaServices.SemanticDomainEditUiName;
 		#endregion
 
 		#region Implementation of ITool

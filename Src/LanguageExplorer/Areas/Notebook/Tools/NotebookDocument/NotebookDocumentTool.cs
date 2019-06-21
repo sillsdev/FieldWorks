@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Document";
+		public string UiName => AreaServices.NotebookDocumentToolUiName;
 		#endregion
 
 		#region Implementation of ITool
