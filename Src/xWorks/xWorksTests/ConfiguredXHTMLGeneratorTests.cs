@@ -232,6 +232,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_InvalidUnicodeHeadword_GeneratesErrorResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache, "\uD900");
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string invalidCharsHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[text()='\u0fff\u0fff\u0fff']";
+			// change Headword back to something legal so that we don't crash trying to save bad data into the cache.
+			AddHeadwordToEntry(entry, "notbadanymore", Cache.DefaultVernWs);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(invalidCharsHeadwordTest, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_SortByHeadwordWithSpecificWsGeneratesLetterHeadings()
 		{
 			var firstAEntry = CreateInterestingLexEntry(Cache, "alpha1");
