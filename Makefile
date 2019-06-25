@@ -412,6 +412,7 @@ COM-all:
 	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
+	echo "DESTDIR=$(DESTDIR);DEB_DESTDIR=$(DEB_DESTDIR)"
 	$(MAKE) -C$(COM_BUILD) install
 	@mkdir -p $(OUT_DIR)
 	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
