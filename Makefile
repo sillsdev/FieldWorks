@@ -363,6 +363,7 @@ installable-COM-clean:
 	$(RM) -r $(COM_DIR)/installer$(ARCH)
 
 install-COM: installable-COM-all
+	echo "DESTDIR=$(DESTDIR);DEB_DESTDIR=$(DEB_DESTDIR)"
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
 
 uninstall-COM:
