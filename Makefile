@@ -422,7 +422,7 @@ COM-install:
 	@mkdir -p $(OUT_DIR)
 	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-installLocal:
-	DESTDIR=$(COM_LIB) $(MAKE) -C$(COM_BUILD) install
+	DESTDIR=$(DEB_DESTDIR) $(MAKE) -C$(COM_BUILD) install
 	@mkdir -p $(OUT_DIR)
 	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-check:
