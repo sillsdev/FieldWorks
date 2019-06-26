@@ -25,14 +25,18 @@ linktoOutputDebug:
 
 
 externaltargets: \
-	externaltargets-noinstall \
+	externaltargets-common \
 	COM-install \
 
-externaltargets-noinstall: \
+externaltargets-common: \
 	Win32Base \
 	COM-all \
 	Win32More \
 	installable-COM-all \
+
+externaltargets-noinstall: \
+	externaltargets-common \
+	COM-installLocal \
 
 externaltargets-test: \
 	Win32Base-check \
@@ -415,6 +419,10 @@ COM-all:
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
 	$(MAKE) -C$(COM_BUILD) install
+	@mkdir -p $(OUT_DIR)
+	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
+COM-installLocal:
+	DESTDIR=$(COM_LIB) $(MAKE) -C$(COM_BUILD) install
 	@mkdir -p $(OUT_DIR)
 	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-check:
