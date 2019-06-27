@@ -427,4 +427,7 @@ Are you sure you want to delete this list?</value>
   <data name="Delete_Academic_Domain" xml:space="preserve">
     <value>Delete Academic Domain...</value>
   </data>
+  <data name="CustomEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\CustomEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

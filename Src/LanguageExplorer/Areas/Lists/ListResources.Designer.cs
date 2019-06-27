@@ -175,6 +175,16 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ListItems&quot; /&gt;.
+        /// </summary>
+        internal static string CustomEditParameters {
+            get {
+                return ResourceManager.GetString("CustomEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom List.
         /// </summary>
         internal static string CustomList {
@@ -240,7 +250,7 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AnthroItems&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AcademicDomains&quot; /&gt;.
         /// </summary>
         internal static string DomainTypeEditParameters {
             get {

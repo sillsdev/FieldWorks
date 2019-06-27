@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 	/// ITool implementation for the "translationTypeEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class TranslationTypeEditTool : ITool
+	internal sealed class TranslationTypeEditTool : IListTool
 	{
 		private const string TranslationTypeList = "TranslationTypeList";
 		/// <summary>
@@ -34,6 +34,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -52,6 +53,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -62,22 +64,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TranslationTypeList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new TranslationTypeMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.TranslationTagsOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new TranslationTypeMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.TranslationTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -140,7 +136,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.TranslationTagsOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == TranslationTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{TranslationTypeList}'.");
 			/*
@@ -156,7 +157,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.TranslationTagsOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
+				MyList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 
 		private sealed class TranslationTypeMenuHelper : IDisposable

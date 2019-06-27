@@ -84,15 +84,11 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				Require.That(plainVanillaToolNames.Contains(_tool.MachineName));
 				commands = new HashSet<Command>
 				{
-					Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList, Command.CmdInsertPossibility, Command.CmdDataTree_Insert_Possibility
+					Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup, Command.CmdInsertPossibility, Command.CmdDataTree_Insert_Possibility
 				};
 			}
 			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-			var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
 			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-			// Goes in Insert menu for all honest List Area tools.
-			// <item command="CmdAddCustomList" defaultVisible="false" />
-			insertMenuDictionary.Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => CanCmdAddCustomList));
 			foreach (var command in commands)
 			{
 				switch (command)
@@ -100,13 +96,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 					case Command.CmdAddToLexicon:
 						_partiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
 						break;
+					case Command.CmdLexiconLookup:
+						_partiallySharedForToolsWideMenuHelper.SetupCmdLexiconLookup(toolUiWidgetParameterObject, _dataTree, () => CanCmdLexiconLookup);
+						break;
 					case Command.CmdExport:
 						// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
 						_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
-						break;
-					case Command.CmdConfigureList:
-						// <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
-						toolsMenuDictionary.Add(Command.CmdConfigureList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureList_Click, () => CanCmdConfigureList));
 						break;
 					case Command.CmdInsertPossibility: // Add to Hashset
 						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
@@ -142,19 +137,6 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		{
 			menu.Text = newText;
 			toolBarButton.ToolTipText = newText;
-		}
-
-		private static Tuple<bool, bool> CanCmdAddCustomList => new Tuple<bool, bool>(true, true);
-
-		private void AddCustomList_Click(object sender, EventArgs e)
-		{
-			using (var dlg = new AddCustomListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache))
-			{
-				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
-				{
-					Area.OnAddCustomList(dlg.NewList);
-				}
-			}
 		}
 
 		private void Register_PossibilityList_Slice_Context_Menus()
@@ -264,19 +246,20 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			}
 		}
 
+		private Tuple<bool, bool> CanCmdLexiconLookup => CanCmdAddToLexicon;
+
 		private Tuple<bool, bool> CanCmdAddToLexicon
 		{
 			get
 			{
 				var currentSliceAsStTextSlice = _dataTree?.CurrentSliceAsStTextSlice;
-				var visible = currentSliceAsStTextSlice != null;
 				var enabled = false;
 				if (currentSliceAsStTextSlice != null)
 				{
 					var currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-					enabled = currentSelection != null && PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSelection) && currentSelection.CanLookupLexicon();
+					enabled = currentSelection != null && currentSelection.CanInsert(_majorFlexComponentParameters.LcmCache) && currentSelection.CanLookupLexicon();
 				}
-				return new Tuple<bool, bool>(visible, enabled);
+				return new Tuple<bool, bool>(true, enabled);
 			}
 		}
 
@@ -307,20 +290,6 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			if (newSubPossibility != null)
 			{
 				_recordList.UpdateRecordTreeBar();
-			}
-		}
-
-		private static Tuple<bool, bool> CanCmdConfigureList => new Tuple<bool, bool>(true, true);
-
-		private void ConfigureList_Click(object sender, EventArgs e)
-		{
-			var originalUiName = _list.Name.BestAnalysisAlternative.Text;
-			using (var dlg = new ConfigureListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache, _list))
-			{
-				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != _list.Name.BestAnalysisAlternative.Text)
-				{
-					Area.OnUpdateListDisplayName(_tool, _list);
-				}
 			}
 		}
 

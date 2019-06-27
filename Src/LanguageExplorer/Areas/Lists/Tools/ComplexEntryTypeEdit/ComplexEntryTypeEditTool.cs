@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 	/// ITool implementation for the "complexEntryTypeEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class ComplexEntryTypeEditTool : ITool
+	internal sealed class ComplexEntryTypeEditTool : IListTool
 	{
 		private const string ComplexEntryTypeList = "ComplexEntryTypeList";
 		/// <summary>
@@ -35,6 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -63,22 +65,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ComplexEntryTypeList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new ComplexEntryTypeEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA.ComplexEntryTypesOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new ComplexEntryTypeEditMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.ComplexEntryTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -141,7 +137,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.LexDbOA.ComplexEntryTypesOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == ComplexEntryTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ComplexEntryTypeList}'.");
 			/*
@@ -157,7 +158,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.LexDbOA.ComplexEntryTypesOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+				MyList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 
 		private sealed class ComplexEntryTypeEditMenuHelper : IDisposable
@@ -185,7 +186,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
 				// <command id="CmdDataTree_Insert_LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar

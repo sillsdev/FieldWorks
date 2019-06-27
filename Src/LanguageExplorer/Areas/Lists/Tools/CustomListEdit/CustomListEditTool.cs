@@ -18,7 +18,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 {
-	internal sealed class CustomListEditTool : ITool
+	internal sealed class CustomListEditTool : IListTool
 	{
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -26,7 +26,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private CustomListMenuHelper _toolMenuHelper;
-		private readonly ICmPossibilityList _customList;
 		private readonly IListArea _area;
 		private IRecordList _recordList;
 
@@ -36,8 +35,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			Guard.AgainstNull(customList, nameof(customList));
 
 			_area = area;
-			_customList = customList;
-			MachineName = $"CustomList_{_customList.Guid}_Edit";
+			MyList = customList;
+			MachineName = $"CustomList_{MyList.Guid}_Edit";
 		}
 
 		#region Implementation of IMajorFlexComponent
@@ -69,23 +68,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MachineName, majorFlexComponentParameters.StatusBar, _customList, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MachineName, majorFlexComponentParameters.StatusBar, MyList, FactoryMethod);
 			}
 
-#if RANDYTODO
-			// TODO: See if custom lists really use ListResources.PositionsEditParameters.
-#endif
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				true, XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
+				true, XDocument.Parse(ListResources.CustomEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-			_toolMenuHelper = new CustomListMenuHelper(majorFlexComponentParameters, this, _customList, _recordList, dataTree);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
+			_toolMenuHelper = new CustomListMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 		}
 
 		/// <summary>
@@ -123,7 +113,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => _customList.Name.BestAnalysisAlternative.Text;
+		public string UiName => MyList.Name.BestAnalysisAlternative.Text;
 
 		#endregion
 
@@ -139,9 +129,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		#endregion
+        #endregion
 
-		private IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+        #region Implementation of IListTool
+        /// <inheritdoc />
+        public ICmPossibilityList MyList { get; }
+        #endregion
+
+        private IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == MachineName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{MachineName}'.");
 
@@ -178,7 +173,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			private void SetupToolUiWidgets()
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				var menuItemsDictionary = toolUiWidgetParameterObject.MenuItemsForTool;
 				// <command id = "CmdDeleteCustomList" label="Delete Custom _List" message="DeleteCustomList" />
 				menuItemsDictionary[MainMenu.Edit].Add(Command.CmdDeleteCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DeleteCustomList_Click, ()=> CanCmdDeleteCustomList));

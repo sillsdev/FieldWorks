@@ -121,7 +121,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
-			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree = new DataTree(new SharedEventHandlers(), false);
 			_dataTree.InitializeFlexComponent(_flexComponentParameters);
 			_slice = GenerateSlice(Cache, _dataTree);
 
@@ -148,7 +148,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void Expand()
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree = new DataTree(new SharedEventHandlers(), false);
 			_dataTree.InitializeFlexComponent(_flexComponentParameters);
 			_slice = GenerateSlice(Cache, _dataTree);
 			_slice.Key = GeneratePath().ToArray();
@@ -168,7 +168,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree = new DataTree(new SharedEventHandlers(), false);
 			_dataTree.InitializeFlexComponent(_flexComponentParameters);
 			_slice = GenerateSlice(Cache, _dataTree);
 			_slice.Key = GeneratePath().ToArray();
@@ -188,7 +188,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			_dataTree = new DataTree(new SharedEventHandlers());
+			_dataTree = new DataTree(new SharedEventHandlers(), false);
 			_dataTree.InitializeFlexComponent(_flexComponentParameters);
 			_slice = GenerateSlice(Cache, _dataTree);
 			_slice.InitializeFlexComponent(_flexComponentParameters);

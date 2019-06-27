@@ -25,7 +25,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly IList m_items; // of IConcSliceInfo
 
 		internal MultiLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IList items)
-			: base(sharedEventHandlers)
+			: base(sharedEventHandlers, false)
 		{
 			m_items = items;
 			InitializeBasic(cache, false);

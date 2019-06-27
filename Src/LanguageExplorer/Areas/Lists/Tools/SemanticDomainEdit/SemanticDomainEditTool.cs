@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 	/// ITool implementation for the "semanticDomainEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class SemanticDomainEditTool : ITool
+	internal sealed class SemanticDomainEditTool : IListTool
 	{
 		private const string SemanticDomainList_ListArea = "SemanticDomainList_ListArea";
 		/// <summary>
@@ -35,6 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -63,22 +65,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SemanticDomainList_ListArea, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new SemanticDomainEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.SemanticDomainListOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new SemanticDomainEditMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.SemanticDomainEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -141,7 +137,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.SemanticDomainListOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == SemanticDomainList_ListArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_ListArea}'.");
 
@@ -158,7 +159,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.SemanticDomainListOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
+				MyList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
 		}
 
 		private sealed class SemanticDomainEditMenuHelper : IDisposable
@@ -186,7 +187,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">

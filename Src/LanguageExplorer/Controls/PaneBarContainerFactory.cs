@@ -74,15 +74,5 @@ namespace LanguageExplorer.Controls
 			mainCollapsingSplitContainer.SecondControl = null;
 			paneBarContainer = null;
 		}
-
-		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
-		{
-			return $"{LanguageExplorerResources.ksShowHiddenFields}_{toolMachineName}";
-		}
-
-		internal static string CreateShowFailingItemsPropertyName(string toolMachineName)
-		{
-			return $"{LanguageExplorerResources.ShowFailingItems}_{toolMachineName}";
-		}
 	}
 }

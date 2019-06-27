@@ -413,10 +413,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion Slice collection manipulation methods
 
-		internal DataTree(ISharedEventHandlers sharedEventHandlers)
+		internal DataTree(ISharedEventHandlers sharedEventHandlers, bool showingAllFields)
 		{
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
+			ShowingAllFields = showingAllFields;
 			DataTreeSliceContextMenuParameterObject = new DataTreeSliceContextMenuParameterObject();
 			Slices = new List<Slice>();
 			_sharedEventHandlers = sharedEventHandlers;

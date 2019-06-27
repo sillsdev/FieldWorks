@@ -309,8 +309,7 @@ namespace LanguageExplorer.Impls
 		{
 			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolStripViewMenuSeparator1,
 				new List<ToolStripMenuItem> { refreshToolStripMenuItem },
-				new List<ToolStripMenuItem> { LexicalToolsList, WordToolsList, GrammarToolsList, NotebookToolsList, ListsToolsList, ShowInvisibleSpaces,
-					Show_DictionaryPubPreview, ShowHiddenFields });
+				new List<ToolStripMenuItem> { LexicalToolsList, WordToolsList, GrammarToolsList, NotebookToolsList, ListsToolsList, ShowInvisibleSpaces, Show_DictionaryPubPreview });
 			var separatorCache2 = new SeparatorMenuBundle(toolStripViewMenuSeparator2,
 				separatorCache1,
 				new List<ToolStripMenuItem> { filtersToolStripMenuItem, CmdChooseTexts });
@@ -330,7 +329,6 @@ namespace LanguageExplorer.Impls
 				{Command.ListsToolsList, ListsToolsList},
 				{Command.ShowInvisibleSpaces, ShowInvisibleSpaces},
 				{Command.Show_DictionaryPubPreview, Show_DictionaryPubPreview},
-				{Command.ShowHiddenFields, ShowHiddenFields},
 				{Command.Separator2, toolStripViewMenuSeparator2},
 				{Command.FiltersList, filtersToolStripMenuItem},
 					{Command.NoFilter, noFilterToolStripMenuItem},
@@ -1389,8 +1387,6 @@ namespace LanguageExplorer.Impls
 			uiWidgetHelper.AddGlobalHandlers(globalUiWidgetParameterObject);
 		}
 
-		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, _currentTool.MachineName != AreaServices.GrammarSketchMachineName);
-
 		private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
 		{
 			toolBarDictionary.Add(key, currentTuple);
@@ -1995,6 +1991,8 @@ namespace LanguageExplorer.Impls
 				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(Cache.ServiceLocator.WritingSystemManager, Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
 			}
 		}
+
+		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, _currentTool.MachineName != AreaServices.GrammarSketchMachineName);
 
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.

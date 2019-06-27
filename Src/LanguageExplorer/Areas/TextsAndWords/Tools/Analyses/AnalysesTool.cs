@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new MultiPaneParameters
@@ -95,11 +95,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			// Too early before now.
 			_toolMenuHelper = new AnalysesToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
-			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>

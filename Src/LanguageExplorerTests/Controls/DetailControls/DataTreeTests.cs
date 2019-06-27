@@ -95,7 +95,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dtree = new DataTree(new SharedEventHandlers());
+			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
@@ -272,7 +272,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree(new SharedEventHandlers());
+			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -300,7 +300,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree(new SharedEventHandlers());
+			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -323,7 +323,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree(new SharedEventHandlers());
+			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 	/// ITool implementation for the "anthroEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class AnthroEditTool : ITool
+	internal sealed class AnthroEditTool : IListTool
 	{
 		private const string AnthropologyList = "AnthropologyList";
 		/// <summary>
@@ -35,6 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -63,22 +65,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(AnthropologyList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new AnthroEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.AnthroListOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new AnthroEditMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.AnthroEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -139,9 +135,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
+        #endregion
+
+        #region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.AnthroListOA;
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == AnthropologyList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{AnthropologyList}'.");
 			/*
@@ -156,7 +157,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
               </sortMethods>
             </clerk>
 			*/
-			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.AnthroListOA,
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), MyList,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
 		}
 
@@ -185,7 +186,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// Both insert menu & Insert tool bar.
 				// <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
@@ -199,7 +200,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, ()=> CanCmdDataTree_Insert_AnthroCategory));
 				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subcategory);
 
-				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_DeleteQuestion, Create_mnuDataTree_SubAnthroCategory);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubAnthroCategory, Create_mnuDataTree_SubAnthroCategory);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 	/// ITool implementation for the "variantEntryTypeEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class VariantEntryTypeEditTool : ITool
+	internal sealed class VariantEntryTypeEditTool : IListTool
 	{
 		private const string VariantEntryTypeList = "VariantEntryTypeList";
 		/// <summary>
@@ -35,6 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -63,22 +65,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(VariantEntryTypeList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new VariantEntryTypeEditMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA.VariantEntryTypesOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new VariantEntryTypeEditMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.VariantEntryTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -142,7 +138,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == VariantEntryTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{VariantEntryTypeList}'.");
 			/*
@@ -158,7 +159,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.LexDbOA.VariantEntryTypesOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+				MyList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 
 		private sealed class VariantEntryTypeEditMenuHelper : IDisposable
@@ -186,7 +187,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// NB: Inserts one of two class options:
 				//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance. (Thus, it can never be inserted at the top level of the list.)
 				//		2) It will only insert LexEntryType at the top or nested in other LexEntryType instances.

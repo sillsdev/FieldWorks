@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName, LcmCache cache, IRecordList recordList, DataTree dataTree, UiWidgetController uiWidgetController)
 		{
-			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(flexComponentParameters, null, UiWidgetServices.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};

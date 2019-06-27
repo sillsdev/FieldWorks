@@ -66,8 +66,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			}
 			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -91,10 +91,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			// Too early before now.
 			_toolMenuHelper = new ProdRestrictEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>

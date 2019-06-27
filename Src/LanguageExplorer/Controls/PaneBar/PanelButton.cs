@@ -16,7 +16,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		private bool _mouseOverControl;
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
-		private ISubscriber _subscriber;
 		private readonly Image _image;
 		private readonly string _property;
 		private readonly string _checkedLabel;
@@ -36,8 +35,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			_propertyTable = flexComponentParameters.PropertyTable;
 			_publisher = flexComponentParameters.Publisher;
-			_subscriber = flexComponentParameters.Subscriber;
-			_subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			_image = image;
 			_property = property;
 			_isChecked = _propertyTable.GetValue(_property, false);
@@ -55,17 +52,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			Click += PanelButton_CheckBox_Clicked;
 			TabIndex = 0;
 			SetLabel();
-		}
-
-		private void ShowHiddenFields_Handler(object obj)
-		{
-			var newCheckedValue = (bool)obj;
-			if (newCheckedValue != _isChecked)
-			{
-				_isChecked = newCheckedValue;
-				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
-				cb.Checked = _isChecked;
-			}
 		}
 
 		private void SetLabel()
@@ -183,11 +169,9 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			if (disposing)
 			{
-				_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			}
 			_propertyTable = null;
 			_publisher = null;
-			_subscriber = null;
 
 			base.Dispose(disposing);
 		}

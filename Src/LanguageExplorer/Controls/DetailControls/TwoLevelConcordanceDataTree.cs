@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private IGetNodeInfo m_gni;
 
 		internal TwoLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
-			: base(sharedEventHandlers)
+			: base(sharedEventHandlers, false)
 		{
 			m_cp = cp;
 			m_gni = gni;

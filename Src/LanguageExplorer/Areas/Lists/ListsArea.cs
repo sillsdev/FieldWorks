@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.Areas.Lists.Tools.CustomListEdit;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,6 +27,7 @@ namespace LanguageExplorer.Areas.Lists
 		private IPropertyTable _propertyTable;
 		private SortedDictionary<string, ITool> _sortedDictionaryOfAllTools;
 		private event EventHandler ListAreaToolsChanged;
+		private ListAreaMenuHelper _listAreaMenuHelper;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -42,6 +45,8 @@ namespace LanguageExplorer.Areas.Lists
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
+			_listAreaMenuHelper.Dispose();
+			_listAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -53,8 +58,7 @@ namespace LanguageExplorer.Areas.Lists
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, true);
-			// Do nothing registration, but required, before a list tool can be registered.
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(new AreaUiWidgetParameterObject(this));
+			_listAreaMenuHelper = new ListAreaMenuHelper(majorFlexComponentParameters, this);
 		}
 
 		/// <summary>
@@ -216,6 +220,101 @@ namespace LanguageExplorer.Areas.Lists
 
 			var toolKvp = _sortedDictionaryOfAllTools.First(kvp => kvp.Value == gonerTool);
 			_sortedDictionaryOfAllTools.Remove(toolKvp.Key);
+		}
+
+		/// <summary>
+		/// Handle creation and use of List area menus.
+		/// </summary>
+		private sealed class ListAreaMenuHelper : IDisposable
+		{
+			private IListArea _area;
+			private MajorFlexComponentParameters _majorFlexComponentParameters;
+
+			internal ListAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea area)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(area, nameof(area));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_area = area;
+				SetupAreaUiWidgets();
+			}
+
+			private void SetupAreaUiWidgets()
+			{
+				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert].Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => CanCmdAddCustomList));
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools].Add(Command.CmdConfigureList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureList_Click, () => CanCmdConfigureList));
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanCmdAddCustomList => new Tuple<bool, bool>(true, true);
+
+			private void AddCustomList_Click(object sender, EventArgs e)
+			{
+				using (var dlg = new AddCustomListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache))
+				{
+					if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
+					{
+						_area.OnAddCustomList(dlg.NewList);
+					}
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdConfigureList => new Tuple<bool, bool>(true, ((IListTool)_area.ActiveTool).MyList != null);
+
+			private void ConfigureList_Click(object sender, EventArgs e)
+			{
+				var list = ((IListTool)_area.ActiveTool).MyList;
+				var originalUiName = list.Name.BestAnalysisAlternative.Text;
+				using (var dlg = new ConfigureListDlg(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher, _majorFlexComponentParameters.LcmCache, list))
+				{
+					if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != list.Name.BestAnalysisAlternative.Text)
+					{
+						_area.OnUpdateListDisplayName(_area.ActiveTool, list);
+					}
+				}
+			}
+
+			#region IDisposable
+			private bool _isDisposed;
+
+			~ListAreaMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+				_area = null;
+				_majorFlexComponentParameters = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

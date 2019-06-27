@@ -13,7 +13,6 @@ using SIL.Code;
 using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -72,14 +71,12 @@ namespace LanguageExplorer.Areas
 				InsertNaturalClass,
 				InsertOptionalItem,
 				InsertHashMark,
-				ShowEnvironmentError,
-				CmdAddToLexicon // Call SetupAddToLexicon to use it.
+				ShowEnvironmentError
 			});
 			_sharedEventKeyNames.AddRange(new[]
 			{
 				AreaServices.JumpToTool,
 				AreaServices.DataTreeDelete,
-				AreaServices.LexiconLookup,
 				AreaServices.DeleteSelectedBrowseViewObject
 			});
 			foreach (var key in _sharedEventKeyNames)
@@ -91,9 +88,6 @@ namespace LanguageExplorer.Areas
 						break;
 					case AreaServices.DataTreeDelete:
 						_sharedEventHandlers.Add(key, DataTreeDelete_Clicked);
-						break;
-					case AreaServices.LexiconLookup:
-						_sharedEventHandlers.Add(key, LexiconLookup_Clicked);
 						break;
 					case AreaServices.DeleteSelectedBrowseViewObject:
 						_sharedEventHandlers.Add(key, DeleteSelectedBrowseViewObject_Clicked);
@@ -357,32 +351,6 @@ namespace LanguageExplorer.Areas
 			LinkHandler.PublishFollowLinkMessage((IPublisher)tagList[0], new FwLinkArgs((string)tagList[1], jumpToGuid));
 		}
 
-		internal static bool Set_CmdInsertFoo_Enabled_State(LcmCache cache, IVwSelection selection)
-		{
-			var enabled = false;
-			if (selection != null)
-			{
-				// Enable the command if the selection exists, we actually have a word, and it's in
-				// the default vernacular writing system.
-				int ichMin;
-				int ichLim;
-				int hvoDummy;
-				int tagDummy;
-				int ws;
-				ITsString tss;
-				selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out tagDummy, out ws, out tss);
-				if (ws == 0)
-				{
-					ws = tss.GetWsFromString(ichMin, ichLim);
-				}
-				if (ichLim > ichMin && ws == cache.DefaultVernWs)
-				{
-					enabled = true;
-				}
-			}
-			return enabled;
-		}
-
 		internal void SetupCmdAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
 		{
 			_eventuallySharedCommands.Add(Command.CmdAddToLexicon);
@@ -430,25 +398,34 @@ namespace LanguageExplorer.Areas
 				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, tssForm);
 				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
 				{
-					// is there anything special we want to do?
+					// is there anything special we want to do, such as jump to the new entry?
 				}
 			}
 		}
 
+		internal void SetupCmdLexiconLookup(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
+		{
+			_eventuallySharedCommands.Add(Command.CmdLexiconLookup);
+			var tuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LexiconLookup_Clicked, seeAndDo);
+			_sharedEventHandlers.Add(Command.CmdLexiconLookup, tuple);
+			// CmdLexiconLookup goes on Tools menu & Insert toolbar
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdLexiconLookup, tuple);
+			_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdLexiconLookup].Tag = dataTree;
+			toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdLexiconLookup, tuple);
+			_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdLexiconLookup].Tag = dataTree;
+		}
+
 		private void LexiconLookup_Clicked(object sender, EventArgs e)
 		{
-			var selection = (IVwSelection)((ToolStripItem)sender).Tag;
-			if (selection == null)
-			{
-				return;
-			}
+			var dataTree = (DataTree)((ToolStripItem)sender).Tag;
+			var currentSlice = dataTree.CurrentSliceAsStTextSlice;
 			int ichMin;
 			int ichLim;
 			int hvo;
 			int tag;
 			int ws;
 			ITsString tss;
-			selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			currentSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>(FwUtils.window), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");

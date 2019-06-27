@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.StatusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
 			_toolMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, this);
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowFailingItemsPropertyName(MachineName), LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, UiWidgetServices.CreateShowFailingItemsPropertyName(MachineName), LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
 				Dock = DockStyle.Right
 			};

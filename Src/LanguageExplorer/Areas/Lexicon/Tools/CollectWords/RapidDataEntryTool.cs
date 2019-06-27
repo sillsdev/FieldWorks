@@ -114,14 +114,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
 			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>(LanguageExplorerConstants.RecordListWidthGlobal, SettingsGroup.GlobalSettings);
 
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			if (_nestedRecordList == null)
 			{
@@ -151,10 +151,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>

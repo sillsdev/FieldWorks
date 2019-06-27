@@ -189,7 +189,6 @@ namespace LanguageExplorer.Areas
 		internal const string JumpToTool = "JumpToTool";
 		internal const string DataTreeDelete = "DataTreeDelete";
 		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
-		internal const string LexiconLookup = "LexiconLookup";
 		#endregion commands
 
 		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants

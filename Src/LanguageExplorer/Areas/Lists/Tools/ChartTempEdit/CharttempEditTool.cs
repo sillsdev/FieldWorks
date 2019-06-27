@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 	/// ITool implementation for the "charttempEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class CharttempEditTool : ITool
+	internal sealed class CharttempEditTool : IListTool
 	{
 		private const string DiscChartTemplateList = "DiscChartTemplateList";
 		/// <summary>
@@ -35,6 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -53,6 +54,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -63,21 +65,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(DiscChartTemplateList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_toolMenuHelper = new CharttempMenuHelper(majorFlexComponentParameters, this, majorFlexComponentParameters.LcmCache.LanguageProject.DiscourseDataOA.ConstChartTemplOA, _recordList, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new CharttempMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.CharttempEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -140,7 +137,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == DiscChartTemplateList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{DiscChartTemplateList}'.");
 			/*
@@ -155,11 +157,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
               </sortMethods>
             </clerk>
 			*/
-			var template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+			var template = MyList;
 			if (template == null)
 			{
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () => cache.LanguageProject.GetDefaultChartTemplate());
-				template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				template = MyList;
 			}
 
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),

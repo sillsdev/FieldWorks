@@ -243,11 +243,11 @@
 		<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree_SubVariantEntryType"/>
 	</layout>
 
-	<layout class="LexEntryInflType" type="detail" name="nestedVariant">
-		<part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
-	</layout>
+  <layout class="LexEntryInflType" type="detail" name="nestedVariant">
+	<part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree_DeletePossibility"/>
+  </layout>
 
-	<layout class="CmAnthroItem" type="detail" name="default">
+  <layout class="CmAnthroItem" type="detail" name="default">
 	<part ref="NameAllA">
 	</part>
 	<part ref="AbbreviationAllA">

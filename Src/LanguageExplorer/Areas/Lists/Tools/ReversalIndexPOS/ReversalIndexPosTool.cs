@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	/// ITool implementation for the "reversalToolReversalIndexPOS" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class ReversalIndexPosTool : ITool
+	internal sealed class ReversalIndexPosTool : IListTool
 	{
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
@@ -36,6 +36,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
+		[Import]
+		private ISubscriber _subscriber;
+		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -50,6 +53,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+			_subscriber.Unsubscribe("ReversalIndexGuid", HandleReversalIndexGuid_Changed);
 
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
@@ -57,6 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_recordBrowseView = null;
 			_currentReversalIndex = null;
 			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -67,21 +72,18 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
-			if (currentGuid != Guid.Empty)
-			{
-				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
-			}
-
+			_cache = majorFlexComponentParameters.LcmCache;
+			_subscriber.Subscribe("ReversalIndexGuid", HandleReversalIndexGuid_Changed);
+			HandleReversalIndexGuid_Changed(null);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _cache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex, _recordList, dataTree, _recordBrowseView, showHiddenFieldsPropertyName);
-			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
+			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), _cache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -109,13 +111,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", browseViewPaneBar, recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -179,7 +174,22 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _currentReversalIndex.PartsOfSpeechOA;
+		#endregion
+
+		private void HandleReversalIndexGuid_Changed(object obj)
+		{
+			// 'obj' is a string of the guid.
+			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
+			if (currentGuid != Guid.Empty)
+			{
+				_currentReversalIndex = (IReversalIndex)_cache.ServiceLocator.GetObject(currentGuid);
+			}
+		}
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
 			/*
@@ -195,15 +205,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
               <!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
             </clerk>
 			*/
-			IReversalIndex currentReversalIndex = null;
-			var currentReversalIndexGuid = RecordListServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
-			if (currentReversalIndexGuid != Guid.Empty)
-			{
-				currentReversalIndex = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(currentReversalIndexGuid);
-			}
-
 			// NB: No need to pass 'recordListId' to the constructor, since it supplies ReversalIndexPOSRecordList.ReversalEntriesPOS for the id.
-			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
+			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
 		}
 
 		private sealed class ReversalIndexPosEditMenuHelper : IDisposable
@@ -307,7 +310,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdConfigureList });
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
 				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar for both.

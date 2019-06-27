@@ -75,8 +75,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
 
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			_dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			_dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
 			_toolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, _dataTree, _recordBrowseView);
@@ -114,10 +114,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -259,7 +255,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					if (currentSliceAsStTextSlice != null)
 					{
 						currentSelection = currentSliceAsStTextSlice.RootSite.RootBox.Selection;
-						enabled = PartiallySharedForToolsWideMenuHelper.Set_CmdInsertFoo_Enabled_State(_majorFlexComponentParameters.LcmCache, currentSelection);
+						enabled = currentSelection != null && currentSelection.CanInsert(_majorFlexComponentParameters.LcmCache);
 					}
 					SetTagsToSelection(currentSelection);
 					return new Tuple<bool, bool>(true, enabled);

@@ -97,8 +97,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_xhtmlRecordDocView = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, _xhtmlRecordDocView, showHiddenFieldsPropertyName);
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
@@ -151,10 +151,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -313,16 +309,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
 
 				// Was: LexiconEditToolViewMenuManager
-				// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
-				_subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 				// Various tool level shared handlers for within the Lexicon area.
 				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 
-				var viewMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View];
-				viewMenuDictionary.Add(Command.ShowHiddenFields, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Hidden_Fields_Clicked, () => CanShowHiddenFields));
-				ShowHiddenFields_Handler(_propertyTable.GetValue(_extendedPropertyName, false));
 				// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
-				viewMenuDictionary.Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, () => CanShow_DictionaryPubPreview));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, () => CanShow_DictionaryPubPreview));
 				((ToolStripMenuItem)_majorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.Show_DictionaryPubPreview]).Checked = _propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 
 				// Was: LexiconEditToolInsertMenuManager
@@ -368,23 +359,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
 				// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, toolUiWidgetParameterObject.Tool, _dataTree, _recordList);
-			}
-
-			private static Tuple<bool, bool> CanShowHiddenFields => new Tuple<bool, bool>(true, true);
-
-			private void Show_Hidden_Fields_Clicked(object sender, EventArgs e)
-			{
-				var menuItem = (ToolStripMenuItem)sender;
-				menuItem.Checked = !menuItem.Checked;
-				_propertyTable.SetProperty(_extendedPropertyName, menuItem.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, menuItem.Checked);
-				InnerMultiPane.Panel1Collapsed = !menuItem.Checked;
-			}
-
-			private void ShowHiddenFields_Handler(object obj)
-			{
-				var hiddenFieldsMenu = (ToolStripMenuItem)_majorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.ShowHiddenFields];
-				hiddenFieldsMenu.Checked = (bool)obj;
 			}
 
 			private static Tuple<bool, bool> CanShow_DictionaryPubPreview => new Tuple<bool, bool>(true, true);
@@ -2429,7 +2403,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					MainPanelMenuContextMenuFactory.Dispose();
 					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
-					_subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 					_rightClickContextMenuManager.Dispose();
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToPreviousInSequence);
 					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToNextInSequence);

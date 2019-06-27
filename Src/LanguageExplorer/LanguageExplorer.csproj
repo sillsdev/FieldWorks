@@ -383,6 +383,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpTopicPaths.resx</DependentUpon>
     </Compile>
+    <Compile Include="IListTool.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
@@ -1971,6 +1972,7 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\CustomEditParameters.xml" />
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
       <Link>XML\Combined\HierarchicalLCModel.xml</Link>
       <SubType>Designer</SubType>

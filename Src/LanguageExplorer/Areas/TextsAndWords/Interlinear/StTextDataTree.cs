@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal StTextDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache)
-			: base(sharedEventHandlers)
+			: base(sharedEventHandlers, false)
 		{
 			Cache = cache;
 			InitializeBasic(cache, false);

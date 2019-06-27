@@ -102,7 +102,6 @@ namespace LanguageExplorer.Impls
             this.ListsToolsList = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowInvisibleSpaces = new System.Windows.Forms.ToolStripMenuItem();
             this.Show_DictionaryPubPreview = new System.Windows.Forms.ToolStripMenuItem();
-            this.ShowHiddenFields = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripViewMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -951,7 +950,6 @@ namespace LanguageExplorer.Impls
             this.ListsToolsList,
             this.ShowInvisibleSpaces,
             this.Show_DictionaryPubPreview,
-            this.ShowHiddenFields,
             this.toolStripViewMenuSeparator2,
             this.filtersToolStripMenuItem,
             this.CmdChooseTexts});
@@ -965,50 +963,50 @@ namespace LanguageExplorer.Impls
             this.refreshToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(208, 26);
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.ToolTipText = "Refresh the screen.";
             // 
             // toolStripViewMenuSeparator1
             // 
             this.toolStripViewMenuSeparator1.Name = "toolStripViewMenuSeparator1";
-            this.toolStripViewMenuSeparator1.Size = new System.Drawing.Size(201, 6);
+            this.toolStripViewMenuSeparator1.Size = new System.Drawing.Size(205, 6);
             // 
             // LexicalToolsList
             // 
             this.LexicalToolsList.Name = "LexicalToolsList";
-            this.LexicalToolsList.Size = new System.Drawing.Size(204, 22);
+            this.LexicalToolsList.Size = new System.Drawing.Size(208, 26);
             this.LexicalToolsList.Text = "&Lexicon";
             // 
             // WordToolsList
             // 
             this.WordToolsList.Name = "WordToolsList";
-            this.WordToolsList.Size = new System.Drawing.Size(204, 22);
+            this.WordToolsList.Size = new System.Drawing.Size(208, 26);
             this.WordToolsList.Text = "&Text && Words";
             // 
             // GrammarToolsList
             // 
             this.GrammarToolsList.Name = "GrammarToolsList";
-            this.GrammarToolsList.Size = new System.Drawing.Size(204, 22);
+            this.GrammarToolsList.Size = new System.Drawing.Size(208, 26);
             this.GrammarToolsList.Text = "&Grammar";
             // 
             // NotebookToolsList
             // 
             this.NotebookToolsList.Name = "NotebookToolsList";
-            this.NotebookToolsList.Size = new System.Drawing.Size(204, 22);
+            this.NotebookToolsList.Size = new System.Drawing.Size(208, 26);
             this.NotebookToolsList.Text = "&Notebook";
             // 
             // ListsToolsList
             // 
             this.ListsToolsList.Name = "ListsToolsList";
-            this.ListsToolsList.Size = new System.Drawing.Size(204, 22);
+            this.ListsToolsList.Size = new System.Drawing.Size(208, 26);
             this.ListsToolsList.Text = "Li&sts";
             // 
             // ShowInvisibleSpaces
             // 
             this.ShowInvisibleSpaces.CheckOnClick = true;
             this.ShowInvisibleSpaces.Name = "ShowInvisibleSpaces";
-            this.ShowInvisibleSpaces.Size = new System.Drawing.Size(204, 22);
+            this.ShowInvisibleSpaces.Size = new System.Drawing.Size(208, 26);
             this.ShowInvisibleSpaces.Text = "Invisible Spaces";
             this.ShowInvisibleSpaces.ToolTipText = "View the invisible, zero-width spaces in this text.";
             this.ShowInvisibleSpaces.Visible = false;
@@ -1016,28 +1014,21 @@ namespace LanguageExplorer.Impls
             // Show_DictionaryPubPreview
             // 
             this.Show_DictionaryPubPreview.Name = "Show_DictionaryPubPreview";
-            this.Show_DictionaryPubPreview.Size = new System.Drawing.Size(204, 22);
+            this.Show_DictionaryPubPreview.Size = new System.Drawing.Size(208, 26);
             this.Show_DictionaryPubPreview.Text = "Show &Dictionary Preview";
             this.Show_DictionaryPubPreview.Visible = false;
-            // 
-            // ShowHiddenFields
-            // 
-            this.ShowHiddenFields.Name = "ShowHiddenFields";
-            this.ShowHiddenFields.Size = new System.Drawing.Size(204, 22);
-            this.ShowHiddenFields.Text = "&Show Hidden Fields";
-            this.ShowHiddenFields.Visible = false;
             // 
             // toolStripViewMenuSeparator2
             // 
             this.toolStripViewMenuSeparator2.Name = "toolStripViewMenuSeparator2";
-            this.toolStripViewMenuSeparator2.Size = new System.Drawing.Size(201, 6);
+            this.toolStripViewMenuSeparator2.Size = new System.Drawing.Size(205, 6);
             // 
             // filtersToolStripMenuItem
             // 
             this.filtersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noFilterToolStripMenuItem});
             this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
-            this.filtersToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.filtersToolStripMenuItem.Size = new System.Drawing.Size(208, 26);
             this.filtersToolStripMenuItem.Text = "Filters";
             // 
             // noFilterToolStripMenuItem
@@ -1052,7 +1043,7 @@ namespace LanguageExplorer.Impls
             // 
             this.CmdChooseTexts.Image = ((System.Drawing.Image)(resources.GetObject("CmdChooseTexts.Image")));
             this.CmdChooseTexts.Name = "CmdChooseTexts";
-            this.CmdChooseTexts.Size = new System.Drawing.Size(204, 22);
+            this.CmdChooseTexts.Size = new System.Drawing.Size(208, 26);
             this.CmdChooseTexts.Text = "Choose Texts...";
             this.CmdChooseTexts.Visible = false;
             // 
@@ -1533,7 +1524,7 @@ namespace LanguageExplorer.Impls
             this.CmdAddToLexicon.Image = ((System.Drawing.Image)(resources.GetObject("CmdAddToLexicon.Image")));
             this.CmdAddToLexicon.Name = "CmdAddToLexicon";
             this.CmdAddToLexicon.Size = new System.Drawing.Size(296, 22);
-            this.CmdAddToLexicon.Text = "Add to Dictionary...";
+            this.CmdAddToLexicon.Text = "Entry...";
             this.CmdAddToLexicon.Visible = false;
             // 
             // CmdInsertPossibility
@@ -2990,7 +2981,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_WritingSystemList,
             this.Toolbar_CombinedStylesList});
             this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripFormat.Location = new System.Drawing.Point(420, 24);
+            this.toolStripFormat.Location = new System.Drawing.Point(424, 24);
             this.toolStripFormat.Name = "toolStripFormat";
             this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
             this.toolStripFormat.TabIndex = 4;
@@ -3253,7 +3244,6 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem ListsToolsList;
 		private ToolStripMenuItem ShowInvisibleSpaces;
 		private ToolStripMenuItem Show_DictionaryPubPreview;
-		private ToolStripMenuItem ShowHiddenFields;
 		private ToolStripMenuItem CmdInsertLexEntry;
 		private ToolStripMenuItem CmdInsertSense;
 		private ToolStripMenuItem CmdInsertVariant;

@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -21,7 +24,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 	/// </summary>
 	/// <remarks>This list is closed for editing.</remarks>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class MorphTypeEditTool : ITool
+	internal sealed class MorphTypeEditTool : IListTool
 	{
 		private const string MorphTypeList = "MorphTypeList";
 		/// <summary>
@@ -32,6 +35,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
+		private LcmCache _cache;
+		private MorphTypeEditMenuHelper _toolMenuHelper;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -48,6 +53,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			// Dispose after the main UI stuff.
+			_toolMenuHelper.Dispose();
+			_toolMenuHelper = null;
+			_cache = null;
 		}
 
 		/// <summary>
@@ -58,22 +66,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MorphTypeList, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			//_listsAreaMenuHelper = new ListsAreaMenuHelper(this, dataTree);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new MorphTypeEditMenuHelper(majorFlexComponentParameters, this, MyList, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true, XDocument.Parse(ListResources.MorphTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
-
-			// Too early before now.
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -136,7 +138,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => _cache.LanguageProject.LexDbOA.MorphTypesOA;
+		#endregion
+
+		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == MorphTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{MorphTypeList}'.");
 			/*
@@ -153,7 +160,78 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 			*/
 			// NB: The morph type list is closed to add/remove, but it does allow editing extant items.
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.LexDbOA.MorphTypesOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
+				MyList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
+		}
+
+		private sealed class MorphTypeEditMenuHelper : IDisposable
+		{
+			private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+			private readonly ICmPossibilityList _list;
+			private readonly IRecordList _recordList;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
+
+			internal MorphTypeEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
+			{
+				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(list, nameof(list));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+
+				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_list = list;
+				_recordList = recordList;
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
+				SetupToolUiWidgets(tool, dataTree);
+			}
+
+			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			#region Implementation of IDisposable
+			private bool _isDisposed;
+
+			~MorphTypeEditMenuHelper()
+			{
+				// The base class finalizer is called automatically.
+				Dispose(false);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing,
+					"****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
+				}
+				_sharedListToolsUiWidgetMenuHelper = null;
+
+				_isDisposed = true;
+			}
+			#endregion
 		}
 	}
 }

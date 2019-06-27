@@ -114,7 +114,6 @@ namespace LanguageExplorer
 		ListsToolsList,
 		ShowInvisibleSpaces,
 		Show_DictionaryPubPreview,
-		ShowHiddenFields,
 		// Separator2 goes here
 		FiltersList,
 			NoFilter,

@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// Oddly enough, this tool isn't a real list (e.g., nothing owned by ICmPossibilityList).
 	/// </remarks>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	internal sealed class FeatureTypesAdvancedEditTool : ITool
+	internal sealed class FeatureTypesAdvancedEditTool : IListTool
 	{
 		private FeatureTypesAdvancedEditMenuHelper _toolMenuHelper;
 		private const string FeatureTypes = "featureTypes";
@@ -76,8 +76,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				majorFlexComponentParameters.LcmCache, _recordList,
 				majorFlexComponentParameters.UiWidgetController);
 
-			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_toolMenuHelper = new FeatureTypesAdvancedEditMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters),
 				XDocument.Parse(AreaResources.HideAdvancedListItemFields),
@@ -107,10 +107,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
-			{
-				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, true);
-			}
 		}
 
 		/// <summary>
@@ -171,6 +167,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+
+		#region Implementation of IListTool
+		/// <inheritdoc />
+		public ICmPossibilityList MyList => null;
+		#endregion
 
 		#endregion
 
