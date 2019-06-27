@@ -335,7 +335,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			DialogResult = DialogResult.OK;
 
+			// The progress dialog takes a few seconds to appear. Disable all controls so the user doesn't think they can click anything.
+			Enabled = false;
 
+			using (new WaitCursor(this))
 			using (var threadHelper = new ThreadHelper())
 			using (var progressDialog = new ProgressDialogWithTask(threadHelper))
 			{
