@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+	<PropertyGroup>
+		<ReposRoot Condition="'$(ReposRoot)'==''">$(fwrt)\..</ReposRoot>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- <ReposToTestPatching Include="$(ReposRoot)\libpalaso"/> -->
+		<!-- <ReposToTestPatching Include="$(ReposRoot)\liblcm"/> -->
+		<!-- <ReposToTestPatching Include="$(ReposRoot)\chorus"/> -->
+		<ReposToTestPatching Include="$(fwrt)"/>
+		<!-- <ReposToTestPatching Include="$(fwrt)\Localization"/>, helps? -->
+	</ItemGroup>
+
+	<!-- ########################################################################################################## -->
+	<!-- Builds a base installer, makes changes in each repository (by applying the stash), then builds a patch to test -->
+	<!-- ########################################################################################################## -->
+	<Target Name="BuildPatchTest">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildBaseInstaller"/>
+		<Exec Command="git stash apply" WorkingDirectory="%(ReposToTestPatching.Identity)"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildVersionSegment=3" Targets="BuildPatchInstaller"/>
+	</Target>
+
+	<!-- ########################################################################################################## -->
+	<!-- Builds a base installer, changes each installed file, then builds a patch to test -->
+	<!-- Note: you must build target BuildBaseInstaller before using this test. -->
+	<!-- ########################################################################################################## -->
+	<Target Name="BuildQuickPatchTest" DependsOnTargets="InstallerVersionNumbers;CleanMasterOutputDir;FieldWorks">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true"
+			Targets="CopyFilesToInstall;WriteFilesMetadata;BuildProductBaseMsi;CopyBuildToMaster"/>
+		<ItemGroup>
+			<HelloWorldLines Include='using System%3B'/>
+			<HelloWorldLines Include='public class FieldWorks{'/>
+			<HelloWorldLines Include='public static void Main(string[] args){'/>
+			<HelloWorldLines Include='Console.WriteLine("Hello, World")%3B}}'/>
+			<FlexCode Include="$(fwrt)\Src\Common\FieldWorks\**\*.cs"/>
+		</ItemGroup>
+		<WriteLinesToFile File="%(FlexCode.Identity)" Overwrite="true" Lines="//"/>
+		<WriteLinesToFile File="$(fwrt)\Src\Common\FieldWorks\FieldWorks.cs" Overwrite="true" Lines="@(HelloWorldLines)"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildVersionSegment=3"
+			Targets="FieldWorks;CopyFilesToInstall;WriteFilesMetadata;BuildProductPatchMsp"/>
+	</Target>
+
+	<!-- ########################################################################################################## -->
+	<!-- ### Write a table of files' metadata to verify that each file has been installed or patched correctly. ### -->
+	<!-- ########################################################################################################## -->
+	<Target Name="WriteFilesMetadata" DependsOnTargets="InstallerVersionNumbers">
+		<PropertyGroup>
+			<MetadataLog>$(AppBuildDir)\$(BinDirSuffix)\installerTestMetadata.$(BuildVersion).csv</MetadataLog>
+		</PropertyGroup>
+		<ItemGroup>
+			<BinFilesToHash Include="$(AppBuildDir)\$(BinDirSuffix)\**\*" Exclude="$(MetadataLog)"/>
+			<L10nFilesToHash Include="$(AppBuildDir)\$(L10nDirSuffix)\**\*"/>
+			<FLExExeToHash
+		</ItemGroup>
+		<WriteLinesToFile File="$(MetadataLog)" Overwrite="true" Lines="Metadata for $(ApplicationName) $(BuildVersion)"/>
+		<LogMetadata LogFile="$(MetadataLog)" Files="@(FilesToHash)" PathPrefixToDrop="$(AppBuildDir)\$(BinDirSuffix)\"/>
+	</Target>
+</Project>

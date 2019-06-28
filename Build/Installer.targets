@@ -266,7 +266,7 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi"/>
+		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
