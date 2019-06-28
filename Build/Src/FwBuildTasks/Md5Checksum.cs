@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,8 @@ namespace FwBuildTasks
 {
 	public class Md5Checksum : Task
 	{
+		private static readonly HashAlgorithm Hasher = HashAlgorithm.Create("MD5");
+
 		[Required]
 		public string SourceFile { get; set; }
 
@@ -20,21 +22,10 @@ namespace FwBuildTasks
 		{
 			try
 			{
-				var hasher = HashAlgorithm.Create("MD5");
-				byte[] checksum;
-				using (var file = File.OpenRead(SourceFile))
-				{
-					checksum = hasher.ComputeHash(file);
-				}
-				var bldr = new StringBuilder();
-				for ( int i=0; i < checksum.Length; i++ )
-				{
-					bldr.Append(String.Format("{0:x2}", checksum[i]));
-				}
 				var outputFile = SourceFile + ".MD5";
 				using (var writer = new StreamWriter(outputFile))
 				{
-					writer.Write(bldr.ToString());
+					writer.Write(Compute(SourceFile));
 				}
 				return true;
 			}
@@ -43,6 +34,22 @@ namespace FwBuildTasks
 				Log.LogErrorFromException(ex);
 				return false;
 			}
+		}
+
+		public static string Compute(string filename)
+		{
+			byte[] checksumBytes;
+			using (var file = File.OpenRead(filename))
+			{
+				checksumBytes = Hasher.ComputeHash(file);
+			}
+			var bldr = new StringBuilder();
+			foreach (var b in checksumBytes)
+			{
+				bldr.AppendFormat("{0:x2}", b);
+			}
+
+			return bldr.ToString();
 		}
 	}
 }

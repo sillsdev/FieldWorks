@@ -50,9 +50,7 @@
 	</PropertyGroup>
 
 	<Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
-		<!-- REVIEW (Hasso) 2018.06: nobody uses the Version property -->
-		<Message Text="Version Property: $(Version)" Importance="high"/>
-		<ParseVersionNumbers VersionInfo="@(VersionSymbols)" Condition="'$(Version)' == ''">
+		<ParseVersionNumbers VersionInfo="@(VersionSymbols)">
 			<Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
 			<Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
 			<Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
@@ -61,7 +59,6 @@
 
 	<!-- Property definitions -->
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
-		<!-- parse the version number into segments -->
 		<PropertyGroup>
 			<!-- set default values for trailing version numbers -->
 			<BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment> <!-- 1 is the base build number. It may be a NAnt thing... -->
@@ -266,7 +263,7 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi"/>
+		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
@@ -301,6 +298,22 @@
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
 		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
+	</Target>
+
+	<!-- Write a table of files' metadata that can be used to verify that each file has been installed or patched correctly. -->
+	<Target Name="WriteFilesMetadata" DependsOnTargets="InstallerVersionNumbers">
+		<PropertyGroup>
+			<MetadataLog>$(AppBuildDir)\$(BinDirSuffix)\installerTestMetadata.$(BuildVersion).csv</MetadataLog>
+		</PropertyGroup>
+		<ItemGroup>
+			<FLExExeToHash Include="$(fwrt)\Output\$(Configuration)\FieldWorks.exe"/>
+			<BinFilesToHash Include="$(AppBuildDir)\$(BinDirSuffix)\**\*" Exclude="$(MetadataLog)"/>
+			<L10nFilesToHash Include="$(AppBuildDir)\$(L10nDirSuffix)\**\*"/>
+		</ItemGroup>
+		<WriteLinesToFile File="$(MetadataLog)" Overwrite="true" Lines="Metadata for $(ApplicationName) $(BuildVersion)"/>
+		<LogMetadata LogFile="$(MetadataLog)" Files="@(FLExExeToHash)" PathPrefixToDrop="$(fwrt)\Output\$(Configuration)\"/>
+		<LogMetadata LogFile="$(MetadataLog)" Files="@(BinFilesToHash)" PathPrefixToDrop="$(AppBuildDir)\$(BinDirSuffix)\" WriteHeaders="false"/>
+		<LogMetadata LogFile="$(MetadataLog)" Files="@(L10nFilesToHash)" PathPrefixToDrop="$(AppBuildDir)\$(L10nDirSuffix)\" WriteHeaders="false"/>
 	</Target>
 
 	<Target Name="ConvertHarvestsToWxi">

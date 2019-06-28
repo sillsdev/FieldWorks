@@ -193,14 +193,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="assembly"></param>
 		/// <param name="productVersion">filled with version or empty string</param>
-		/// <param name="productDate">filled with date or empty string</param>
+		/// <param name="productDate">filled with build date or empty string</param>
 		private static void ParseInformationalVersion(Assembly assembly, out string productVersion, out string productDate)
 		{
 			var informationalVersionAttr = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
 			var appInfoVersion = informationalVersionAttr.Length > 0
 				? ((AssemblyInformationalVersionAttribute)informationalVersionAttr[0]).InformationalVersion
 				: null;
-			var versionParts = appInfoVersion?.Split(' ');
+			var versionParts = appInfoVersion?.Split(new[] {' '}, 3);
 			productDate = string.Empty;
 			productVersion = string.Empty;
 			var productType = string.Empty;
@@ -223,8 +223,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 					goto case 1;
 				}
 				case 1:
+				{
 					productVersion = versionParts[0] + productType;
 					break;
+				}
 			}
 		}
 
