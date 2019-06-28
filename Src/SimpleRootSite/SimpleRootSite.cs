@@ -305,8 +305,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (Subscriber != null)
 				{
-					Subscriber.Unsubscribe("AboutToFollowLink", AboutToFollowLink);
-					Subscriber.Unsubscribe("WritingSystemHvo", WritingSystemHvo_Changed);
+					Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
+					Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
 				}
 
 				if (m_printMenu != null)
@@ -5023,8 +5023,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Subscriber.Subscribe("AboutToFollowLink", AboutToFollowLink);
-			Subscriber.Subscribe("WritingSystemHvo", WritingSystemHvo_Changed);
+			Subscriber.Subscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
+			Subscriber.Subscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
 
 			if (!SuppressPrintHandling)
 			{

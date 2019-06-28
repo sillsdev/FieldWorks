@@ -168,7 +168,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 			private readonly ICmPossibilityList _list;
 			private readonly IRecordList _recordList;
 			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
-			private IListArea Area => (IListArea)_tool.Area;
 
 			internal PeopleEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 			{

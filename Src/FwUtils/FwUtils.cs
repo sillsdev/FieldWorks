@@ -28,6 +28,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public static partial class FwUtils
 	{
 		/// <summary>
+		/// Shared string value.
+		/// </summary>
+		public const string WritingSystemHvo = "WritingSystemHvo";
+		/// <summary>
+		/// Shared string value.
+		/// </summary>
+		public const string AboutToFollowLink = "AboutToFollowLink";
+		/// <summary>
 		/// The name of the overarching umbrella application that will one day conquer the world:
 		/// "FieldWorks"
 		/// </summary>

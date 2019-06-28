@@ -2455,6 +2455,7 @@ very simple minor adjustments. ;)"
 			{
 				focusRootSite.SelectionChanged(focusRootSite.RootBox, focusRootSite.RootBox.Selection);
 			}
+			_recordListRepositoryForTools.ActiveRecordList?.UpdateRecordTreeBar();
 		}
 
 		private Tuple<bool, bool> CanCmdRedo
@@ -2513,6 +2514,7 @@ very simple minor adjustments. ;)"
 					_inUndoRedo = false;
 				}
 			}
+			_recordListRepositoryForTools.ActiveRecordList?.UpdateRecordTreeBar();
 		}
 
 		private void Format_Styles_Click(object sender, EventArgs e)

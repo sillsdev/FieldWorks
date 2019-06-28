@@ -44,7 +44,7 @@ namespace LanguageExplorer.Impls
 			_allWritingSystemDefinitions = _cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 			_formatToolStripComboBox = formatToolStripComboBox;
 			_writingSystemToolStripMenuItem = writingSystemToolStripMenuItem;
-			_subscriber.Subscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
+			_subscriber.Subscribe(FwUtils.WritingSystemHvo, UpdateComboboxSelectedItem);
 			SetupControlsForWritingSystems();
 			Application.Idle += ApplicationOnIdle;
 		}
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Impls
 			{
 				Application.Idle -= ApplicationOnIdle;
 				// Dispose any combobox items or menu items that remain.
-				_subscriber.Unsubscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
+				_subscriber.Unsubscribe(FwUtils.WritingSystemHvo, UpdateComboboxSelectedItem);
 				_formatToolStripComboBox.SelectedIndexChanged -= FormatToolStripComboBoxOnSelectedIndexChanged;
 				foreach (ToolStripMenuItem submenu in _writingSystemToolStripMenuItem.DropDownItems)
 				{

@@ -22,6 +22,7 @@ namespace LanguageExplorer
 	internal sealed class LinkHandler : IFlexComponent, IDisposable
 	{
 		// Limit the stacks to 50 elements (LT-729).
+		private const string FollowLink = "FollowLink";
 		const int kmaxDepth = 50;
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
@@ -364,8 +365,8 @@ namespace LanguageExplorer
 		{
 			var commands = new List<string>
 			{
-				"AboutToFollowLink",
-				"FollowLink"
+				FwUtils.AboutToFollowLink,
+				FollowLink
 			};
 			var parms = new List<object>
 			{
@@ -417,7 +418,7 @@ namespace LanguageExplorer
 			Subscriber = flexComponentParameters.Subscriber;
 
 			PropertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
-			Subscriber.Subscribe("FollowLink", FollowLink_Handler);
+			Subscriber.Subscribe(FollowLink, FollowLink_Handler);
 		}
 
 		#endregion
@@ -490,7 +491,7 @@ namespace LanguageExplorer
 			if (disposing)
 			{
 				PropertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
-				Subscriber.Unsubscribe("FollowLink", FollowLink_Handler);
+				Subscriber.Unsubscribe(FollowLink, FollowLink_Handler);
 				_backStack?.Clear();
 				_forwardStack?.Clear();
 			}

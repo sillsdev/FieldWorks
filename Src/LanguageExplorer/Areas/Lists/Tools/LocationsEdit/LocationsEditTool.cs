@@ -298,7 +298,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
+				_sharedListToolsUiWidgetMenuHelper = null;
 
 				_isDisposed = true;
 			}
