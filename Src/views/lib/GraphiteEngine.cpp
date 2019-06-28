@@ -465,7 +465,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	if (font != NULL)
 	{
 		const void * error = 0;
-		int usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
+		size_t usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
 		Assert(!error || usvCount >= 0); // Something went wrong trying to count the characters, maybe a bad surrogate pair in the segStr?
 		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, usvCount + (extraSlot ? 1 : 0), isRtl ? gr_rtl : 0);
 	}

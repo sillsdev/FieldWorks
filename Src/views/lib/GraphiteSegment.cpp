@@ -1088,7 +1088,7 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	CheckHr(m_qts->Fetch(m_ichMin, m_ichLim, pchNfd));
 	pchNfd[segmentLen] = '\0';
 	const void * error = 0;
-	int usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
+	size_t usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
 	Assert(!error || usvCount > 0); // Something went wrong trying to count the characters, maybe a bad surrogate pair in the data?
 	gr_segment* segment = gr_make_seg(font, m_qgre->Face(), 0, m_qgre->FeatureValues(), gr_utf16, segStr, usvCount, IsRtl() ? gr_rtl : 0);
 	if (m_stretch > 0)
