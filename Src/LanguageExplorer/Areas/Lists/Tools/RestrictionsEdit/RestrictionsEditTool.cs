@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == RestrictionsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{RestrictionsList}'.");
+			Require.That(recordListId == RestrictionsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{RestrictionsList}'.");
 			/*
             <clerk id="RestrictionsList">
               <recordList owner="LangProject" property="Restrictions">

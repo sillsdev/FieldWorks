@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == TranslationTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{TranslationTypeList}'.");
+			Require.That(recordListId == TranslationTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{TranslationTypeList}'.");
 			/*
             <clerk id="TranslationTypeList">
               <recordList owner="LangProject" property="TranslationTags">

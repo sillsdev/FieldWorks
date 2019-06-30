@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == LexProblems, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LexProblems}'.");
+			Require.That(recordListId == LexProblems, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LexProblems}'.");
 			/*
             <clerk id="lexProblems">
               <recordList owner="LangProject" property="Problems" />

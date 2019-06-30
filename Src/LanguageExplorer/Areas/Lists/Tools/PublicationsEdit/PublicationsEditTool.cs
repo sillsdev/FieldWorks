@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == PublicationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PublicationList}'.");
+			Require.That(recordListId == PublicationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{PublicationList}'.");
 			/*
             <clerk id="PublicationList">
               <recordList owner="LexDb" property="PublicationTypes">

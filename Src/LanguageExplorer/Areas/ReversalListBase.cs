@@ -347,7 +347,6 @@ namespace LanguageExplorer.Areas
 			UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 			OnChangeSorter(); // Update the column headers with sort arrows
 			OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-			PropertyTable.SetProperty("ActiveListOwningObject", newOwningObj, doBroadcastIfChanged: true);
 			Publisher.Publish("RecordListOwningObjChanged", this);
 			Publisher.Publish("MasterRefresh", null);
 		}

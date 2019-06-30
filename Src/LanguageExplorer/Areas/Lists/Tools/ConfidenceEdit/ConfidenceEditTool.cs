@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ConfidenceList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ConfidenceList}'.");
+			Require.That(recordListId == ConfidenceList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ConfidenceList}'.");
 			/*
             <clerk id="ConfidenceList">
               <recordList owner="LangProject" property="ConfidenceLevels">

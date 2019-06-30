@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == LocationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LocationList}'.");
+			Require.That(recordListId == LocationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LocationList}'.");
 			/*
             <clerk id="LocationList">
               <recordList owner="LangProject" property="Locations">

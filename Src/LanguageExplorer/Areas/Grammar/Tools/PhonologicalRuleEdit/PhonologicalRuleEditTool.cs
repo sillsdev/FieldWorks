@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == PhonologicalRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PhonologicalRules}'.");
+			Require.That(recordListId == PhonologicalRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{PhonologicalRules}'.");
 			/*
 			 // NB: How can Flex work when the clerk claims the owner is MorphologicalData, but the real world has it PhonologicalDataOA?
             <clerk id="phonologicalRules">

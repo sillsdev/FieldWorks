@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == LexiconArea.AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LexiconArea.AllReversalEntries}'.");
+			Require.That(recordListId == LexiconArea.AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LexiconArea.AllReversalEntries}'.");
 			/*
 			<clerk id="AllReversalEntries">
 				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk" />

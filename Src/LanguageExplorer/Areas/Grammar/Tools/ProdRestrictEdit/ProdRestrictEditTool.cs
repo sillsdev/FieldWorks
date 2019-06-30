@@ -151,7 +151,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ProdRestrict, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ProdRestrict}'.");
+			Require.That(recordListId == ProdRestrict, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ProdRestrict}'.");
 			/*
             <clerk id="ProdRestrict">
               <recordList owner="MorphologicalData" property="ProdRestrict">

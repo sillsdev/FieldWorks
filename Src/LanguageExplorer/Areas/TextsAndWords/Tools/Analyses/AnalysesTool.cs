@@ -95,6 +95,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			// Too early before now.
 			_toolMenuHelper = new AnalysesToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
+			recordEditView.FinishInitialization();
 		}
 
 		/// <summary>

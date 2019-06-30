@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Environments, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Environments}'.");
+			Require.That(recordListId == Environments, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Environments}'.");
 			/*
             <clerk id="environments">
               <recordList owner="MorphologicalData" property="Environments" />

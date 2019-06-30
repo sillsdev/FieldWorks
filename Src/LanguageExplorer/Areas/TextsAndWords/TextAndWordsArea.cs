@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal static IRecordList ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ConcordanceWords}'.");
+			Require.That(recordListId == ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ConcordanceWords}'.");
 			/*
             <clerk id="concordanceWords">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{InterlinearTexts}'.");
+			Require.That(recordListId == InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{InterlinearTexts}'.");
 			/*
             <clerk id="interlinearTexts">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />

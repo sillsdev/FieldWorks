@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == DomainTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{DomainTypeList}'.");
+			Require.That(recordListId == DomainTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{DomainTypeList}'.");
 			/*
             <clerk id="DomainTypeList">
               <recordList owner="LexDb" property="DomainTypes">

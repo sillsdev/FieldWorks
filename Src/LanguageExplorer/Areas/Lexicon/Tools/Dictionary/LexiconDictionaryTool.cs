@@ -206,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftMainPanelContextMenuStrip(string panelMenuId)
 			{
-				Require.That(panelMenuId == AreaServices.LeftPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.LeftPanelMenuId}'.");
+				Require.That(panelMenuId == AreaServices.LeftPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create one with an id of '{AreaServices.LeftPanelMenuId}'.");
 
 				var currentPublication = _propertyTable.GetValue<string>(LanguageExplorerConstants.SelectedPublication);
 				var contextMenuStrip = new ContextMenuStrip();
@@ -249,7 +249,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightMainPanelContextMenuStrip(string panelMenuId)
 			{
-				Require.That(panelMenuId == AreaServices.RightPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create on with an id of '{AreaServices.RightPanelMenuId}'.");
+				Require.That(panelMenuId == AreaServices.RightPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create one with an id of '{AreaServices.RightPanelMenuId}'.");
 
 				var contextMenuStrip = new ContextMenuStrip();
 

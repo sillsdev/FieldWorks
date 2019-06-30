@@ -112,6 +112,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters,
 				_recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
+
+			// Too early before now.
+			recordEditView.FinishInitialization();
 		}
 
 		/// <summary>
@@ -172,7 +175,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == AdhocCoprohibitions, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{AdhocCoprohibitions}'.");
+			Require.That(recordListId == AdhocCoprohibitions, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{AdhocCoprohibitions}'.");
 			/*
             <clerk id="adhocCoprohibitions">
               <recordList owner="MorphologicalData" property="AdhocCoprohibitions" />

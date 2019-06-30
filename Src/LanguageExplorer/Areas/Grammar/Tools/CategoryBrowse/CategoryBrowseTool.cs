@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
+			Require.That(recordListId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{CategoriesWithoutTreeBarHandler}'.");
 			/*
             <clerk id="categories">
               <recordList owner="LangProject" property="PartsOfSpeech">

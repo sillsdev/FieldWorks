@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Features, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Features}'.");
+			Require.That(recordListId == Features, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Features}'.");
 			/*
             <clerk id="features">
               <recordList owner="MsFeatureSystem" property="Features" />

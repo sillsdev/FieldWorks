@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == TimeOfDayList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{TimeOfDayList}'.");
+			Require.That(recordListId == TimeOfDayList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{TimeOfDayList}'.");
 			/*
             <clerk id="TimeOfDayList">
               <recordList owner="LangProject" property="TimeOfDay">

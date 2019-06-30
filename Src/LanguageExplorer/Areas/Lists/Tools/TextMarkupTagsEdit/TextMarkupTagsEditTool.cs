@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == TextMarkupTagsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{TextMarkupTagsList}'.");
+			Require.That(recordListId == TextMarkupTagsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{TextMarkupTagsList}'.");
 			/*
             <clerk id="TextMarkupTagsList">
               <recordList owner="LangProject" property="TextMarkupTags">

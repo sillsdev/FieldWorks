@@ -69,8 +69,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 #endif
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_nestedRecordList.Id));
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_recordList.Id));
-
-			_propertyTable.RemoveProperty("ActiveListOwningObject");
 			_propertyTable.RemoveProperty("ActiveListSelectedObject");
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
@@ -212,7 +210,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 		private static IRecordList RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == RDEwords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{RDEwords}'.");
+			Require.That(recordListId == RDEwords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{RDEwords}'.");
 			/*
             <clerk id="RDEwords" clerkProvidingOwner="SemanticDomainList">
               <recordList class="CmSemanticDomain" field="ReferringSenses" />

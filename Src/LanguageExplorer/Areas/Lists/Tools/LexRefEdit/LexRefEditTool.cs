@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == LexRefTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LexRefTypeList}'.");
+			Require.That(recordListId == LexRefTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LexRefTypeList}'.");
 			/*
             <clerk id="LexRefTypeList">
               <recordList owner="LexDb" property="References">

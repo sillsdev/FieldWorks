@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == CompoundRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{CompoundRules}'.");
+			Require.That(recordListId == CompoundRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{CompoundRules}'.");
 			/*
             <clerk id="compoundRules">
               <recordList owner="MorphologicalData" property="CompoundRules" />

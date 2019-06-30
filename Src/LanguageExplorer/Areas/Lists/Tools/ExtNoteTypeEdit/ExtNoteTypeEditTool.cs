@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ExtendedNoteTypes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ExtendedNoteTypes}'.");
+			Require.That(recordListId == ExtendedNoteTypes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ExtendedNoteTypes}'.");
 			/*
             <clerk id="ExtNoteTypeList">
               <recordList owner="LexDb" property="ExtendedNoteTypes">

@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == GenreList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{GenreList}'.");
+			Require.That(recordListId == GenreList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{GenreList}'.");
 			/*
             <clerk id="GenreList">
               <recordList owner="LangProject" property="GenreList">

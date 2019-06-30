@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == UsageTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{UsageTypeList}'.");
+			Require.That(recordListId == UsageTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{UsageTypeList}'.");
 			/*
             <clerk id="UsageTypeList">
               <recordList owner="LexDb" property="UsageTypes">

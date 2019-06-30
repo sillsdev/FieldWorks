@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		internal static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Guard.AssertThat(recordListId == EntriesOrChildren, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{EntriesOrChildren}'.");
+			Guard.AssertThat(recordListId == EntriesOrChildren, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{EntriesOrChildren}'.");
 			/*
             <clerk id="entriesOrChildren">
               <recordList owner="LexDb" property="Entries">

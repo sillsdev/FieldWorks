@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == SenseTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SenseTypeList}'.");
+			Require.That(recordListId == SenseTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{SenseTypeList}'.");
 			/*
             <clerk id="SenseTypeList">
               <recordList owner="LexDb" property="SenseTypes">

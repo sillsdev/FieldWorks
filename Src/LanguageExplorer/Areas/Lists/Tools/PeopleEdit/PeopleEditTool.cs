@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == PeopleList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PeopleList}'.");
+			Require.That(recordListId == PeopleList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{PeopleList}'.");
 			/*
             <clerk id="PeopleList">
               <recordList owner="LangProject" property="People">

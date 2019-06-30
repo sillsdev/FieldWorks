@@ -167,7 +167,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		internal static IRecordList NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Records, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Records}'.");
+			Require.That(recordListId == Records, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Records}'.");
 			/*
             <clerk id="records">
               <recordList owner="RnResearchNbk" property="AllRecords">

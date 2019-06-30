@@ -999,6 +999,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("SelectedWritingSystemHvosForCurrentContextMenu");
 			PropertyTable.RemoveProperty("SortedFromEnd");
 			PropertyTable.RemoveProperty("SortedByLength");
+			PropertyTable.RemoveProperty("ActiveListOwningObject");
 		}
 
 		private void SetTemporaryProperties()

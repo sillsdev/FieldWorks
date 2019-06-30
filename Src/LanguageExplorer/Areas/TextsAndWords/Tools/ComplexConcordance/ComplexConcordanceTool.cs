@@ -172,7 +172,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
+			Require.That(recordListId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
 			/*
             <clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />

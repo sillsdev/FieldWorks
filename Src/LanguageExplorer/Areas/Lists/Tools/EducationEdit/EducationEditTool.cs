@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == EducationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{EducationList}'.");
+			Require.That(recordListId == EducationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{EducationList}'.");
 			/*
             <clerk id="EducationList">
               <recordList owner="LangProject" property="Education">

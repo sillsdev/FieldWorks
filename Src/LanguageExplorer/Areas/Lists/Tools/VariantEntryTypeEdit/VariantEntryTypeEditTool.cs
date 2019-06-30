@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == VariantEntryTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{VariantEntryTypeList}'.");
+			Require.That(recordListId == VariantEntryTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{VariantEntryTypeList}'.");
 			/*
             <clerk id="VariantEntryTypeList">
               <recordList owner="LexDb" property="VariantEntryTypes">

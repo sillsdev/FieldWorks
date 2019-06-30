@@ -139,7 +139,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 
 		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == DialectsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{DialectsList}'.");
+			Require.That(recordListId == DialectsList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{DialectsList}'.");
 			/*
             <clerk id="DialectsList">
               <recordList owner="LexDb" property="DialectLabels">

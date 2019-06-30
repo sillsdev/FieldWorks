@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
+			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{OccurrencesOfSelectedWordform}'.");
 			/*
             <clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
               <recordList class="WfiWordform" field="Occurrences">

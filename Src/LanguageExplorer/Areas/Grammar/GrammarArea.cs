@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Grammar
 
 		internal static IRecordList PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Phonemes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Phonemes}'.");
+			Require.That(recordListId == Phonemes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Phonemes}'.");
 			/*
             <clerk id="phonemes">
               <recordList owner="MorphologicalData" property="Phonemes" />

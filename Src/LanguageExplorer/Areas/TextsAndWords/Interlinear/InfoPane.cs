@@ -91,6 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
 			DisplayCurrentRoot();
+			m_xrev.FinishInitialization();
 		}
 
 		/// <summary>

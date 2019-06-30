@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		internal static IRecordList EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Entries}'.");
+			Require.That(recordListId == Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Entries}'.");
 			/*
 			<clerk id="entries">
 				<recordList owner="LexDb" property="Entries" />
@@ -206,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == SemanticDomainList_LexiconArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
+			Require.That(recordListId == SemanticDomainList_LexiconArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{SemanticDomainList_LexiconArea}'.");
 			/*
             <clerk id="SemanticDomainList">
               <recordList owner="LangProject" property="SemanticDomainList">

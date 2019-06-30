@@ -170,7 +170,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == OccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
+			Require.That(recordListId == OccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{OccurrencesOfSelectedUnit}'.");
 			/*
             <clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />

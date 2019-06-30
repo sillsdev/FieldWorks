@@ -151,7 +151,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == NaturalClasses, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{NaturalClasses}'.");
+			Require.That(recordListId == NaturalClasses, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{NaturalClasses}'.");
 			/*
             <clerk id="naturalClasses">
               <recordList owner="MorphologicalData" property="NaturalClasses" />
