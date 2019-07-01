@@ -51,7 +51,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public DictionaryDetailsController(IDictionaryDetailsView view, IPropertyTable propertyTable)
 		{
 			m_propertyTable = propertyTable;
-			m_cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			LoadStylesLists();
 			View = view;

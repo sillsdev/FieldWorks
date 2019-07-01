@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
@@ -19,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			get
 			{
-				var riGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (riGuid.Equals(Guid.Empty))
 				{
 					return null;

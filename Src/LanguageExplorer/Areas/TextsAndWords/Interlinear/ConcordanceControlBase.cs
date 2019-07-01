@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Subscriber = flexComponentParameters.Subscriber;
 
 			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 		}
 
 		#endregion

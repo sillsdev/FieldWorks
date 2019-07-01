@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
 				DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);

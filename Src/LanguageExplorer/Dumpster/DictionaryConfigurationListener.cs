@@ -89,7 +89,7 @@ namespace LanguageExplorer.Dumpster
 				return false;
 
 			var currentConfig = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, true);
-			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
 			configuration.Save();
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Dumpster
 		public bool OnWritingSystemDeleted(object param)
 		{
 			var currentConfig = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, true, null);
-			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
 			if (configuration.HomographConfiguration != null && ((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
 			{

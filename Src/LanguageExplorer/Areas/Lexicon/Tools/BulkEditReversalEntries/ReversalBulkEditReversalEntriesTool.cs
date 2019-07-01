@@ -74,8 +74,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
 			_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			ReversalServices.EnsureReversalIndicesExist(_cache, _propertyTable);
-			var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
+			_reversalIndexRepository.EnsureReversalIndicesExist(_cache, _propertyTable);
+			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);

@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			// Try to create a sorter based on the current Reversal Index's WritingSystem
-			var newGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var newGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (newGuid.Equals(Guid.Empty))
 			{
 				return false;
@@ -146,7 +146,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			ChangeOwningObject(newGuid);
-			var guid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
 			{
 				SetReversalIndexGuid(newGuid);
@@ -222,7 +222,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public virtual void OnDeleteReversalIndex(object argument)
 		{
-			var oldGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var oldGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (oldGuid.Equals(Guid.Empty))
 			{
 				return;
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas
 		{
 			try
 			{
-				ChangeOwningObject(RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
+				ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
 			}
 			catch
 			{

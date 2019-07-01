@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 				IDictionary<string, string> hasPub;
 				IDictionary<string, string> doesNotHavePub;
-				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), _configureObjectName);
+				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(FwUtils.cache), _configureObjectName);
 				DocView.SplitConfigurationsByPublication(allConfigurations, DocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
 				// Add menu items that display the configuration name and send PropChanges with
 				// the configuration path.

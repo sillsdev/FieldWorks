@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			using (var dlg = new InsertRecordDlg())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 				ICmObject owner;
 				var currentRecord = _recordList.CurrentObject;
 				var researchNbk = (IRnResearchNbk)_recordList.OwningObject;

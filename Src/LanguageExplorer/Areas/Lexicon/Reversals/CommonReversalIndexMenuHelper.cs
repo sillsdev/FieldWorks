@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 				dlg.SetDlgInfo(cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
 		{
 			display.List.Clear();
-			var lp = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).LanguageProject;
+			var lp = m_propertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)
 			// But only for analysis wss
 			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams { m_btnText = LanguageExplorerResources.ks_MoveEntry, m_title = LanguageExplorerResources.ksMoveRevEntry };
-				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{

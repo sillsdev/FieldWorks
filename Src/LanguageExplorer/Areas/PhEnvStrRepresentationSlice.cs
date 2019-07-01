@@ -4,6 +4,7 @@
 
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
@@ -33,7 +34,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void FinishInit()
 		{
-			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			MyStringRepSliceView.ResetValidator();
 			if (MyStringRepSliceView.RootBox == null)
 			{

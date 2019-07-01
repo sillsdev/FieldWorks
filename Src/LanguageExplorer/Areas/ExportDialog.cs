@@ -1346,13 +1346,13 @@ namespace LanguageExplorer.Areas
 			var cssDialog = Path.Combine(PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			var fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				var riGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					IReversalIndex ri;
@@ -1588,7 +1588,7 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			AccessibleName = GetType().Name;
 			// Figure out where to locate the dlg.
 			var obj = SettingsKey.GetValue("InsertX");

@@ -58,7 +58,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private bool _isHighlighted;
 
-		private LcmCache Cache => PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+		private LcmCache Cache => PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 
 		/// <summary>
 		/// The view to display the model in
@@ -1554,7 +1554,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, cache.GetManagedSilDataAccess(), cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			if (_previewEntry == null)
 			{

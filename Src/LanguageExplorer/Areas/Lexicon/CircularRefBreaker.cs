@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.Reporting;
@@ -63,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			Process(cache);
 			// Show the message returned from running the circular reference breaker service.
 			MessageBox.Show(Report, LanguageExplorerResources.ksCircularRefsFixed);

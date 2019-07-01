@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.Grammar
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), m_fs, m_flid, "Name", ContainingDataTree.PersistenceProvder,
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(FwUtils.cache), m_fs, m_flid, "Name", ContainingDataTree.PersistenceProvder,
 				"Name", XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
 

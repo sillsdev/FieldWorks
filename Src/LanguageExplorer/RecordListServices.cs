@@ -48,30 +48,5 @@ namespace LanguageExplorer
 			dataForWindow.Item2.MyRecordList = recordList;
 			dataForWindow.Item3.ActiveRecordList = recordList;
 		}
-
-		/// <summary>
-		/// Fetches the GUID value of the given property, having checked it is a valid object.
-		/// If it is not a valid object, the property is removed.
-		/// </summary>
-		internal static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
-		{
-			var sGuid = propertyTable.GetValue<string>(key);
-			if (string.IsNullOrEmpty(sGuid))
-			{
-				return Guid.Empty;
-			}
-			Guid guid;
-			if (!Guid.TryParse(sGuid, out guid))
-			{
-				return Guid.Empty;
-			}
-			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
-			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
-			{
-				return guid;
-			}
-			propertyTable.RemoveProperty(key);
-			return Guid.Empty;
-		}
 	}
 }

@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_flid = mdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 			Sorter = new OccurrenceSorter
 			{
-				Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
+				Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache),
 				SpecialDataAccess = VirtualListPublisher
 			};
 		}

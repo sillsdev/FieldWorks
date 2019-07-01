@@ -1009,7 +1009,7 @@ namespace LanguageExplorer.Impls
 			{
 				FwUtils.window,
 				LanguageExplorerConstants.App,
-				LanguageExplorerConstants.cache,
+				FwUtils.cache,
 				LanguageExplorerConstants.HelpTopicProvider,
 				FwUtils.FlexStyleSheet,
 				LanguageExplorerConstants.LinkHandler,
@@ -1027,7 +1027,7 @@ namespace LanguageExplorer.Impls
 					case LanguageExplorerConstants.App:
 						PropertyTable.SetProperty(key, _flexApp);
 						break;
-					case LanguageExplorerConstants.cache:
+					case FwUtils.cache:
 						PropertyTable.SetProperty(key, Cache);
 						break;
 					case LanguageExplorerConstants.HelpTopicProvider:

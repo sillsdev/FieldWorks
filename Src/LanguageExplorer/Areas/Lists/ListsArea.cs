@@ -138,7 +138,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				if (_sortedDictionaryOfAllTools == null)
 				{
-					var cache = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+					var cache = _propertyTable.GetValue<LcmCache>(FwUtils.cache);
 					var coreWritingSystemDefinition = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
 					_sortedDictionaryOfAllTools = new SortedDictionary<string, ITool>(coreWritingSystemDefinition.DefaultCollation.Collator);
 					foreach (var builtinTool in _myBuiltinTools)

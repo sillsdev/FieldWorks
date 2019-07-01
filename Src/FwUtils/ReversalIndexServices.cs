@@ -24,6 +24,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		internal const string AllIndexesFileName = "AllReversalIndexes";
 		internal const string DictConfigElement = "DictionaryConfiguration";
 		internal const string WsAttribute = "writingSystem";
+		private static bool s_reversalIndicesAreKnownToExist;
+
 
 		/// <summary>
 		/// Create configuration file for analysis writing systems in Reversal Index
@@ -108,7 +110,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
 				{
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
-						cache.ActionHandlerAccessor, () => GetOrCreateWsGuid(wsObj, cache));
+						cache.ActionHandlerAccessor, () => cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetOrCreateWsGuid(wsObj, cache));
 				}
 			}
 		}
@@ -122,13 +124,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Method returns Guid of existing or created writing system
+		/// Fetches the GUID value of the given property, having checked it is a valid object.
+		/// If it is not a valid object, the property is removed.
 		/// </summary>
-		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, LcmCache cache)
+		public static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
 		{
-			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+			var sGuid = propertyTable.GetValue<string>(key);
+			if (string.IsNullOrEmpty(sGuid))
+			{
+				return Guid.Empty;
+			}
+			Guid guid;
+			if (!Guid.TryParse(sGuid, out guid))
+			{
+				return Guid.Empty;
+			}
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			{
+				return guid;
+			}
+			propertyTable.RemoveProperty(key);
+			return Guid.Empty;
 		}
 	}
 }

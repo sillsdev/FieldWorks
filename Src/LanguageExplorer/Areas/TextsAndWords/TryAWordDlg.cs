@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			_sharedEventHandlers = sharedEventHandlers;
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_parserMenuManager = parserMenuManager;
 
 			Text = $@"{m_cache.ProjectId.UiName} - {Text}";

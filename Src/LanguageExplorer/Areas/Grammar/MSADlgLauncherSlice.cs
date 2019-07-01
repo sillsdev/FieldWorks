@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.Grammar
 				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), MyCmObject, 1, "InterlinearName", ContainingDataTree.PersistenceProvder,
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(FwUtils.cache), MyCmObject, 1, "InterlinearName", ContainingDataTree.PersistenceProvder,
 				"InterlinearName", XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			var view = (MSADlglauncherView)ctrl.MainControl;
 			view.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);

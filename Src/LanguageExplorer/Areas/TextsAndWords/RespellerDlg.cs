@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 		}
 
 		#endregion
@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
 				// Access to this respeller dlg is currently (Jan. 2008) only via a context menu in the detail edit pane.

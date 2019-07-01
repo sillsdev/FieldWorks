@@ -197,7 +197,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
+			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(FwUtils.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
@@ -249,7 +249,7 @@ namespace LanguageExplorer
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = propertyTable.GetValue(pubLayoutPropName, string.Empty);
-			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
 				SetConfigureHomographParameters(currentConfig, cache);

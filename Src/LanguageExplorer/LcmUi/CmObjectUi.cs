@@ -256,7 +256,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		internal static CmObjectUi MakeLcmModelUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			switch (classId)
 			{
 				default:

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Language;
 using SIL.LCModel;
@@ -51,7 +52,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				SortReversalSubEntriesInPlace(cache);

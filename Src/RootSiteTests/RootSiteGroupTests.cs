@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites

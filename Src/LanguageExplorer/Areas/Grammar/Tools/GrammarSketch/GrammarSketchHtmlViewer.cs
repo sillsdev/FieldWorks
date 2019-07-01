@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// LCM cache.
 		/// </summary>
-		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache));
+		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache));
 
 		#endregion // Properties
 

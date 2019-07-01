@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.Impls
 				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, flexComponentParameters))
 				{
 					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
-					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
+					flexComponentParameters.PropertyTable.SetProperty(FwUtils.cache, Cache);
 					flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, dummyWindow);
 
 					// Test 1. Make sure a bogus record list isn't in the repository.

@@ -22,80 +22,6 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 	/// </summary>
 	internal static class ReversalServices
 	{
-		private static bool s_reversalIndicesAreKnownToExist;
-
-		/// <summary>
-		/// Make sure the required reversal indices exist.
-		/// </summary>
-		internal static void EnsureReversalIndicesExist(LcmCache cache, IPropertyTable propertyTable)
-		{
-			Guard.AgainstNull(cache, nameof(cache));
-			Guard.AgainstNull(propertyTable, nameof(propertyTable));
-
-			if (s_reversalIndicesAreKnownToExist)
-			{
-				return;
-			}
-			var wsMgr = cache.ServiceLocator.WritingSystemManager;
-			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
-			{
-				var usedWses = new List<CoreWritingSystemDefinition>();
-				foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
-				{
-					usedWses.Add(wsMgr.Get(rev.WritingSystem));
-					if (rev.PartsOfSpeechOA == null)
-					{
-						rev.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-					}
-					rev.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
-				}
-				var corruptReversalIndices = new List<IReversalIndex>();
-				foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
-				{
-					// Make sure each index has a name, if it is available from the writing system.
-					if (string.IsNullOrEmpty(rev.WritingSystem))
-					{
-						// Delete a bogus IReversalIndex that has no writing system.
-						// But, for now only store them for later deletion,
-						// as immediate removal will wreck the looping.
-						corruptReversalIndices.Add(rev);
-						continue;
-					}
-					var revWs = wsMgr.Get(rev.WritingSystem);
-					// TODO WS: is DisplayLabel the right thing to use here?
-					rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
-				}
-				// Delete any corrupt reversal indices.
-				foreach (var rev in corruptReversalIndices)
-				{
-					MessageBox.Show("Need to delete a corrupt reversal index (no writing system)", "Self-correction");
-					// does this accomplish anything?
-					cache.LangProject.LexDbOA.ReversalIndexesOC.Remove(rev);
-				}
-				// Set up for the reversal index combo box or dropdown menu.
-				var reversalIndexGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-				if (reversalIndexGuid == Guid.Empty)
-				{
-					// We haven't established the reversal index yet. Choose the first one available.
-					var firstGuid = Guid.Empty;
-					var reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-					if (reversalIds.Any())
-					{
-						firstGuid = reversalIds[0].Guid;
-					}
-					else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Any())
-					{
-						firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
-					}
-					if (firstGuid != Guid.Empty)
-					{
-						propertyTable.SetProperty("ReversalIndexGuid", firstGuid.ToString(), true, true, SettingsGroup.LocalSettings);
-					}
-				}
-			});
-			s_reversalIndicesAreKnownToExist = true;
-		}
-
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == LexiconArea.AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LexiconArea.AllReversalEntries}'.");
@@ -112,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 				<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
 			</clerk>
 			*/
-			var currentGuid = RecordListServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
 			IReversalIndex revIdx = null;
 			if (currentGuid != Guid.Empty)
 			{

@@ -206,7 +206,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 				_cache = majorFlexComponentParameters.LcmCache;
 				_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-				ReversalServices.EnsureReversalIndicesExist(_cache, _propertyTable);
+				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				_reversalIndexRepository.EnsureReversalIndicesExist(_cache, _propertyTable);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
@@ -290,11 +291,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
 				// <menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
-				if (_reversalIndexRepository == null)
-				{
-					_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-				}
-				var currentGuid = RecordListServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
+				var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 				if (currentGuid != Guid.Empty)
 				{
 					_currentReversalIndex = (IReversalIndex)_majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);

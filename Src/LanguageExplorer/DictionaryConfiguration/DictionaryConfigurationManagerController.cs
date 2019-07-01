@@ -696,7 +696,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			if (!PropertyTable.GetValue("SkipSomeTestInitialization", false))
 			{
 				// Populate lists of configurations and publications

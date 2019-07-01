@@ -184,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// TODO-Linux: SelectionTabs isn't implemented on Mono
 			statisticsBox.SelectionTabs = new[] { 10, 300 };
 			//retrieve the default UI font.
-			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName, FwUtils.StyleSheetFromPropertyTable(PropertyTable), cache.DefaultUserWs, cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
 			var headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);

@@ -62,7 +62,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 		}
 

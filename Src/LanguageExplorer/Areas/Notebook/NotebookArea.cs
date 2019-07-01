@@ -224,7 +224,7 @@ namespace LanguageExplorer.Areas.Notebook
 				using (var dlg = new RecordGoDlg())
 				{
 					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+					var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 					dlg.SetDlgInfo(cache, null);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{

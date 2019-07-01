@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -62,7 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Init(ICmFile obj, int flid)
 		{
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_file = obj;
 			m_flid = flid;
 			if (RootBox == null)

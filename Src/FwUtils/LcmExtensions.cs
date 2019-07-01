@@ -14,6 +14,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -24,6 +25,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class LcmExtensions
 	{
+		private static bool s_reversalIndicesAreKnownToExist = false;
+
 		/// <summary>
 		/// Get a message suitable for display in a status bar.
 		/// </summary>
@@ -467,6 +470,74 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			max++; //Increment so the latest duplicate has the highest duplicate number
 			return prefix + " (Copy) (" + max + ")";
+		}
+
+		public static Guid GetOrCreateWsGuid(this IReversalIndexRepository me, CoreWritingSystemDefinition wsObj, LcmCache cache)
+		{
+			var mHvoRevIdx = me.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+		}
+
+		public static void EnsureReversalIndicesExist(this IReversalIndexRepository me, LcmCache cache, IPropertyTable propertyTable)
+		{
+			if (s_reversalIndicesAreKnownToExist)
+			{
+				return;
+			}
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
+			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
+			{
+				var usedWses = new List<CoreWritingSystemDefinition>();
+				foreach (var coreWritingSystemDefinition in cache.LanguageProject.CurrentAnalysisWritingSystems)
+				{
+					var currentReversalIndex = me.FindOrCreateIndexForWs(coreWritingSystemDefinition.Handle);
+					usedWses.Add(wsMgr.Get(currentReversalIndex.WritingSystem));
+				}
+				var corruptReversalIndices = new List<IReversalIndex>();
+				foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
+				{
+					// Make sure each index has a name, if it is available from the writing system.
+					if (String.IsNullOrEmpty(rev.WritingSystem))
+					{
+						// Delete a bogus IReversalIndex that has no writing system.
+						// But, for now only store them for later deletion,
+						// as immediate removal will wreck the looping.
+						corruptReversalIndices.Add(rev);
+						continue;
+					}
+					var revWs = wsMgr.Get(rev.WritingSystem);
+					// TODO WS: is DisplayLabel the right thing to use here?
+					rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
+				}
+				// Delete any corrupt reversal indices.
+				foreach (var rev in corruptReversalIndices)
+				{
+					MessageBox.Show("Need to delete a corrupt reversal index (no writing system)", "Self-correction");
+					// does this accomplish anything?
+					cache.LangProject.LexDbOA.ReversalIndexesOC.Remove(rev);
+				}
+				// Set up for the reversal index combo box or dropdown menu.
+				var reversalIndexGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+				if (reversalIndexGuid == Guid.Empty)
+				{
+					// We haven't established the reversal index yet. Choose the first one available.
+					var firstGuid = Guid.Empty;
+					var reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+					if (reversalIds.Any())
+					{
+						firstGuid = reversalIds[0].Guid;
+					}
+					else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Any())
+					{
+						firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
+					}
+					if (firstGuid != Guid.Empty)
+					{
+						propertyTable.SetProperty("ReversalIndexGuid", firstGuid.ToString(), true, true, SettingsGroup.LocalSettings);
+					}
+				}
+			});
+			s_reversalIndicesAreKnownToExist = true;
 		}
 	}
 }

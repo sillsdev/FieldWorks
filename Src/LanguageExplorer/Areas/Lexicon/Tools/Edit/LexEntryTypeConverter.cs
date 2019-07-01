@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.UtilityTools;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -47,7 +48,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoConvertVariants, LanguageExplorerResources.ksRedoConvertVariants,
 				m_cache.ActionHandlerAccessor, () => ShowDialogAndConvert(LexEntryTypeTags.kClassId));
 

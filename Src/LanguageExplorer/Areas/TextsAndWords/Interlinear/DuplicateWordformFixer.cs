@@ -6,6 +6,7 @@ using System;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.UtilityTools;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -63,7 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			string failures = null;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms, cache.ActionHandlerAccessor,
 				() => failures = WfiWordformServices.FixDuplicates(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));

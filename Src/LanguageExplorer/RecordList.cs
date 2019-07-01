@@ -336,7 +336,7 @@ namespace LanguageExplorer
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 			m_oldLength = 0;

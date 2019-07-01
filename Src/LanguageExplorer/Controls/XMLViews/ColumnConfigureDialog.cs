@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_possibleColumns = possibleColumns;
 			CurrentSpecs = currentColumns;
-			m_cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			InitializeComponent();
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null)

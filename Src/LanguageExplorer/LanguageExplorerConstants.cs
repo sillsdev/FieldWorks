@@ -59,7 +59,6 @@ namespace LanguageExplorer
 		internal const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
 		internal const string RevIndexDir = "ReversalIndex";
 		internal const string App = "App";
-		internal const string cache = "cache";
 		internal const string HomographConfiguration = "HomographConfiguration";
 		internal const string HelpTopicProvider = "HelpTopicProvider";
 		internal const string LinkHandler = "LinkHandler";

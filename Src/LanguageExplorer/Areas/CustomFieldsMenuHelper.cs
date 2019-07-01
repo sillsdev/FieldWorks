@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas
 			areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools].Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));
 		}
 
-		private Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, !SharedBackendServices.AreMultipleApplicationsConnected(_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache)));
+		private Tuple<bool, bool> CanAddCustomField => new Tuple<bool, bool>(true, !SharedBackendServices.AreMultipleApplicationsConnected(_propertyTable.GetValue<LcmCache>(FwUtils.cache)));
 
 		private void AddCustomField_Click(object sender, EventArgs e)
 		{

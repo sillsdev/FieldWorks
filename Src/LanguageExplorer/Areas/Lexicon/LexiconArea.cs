@@ -120,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void EnsurePropertiesAreCurrent()
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-			var serviceLocator = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ServiceLocator;
+			var serviceLocator = _propertyTable.GetValue<LcmCache>(FwUtils.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(LanguageExplorerConstants.HomographConfiguration, hc.PersistData, true);
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();

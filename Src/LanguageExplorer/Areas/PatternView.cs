@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas
 		public void Init(int hvo, IPatternControl patternControl, PatternVcBase vc, int rootFrag, ISilDataAccess sda)
 		{
 			m_patternControl = patternControl;
-			Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_hvo = hvo;
 			m_vc = vc;
 			m_sda = sda;

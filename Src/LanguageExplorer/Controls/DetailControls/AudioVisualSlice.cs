@@ -81,7 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Install(parentDataTree);
 			var ctrl = (AudioVisualLauncher)Control;
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), Media.MediaFileRA, CmFileTags.kflidInternalPath, "InternalPath",
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(FwUtils.cache), Media.MediaFileRA, CmFileTags.kflidInternalPath, "InternalPath",
 				ContainingDataTree.PersistenceProvder, "InternalPath", "user");
 		}
 

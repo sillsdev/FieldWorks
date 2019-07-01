@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(propertyTable, nameof(propertyTable));
 
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_expand = expand;
 			m_hierarchical = hierarchical;
 			m_includeAbbr = includeAbbr;
@@ -521,7 +521,7 @@ namespace LanguageExplorer.Areas
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;

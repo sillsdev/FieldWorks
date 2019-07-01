@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -30,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), obj as IMoMorphSynAnalysis);
+			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>(FwUtils.cache), obj as IMoMorphSynAnalysis);
 		}
 
 		/// <summary>

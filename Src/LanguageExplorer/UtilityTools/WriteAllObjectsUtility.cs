@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.UtilityTools
@@ -45,7 +46,7 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary />
 		public void Process()
 		{
-			var cache = _utilityDlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = _utilityDlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			cache.ExportEverythingAsModified();
 		}
 

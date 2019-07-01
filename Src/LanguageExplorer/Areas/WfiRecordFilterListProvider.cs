@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			ReLoad();
 		}
 

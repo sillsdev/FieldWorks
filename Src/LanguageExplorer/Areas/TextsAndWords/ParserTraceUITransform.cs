@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
-			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
 			var filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");

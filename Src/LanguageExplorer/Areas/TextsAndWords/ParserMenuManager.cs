@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_sda = m_cache.MainCacheAccessor;
 			_parserMenu.DropDownOpening += ParserMenu_DropDownOpening;
 			var parserMenuDictionary = _globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Parser];
