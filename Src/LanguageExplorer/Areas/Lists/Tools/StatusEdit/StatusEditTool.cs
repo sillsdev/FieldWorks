@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 		public string MachineName => AreaServices.StatusEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.StatusEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.StatusEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

@@ -104,9 +104,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		public string MachineName => AreaServices.NotebookDocumentToolMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.NotebookDocumentToolUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookDocumentToolUiName);
+
 		#endregion
 
 		#region Implementation of ITool

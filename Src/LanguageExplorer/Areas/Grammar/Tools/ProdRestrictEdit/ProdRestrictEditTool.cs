@@ -129,9 +129,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		public string MachineName => AreaServices.ProdRestrictEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ProdRestrictEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ProdRestrictEditUiName);
 
 		#endregion
 

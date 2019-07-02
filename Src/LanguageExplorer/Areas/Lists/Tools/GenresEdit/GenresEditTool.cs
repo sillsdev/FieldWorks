@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 		public string MachineName => AreaServices.GenresEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.GenresEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.GenresEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

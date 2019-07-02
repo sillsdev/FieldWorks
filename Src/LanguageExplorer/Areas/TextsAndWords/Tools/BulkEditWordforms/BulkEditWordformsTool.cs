@@ -119,9 +119,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		public string MachineName => AreaServices.BulkEditWordformsMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.BulkEditWordformsUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditWordformsUiName);
+
 		#endregion
 
 		#region Implementation of ITool

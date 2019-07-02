@@ -118,9 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 		public string MachineName => AreaServices.LexRefEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexRefEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexRefEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

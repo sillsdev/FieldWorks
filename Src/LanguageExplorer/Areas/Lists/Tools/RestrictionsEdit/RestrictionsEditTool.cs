@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		public string MachineName => AreaServices.RestrictionsEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.RestrictionsEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RestrictionsEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

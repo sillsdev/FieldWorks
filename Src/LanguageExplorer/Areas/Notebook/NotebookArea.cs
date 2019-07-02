@@ -113,9 +113,10 @@ namespace LanguageExplorer.Areas.Notebook
 		public string MachineName => AreaServices.NotebookAreaMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.NotebookAreaUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookAreaUiName);
+
 		#endregion
 
 		#region Implementation of IArea
@@ -137,16 +138,21 @@ namespace LanguageExplorer.Areas.Notebook
 				if (_dictionaryOfAllTools == null)
 				{
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
-					var myToolsInOrder = new List<string>
+					var myBuiltinToolsInOrder = new List<string>
 					{
 						AreaServices.NotebookEditToolMachineName,
 						AreaServices.NotebookBrowseToolMachineName,
 						AreaServices.NotebookDocumentToolMachineName
 					};
-					foreach (var toolName in myToolsInOrder)
+					foreach (var toolName in myBuiltinToolsInOrder)
 					{
-						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
-						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+						var currentBuiltinTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(currentBuiltinTool.UiName, currentBuiltinTool);
+					}
+					// Add user-defined tools in unspecified order, but after the fully supported tools.
+					foreach (var userDefinedTool in _myTools.Where(tool => !myBuiltinToolsInOrder.Contains(tool.MachineName)))
+					{
+						_dictionaryOfAllTools.Add(userDefinedTool.UiName, userDefinedTool);
 					}
 				}
 				return _dictionaryOfAllTools;

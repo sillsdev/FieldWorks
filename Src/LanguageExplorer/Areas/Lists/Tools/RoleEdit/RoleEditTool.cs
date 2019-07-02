@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 		public string MachineName => AreaServices.RoleEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.RoleEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RoleEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

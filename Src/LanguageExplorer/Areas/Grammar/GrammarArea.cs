@@ -98,9 +98,9 @@ namespace LanguageExplorer.Areas.Grammar
 		public string MachineName => AreaServices.GrammarAreaMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.GrammarAreaUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.GrammarAreaUiName);
 
 		#endregion
 
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Grammar
 				if (_dictionaryOfAllTools == null)
 				{
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
-					var myToolsInOrder = new List<string>
+					var myBuiltinToolsInOrder = new List<string>
 					{
 						AreaServices.PosEditMachineName,
 						AreaServices.CategoryBrowseMachineName,
@@ -140,10 +140,15 @@ namespace LanguageExplorer.Areas.Grammar
 						AreaServices.GrammarSketchMachineName,
 						AreaServices.LexiconProblemsMachineName
 					};
-					foreach (var toolName in myToolsInOrder)
+					foreach (var toolName in myBuiltinToolsInOrder)
 					{
-						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
-						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+						var currentBuiltinTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(currentBuiltinTool.UiName, currentBuiltinTool);
+					}
+					// Add user-defined tools in unspecified order, but after the fully supported tools.
+					foreach (var userDefinedTool in _myTools.Where(tool => !myBuiltinToolsInOrder.Contains(tool.MachineName)))
+					{
+						_dictionaryOfAllTools.Add(userDefinedTool.UiName, userDefinedTool);
 					}
 				}
 				return _dictionaryOfAllTools;

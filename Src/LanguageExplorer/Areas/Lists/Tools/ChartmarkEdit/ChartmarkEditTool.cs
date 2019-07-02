@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		public string MachineName => AreaServices.ChartmarkEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ChartmarkEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ChartmarkEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

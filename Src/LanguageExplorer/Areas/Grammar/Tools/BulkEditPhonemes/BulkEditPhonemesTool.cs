@@ -111,9 +111,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		public string MachineName => AreaServices.BulkEditPhonemesMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.BulkEditPhonemesUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditPhonemesUiName);
 
 		#endregion
 

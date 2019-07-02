@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 		public string MachineName => AreaServices.ExtNoteTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ExtNoteTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ExtNoteTypeEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

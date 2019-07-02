@@ -134,9 +134,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public string MachineName => AreaServices.AnalysesMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.AnalysesUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AnalysesUiName);
+
 		#endregion
 
 		#region Implementation of ITool

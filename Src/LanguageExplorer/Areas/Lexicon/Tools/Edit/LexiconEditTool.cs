@@ -189,9 +189,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public string MachineName => AreaServices.LexiconEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexiconEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconEditUiName);
 
 		#endregion
 

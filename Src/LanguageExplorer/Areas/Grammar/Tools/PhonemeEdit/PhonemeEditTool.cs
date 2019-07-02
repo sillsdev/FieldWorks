@@ -137,9 +137,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public string MachineName => AreaServices.PhonemeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.PhonemeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PhonemeEditUiName);
 
 		#endregion
 

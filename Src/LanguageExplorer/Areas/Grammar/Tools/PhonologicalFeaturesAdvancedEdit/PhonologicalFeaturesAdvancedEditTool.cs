@@ -129,9 +129,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		public string MachineName => AreaServices.PhonologicalFeaturesAdvancedEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.PhonologicalFeaturesAdvancedEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PhonologicalFeaturesAdvancedEditUiName);
 
 		#endregion
 

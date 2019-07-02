@@ -118,9 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		public string MachineName => AreaServices.PublicationsEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.PublicationsEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PublicationsEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

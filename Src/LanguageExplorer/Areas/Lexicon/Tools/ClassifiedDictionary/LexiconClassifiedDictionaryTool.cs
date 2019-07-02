@@ -114,9 +114,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		public string MachineName => AreaServices.LexiconClassifiedDictionaryMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexiconClassifiedDictionaryUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconClassifiedDictionaryUiName);
+
 		#endregion
 
 		#region Implementation of ITool

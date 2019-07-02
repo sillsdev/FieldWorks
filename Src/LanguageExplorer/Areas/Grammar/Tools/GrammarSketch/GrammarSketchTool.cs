@@ -93,9 +93,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public string MachineName => AreaServices.GrammarSketchMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.GrammarSketchUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.GrammarSketchUiName);
 
 		#endregion
 

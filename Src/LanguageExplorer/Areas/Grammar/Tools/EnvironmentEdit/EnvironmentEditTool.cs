@@ -128,9 +128,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		public string MachineName => AreaServices.EnvironmentEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.EnvironmentEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.EnvironmentEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

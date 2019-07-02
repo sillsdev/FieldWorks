@@ -127,9 +127,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		public string MachineName => AreaServices.FeaturesAdvancedEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.FeaturesAdvancedEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.FeaturesAdvancedEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

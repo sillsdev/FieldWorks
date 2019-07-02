@@ -18,9 +18,10 @@ namespace LanguageExplorer.Impls
 	{
 		private const string DefaultAreaMachineName = AreaServices.InitialAreaMachineName;
 		[ImportMany]
-		private IEnumerable<IArea> m_areas;
+		private IEnumerable<IArea> _areas;
 		[Import]
 		private IPropertyTable _propertyTable;
+		private Dictionary<string, IArea> _dictionaryOfAllAreas;
 
 		#region Implementation of IAreaRepository
 
@@ -37,7 +38,7 @@ namespace LanguageExplorer.Impls
 		/// <returns>The IArea for the given Name, or null if not in the system.</returns>
 		public IArea GetArea(string machineName)
 		{
-			return m_areas.FirstOrDefault(area => area.MachineName == machineName); // May be null.
+			return _areas.FirstOrDefault(area => area.MachineName == machineName); // May be null.
 		}
 
 		/// <summary>
@@ -50,22 +51,33 @@ namespace LanguageExplorer.Impls
 		/// User defined areas (unspecified order, but after the fully supported areas)
 		/// </summary>
 		/// <returns>The areas in correct order for display in sidebar.</returns>
-		public IReadOnlyList<IArea> AllAreasInOrder
+		public IReadOnlyDictionary<string, IArea> AllAreasInOrder
 		{
 			get
 			{
-				var knownAreas = new List<string>
+				if (_dictionaryOfAllAreas == null)
 				{
-					AreaServices.LexiconAreaMachineName,
-					AreaServices.TextAndWordsAreaMachineName,
-					AreaServices.GrammarAreaMachineName,
-					AreaServices.NotebookAreaMachineName,
-					AreaServices.ListsAreaMachineName
-				};
-				var retval = new List<IArea>(knownAreas.Select(knownAreaName => GetArea(knownAreaName)));
-				// Add user-defined areas in unspecified order, but after the fully supported areas.
-				retval.AddRange(m_areas.Where(userDefinedArea => !knownAreas.Contains(userDefinedArea.MachineName)));
-				return retval;
+					_dictionaryOfAllAreas = new Dictionary<string, IArea>();
+					var myBuiltinAreasInOrder = new List<string>
+					{
+						AreaServices.LexiconAreaMachineName,
+						AreaServices.TextAndWordsAreaMachineName,
+						AreaServices.GrammarAreaMachineName,
+						AreaServices.NotebookAreaMachineName,
+						AreaServices.ListsAreaMachineName
+					};
+					foreach (var areaMachineName in myBuiltinAreasInOrder)
+					{
+						var currentBuiltinArea = _areas.First(area => area.MachineName == areaMachineName);
+						_dictionaryOfAllAreas.Add(currentBuiltinArea.UiName, currentBuiltinArea);
+					}
+					// Add user-defined areas in unspecified order, but after the fully supported areas.
+					foreach (var userDefinedArea in _areas.Where(area => !myBuiltinAreasInOrder.Contains(area.MachineName)))
+					{
+						_dictionaryOfAllAreas.Add(userDefinedArea.UiName, userDefinedArea);
+					}
+				}
+				return _dictionaryOfAllAreas;
 			}
 		}
 

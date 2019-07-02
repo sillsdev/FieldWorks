@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		public string MachineName => AreaServices.SenseTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.SenseTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.SenseTypeEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

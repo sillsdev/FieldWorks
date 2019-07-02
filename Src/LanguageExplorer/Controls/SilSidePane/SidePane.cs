@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
@@ -208,9 +207,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 			var currentAreaMenuIdx = 2;
 			var isListArea = false;
 			_listAreaItems = new List<Item>();
-			foreach (var area in areaRepository.AllAreasInOrder)
+			foreach (var areaKvp in areaRepository.AllAreasInOrder)
 			{
-				var localizedAreaName = StringTable.Table.LocalizeLiteralValue(area.UiName);
+				var localizedAreaName = areaKvp.Key;
+				var area = areaKvp.Value;
 				var currentAreaMenu = (ToolStripMenuItem)viewToolStripMenuItem.DropDownItems[currentAreaMenuIdx++];
 				currentAreaMenu.Text = localizedAreaName;
 				currentAreaMenu.Image = area.Icon;

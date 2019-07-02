@@ -16,7 +16,7 @@ namespace LanguageExplorer
 		string MachineName { get; }
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
 		string UiName { get; }
 	}

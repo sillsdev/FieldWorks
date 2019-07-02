@@ -118,9 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		public string MachineName => AreaServices.AnthroEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.AnthroEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AnthroEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

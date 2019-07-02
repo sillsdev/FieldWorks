@@ -112,9 +112,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		public string MachineName => AreaServices.BulkEditEntriesOrSensesMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.BulkEditEntriesOrSensesUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditEntriesOrSensesUiName);
+
 		#endregion
 
 		#region Implementation of ITool

@@ -129,9 +129,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		public string MachineName => AreaServices.NaturalClassEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.NaturalClassEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NaturalClassEditUiName);
 
 		#endregion
 

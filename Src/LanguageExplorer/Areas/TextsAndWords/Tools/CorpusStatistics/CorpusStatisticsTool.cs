@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
@@ -87,9 +88,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public string MachineName => AreaServices.CorpusStatisticsMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.CorpusStatisticsUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CorpusStatisticsUiName);
+
 		#endregion
 
 		#region Implementation of ITool

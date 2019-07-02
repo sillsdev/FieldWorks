@@ -158,9 +158,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public string MachineName => AreaServices.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ReversalToolReversalIndexPOSUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ReversalToolReversalIndexPOSUiName);
+
 		#endregion
 
 		#region Implementation of ITool

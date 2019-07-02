@@ -118,9 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		public string MachineName => AreaServices.CharttempEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.CharttempEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CharttempEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

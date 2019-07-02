@@ -102,9 +102,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public string MachineName => AreaServices.CategoryBrowseMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.CategoryBrowseUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CategoryBrowseUiName);
 
 		#endregion
 

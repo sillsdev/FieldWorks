@@ -108,9 +108,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		public string MachineName => AreaServices.LexiconBrowseMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexiconBrowseUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconBrowseUiName);
+
 		#endregion
 
 		#region Implementation of ITool

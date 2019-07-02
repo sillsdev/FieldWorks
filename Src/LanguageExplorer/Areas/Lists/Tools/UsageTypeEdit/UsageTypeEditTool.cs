@@ -117,9 +117,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 		public string MachineName => AreaServices.UsageTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.UsageTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.UsageTypeEditUiName);
 
 		#endregion
 

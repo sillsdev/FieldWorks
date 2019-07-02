@@ -153,9 +153,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		public string MachineName => AreaServices.AdhocCoprohibitionRuleEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.AdhocCoprohibitionRuleEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AdhocCoprohibitionRuleEditUiName);
 
 		#endregion
 

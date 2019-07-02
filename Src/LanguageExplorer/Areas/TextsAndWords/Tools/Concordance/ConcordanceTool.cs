@@ -148,9 +148,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		public string MachineName => AreaServices.ConcordanceMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ConcordanceUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ConcordanceUiName);
+
 		#endregion
 
 		#region Implementation of ITool

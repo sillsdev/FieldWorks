@@ -42,17 +42,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
-		/// Get the internal name of the component.
-		/// </summary>
-		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexiconAreaMachineName;
-
-		/// <summary>
-		/// User-visible localizable component name.
-		/// </summary>
-		public string UiName => AreaServices.LexiconAreaUiName;
-
-		/// <summary>
 		/// Deactivate the component.
 		/// </summary>
 		/// <remarks>
@@ -128,6 +117,21 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		#endregion
 
+		#region Implementation of IMajorFlexUiComponent
+
+		/// <summary>
+		/// Get the internal name of the component.
+		/// </summary>
+		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
+		public string MachineName => AreaServices.LexiconAreaMachineName;
+
+		/// <summary>
+		/// User-visible localized component name.
+		/// </summary>
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconAreaUiName);
+
+		#endregion
+
 		#region Implementation of IArea
 
 		/// <summary>
@@ -147,7 +151,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				if (_dictionaryOfAllTools == null)
 				{
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
-					var myToolsInOrder = new List<string>
+					var myBuiltinToolsInOrder = new List<string>
 					{
 						AreaServices.LexiconEditMachineName,
 						AreaServices.LexiconBrowseMachineName,
@@ -158,10 +162,15 @@ namespace LanguageExplorer.Areas.Lexicon
 						AreaServices.ReversalEditCompleteMachineName,
 						AreaServices.ReversalBulkEditReversalEntriesMachineName
 					};
-					foreach (var toolName in myToolsInOrder)
+					foreach (var toolName in myBuiltinToolsInOrder)
 					{
-						var currentTool = _myTools.First(tool => tool.MachineName == toolName);
-						_dictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(currentTool.UiName), currentTool);
+						var currentBuiltinTool = _myTools.First(tool => tool.MachineName == toolName);
+						_dictionaryOfAllTools.Add(currentBuiltinTool.UiName, currentBuiltinTool);
+					}
+					// Add user-defined tools in unspecified order, but after the fully supported tools.
+					foreach (var userDefinedTool in _myTools.Where(tool => !myBuiltinToolsInOrder.Contains(tool.MachineName)))
+					{
+						_dictionaryOfAllTools.Add(userDefinedTool.UiName, userDefinedTool);
 					}
 				}
 				return _dictionaryOfAllTools;

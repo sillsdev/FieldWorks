@@ -119,9 +119,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		public string MachineName => AreaServices.MorphTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.MorphTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.MorphTypeEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

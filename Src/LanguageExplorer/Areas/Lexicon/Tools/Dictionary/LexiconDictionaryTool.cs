@@ -144,9 +144,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		public string MachineName => AreaServices.LexiconDictionaryMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexiconDictionaryUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconDictionaryUiName);
 
 		#endregion
 

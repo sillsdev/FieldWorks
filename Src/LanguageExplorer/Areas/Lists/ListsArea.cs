@@ -100,9 +100,10 @@ namespace LanguageExplorer.Areas.Lists
 		public string MachineName => AreaServices.ListsAreaMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ListsAreaUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ListsAreaUiName);
+
 		#endregion
 
 		#region Implementation of IArea
@@ -143,12 +144,15 @@ namespace LanguageExplorer.Areas.Lists
 					_sortedDictionaryOfAllTools = new SortedDictionary<string, ITool>(coreWritingSystemDefinition.DefaultCollation.Collator);
 					foreach (var builtinTool in _myBuiltinTools)
 					{
-						_sortedDictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(builtinTool.UiName), builtinTool);
+						// This will include any user-defined tools that were imported via MEF.
+						// Since all list area tools are sorted, the user defined ones need not be appended to the end,
+						// as is done for all other areas.
+						_sortedDictionaryOfAllTools.Add(builtinTool.UiName, builtinTool);
 					}
 					foreach (var customList in cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null))
 					{
 						var customTool = new CustomListEditTool(this, customList);
-						_sortedDictionaryOfAllTools.Add(StringTable.Table.LocalizeLiteralValue(customTool.UiName), customTool);
+						_sortedDictionaryOfAllTools.Add(customTool.UiName, customTool);
 					}
 				}
 				return _sortedDictionaryOfAllTools;

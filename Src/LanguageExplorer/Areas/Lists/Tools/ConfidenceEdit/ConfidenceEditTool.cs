@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		public string MachineName => AreaServices.ConfidenceEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ConfidenceEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ConfidenceEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

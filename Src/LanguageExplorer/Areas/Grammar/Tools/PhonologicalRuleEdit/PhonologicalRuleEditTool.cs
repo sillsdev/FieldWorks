@@ -129,9 +129,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		public string MachineName => AreaServices.PhonologicalRuleEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.PhonologicalRuleEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PhonologicalRuleEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

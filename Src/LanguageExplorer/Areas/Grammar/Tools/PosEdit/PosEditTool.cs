@@ -112,9 +112,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public string MachineName => AreaServices.PosEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.PosEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PosEditUiName);
 
 		#endregion
 

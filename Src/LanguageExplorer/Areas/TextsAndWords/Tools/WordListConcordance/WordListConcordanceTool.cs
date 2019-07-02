@@ -158,9 +158,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		public string MachineName => AreaServices.WordListConcordanceMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.WordListConcordanceUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.WordListConcordanceUiName);
 
 		#endregion
 

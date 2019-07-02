@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Controls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -104,9 +105,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		public string MachineName => AreaServices.NotebookBrowseToolMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.NotebookBrowseToolUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookBrowseToolUiName);
+
 		#endregion
 
 		#region Implementation of ITool

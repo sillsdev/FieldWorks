@@ -151,9 +151,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		public string MachineName => AreaServices.FeatureTypesAdvancedEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.FeatureTypesAdvancedEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.FeatureTypesAdvancedEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

@@ -38,6 +38,6 @@ namespace LanguageExplorer
 		/// Lists
 		/// </summary>
 		/// <returns>The areas in correct order for display in sidebar.</returns>
-		IReadOnlyList<IArea> AllAreasInOrder { get; }
+		IReadOnlyDictionary<string, IArea> AllAreasInOrder { get; }
 	}
 }

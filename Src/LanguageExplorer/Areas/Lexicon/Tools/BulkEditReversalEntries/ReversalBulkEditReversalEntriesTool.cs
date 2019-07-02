@@ -137,9 +137,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		public string MachineName => AreaServices.ReversalBulkEditReversalEntriesMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ReversalBulkEditReversalEntriesUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ReversalBulkEditReversalEntriesUiName);
+
 		#endregion
 
 		#region Implementation of ITool

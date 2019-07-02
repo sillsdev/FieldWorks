@@ -118,9 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 		public string MachineName => AreaServices.ComplexEntryTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.ComplexEntryTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ComplexEntryTypeEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

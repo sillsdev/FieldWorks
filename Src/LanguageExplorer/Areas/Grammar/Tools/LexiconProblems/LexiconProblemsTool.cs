@@ -108,9 +108,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		public string MachineName => AreaServices.LexiconProblemsMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.LexiconProblemsUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconProblemsUiName);
 
 		#endregion
 

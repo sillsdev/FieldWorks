@@ -111,9 +111,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
         public string MachineName { get; }
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => MyList.Name.BestAnalysisAlternative.Text;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(MyList.Name.BestAnalysisAlternative.Text);
 
 		#endregion
 

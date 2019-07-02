@@ -119,9 +119,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public string MachineName => AreaServices.DomainTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.DomainTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.DomainTypeEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

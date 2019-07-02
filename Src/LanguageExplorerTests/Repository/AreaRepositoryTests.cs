@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
+using SIL.Extensions;
 
 namespace LanguageExplorerTests.Repository
 {
@@ -15,7 +16,7 @@ namespace LanguageExplorerTests.Repository
 	[TestFixture]
 	internal class AreaRepositoryTests : MefTestBase
 	{
-		private IReadOnlyList<IArea> _allAreas;
+		private IReadOnlyDictionary<string, IArea> _allAreas;
 
 		/// <summary>
 		/// Set up test fixture.
@@ -60,14 +61,16 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the AreaRepository has the areas in the right order.
 		/// </summary>
-		[TestCase(0, AreaServices.LexiconAreaMachineName)]
-		[TestCase(1, AreaServices.TextAndWordsAreaMachineName)]
-		[TestCase(2, AreaServices.GrammarAreaMachineName)]
-		[TestCase(3, AreaServices.NotebookAreaMachineName)]
-		[TestCase(4, AreaServices.ListsAreaMachineName)]
-		public void AreaRepositoryHasAllToolsInCorrectOrder(int idx, string expectedMachineName)
+		[TestCase(AreaServices.LexiconAreaUiName, 0, AreaServices.LexiconAreaMachineName)]
+		[TestCase(AreaServices.TextAndWordsAreaUiName, 1, AreaServices.TextAndWordsAreaMachineName)]
+		[TestCase(AreaServices.GrammarAreaUiName, 2, AreaServices.GrammarAreaMachineName)]
+		[TestCase(AreaServices.NotebookAreaUiName, 3, AreaServices.NotebookAreaMachineName)]
+		[TestCase(AreaServices.ListsAreaUiName, 4, AreaServices.ListsAreaMachineName)]
+		public void AreaRepositoryHasAllToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
-			Assert.AreEqual(expectedMachineName, _allAreas[idx].MachineName);
+			var area = _allAreas[uiName];
+			Assert.AreEqual(idx, _allAreas.IndexOf(new KeyValuePair<string, IArea>(uiName, area)));
+			Assert.AreEqual(expectedMachineName, area.MachineName);
 		}
 	}
 }

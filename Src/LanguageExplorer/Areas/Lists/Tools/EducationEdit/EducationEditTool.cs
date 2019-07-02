@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 		public string MachineName => AreaServices.EducationEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.EducationEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.EducationEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

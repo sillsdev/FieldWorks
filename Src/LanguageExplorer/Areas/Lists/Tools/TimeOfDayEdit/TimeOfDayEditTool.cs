@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 		public string MachineName => AreaServices.TimeOfDayEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.TimeOfDayEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TimeOfDayEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool

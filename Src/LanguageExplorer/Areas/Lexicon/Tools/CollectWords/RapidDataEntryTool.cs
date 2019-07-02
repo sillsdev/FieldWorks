@@ -188,9 +188,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		public string MachineName => AreaServices.RapidDataEntryMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.RapidDataEntryUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RapidDataEntryUiName);
 
 		#endregion
 

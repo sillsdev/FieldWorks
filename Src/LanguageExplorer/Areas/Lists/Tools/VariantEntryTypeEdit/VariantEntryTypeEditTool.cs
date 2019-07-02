@@ -118,9 +118,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		public string MachineName => AreaServices.VariantEntryTypeEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.VariantEntryTypeEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.VariantEntryTypeEditUiName);
 
 		#endregion
 

@@ -117,9 +117,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		public string MachineName => AreaServices.TextMarkupTagsEditMachineName;
 
 		/// <summary>
-		/// User-visible localizable component name.
+		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => AreaServices.TextMarkupTagsEditUiName;
+		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TextMarkupTagsEditUiName);
+
 		#endregion
 
 		#region Implementation of ITool
