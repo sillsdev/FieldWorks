@@ -47,7 +47,7 @@ LDLIBS := \
 	-lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -std=c++11
 LDFLAGS = -g -z muldefs
 
 PRECOMPS = $(GENERIC_OBJ)/Main.h.gch

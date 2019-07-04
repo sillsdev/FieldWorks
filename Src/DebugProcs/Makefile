@@ -45,7 +45,7 @@ LDLIBS = \
 	-luuid -lexpat
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Wshadow
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Wshadow -std=c++11
 
 ARFLAGS  = -crs
 
