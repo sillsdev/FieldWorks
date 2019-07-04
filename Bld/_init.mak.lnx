@@ -83,6 +83,6 @@ ICU_BIN_DIR = $(ICU_INSTALL_DIR)/bin
 ICU_LIB_DIR = $(ICU_INSTALL_DIR)/lib
 
 # Use our own icu-config by putting it first in the path
-PATH := $(shell $(BUILD_ROOT)/Bin/abs.py $(ICU_BIN_DIR)):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
+PATH := $(shell readlink -f $(ICU_BIN_DIR)):$(PATH):$(shell readlink -f $(BUILD_ROOT)/Bin)
 
 export PATH

@@ -99,21 +99,21 @@ test: $(PROGS)
 	cd $(OUT_DIR) && \
 	@for PROG in $(PROGS); \
 	do \
-		ICU_DATA=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/Icu40/) \
-		FW_ROOT=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
-		FW_ROOTCODE=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
-		COMPONENTS_MAP_PATH=$(shell $(BUILD_ROOT)/Bin/abs.py $(OUT_DIR)) \
-		LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
+		ICU_DATA=$(shell readlink -f $(BUILD_ROOT)/DistFiles/Icu40/) \
+		FW_ROOT=$(shell readlink -f $(BUILD_ROOT)/DistFiles/) \
+		FW_ROOTCODE=$(shell readlink -f $(BUILD_ROOT)/DistFiles/) \
+		COMPONENTS_MAP_PATH=$(shell readlink -f $(OUT_DIR)) \
+		LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell readlink -f $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
 		./$$PROG || echo $$PROG failed; \
 	done
 
 check: all
 	cd $(OUT_DIR) && \
-	ICU_DATA=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/Icu40/) \
-	FW_ROOT=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
-	FW_ROOTCODE=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
-	COMPONENTS_MAP_PATH=$(shell $(BUILD_ROOT)/Bin/abs.py $(OUT_DIR)) \
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
+	ICU_DATA=$(shell readlink -f $(BUILD_ROOT)/DistFiles/Icu40/) \
+	FW_ROOT=$(shell readlink -f $(BUILD_ROOT)/DistFiles/) \
+	FW_ROOTCODE=$(shell readlink -f $(BUILD_ROOT)/DistFiles/) \
+	COMPONENTS_MAP_PATH=$(shell readlink -f $(OUT_DIR)) \
+	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell readlink -f $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
 	./testGenericLib
 
 clean:
