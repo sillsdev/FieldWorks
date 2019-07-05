@@ -90,12 +90,7 @@
 			<LinuxECLibs Include="/usr/lib/fieldworks/libecdriver*.so" />
 		</ItemGroup>
 
-		<PropertyGroup>
-			<ExternalTargets Condition="'$(noinstall)'!='yes'">externaltargets</ExternalTargets>
-			<ExternalTargets Condition="'$(noinstall)'=='yes'">externaltargets-noinstall</ExternalTargets>
-		</PropertyGroup>
-
-		<Exec Command="make $(ExternalTargets)" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
+		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
 
 		<Copy SourceFiles="@(LinuxReleaseLibs)"
@@ -348,7 +343,7 @@
 			</GetPublicTypes>
 		</PropertyGroup>
 
-		<Exec Command="$(NuGetCommand) install -ExcludeVersion -NonInteractive -Source https://nuget.org/api/v2/ ILRepack" Condition="!Exists('ILRepack/tools/ILRepack.exe')"/>
+		<Exec Command="$(NuGetCommand) install -ExcludeVersion -NonInteractive ILRepack" Condition="!Exists('ILRepack/tools/ILRepack.exe')"/>
 		<Script Language="C#" Code="$(GetPublicTypes)">
 			<Output TaskParameter="ReturnValue" PropertyName="ExcludeFile" />
 		</Script>

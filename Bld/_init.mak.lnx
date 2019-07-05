@@ -46,7 +46,7 @@ ifndef BUILD_CONFIG
 BUILD_CONFIG=Debug
 endif
 
-# defines the root dir for where the intermediate files get built
+# defines the root dir for where the intermetidate files get built
 INT_DIR=$(OBJ_DIR)/$(BUILD_CONFIG)/$(BUILD_PRODUCT)
 
 OUT_DIR = $(FWOUTPUT)/$(BUILD_CONFIG)

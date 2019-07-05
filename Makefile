@@ -25,18 +25,11 @@ linktoOutputDebug:
 
 
 externaltargets: \
-	externaltargets-common \
-	COM-install \
-
-externaltargets-common: \
 	Win32Base \
 	COM-all \
+	COM-install \
 	Win32More \
 	installable-COM-all \
-
-externaltargets-noinstall: \
-	externaltargets-common \
-	COM-installLocal \
 
 externaltargets-test: \
 	Win32Base-check \
@@ -330,7 +323,7 @@ install: install-tree install-menuentries l10n-install
 install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
-install-package-fdo: COM-install install-tree-fdo install-COM
+install-package-fdo: install-tree-fdo install-COM
 	# Remove additional unwanted files
 	rm -f $(DESTDIR)/usr/lib/fieldworks/FormattedEditor.dll*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/HelpSystem.dll*
@@ -415,17 +408,10 @@ DebugProcs-link:
 
 COM-all:
 	-mkdir -p $(COM_BUILD)
-	-echo "COM-all: DESTDIR=$(DESTDIR);DEB_DESTDIR=$(DEB_DESTDIR)"
 	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
 	$(MAKE) -C$(COM_BUILD) install
-	@mkdir -p $(OUT_DIR)
-	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
-COM-installLocal:
-	echo "COM-installLocal: DESTDIR=$(DESTDIR);DEB_DESTDIR=$(DEB_DESTDIR)"
-	pwd
-	DESTDIR=$(DEB_DESTDIR) $(MAKE) -C$(COM_BUILD) install
 	@mkdir -p $(OUT_DIR)
 	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-check:
@@ -780,7 +766,7 @@ Fw-build-package:
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:build4package-fdo;pack-fdo' /property:config=release /property:packaging=yes /property:noinstall=yes
+		&& xbuild '/t:build4package-fdo;pack-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
