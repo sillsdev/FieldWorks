@@ -15,7 +15,7 @@
 		just setting -ConfigFile is not enough to make nuget not work with config files in the home directory.
 		Setting XDG_CONFIG_HOME prevents nuget from working with config files the home directory.
 		-->
-		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=$(mktemp -d); mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
+		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=`mktemp -d`; mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Command to download packages -->
 		<CoreRestoreCommand>$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</CoreRestoreCommand>
