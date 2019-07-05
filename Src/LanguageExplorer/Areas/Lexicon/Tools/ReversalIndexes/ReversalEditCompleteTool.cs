@@ -302,6 +302,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				{
 					var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ReversalIndex_Menu_Clicked, rei.ChooserNameTS.Text);
 					newMenuItem.Tag = rei;
+					if (_currentReversalIndex == rei)
+					{
+						newMenuItem.Checked = true;
+					}
 				}
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);

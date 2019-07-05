@@ -1239,14 +1239,6 @@ namespace LanguageExplorer.Impls
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			SetupCustomStatusBarPanels();
-#if RANDYTODO
-			// TODO: Moved to SetupUiWidgets. Hopefully, the new ordering won't impact the following stuff.
-			CmdProjectLocation.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
-			CmdArchiveWithRamp.Enabled = ReapRamp.Installed;
-			_viewHelper = new ActiveViewHelper(this);
-			_linkHandler = new LinkHandler(this, Cache, CmdHistoryBack, CmdHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
-			_linkHandler.InitializeFlexComponent(flexComponentParameters);
-#endif
 			SetupStylesheet();
 			SetupPropertyTable();
 			RegisterSubscriptions();

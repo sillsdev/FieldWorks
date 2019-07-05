@@ -168,6 +168,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
+		internal void OwnerChanged(ICmObject newOwner)
+		{
+			Enabled = false;
+			SetListModificationInProgress(true);
+			BrowseView.RootObjectHvo = newOwner.Hvo;
+		}
+
 		/// <summary>
 		/// This supports external clients using the Bulk Edit Preview functionality.
 		/// To turn on, set to the index of the column that should have the preview

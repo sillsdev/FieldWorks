@@ -242,7 +242,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 					newMenuItem.Tag = rei;
 					if (rei == _currentReversalIndex)
 					{
-						SetCheckedState(newMenuItem);
+						if (_currentReversalIndex == rei)
+						{
+							newMenuItem.Checked = true;
+						}
 					}
 				}
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -266,13 +269,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 				_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
-				SetCheckedState(contextMenuItem);
-			}
-
-			private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
-			{
-				var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-				reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 			}
 
 			#region Implementation of IDisposable

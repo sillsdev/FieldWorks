@@ -548,6 +548,52 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
+		protected override void MyRecordList_OwningObjectChanged(object sender, RecordNavigationEventArgs e)
+		{
+			// Don't call base, since we don't want that behavior.
+			// Can't do anything if it isn't fully initialized,
+			// and we don't want to do anything, if we are told not to.
+			if (!m_fullyInitialized || m_suppressRecordNavigation)
+			{
+				return;
+			}
+			Debug.Assert(BrowseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
+			if (BrowseViewer?.BrowseView?.RootBox == null)
+			{
+				return; // can't do anything useful without a root box to select in.
+			}
+			m_suppressShowRecord = e.RecordNavigationInfo.SkipShowRecord;
+			m_suppressRecordNavigation = e.RecordNavigationInfo.SuppressSaveOnChangeRecord;
+			var bvEnabled = BrowseViewer.Enabled;
+			if (e.RecordNavigationInfo.SuppressFocusChange && bvEnabled)
+			{
+                BrowseViewer.OwnerChanged(MyRecordList.OwningObject);
+			}
+			try
+			{
+				// NOTE: If the record list's current index is less than zero,
+				// or greater than the number of objects in the vector,
+				// SelectedIndex will assert in a debug build,
+				// and throw an exception in a release build.
+				if (MyRecordList != null && MyRecordList.IsActiveInGui)
+				{
+					BrowseViewer.SelectedIndex = MyRecordList.SortedObjects.Count > 0 ? 0 : -1;
+					// go ahead and SetInfoBarText even if we didn't change indices
+					// we may have changed objects or root object classes (from Entries to Senses)
+					SetInfoBarText();
+				}
+			}
+			finally
+			{
+				m_suppressShowRecord = false;
+				m_suppressRecordNavigation = false;
+				if (e.RecordNavigationInfo.SuppressFocusChange && bvEnabled)
+				{
+					BrowseViewer.Enabled = true;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Record browse view implements ShowRecord by scrolling to show the current record. However,
 		/// that may well not be all the response to selecting that record in the record list: for example,
@@ -564,7 +610,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			Debug.Assert(BrowseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
-			if (BrowseViewer == null || BrowseViewer.BrowseView == null || BrowseViewer.BrowseView.RootBox == null)
+			if (BrowseViewer?.BrowseView?.RootBox == null)
 			{
 				return; // can't do anything useful without a root box to select in.
 			}

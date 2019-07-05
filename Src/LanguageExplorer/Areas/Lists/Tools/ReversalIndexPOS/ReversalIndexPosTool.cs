@@ -94,6 +94,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
+			// NB: FW9 has this on the left and another on the right.
+			// Trouble is, the right one does nothing, so FW10 throw it overboard.
 			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
@@ -255,6 +257,32 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				SetupToolUiWidgets(tool, dataTree);
 			}
 
+			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
+				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
+				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+				// Insert menu & tool bar for both.
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
+				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
+
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
+				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subcategory);
+
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
+				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
+				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelLeftContextMenuStrip);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				_recordBrowseView.RegisterUiWidgets(true);
+				CreateBrowseViewContextMenu();
+			}
+
 			private void CreateBrowseViewContextMenu()
 			{
 				// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
@@ -277,9 +305,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelLeftContextMenuStrip(string panelMenuId)
 			{
 				Require.That(panelMenuId == AreaServices.LeftPanelMenuId, $"I don't know how to create the panel menu with an ID of '{panelMenuId}', as I can only create one with an id of '{AreaServices.LeftPanelMenuId}'.");
+
 				var contextMenuStrip = new ContextMenuStrip();
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
@@ -292,6 +321,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				{
 					var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ReversalIndex_Menu_Clicked, rei.ChooserNameTS.Text);
 					newMenuItem.Tag = rei;
+					if (_currentReversalIndex == rei)
+					{
+						newMenuItem.Checked = true;
+					}
 				}
 
 				return retVal;
@@ -303,38 +336,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 				_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
-				SetCheckedState(contextMenuItem);
-			}
-
-			private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
-			{
-				var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-				reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
-			}
-
-			private void SetupToolUiWidgets(ITool tool, DataTree dataTree)
-			{
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
-				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
-				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
-				// Insert menu & tool bar for both.
-				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
-
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
-				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subcategory);
-
-				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
-				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
-				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.LeftPanelMenuId, CreateMainPanelContextMenuStrip);
-
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				CreateBrowseViewContextMenu();
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, ContextMenuName contextMenuId)

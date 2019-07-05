@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
@@ -25,7 +24,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -559,6 +557,7 @@ namespace LanguageExplorer
 
 		public event FilterChangeHandler FilterChangedByList;
 		public event RecordNavigationInfoEventHandler RecordChanged;
+		public event RecordNavigationInfoEventHandler OwningObjectChanged;
 		public event SelectObjectEventHandler SelectedObjectChanged;
 		public event EventHandler SorterChangedByList;
 
@@ -1335,9 +1334,23 @@ namespace LanguageExplorer
 				{
 					return; // no need to reload.
 				}
+				var hasChangedOwner = m_owningObject != null && value != null;
 				m_owningObject = value;
 				m_oldLength = 0;
-				ReloadList();
+				if (hasChangedOwner)
+				{
+					SortedObjects = new ArrayList(0);
+					foreach (var hvo in GetObjectSet())
+					{
+						MakeItemsFor(SortedObjects, hvo);
+					}
+					// This should let the downstream views know that everything they think they know about the owning object is wrong.
+					OwningObjectChanged?.Invoke(this, new RecordNavigationEventArgs(new RecordNavigationInfo(this, false, true, true)));
+				}
+				else
+				{
+					ReloadList();
+				}
 			}
 		}
 

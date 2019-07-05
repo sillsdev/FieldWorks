@@ -18,6 +18,7 @@ namespace LanguageExplorer
 	{
 		event FilterChangeHandler FilterChangedByList;
 		event RecordNavigationInfoEventHandler RecordChanged;
+		event RecordNavigationInfoEventHandler OwningObjectChanged;
 		event SelectObjectEventHandler SelectedObjectChanged;
 		event EventHandler SorterChangedByList;
 

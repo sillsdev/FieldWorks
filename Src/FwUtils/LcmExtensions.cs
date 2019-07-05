@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -497,7 +497,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 				{
 					// Make sure each index has a name, if it is available from the writing system.
-					if (String.IsNullOrEmpty(rev.WritingSystem))
+					if (string.IsNullOrEmpty(rev.WritingSystem))
 					{
 						// Delete a bogus IReversalIndex that has no writing system.
 						// But, for now only store them for later deletion,
@@ -505,9 +505,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 						corruptReversalIndices.Add(rev);
 						continue;
 					}
-					var revWs = wsMgr.Get(rev.WritingSystem);
-					// TODO WS: is DisplayLabel the right thing to use here?
-					rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
+					if (string.IsNullOrWhiteSpace(rev.Name.AnalysisDefaultWritingSystem.Text))
+					{
+						var revWs = wsMgr.Get(rev.WritingSystem);
+						// TODO WS: is DisplayLabel the right thing to use here?
+						rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
+					}
 				}
 				// Delete any corrupt reversal indices.
 				foreach (var rev in corruptReversalIndices)

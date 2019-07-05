@@ -60,6 +60,13 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 			AccNameDefault = "RecordView";
 			MyRecordList.RecordChanged += RecordList_RecordChanged_Handler;
+			MyRecordList.OwningObjectChanged += MyRecordList_OwningObjectChanged;
+
+		}
+
+		protected virtual void MyRecordList_OwningObjectChanged(object sender, RecordNavigationEventArgs e)
+		{
+			// Do nothing.
 		}
 
 		protected virtual void RecordList_RecordChanged_Handler(object sender, RecordNavigationEventArgs e)
@@ -71,7 +78,8 @@ namespace LanguageExplorer.Areas
 			var options = new ListUpdateHelperParameterObject
 			{
 				MyRecordList = MyRecordList,
-				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord
+				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord,
+				SkipShowRecord = e.RecordNavigationInfo.SkipShowRecord
 			};
 			using (new ListUpdateHelper(options))
 			{
@@ -94,6 +102,7 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				MyRecordList.RecordChanged -= RecordList_RecordChanged_Handler;
+				MyRecordList.OwningObjectChanged -= MyRecordList_OwningObjectChanged;
 				components?.Dispose();
 			}
 

@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas
 			internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
 				internal const string BulkEditEntriesOrSensesUiName = "CRASHES: Bulk Edit Entries";
 			internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
-				internal const string ReversalEditCompleteUiName = "BUGGY: Reversal Indexes";
+				internal const string ReversalEditCompleteUiName = "Reversal Indexes";
 			internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";
 				internal const string ReversalBulkEditReversalEntriesUiName = "Bulk Edit Reversal Entries";
 		#endregion Lexicon area

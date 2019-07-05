@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -132,18 +132,7 @@ namespace SIL.FieldWorks
 
 			try
 			{
-				// Create main catalogs.
-				var globalPartsAggregateCatalog = new AggregateCatalog();
-				var scopedChildAggregateCatalog = new AggregateCatalog();
-				var compositionScopeDefinition = globalPartsAggregateCatalog.AsScope(scopedChildAggregateCatalog.AsScope());
-				s_compositionContainer = new CompositionContainer(compositionScopeDefinition);
-				// Add parts to globally scoped catalog.
-				var globalTypes = LanguageExplorerCompositionServices.GetGloballyAvailableTypes();
-				globalTypes.Add(typeof(FieldWorksManager));
-				globalPartsAggregateCatalog.Catalogs.Add(new TypeCatalog(globalTypes));
-				// Add parts to windows level scoped catalog
-				scopedChildAggregateCatalog.Catalogs.Add(new TypeCatalog(LanguageExplorerCompositionServices.GetWindowScopedTypes()));
-				scopedChildAggregateCatalog.Catalogs.Add(new DirectoryCatalog(".", "Macro*.dll"));
+				SetupMef();
 
 				#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				var exePath = Path.GetDirectoryName(Application.ExecutablePath);
@@ -368,6 +357,24 @@ namespace SIL.FieldWorks
 				}
 			}
 			return 0;
+		}
+
+		private static void SetupMef()
+		{
+			Require.That(s_compositionContainer == null, "The old container should be null.");
+
+			// Create main catalogs.
+			var globalPartsAggregateCatalog = new AggregateCatalog();
+			var scopedChildAggregateCatalog = new AggregateCatalog();
+			var compositionScopeDefinition = globalPartsAggregateCatalog.AsScope(scopedChildAggregateCatalog.AsScope());
+			s_compositionContainer = new CompositionContainer(compositionScopeDefinition);
+			// Add parts to globally scoped catalog.
+			var globalTypes = LanguageExplorerCompositionServices.GetGloballyAvailableTypes();
+			globalTypes.Add(typeof(FieldWorksManager));
+			globalPartsAggregateCatalog.Catalogs.Add(new TypeCatalog(globalTypes));
+			// Add parts to windows level scoped catalog
+			scopedChildAggregateCatalog.Catalogs.Add(new TypeCatalog(LanguageExplorerCompositionServices.GetWindowScopedTypes()));
+			scopedChildAggregateCatalog.Catalogs.Add(new DirectoryCatalog(".", "Macro*.dll"));
 		}
 
 		/// <summary>
@@ -2786,6 +2793,13 @@ namespace SIL.FieldWorks
 			{
 				return s_flexApp;
 			}
+			// By this time the container has been used once that was created in Main,
+			// which is why it is checked for null, before setting up.
+			if (s_compositionContainer == null)
+			{
+				// Set up new MEF container.
+				SetupMef();
+			}
 			s_flexApp = s_compositionContainer.GetExportedValue<IFlexApp>();
 			s_flexApp.FwAppArgs = args;
 			s_flexAppKey = s_flexApp.SettingsKey;
@@ -2940,6 +2954,14 @@ namespace SIL.FieldWorks
 			try
 			{
 				app.Dispose();
+				s_flexAppKey?.Dispose();
+				s_flexAppKey = null;
+				// Get rid of container that worked with 'app'.
+				s_compositionContainer?.Dispose();
+				s_compositionContainer = null;
+				// Get rid of container that worked with 'app', and make a new one,
+				// in case the user is doing something like restoring a project.
+				SetupMef();
 				s_flexApp = null;
 			}
 			catch
@@ -3364,7 +3386,6 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("Culture", System.Globalization.CultureInfo.CurrentCulture.ToString());
 			using (var bm = new Bitmap(10, 10))
 			{
-
 				ErrorReporter.AddProperty("ScreenDpiX", bm.HorizontalResolution.ToString());
 				ErrorReporter.AddProperty("ScreenDpiY", bm.VerticalResolution.ToString());
 			}
