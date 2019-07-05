@@ -12,8 +12,6 @@ ARCH=$(uname -m)
 [ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono-sil
 
 # Dependency locations
-# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
-. ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 ENC_CONVERTERS=/usr/lib/fieldworks
 
@@ -24,7 +22,6 @@ MONO_ENV_OPTIONS="-O=-gshared"
 # Directory settings
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
-${BASE}/Bin/nant/bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\

@@ -407,7 +407,7 @@ DebugProcs-link:
 
 COM-all:
 	-mkdir -p $(COM_BUILD)
-	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
+	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`readlink -f .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
 	$(MAKE) -C$(COM_BUILD) install

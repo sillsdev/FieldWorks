@@ -345,7 +345,7 @@
 			</GetPublicTypes>
 		</PropertyGroup>
 
-		<Exec Command="$(NuGetCommand) install -ExcludeVersion -NonInteractive ILRepack" Condition="!Exists('ILRepack/tools/ILRepack.exe')"/>
+		<Exec Command='$(NuGetCommand) install -source "$(PackageSources)" -ExcludeVersion -NonInteractive ILRepack' Condition="!Exists('ILRepack/tools/ILRepack.exe')"/>
 		<Script Language="C#" Code="$(GetPublicTypes)">
 			<Output TaskParameter="ReturnValue" PropertyName="ExcludeFile" />
 		</Script>
