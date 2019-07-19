@@ -1151,7 +1151,7 @@ void GraphiteSegment::InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_f
 	for (s = gr_seg_first_slot(segment); s != NULL; s = gr_slot_next_in_segment(s))
 	{
 		int before = m_ichMin + GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_before(s));
-		int after = m_ichMin + GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_after(s));
+		int after = m_ichMin + GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_after(s) + 1);
 
 		while (m_clusters.size() > 1 && m_clusters.back().ichBase > before)
 		{
@@ -1162,6 +1162,9 @@ void GraphiteSegment::InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_f
 			m_clusters.pop_back();
 		}
 
+		// If we can insert before this slot and the last cluster has an actual length,
+		// and the index of the char for the slot_before is greater than or equal to the index of the char at the
+		// end of the previous cluster then add a new cluster
 		if (gr_slot_can_insert_before(s) && m_clusters.back().length > 0
 			&& before >= m_clusters.back().ichBase + m_clusters.back().length)
 		{
@@ -1182,16 +1185,28 @@ void GraphiteSegment::InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_f
 			}
 			m_clusters.push_back(Cluster(ichBase, before - ichBase, gi, 0, x));
 		}
+		// increment the glyph count of the last cluster (which we may have just added with a '0')
 		m_clusters.back().glyphCount++;
 
-		if (m_clusters.back().ichBase + m_clusters.back().length < after + 1)
-			m_clusters.back().length = after + 1 - m_clusters.back().ichBase;
+		// if needed, increase the length of the last cluster to handle the current slot information
+		if (m_clusters.back().ichBase + m_clusters.back().length < after)
+			m_clusters.back().length = after - m_clusters.back().ichBase;
 
 		if (IsRtl())
 			gi--;
 		else
 			gi++;
 	}
+}
+
+int GraphiteSegment::Utf16CharLength(StrUni& utf16Str, int charIndex)
+{
+	wchar_t uni16char = utf16Str[charIndex];
+	if (uni16char <= 0x0000FFFF && uni16char >= 0xD800 && uni16char <= 0xDFFF)
+	{
+		return 2;
+	}
+	return 1;
 }
 
 void GraphiteSegment::InterpretChrp(LgCharRenderProps& chrp)

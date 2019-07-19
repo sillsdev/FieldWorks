@@ -4148,65 +4148,88 @@ public:
 		return kTypingContinue;
 	}
 
+	int CountFollowingCombiningMarks(int startIndex, int stringLength, const OLECHAR * pch)
+	{
+		if (startIndex >= stringLength)
+		{
+			return 0;
+		}
+		int i = startIndex;
+		int increment = 0; // lets us return 'i' without keeping track of surrogates
+		for (; i < stringLength; i += increment)
+		{
+			UChar32 uch32;
+			increment = 1;
+			if (IsHighSurrogate(pch[i]) && i + 1 < stringLength)
+			{
+				// Get the character from the pair to check if it is a combining mark
+				VERIFY(FromSurrogate(pch[i], pch[i + 1], (uint *)&uch32));
+				increment = 2;
+			}
+			else
+			{
+				uch32 = (unsigned)pch[i];
+			}
+
+			// if this character is not a mark then return the count up to this point
+			if (!StrUtil::IsMark(uch32))
+			{
+				break;
+			}
+		}
+		return i - startIndex;
+	}
+
 	//*******************************************************************************************
-	// Calculate how many characters we have to delete.
+	// Calculate how many characters we have to delete and remove them from m_qsel->m_qtsbProp.
 	// This is even messier than you think because of the possible presence of
-	// surrogate pairs.  AND even worse than that because of the possible presence of diacritic
-	// marks.
+	// surrogate pairs. AND even worse because of the possible presence of diacritic marks.
 	// We also have to check for pictures...
 	//
 	// @param qttp
 	// @param cchProp - the number of characters currently in the string builder for the prop.
-	// @param cchDelHere - the number of (logical) characters to delete
 	// @returns The number of physical code points to delete
 	//*******************************************************************************************
-	int DetermineCharsToDelete(ITsTextPropsPtr & qttp, int cchProp, int & cchDelHere)
+	int DetermineCharsToDelete(ITsTextPropsPtr & qttp, int cchProp)
 	{
-		if (!cchDelHere)
-			return 0;
-
-		int cchDelPhys = cchDelHere;
+		int cchDelPhys = 1;
 		// We would like the new IP associated with the properties of the last
 		// character deleted, if any.  Unless it's a picture...
-		int ichMin = m_ichAnchor - m_qsel->m_ichMinEditProp;
-		int ichLim = ichMin + cchDelHere;
-		int ich;
-		int cchHighSurr = 0;
-		int cchMark = 0;
+		const int ichMin = m_ichAnchor - m_qsel->m_ichMinEditProp;
+		int ichLim = ichMin + 1; // Start off assuming we are deleting 1 utf16 char
 		SmartBstr sbstrT;
 		CheckHr(m_qsel->m_qtsbProp->get_Text(&sbstrT));
 		Assert(ichMin >= 0);
 		Assert(ichLim <= sbstrT.Length());
 		Assert(cchProp == sbstrT.Length());
 		const OLECHAR * prgch = sbstrT.Chars();
-		for (ich = ichMin; ich <= ichLim && ichLim <= cchProp; ++ich)
+		bool firstCharIsHighSurrogate = IsHighSurrogate(prgch[ichMin]);
+		// We will not delete the first half of a surrogate pair
+		if (firstCharIsHighSurrogate && ichMin + 1 > cchProp)
 		{
-			UChar32 uch32;
-			if (IsHighSurrogate(prgch[ich]))
+			return 0; // indicates we declined to delete anything
+		}
+		// Delete one utf32 Char
+		if (firstCharIsHighSurrogate)
+		{
+			// if we have an unmatched high surrogate
+			if (!IsLowSurrogate(prgch[ichMin + 1]))
 			{
-				VERIFY(FromSurrogate(prgch[ich], prgch[ich+1], (uint *)&uch32));
-
-				++cchHighSurr;
-				if (ichLim < cchProp)
-				{
-					++ich;		// No need to go through loop for 2nd char of pair.
-					++ichLim;
-				}
-				else
-					--cchDelHere;
+				// delete the nasty dangling thing?
+				// default is to delete a single char, not half of one.
 			}
-			else
-				uch32 = (unsigned)prgch[ich];
-
-			if (StrUtil::IsMark(uch32) && ich > ichMin)
+			else // it is matched
 			{
-				++cchMark;
-				if (ichLim < cchProp)
-					++ichLim;
+				UChar32 uch32;
+				VERIFY(FromSurrogate(prgch[ichMin], prgch[ichMin + 1], (uint *)&uch32));
+				++ichLim; // increase limit for the low/trailing surrogate
+				ichLim += CountFollowingCombiningMarks(ichMin + 2, cchProp, prgch);
 			}
 		}
-		if (cchHighSurr + cchMark)
-			cchDelPhys = ichLim - ichMin;
+		else
+		{
+			ichLim += CountFollowingCombiningMarks(ichMin + 1, cchProp, prgch);
+		}
 
 		CheckHr(m_qsel->m_qtsbProp->get_PropertiesAt(ichLim - 1, &qttp));
 		// If the last "character" deleted was a picture, remove the picture
@@ -4244,11 +4267,16 @@ public:
 			if (cchDelHere > cchProp - (m_ichAnchor - m_qsel->m_ichMinEditProp))
 				cchDelHere = cchProp - (m_ichAnchor - m_qsel->m_ichMinEditProp);
 
-			int cchDelPhys = DetermineCharsToDelete(qttp, cchProp, cchDelHere);
+			// Finds correct number of chars to delete and removes them from m_qsel->m_qtsbProp
+			int cchDelPhys = cchDelHere == 0 ? 0 : DetermineCharsToDelete(qttp, cchProp);
 
 			// Note that delete forward does not move the IP.
-			m_cchDelForward -= cchDelHere;
-			cchProp -= cchDelPhys;
+
+			// if we would have been deleting half a surrogate pair DetermineCharsToDelete returns 0
+			if (cchDelPhys > 0)
+			{
+				m_cchDelForward--; // decrementing to indicate that we deleted something
+			}
 			if (m_cchDelForward)
 			{
 				// We can't delete (any more) in current property, see what else we can do.
@@ -4386,32 +4414,6 @@ public:
 	{
 		int cchProp; // the number of characters currently in the string builder for the prop.
 		CheckHr(m_qsel->m_qtsbProp->get_Length(&cchProp));
-#if WANTPORT // IVwOleDbDa has been removed, so what should be done here?
-		// Check to see if the record has been edited by someone else.
-		// TODO 1724 (PaulP):  This check needs to go in here somewhere, but I'm not sure
-		// where and also what to do if the user says "No" and the method returns.
-		IVwOleDbDaPtr qodde;
-		HRESULT hrDbCache = E_FAIL;
-		//ISilDataAccess * psdaTemp = m_qsel->m_pvpbox->Root()->GetDataAccess();
-		hrDbCache = m_qsda->QueryInterface(IID_IVwOleDbDa, (void **) &qodde);
-		if ((hrDbCache == S_OK) && m_qsel->m_hvoParaOwner)
-		{
-			HRESULT hrTemp = E_FAIL;
-			// This seems kludgy, but CheckTimeStamp may pop up a dialog which causes
-			// us to lose focus. Part of LoseFocus clears m_qtsbProp. So if the user
-			// responds Yes to the dialog, m_qtsbProp is cleared and we get a crash
-			// below when we use it. So prior to calling CheckTimeStamp we'll save a
-			// pointer to m_qtsbProp and restore it afterwards if it ended up being
-			// cleared.
-			ITsStrBldrPtr qtsbT = m_qsel->m_qtsbProp;
-			if ((hrTemp = qodde->CheckTimeStamp(m_qsel->m_hvoParaOwner)) != S_OK)
-			{
-				return kTypingReturn;
-			}
-			if (!m_qsel->m_qtsbProp)
-				m_qsel->m_qtsbProp = qtsbT;
-		}
-#endif // WIN32
 
 		// Text was typed.
 		ITsTextPropsPtr qttpT = qttp;
@@ -7349,25 +7351,6 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 		m_ichLimEditProp = ichNormalizedLim;
 		// If we are not dealing with a view constructor, it must be a standard prop type.
 		// This code should stay in sync with that in VwNotifier::PropChanged.
-
-#if WANTPORT // IVwOleDbDa has been removed, so what should be done here?
-		// Check to see if the record has been edited by someone else.
-		// TODO 1724 (PaulP):  This check needs to go in here somewhere, but I'm not sure
-		// where and also what to do if the user says "No" and the method returns.
-		IVwOleDbDaPtr qodde;
-		HRESULT hrDbCache = E_FAIL;
-		hrDbCache = qsda->QueryInterface(IID_IVwOleDbDa, (void **) &qodde);
-		if (hrDbCache == S_OK)
-		{
-			HRESULT hrTemp = E_FAIL;
-			if ((hrTemp = qodde->CheckTimeStamp(hvo)) != S_OK)
-			{
-				qsda->PropChanged(prootb, kpctNotifyMeThenAll, hvo, tag, 0, 0, 0);
-				*pfOk = false;
-				return;
-			}
-		}
-#endif
 
 		switch(vnp)
 		{
