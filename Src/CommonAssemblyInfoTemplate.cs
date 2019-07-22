@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 // Format: Major.Minor.Revision.BuildNumber
 [assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER")]
-// Format: FwMajorVersion.FwMinorVersion Alpha/Beta/RC
-[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $!FWBETAVERSION")]
+// Format: FwMajorVersion.FwMinorVersion Day Alpha/Beta/RC
+[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $NUMBEROFDAYS $!FWBETAVERSION")]
 // Format: Major.Minor.Revision.BuildNumber?
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]

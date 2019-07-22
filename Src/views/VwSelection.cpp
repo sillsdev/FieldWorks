@@ -12437,6 +12437,7 @@ void VwTextSelection::FindWordBoundaries(int & ichMinWord, int & ichLimWord)
 		ichLimWord++;
 	}
 
+	// TODO: Handle Surrogate Pairs (currently they incorrectly act as a boundary)
 	// Similarly decrease ichMinWord
 	ichMinWord = m_ichAnchor;
 	while (ichMinWord > ichMin)
