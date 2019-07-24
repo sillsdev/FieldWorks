@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			_mainContentPanel.SuspendLayout();
 			_mainContentPanel.Controls.Clear();
-			var moreWsControl = new FwNewLangProjMoreWsControl(m_model);
+			var moreWsControl = new FwNewLangProjMoreWsControl(m_model, m_helpTopicProvider);
 			Bind(m_model);
 			_mainContentPanel.Controls.Add(moreWsControl);
 			_mainContentPanel.ResumeLayout();

@@ -382,6 +382,17 @@ namespace SIL.FieldWorks.Resources {
 	    }
 
 		/// <summary>
+		///   Looks up a localized string similar to Advanced_Tasks/Writing_Systems/Add_a_new_writing_system/About_Writing_Systems.htm.
+		/// </summary>
+		internal static string khtpProjectProperties_WritingSystem_List
+		{
+		    get
+		    {
+			    return ResourceManager.GetString("khtpProjectProperties_WritingSystem_List", resourceCulture);
+		    }
+	    }
+
+		/// <summary>
 		///   Looks up a localized string similar to User_Interface/Menus/File/Publish_to_Webonary.htm.
 		/// </summary>
 		internal static string khtpUploadToWebonary {
@@ -523,12 +534,23 @@ namespace SIL.FieldWorks.Resources {
             get {
                 return ResourceManager.GetString("khtpWsConverters", resourceCulture);
             }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Fonts_tab.htm.
-        /// </summary>
-        internal static string khtpWsFonts {
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Numbers_tab.htm.
+		/// </summary>
+		internal static string khtpWsNumbers
+		{
+			get
+			{
+				return ResourceManager.GetString("khtpWsNumbers", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Fonts_tab.htm.
+		/// </summary>
+		internal static string khtpWsFonts {
             get {
                 return ResourceManager.GetString("khtpWsFonts", resourceCulture);
             }

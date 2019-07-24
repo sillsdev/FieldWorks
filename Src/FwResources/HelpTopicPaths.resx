@@ -213,7 +213,7 @@
     <value>Advanced_Tasks/Writing_Systems/Defining_a_New_Writing_System/Step_3_of_4_Appearance.htm</value>
     <comment>help topic ID for writing system wizard step 3</comment>
   </data>
-  <data name="khtpWsWizardStep4" mimetype="">
+  <data name="khtpWsWizardStep4" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Defining_a_New_Writing_System/Step_4_of_4_Input.htm</value>
     <comment>help topic ID for writing system wizard step 1</comment>
   </data>
@@ -262,8 +262,12 @@
     <comment>help topic ID for page setup dialog, text tab</comment>
   </data>
   <data name="khtpProjectProperties_WritingSystem" xml:space="preserve">
-    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_Writing_Systems_tab.htm</value>
+    <value>Advanced_Tasks/Writing_Systems/Writing_Systems_overview.htm</value>
     <comment>help topic ID for project properties dialog-writing system tab</comment>
+  </data>
+  <data name="khtpProjectProperties_WritingSystem_List" xml:space="preserve">
+    <value>Advanced_Tasks/Writing_Systems/Add_a_new_writing_system/About_Writing_Systems.htm</value>
+    <comment>help topic ID for the '?' button on the writing system list</comment>
   </data>
   <data name="khtpProjectProperties_ExternalLinks" xml:space="preserve">
     <value>User_Interface/Menus/File/Project_Properties/Project_Properties_Linked_Files_tab.htm</value>
@@ -338,6 +342,10 @@
   </data>
   <data name="khtpWsConverters" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Converters_tab.htm</value>
+    <comment>help topic ID for ws properties/Converters tab</comment>
+  </data>
+  <data name="khtpWsNumbers" xml:space="preserve">
+    <value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Numbers_tab.htm</value>
     <comment>help topic ID for ws properties/Converters tab</comment>
   </data>
   <data name="khtpWsKeyboard" xml:space="preserve">

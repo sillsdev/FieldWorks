@@ -566,7 +566,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void FormHelpClick(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem");
+			// grab the correct help topic for each tab and use it
+			string helpTopic = "khtpProjectProperties_WritingSystem";
+			switch (_tabControl.SelectedIndex)
+			{
+				case 0:
+				{
+					helpTopic = "khtpWsGeneral";
+					break;
+				}
+				case 1:
+				{
+					helpTopic = "khtpWsFonts";
+					break;
+				}
+				case 2:
+				{
+					helpTopic = "khtpWsKeyboard";
+					break;
+				}
+				case 3:
+				{
+					helpTopic = "khtpWsSorting";
+					break;
+				}
+				case 4:
+				{
+					helpTopic = "khtpWsPUACharacters";
+					break;
+				}
+				case 5:
+				{
+					helpTopic = "khtpWsNumbers";
+					break;
+				}
+				case 6:
+				{
+					helpTopic = "khtpWsConverters";
+					break;
+				}
+			}
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", helpTopic);
 		}
 
 		private void WritingListHelpClick(object sender, EventArgs e)

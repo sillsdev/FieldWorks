@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -12,12 +13,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public partial class FwNewLangProjMoreWsControl : UserControl
 	{
 		private readonly FwNewLangProjectModel _model;
+		private readonly IHelpTopicProvider _helpTopicProvider;
 
 		/// <summary/>
-		public FwNewLangProjMoreWsControl(FwNewLangProjectModel model = null)
+		public FwNewLangProjMoreWsControl(FwNewLangProjectModel model = null, IHelpTopicProvider helpTopicProvider = null)
 		{
 			InitializeComponent();
 			_model = model;
+			_helpTopicProvider = helpTopicProvider;
 		}
 
 		private void ConfigureVernacularClick(object sender, System.EventArgs e)
@@ -25,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer,
 				FwWritingSystemSetupModel.ListType.Vernacular,
 				_model.WritingSystemManager);
-			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel))
+			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel, _helpTopicProvider))
 			{
 				wsDlg.ShowDialog(this);
 			}
