@@ -2199,7 +2199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is used for glosses, definitions, notes, text analyses, and so on..
+        ///   Looks up a localized string similar to It is used for glosses, definitions, notes, text analyses, and so on..
         /// </summary>
         public static string NewLangProjWizard_AnalysisWritingSystemExplanation {
             get {
@@ -2217,7 +2217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose analysis language writing system.
+        ///   Looks up a localized string similar to Choose an analysis language.
         /// </summary>
         public static string NewProjectWizard_AnalysisHeader {
             get {
@@ -2262,7 +2262,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You chose the same vernacular and analysis language writing systems..
+        ///   Looks up a localized string similar to You chose the same vernacular and analysis writing systems..
         /// </summary>
         public static string NewProjectWizard_MonolingualMessage {
             get {

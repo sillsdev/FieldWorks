@@ -1031,15 +1031,15 @@ that also use the SIL Locale Data Repository</value>
     <comment>{0} is the name of a Writing System</comment>
   </data>
   <data name="NewLangProjWizard_AnalysisWritingSystemExplanation" xml:space="preserve">
-    <value>This is used for glosses, definitions, notes, text analyses, and so on.</value>
+    <value>It is used for glosses, definitions, notes, text analyses, and so on.</value>
     <comment>Used for the Analysis step in the New Project wizard</comment>
   </data>
   <data name="NewProjectWizard_AnalysisHeader" xml:space="preserve">
-    <value>Choose analysis language writing system</value>
+    <value>Choose an analysis language</value>
     <comment>Header label for analysis writing system step in the New Project wizard</comment>
   </data>
   <data name="NewProjectWizard_MonolingualMessage" xml:space="preserve">
-    <value>You chose the same vernacular and analysis language writing systems.</value>
+    <value>You chose the same vernacular and analysis writing systems.</value>
     <comment>Message used to alert the user when they select a monolingual configuration. (this is a soft warning)</comment>
   </data>
   <data name="NewProjectWizard_MonolingualCaption" xml:space="preserve">

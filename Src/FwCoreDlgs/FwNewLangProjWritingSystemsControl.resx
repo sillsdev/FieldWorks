@@ -139,7 +139,7 @@
     <value>8</value>
   </data>
   <data name="m_lblWsTypeHeader.Text" xml:space="preserve">
-    <value>Choose vernacular language writing system</value>
+    <value>Choose a vernacular language</value>
   </data>
   <data name="&gt;&gt;m_lblWsTypeHeader.Name" xml:space="preserve">
     <value>m_lblWsTypeHeader</value>
@@ -217,7 +217,7 @@
     <value>9</value>
   </data>
   <data name="m_lblExplainWsTypeUsage.Text" xml:space="preserve">
-    <value>This is used for lexical headwords, example sentences, texts, and so on.</value>
+    <value>It is used for lexical headwords, example sentences, texts, and so on.</value>
   </data>
   <data name="&gt;&gt;m_lblExplainWsTypeUsage.Name" xml:space="preserve">
     <value>m_lblExplainWsTypeUsage</value>
@@ -244,7 +244,7 @@
     <value>14</value>
   </data>
   <data name="m_defaultAnalysisAndVernSame.Text" xml:space="preserve">
-    <value>You should only have the same vernacular and analysis language writing systems if you are making a monolingual dictionary.</value>
+    <value>You should only have the same vernacular and analysis writing systems if you are making a monolingual dictionary.</value>
   </data>
   <data name="&gt;&gt;m_defaultAnalysisAndVernSame.Name" xml:space="preserve">
     <value>m_defaultAnalysisAndVernSame</value>

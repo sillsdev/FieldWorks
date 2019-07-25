@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -214,7 +214,7 @@
     <value>14</value>
   </data>
   <data name="m_tbDescription.Text" xml:space="preserve">
-    <value>You may add more vernacular or analysis writing system languages and configure the details of each writing system.</value>
+    <value>You may add and configure more vernacular or analysis writing systems now. Or you can do it later.</value>
   </data>
   <data name="&gt;&gt;m_tbDescription.Name" xml:space="preserve">
     <value>m_tbDescription</value>
