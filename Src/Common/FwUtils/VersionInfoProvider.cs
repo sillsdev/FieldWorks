@@ -242,7 +242,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Set the Fieldworks version text
 				string productVersion, productDate, productType;
 				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
-				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, productVersion);
+				// Fill the expected parts to document and avoid a crash if we get an odd informational version
+				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
+				var realParts = productVersion.Split('.', ' ');
+				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
+
+				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
 			}
 		}
 
