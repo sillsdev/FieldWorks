@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer, FwWritingSystemSetupModel.ListType.Analysis,
 				_model.WritingSystemManager);
-			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel))
+			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel, _helpTopicProvider))
 			{
 				wsDlg.ShowDialog(this);
 			}
