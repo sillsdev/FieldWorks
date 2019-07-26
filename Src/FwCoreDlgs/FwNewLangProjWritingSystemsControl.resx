@@ -244,7 +244,7 @@
     <value>14</value>
   </data>
   <data name="m_defaultAnalysisAndVernSame.Text" xml:space="preserve">
-    <value>You should only have the same vernacular and analysis writing systems if you are making a monolingual dictionary.</value>
+    <value>You should have the same vernacular and analysis writing systems only if you are making a monolingual dictionary.</value>
   </data>
   <data name="&gt;&gt;m_defaultAnalysisAndVernSame.Name" xml:space="preserve">
     <value>m_defaultAnalysisAndVernSame</value>

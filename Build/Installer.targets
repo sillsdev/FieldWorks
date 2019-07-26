@@ -204,7 +204,7 @@
 			<MergeModules Include="$(OutputDirForConfig)\CcEC.dll"/>
 			<MergeModules Include="$(OutputDirForConfig)\DebugProcs.*"/>
 			<MergeModules Include="$(OutputDirForConfig)\DefaultIcon.ico"/>
-			<MergeModules Include="$(OutputDirForConfig)\EC\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\EC\**\*" Exclude="$(OutputDirForConfig)\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml"/>
 			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.dll"/>
 			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.tlb"/>
 			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*"/>
