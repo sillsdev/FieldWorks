@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9332,6 +9332,24 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash");
 		}
+
+		[TestCase("Bob", false, "Bo")]
+		[TestCase("Bob", true, "B")]
+		[TestCase("a", false, "a")]
+		[TestCase("", false, "")]
+		// surrogate pairs
+		[TestCase("\ud81b\udf00\ud81b\udf55", true, "\ud81b\udf00")]
+		[TestCase("\ud81b\udf00\ud81b\udf55", false, "\ud81b\udf00\ud81b\udf55")]
+		[TestCase("a\ud81b\udf55", false, "a\ud81b\udf55")]
+		[TestCase("\ud81b\udf00test", false, "\ud81b\udf00t")]
+		public void GetIndexLettersOfHeadword(string headWord, bool onlyFirstLetter, string expected)
+		{
+			var actual = typeof(ConfiguredXHTMLGenerator)
+				.GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static)
+				.Invoke(null, new object[] {headWord, onlyFirstLetter});
+			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
+		}
+
 
 		[Test]
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()

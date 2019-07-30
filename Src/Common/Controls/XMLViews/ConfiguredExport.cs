@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				sEntryT = sEntry;
 			} while (fChanged);
-			int cnt = GetFirstLetterLength(sEntry);
+			int cnt = GetLetterLengthAt(sEntry, 0);
 			string sFirst = sEntry.Substring(0, cnt);
 			foreach (string sChar in sortChars)
 			{
@@ -681,13 +681,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <returns>
-		/// 2 if the first letter in the string is composed of a Surrogate Pair; 1 otherwise
+		/// 2 if the letter at the index in the string is composed of a Surrogate Pair; 1 otherwise
 		/// </returns>
-		internal static int GetFirstLetterLength(string sEntry)
+		public static int GetLetterLengthAt(string sEntry, int ich)
 		{
-			if (char.IsSurrogatePair(sEntry, 0))
-				return 2;
-			return 1;
+			return char.IsSurrogatePair(sEntry, ich) ? 2 : 1;
 		}
 
 		/// <summary>

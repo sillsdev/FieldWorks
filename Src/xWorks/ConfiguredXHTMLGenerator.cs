@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -520,7 +520,12 @@ namespace SIL.FieldWorks.XWorks
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
 			if (headWord.Length == 0)
 				return string.Empty;
-			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
+			var length = ConfiguredExport.GetLetterLengthAt(headWord, 0);
+			if (headWord.Length > length && !justFirstLetter)
+			{
+				length += ConfiguredExport.GetLetterLengthAt(headWord, length);
+			}
+			return TsStringUtils.Compose(headWord.Substring(0, length));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
