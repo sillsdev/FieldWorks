@@ -34,45 +34,50 @@ namespace SIL.InstallValidator
 			}
 
 			var inFile = args[0];
-			var logFile = SafeGetAt(args, 1) ?? GenerateOutputNameFromInputFile(inFile);
+			var logFile = SafeGetAt(args, 1);
 
 			using (var expected = new StreamReader(inFile))
-			using (var actual = new StreamWriter(logFile))
 			{
-				actual.WriteLine("File, Result, Expected Version, Actual Version, Expected Date, Actual Date Modified (UTC)");
-				string line;
-				while ((line = expected.ReadLine()) != null)
+				var line = expected.ReadLine(); // first line is either headers (tests) or app version info (production)
+				logFile = logFile ?? GenerateOutputNameFromInput(line);
+				using (var actual = new StreamWriter(logFile))
 				{
-					var info = line.Split(',');
-					if (info.Length < 2)
-					{
-						actual.WriteLine($"short line, {line}");
-						continue;
-					}
-
-					var filePath = info[0].Trim();
-					actual.Write(filePath);
-					var fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
-					if (!File.Exists(fullPath))
-					{
-						actual.WriteLine(", is missing");
-						continue;
-					}
-
-					var expectedMd5 = info[1].Trim();
-					var actualMd5 = ComputeMd5Sum(fullPath);
-					if (string.Equals(expectedMd5, actualMd5))
-					{
-						actual.WriteLine(", was installed correctly");
-						continue;
-					}
-
-					var expectedVersion = SafeGetAt(info, 2);
-					var actualVersion = FileVersionInfo.GetVersionInfo(fullPath).FileVersion;
-					var expectedDate = SafeGetAt(info, 3);
-					var actualDate = File.GetLastWriteTimeUtc(fullPath);
+					actual.WriteLine($"Installation report for: {line}");
 					actual.WriteLine(
-						$", incorrect file is present, {expectedVersion}, {actualVersion}, {expectedDate}, {actualDate:yyyy-MM-dd HH:mm:ss}");
+						"File, Result, Expected Version, Actual Version, Expected Date, Actual Date Modified (UTC)");
+					while ((line = expected.ReadLine()) != null)
+					{
+						var info = line.Split(',');
+						if (info.Length < 2)
+						{
+							actual.WriteLine($"short line, {line}");
+							continue;
+						}
+
+						var filePath = info[0].Trim();
+						actual.Write(filePath);
+						var fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+						if (!File.Exists(fullPath))
+						{
+							actual.WriteLine(", is missing");
+							continue;
+						}
+
+						var expectedMd5 = info[1].Trim();
+						var actualMd5 = ComputeMd5Sum(fullPath);
+						if (string.Equals(expectedMd5, actualMd5))
+						{
+							actual.WriteLine(", was installed correctly");
+							continue;
+						}
+
+						var expectedVersion = SafeGetAt(info, 2);
+						var actualVersion = FileVersionInfo.GetVersionInfo(fullPath).FileVersion;
+						var expectedDate = SafeGetAt(info, 3);
+						var actualDate = File.GetLastWriteTimeUtc(fullPath);
+						actual.WriteLine(
+							$", incorrect file is present, {expectedVersion}, {actualVersion}, {expectedDate}, {actualDate:yyyy-MM-dd HH:mm:ss}");
+					}
 				}
 			}
 
@@ -88,9 +93,9 @@ namespace SIL.InstallValidator
 			return arr.Length > index ? arr[index].Trim() : null;
 		}
 
-		private static string GenerateOutputNameFromInputFile(string inputFile)
+		private static string GenerateOutputNameFromInput(string firstLine)
 		{
-			var versionPart = Path.GetFileNameWithoutExtension(inputFile)?.Split(new[] { '.' }, 2).Last();
+			var versionPart = firstLine.Split(' ').Last();
 			return Path.Combine(Path.GetTempPath(), $"FlexInstallationReport.{versionPart}.csv");
 		}
 

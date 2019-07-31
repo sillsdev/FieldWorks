@@ -303,7 +303,7 @@
 	<!-- Write a table of files' metadata that can be used to verify that each file has been installed or patched correctly. -->
 	<Target Name="WriteFilesMetadata" DependsOnTargets="InstallerVersionNumbers">
 		<PropertyGroup>
-			<MetadataLog>$(AppBuildDir)\$(BinDirSuffix)\installerTestMetadata.$(BuildVersion).csv</MetadataLog>
+			<MetadataLog>$(AppBuildDir)\$(BinDirSuffix)\installerTestMetadata.csv</MetadataLog>
 		</PropertyGroup>
 		<ItemGroup>
 			<FLExExeToHash Include="$(fwrt)\Output\$(Configuration)\FieldWorks.exe"/>
