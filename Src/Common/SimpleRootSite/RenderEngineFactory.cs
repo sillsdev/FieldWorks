@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -98,18 +98,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			IRenderEngine nonGraphiteEngine;
 			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out nonGraphiteEngine))
 			{
-				if (!MiscUtils.IsUnix)
-				{
-					nonGraphiteEngine = UniscribeEngineClass.Create();
-				}
-				else
-				{
-					// default to the UniscribeEngine unless ROMAN environment variable is set.
-					if (Environment.GetEnvironmentVariable("ROMAN") == null)
-						nonGraphiteEngine = UniscribeEngineClass.Create();
-					else
-						nonGraphiteEngine = RomRenderEngineClass.Create();
-				}
+				nonGraphiteEngine = UniscribeEngineClass.Create();
 				nonGraphiteEngine.InitRenderer(vg, null);
 				nonGraphiteEngine.RenderEngineFactory = this;
 				nonGraphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;

@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -356,6 +356,31 @@ STDMETHODIMP GraphiteEngine::get_ClassId(GUID * pguid)
 
 /*----------------------------------------------------------------------------------------------
 	Make a segment by finding a suitable break point in the specified range of text.
+	Note that it is appropriate for line layout to use this routine even if putting
+	text on a single line, because an old writing system may take advantage of line layout
+	to handle direction changes and style changes and generate multiple segments
+	even on one line. For such layouts, pass a large dxMaxWidth, but still expect
+	possibly multiple segments.
+	Arguments:
+	[in]	pvg					Pointer to graphics interface.
+	[in]	pts					Pointer to text source interface.
+	[in]	pvjus				NULL if no justification will ever be needed for the resulting segment (TODO 2012 or earlier: deprecate)
+	[in]	ichMinSeg			Index of the first char in the text that is of interest.
+	[in]	ichLimText			Index of the last char in the text that is of interest (+ 1).
+	[in]	ichLimBacktrack		Index of last char that may be included in the segment;
+								generally the same as ichLimText unless backtracking.
+	[in]	fNeedFinalBreak		True if backtracking is needed to shorten a line that is too long
+	[in]	fStartLine			True if the segment is logically first on the line. (TODO 2012 or earlier: deprecate)
+	[in]	dxMaxWidth			Whatever coordinates pvg is using.
+	[in]	lbPref				Try for longest seg of this weight.
+	[in]	lbMax				Max if no preferred break possible.
+	[in]	twsh				How we are handling trailing white-space.
+	[in]	fParaRtoL			Overall paragraph direction.
+	[out]	ppsegRet			Segment produced, or null if nothing works.
+	[out]	pdichLimSeg			Offset to last char of segment, first of next if any.
+	[out]	pdxWidth			Width of the new segment, if any.
+	[out]	pest				What caused the segment to end?
+	[in]	psegPrev			TODO (Hasso) 2019.08: remove
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	IVwGraphics * pvg, IVwTextSource * pts, IVwJustifier * pvjus,
@@ -578,10 +603,11 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 		while (s != NULL)
 		{
-			int ich = ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_after(gr_slot_prev_in_segment(s)));
+			int ich = ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_original(s));
 			UCharDirection dir = u_charDirection(segStr[ich]);
-			if (dir != U_WHITE_SPACE_NEUTRAL)
+			if (dir != U_WHITE_SPACE_NEUTRAL) {
 				break;
+			}
 
 			wsSlot = s;
 			s = gr_slot_prev_in_segment(s);
@@ -609,9 +635,11 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	*pdxWidth = width;
 	*pest = est;
 
-	if (segmentLen > 0 && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
+	if (est != kestHardBreak && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
 	{
-		// Views expects a NULL segment when a non-zero length segment was requested and nothing fit
+		// Views expects a NULL segment when we cannot fulfill its request for a non-zero-length segment
+		// (either because nothing fit or nothing matched the whitespace restrictions (twsh); however,
+		// if we're breaking on a hard break, we should return a segment even if it's empty)
 		*pdichLimSeg = 0;
 		*ppsegRet = NULL;
 	}

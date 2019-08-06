@@ -75,8 +75,6 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLayoutStream.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeSegment.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderEngine.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgLineBreaker.obj\
@@ -140,7 +138,6 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestVwTableBox.h \
  $(VIEWSTEST_SRC)\TestLgLineBreaker.h\
  $(VIEWSTEST_SRC)\TestUniscribeEngine.h\
- $(VIEWSTEST_SRC)\TestRomRenderEngine.h\
  $(VIEWSTEST_SRC)\TestGraphiteEngine.h\
  $(VIEWSTEST_SRC)\RenderEngineTestBase.h\
  $(VIEWSTEST_SRC)\MockRenderEngineFactory.h\

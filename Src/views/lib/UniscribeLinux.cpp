@@ -189,12 +189,13 @@ HRESULT ScriptShape(
 	psva->fShapeReserved = 0;
 
 	UnicodeString8 utf8(pwcChars, cChars);
-	PangoCharsToGlyph(psc, utf8.c_str(), utf8.size(), cMaxGlyphs, reinterpret_cast<PangoGlyphString**>(pwOutGlyphs), pcGlyphs);
+	HRESULT hr;
+	hr = PangoCharsToGlyph(psc, utf8.c_str(), utf8.size(), cMaxGlyphs, reinterpret_cast<PangoGlyphString**>(pwOutGlyphs), pcGlyphs);
 
 	for(int i = 0; i < cChars; ++i)
 	{
 		if (psa->fRTL)
-			pwLogClust[i] = cChars - i + 1;
+			pwLogClust[i] = cChars - i + 1; // REVIEW (Hasso) 2019.08: shouldn't this be cChars - i - 1?
 		else
 			pwLogClust[i] = i;
 	}
@@ -489,6 +490,23 @@ HRESULT ScriptItemize(
 
 	if (*pcItems + 1 > cMaxItems)
 		return E_OUTOFMEMORY;
+
+	// Convert utf8 indices from PangoItemize to utf16 for clients.
+	for (int utf8idx = 0, utf16idx = 0, itemIdx = 0; utf16idx < cInChars && itemIdx < *pcItems; utf16idx++)
+	{
+		if (pItems[itemIdx].iCharPos == utf8idx)
+		{
+			pItems[itemIdx++].iCharPos = utf16idx;
+		}
+		else if (pItems[itemIdx].iCharPos < utf8idx)
+		{
+			// the index in the utf8 string was to the second half of a two-byte character. This shouldn't happen, but just in case:
+			pItems[itemIdx++].iCharPos = utf16idx - 1;
+		}
+		utf8idx++;
+		if(pwcInChars[utf16idx] > 0xFF)
+			utf8idx++;
+	}
 
 	pItems[*pcItems].iCharPos = cInChars;
 	pItems[*pcItems].a.fRTL = false;

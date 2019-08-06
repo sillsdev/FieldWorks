@@ -2569,7 +2569,7 @@ public:  // we can make anything public since the whole class is private to this
 			&dichLimSeg, &dxWidth, &est,
 			m_psegPrevContext);
 
-		if (!qlseg && m_twsh != ktwshAll)
+		if (!qlseg && m_twsh != ktwshAll && est != kestMoreLines)
 		{
 			// If we are separating out visible text and white-space, and we didn't get
 			// any of what we were expecting, try the other.

@@ -104,8 +104,6 @@ OBJS = \
 	$(INT_DIR)/lib/UniscribeEngine.o \
 	$(INT_DIR)/lib/GraphiteSegment.o \
 	$(INT_DIR)/lib/GraphiteEngine.o \
-	$(INT_DIR)/lib/RomRenderEngine.o \
-	$(INT_DIR)/lib/RomRenderSegment.o \
 	$(INT_DIR)/lib/LgLineBreaker.o \
 	$(INT_DIR)/lib/LgUnicodeCollater.o \
 	$(INT_DIR)/lib/TsString.o \

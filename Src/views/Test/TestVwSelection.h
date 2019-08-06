@@ -2120,38 +2120,6 @@ namespace TestViews
 		}
 
 		// Tests pressing the delete key when the IP is in front of the base character
-		void testDeleteInFrontOfBaseCharWithSurrogateDiacritic()
-		{
-			// Create test data
-			ITsStringPtr qtss;
-			ITsStringPtr qtssT;
-			// Make a string which will be the content of our paragraph.
-			StrUni stuPara1(L"This is a" SURROGATE_PAIR_DIACRITIC COMBINING_MACRON SURROGATE_PAIR_DIACRITIC
-				L" first test paragraph");
-			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
-			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
-
-			// Now make them the paragraphs of an StText.
-			HVO rghvo[1] = { khvoOrigPara1 };
-			HVO hvoRootBox = 101;
-			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
-
-			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
-			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
-			unitpp::assert_eq("Layout failed", S_OK, hr);
-			int wspend = -1;
-
-			// Delete in front of the first "a"
-			MakeSelection(0, 8, 8, true, true, NULL);
-			m_qdrs->SimulateBeginUnitOfWork();
-			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
-			m_qdrs->SimulateEndUnitOfWork();
-			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
-			VerifyParaContents(0, OleStringLiteral(L"This is  first test paragraph"));
-		}
-
-		// Tests pressing the delete key when the IP is in front of the base character
 		void testDeleteInFrontOfSurrogateCharWithSurrogateDiacritic()
 		{
 			// Create test data
@@ -2181,6 +2149,38 @@ namespace TestViews
 			m_qdrs->SimulateEndUnitOfWork();
 			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
 			VerifyParaContents(0, OleStringLiteral(L"This is an ugly test case"));
+		}
+
+		// Tests pressing the delete key when the IP is in front of the base character
+		void testDeleteInFrontOfBaseCharWithSurrogateDiacritic()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" SURROGATE_PAIR_DIACRITIC COMBINING_MACRON SURROGATE_PAIR_DIACRITIC
+				L" first test paragraph");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the first "a"
+			MakeSelection(0, 8, 8, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is  first test paragraph"));
 		}
 
 		// Tests pressing the delete key when the IP is between the base character and the

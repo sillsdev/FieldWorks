@@ -55,12 +55,6 @@
     <ClInclude Include="lib\LgLineBreaker.h">
       <Filter>lib</Filter>
     </ClInclude>
-    <ClInclude Include="lib\RomRenderEngine.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\RomRenderSegment.h">
-      <Filter>lib</Filter>
-    </ClInclude>
     <ClInclude Include="lib\UniscribeEngine.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -142,12 +136,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\LgLineBreaker.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\RomRenderEngine.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\RomRenderSegment.cpp">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\UniscribeEngine.cpp">

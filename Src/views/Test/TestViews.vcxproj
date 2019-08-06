@@ -149,7 +149,6 @@
     <ClInclude Include="TestTsTextProps.h" />
     <ClInclude Include="TestUndoStack.h" />
     <ClInclude Include="TestNotifier.h" />
-    <ClInclude Include="TestRomRenderEngine.h" />
     <ClInclude Include="TestUniscribeEngine.h" />
     <ClInclude Include="testViews.h" />
     <ClInclude Include="TestVirtualHandlers.h" />

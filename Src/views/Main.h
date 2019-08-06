@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -167,14 +167,10 @@ class GrEngine;
 } // gr
 
 #include "LgLineBreaker.h"
-class RomRenderEngine;
-DEFINE_COM_PTR(RomRenderEngine);
 class UniscribeEngine;
 DEFINE_COM_PTR(UniscribeEngine);
 class GraphiteEngine;
 DEFINE_COM_PTR(GraphiteEngine);
-#include "RomRenderSegment.h"
-#include "RomRenderEngine.h"
 #if !defined(_WIN32) && !defined(_M_X64)
 #include "UniscribeLinux.h"
 #endif
@@ -183,7 +179,6 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "GraphiteSegment.h"
 #include "GraphiteEngine.h"
 
-// obsolete #include "ActualTextProperties.h"
 #include "ViewsGlobals.h"
 #include "VwBaseDataAccess.h"
 #include "VwBaseVirtualHandler.h"

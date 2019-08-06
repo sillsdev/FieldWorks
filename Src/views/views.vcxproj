@@ -204,8 +204,6 @@
     <ClInclude Include="lib\LgLineBreaker.h" />
     <ClInclude Include="lib\LgUnicodeCollateInit.h" />
     <ClInclude Include="lib\LgUnicodeCollater.h" />
-    <ClInclude Include="lib\RomRenderEngine.h" />
-    <ClInclude Include="lib\RomRenderSegment.h" />
     <ClInclude Include="lib\TextServ.h" />
     <ClInclude Include="lib\TsPropsFactory.h" />
     <ClInclude Include="lib\TsStrFactory.h" />
@@ -248,8 +246,6 @@
     <ClCompile Include="lib\GraphiteSegment.cpp" />
     <ClCompile Include="lib\LgLineBreaker.cpp" />
     <ClCompile Include="lib\LgUnicodeCollater.cpp" />
-    <ClCompile Include="lib\RomRenderEngine.cpp" />
-    <ClCompile Include="lib\RomRenderSegment.cpp" />
     <ClCompile Include="lib\TextServ.cpp" />
     <ClCompile Include="lib\TsPropsFactory.cpp" />
     <ClCompile Include="lib\TsStrFactory.cpp" />
