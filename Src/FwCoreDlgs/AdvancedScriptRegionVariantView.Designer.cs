@@ -38,6 +38,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._otherVariantsLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this._scriptCodeLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this._regionCodeLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _scriptChooser
@@ -131,7 +135,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// _scriptLabel
 			// 
 			resources.ApplyResources(this._scriptLabel, "_scriptLabel");
-			this._scriptLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._scriptLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._scriptLabel.ForeColor = System.Drawing.SystemColors.ControlText;
 			this._scriptLabel.IsTextSelectable = false;
 			this._scriptLabel.Name = "_scriptLabel";
@@ -218,33 +222,49 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._regionCodeLabel.ReadOnly = true;
 			this._regionCodeLabel.TabStop = false;
 			// 
+			// tableLayoutPanel1
+			// 
+			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+			this.tableLayoutPanel1.Controls.Add(this._scriptLabel, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._regionCodeLabel, 4, 1);
+			this.tableLayoutPanel1.Controls.Add(this._regionLabel, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._scriptCodeLabel, 4, 0);
+			this.tableLayoutPanel1.Controls.Add(this._scriptChooser, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this._regionChooser, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._customRegionNameLabel, 2, 1);
+			this.tableLayoutPanel1.Controls.Add(this._customScriptNameLabel, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this._scriptNameTextbox, 3, 0);
+			this.tableLayoutPanel1.Controls.Add(this._regionNameTextBox, 3, 1);
+			this.tableLayoutPanel1.Controls.Add(this._scriptCodeTextBox, 5, 0);
+			this.tableLayoutPanel1.Controls.Add(this._regionCodeTextbox, 5, 1);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			// 
+			// tableLayoutPanel2
+			// 
+			resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+			this.tableLayoutPanel2.Controls.Add(this._standardVariantLabel, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(this._bcp47Label, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this._otherVariantsLabel, 2, 0);
+			this.tableLayoutPanel2.Controls.Add(this._standardVariantCombo, 1, 0);
+			this.tableLayoutPanel2.Controls.Add(this._ietftagTextBox, 1, 1);
+			this.tableLayoutPanel2.Controls.Add(this._variantsTextBox, 3, 0);
+			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+			// 
 			// AdvancedScriptRegionVariantView
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.Controls.Add(this._regionCodeLabel);
-			this.Controls.Add(this._scriptCodeLabel);
-			this.Controls.Add(this._otherVariantsLabel);
-			this.Controls.Add(this._customRegionNameLabel);
-			this.Controls.Add(this._customScriptNameLabel);
-			this.Controls.Add(this._bcp47Label);
-			this.Controls.Add(this._standardVariantLabel);
-			this.Controls.Add(this._regionLabel);
-			this.Controls.Add(this._scriptLabel);
+			this.Controls.Add(this.tableLayoutPanel2);
+			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._abbreviation);
 			this.Controls.Add(this._specialTypeComboBox);
 			this.Controls.Add(this.betterLabel5);
 			this.Controls.Add(this.betterLabel4);
-			this.Controls.Add(this._standardVariantCombo);
-			this.Controls.Add(this._ietftagTextBox);
-			this.Controls.Add(this._variantsTextBox);
-			this.Controls.Add(this._regionNameTextBox);
-			this.Controls.Add(this._regionCodeTextbox);
-			this.Controls.Add(this._regionChooser);
-			this.Controls.Add(this._scriptNameTextbox);
-			this.Controls.Add(this._scriptCodeTextBox);
-			this.Controls.Add(this._scriptChooser);
 			resources.ApplyResources(this, "$this");
 			this.Name = "AdvancedScriptRegionVariantView";
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
+			this.tableLayoutPanel2.ResumeLayout(false);
+			this.tableLayoutPanel2.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -276,5 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private BetterLabel _scriptCodeLabel;
 		private BetterLabel _regionCodeLabel;
 		private BetterLabel betterLabel2;
+		private TableLayoutPanel tableLayoutPanel1;
+		private TableLayoutPanel tableLayoutPanel2;
 	}
 }

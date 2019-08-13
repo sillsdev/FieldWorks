@@ -119,7 +119,7 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_scriptChooser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>103, 90</value>
+    <value>90, 3</value>
   </data>
   <data name="_scriptChooser.Size" type="System.Drawing.Size, System.Drawing">
     <value>143, 21</value>
@@ -135,13 +135,13 @@
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_scriptChooser.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_scriptChooser.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>4</value>
   </data>
   <data name="_scriptCodeTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>526, 93</value>
+    <value>500, 3</value>
   </data>
   <data name="_scriptCodeTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>58, 20</value>
@@ -156,16 +156,16 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_scriptCodeTextBox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_scriptCodeTextBox.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>10</value>
   </data>
   <data name="_scriptNameTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>332, 93</value>
+    <value>310, 3</value>
   </data>
   <data name="_scriptNameTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 20</value>
+    <value>132, 20</value>
   </data>
   <data name="_scriptNameTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -177,16 +177,16 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_scriptNameTextbox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_scriptNameTextbox.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>8</value>
   </data>
   <data name="_regionNameTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>332, 125</value>
+    <value>310, 33</value>
   </data>
   <data name="_regionNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 20</value>
+    <value>132, 20</value>
   </data>
   <data name="_regionNameTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -198,13 +198,13 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_regionNameTextBox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_regionNameTextBox.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>9</value>
   </data>
   <data name="_regionCodeTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>526, 124</value>
+    <value>500, 33</value>
   </data>
   <data name="_regionCodeTextbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>30, 20</value>
@@ -219,13 +219,13 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_regionCodeTextbox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_regionCodeTextbox.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>11</value>
   </data>
   <data name="_regionChooser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>103, 124</value>
+    <value>90, 33</value>
   </data>
   <data name="_regionChooser.Size" type="System.Drawing.Size, System.Drawing">
     <value>143, 21</value>
@@ -240,13 +240,13 @@
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_regionChooser.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_regionChooser.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>5</value>
   </data>
   <data name="_variantsTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>451, 160</value>
+    <value>429, 3</value>
   </data>
   <data name="_variantsTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>133, 20</value>
@@ -261,13 +261,13 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_variantsTextBox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_variantsTextBox.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>5</value>
   </data>
   <data name="_ietftagTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>143, 191</value>
+    <value>113, 33</value>
   </data>
   <data name="_ietftagTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>188, 20</value>
@@ -282,13 +282,13 @@
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_ietftagTextBox.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_ietftagTextBox.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>4</value>
   </data>
   <data name="_standardVariantCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>143, 158</value>
+    <value>113, 3</value>
   </data>
   <data name="_standardVariantCombo.Size" type="System.Drawing.Size, System.Drawing">
     <value>188, 21</value>
@@ -303,10 +303,10 @@
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_standardVariantCombo.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_standardVariantCombo.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>3</value>
   </data>
   <data name="_abbreviation.Location" type="System.Drawing.Point, System.Drawing">
     <value>102, 22</value>
@@ -327,7 +327,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_abbreviation.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>2</value>
   </data>
   <data name="_specialTypeComboBox.Items" xml:space="preserve">
     <value>Script/Region/Variant</value>
@@ -351,7 +351,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_specialTypeComboBox.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>3</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="betterLabel5.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -388,7 +388,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;betterLabel5.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>4</value>
   </data>
   <data name="betterLabel4.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -424,7 +424,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;betterLabel4.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>5</value>
   </data>
   <data name="_scriptLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -436,13 +436,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_scriptLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 92</value>
+    <value>3, 3</value>
   </data>
   <data name="_scriptLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_scriptLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 15</value>
+    <value>81, 15</value>
   </data>
   <data name="_scriptLabel.TabIndex" type="System.Int32, mscorlib">
     <value>24</value>
@@ -457,10 +457,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_scriptLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_scriptLabel.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>0</value>
   </data>
   <data name="_regionLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -472,13 +472,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_regionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 127</value>
+    <value>3, 33</value>
   </data>
   <data name="_regionLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_regionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 15</value>
+    <value>81, 15</value>
   </data>
   <data name="_regionLabel.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -493,10 +493,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_regionLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_regionLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>2</value>
   </data>
   <data name="_standardVariantLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -508,13 +508,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_standardVariantLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 160</value>
+    <value>3, 3</value>
   </data>
   <data name="_standardVariantLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_standardVariantLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 15</value>
+    <value>104, 15</value>
   </data>
   <data name="_standardVariantLabel.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
@@ -529,10 +529,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_standardVariantLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_standardVariantLabel.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>0</value>
   </data>
   <data name="_bcp47Label.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -544,13 +544,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_bcp47Label.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 191</value>
+    <value>3, 33</value>
   </data>
   <data name="_bcp47Label.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_bcp47Label.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 15</value>
+    <value>104, 15</value>
   </data>
   <data name="_bcp47Label.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -565,10 +565,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_bcp47Label.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_bcp47Label.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>1</value>
   </data>
   <data name="_customScriptNameLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -580,13 +580,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_customScriptNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>252, 92</value>
+    <value>259, 3</value>
   </data>
   <data name="_customScriptNameLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_customScriptNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 15</value>
+    <value>45, 15</value>
   </data>
   <data name="_customScriptNameLabel.TabIndex" type="System.Int32, mscorlib">
     <value>28</value>
@@ -601,10 +601,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_customScriptNameLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_customScriptNameLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>7</value>
   </data>
   <data name="_customRegionNameLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -616,13 +616,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_customRegionNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>252, 126</value>
+    <value>259, 33</value>
   </data>
   <data name="_customRegionNameLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_customRegionNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 15</value>
+    <value>45, 15</value>
   </data>
   <data name="_customRegionNameLabel.TabIndex" type="System.Int32, mscorlib">
     <value>29</value>
@@ -637,10 +637,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_customRegionNameLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_customRegionNameLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>6</value>
   </data>
   <data name="_otherVariantsLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -652,13 +652,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_otherVariantsLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>338, 162</value>
+    <value>310, 3</value>
   </data>
   <data name="_otherVariantsLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_otherVariantsLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 15</value>
+    <value>113, 15</value>
   </data>
   <data name="_otherVariantsLabel.TabIndex" type="System.Int32, mscorlib">
     <value>30</value>
@@ -673,7 +673,7 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_otherVariantsLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_otherVariantsLabel.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -688,13 +688,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_scriptCodeLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>471, 92</value>
+    <value>448, 3</value>
   </data>
   <data name="_scriptCodeLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_scriptCodeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>49, 15</value>
+    <value>46, 15</value>
   </data>
   <data name="_scriptCodeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -709,10 +709,10 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_scriptCodeLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_scriptCodeLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="_regionCodeLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -724,13 +724,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="_regionCodeLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>471, 125</value>
+    <value>448, 33</value>
   </data>
   <data name="_regionCodeLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_regionCodeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>49, 15</value>
+    <value>46, 15</value>
   </data>
   <data name="_regionCodeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -745,10 +745,70 @@
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_regionCodeLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;_regionCodeLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>11, 85</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>571, 61</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_scriptLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_regionCodeLabel" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="_regionLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_scriptCodeLabel" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="_scriptChooser" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_regionChooser" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_customRegionNameLabel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_customScriptNameLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_scriptNameTextbox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_regionNameTextBox" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_scriptCodeTextBox" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_regionCodeTextbox" Row="1" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,87,Absolute,169,Absolute,51,Absolute,138,Absolute,52,Absolute,8" /&gt;&lt;Rows Styles="Absolute,30,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>11, 152</value>
+  </data>
+  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>571, 64</value>
+  </data>
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_standardVariantLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_bcp47Label" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_otherVariantsLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_standardVariantCombo" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_ietftagTextBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_variantsTextBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,110,Absolute,197,Absolute,119,Absolute,9" /&gt;&lt;Rows Styles="Absolute,30,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
