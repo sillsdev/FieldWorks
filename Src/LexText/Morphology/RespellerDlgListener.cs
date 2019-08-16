@@ -58,30 +58,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// but return null if we can't get the info, otherwise we allow the user to
 				// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-				if (clerk == null || clerk.CurrentObject == null)
-					return null;
-				var wfiWordform = clerk.CurrentObject as IWfiWordform;
-				if (wfiWordform == null)
-					return null;
-				var tssVern = wfiWordform.Form.BestVernacularAlternative;
+				var tssVern = (clerk?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
 				return tssVern;
 			}
 			var app = m_propertyTable.GetValue<IApp>("App");
-			if (app == null)
+			var roots = (app?.ActiveMainWindow as FwXWindow)?.ActiveView?.AllRootBoxes();
+			if (roots == null || roots.Count < 1 || roots[0] == null)
 				return null;
-			var window = app.ActiveMainWindow as FwXWindow;
-			if (window == null)
-				return null;
-			var activeView = window.ActiveView;
-			if (activeView == null)
-				return null;
-			var roots = activeView.AllRootBoxes();
-			if (roots.Count < 1)
-				return null;
-			var helper = SelectionHelper.Create(roots[0].Site);
-			if (helper == null)
-				return null;
-			var tssWord = helper.SelectedWord;
+			var tssWord = SelectionHelper.Create(roots[0].Site)?.SelectedWord;
 			if (tssWord != null)
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
@@ -200,7 +184,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable?.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -212,7 +196,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return InFriendlyArea && m_propertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null) == "Analyses";
+				return InFriendlyArea && m_propertyTable?.GetStringProperty("ToolForAreaNamed_textsWords", null) == "Analyses";
 			}
 		}
 	}

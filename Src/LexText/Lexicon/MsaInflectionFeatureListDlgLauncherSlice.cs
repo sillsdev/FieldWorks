@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_obj != null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					switch (m_obj.ClassID)
 					{

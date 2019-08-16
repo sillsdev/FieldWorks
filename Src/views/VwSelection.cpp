@@ -12431,7 +12431,14 @@ void VwTextSelection::FindWordBoundaries(int & ichMinWord, int & ichLimWord)
 		GetWsFromRootAndProps(m_qrootb, qttpCurrent, &qws);
 		bool isDigit = StrUtil::IsNumber(ch);
 		ComBool isWordForming;
-		CheckHr(qws->get_IsWordForming(ch, &isWordForming));
+		if (qws.Ptr() != NULL)
+		{
+			CheckHr(qws->get_IsWordForming(ch, &isWordForming));
+		}
+		else
+		{
+			isWordForming = false;
+		}
 		if (!isWordForming && !isDigit)
 			break;
 		ichLimWord++;
