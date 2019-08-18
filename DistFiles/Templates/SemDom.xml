@@ -26,10 +26,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>772 Cosmology;  130 Geography</Uni>
+<Uni>772 Cosmology; 130 Geography</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>1A Universe, Creation;  14 Physical Events and States</Uni>
+<Uni>1A Universe, Creation; 14 Physical Events and States</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -1619,7 +1619,7 @@
 <Uni>133 Topography and Geology</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>1 Geographical Objects and Features;  1F The Earth's Surface</Uni>
+<Uni>1 Geographical Objects and Features; 1F The Earth's Surface</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="928741B5-BFF6-4DD1-BE37-EC6E7A4EB6CA"/>
@@ -1942,7 +1942,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>1H Depressions and Holes;  1C Regions Below the Surface of the Earth</Uni>
+<Uni>1H Depressions and Holes; 1C Regions Below the Surface of the Earth</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="C5B8C936-1E01-4E86-9145-A2B721EC9E39"/>
@@ -3229,7 +3229,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>47 Activities Involving Liquids or Masses;  47A Movement of Liquids or Masses;  14E Events Involving Liquids and Dry Masses</Uni>
+<Uni>47 Activities Involving Liquids or Masses; 47A Movement of Liquids or Masses; 14E Events Involving Liquids and Dry Masses</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="0205145D-23B6-4C3C-BF2D-BF866BB010E7"/>
@@ -3617,7 +3617,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>47C Application and Removal of Liquids or Masses;  79O Wet, Dry</Uni>
+<Uni>47C Application and Removal of Liquids or Masses; 79O Wet, Dry</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -3731,7 +3731,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>79O Wet, Dry;  47C Application and Removal of Liquids or Masses;  79O Wet, Dry</Uni>
+<Uni>79O Wet, Dry; 47C Application and Removal of Liquids or Masses; 79O Wet, Dry</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -4201,7 +4201,7 @@
 <Uni>137 Flora</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>3 Plants;  3A Plants</Uni>
+<Uni>3 Plants; 3A Plants</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="F3627C41-5DAF-4F73-AC42-8A0522035E0B"/>
@@ -4367,7 +4367,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>137f Grass and Weeds;  137g Herbs, medicinal, fungus</Uni>
+<Uni>137f Grass and Weeds; 137g Herbs, medicinal, fungus</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>3C Plants That Are Not Trees</Uni>
@@ -4635,7 +4635,7 @@
 <Uni>137a Plant Parts</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>3D Fruit Parts of Plants;  3E Non-Fruit Parts of Plants</Uni>
+<Uni>3D Fruit Parts of Plants; 3E Non-Fruit Parts of Plants</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -4824,7 +4824,7 @@
 <Uni>137b Growth Stages</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>23K Grow, Growth;  23L Ripen, Produce Fruit, Bear Seed</Uni>
+<Uni>23K Grow, Growth; 23L Ripen, Produce Fruit, Bear Seed</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -5911,7 +5911,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>136g Amphibian, worm;  136j Fish and Mollusk</Uni>
+<Uni>136g Amphibian, worm; 136j Fish and Mollusk</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>4E Fishes and Other Sea Creatures</Uni>
@@ -7043,7 +7043,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>9B Males;  9C Females</Uni>
+<Uni>9B Males; 9C Females</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="0DB5817E-05BF-4703-A6B9-E239AC44F857"/>
@@ -7166,7 +7166,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>9 People;  9A Human Beings</Uni>
+<Uni>9 People; 9A Human Beings</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -7240,10 +7240,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>140 Human Biology;  141 Anthropometry;  142 Descriptive Somatology</Uni>
+<Uni>140 Human Biology; 141 Anthropometry; 142 Descriptive Somatology</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>8 Body, Body Parts, and Body Products;  8A Body;  8B Parts of the Body</Uni>
+<Uni>8 Body, Body Parts, and Body Products; 8A Body; 8B Parts of the Body</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="7E2B6218-0837-4B16-A982-C9535CCCDB21"/>
@@ -8762,10 +8762,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>147 Physiological Data;  514 Elimination</Uni>
+<Uni>147 Physiological Data; 514 Elimination</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>8C Physiological Products of the Body;  23 Physiological Processes and States</Uni>
+<Uni>8C Physiological Products of the Body; 23 Physiological Processes and States</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -9421,7 +9421,7 @@
 <Uni>151 Sensation and Perception</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>24 Sensory Events and States;  24G General Sensory Perception</Uni>
+<Uni>24 Sensory Events and States; 24G General Sensory Perception</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -11081,7 +11081,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>24D Taste;  79H Sweet, Bitter, Tasteless</Uni>
+<Uni>24D Taste; 79H Sweet, Bitter, Tasteless</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -11235,7 +11235,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>24C Smell;  79I Fragrance, Odor</Uni>
+<Uni>24C Smell; 79I Fragrance, Odor</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -12103,7 +12103,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>147 Physiological Data;  740 Health and Welfare</Uni>
+<Uni>147 Physiological Data; 740 Health and Welfare</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23H Health, Vigor, Strength</Uni>
@@ -13095,7 +13095,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>732 Disabilities;  Handicapped;  734 Invalidism</Uni>
+<Uni>732 Disabilities; Handicapped; 734 Invalidism</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -13482,7 +13482,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>164 Morbidity;  753 Theory of Disease</Uni>
+<Uni>164 Morbidity; 753 Theory of Disease</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -14142,7 +14142,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>742 Medical Research;  751 Preventive Medicine;  757 Medical Therapy;  758 Medical Care</Uni>
+<Uni>742 Medical Research; 751 Preventive Medicine; 757 Medical Therapy; 758 Medical Care</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -14378,7 +14378,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>751 Preventive Medicine;  278 Pharmaceuticals</Uni>
+<Uni>751 Preventive Medicine; 278 Pharmaceuticals</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>6T Medicines</Uni>
@@ -14612,7 +14612,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>754 Sorcery;  755 Magical and Mental Therapy</Uni>
+<Uni>754 Sorcery; 755 Magical and Mental Therapy</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -14664,7 +14664,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>158 Personality Disorders;  756 Shamans and Psychotherapists</Uni>
+<Uni>158 Personality Disorders; 756 Shamans and Psychotherapists</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="FC193988-26CA-49E9-849A-B12456D98792"/>
@@ -14767,7 +14767,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>761 Life and Death;  159 Life History Materials</Uni>
+<Uni>761 Life and Death; 159 Life History Materials</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23G Live, Die</Uni>
@@ -14879,7 +14879,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>580 Marriage;  581 Basis of Marriage;  582 Regulation of Marriage;  583 Mode of Marriage;  587 Secondary Marriages;  588 Special Unions and Marriages;  Irregular Unions;  595 Polygamy</Uni>
+<Uni>580 Marriage; 581 Basis of Marriage; 582 Regulation of Marriage; 583 Mode of Marriage; 587 Secondary Marriages; 588 Special Unions and Marriages; Irregular Unions; 595 Polygamy</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>34J Marriage, Divorce</Uni>
@@ -15007,7 +15007,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>583 Mode of Marriage;  584 Arranging a Marriage</Uni>
+<Uni>583 Mode of Marriage; 584 Arranging a Marriage</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="DA203891-90A2-48F0-955A-8A80B6C62AF9"/>
@@ -15465,7 +15465,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>830 Sex;  831 Sexuality;  832 Sexual Stimulation;  833 Sexual Intercourse</Uni>
+<Uni>830 Sex; 831 Sexuality; 832 Sexual Stimulation; 833 Sexual Intercourse</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23D Sexual Relations</Uni>
@@ -15684,7 +15684,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>684 Sex and Marital Offenses;  834 General Sex Restrictions;  835 Kinship Regulation of Sex;  836 Premarital Sex Relations;  837 Extramarital Sex Relations;  838 Homosexuality;  839 Miscellaneous Sex Behavior</Uni>
+<Uni>684 Sex and Marital Offenses; 834 General Sex Restrictions; 835 Kinship Regulation of Sex; 836 Premarital Sex Relations; 837 Extramarital Sex Relations; 838 Homosexuality; 839 Miscellaneous Sex Behavior</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>88J' Sexual Misbehavior</Uni>
@@ -15867,7 +15867,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>163 Birth Statistics;  840 Reproduction;  841 Menstruation;  844 Childbirth;  846 Postnatal Care</Uni>
+<Uni>163 Birth Statistics; 840 Reproduction; 841 Menstruation; 844 Childbirth; 846 Postnatal Care</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23C Birth, Procreation</Uni>
@@ -15952,7 +15952,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>843 Pregnancy;  842 Conception</Uni>
+<Uni>843 Pregnancy; 842 Conception</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -16057,7 +16057,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>847 Abortion and Infanticide;  168 Population Policy</Uni>
+<Uni>847 Abortion and Infanticide; 168 Population Policy</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -16332,7 +16332,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>852 Ceremonial During Infancy and Childhood;  851 Social Placement</Uni>
+<Uni>852 Ceremonial During Infancy and Childhood; 851 Social Placement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -16376,7 +16376,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>145 Ontogenetic Data;  850 Infancy and Childhood;  880 Adolescence, Adulthood, and Old Age</Uni>
+<Uni>145 Ontogenetic Data; 850 Infancy and Childhood; 880 Adolescence, Adulthood, and Old Age</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -16460,7 +16460,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>853 Infant Feeding;  854 Infant Care;  862 Weaning and Food Training</Uni>
+<Uni>853 Infant Feeding; 854 Infant Care; 862 Weaning and Food Training</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -16576,7 +16576,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>857 Childhood Activities;  858 Status of Children</Uni>
+<Uni>857 Childhood Activities; 858 Status of Children</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>9D Children</Uni>
@@ -16629,7 +16629,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>855 Child Care;  860 Socialization;  861 Techniques of Inculcation;  862 Weaning and Food Training;  863 Cleanliness Training;  864 Sex Training;  865 Aggression Training;  866 Independence Training;  867 Transmission of Cultural Norms;  868 Transmission of Skills;  869 Transmission of Beliefs</Uni>
+<Uni>855 Child Care; 860 Socialization; 861 Techniques of Inculcation; 862 Weaning and Food Training; 863 Cleanliness Training; 864 Sex Training; 865 Aggression Training; 866 Independence Training; 867 Transmission of Cultural Norms; 868 Transmission of Skills; 869 Transmission of Beliefs</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>35F Rear, Bring Up</Uni>
@@ -16732,7 +16732,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>881 Puberty and Initiation;  882 Status of Adolescents;  883 Adolescent Activities;  884 Majority</Uni>
+<Uni>881 Puberty and Initiation; 882 Status of Adolescents; 883 Adolescent Activities; 884 Majority</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="0D38C343-9C51-47fe-A367-FFADFC92C507"/>
@@ -16867,7 +16867,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>886 Senescence;  887 Activities of the Aged;  888 Status and Treatment of the Aged</Uni>
+<Uni>886 Senescence; 887 Activities of the Aged; 888 Status and Treatment of the Aged</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="CC6F100A-5220-4f53-801C-B1FDCC619608"/>
@@ -16976,7 +16976,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>145 Ontogenetic Data;  856 Development and Maturation</Uni>
+<Uni>145 Ontogenetic Data; 856 Development and Maturation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23K Grow, Growth</Uni>
@@ -17404,7 +17404,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>165 Mortality;  760 Death;  763 Dying</Uni>
+<Uni>165 Mortality; 760 Death; 763 Dying</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23G Live, Die</Uni>
@@ -17813,7 +17813,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>765 Mourning;  768 Social Readjustments to Death;  769 Cult of the Dead</Uni>
+<Uni>765 Mourning; 768 Social Readjustments to Death; 769 Cult of the Dead</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>25L Laugh, Cry, Groan x</Uni>
@@ -17882,7 +17882,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>766 Special Burial Practices and Funerals;  Deviant Mortuary Practices;  767 Mortuary Specialists</Uni>
+<Uni>766 Special Burial Practices and Funerals; Deviant Mortuary Practices; 767 Mortuary Specialists</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>52 Funerals and Burial</Uni>
@@ -18256,7 +18256,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>150 Behavior Processes and Personality;  156 Social Personality;  157 Personality Traits</Uni>
+<Uni>150 Behavior Processes and Personality; 156 Social Personality; 157 Personality Traits</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="8E11DD10-459B-4FB3-B876-7D80EC5F8A4D"/>
@@ -18603,7 +18603,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>30 Think;  30A To Think, Thought</Uni>
+<Uni>30 Think; 30A To Think, Thought</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -18668,7 +18668,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>30 Think;  30A To Think, Thought;  30B To Think About, with the Implied Purpose of Responding Appropriately</Uni>
+<Uni>30 Think; 30A To Think, Thought; 30B To Think About, with the Implied Purpose of Responding Appropriately</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -19097,7 +19097,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>27 Learn;  27A Learn</Uni>
+<Uni>27 Learn; 27A Learn</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -19171,7 +19171,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>120 Research Methods;  Methodology;  121 Theoretical Orientation in Research and Its Results;  122 Practical Preparations in Conducting Fieldwork;  123 Observational Role in Research;  124 Interviewing in Research;  125 Tests and Schedules Administered In the Field;  126 Recording and Collecting In the Field;  127 Historical and Archival Research;  128 Organization and Analysis of Results of Research</Uni>
+<Uni>120 Research Methods; Methodology; 121 Theoretical Orientation in Research and Its Results; 122 Practical Preparations in Conducting Fieldwork; 123 Observational Role in Research; 124 Interviewing in Research; 125 Tests and Schedules Administered In the Field; 126 Recording and Collecting In the Field; 127 Historical and Archival Research; 128 Organization and Analysis of Results of Research</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>27D Try To Learn</Uni>
@@ -19263,7 +19263,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>125 Tests and Schedules Administered In the Field;  208 Public Opinion</Uni>
+<Uni>125 Tests and Schedules Administered In the Field; 208 Public Opinion</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>30G To Distinguish, To Evaluate, To Judge</Uni>
@@ -19485,7 +19485,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>28 Know;  28A Know;  28B Known</Uni>
+<Uni>28 Know; 28A Know; 28B Known</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -19583,7 +19583,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>28C Well Known, Clearly Shown, Revealed;  28D Able To Be Known;  28E Not Able To Be Known, Secret</Uni>
+<Uni>28C Well Known, Clearly Shown, Revealed; 28D Able To Be Known; 28E Not Able To Be Known, Secret</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -19756,7 +19756,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>32 Understand;  32A Understand;  32B Come To Understand;  32C Ease or Difficulty in Understand</Uni>
+<Uni>32 Understand; 32A Understand; 32B Come To Understand; 32C Ease or Difficulty in Understand</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="C4330001-83CA-485D-8B9B-09F7E1BE60CC"/>
@@ -19908,7 +19908,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>31A Have an Opinion, Hold a View;  31 Hold a View, Believe, Trust;  31D Acknowledge;  31G Accept as True;  31H Change an Opinion Concerning Truth</Uni>
+<Uni>31A Have an Opinion, Hold a View; 31 Hold a View, Believe, Trust; 31D Acknowledge; 31G Accept as True; 31H Change an Opinion Concerning Truth</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -19950,7 +19950,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>31F Believe To Be True;  31J Be a Believer, Christian Faith</Uni>
+<Uni>31F Believe To Be True; 31J Be a Believer, Christian Faith</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -20210,7 +20210,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33W Agree;  31C Agree, Consent</Uni>
+<Uni>33W Agree; 31C Agree, Consent</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -20670,7 +20670,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>29 Memory and Recall;  29B Recalling from Memory;  29D Recalling and Responding with Appropriate Action</Uni>
+<Uni>29 Memory and Recall; 29B Recalling from Memory; 29D Recalling and Responding with Appropriate Action</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -21307,7 +21307,7 @@
 <AUni ws="en">(1) What is the general term for making a decision by chance?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">cast lots [in English and many languages there isn't a generic term;  'cast lots' is archaic]</AUni>
+<AUni ws="en">cast lots [in English and many languages there isn't a generic term; 'cast lots' is archaic]</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -21446,7 +21446,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>25O Patience, Endurance, Perseverance;  25F Be Eager, Be Earnest, In a Devoted Manner</Uni>
+<Uni>25O Patience, Endurance, Perseverance; 25F Be Eager, Be Earnest, In a Devoted Manner</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="85912845-21B0-41EB-8B8C-1F5C3D53DF08"/>
@@ -21528,7 +21528,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to being stubborn--to be unwilling to change a decision;  to be unwilling to do something someone wants you to do;  or to do what you want to do, even though other people do not want you to do it.</Run>
+<Run ws="en">Use this domain for words related to being stubborn--to be unwilling to change a decision; to be unwilling to do something someone wants you to do; or to do what you want to do, even though other people do not want you to do it.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -22070,7 +22070,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33B' Urge, Persuade;  33H' Recommend, Propose</Uni>
+<Uni>33B' Urge, Persuade; 33H' Recommend, Propose</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="5EA9301A-9906-4E81-97CF-48EE95A54C63"/>
@@ -22559,7 +22559,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The rain &lt;prevented&gt; John &lt;from&gt; finishing his work.;  John &lt;kept&gt; us &lt;from&gt; losing our way.</Run>
+<Run ws="en">The rain &lt;prevented&gt; John &lt;from&gt; finishing his work.; John &lt;kept&gt; us &lt;from&gt; losing our way.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -22806,7 +22806,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>152 Drives and Emotions;  150 Behavior Processes and Personality</Uni>
+<Uni>152 Drives and Emotions; 150 Behavior Processes and Personality</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>25 Attitudes and Emotions</Uni>
@@ -23655,7 +23655,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>25K Happy, Glad, Joyful;  25H Acceptable To, To Be Pleased With;  25J Enjoy, Take Pleasure In, Be Fond of Doing</Uni>
+<Uni>25K Happy, Glad, Joyful; 25H Acceptable To, To Be Pleased With; 25J Enjoy, Take Pleasure In, Be Fond of Doing</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -24847,7 +24847,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>25W Sorrow, Regret;  25X Discouragement</Uni>
+<Uni>25W Sorrow, Regret; 25X Discouragement</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="F2D0F288-5BBE-4FA0-9E8F-DDCC74891701"/>
@@ -25121,7 +25121,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88Z Hate, Hateful;  25Q Abhor</Uni>
+<Uni>88Z Hate, Hateful; 25Q Abhor</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="642FF468-E6C8-4FD0-8F52-262EFA8F7774"/>
@@ -25724,7 +25724,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>25R Shame, Disgrace, Humiliation;  88T Act Shamefully</Uni>
+<Uni>25R Shame, Disgrace, Humiliation; 88T Act Shamefully</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -25895,7 +25895,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88X Anger, Be Indignant With;  25P Offend, Be Offended;  88W Resentful, Hold a Grudge Against</Uni>
+<Uni>88X Anger, Be Indignant With; 25P Offend, Be Offended; 88W Resentful, Hold a Grudge Against</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -26944,7 +26944,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>195 Sociolinguistics;  Stylistic</Uni>
+<Uni>195 Sociolinguistics; Stylistic</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33D Language Levels</Uni>
@@ -27510,7 +27510,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The book &lt;is about&gt; the President.;  The meeting &lt;is about&gt; the schedule.;  The story &lt;depicts&gt; the life of the President.;  The story &lt;presents&gt; a view of the President.</Run>
+<Run ws="en">The book &lt;is about&gt; the President.; The meeting &lt;is about&gt; the schedule.; The story &lt;depicts&gt; the life of the President.; The story &lt;presents&gt; a view of the President.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -27523,7 +27523,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John was talking &lt;about&gt; the new seed he bought.;  I read &lt;about&gt; John in the newspaper.;  a book &lt;about&gt; the President;  the book &lt;on&gt; the President;  the picture &lt;of&gt; the President;  an experiment &lt;concerning&gt; growing rice;  a course &lt;in&gt; history</Run>
+<Run ws="en">John was talking &lt;about&gt; the new seed he bought.; I read &lt;about&gt; John in the newspaper.; a book &lt;about&gt; the President; the book &lt;on&gt; the President; the picture &lt;of&gt; the President; an experiment &lt;concerning&gt; growing rice; a course &lt;in&gt; history</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -27536,7 +27536,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The &lt;subject&gt; of the book is the President.;  The &lt;topic&gt; of the discussion is efficiency.</Run>
+<Run ws="en">The &lt;subject&gt; of the book is the President.; The &lt;topic&gt; of the discussion is efficiency.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -27557,7 +27557,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>72 True, False;  72A True, False;  72B Accurate, Inaccurate</Uni>
+<Uni>72 True, False; 72A True, False; 72B Accurate, Inaccurate</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -27591,7 +27591,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33R Speak Truth, Speak Falsehood;  88E Honesty, Sincerity</Uni>
+<Uni>33R Speak Truth, Speak Falsehood; 88E Honesty, Sincerity</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -27737,7 +27737,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>70 Real, Unreal;  73 Genuine, Phony</Uni>
+<Uni>70 Real, Unreal; 73 Genuine, Phony</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -28094,7 +28094,7 @@
 <Uni>124 Interviewing in Research</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>33L Ask For, Request;  33N Question, Answer</Uni>
+<Uni>33L Ask For, Request; 33N Question, Answer</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="45F7B003-ADE3-4EFC-8DEE-259DCBF80A4A"/>
@@ -28460,7 +28460,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33J' Thanks;  25I Thankful, Grateful</Uni>
+<Uni>33J' Thanks; 25I Thankful, Grateful</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -28839,7 +28839,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33P' Insult, Slander;  33R' Mock, Ridicule</Uni>
+<Uni>33P' Insult, Slander; 33R' Mock, Ridicule</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -29114,7 +29114,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>537 Oratory;  544 Public Lectures</Uni>
+<Uni>537 Oratory; 544 Public Lectures</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -29188,7 +29188,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33O Inform, Announce;  33P Assert, Declare;  33S Preach, Proclaim</Uni>
+<Uni>33O Inform, Announce; 33P Assert, Declare; 33S Preach, Proclaim</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -29320,7 +29320,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>190 Language;  197 Linguistic Identification;  198 Special Languages;  193 Grammar;  194 Phonology;  192 Vocabulary</Uni>
+<Uni>190 Language; 197 Linguistic Identification; 198 Special Languages; 193 Grammar; 194 Phonology; 192 Vocabulary</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33A Language</Uni>
@@ -29826,7 +29826,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>1210 Archaeological Excavation Methods;  1211 Dating Methods in Archaeology;  1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology;  1213 Comparative Data [in Reconstructing History];  129 Archaeological Survey Methods;  138 Post Depositional Processes in Archaeological Sites;  159 Life History Materials;  170 History and Culture Change;  171 Comparative Evidence;  Distributional Evidence;  1710 Cultural Revitalization and Ethnogenesis;  172 Prehistory;  Archaeology;  173 Traditional History;  174 Historical Reconstruction;  175 History;  Recorded History;  176 Innovation;  177 Acculturation and Culture Contact;  178 Sociocultural Trends;  910 Archaeological Measures, Techniques and Analysis;  911 Chronologies and Cultural Sequences;  912 Cultural Stratigraphy;  913 Functional Specialization;  914 Typologies and Classification;  915 Archaeological Inventories</Uni>
+<Uni>1210 Archaeological Excavation Methods; 1211 Dating Methods in Archaeology; 1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology; 1213 Comparative Data [in Reconstructing History]; 129 Archaeological Survey Methods; 138 Post Depositional Processes in Archaeological Sites; 159 Life History Materials; 170 History and Culture Change; 171 Comparative Evidence; Distributional Evidence; 1710 Cultural Revitalization and Ethnogenesis; 172 Prehistory; Archaeology; 173 Traditional History; 174 Historical Reconstruction; 175 History; Recorded History; 176 Innovation; 177 Acculturation and Culture Contact; 178 Sociocultural Trends; 910 Archaeological Measures, Techniques and Analysis; 911 Chronologies and Cultural Sequences; 912 Cultural Stratigraphy; 913 Functional Specialization; 914 Typologies and Classification; 915 Archaeological Inventories</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -30454,10 +30454,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>212 Writing;  218 Writing and Printing Supplies</Uni>
+<Uni>212 Writing; 218 Writing and Printing Supplies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>33E Written Language;  6J Instruments Used in Marking and Writing</Uni>
+<Uni>33E Written Language; 6J Instruments Used in Marking and Writing</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -30499,7 +30499,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>538 Literature;  539 Literary Texts;  900 Texts;  901 Texts in the Language of the Culture or Ethnic Group;  902 Texts Translated in English;  903 Interlinear Translations</Uni>
+<Uni>538 Literature; 539 Literary Texts; 900 Texts; 901 Texts in the Language of the Culture or Ethnic Group; 902 Texts Translated in English; 903 Interlinear Translations</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -30588,7 +30588,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>214 Publishing;  213 Printing</Uni>
+<Uni>214 Publishing; 213 Printing</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -30654,7 +30654,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>210 Records;  126 Recording and Collecting In the Field;  211 Mnemonic Devices;  217 Archives</Uni>
+<Uni>210 Records; 126 Recording and Collecting In the Field; 211 Mnemonic Devices; 217 Archives</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31018,7 +31018,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>2010 Internet Communications;  202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail;  Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
+<Uni>2010 Internet Communications; 202 Transmission of Messages; 203 Dissemination of News and Information; 204 Press; 205 Mail; Postal System; 206 Telephone and Telegraph; 207 Radio and Television</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31184,7 +31184,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>203 Dissemination of News and Information;  204 Press</Uni>
+<Uni>203 Dissemination of News and Information; 204 Press</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31374,7 +31374,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail;  Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
+<Uni>202 Transmission of Messages; 203 Dissemination of News and Information; 204 Press; 205 Mail; Postal System; 206 Telephone and Telegraph; 207 Radio and Television</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31497,7 +31497,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>870 Education;  871 Educational System;  872 Elementary Education;  873 Liberal Arts Education;  874 Vocational Education;  875 Teachers;  876 Educational Theory and Methods;  877 Students</Uni>
+<Uni>870 Education; 871 Educational System; 872 Elementary Education; 873 Liberal Arts Education; 874 Vocational Education; 875 Teachers; 876 Educational Theory and Methods; 877 Students</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31664,7 +31664,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>378 Atomic Energy;  810 Sciences and Humanities;  Exact Knowledge;  811 Logic;  812 Philosophy;  813 Scientific Method;  814 Humanistic Studies;  815 Science;  816 Applied Science;  820 Ideas about Nature and People;  Ideas about Nature and Man;  821 Ethnometeorology;  822 Ethnophysics;  823 Ethnogeography;  824 Ethnobotany;  825 Ethnozoology;  826 Ethnoanatomy;  827 Ethnophysiology;  828 Ethnopyschology;  829 Ethnosociology</Uni>
+<Uni>378 Atomic Energy; 810 Sciences and Humanities; Exact Knowledge; 811 Logic; 812 Philosophy; 813 Scientific Method; 814 Humanistic Studies; 815 Science; 816 Applied Science; 820 Ideas about Nature and People; Ideas about Nature and Man; 821 Ethnometeorology; 822 Ethnophysics; 823 Ethnogeography; 824 Ethnobotany; 825 Ethnozoology; 826 Ethnoanatomy; 827 Ethnophysiology; 828 Ethnopyschology; 829 Ethnosociology</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31862,7 +31862,7 @@
 <Uni>570 Interpersonal Relations</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>34 Association;  34A Associate;  89T Association;  89A Relation;  89Z Mediation</Uni>
+<Uni>34 Association; 34A Associate; 89T Association; 89A Relation; 89Z Mediation</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -31928,7 +31928,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>572 Friendships;  573 Cliques</Uni>
+<Uni>572 Friendships; 573 Cliques</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -32295,7 +32295,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>560 Social Stratification;  561 Age Stratification;  562 Gender Status;  Sex Status;  563 Ethnic Stratification;  564 Castes;  565 Classes;  566 Serfdom and Peonage;  567 Slavery</Uni>
+<Uni>560 Social Stratification; 561 Age Stratification; 562 Gender Status; Sex Status; 563 Ethnic Stratification; 564 Castes; 565 Classes; 566 Serfdom and Peonage; 567 Slavery</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -32421,7 +32421,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>39A Opposition, Hostility;  39B Division</Uni>
+<Uni>39A Opposition, Hostility; 39B Division</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -32662,7 +32662,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>34B Join, Begin To Associate;  34E Establish or Confirm a Relation</Uni>
+<Uni>34B Join, Begin To Associate; 34E Establish or Confirm a Relation</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -32747,7 +32747,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>600 Kinship;  601 Kinship Terminology</Uni>
+<Uni>600 Kinship; 601 Kinship Terminology</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>10 Kinship Terms</Uni>
@@ -32822,7 +32822,7 @@
 <Uni>602 Kin Relationships</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>10A Groups and Members of Groups of Persons Regarded as Related by Blood but without Special Reference to Successive Generations;  10B Kinship Relations Involving Successive Generations</Uni>
+<Uni>10A Groups and Members of Groups of Persons Regarded as Related by Blood but without Special Reference to Successive Generations; 10B Kinship Relations Involving Successive Generations</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -33375,7 +33375,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>606 Parents-in-Law and Children-in-Law;  607 Siblings-in-Law</Uni>
+<Uni>606 Parents-in-Law and Children-in-Law; 607 Siblings-in-Law</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -33610,7 +33610,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>608 Artificial Kin Relationships;  609 Behavior Toward Non-relatives</Uni>
+<Uni>608 Artificial Kin Relationships; 609 Behavior Toward Non-relatives</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="0E79435B-F5FF-4061-81FF-49557BA2AED4"/>
@@ -33639,7 +33639,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>590 Family;  144 Racial Identification;  Racial Affinities;  591 Residence;  592 Household;  593 Family Relationships;  594 Nuclear Family;  595 Polygamy;  596 Extended Families;  610 Kin Groups;  611 Rule of Descent;  612 Kindreds and Ramages;  613 Lineages;  614 Clans;  615 Phratries;  616 Moieties;  617 Bilineal Kin Groups;  618 Localized Kin Groups;  619 Tribe and Nation</Uni>
+<Uni>590 Family; 144 Racial Identification; Racial Affinities; 591 Residence; 592 Household; 593 Family Relationships; 594 Nuclear Family; 595 Polygamy; 596 Extended Families; 610 Kin Groups; 611 Rule of Descent; 612 Kindreds and Ramages; 613 Lineages; 614 Clans; 615 Phratries; 616 Moieties; 617 Bilineal Kin Groups; 618 Localized Kin Groups; 619 Tribe and Nation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11D Ethnic-Cultural</Uni>
@@ -34151,7 +34151,7 @@
 <Uni>571 Social Relationships and Groups</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>11 Groups and Classes of Persons and Members of Such Groups and Classes;  11A General</Uni>
+<Uni>11 Groups and Classes of Persons and Members of Such Groups and Classes; 11A General</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -34323,7 +34323,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The hospital &lt;is affiliated with&gt; the university.;  Our dictionary project &lt;is affiliated with&gt; the university.</Run>
+<Run ws="en">The hospital &lt;is affiliated with&gt; the university.; Our dictionary project &lt;is affiliated with&gt; the university.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -34540,7 +34540,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>533 Music;  545 Musical and Theatrical Productions</Uni>
+<Uni>533 Music; 545 Musical and Theatrical Productions</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -35033,7 +35033,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>536 Drama;  545 Musical and Theatrical Productions</Uni>
+<Uni>536 Drama; 545 Musical and Theatrical Productions</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="4F516445-E044-4D9C-AC9B-A3178F72B405"/>
@@ -35150,7 +35150,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>540 Commercialized Entertainment;  520 Recreation;  517 Leisure Time Activities;  523 Hobbies;  529 Recreational Facilities;  541 Spectacles;  543 Exhibitions;  546 Motion Picture Industry;  547 Night Clubs and Cabarets;  548 Illegal Entertainment;  Organized Vice</Uni>
+<Uni>540 Commercialized Entertainment; 520 Recreation; 517 Leisure Time Activities; 523 Hobbies; 529 Recreational Facilities; 541 Spectacles; 543 Exhibitions; 546 Motion Picture Industry; 547 Night Clubs and Cabarets; 548 Illegal Entertainment; Organized Vice</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>50 Contests and Play</Uni>
@@ -35413,7 +35413,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>526 Athletic Sports;  542 Commercialized Sports</Uni>
+<Uni>526 Athletic Sports; 542 Commercialized Sports</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -36211,7 +36211,7 @@
 <Uni>577 Ethics</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>41 Behavior and Related States;  41A Behavior, Conduct;  88 Moral and Ethical Qualities and Related Behavior</Uni>
+<Uni>41 Behavior and Related States; 41A Behavior, Conduct; 88 Moral and Ethical Qualities and Related Behavior</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -36245,7 +36245,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88B Just, Righteous;  88C Holy, Pure;  41C Particular Patterns of Behavior</Uni>
+<Uni>88B Just, Righteous; 88C Holy, Pure; 41C Particular Patterns of Behavior</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="83ADEB9D-C0BE-4073-894D-913014420280"/>
@@ -36322,10 +36322,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>680 Offenses and Sanctions;  682 Offenses against Life;  683 Offenses against the Person;  684 Sex and Marital Offenses;  685 Property Offenses;  686 Nonfulfillment of Obligations;  687 Offenses against the State;  688 Religious Offenses;  689 Social Offenses</Uni>
+<Uni>680 Offenses and Sanctions; 682 Offenses against Life; 683 Offenses against the Person; 684 Sex and Marital Offenses; 685 Property Offenses; 686 Nonfulfillment of Obligations; 687 Offenses against the State; 688 Religious Offenses; 689 Social Offenses</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>88H' Impurity;  88T Act Shamefully;  88I' Licentiousness, Perversion;  88L' Sin, Wrongdoing, Guilt</Uni>
+<Uni>88H' Impurity; 88T Act Shamefully; 88I' Licentiousness, Perversion; 88L' Sin, Wrongdoing, Guilt</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="AECF2AAD-B7A4-444F-9B13-64BC534126D2"/>
@@ -36442,7 +36442,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88D Perfect, Perfection;  88F Modesty, Propriety</Uni>
+<Uni>88D Perfect, Perfection; 88F Modesty, Propriety</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -37057,7 +37057,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88F Modesty, Propriety;  88G Humility</Uni>
+<Uni>88F Modesty, Propriety; 88G Humility</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -37601,7 +37601,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88I Kindness, Harshness;  35 Help, Care For</Uni>
+<Uni>88I Kindness, Harshness; 35 Help, Care For</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -37725,7 +37725,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">His father &lt;helped&gt; John build his house.;  John built his house &lt;with&gt; his father's &lt;help&gt;.</Run>
+<Run ws="en">His father &lt;helped&gt; John build his house.; John built his house &lt;with&gt; his father's &lt;help&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -38588,7 +38588,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to self-control--deciding not to do something that you want to do, because you think it would be bad to do it;  or deciding to do something, because you know it is good.</Run>
+<Run ws="en">Use this domain for words referring to self-control--deciding not to do something that you want to do, because you think it would be bad to do it; or deciding to do something, because you know it is good.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -38674,7 +38674,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>88K Self-Control, Lack of Self-Control;  88G' Extravagant Living, Intemperate Living</Uni>
+<Uni>88K Self-Control, Lack of Self-Control; 88G' Extravagant Living, Intemperate Living</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -39110,7 +39110,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>153 Modification of Behavior;  154 Adjustment Processes;  155 Personality Development</Uni>
+<Uni>153 Modification of Behavior; 154 Adjustment Processes; 155 Personality Development</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>41E Change Behavior</Uni>
@@ -39202,7 +39202,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>180 Total Culture;  181 Ethos;  182 Function and Adaptational Interpretations;  183 Norms;  184 Cultural Participation;  185 Cultural Goals;  186 Cultural Identity and Pride;  Ethnocentrism</Uni>
+<Uni>180 Total Culture; 181 Ethos; 182 Function and Adaptational Interpretations; 183 Norms; 184 Cultural Participation; 185 Cultural Goals; 186 Cultural Identity and Pride; Ethnocentrism</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -39250,7 +39250,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to a habit--a pattern of behavior of a person;  something a person does frequently or regularly.</Run>
+<Run ws="en">Use this domain for words referring to a habit--a pattern of behavior of a person; something a person does frequently or regularly.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -39357,10 +39357,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>730 Social Problems;  732 Disabilities;  Handicapped;  733 Alcoholism and Drug Addiction;  734 Invalidism;  735 Poverty;  736 Dependency;  737 Old Age Dependency;  738 Delinquency</Uni>
+<Uni>730 Social Problems; 732 Disabilities; Handicapped; 733 Alcoholism and Drug Addiction; 734 Invalidism; 735 Poverty; 736 Dependency; 737 Old Age Dependency; 738 Delinquency</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>22A Trouble, Hardship, Distress;  22B Experience Trouble, Hardship;  22C Cause Trouble, Hardship;  22D Difficult, Hard;  22F Easy, Light</Uni>
+<Uni>22A Trouble, Hardship, Distress; 22B Experience Trouble, Hardship; 22C Cause Trouble, Hardship; 22D Difficult, Hard; 22F Easy, Light</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -39433,7 +39433,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>21 Danger, Risk, Safe, Save;  21A Danger</Uni>
+<Uni>21 Danger, Risk, Safe, Save; 21A Danger</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="0EDA983B-633E-4B11-B5C8-28BE60067782"/>
@@ -40141,7 +40141,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>21C Safe, Free from Danger;  21D Become Safe, Free from Danger;  21E Cause To Be Safe, Free from Danger</Uni>
+<Uni>21C Safe, Free from Danger; 21D Become Safe, Free from Danger; 21E Cause To Be Safe, Free from Danger</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -40193,7 +40193,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We are safe here.;  We made it to safety.</Run>
+<Run ws="en">We are safe here.; We made it to safety.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -40561,7 +40561,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>622 Community Heads;  Headmen;  624 Local Officials</Uni>
+<Uni>622 Community Heads; Headmen; 624 Local Officials</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -40636,7 +40636,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>36 Guide, Discipline, Follow;  36A Guide, Lead</Uni>
+<Uni>36 Guide, Discipline, Follow; 36A Guide, Lead</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="E931DA8A-EFC1-46CB-836A-72FBA4A1EB4F"/>
@@ -40776,7 +40776,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>39D Yielding;  33U Profess Allegiance</Uni>
+<Uni>39D Yielding; 33U Profess Allegiance</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -41209,10 +41209,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>550 Individuation and Mobility;  554 Status, Role, and Prestige;  555 Talent Mobility;  557 Manipulative Mobility;  558 Downward Mobility</Uni>
+<Uni>550 Individuation and Mobility; 554 Status, Role, and Prestige; 555 Talent Mobility; 557 Manipulative Mobility; 558 Downward Mobility</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>87 Status;  87A Position, Rank</Uni>
+<Uni>87 Status; 87A Position, Rank</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -41408,7 +41408,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>643 Chief Executive;  644 Executive Household</Uni>
+<Uni>643 Chief Executive; 644 Executive Household</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -41573,7 +41573,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>641 Citizenship;  160 Demography;  161 Population;  162 Composition of Population;  163 Birth Statistics;  164 Morbidity;  165 Mortality;  168 Population Policy</Uni>
+<Uni>641 Citizenship; 160 Demography; 161 Population; 162 Composition of Population; 163 Birth Statistics; 164 Morbidity; 165 Mortality; 168 Population Policy</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -41709,7 +41709,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>621 Community Structure;  628 Inter-community Relations;  629 Inter-ethnic Relations;  642 Constitution</Uni>
+<Uni>621 Community Structure; 628 Inter-community Relations; 629 Inter-ethnic Relations; 642 Constitution</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -41735,7 +41735,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>623 Councils;  646 Parliament;  647 Administrative Agencies</Uni>
+<Uni>623 Councils; 646 Parliament; 647 Administrative Agencies</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -41763,7 +41763,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>37D Rule, Govern;  37 Control, Rule</Uni>
+<Uni>37D Rule, Govern; 37 Control, Rule</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -41812,7 +41812,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>626 Social Control;  650 Government Activities;  653 Public Works;  654 Research and Development;  655 Government Enterprises;  656 Government Regulation;  657 Public Welfare;  658 Public Education;  659 Miscellaneous Government Activities;  744 Public Health and Sanitation;  745 Social Insurance;  746 Public Assistance</Uni>
+<Uni>626 Social Control; 650 Government Activities; 653 Public Works; 654 Research and Development; 655 Government Enterprises; 656 Government Regulation; 657 Public Welfare; 658 Public Education; 659 Miscellaneous Government Activities; 744 Public Health and Sanitation; 745 Social Insurance; 746 Public Assistance</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="9A8F2F6A-A039-45DD-80D3-D1E0911907B2"/>
@@ -42023,7 +42023,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John went &lt;as&gt; David's &lt;representative&gt;.;  John spoke &lt;on&gt; David's &lt;behalf&gt;.;  John spoke &lt;on behalf of&gt; David.;  John spoke &lt;for&gt; David.</Run>
+<Run ws="en">John went &lt;as&gt; David's &lt;representative&gt;.; John spoke &lt;on&gt; David's &lt;behalf&gt;.; John spoke &lt;on behalf of&gt; David.; John spoke &lt;for&gt; David.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -42084,7 +42084,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>660 Political Behavior;  661 Exploitation;  662 Political Intrigue;  663 Public Service;  664 Pressure Politics;  665 Political Parties;  667 Political Machines;  668 Political Movements</Uni>
+<Uni>660 Political Behavior; 661 Exploitation; 662 Political Intrigue; 663 Public Service; 664 Pressure Politics; 665 Political Parties; 667 Political Machines; 668 Political Movements</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11C Socio-Political</Uni>
@@ -42147,7 +42147,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>630 Territorial Organization;  631 Territorial Hierarchy;  634 Districts;  635 Provinces;  636 Dependencies</Uni>
+<Uni>630 Territorial Organization; 631 Territorial Hierarchy; 634 Districts; 635 Provinces; 636 Dependencies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>1K Sociopolitical Areas</Uni>
@@ -42258,7 +42258,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>632 Towns;  633 Cities;  360 Settlements;  361 Settlement Patterns;  362 Housing;  369 Urban and Rural Life</Uni>
+<Uni>632 Towns; 633 Cities; 360 Settlements; 361 Settlement Patterns; 362 Housing; 369 Urban and Rural Life</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>1N Population Centers</Uni>
@@ -42536,7 +42536,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>674 Crime;  677 Organized Crime;  672 Liability;  673 Wrongs</Uni>
+<Uni>674 Crime; 677 Organized Crime; 672 Liability; 673 Wrongs</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>88R Act Lawlessly</Uni>
@@ -42592,7 +42592,7 @@
 <Uni>698 Special Courts</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>56A Court of Justice;  56B Lawsuit, Case</Uni>
+<Uni>56A Court of Justice; 56B Lawsuit, Case</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -42718,7 +42718,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>691 Litigation;  690 Justice;  692 Judicial Authority;  693 Legal and Judicial Personnel;  694 Initiation of Judicial Proceedings;  695 Trial Procedure;  696 Execution of Justice</Uni>
+<Uni>691 Litigation; 690 Justice; 692 Judicial Authority; 693 Legal and Judicial Personnel; 694 Initiation of Judicial Proceedings; 695 Trial Procedure; 696 Execution of Justice</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>56D Judicial Hearing, Inquiry</Uni>
@@ -42860,7 +42860,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33V' Accuse, Blame;  56C Accusation</Uni>
+<Uni>33V' Accuse, Blame; 56C Accusation</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -43047,7 +43047,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>56E Judge, Condemn, Acquit;  56F Obtain Justice;  56H Lead Off to Punishment</Uni>
+<Uni>56E Judge, Condemn, Acquit; 56F Obtain Justice; 56H Lead Off to Punishment</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -43214,7 +43214,7 @@
 <Uni>681 Sanctions</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>38 Punish, Reward;  38A Punish</Uni>
+<Uni>38 Punish, Reward; 38A Punish</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -43332,7 +43332,7 @@
 <Uni>697 Prisons and Jails</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>37H Imprison;  37I Guard, Watch Over</Uni>
+<Uni>37H Imprison; 37I Guard, Watch Over</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -43938,7 +43938,7 @@
 <Uni>578 Ingroup Antagonisms</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>39 Hostility, Strife;  39E Strife, Struggle</Uni>
+<Uni>39 Hostility, Strife; 39E Strife, Struggle</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="EAED8C63-9F97-4116-927C-19F364A99E72"/>
@@ -43978,7 +43978,7 @@
 <Uni>578 Ingroup Antagonisms</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>39 Hostility, Strife;  39E Strife, Struggle</Uni>
+<Uni>39 Hostility, Strife; 39E Strife, Struggle</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="92E441DF-7E56-4E2C-B205-79A95800F567"/>
@@ -44750,10 +44750,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>720 War;  726 Warfare;  721 Instigation of War;  722 Wartime Adjustments;  723 Strategy;  724 Logistics;  725 Tactics;  727 Aftermath of Combat;  729 War Veterans</Uni>
+<Uni>720 War; 726 Warfare; 721 Instigation of War; 722 Wartime Adjustments; 723 Strategy; 724 Logistics; 725 Tactics; 727 Aftermath of Combat; 729 War Veterans</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>39 Hostility, Strife;  55 Military Activities</Uni>
+<Uni>39 Hostility, Strife; 55 Military Activities</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -45162,7 +45162,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>700 Armed Forces;  701 Military Organization;  702 Recruitment and Training;  703 Discipline and Morale;  704 Ground Combat Forces;  705 Supply and Commissariat;  708 Auxiliary Corps</Uni>
+<Uni>700 Armed Forces; 701 Military Organization; 702 Recruitment and Training; 703 Discipline and Morale; 704 Ground Combat Forces; 705 Supply and Commissariat; 708 Auxiliary Corps</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>55C Army</Uni>
@@ -45570,10 +45570,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>411 Weapons;  710 Military Technology;  711 Military Engineering;  712 Military Installations;  713 Ordnance;  714 Uniform and Accouterment;  715 Military Vehicles;  716 Naval Vessels;  717 Military Aircraft;  718 Special Military Equipment</Uni>
+<Uni>411 Weapons; 710 Military Technology; 711 Military Engineering; 712 Military Installations; 713 Ordnance; 714 Uniform and Accouterment; 715 Military Vehicles; 716 Naval Vessels; 717 Military Aircraft; 718 Special Military Equipment</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>6G Weapons and Armor;  55A To Arm</Uni>
+<Uni>6G Weapons and Armor; 55A To Arm</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -46203,7 +46203,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>40A Reconciliation;  40 Reconciliation, Forgiveness</Uni>
+<Uni>40A Reconciliation; 40 Reconciliation, Forgiveness</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -46233,7 +46233,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>770 Religious Beliefs;  771 General Character of Religion</Uni>
+<Uni>770 Religious Beliefs; 771 General Character of Religion</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>12 Supernatural Beings and Powers</Uni>
@@ -46336,7 +46336,7 @@
 <Uni>776 Spirits and Gods</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>12 Supernatural Beings and Powers;  12A Supernatural Beings</Uni>
+<Uni>12 Supernatural Beings and Powers; 12A Supernatural Beings</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -46410,7 +46410,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>779 Theological Systems;  770 Religious Beliefs;  772 Cosmology;  773 Mythology;  774 Animism;  775 Eschatology</Uni>
+<Uni>779 Theological Systems; 770 Religious Beliefs; 772 Cosmology; 773 Mythology; 774 Animism; 775 Eschatology</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -46599,7 +46599,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>789 Magic;  754 Sorcery;  755 Magical and Mental Therapy</Uni>
+<Uni>789 Magic; 754 Sorcery; 755 Magical and Mental Therapy</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>53J Magic</Uni>
@@ -46860,7 +46860,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>33A" Prophesy;  33X Foretell, Tell Fortunes</Uni>
+<Uni>33A" Prophesy; 33X Foretell, Tell Fortunes</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="C956A98A-4C85-4C85-868D-F27F44BD6422"/>
@@ -46997,10 +46997,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>780 Religious Practices;  781 Religious Experience;  786 Ecstatic Religious Practices;  Orgies</Uni>
+<Uni>780 Religious Practices; 781 Religious Experience; 786 Ecstatic Religious Practices; Orgies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>53 Religious Activities;  53A Religious Practice</Uni>
+<Uni>53 Religious Activities; 53A Religious Practice</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -47154,7 +47154,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>796 Organized Ceremonial;  788 Ritual;  786 Ecstatic religious practices;  Orgies</Uni>
+<Uni>796 Organized Ceremonial; 788 Ritual; 786 Ecstatic religious practices; Orgies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33S Preach, Proclaim</Uni>
@@ -47194,7 +47194,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>782 Prayers and Sacrifices;  Propitiation;  782 Propitiation</Uni>
+<Uni>782 Prayers and Sacrifices; Propitiation; 782 Propitiation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>53B Offering, Sacrifice</Uni>
@@ -47247,10 +47247,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>783 Purification and Atonement;  Purification and Expiation;  783 Purification and Expiation;  688 Religious Offenses</Uni>
+<Uni>783 Purification and Atonement; Purification and Expiation; 783 Purification and Expiation; 688 Religious Offenses</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>88C Holy, Pure;  53C Purify, Cleanse;  53D Defiled, Unclean, Common;  53E Baptize</Uni>
+<Uni>88C Holy, Pure; 53C Purify, Cleanse; 53D Defiled, Unclean, Common; 53E Baptize</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -47296,7 +47296,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to things that are taboo--something to be avoided;  a religious, social, or cultural restriction on behavior, as opposed to a government law.</Run>
+<Run ws="en">Use this domain for words referring to things that are taboo--something to be avoided; a religious, social, or cultural restriction on behavior, as opposed to a government law.</Run>
 </AStr>
 </Description>
 <OcmCodes>
@@ -47491,7 +47491,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>772 Cosmology;  775 Eschatology</Uni>
+<Uni>772 Cosmology; 775 Eschatology</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>1C Regions Below the Surface of the Earth</Uni>
@@ -47609,7 +47609,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>779 Theological Systems;  790 Ecclesiastical Organization;  794 Congregations;  795 Religious Denominations;  Sects;  797 Missions</Uni>
+<Uni>779 Theological Systems; 790 Ecclesiastical Organization; 794 Congregations; 795 Religious Denominations; Sects; 797 Missions</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11B Socio-Religious</Uni>
@@ -47678,10 +47678,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>791 Magicians and Diviners;  792 Prophets and Ascetics;  Holy Men;  793 Priesthood</Uni>
+<Uni>791 Magicians and Diviners; 792 Prophets and Ascetics; Holy Men; 793 Priesthood</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>31J Be a Believer, Christian Faith;  53I Roles and Functions</Uni>
+<Uni>31J Be a Believer, Christian Faith; 53I Roles and Functions</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -47982,7 +47982,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>778 Sacred Objects and Places;  346 Religious and Educational Structures</Uni>
+<Uni>778 Sacred Objects and Places; 346 Religious and Educational Structures</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -48189,7 +48189,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>354 Heating and Lighting Equipment;  355 Miscellaneous Building Equipment</Uni>
+<Uni>354 Heating and Lighting Equipment; 355 Miscellaneous Building Equipment</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="6342C8BF-55B5-400F-AF7E-63055FE6813B"/>
@@ -48452,7 +48452,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -48483,7 +48483,7 @@
 <Uni>146 Nutrition</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>5 Foods and Condiments;  5A Food</Uni>
+<Uni>5 Foods and Condiments; 5A Food</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -48509,7 +48509,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>252 Food Preparation;  265 Food Service Industries</Uni>
+<Uni>252 Food Preparation; 265 Food Service Industries</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -48998,7 +48998,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>260 Food Consumption;  262 Diet;  264 Eating</Uni>
+<Uni>260 Food Consumption; 262 Diet; 264 Eating</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>23A Eat, Drink</Uni>
@@ -49344,7 +49344,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>261 Gratification and Control of Hunger;  271 Water and Thirst</Uni>
+<Uni>261 Gratification and Control of Hunger; 271 Water and Thirst</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50459,7 +50459,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>273 Alcoholic Beverages;  270 Drink and Drugs;  Drink, Drugs and Indulgence</Uni>
+<Uni>273 Alcoholic Beverages; 270 Drink and Drugs; Drink, Drugs and Indulgence</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50690,7 +50690,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>276 Recreational and Non-therapeutic Drugs;  Narcotics and Stimulants</Uni>
+<Uni>276 Recreational and Non-therapeutic Drugs; Narcotics and Stimulants</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50788,7 +50788,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>276 Recreational and Non-therapeutic Drugs;  Narcotics and Stimulants</Uni>
+<Uni>276 Recreational and Non-therapeutic Drugs; Narcotics and Stimulants</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50824,7 +50824,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>290 Clothing;  291 Normal Garb</Uni>
+<Uni>290 Clothing; 291 Normal Garb</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>6Q Cloth, Leather, and Objects Made of Such Materials</Uni>
@@ -51207,7 +51207,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>300 Adornment;  515 Personal Hygiene;  302 Toilet;  305 Beauty Specialists</Uni>
+<Uni>300 Adornment; 515 Personal Hygiene; 302 Toilet; 305 Beauty Specialists</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>49 Activities Involving Clothing and Adorning</Uni>
@@ -51699,7 +51699,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>6U Perfumes and Incense;  47C Application and Removal of Liquids or Masses</Uni>
+<Uni>6U Perfumes and Incense; 47C Application and Removal of Liquids or Masses</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -51733,7 +51733,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>304 Body Alterations;  Mutilation</Uni>
+<Uni>304 Body Alterations; Mutilation</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -52628,7 +52628,7 @@
 <Uni>318 Environmental Quality</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>79J Clean, Dirty;  79K Spotted, Spotless</Uni>
+<Uni>79J Clean, Dirty; 79K Spotted, Spotless</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -53256,7 +53256,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>356 Housekeeping;  357 Domestic Service</Uni>
+<Uni>356 Housekeeping; 357 Domestic Service</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -53522,7 +53522,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>120 Research Methods;  Methodology</Uni>
+<Uni>120 Research Methods; Methodology</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -53699,7 +53699,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This pot &lt;is used to&gt; make coffee.;  This pot &lt;is used for&gt; making coffee.;  What &lt;is&gt; this pot &lt;used for&gt;?;  This pot &lt;is for&gt; coffee.;  What &lt;is&gt; this pot &lt;for&gt;?;  a pot &lt;for&gt; coffee</Run>
+<Run ws="en">This pot &lt;is used to&gt; make coffee.; This pot &lt;is used for&gt; making coffee.; What &lt;is&gt; this pot &lt;used for&gt;?; This pot &lt;is for&gt; coffee.; What &lt;is&gt; this pot &lt;for&gt;?; a pot &lt;for&gt; coffee</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -53739,7 +53739,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>65D Useful, Useless;  65E Advantageous, Not Advantageous</Uni>
+<Uni>65D Useful, Useless; 65E Advantageous, Not Advantageous</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -53789,7 +53789,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>65D Useful, Useless;  65E Advantageous, Not Advantageous</Uni>
+<Uni>65D Useful, Useless; 65E Advantageous, Not Advantageous</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -53920,7 +53920,7 @@
 <Uni>555 Talent Mobility</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>75 Adequate, Qualified;  68F Do Intensely or Extensively</Uni>
+<Uni>75 Adequate, Qualified; 68F Do Intensely or Extensively</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -54042,7 +54042,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>370 Energy and Power;  371 Power Development;  379 Miscellaneous Power Production</Uni>
+<Uni>370 Energy and Power; 371 Power Development; 379 Miscellaneous Power Production</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>76 Power, Force</Uni>
@@ -54564,7 +54564,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;managed&gt; to bake bread.;  John &lt;succeeded&gt; in earning enough money to buy a bicycle.</Run>
+<Run ws="en">John &lt;managed&gt; to bake bread.; John &lt;succeeded&gt; in earning enough money to buy a bicycle.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -54853,7 +54853,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>240 Agriculture;  242 Agricultural Science</Uni>
+<Uni>240 Agriculture; 242 Agricultural Science</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>43 Agriculture</Uni>
@@ -54885,7 +54885,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>248 Textile Agriculture;  249 Special Crops</Uni>
+<Uni>248 Textile Agriculture; 249 Special Crops</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -55840,7 +55840,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>6S Plant Products;  3F Wood and Wood Products</Uni>
+<Uni>6S Plant Products; 3F Wood and Wood Products</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="4098899A-0AD0-4D71-9F9F-B99D5BA2E0D5"/>
@@ -55903,7 +55903,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>250 Food Processing;  251 Preservation and Storage of Food</Uni>
+<Uni>250 Food Processing; 251 Preservation and Storage of Food</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -56036,7 +56036,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>253 Meat Packing Industry;  254 Refrigeration Industry;  255 Canning Industry;  256 Cereal Industry;  257 Confectionery Industries;  258 Miscellaneous Food Processing and Packing Industries</Uni>
+<Uni>253 Meat Packing Industry; 254 Refrigeration Industry; 255 Canning Industry; 256 Cereal Industry; 257 Confectionery Industries; 258 Miscellaneous Food Processing and Packing Industries</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -56195,7 +56195,7 @@
 <Uni>230 Animal Husbandry</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>44 Animal Husbandry, Fishing;  1O Pastures and Cultivated Lands</Uni>
+<Uni>44 Animal Husbandry, Fishing; 1O Pastures and Cultivated Lands</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="944CF5AF-469E-4B03-878F-A05D34B0D9F6"/>
@@ -57212,7 +57212,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>220 Food Quest;  221 Annual Cycle;  222 Collecting</Uni>
+<Uni>220 Food Quest; 221 Annual Cycle; 222 Collecting</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>44 Animal Husbandry, Fishing</Uni>
@@ -57450,7 +57450,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>226 Fishing;  225 Marine Hunting</Uni>
+<Uni>226 Fishing; 225 Marine Hunting</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -57718,10 +57718,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>330 Building and Construction;  331 Construction;  334 Structural Steel Work;  338 Miscellaneous Building Trades;  341 Architecture</Uni>
+<Uni>330 Building and Construction; 331 Construction; 334 Structural Steel Work; 338 Miscellaneous Building Trades; 341 Architecture</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>45 Building, Constructing;  7 Constructions;  7A Constructions</Uni>
+<Uni>45 Building, Constructing; 7 Constructions; 7A Constructions</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -57787,10 +57787,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>340 Structures;  344 Public Structures;  345 Recreational Structures;  346 Religious and Educational Structures;  347 Business Structures;  348 Industrial Structures;  349 Miscellaneous Structures</Uni>
+<Uni>340 Structures; 344 Public Structures; 345 Recreational Structures; 346 Religious and Educational Structures; 347 Business Structures; 348 Industrial Structures; 349 Miscellaneous Structures</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>7B Buildings;  7D Open Constructions</Uni>
+<Uni>7B Buildings; 7D Open Constructions</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -57999,7 +57999,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>342 Dwellings;  343 Outbuildings</Uni>
+<Uni>342 Dwellings; 343 Outbuildings</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -58685,7 +58685,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>350 Equipment and Maintenance of Buildings;  358 Maintenance of Non-domestic Buildings</Uni>
+<Uni>350 Equipment and Maintenance of Buildings; 358 Maintenance of Non-domestic Buildings</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -58761,7 +58761,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>364 Refuse Disposal and Sanitary Facilities;  365 Public Utilities;  366 Commercial Facilities;  367 Parks;  368 Miscellaneous Facilities</Uni>
+<Uni>364 Refuse Disposal and Sanitary Facilities; 365 Public Utilities; 366 Commercial Facilities; 367 Parks; 368 Miscellaneous Facilities</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -59088,7 +59088,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>280 Leather, Textiles and Fabrics;  287 Nonwoven Fabrics;  288 Textile Industry;  294 Clothing Manufacture;  295 Special Clothing Industries</Uni>
+<Uni>280 Leather, Textiles and Fabrics; 287 Nonwoven Fabrics; 288 Textile Industry; 294 Clothing Manufacture; 295 Special Clothing Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>48 Activities Involving Cloth</Uni>
@@ -59372,7 +59372,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>320 Processing of Basic Materials;  310 Exploitative Activities;  306 Jewelry Manufacture</Uni>
+<Uni>320 Processing of Basic Materials; 310 Exploitative Activities; 306 Jewelry Manufacture</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -59398,7 +59398,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>316 Mining and Quarrying;  317 Special Deposits</Uni>
+<Uni>316 Mining and Quarrying; 317 Special Deposits</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="C5B8C936-1E01-4E86-9145-A2B721EC9E39"/>
@@ -59476,7 +59476,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>325 Metallurgy;  327 Iron and Steel Industry</Uni>
+<Uni>325 Metallurgy; 327 Iron and Steel Industry</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -59526,7 +59526,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>326 Smiths and Their Crafts;  328 Nonferrous Metal Industries</Uni>
+<Uni>326 Smiths and Their Crafts; 328 Nonferrous Metal Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>7G Miscellaneous Constructions</Uni>
@@ -59603,7 +59603,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>323 Ceramic Technology;  Ceramic Industries</Uni>
+<Uni>323 Ceramic Technology; Ceramic Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>7G Miscellaneous Constructions</Uni>
@@ -59680,7 +59680,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>323 Ceramic Technology;  Ceramic Industries</Uni>
+<Uni>323 Ceramic Technology; Ceramic Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>7G Miscellaneous Constructions</Uni>
@@ -59811,7 +59811,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>324 Lithic Industries;  Stone Industry</Uni>
+<Uni>324 Lithic Industries; Stone Industry</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="0F07ADB7-4387-4723-9800-8362E825AD45"/>
@@ -59914,7 +59914,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>303 Manufacturing of Toilet Accessories;  380 Chemical Industries;  381 Chemical Engineering;  382 Petroleum and Coal Products Industries;  383 Rubber Industry;  384 Synthetics Industry;  385 Industrial Chemicals;  386 Paint and Dye Manufacture;  387 Fertilizer Industry;  388 Soap and Allied Products;  389 Manufacture of Explosives;  549 Art and Recreational Supplies Industries;  719 Munitions Industries</Uni>
+<Uni>303 Manufacturing of Toilet Accessories; 380 Chemical Industries; 381 Chemical Engineering; 382 Petroleum and Coal Products Industries; 383 Rubber Industry; 384 Synthetics Industry; 385 Industrial Chemicals; 386 Paint and Dye Manufacture; 387 Fertilizer Industry; 388 Soap and Allied Products; 389 Manufacture of Explosives; 549 Art and Recreational Supplies Industries; 719 Munitions Industries</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60015,7 +60015,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>322 Woodworking;  335 Carpentry;  289 Paper Industry</Uni>
+<Uni>322 Woodworking; 335 Carpentry; 289 Paper Industry</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60235,7 +60235,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>283 Cordage;  284 Knots and Lashing</Uni>
+<Uni>283 Cordage; 284 Knots and Lashing</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60322,7 +60322,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>282 Leather Industry;  281 Work in Skins</Uni>
+<Uni>282 Leather Industry; 281 Work in Skins</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60389,7 +60389,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>530 Fine Arts;  531 Decorative Art;  5311 Visual Arts;  532 Representative Art;  543 Exhibitions</Uni>
+<Uni>530 Fine Arts; 531 Decorative Art; 5311 Visual Arts; 532 Representative Art; 543 Exhibitions</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60609,7 +60609,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>311 Land Use;  332 Earth Moving</Uni>
+<Uni>311 Land Use; 332 Earth Moving</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60911,7 +60911,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>228 Marine Industries;  312 Water Supply;  336 Plumbing;  376 Water Power</Uni>
+<Uni>228 Marine Industries; 312 Water Supply; 336 Plumbing; 376 Water Power</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60939,7 +60939,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>390 Capital Goods Industry;  391 Hardware Manufacture;  392 Machine Industries;  393 Electrical Supplies Industry;  394 Manufacture of Heating and Lighting Appliances;  395 Manufacture of Optical and Photographic Equipment;  396 Shipbuilding;  397 Railway Equipment Industry;  398 Manufacture of Vehicles;  399 Aircraft Industry;  719 Munitions Industries</Uni>
+<Uni>390 Capital Goods Industry; 391 Hardware Manufacture; 392 Machine Industries; 393 Electrical Supplies Industry; 394 Manufacture of Heating and Lighting Appliances; 395 Manufacture of Optical and Photographic Equipment; 396 Shipbuilding; 397 Railway Equipment Industry; 398 Manufacture of Vehicles; 399 Aircraft Industry; 719 Munitions Industries</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -60981,7 +60981,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>337 Electrical Installation;  375 Thermal Power;  377 Electric Power;  378 Atomic Energy;  379 Miscellaneous Power Production</Uni>
+<Uni>337 Electrical Installation; 375 Thermal Power; 377 Electric Power; 378 Atomic Energy; 379 Miscellaneous Power Production</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -61035,10 +61035,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>410 Tools and Appliances;  412 General Tools;  413 Special Tools;  414 Miscellaneous Hardware;  417 Apparatus</Uni>
+<Uni>410 Tools and Appliances; 412 General Tools; 413 Special Tools; 414 Miscellaneous Hardware; 417 Apparatus</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>6 Artifacts;  6A Artifacts;  6W Miscellaneous</Uni>
+<Uni>6 Artifacts; 6A Artifacts; 6W Miscellaneous</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="64493789-1C2C-4B24-A7E6-F00FF9BE923E"/>
@@ -61494,7 +61494,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>400 Machines;  401 Mechanics;  402 Industrial Machinery;  403 Electrical Machines and Appliances;  404 Household Machines and Appliances;  405 Weighing, Measuring, and Recording Machines;  406 Weight-moving Machinery;  407 Agricultural Machinery;  408 Computer Technology;  416 Appliances</Uni>
+<Uni>400 Machines; 401 Mechanics; 402 Industrial Machinery; 403 Electrical Machines and Appliances; 404 Household Machines and Appliances; 405 Weighing, Measuring, and Recording Machines; 406 Weight-moving Machinery; 407 Agricultural Machinery; 408 Computer Technology; 416 Appliances</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -61599,7 +61599,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>420 Property;  510 Living Standards and Routines;  511 Standard of Living</Uni>
+<Uni>420 Property; 510 Living Standards and Routines; 511 Standard of Living</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>57A Have, Possess, Property, Owner</Uni>
@@ -61656,7 +61656,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;has&gt; a house.;  John &lt;owns&gt; a house.;  That house &lt;belongs to&gt; John.</Run>
+<Run ws="en">John &lt;has&gt; a house.; John &lt;owns&gt; a house.; That house &lt;belongs to&gt; John.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -61749,7 +61749,7 @@
 <Uni>735 Poverty</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>57F Be Poor, Be Needy, Poverty;  57S Be a Financial Burden</Uni>
+<Uni>57F Be Poor, Be Needy, Poverty; 57S Be a Financial Burden</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -61815,7 +61815,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>454 Saving and Investment;  453 Banking</Uni>
+<Uni>454 Saving and Investment; 453 Banking</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -61865,7 +61865,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>422 Property in Movables;  423 Real Property;  424 Incorporeal Property</Uni>
+<Uni>422 Property in Movables; 423 Real Property; 424 Incorporeal Property</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>57D Treasure</Uni>
@@ -62174,7 +62174,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>740 Health and Welfare;  741 Philanthropic Foundations;  747 Private Welfare Agencies</Uni>
+<Uni>740 Health and Welfare; 741 Philanthropic Foundations; 747 Private Welfare Agencies</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="B5B36C31-C56D-44B9-933C-FE0E62D80C25"/>
@@ -62394,7 +62394,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>425 Acquisition and Relinquishment of Property;  430 Exchange</Uni>
+<Uni>425 Acquisition and Relinquishment of Property; 430 Exchange</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -62948,7 +62948,7 @@
 <Uni>426 Borrowing and Lending</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>57R Owe, Debt, Cancel;  57Q Lend, Loan, Interest, Borrow, Bank</Uni>
+<Uni>57R Owe, Debt, Cancel; 57Q Lend, Loan, Interest, Borrow, Bank</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -63033,7 +63033,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>436 Medium of Exchange;  457 Foreign Exchange</Uni>
+<Uni>436 Medium of Exchange; 457 Foreign Exchange</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>6K Money and Monetary Units</Uni>
@@ -63116,7 +63116,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>651 Taxation and Public Income;  652 Public Finance</Uni>
+<Uni>651 Taxation and Public Income; 652 Public Finance</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>57N Tax, Tribute</Uni>
@@ -63503,7 +63503,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>470 Business and Industrial Organization;  471 Ownership and Control of Capital;  472 Individual Enterprise;  473 Corporate Organization;  474 Cooperative Organization;  475 State Enterprise;  476 Mutual Aid;  477 Competition</Uni>
+<Uni>470 Business and Industrial Organization; 471 Ownership and Control of Capital; 472 Individual Enterprise; 473 Corporate Organization; 474 Cooperative Organization; 475 State Enterprise; 476 Mutual Aid; 477 Competition</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -63579,7 +63579,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>460 Labor;  461 Labor and Leisure;  462 Division of Labor by Gender;  Division of Labor by Sex;  463 Occupational Specialization;  464 Labor Supply and Employment;  465 Wages and Salaries;  466 Labor Relations;  467 Labor Organization;  468 Collective Bargaining;  890 Gender Roles and Issues</Uni>
+<Uni>460 Labor; 461 Labor and Leisure; 462 Division of Labor by Gender; Division of Labor by Sex; 463 Occupational Specialization; 464 Labor Supply and Employment; 465 Wages and Salaries; 466 Labor Relations; 467 Labor Organization; 468 Collective Bargaining; 890 Gender Roles and Issues</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -63693,7 +63693,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>440 Marketing;  441 Mercantile Business;  442 Wholesale Marketing;  443 Retail Marketing;  444 Retail Businesses;  445 Service Industries;  446 Sales Promotion;  447 Advertising</Uni>
+<Uni>440 Marketing; 441 Mercantile Business; 442 Wholesale Marketing; 443 Retail Marketing; 444 Retail Businesses; 445 Service Industries; 446 Sales Promotion; 447 Advertising</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -63735,7 +63735,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>438 Domestic Trade;  439 Foreign Trade</Uni>
+<Uni>438 Domestic Trade; 439 Foreign Trade</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -63769,7 +63769,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>179 Economic Planning and Development;  433 Production and Supply;  434 Income and Demand;  454 Saving and Investment;  455 Speculation;  458 Business Cycles</Uni>
+<Uni>179 Economic Planning and Development; 433 Production and Supply; 434 Income and Demand; 454 Saving and Investment; 455 Speculation; 458 Business Cycles</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -64103,7 +64103,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>17G Lie x;  17F Recline x</Uni>
+<Uni>17G Lie x; 17F Recline x</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="943EB131-2761-4C98-90A0-0BDFB0F8584D"/>
@@ -64503,7 +64503,7 @@
 <Uni>481 Locomotion</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>15 Linear Movement;  15A Move, Come/Go;  16 Non-Linear Movement</Uni>
+<Uni>15 Linear Movement; 15A Move, Come/Go; 16 Non-Linear Movement</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -64951,7 +64951,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15A' Movement with Speed x;  15B' Goal-Oriented Movement</Uni>
+<Uni>15A' Movement with Speed x; 15B' Goal-Oriented Movement</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="DF149819-608F-46CD-BA0F-55F1D9D2E8EC"/>
@@ -65172,7 +65172,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to walking with some difficulty such as stumbling--to miss your step because of hitting an object such as a stone, hole, or mud;  staggering--to walk unsteadily because of weakness, illness, or drunkenness;  or limping--to walk unevenly or with difficulty because of injury to a foot.</Run>
+<Run ws="en">Use this domain for words referring to walking with some difficulty such as stumbling--to miss your step because of hitting an object such as a stone, hole, or mud; staggering--to walk unsteadily because of weakness, illness, or drunkenness; or limping--to walk unevenly or with difficulty because of injury to a foot.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -65520,7 +65520,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15I Come/Go Onto;  15J Come/Go Up, Ascend</Uni>
+<Uni>15I Come/Go Onto; 15J Come/Go Up, Ascend</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -65847,7 +65847,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15R Go Around, Surround;  15I' Roll</Uni>
+<Uni>15R Go Around, Surround; 15I' Roll</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -65992,7 +65992,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">They didn't know it, but their paths were converging.;  The two ships were on a collision course.</Run>
+<Run ws="en">They didn't know it, but their paths were converging.; The two ships were on a collision course.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -66056,7 +66056,7 @@
 </Question>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Go away!;  Leave me alone!;  Get out of my sight!</Run>
+<Run ws="en">Go away!; Leave me alone!; Get out of my sight!</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -66089,7 +66089,7 @@
 </Question>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Come here!;  Get over here!</Run>
+<Run ws="en">Come here!; Get over here!</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -66325,10 +66325,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>484 Travel;  480 Travel and Transportation;  485 Travel Services;  486 Regulation of Travel;  487 Routes;  488 Warehousing;  489 Transportation;  167 External Migration;  Immigration and Emigration</Uni>
+<Uni>484 Travel; 480 Travel and Transportation; 485 Travel Services; 486 Regulation of Travel; 487 Routes; 488 Warehousing; 489 Transportation; 167 External Migration; Immigration and Emigration</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>15R Go Around, Surround;  15B Travel, Journey</Uni>
+<Uni>15R Go Around, Surround; 15B Travel, Journey</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -66418,7 +66418,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>490 Land Transport;  491 Highways and Bridges;  492 Animal Transport;  493 Vehicles;  494 Highway Transport;  495 Auxiliary Highway Services;  496 Railways;  497 Rail Transport;  498 Terminal Facilities;  499 Highway and Railway Construction</Uni>
+<Uni>490 Land Transport; 491 Highways and Bridges; 492 Animal Transport; 493 Vehicles; 494 Highway Transport; 495 Auxiliary Highway Services; 496 Railways; 497 Rail Transport; 498 Terminal Facilities; 499 Highway and Railway Construction</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -66591,7 +66591,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>500 Water and Air Transport;  501 Boats;  502 Navigation;  503 Waterways Improvements;  504 Port Facilities;  505 Water Transport</Uni>
+<Uni>500 Water and Air Transport; 501 Boats; 502 Navigation; 503 Waterways Improvements; 504 Port Facilities; 505 Water Transport</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>54 Maritime Activities</Uni>
@@ -66817,7 +66817,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>507 Aviation;  506 Aircraft;  508 Airport Facilities;  509 Air Transport</Uni>
+<Uni>507 Aviation; 506 Aircraft; 508 Airport Facilities; 509 Air Transport</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>15G' Fly</Uni>
@@ -67156,7 +67156,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15T Follow, Accompany;  15S Come/Go With, Travel With</Uni>
+<Uni>15T Follow, Accompany; 15S Come/Go With, Travel With</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="6903B844-79BE-4E9D-A3C8-1CA2A385BF4F"/>
@@ -67209,7 +67209,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15O Come/Go Prior To;  15P Come/Go In Front Of</Uni>
+<Uni>15O Come/Go Prior To; 15P Come/Go In Front Of</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -67243,7 +67243,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>15T Follow, Accompany;  15Q Come/Go Behind</Uni>
+<Uni>15T Follow, Accompany; 15Q Come/Go Behind</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -68020,7 +68020,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>482 Burden Carrying;  483 Weight Moving</Uni>
+<Uni>482 Burden Carrying; 483 Weight Moving</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>15X Carry, Bear</Uni>
@@ -69254,7 +69254,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>18 Attachment;  18A Grasp, Hold</Uni>
+<Uni>18 Attachment; 18A Grasp, Hold</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -69398,7 +69398,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>16 Non-Linear Movement;  84 Spatial Extensions;  84A Extension From a Source;  84B Extension To a Goal;  84C Extension Along a Path</Uni>
+<Uni>16 Non-Linear Movement; 84 Spatial Extensions; 84A Extension From a Source; 84B Extension To a Goal; 84C Extension Along a Path</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -70088,7 +70088,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>62 Arrange, Organize;  62A Put Together, Arrange</Uni>
+<Uni>62 Arrange, Organize; 62A Put Together, Arrange</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="00269021-E1C4-474D-9DBA-341D296BDAC7"/>
@@ -70202,7 +70202,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>63G Separate;  15N Disperse, Scatter</Uni>
+<Uni>63G Separate; 15N Disperse, Scatter</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -70324,7 +70324,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>18 Attachment;  18B Fasten, Stick To;  63B Unite</Uni>
+<Uni>18 Attachment; 18B Fasten, Stick To; 63B Unite</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -70808,7 +70808,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to being pure--words describing something (like water, food, or air) that does not have anything bad in it;  or unmixed--words describing something that is only one thing and has not been mixed with something else.</Run>
+<Run ws="en">Use this domain for words related to being pure--words describing something (like water, food, or air) that does not have anything bad in it; or unmixed--words describing something that is only one thing and has not been mixed with something else.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -70880,7 +70880,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>18 Attachment;  18B Fasten, Stick To</Uni>
+<Uni>18 Attachment; 18B Fasten, Stick To</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="0B7BFD0A-249C-45B6-9427-2C17AE00BF37"/>
@@ -72379,7 +72379,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>20 Violence, Harm, Destroy, Kill;  20B Harm, wound</Uni>
+<Uni>20 Violence, Harm, Destroy, Kill; 20B Harm, wound</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="9D865347-6656-4AB7-8613-BF2E8BC53AA7"/>
@@ -72519,7 +72519,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>20 Violence, Harm, Destroy, Kill;  20C Destroy</Uni>
+<Uni>20 Violence, Harm, Destroy, Kill; 20C Destroy</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -72635,7 +72635,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">What &lt;state&gt; is your house in?;  My house is in bad &lt;shape&gt;.</Run>
+<Run ws="en">What &lt;state&gt; is your house in?; My house is in bad &lt;shape&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -72648,7 +72648,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">How are you &lt;faring&gt;?;  How do things &lt;stand&gt; at work?</Run>
+<Run ws="en">How are you &lt;faring&gt;?; How do things &lt;stand&gt; at work?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -72744,10 +72744,10 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>801 Numerology;  802 Numeration</Uni>
+<Uni>801 Numerology; 802 Numeration</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>60 Number;  60A Number, Countless</Uni>
+<Uni>60 Number; 60A Number, Countless</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -73057,7 +73057,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">My parents had five boys and I am the &lt;second&gt;.;  This book is the &lt;third&gt; in the series.</Run>
+<Run ws="en">My parents had five boys and I am the &lt;second&gt;.; This book is the &lt;third&gt; in the series.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73092,7 +73092,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Mary washed the dress &lt;three times&gt;.;  I have lent John money &lt;many times&gt;.;  I have lent John money &lt;twice&gt;.</Run>
+<Run ws="en">Mary washed the dress &lt;three times&gt;.; I have lent John money &lt;many times&gt;.; I have lent John money &lt;twice&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73152,7 +73152,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">He gave you &lt;three times what&gt; he gave me.;  He gave you &lt;three times as much as&gt; he gave me.</Run>
+<Run ws="en">He gave you &lt;three times what&gt; he gave me.; He gave you &lt;three times as much as&gt; he gave me.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73193,7 +73193,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to a group of a particular number of things or people (solo, duo, trio;  alone, in threes).</Run>
+<Run ws="en">Use this domain for words related to a group of a particular number of things or people (solo, duo, trio; alone, in threes).</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -73440,7 +73440,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Two plus two &lt;is&gt; four.;  Two added to two &lt;equals&gt; four.;  If you add two and two, you &lt;get&gt; four.</Run>
+<Run ws="en">Two plus two &lt;is&gt; four.; Two added to two &lt;equals&gt; four.; If you add two and two, you &lt;get&gt; four.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73522,7 +73522,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Two &lt;plus&gt; two is four.;  Two &lt;and&gt; two makes four.;  Two &lt;added to&gt; two equals four.</Run>
+<Run ws="en">Two &lt;plus&gt; two is four.; Two &lt;and&gt; two makes four.; Two &lt;added to&gt; two equals four.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73590,7 +73590,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Four &lt;minus&gt; two equals two.;  Two &lt;subtracted from&gt; four equals two.;  Two &lt;from&gt; four is two.</Run>
+<Run ws="en">Four &lt;minus&gt; two equals two.; Two &lt;subtracted from&gt; four equals two.; Two &lt;from&gt; four is two.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73642,7 +73642,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Two &lt;multiplied by&gt; two equals four.;  Two &lt;times&gt; two makes four.</Run>
+<Run ws="en">Two &lt;multiplied by&gt; two equals four.; Two &lt;times&gt; two makes four.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73697,7 +73697,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Four &lt;divided by&gt; two is two.;  Two &lt;into&gt; four equals two.;  Two &lt;goes into&gt; four two times.</Run>
+<Run ws="en">Four &lt;divided by&gt; two is two.; Two &lt;into&gt; four equals two.; Two &lt;goes into&gt; four two times.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -73765,7 +73765,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>59A Many, Few;  59B Much, Little;  59F Abundance, Excess, Sparing</Uni>
+<Uni>59A Many, Few; 59B Much, Little; 59F Abundance, Excess, Sparing</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -74456,7 +74456,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;Each&gt; went his separate way.;  &lt;each&gt; person</Run>
+<Run ws="en">&lt;Each&gt; went his separate way.; &lt;each&gt; person</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -74527,7 +74527,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to some--a number or amount of things or people when the number is not stated;  an indefinite number or amount.</Run>
+<Run ws="en">Use this domain for words related to some--a number or amount of things or people when the number is not stated; an indefinite number or amount.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -74637,7 +74637,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I couldn't decide which of the two I wanted more, so I bought them both.;  The plan would be to our &lt;mutual&gt; benefit.;  We have a &lt;mutual&gt; friend.;  They &lt;share&gt; the same name.</Run>
+<Run ws="en">I couldn't decide which of the two I wanted more, so I bought them both.; The plan would be to our &lt;mutual&gt; benefit.; We have a &lt;mutual&gt; friend.; They &lt;share&gt; the same name.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -74707,7 +74707,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to the most--the largest number or amount;  or the least--the smallest number or amount. Most/least may refer to the largest/smallest number possible or needed. If there are several groups being counted, most/least may refer to the largest/smallest group.</Run>
+<Run ws="en">Use this domain for words related to the most--the largest number or amount; or the least--the smallest number or amount. Most/least may refer to the largest/smallest number possible or needed. If there are several groups being counted, most/least may refer to the largest/smallest group.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -74972,7 +74972,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">He doesn't understand--he's &lt;only&gt; a child.;  I don't want anything--I &lt;only&gt; want to help.</Run>
+<Run ws="en">He doesn't understand--he's &lt;only&gt; a child.; I don't want anything--I &lt;only&gt; want to help.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -75092,7 +75092,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">It weighs &lt;about&gt; four kilos.;  John walks &lt;approximately&gt; two miles a day.</Run>
+<Run ws="en">It weighs &lt;about&gt; four kilos.; John walks &lt;approximately&gt; two miles a day.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -75234,7 +75234,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>63 Whole, Unite, Part, Divide;  63A Whole</Uni>
+<Uni>63 Whole, Unite, Part, Divide; 63A Whole</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -75348,7 +75348,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Many animals &lt;have&gt; four feet.;  The story &lt;is composed of&gt; several episodes.;  This page &lt;is part of&gt; that document.;  the wheel &lt;of&gt; the car;  the boy&lt;'s&gt; foot</Run>
+<Run ws="en">Many animals &lt;have&gt; four feet.; The story &lt;is composed of&gt; several episodes.; This page &lt;is part of&gt; that document.; the wheel &lt;of&gt; the car; the boy&lt;'s&gt; foot</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -75445,7 +75445,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>57B Have Sufficient;  59E Enough, Sufficient</Uni>
+<Uni>57B Have Sufficient; 59E Enough, Sufficient</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -76381,7 +76381,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>81C Long, Short, Far;  81F Specific Measures of Length</Uni>
+<Uni>81C Long, Short, Far; 81F Specific Measures of Length</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="73D580AC-DC89-474C-8048-3453EBDDA807"/>
@@ -76584,7 +76584,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>23K Grow, Growth;  81B High, Low, Deep</Uni>
+<Uni>23K Grow, Growth; 81B High, Low, Deep</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -77658,7 +77658,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We've just received two &lt;truckloads&gt; of food.;  All I had to eat was a &lt;handful&gt; of maize.</Run>
+<Run ws="en">We've just received two &lt;truckloads&gt; of food.; All I had to eat was a &lt;handful&gt; of maize.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -77707,7 +77707,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Dallas is a thousand miles &lt;from&gt; Phoenix.;  Our house is two miles &lt;from&gt; town.;  Our house is two miles &lt;away&gt;.</Run>
+<Run ws="en">Dallas is a thousand miles &lt;from&gt; Phoenix.; Our house is two miles &lt;from&gt; town.; Our house is two miles &lt;away&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -77743,7 +77743,7 @@
 </Question>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;How far&gt; is New York from Washington?;  &lt;What is the distance&gt; from New York to Washington?</Run>
+<Run ws="en">&lt;How far&gt; is New York from Washington?; &lt;What is the distance&gt; from New York to Washington?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -78427,7 +78427,7 @@
 <Uni>804 Weights and Measures</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>81 Spatial Dimensions;  81A Measure, To Measure;  6V Instruments for Measuring</Uni>
+<Uni>81 Spatial Dimensions; 81A Measure, To Measure; 6V Instruments for Measuring</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="06CB2024-5F7B-467C-B32C-EF4C56030AC0"/>
@@ -78517,7 +78517,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>86 Weight;  86B Pound, Talent</Uni>
+<Uni>86 Weight; 86B Pound, Talent</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -78805,7 +78805,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>79W Shapes;  79R Two-Dimensional and Three-Dimensional Shapes</Uni>
+<Uni>79W Shapes; 79R Two-Dimensional and Three-Dimensional Shapes</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -81242,7 +81242,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>58D Class, Kind;  58 Nature, Class, Example</Uni>
+<Uni>58D Class, Kind; 58 Nature, Class, Example</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="D8EA1902-5FA6-4FDA-B7B2-1F9C301CDC5F"/>
@@ -81257,7 +81257,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">An ant &lt;is&gt; an insect.;  An ant &lt;is a kind of&gt; insect.;  Dogs, cats, and horses &lt;are members of&gt; the animal &lt;class&gt;.;  Plants &lt;include&gt; trees, flowers, and weeds.;  The animal &lt;class&gt; &lt;includes&gt; dogs, cats, and horses.</Run>
+<Run ws="en">An ant &lt;is&gt; an insect.; An ant &lt;is a kind of&gt; insect.; Dogs, cats, and horses &lt;are members of&gt; the animal &lt;class&gt;.; Plants &lt;include&gt; trees, flowers, and weeds.; The animal &lt;class&gt; &lt;includes&gt; dogs, cats, and horses.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81286,7 +81286,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Mushrooms are not &lt;classified with&gt; the plants.;  I would not &lt;classify&gt; this fossil &lt;as&gt; a dinosaur.</Run>
+<Run ws="en">Mushrooms are not &lt;classified with&gt; the plants.; I would not &lt;classify&gt; this fossil &lt;as&gt; a dinosaur.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81305,7 +81305,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>58A Nature, Character;  58C Basic Principles or Features Defining the Nature of Something</Uni>
+<Uni>58A Nature, Character; 58C Basic Principles or Features Defining the Nature of Something</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -81369,7 +81369,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This is &lt;the same&gt; man that I saw yesterday.;  This isn't &lt;the same&gt; man, it's another man.</Run>
+<Run ws="en">This is &lt;the same&gt; man that I saw yesterday.; This isn't &lt;the same&gt; man, it's another man.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81382,7 +81382,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This is &lt;the same&gt; as that.;  The twins are &lt;the same&gt; in every way.</Run>
+<Run ws="en">This is &lt;the same&gt; as that.; The twins are &lt;the same&gt; in every way.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81620,7 +81620,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This &lt;is different from&gt; that.;  &lt;a different&gt; man</Run>
+<Run ws="en">This &lt;is different from&gt; that.; &lt;a different&gt; man</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81672,7 +81672,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This isn't the same man, it's &lt;another&gt; man.;  I'm not talking about John, I'm talking about the &lt;other&gt; man.;  I'm talking about someone &lt;else&gt;.;  It must have been someone &lt;other than&gt; you.</Run>
+<Run ws="en">This isn't the same man, it's &lt;another&gt; man.; I'm not talking about John, I'm talking about the &lt;other&gt; man.; I'm talking about someone &lt;else&gt;.; It must have been someone &lt;other than&gt; you.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -81881,7 +81881,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>58I Pattern, Model, Example, and Corresponding Representation;  58J Archetype, Corresponding Type</Uni>
+<Uni>58I Pattern, Model, Example, and Corresponding Representation; 58J Archetype, Corresponding Type</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -82023,7 +82023,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The coffee has milk in it.;  The coffee contains milk.</Run>
+<Run ws="en">The coffee has milk in it.; The coffee contains milk.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -82044,7 +82044,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John built his house &lt;out of&gt; cement blocks.;  This picture was done &lt;with&gt; oil paints.</Run>
+<Run ws="en">John built his house &lt;out of&gt; cement blocks.; This picture was done &lt;with&gt; oil paints.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -82258,7 +82258,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>65C Good, Bad;  88A Goodness</Uni>
+<Uni>65C Good, Bad; 88A Goodness</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="30E6B42C-6BBF-4659-99E7-AA4B8E68C9CE"/>
@@ -82391,7 +82391,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>79C' Perfect;  88D Perfect, Perfection</Uni>
+<Uni>79C' Perfect; 88D Perfect, Perfection</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -83112,7 +83112,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>65 Value;  65A Valuable, Lacking in Value;  65B Worthy, Not Worthy</Uni>
+<Uni>65 Value; 65A Valuable, Lacking in Value; 65B Worthy, Not Worthy</Uni>
 </LouwNidaCodes>
 <RelatedDomains>
 <Link guid="167BFBA5-0785-4BB5-A083-3FFBEFA57897"/>
@@ -83183,7 +83183,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -83225,7 +83225,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -83304,7 +83304,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The meeting &lt;is at&gt; four o'clock.;  John stopped for lunch &lt;at&gt; noon.;  The game &lt;is on&gt; Saturday.;  Saturday&lt;'s&gt; game;  &lt;The time of&gt; the meeting &lt;will be&gt; four o'clock.</Run>
+<Run ws="en">The meeting &lt;is at&gt; four o'clock.; John stopped for lunch &lt;at&gt; noon.; The game &lt;is on&gt; Saturday.; Saturday&lt;'s&gt; game; &lt;The time of&gt; the meeting &lt;will be&gt; four o'clock.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -83323,7 +83323,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>67 Units of Time;  67H Indefinite Units of Time: Age, Lifetime, Interval, Period;  67I Definite Units of Time: Year, Month, Week, Day, Hour</Uni>
+<Uni>67 Units of Time; 67H Indefinite Units of Time: Age, Lifetime, Interval, Period; 67I Definite Units of Time: Year, Month, Week, Day, Hour</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -83564,7 +83564,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>67 Points of Time;  67D A Point of Time with Reference to Units of Time: Daybreak, Midday, Midnight, Late</Uni>
+<Uni>67 Points of Time; 67D A Point of Time with Reference to Units of Time: Daybreak, Midday, Midnight, Late</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -83925,7 +83925,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>527 Rest Days and Holidays;  528 Vacations</Uni>
+<Uni>527 Rest Days and Holidays; 528 Vacations</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="71CBEFC3-E0A5-4B97-9672-FA0CB34C59E4"/>
@@ -84207,7 +84207,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">It is now five &lt;o'clock&gt;.;  It is five &lt;a.m.&gt;;  It is five &lt;p.m.&gt;;  It is noon &lt;time&gt;.;  ten minutes &lt;after&gt; five.;  &lt;half&gt; &lt;past&gt; five.;  a &lt;quarter&gt; &lt;to&gt; five.;  at ten &lt;of&gt; six.;  a &lt;quarter&gt; &lt;of&gt; an hour.;  in &lt;half&gt; an hour.;  ten minutes &lt;past&gt; &lt;the hour&gt;.</Run>
+<Run ws="en">It is now five &lt;o'clock&gt;.; It is five &lt;a.m.&gt;; It is five &lt;p.m.&gt;; It is noon &lt;time&gt;.; ten minutes &lt;after&gt; five.; &lt;half&gt; &lt;past&gt; five.; a &lt;quarter&gt; &lt;to&gt; five.; at ten &lt;of&gt; six.; a &lt;quarter&gt; &lt;of&gt; an hour.; in &lt;half&gt; an hour.; ten minutes &lt;past&gt; &lt;the hour&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -84290,7 +84290,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>67 Points of Time;  67B A Point of Time with Reference to Other Points of Time: Before, Long Ago, Now, At the Same Time, When, About, After</Uni>
+<Uni>67 Points of Time; 67B A Point of Time with Reference to Other Points of Time: Before, Long Ago, Now, At the Same Time, When, About, After</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -84408,7 +84408,7 @@
 </Question>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">the first child;  the second taxi;  the next person (to speak);  the last person (out the door)</Run>
+<Run ws="en">the first child; the second taxi; the next person (to speak); the last person (out the door)</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -85042,7 +85042,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John took a bath, &lt;and&gt; ate a big dinner.;  John took a bath, &lt;and then&gt; ate a big dinner.;  &lt;Having&gt; tak&lt;en&gt; a bath, John ate a big dinner.;  &lt;After&gt; taking a bath, John ate a big dinner.</Run>
+<Run ws="en">John took a bath, &lt;and&gt; ate a big dinner.; John took a bath, &lt;and then&gt; ate a big dinner.; &lt;Having&gt; tak&lt;en&gt; a bath, John ate a big dinner.; &lt;After&gt; taking a bath, John ate a big dinner.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -85081,7 +85081,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John went out to the garden, carry&lt;ing&gt; his hoe and shovel.;  Mary bought food, &lt;while&gt; John got gas for the car.</Run>
+<Run ws="en">John went out to the garden, carry&lt;ing&gt; his hoe and shovel.; Mary bought food, &lt;while&gt; John got gas for the car.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -85509,7 +85509,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I'll get around to it someday.;  I'll do it later.</Run>
+<Run ws="en">I'll get around to it someday.; I'll do it later.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -85532,7 +85532,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>68 Aspect;  67 Duration of Time;  67F Duration of Time with Reference to Some Point of Time: Until, Delay, Still, From</Uni>
+<Uni>68 Aspect; 67 Duration of Time; 67F Duration of Time with Reference to Some Point of Time: Until, Delay, Still, From</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -86928,7 +86928,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Mary &lt;often&gt; washes the dress.;  I have &lt;frequently&gt; lent John money.</Run>
+<Run ws="en">Mary &lt;often&gt; washes the dress.; I have &lt;frequently&gt; lent John money.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -87438,7 +87438,7 @@
 <Uni>131 Location</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>83 Spatial Positions;  83B Where, Somewhere, Everywhere</Uni>
+<Uni>83 Spatial Positions; 83B Where, Somewhere, Everywhere</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -87458,7 +87458,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;is at&gt; home.;  John &lt;is&gt; here.;  The books &lt;are&gt; in the box.;  The office &lt;is located&gt; in the next building.;  The &lt;location&gt; of the library &lt;is&gt; in the Academic Building.;  Here &lt;is&gt; John.;  There &lt;are&gt; the potatoes.;  the steps &lt;at&gt; the door</Run>
+<Run ws="en">John &lt;is at&gt; home.; John &lt;is&gt; here.; The books &lt;are&gt; in the box.; The office &lt;is located&gt; in the next building.; The &lt;location&gt; of the library &lt;is&gt; in the Academic Building.; Here &lt;is&gt; John.; There &lt;are&gt; the potatoes.; the steps &lt;at&gt; the door</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -87964,7 +87964,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>83G Opposite, Over Against, Across From, Offshore From;  83J Beyond, On the Other Side Of</Uni>
+<Uni>83G Opposite, Over Against, Across From, Offshore From; 83J Beyond, On the Other Side Of</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -88020,7 +88020,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>82 Spatial Orientation;  82B Left, Right, Straight Ahead, Opposite</Uni>
+<Uni>82 Spatial Orientation; 82B Left, Right, Straight Ahead, Opposite</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -88032,7 +88032,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">What &lt;way&gt; did he go?;  He headed in that &lt;direction&gt;.;  Turn to a &lt;bearing&gt; of 270 degrees.</Run>
+<Run ws="en">What &lt;way&gt; did he go?; He headed in that &lt;direction&gt;.; Turn to a &lt;bearing&gt; of 270 degrees.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -88045,7 +88045,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Turn and &lt;face&gt; north.;  The temple &lt;faced&gt; east.;  We buried him with his feet &lt;pointing&gt; west.;  The captain &lt;pointed&gt; the ship into the wind.</Run>
+<Run ws="en">Turn and &lt;face&gt; north.; The temple &lt;faced&gt; east.; We buried him with his feet &lt;pointing&gt; west.; The captain &lt;pointed&gt; the ship into the wind.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -88383,7 +88383,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>85A Be in a Place;  83E At, Beside, Near, Far;  85 Existence in Space</Uni>
+<Uni>85A Be in a Place; 83E At, Beside, Near, Far; 85 Existence in Space</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -88454,7 +88454,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>80 Space;  80A Space, Place</Uni>
+<Uni>80 Space; 80A Space, Place</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -89337,7 +89337,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;is&gt; our new leader.;  This &lt;is&gt; a pine tree.</Run>
+<Run ws="en">John &lt;is&gt; our new leader.; This &lt;is&gt; a pine tree.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -89376,7 +89376,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;There is&gt; a man....;  &lt;There was&gt; a man....;  &lt;There exists&gt; evidence....;  Evidence &lt;exists&gt;....;  God &lt;exists&gt;.;  I think, therefore I &lt;am&gt;.;  Once upon a time &lt;there lived&gt; a man....</Run>
+<Run ws="en">&lt;There is&gt; a man....; &lt;There was&gt; a man....; &lt;There exists&gt; evidence....; Evidence &lt;exists&gt;....; God &lt;exists&gt;.; I think, therefore I &lt;am&gt;.; Once upon a time &lt;there lived&gt; a man....</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -89439,7 +89439,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;became&gt; president last year.;  The sky &lt;turned&gt; red as the sun set.;  After a long illness, John finally &lt;got&gt; better.</Run>
+<Run ws="en">John &lt;became&gt; president last year.; The sky &lt;turned&gt; red as the sun set.; After a long illness, John finally &lt;got&gt; better.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -89496,7 +89496,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Own: John &lt;has&gt; a house (to sell), the house &lt;of&gt; John, John&lt;'s&gt; house, hi&lt;s&gt; house, who&lt;se&gt; house (is this?), the house is hi&lt;s&gt;;  Kinship: John &lt;has&gt; a brother, the brother &lt;of&gt; John, John&lt;'s&gt;brother, hi&lt;s&gt; brother;  Relationship: John &lt;has&gt; a friend, the friend &lt;of&gt; John, John&lt;'s&gt; friend, a friend of hi&lt;s&gt;;  Member: The school &lt;has&gt; (a hundred) students, the students &lt;of&gt; the school, the school&lt;'s&gt; students;  Part: Trees &lt;have&gt; leaves, the leaves &lt;of&gt; the tree, the tree&lt;'s&gt; leaves, it&lt;s&gt; leaves;  Name: John &lt;has&gt; three names, the three names &lt;of&gt; John, John&lt;'s&gt; three names, hi&lt;s&gt; names;  Know: John &lt;has&gt; the answer, John&lt;'s&gt; answer, hi&lt;s&gt; answer;  Hold: John &lt;has&gt; the key (in his pocket), John&lt;'s&gt; key, hi&lt;s&gt; key;  Feel: John &lt;has&gt; anger, the anger &lt;of&gt; John, John's anger, hi&lt;s&gt; anger;  Sickness: John &lt;has&gt; cancer, John&lt;'s&gt; cancer, hi&lt;s&gt; cancer;  Located on: The yard &lt;has&gt; a fence, the yard&lt;'s&gt; fence;  Be pictured in: the photo &lt;of&gt; John, John&lt;'s&gt; photo, hi&lt;s&gt; photo;  Quality: John &lt;has&gt; status, the status &lt;of&gt; John, John&lt;'s&gt; status, hi&lt;s&gt; status;  Use: The secretary &lt;has&gt; a computer, the computer &lt;of&gt; the secretary, the secretary&lt;'s&gt; computer, the computer is her&lt;s&gt;;  Event: the arrival &lt;of&gt; John, John&lt;'s&gt; arrival, hi&lt;s&gt; arrival</Run>
+<Run ws="en">Own: John &lt;has&gt; a house (to sell), the house &lt;of&gt; John, John&lt;'s&gt; house, hi&lt;s&gt; house, who&lt;se&gt; house (is this?), the house is hi&lt;s&gt;; Kinship: John &lt;has&gt; a brother, the brother &lt;of&gt; John, John&lt;'s&gt;brother, hi&lt;s&gt; brother; Relationship: John &lt;has&gt; a friend, the friend &lt;of&gt; John, John&lt;'s&gt; friend, a friend of hi&lt;s&gt;; Member: The school &lt;has&gt; (a hundred) students, the students &lt;of&gt; the school, the school&lt;'s&gt; students; Part: Trees &lt;have&gt; leaves, the leaves &lt;of&gt; the tree, the tree&lt;'s&gt; leaves, it&lt;s&gt; leaves; Name: John &lt;has&gt; three names, the three names &lt;of&gt; John, John&lt;'s&gt; three names, hi&lt;s&gt; names; Know: John &lt;has&gt; the answer, John&lt;'s&gt; answer, hi&lt;s&gt; answer; Hold: John &lt;has&gt; the key (in his pocket), John&lt;'s&gt; key, hi&lt;s&gt; key; Feel: John &lt;has&gt; anger, the anger &lt;of&gt; John, John's anger, hi&lt;s&gt; anger; Sickness: John &lt;has&gt; cancer, John&lt;'s&gt; cancer, hi&lt;s&gt; cancer; Located on: The yard &lt;has&gt; a fence, the yard&lt;'s&gt; fence; Be pictured in: the photo &lt;of&gt; John, John&lt;'s&gt; photo, hi&lt;s&gt; photo; Quality: John &lt;has&gt; status, the status &lt;of&gt; John, John&lt;'s&gt; status, hi&lt;s&gt; status; Use: The secretary &lt;has&gt; a computer, the computer &lt;of&gt; the secretary, the secretary&lt;'s&gt; computer, the computer is her&lt;s&gt;; Event: the arrival &lt;of&gt; John, John&lt;'s&gt; arrival, hi&lt;s&gt; arrival</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -89524,7 +89524,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;be&gt; characteristic, state;  &lt;have&gt; condition;  &lt;bear&gt; characteristic;  &lt;be in a state of&gt; characteristic;  The dirt &lt;is&gt; red.;  The towel &lt;is&gt; damp.;  This man &lt;is&gt; important.;  This man &lt;has&gt; an important status.;  The towel&lt;'s&gt; dampness.;  The dampness &lt;of&gt; the towel.;  The damp state &lt;of&gt; this towel.</Run>
+<Run ws="en">&lt;be&gt; characteristic, state; &lt;have&gt; condition; &lt;bear&gt; characteristic; &lt;be in a state of&gt; characteristic; The dirt &lt;is&gt; red.; The towel &lt;is&gt; damp.; This man &lt;is&gt; important.; This man &lt;has&gt; an important status.; The towel&lt;'s&gt; dampness.; The dampness &lt;of&gt; the towel.; The damp state &lt;of&gt; this towel.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -89565,7 +89565,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>42 Perform, Do;  42A Function;  42B Do, Perform</Uni>
+<Uni>42 Perform, Do; 42A Function; 42B Do, Perform</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -89953,7 +89953,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">A bark&lt;ing&gt; dog (kept me awake last night).;  The dog&lt;'s&gt; bark&lt;ing&gt; (woke me up).;  The bark&lt;ing&gt; &lt;of&gt; a dog (woke me up).;  (John told me) &lt;to&gt; wake him up at 6 a.m.;  I want &lt;to&gt; do something.;  He started do&lt;ing&gt; something.</Run>
+<Run ws="en">A bark&lt;ing&gt; dog (kept me awake last night).; The dog&lt;'s&gt; bark&lt;ing&gt; (woke me up).; The bark&lt;ing&gt; &lt;of&gt; a dog (woke me up).; (John told me) &lt;to&gt; wake him up at 6 a.m.; I want &lt;to&gt; do something.; He started do&lt;ing&gt; something.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90021,7 +90021,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>79A Physical, Spiritual;  79B Natural, Spiritual</Uni>
+<Uni>79A Physical, Spiritual; 79B Natural, Spiritual</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -90155,7 +90155,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We all admire &lt;such&gt; a man. (a generous man);  We all admire &lt;that kind of&gt; a man.;  We all admire &lt;that sort of&gt; a man.</Run>
+<Run ws="en">We all admire &lt;such&gt; a man. (a generous man); We all admire &lt;that kind of&gt; a man.; We all admire &lt;that sort of&gt; a man.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90168,7 +90168,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;What kind of&gt; a man is he? (a good man);  &lt;What sort of&gt; man is he?</Run>
+<Run ws="en">&lt;What kind of&gt; a man is he? (a good man); &lt;What sort of&gt; man is he?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90209,7 +90209,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We would like you to do it &lt;thus&gt;.;  I'll show you &lt;how&gt; I want it.</Run>
+<Run ws="en">We would like you to do it &lt;thus&gt;.; I'll show you &lt;how&gt; I want it.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90289,7 +90289,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>92 Discourse Referentials;  92A Speaker;  92B Speaker and Those Associated with the Speaker;  92C Receptor, Receptors;  92D Whom or What Spoken or Written About;  92H Emphatic Adjunct</Uni>
+<Uni>92 Discourse Referentials; 92A Speaker; 92B Speaker and Those Associated with the Speaker; 92C Receptor, Receptors; 92D Whom or What Spoken or Written About; 92H Emphatic Adjunct</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -90393,7 +90393,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">He &lt;himself&gt; admits he is guilty.;  I did it &lt;myself&gt; without any help.;  You can do what you want. &lt;As for me&gt;, I'm not going.</Run>
+<Run ws="en">He &lt;himself&gt; admits he is guilty.; I did it &lt;myself&gt; without any help.; You can do what you want. &lt;As for me&gt;, I'm not going.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90437,7 +90437,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">They hit &lt;each other&gt;.;  We should help &lt;one another&gt;.</Run>
+<Run ws="en">They hit &lt;each other&gt;.; We should help &lt;one another&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90539,7 +90539,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I'm looking for the man &lt;who&gt; killed John.;  I found the coin &lt;that&gt; I lost.;  That is the reason &lt;why&gt; I did it.</Run>
+<Run ws="en">I'm looking for the man &lt;who&gt; killed John.; I found the coin &lt;that&gt; I lost.; That is the reason &lt;why&gt; I did it.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90567,7 +90567,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;Who&gt; is that?;  &lt;Where&gt; did you go?;  &lt;How many&gt; did you get?;  &lt;How often&gt; will you go?;  &lt;Why&gt; did you do that?</Run>
+<Run ws="en">&lt;Who&gt; is that?; &lt;Where&gt; did you go?; &lt;How many&gt; did you get?; &lt;How often&gt; will you go?; &lt;Why&gt; did you do that?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90598,7 +90598,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;the&gt; leader;  &lt;a&gt; really old man;  &lt;this&gt; new shirt;  &lt;these&gt; tomatoes;  &lt;that&gt; book;  &lt;those&gt; flowers;  I want &lt;this&gt;.;  &lt;That&gt; is what I want.</Run>
+<Run ws="en">&lt;the&gt; leader; &lt;a&gt; really old man; &lt;this&gt; new shirt; &lt;these&gt; tomatoes; &lt;that&gt; book; &lt;those&gt; flowers; I want &lt;this&gt;.; &lt;That&gt; is what I want.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90626,7 +90626,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">You don't need to do anything. I will take care of it &lt;personally&gt;.;  Instead of sending a representative, he is coming &lt;in person&gt;.;  You can talk to him &lt;direct&gt;.</Run>
+<Run ws="en">You don't need to do anything. I will take care of it &lt;personally&gt;.; Instead of sending a representative, he is coming &lt;in person&gt;.; You can talk to him &lt;direct&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90715,7 +90715,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">coming &lt;and&gt; going;  me &lt;and&gt; you;  men &lt;and&gt; women;  &lt;both&gt; this &lt;and&gt; that;  &lt;either&gt; good &lt;or&gt; bad;  &lt;neither&gt; good &lt;nor&gt; bad;  quickly &lt;but&gt; not carelessly</Run>
+<Run ws="en">coming &lt;and&gt; going; me &lt;and&gt; you; men &lt;and&gt; women; &lt;both&gt; this &lt;and&gt; that; &lt;either&gt; good &lt;or&gt; bad; &lt;neither&gt; good &lt;nor&gt; bad; quickly &lt;but&gt; not carelessly</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90743,7 +90743,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">You come here &lt;and&gt; I'll go there.;  You come here &lt;or&gt; I'll go there.;  You come here &lt;while&gt; I go there.;  You come here &lt;then&gt; I'll go there.;  &lt;If&gt; you come here, I'll go there.</Run>
+<Run ws="en">You come here &lt;and&gt; I'll go there.; You come here &lt;or&gt; I'll go there.; You come here &lt;while&gt; I go there.; You come here &lt;then&gt; I'll go there.; &lt;If&gt; you come here, I'll go there.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90771,7 +90771,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I want you to come here. &lt;Then&gt; I'll go there.;  You wanted to come here. &lt;So&gt; I decided to let you.</Run>
+<Run ws="en">I want you to come here. &lt;Then&gt; I'll go there.; You wanted to come here. &lt;So&gt; I decided to let you.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -90994,7 +90994,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;very&gt; green;  &lt;too&gt; dark;  &lt;really&gt; fast;  &lt;real&gt; good;  &lt;pretty&gt; heavy</Run>
+<Run ws="en">&lt;very&gt; green; &lt;too&gt; dark; &lt;really&gt; fast; &lt;real&gt; good; &lt;pretty&gt; heavy</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -91029,7 +91029,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>78 Degree;  78E Up to, As Much As, To the Degree That</Uni>
+<Uni>78 Degree; 78E Up to, As Much As, To the Degree That</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -91049,7 +91049,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Ambassador Stevenson is a very &lt;high&gt; level official.;  &lt;Low&gt; priority tasks should be placed later in the list.;  The musician gave a &lt;first&gt; rate performance.;  Finding a suitable place to live was of &lt;primary&gt; importance.</Run>
+<Run ws="en">Ambassador Stevenson is a very &lt;high&gt; level official.; &lt;Low&gt; priority tasks should be placed later in the list.; The musician gave a &lt;first&gt; rate performance.; Finding a suitable place to live was of &lt;primary&gt; importance.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -91436,7 +91436,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(3) future: the situation takes place after the moment of speech;  the speaker predicts that the situation in the proposition will hold.</AUni>
+<AUni ws="en">(3) future: the situation takes place after the moment of speech; the speaker predicts that the situation in the proposition will hold.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91496,7 +91496,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(15) expected future: the situation is to occur in the near future;  what is scheduled to happen.</AUni>
+<AUni ws="en">(15) expected future: the situation is to occur in the near future; what is scheduled to happen.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91506,7 +91506,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(17) gnomic present: the situation described in the proposition is generic;  the predicate has held, holds, and will hold for the class of entities named by the subject, such as 'Elephants have trunks'. </AUni>
+<AUni ws="en">(17) gnomic present: the situation described in the proposition is generic; the predicate has held, holds, and will hold for the class of entities named by the subject, such as 'Elephants have trunks'. </AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91558,12 +91558,12 @@
 <Questions>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(1) habitual: the situation is customary or usual, repeated on different occasion over a period of time. English 'used to' is past habitual;  English 'Nancy sings' is present habitual.</AUni>
+<AUni ws="en">(1) habitual: the situation is customary or usual, repeated on different occasion over a period of time. English 'used to' is past habitual; English 'Nancy sings' is present habitual.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(2) continuous: a single situation is viewed as in progress, as maintained over a period of time;  also called "durative." The English "Progressive" is a continuous restricted to dynamic words. English 'I am reading;  *I am knowing the number'.</AUni>
+<AUni ws="en">(2) continuous: a single situation is viewed as in progress, as maintained over a period of time; also called "durative." The English "Progressive" is a continuous restricted to dynamic words. English 'I am reading; *I am knowing the number'.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91588,7 +91588,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(7) iterative: the action is repeated on one occasion;  usually restricted to dynamic words, often further restricted to semelfactive words.</AUni>
+<AUni ws="en">(7) iterative: the action is repeated on one occasion; usually restricted to dynamic words, often further restricted to semelfactive words.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91603,7 +91603,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(10) perfective: the situation is viewed as bounded temporally. It cannot be simultaneous with the moment of speech;  in the non-past it is sometimes interpreted as future.</AUni>
+<AUni ws="en">(10) perfective: the situation is viewed as bounded temporally. It cannot be simultaneous with the moment of speech; in the non-past it is sometimes interpreted as future.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91888,7 +91888,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(10) root possibility: it is possible for the agent to carry out the action of the main verb;  i.e. s/he is able and external conditions allow it: 'You can get that kind of paper at Ulbrich's'.</AUni>
+<AUni ws="en">(10) root possibility: it is possible for the agent to carry out the action of the main verb; i.e. s/he is able and external conditions allow it: 'You can get that kind of paper at Ulbrich's'.</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">can</AUni>
@@ -91945,7 +91945,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;can&gt; drive a car.;  John &lt;knows how&gt; to drive a car.</Run>
+<Run ws="en">John &lt;can&gt; drive a car.; John &lt;knows how&gt; to drive a car.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92177,7 +92177,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I &lt;urge&gt; you to help.;  I &lt;request&gt; that you help.;  &lt;Let&gt; us all do our part.;  &lt;Why don't&gt; you do something to help?;  &lt;Please&gt; do something to help.</Run>
+<Run ws="en">I &lt;urge&gt; you to help.; I &lt;request&gt; that you help.; &lt;Let&gt; us all do our part.; &lt;Why don't&gt; you do something to help?; &lt;Please&gt; do something to help.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92190,7 +92190,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We &lt;should&gt; do something to help.;  We &lt;ought to&gt; do something to help.;  &lt;Should&gt;n't we do something to help?;  This building &lt;should&gt; be torn down.</Run>
+<Run ws="en">We &lt;should&gt; do something to help.; We &lt;ought to&gt; do something to help.; &lt;Should&gt;n't we do something to help?; This building &lt;should&gt; be torn down.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92203,7 +92203,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We &lt;should not&gt; do anything to hinder them.;  We &lt;ought not to&gt; do anything that might harm them.;  I &lt;caution&gt; you not to interfere.</Run>
+<Run ws="en">We &lt;should not&gt; do anything to hinder them.; We &lt;ought not to&gt; do anything that might harm them.; I &lt;caution&gt; you not to interfere.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92286,7 +92286,7 @@
 <Questions>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(1) possibility: the speaker is indicating that the situation described in the proposition is possibly true. Some markers with this meaning also indicate future time: 'He may arrive late because of the weather;  It may snow again tomorrow;  She could have already taken it'.</AUni>
+<AUni ws="en">(1) possibility: the speaker is indicating that the situation described in the proposition is possibly true. Some markers with this meaning also indicate future time: 'He may arrive late because of the weather; It may snow again tomorrow; She could have already taken it'.</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">may, could</AUni>
@@ -92572,7 +92572,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;It is possible that&gt; he will come.;  &lt;It is possible for&gt; him to come.;  He &lt;could&gt; come.;  He &lt;might&gt; come.;  He &lt;may&gt; come.;  He &lt;is able to&gt; come.;  &lt;Maybe&gt; he will come.</Run>
+<Run ws="en">&lt;It is possible that&gt; he will come.; &lt;It is possible for&gt; him to come.; He &lt;could&gt; come.; He &lt;might&gt; come.; He &lt;may&gt; come.; He &lt;is able to&gt; come.; &lt;Maybe&gt; he will come.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92700,7 +92700,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;I suppose&gt; X is true.;  &lt;It is my conjecture that&gt; X is true.;  &lt;I would wager that&gt; X is true.;  &lt;If my suspicions are true,&gt; X is true.;  X &lt;may&gt; be true.;  &lt;It's possible&gt; X is true.</Run>
+<Run ws="en">&lt;I suppose&gt; X is true.; &lt;It is my conjecture that&gt; X is true.; &lt;I would wager that&gt; X is true.; &lt;If my suspicions are true,&gt; X is true.; X &lt;may&gt; be true.; &lt;It's possible&gt; X is true.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92713,7 +92713,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">"Is X true?" "&lt;I think so&gt;.";  X is true, &lt;as far as I know&gt;.;  &lt;To the best of my knowledge&gt;, X is true.;  &lt;As far as I'm aware&gt;, X is true.</Run>
+<Run ws="en">"Is X true?" "&lt;I think so&gt;."; X is true, &lt;as far as I know&gt;.; &lt;To the best of my knowledge&gt;, X is true.; &lt;As far as I'm aware&gt;, X is true.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92745,7 +92745,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;It is possible that&gt; he will come.;  He &lt;could&gt; come.;  He &lt;might&gt; come.;  He &lt;may&gt; come.;  &lt;Maybe&gt; he will come.</Run>
+<Run ws="en">&lt;It is possible that&gt; he will come.; He &lt;could&gt; come.; He &lt;might&gt; come.; He &lt;may&gt; come.; &lt;Maybe&gt; he will come.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92789,7 +92789,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">X &lt;seems to&gt; be true.;  X &lt;appears to&gt; be true.;  &lt;It sounds to me like&gt; X is true.;  &lt;It appears that&gt; X is true.;  &lt;To all appearances&gt; X is true.;  &lt;All indications are that&gt; X is true.;  &lt;It looks suspiciously like&gt; X is true.</Run>
+<Run ws="en">X &lt;seems to&gt; be true.; X &lt;appears to&gt; be true.; &lt;It sounds to me like&gt; X is true.; &lt;It appears that&gt; X is true.; &lt;To all appearances&gt; X is true.; &lt;All indications are that&gt; X is true.; &lt;It looks suspiciously like&gt; X is true.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -92956,7 +92956,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;It is impossible for&gt; a person to fly.;  &lt;It is not possible for&gt; a person to fly.</Run>
+<Run ws="en">&lt;It is impossible for&gt; a person to fly.; &lt;It is not possible for&gt; a person to fly.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93128,7 +93128,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This job is very important &lt;to&gt; John.;  The proposal looks good &lt;in&gt; my &lt;opinion&gt;.</Run>
+<Run ws="en">This job is very important &lt;to&gt; John.; The proposal looks good &lt;in&gt; my &lt;opinion&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93162,7 +93162,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>69A Affirmation;  69 Affirmation, Negation</Uni>
+<Uni>69A Affirmation; 69 Affirmation, Negation</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -93196,7 +93196,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>69B Negation;  69C Negation Combined with Clitics</Uni>
+<Uni>69B Negation; 69C Negation Combined with Clitics</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -93247,7 +93247,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">You are going, &lt;aren't you&gt;? (The expected answer in English is, 'Yes, I am going'.);  He's going, &lt;isn't he&gt;? (Yes, he is.);  Are&lt;n't&gt; you going? (Yes, I am.);  Did&lt;n't&gt; he go? (Yes, he did).</Run>
+<Run ws="en">You are going, &lt;aren't you&gt;? (The expected answer in English is, 'Yes, I am going'.); He's going, &lt;isn't he&gt;? (Yes, he is.); Are&lt;n't&gt; you going? (Yes, I am.); Did&lt;n't&gt; he go? (Yes, he did).</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93278,7 +93278,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">You are&lt;n't&gt; going, &lt;are you&gt;? (The expected answer in English is, 'No, I'm not going.');  He is&lt;n't&gt; going, &lt;is he&gt;? (No, he's not going.);  You're &lt;not&gt; going? (No, I'm not going.);  He is&lt;n't&gt; going? (No, he's not going.)</Run>
+<Run ws="en">You are&lt;n't&gt; going, &lt;are you&gt;? (The expected answer in English is, 'No, I'm not going.'); He is&lt;n't&gt; going, &lt;is he&gt;? (No, he's not going.); You're &lt;not&gt; going? (No, I'm not going.); He is&lt;n't&gt; going? (No, he's not going.)</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93336,7 +93336,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(8) complement to words of emotion (surprise, regret, happiness, sadness, etc.;  the complement proposition is presupposed to be true)</AUni>
+<AUni ws="en">(8) complement to words of emotion (surprise, regret, happiness, sadness, etc.; the complement proposition is presupposed to be true)</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -93412,7 +93412,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>90 Case;  90A Agent, Personal or Nonpersonal, Causative or Immediate, Direct or Indirect;  90C Source of Event or Activity;  90D Responsibility;  90E Viewpoint Participant;  90F Content;  90G Guarantor Participant with Oaths;  90H Opposition;  90J Reason Participant;  90K Agent of a Numerable Event;  90L Agent in a Causative Role Marked by Verbs;  90M Experiencer;  90N To Cause To Experience</Uni>
+<Uni>90 Case; 90A Agent, Personal or Nonpersonal, Causative or Immediate, Direct or Indirect; 90C Source of Event or Activity; 90D Responsibility; 90E Viewpoint Participant; 90F Content; 90G Guarantor Participant with Oaths; 90H Opposition; 90J Reason Participant; 90K Agent of a Numerable Event; 90L Agent in a Causative Role Marked by Verbs; 90M Experiencer; 90N To Cause To Experience</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -93489,7 +93489,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John held our coats &lt;for&gt; us.;  John manages the business &lt;for&gt; us.;  John invited some older couples to join them &lt;for&gt; his parent's &lt;sake&gt;.;  &lt;For the sake of&gt; his parents John invited some older couples to join them.;  &lt;For the benefit of&gt; the children we included a trip to the zoo.;  Because you are sick, Mary has offered to cook &lt;for&gt; you.</Run>
+<Run ws="en">John held our coats &lt;for&gt; us.; John manages the business &lt;for&gt; us.; John invited some older couples to join them &lt;for&gt; his parent's &lt;sake&gt;.; &lt;For the sake of&gt; his parents John invited some older couples to join them.; &lt;For the benefit of&gt; the children we included a trip to the zoo.; Because you are sick, Mary has offered to cook &lt;for&gt; you.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93524,7 +93524,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John hit the dog &lt;with&gt; a stick.;  John caught the rat &lt;using&gt; a trap he built.</Run>
+<Run ws="en">John hit the dog &lt;with&gt; a stick.; John caught the rat &lt;using&gt; a trap he built.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93555,7 +93555,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John travels to work &lt;by&gt; bus.;  He intends to get there &lt;by means of&gt; his wits.</Run>
+<Run ws="en">John travels to work &lt;by&gt; bus.; He intends to get there &lt;by means of&gt; his wits.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93702,7 +93702,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The &lt;source&gt; of our water is a deep well.;  Our drinking water is &lt;from&gt; a deep well.;  John brought the wood &lt;from&gt; the forest.</Run>
+<Run ws="en">The &lt;source&gt; of our water is a deep well.; Our drinking water is &lt;from&gt; a deep well.; John brought the wood &lt;from&gt; the forest.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93730,7 +93730,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We traveled &lt;via&gt; the highway most of the way.;  What &lt;route&gt; will you follow?</Run>
+<Run ws="en">We traveled &lt;via&gt; the highway most of the way.; What &lt;route&gt; will you follow?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93758,7 +93758,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We traveled &lt;to&gt; New York.;  Our &lt;destination&gt; is New York.;  John moved the wood &lt;to&gt; the back of the house.;  John sent David &lt;to&gt; New York.</Run>
+<Run ws="en">We traveled &lt;to&gt; New York.; Our &lt;destination&gt; is New York.; John moved the wood &lt;to&gt; the back of the house.; John sent David &lt;to&gt; New York.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93786,7 +93786,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John &lt;is from&gt; New York.;  I&lt;'m from&gt; California.;  &lt;from&gt; the tribe of;  &lt;from&gt; America</Run>
+<Run ws="en">John &lt;is from&gt; New York.; I&lt;'m from&gt; California.; &lt;from&gt; the tribe of; &lt;from&gt; America</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93839,7 +93839,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John and David went to town &lt;together&gt;.;  We all went &lt;together&gt;.</Run>
+<Run ws="en">John and David went to town &lt;together&gt;.; We all went &lt;together&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93880,7 +93880,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John was &lt;with&gt; me at supper last night.;  John was there &lt;along with&gt; David.</Run>
+<Run ws="en">John was &lt;with&gt; me at supper last night.; John was there &lt;along with&gt; David.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93911,7 +93911,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John went to town &lt;with&gt; David.;  We will go &lt;with&gt; you.;  We wanted to go to town and John decided to go &lt;along&gt;.</Run>
+<Run ws="en">John went to town &lt;with&gt; David.; We will go &lt;with&gt; you.; We wanted to go to town and John decided to go &lt;along&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93968,7 +93968,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">They helped &lt;each other&gt; with their work.;  We all helped &lt;one another&gt;.;  &lt;Each&gt; accused &lt;the other&gt; of causing the problem.;  We &lt;exchanged&gt; glances.;  They &lt;traded&gt; insults.</Run>
+<Run ws="en">They helped &lt;each other&gt; with their work.; We all helped &lt;one another&gt;.; &lt;Each&gt; accused &lt;the other&gt; of causing the problem.; We &lt;exchanged&gt; glances.; They &lt;traded&gt; insults.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -93981,7 +93981,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The feeling is &lt;mutual&gt;.;  The two countries signed a &lt;reciprocal&gt; trade agreement.;  Effective communication is &lt;two-way&gt;.</Run>
+<Run ws="en">The feeling is &lt;mutual&gt;.; The two countries signed a &lt;reciprocal&gt; trade agreement.; Effective communication is &lt;two-way&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94009,7 +94009,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The participants entered two &lt;by&gt; two.;  The students lined up class &lt;by&gt; class.;  We lined up the shoes &lt;in&gt; pairs.;  The guests were seated &lt;in&gt; groups of six.</Run>
+<Run ws="en">The participants entered two &lt;by&gt; two.; The students lined up class &lt;by&gt; class.; We lined up the shoes &lt;in&gt; pairs.; The guests were seated &lt;in&gt; groups of six.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94134,7 +94134,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">John drank coffee &lt;with&gt; milk.;  John sent flowers to Mary &lt;along with&gt; a birthday card.;  He paid back my money &lt;with&gt; interest.</Run>
+<Run ws="en">John drank coffee &lt;with&gt; milk.; John sent flowers to Mary &lt;along with&gt; a birthday card.; He paid back my money &lt;with&gt; interest.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94157,7 +94157,7 @@
 </AStr>
 </Description>
 <LouwNidaCodes>
-<Uni>89 Relations;  89A Relation</Uni>
+<Uni>89 Relations; 89A Relation</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -94169,7 +94169,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">What is the &lt;relation&gt; between the two?;  How are they &lt;related&gt;?;  The &lt;relationship&gt; is complex.;  What does this &lt;have to do with&gt; that?;  The two &lt;are related&gt; somehow, but I don't know in what way.;  The distance an arrow flies &lt;is related to&gt; the angle at which you shoot.;  My science class and the smell of sulfur will forever &lt;be associated&gt; in my mind.;  I don't see the &lt;connection&gt;.;  There must be some sort of &lt;correlation&gt; between them.;  I'm sure there is &lt;a link between&gt; the two, but I haven't found it yet.</Run>
+<Run ws="en">What is the &lt;relation&gt; between the two?; How are they &lt;related&gt;?; The &lt;relationship&gt; is complex.; What does this &lt;have to do with&gt; that?; The two &lt;are related&gt; somehow, but I don't know in what way.; The distance an arrow flies &lt;is related to&gt; the angle at which you shoot.; My science class and the smell of sulfur will forever &lt;be associated&gt; in my mind.; I don't see the &lt;connection&gt;.; There must be some sort of &lt;correlation&gt; between them.; I'm sure there is &lt;a link between&gt; the two, but I haven't found it yet.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94269,7 +94269,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Mary washed &lt;and&gt; ironed the dress.;  Mary washed the dress &lt;and also&gt; ironed it.;  Mary &lt;and&gt; Laura washed the dress.;  Mary washed the dress &lt;and&gt; Laura washed it &lt;too&gt;.;  Laura &lt;also&gt; washed the dress.;  Mary washed the dress &lt;and&gt; the shirt.</Run>
+<Run ws="en">Mary washed &lt;and&gt; ironed the dress.; Mary washed the dress &lt;and also&gt; ironed it.; Mary &lt;and&gt; Laura washed the dress.; Mary washed the dress &lt;and&gt; Laura washed it &lt;too&gt;.; Laura &lt;also&gt; washed the dress.; Mary washed the dress &lt;and&gt; the shirt.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94378,7 +94378,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We eat vegetables &lt;with&gt; our rice.;  We used mud &lt;mixed with&gt; a little cement to plaster the wall.</Run>
+<Run ws="en">We eat vegetables &lt;with&gt; our rice.; We used mud &lt;mixed with&gt; a little cement to plaster the wall.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94409,7 +94409,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I want to do something, &lt;but&gt; can't do it.;  I tried to do something, &lt;but&gt; couldn't do it.;  I promised to do something, &lt;but&gt; didn't do it.</Run>
+<Run ws="en">I want to do something, &lt;but&gt; can't do it.; I tried to do something, &lt;but&gt; couldn't do it.; I promised to do something, &lt;but&gt; didn't do it.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94435,7 +94435,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">This is true, &lt;but&gt; that is also true.;  This is true, &lt;although&gt; that is also true.</Run>
+<Run ws="en">This is true, &lt;but&gt; that is also true.; This is true, &lt;although&gt; that is also true.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94523,7 +94523,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">All of my family was there &lt;except&gt; me.;  Everyone went &lt;except&gt; John.;  John spent everything &lt;except for&gt; ten dollars.</Run>
+<Run ws="en">All of my family was there &lt;except&gt; me.; Everyone went &lt;except&gt; John.; John spent everything &lt;except for&gt; ten dollars.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94559,7 +94559,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I couldn't do that, so I did this &lt;instead&gt;.;  I did this &lt;instead of&gt; that.;  I want this &lt;rather than&gt; that.</Run>
+<Run ws="en">I couldn't do that, so I did this &lt;instead&gt;.; I did this &lt;instead of&gt; that.; I want this &lt;rather than&gt; that.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94572,7 +94572,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I couldn't do this, so he did it &lt;instead&gt;.;  I went &lt;instead of&gt; him.</Run>
+<Run ws="en">I couldn't do this, so he did it &lt;instead&gt;.; I went &lt;instead of&gt; him.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94631,7 +94631,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The disease spread &lt;throughout&gt; the population.;  He went &lt;from&gt; town &lt;to&gt; town.;  He applied for admission year &lt;after&gt; year.;  He placed them in piles of ten &lt;each&gt;.;  They received ten dollars &lt;apiece&gt;.</Run>
+<Run ws="en">The disease spread &lt;throughout&gt; the population.; He went &lt;from&gt; town &lt;to&gt; town.; He applied for admission year &lt;after&gt; year.; He placed them in piles of ten &lt;each&gt;.; They received ten dollars &lt;apiece&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94690,7 +94690,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">It all &lt;depends&gt;.;  This &lt;is dependent on&gt; that.;  It all &lt;hangs on&gt; whether we finish on time.;  Prosperity &lt;is tied to&gt; government regulations.</Run>
+<Run ws="en">It all &lt;depends&gt;.; This &lt;is dependent on&gt; that.; It all &lt;hangs on&gt; whether we finish on time.; Prosperity &lt;is tied to&gt; government regulations.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94752,7 +94752,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">He is rich &lt;in&gt; land.;  He is a leader, &lt;specifically in regard to&gt; strategy.;  &lt;In the case of&gt; a disagreement we will seek arbitration.;  What does that have to do &lt;with&gt; me?;  There might be a problem &lt;between&gt; our decision &lt;and&gt; his.</Run>
+<Run ws="en">He is rich &lt;in&gt; land.; He is a leader, &lt;specifically in regard to&gt; strategy.; &lt;In the case of&gt; a disagreement we will seek arbitration.; What does that have to do &lt;with&gt; me?; There might be a problem &lt;between&gt; our decision &lt;and&gt; his.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94808,7 +94808,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">We will submit the file &lt;in accordance with&gt; the law.;  He will be judged &lt;in accordance with&gt; his crime.;  His grade &lt;corresponds to&gt; his performance.;  You aren't acting &lt;in line with&gt; your beliefs.;  You will benefit &lt;in proportion to&gt; your contribution.;  What I have said &lt;applies to&gt; myself as well.</Run>
+<Run ws="en">We will submit the file &lt;in accordance with&gt; the law.; He will be judged &lt;in accordance with&gt; his crime.; His grade &lt;corresponds to&gt; his performance.; You aren't acting &lt;in line with&gt; your beliefs.; You will benefit &lt;in proportion to&gt; your contribution.; What I have said &lt;applies to&gt; myself as well.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94839,7 +94839,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">His promise &lt;is the basis of&gt; my hope.;  His work &lt;formed the basis of&gt; all subsequent developments.;  He was convicted &lt;on the basis of&gt; circumstantial evidence.;  &lt;In view of&gt; the current situation we should think about moving.;  &lt;By virtue of&gt; the authority conferred on me I pronounce you man and wife.</Run>
+<Run ws="en">His promise &lt;is the basis of&gt; my hope.; His work &lt;formed the basis of&gt; all subsequent developments.; He was convicted &lt;on the basis of&gt; circumstantial evidence.; &lt;In view of&gt; the current situation we should think about moving.; &lt;By virtue of&gt; the authority conferred on me I pronounce you man and wife.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94886,7 +94886,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">I did it &lt;because&gt; I wanted to.;  I did it &lt;because of&gt; him.;  His statement is &lt;the origin of&gt; all the confusion.;  The &lt;source&gt; of the problem is a lack of motivation.;  Laziness &lt;breeds&gt; hunger.;  The storm &lt;caused&gt; a lot of damage.</Run>
+<Run ws="en">I did it &lt;because&gt; I wanted to.; I did it &lt;because of&gt; him.; His statement is &lt;the origin of&gt; all the confusion.; The &lt;source&gt; of the problem is a lack of motivation.; Laziness &lt;breeds&gt; hunger.; The storm &lt;caused&gt; a lot of damage.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94964,7 +94964,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">He did it &lt;for no reason&gt;.;  There is &lt;no basis&gt; for your claim.</Run>
+<Run ws="en">He did it &lt;for no reason&gt;.; There is &lt;no basis&gt; for your claim.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94977,7 +94977,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">It is &lt;unreasonable&gt; to assume that anything will come of this.;  What you are saying is &lt;ridiculous&gt;.</Run>
+<Run ws="en">It is &lt;unreasonable&gt; to assume that anything will come of this.; What you are saying is &lt;ridiculous&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -94987,7 +94987,7 @@
 </Question>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">The door opened &lt;by itself&gt;.;  Goodness &lt;is its own reason&gt;.</Run>
+<Run ws="en">The door opened &lt;by itself&gt;.; Goodness &lt;is its own reason&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -95078,7 +95078,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">Do something &lt;with the purpose of&gt; something happening.;  Do something &lt;for the sake of&gt; something happening.;  Do something &lt;for the purpose of&gt; causing something to happen.;  Do something &lt;in order to&gt; cause something to happen.;  Do something &lt;to&gt; cause something to happen.;  Do something &lt;in order that&gt; something might happen.;  Do something &lt;so that&gt; something might happen.;  Do something &lt;to show that&gt; something would happen.;  Do something &lt;for&gt; some reason.;  This medicine is good &lt;for&gt; malaria.</Run>
+<Run ws="en">Do something &lt;with the purpose of&gt; something happening.; Do something &lt;for the sake of&gt; something happening.; Do something &lt;for the purpose of&gt; causing something to happen.; Do something &lt;in order to&gt; cause something to happen.; Do something &lt;to&gt; cause something to happen.; Do something &lt;in order that&gt; something might happen.; Do something &lt;so that&gt; something might happen.; Do something &lt;to show that&gt; something would happen.; Do something &lt;for&gt; some reason.; This medicine is good &lt;for&gt; malaria.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -95397,7 +95397,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">&lt;O&gt; king, live forever.;  Excuse me, &lt;sir&gt;.;  Pardon me, &lt;ma'am&gt;.</Run>
+<Run ws="en">&lt;O&gt; king, live forever.; Excuse me, &lt;sir&gt;.; Pardon me, &lt;ma'am&gt;.</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
@@ -95632,7 +95632,7 @@
 <Uni>551 Personal Names</Uni>
 </OcmCodes>
 <LouwNidaCodes>
-<Uni>9E Persons For Whom There Is Affectionate Concern;  93A Persons</Uni>
+<Uni>9E Persons For Whom There Is Affectionate Concern; 93A Persons</Uni>
 </LouwNidaCodes>
 <Questions>
 <CmDomainQ>
@@ -96214,7 +96214,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>553 Naming;  552 Names of Animals and Things</Uni>
+<Uni>553 Naming; 552 Names of Animals and Things</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33I Name</Uni>
