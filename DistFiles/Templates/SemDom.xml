@@ -13095,7 +13095,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>732 Disabilities; Handicapped;  734 Invalidism</Uni>
+<Uni>732 Disabilities;  Handicapped;  734 Invalidism</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -14879,7 +14879,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>580 Marriage;  581 Basis of Marriage;  582 Regulation of Marriage;  583 Mode of Marriage;  587 Secondary Marriages;  588 Special Unions and Marriages; Irregular Unions;  595 Polygamy</Uni>
+<Uni>580 Marriage;  581 Basis of Marriage;  582 Regulation of Marriage;  583 Mode of Marriage;  587 Secondary Marriages;  588 Special Unions and Marriages;  Irregular Unions;  595 Polygamy</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>34J Marriage, Divorce</Uni>
@@ -17882,7 +17882,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>766 Special Burial Practices and Funerals; Deviant Mortuary Practices;  767 Mortuary Specialists</Uni>
+<Uni>766 Special Burial Practices and Funerals;  Deviant Mortuary Practices;  767 Mortuary Specialists</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>52 Funerals and Burial</Uni>
@@ -19171,7 +19171,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>120 Research Methods; Methodology;  121 Theoretical Orientation in Research and Its Results;  122 Practical Preparations in Conducting Fieldwork;  123 Observational Role in Research;  124 Interviewing in Research;  125 Tests and Schedules Administered In the Field;  126 Recording and Collecting In the Field;  127 Historical and Archival Research;  128 Organization and Analysis of Results of Research</Uni>
+<Uni>120 Research Methods;  Methodology;  121 Theoretical Orientation in Research and Its Results;  122 Practical Preparations in Conducting Fieldwork;  123 Observational Role in Research;  124 Interviewing in Research;  125 Tests and Schedules Administered In the Field;  126 Recording and Collecting In the Field;  127 Historical and Archival Research;  128 Organization and Analysis of Results of Research</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>27D Try To Learn</Uni>
@@ -21307,7 +21307,7 @@
 <AUni ws="en">(1) What is the general term for making a decision by chance?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">cast lots [in English and many languages there isn't a generic term; 'cast lots' is archaic]</AUni>
+<AUni ws="en">cast lots [in English and many languages there isn't a generic term;  'cast lots' is archaic]</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -21528,7 +21528,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to being stubborn--to be unwilling to change a decision; to be unwilling to do something someone wants you to do; or to do what you want to do, even though other people do not want you to do it.</Run>
+<Run ws="en">Use this domain for words related to being stubborn--to be unwilling to change a decision;  to be unwilling to do something someone wants you to do;  or to do what you want to do, even though other people do not want you to do it.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -26944,7 +26944,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>195 Sociolinguistics; Stylistic</Uni>
+<Uni>195 Sociolinguistics;  Stylistic</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33D Language Levels</Uni>
@@ -29826,7 +29826,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>1210 Archaeological Excavation Methods;  1211 Dating Methods in Archaeology;  1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology;  1213 Comparative Data [in Reconstructing History];  129 Archaiological Survey Methods;  138 Post Depositional Processes in Archaeological Sites;  159 Life History Materials;  170 History and Culture Change;  171 Comparative Evidence; Distributional Evidence;  1710 Cultural Revitalization and Ethnogenesis;  172 Prehistory; Archaeology;  173 Traditional History;  174 Historical Reconstruction;  175 History; Recorded History;  176 Innovation;  177 Acculturation and Culture Contact;  178 Sociocultural Trends;  910 Archaeological Measures, Techniques and Analysis;  911 Chronologies and Cultural Sequences;  912 Cultural Stratigraphy;  913 Functional Specialization;  914 Typologies and Classification;  915 Archaeological Inventories</Uni>
+<Uni>1210 Archaeological Excavation Methods;  1211 Dating Methods in Archaeology;  1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology;  1213 Comparative Data [in Reconstructing History];  129 Archaiological Survey Methods;  138 Post Depositional Processes in Archaeological Sites;  159 Life History Materials;  170 History and Culture Change;  171 Comparative Evidence;  Distributional Evidence;  1710 Cultural Revitalization and Ethnogenesis;  172 Prehistory;  Archaeology;  173 Traditional History;  174 Historical Reconstruction;  175 History;  Recorded History;  176 Innovation;  177 Acculturation and Culture Contact;  178 Sociocultural Trends;  910 Archaeological Measures, Techniques and Analysis;  911 Chronologies and Cultural Sequences;  912 Cultural Stratigraphy;  913 Functional Specialization;  914 Typologies and Classification;  915 Archaeological Inventories</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31018,7 +31018,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>2010 Internet Communications;  202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail; Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
+<Uni>2010 Internet Communications;  202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail;  Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31374,7 +31374,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail; Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
+<Uni>202 Transmission of Messages;  203 Dissemination of News and Information;  204 Press;  205 Mail;  Postal System;  206 Telephone and Telegraph;  207 Radio and Television</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -31664,7 +31664,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>378 Atomic Energy;  810 Sciences and Humanities; Exact Knowledge;  811 Logic;  812 Philosophy;  813 Scientific Method;  814 Humanistic Studies;  815 Science;  816 Applied Science;  820 Ideas about Nature and People; Ideas about Nature and Man;  821 Ethnometeorology;  822 Ethnophysics;  823 Ethnogeography;  824 Ethnobotany;  825 Ethnozoology;  826 Ethnoanatomy;  827 Ethnophysiology;  828 Ethnopyschology;  829 Ethnosociology</Uni>
+<Uni>378 Atomic Energy;  810 Sciences and Humanities;  Exact Knowledge;  811 Logic;  812 Philosophy;  813 Scientific Method;  814 Humanistic Studies;  815 Science;  816 Applied Science;  820 Ideas about Nature and People;  Ideas about Nature and Man;  821 Ethnometeorology;  822 Ethnophysics;  823 Ethnogeography;  824 Ethnobotany;  825 Ethnozoology;  826 Ethnoanatomy;  827 Ethnophysiology;  828 Ethnopyschology;  829 Ethnosociology</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -32295,7 +32295,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>560 Social Stratification;  561 Age Stratification;  562 Gender Status; Sex Status;  563 Ethnic Stratification;  564 Castes;  565 Classes;  566 Serfdom and Peonage;  567 Slavery</Uni>
+<Uni>560 Social Stratification;  561 Age Stratification;  562 Gender Status;  Sex Status;  563 Ethnic Stratification;  564 Castes;  565 Classes;  566 Serfdom and Peonage;  567 Slavery</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -33639,7 +33639,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>590 Family;  144 Racial Identification; Racial Affinities;  591 Residence;  592 Household;  593 Family Relationships;  594 Nuclear Family;  595 Polygamy;  596 Extended Families;  610 Kin Groups;  611 Rule of Descent;  612 Kindreds and Ramages;  613 Lineages;  614 Sibs;  615 Phratries;  616 Moieties;  617 Bilinear Kin Groups;  618 Clans;  619 Tribe and Nation</Uni>
+<Uni>590 Family;  144 Racial Identification;  Racial Affinities;  591 Residence;  592 Household;  593 Family Relationships;  594 Nuclear Family;  595 Polygamy;  596 Extended Families;  610 Kin Groups;  611 Rule of Descent;  612 Kindreds and Ramages;  613 Lineages;  614 Sibs;  615 Phratries;  616 Moieties;  617 Bilinear Kin Groups;  618 Clans;  619 Tribe and Nation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11D Ethnic-Cultural</Uni>
@@ -35150,7 +35150,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>540 Commercialized Entertainment;  520 Recreation;  517 Leisure Time Activities;  523 Hobbies;  529 Recreational Facilities;  541 Spectacles;  543 Exhibitions;  546 Motion Picture Industry;  547 Night Clubs and Cabarets;  548 Illegal Entertainment; Organized Vice</Uni>
+<Uni>540 Commercialized Entertainment;  520 Recreation;  517 Leisure Time Activities;  523 Hobbies;  529 Recreational Facilities;  541 Spectacles;  543 Exhibitions;  546 Motion Picture Industry;  547 Night Clubs and Cabarets;  548 Illegal Entertainment;  Organized Vice</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>50 Contests and Play</Uni>
@@ -38588,7 +38588,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to self-control--deciding not to do something that you want to do, because you think it would be bad to do it; or deciding to do something, because you know it is good.</Run>
+<Run ws="en">Use this domain for words referring to self-control--deciding not to do something that you want to do, because you think it would be bad to do it;  or deciding to do something, because you know it is good.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -39202,7 +39202,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>180 Total Culture;  181 Ethos;  182 Function and Adaptational Interpretations;  183 Norms;  184 Cultural Participation;  185 Cultural Goals;  186 Cultural Identity and Pride; Ethnocentrism</Uni>
+<Uni>180 Total Culture;  181 Ethos;  182 Function and Adaptational Interpretations;  183 Norms;  184 Cultural Participation;  185 Cultural Goals;  186 Cultural Identity and Pride;  Ethnocentrism</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -39250,7 +39250,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to a habit--a pattern of behavior of a person; something a person does frequently or regularly.</Run>
+<Run ws="en">Use this domain for words referring to a habit--a pattern of behavior of a person;  something a person does frequently or regularly.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -39357,7 +39357,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>730 Social Problems;  732 Disabilities; Handicapped;  733 Alcoholism and Drug Addiction;  734 Invalidism;  735 Poverty;  736 Dependency;  737 Old Age Dependency;  738 Delinquency</Uni>
+<Uni>730 Social Problems;  732 Disabilities;  Handicapped;  733 Alcoholism and Drug Addiction;  734 Invalidism;  735 Poverty;  736 Dependency;  737 Old Age Dependency;  738 Delinquency</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>22A Trouble, Hardship, Distress;  22B Experience Trouble, Hardship;  22C Cause Trouble, Hardship;  22D Difficult, Hard;  22F Easy, Light</Uni>
@@ -40561,7 +40561,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>622 Community Heads; Headmen;  624 Local Officials</Uni>
+<Uni>622 Community Heads;  Headmen;  624 Local Officials</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -46997,7 +46997,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>780 Religious Practices;  781 Religious Experience;  786 Ecstatic Religious Practices; Orgies</Uni>
+<Uni>780 Religious Practices;  781 Religious Experience;  786 Ecstatic Religious Practices;  Orgies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>53 Religious Activities;  53A Religious Practice</Uni>
@@ -47154,7 +47154,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>796 Organized Ceremonial;  788 Ritual;  786 Ecstatic religious practices; Orgies</Uni>
+<Uni>796 Organized Ceremonial;  788 Ritual;  786 Ecstatic religious practices;  Orgies</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>33S Preach, Proclaim</Uni>
@@ -47194,7 +47194,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>782 Prayers and Sacrifices; Propitiation;  782 Propitiation</Uni>
+<Uni>782 Prayers and Sacrifices;  Propitiation;  782 Propitiation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>53B Offering, Sacrifice</Uni>
@@ -47247,7 +47247,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>783 Purification and Atonement; Purification and Expiation;  783 Purification and Expiation;  688 Religious Offenses</Uni>
+<Uni>783 Purification and Atonement;  Purification and Expiation;  783 Purification and Expiation;  688 Religious Offenses</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>88C Holy, Pure;  53C Purify, Cleanse;  53D Defiled, Unclean, Common;  53E Baptize</Uni>
@@ -47296,7 +47296,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to things that are taboo--something to be avoided; a religious, social, or cultural restriction on behavior, as opposed to a government law.</Run>
+<Run ws="en">Use this domain for words referring to things that are taboo--something to be avoided;  a religious, social, or cultural restriction on behavior, as opposed to a government law.</Run>
 </AStr>
 </Description>
 <OcmCodes>
@@ -47609,7 +47609,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>779 Theological Systems;  790 Ecclesiastical Organization;  794 Congregations;  795 Religious Denominations; Sects;  797 Missions</Uni>
+<Uni>779 Theological Systems;  790 Ecclesiastical Organization;  794 Congregations;  795 Religious Denominations;  Sects;  797 Missions</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11B Socio-Religious</Uni>
@@ -47678,7 +47678,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>791 Magicians and Diviners;  792 Prophets and Ascetics; Holy Men;  793 Priesthood</Uni>
+<Uni>791 Magicians and Diviners;  792 Prophets and Ascetics;  Holy Men;  793 Priesthood</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>31J Be a Believer, Christian Faith;  53I Roles and Functions</Uni>
@@ -48452,7 +48452,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50459,7 +50459,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>273 Alcoholic Beverages;  270 Drink and Drugs; Drink, Drugs and Indulgence</Uni>
+<Uni>273 Alcoholic Beverages;  270 Drink and Drugs;  Drink, Drugs and Indulgence</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50690,7 +50690,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>276 Recreational and Non-therapeutic Drugs; Narcotics and Stimulants</Uni>
+<Uni>276 Recreational and Non-therapeutic Drugs;  Narcotics and Stimulants</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -50788,7 +50788,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>276 Recreational and Non-therapeutic Drugs; Narcotics and Stimulants</Uni>
+<Uni>276 Recreational and Non-therapeutic Drugs;  Narcotics and Stimulants</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -51733,7 +51733,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>304 Body Alterations; Mutilation</Uni>
+<Uni>304 Body Alterations;  Mutilation</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -53522,7 +53522,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>120 Research Methods; Methodology</Uni>
+<Uni>120 Research Methods;  Methodology</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -59603,7 +59603,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>323 Ceramic Technology; Ceramic Industries</Uni>
+<Uni>323 Ceramic Technology;  Ceramic Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>7G Miscellaneous Constructions</Uni>
@@ -59680,7 +59680,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>323 Ceramic Technology; Ceramic Industries</Uni>
+<Uni>323 Ceramic Technology;  Ceramic Industries</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>7G Miscellaneous Constructions</Uni>
@@ -59811,7 +59811,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>324 Lithic Industries; Stone Industry</Uni>
+<Uni>324 Lithic Industries;  Stone Industry</Uni>
 </OcmCodes>
 <RelatedDomains>
 <Link guid="0F07ADB7-4387-4723-9800-8362E825AD45"/>
@@ -63579,7 +63579,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>460 Labor;  461 Labor and Leisure;  462 Division of Labor by Gender; Division of Labor by Sex;  463 Occupational Specialization;  464 Labor Supply and Employment;  465 Wages and Salaries;  466 Labor Relations;  467 Labor Organization;  468 Collective Bargaining;  890 Gender Roles and Issues</Uni>
+<Uni>460 Labor;  461 Labor and Leisure;  462 Division of Labor by Gender;  Division of Labor by Sex;  463 Occupational Specialization;  464 Labor Supply and Employment;  465 Wages and Salaries;  466 Labor Relations;  467 Labor Organization;  468 Collective Bargaining;  890 Gender Roles and Issues</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -65172,7 +65172,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words referring to walking with some difficulty such as stumbling--to miss your step because of hitting an object such as a stone, hole, or mud; staggering--to walk unsteadily because of weakness, illness, or drunkenness; or limping--to walk unevenly or with difficulty because of injury to a foot.</Run>
+<Run ws="en">Use this domain for words referring to walking with some difficulty such as stumbling--to miss your step because of hitting an object such as a stone, hole, or mud;  staggering--to walk unsteadily because of weakness, illness, or drunkenness;  or limping--to walk unevenly or with difficulty because of injury to a foot.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -66325,7 +66325,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>484 Travel;  480 Travel and Transportation;  485 Travel Services;  486 Regulation of Travel;  487 Routes;  488 Warehousing;  489 Transportation;  167 External Migration; Immigration and Emigration</Uni>
+<Uni>484 Travel;  480 Travel and Transportation;  485 Travel Services;  486 Regulation of Travel;  487 Routes;  488 Warehousing;  489 Transportation;  167 External Migration;  Immigration and Emigration</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>15R Go Around, Surround;  15B Travel, Journey</Uni>
@@ -70808,7 +70808,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to being pure--words describing something (like water, food, or air) that does not have anything bad in it; or unmixed--words describing something that is only one thing and has not been mixed with something else.</Run>
+<Run ws="en">Use this domain for words related to being pure--words describing something (like water, food, or air) that does not have anything bad in it;  or unmixed--words describing something that is only one thing and has not been mixed with something else.</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -73193,7 +73193,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to a group of a particular number of things or people (solo, duo, trio; alone, in threes).</Run>
+<Run ws="en">Use this domain for words related to a group of a particular number of things or people (solo, duo, trio;  alone, in threes).</Run>
 </AStr>
 </Description>
 <LouwNidaCodes>
@@ -74527,7 +74527,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to some--a number or amount of things or people when the number is not stated; an indefinite number or amount.</Run>
+<Run ws="en">Use this domain for words related to some--a number or amount of things or people when the number is not stated;  an indefinite number or amount.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -74707,7 +74707,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words related to the most--the largest number or amount; or the least--the smallest number or amount. Most/least may refer to the largest/smallest number possible or needed. If there are several groups being counted, most/least may refer to the largest/smallest group.</Run>
+<Run ws="en">Use this domain for words related to the most--the largest number or amount;  or the least--the smallest number or amount. Most/least may refer to the largest/smallest number possible or needed. If there are several groups being counted, most/least may refer to the largest/smallest group.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -83183,7 +83183,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -83225,7 +83225,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>353 Building Interiors and Arrangement; Interior Decoration and Arrangement</Uni>
+<Uni>353 Building Interiors and Arrangement;  Interior Decoration and Arrangement</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -91436,7 +91436,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(3) future: the situation takes place after the moment of speech; the speaker predicts that the situation in the proposition will hold.</AUni>
+<AUni ws="en">(3) future: the situation takes place after the moment of speech;  the speaker predicts that the situation in the proposition will hold.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91496,7 +91496,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(15) expected future: the situation is to occur in the near future; what is scheduled to happen.</AUni>
+<AUni ws="en">(15) expected future: the situation is to occur in the near future;  what is scheduled to happen.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91506,7 +91506,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(17) gnomic present: the situation described in the proposition is generic; the predicate has held, holds, and will hold for the class of entities named by the subject, such as 'Elephants have trunks'. </AUni>
+<AUni ws="en">(17) gnomic present: the situation described in the proposition is generic;  the predicate has held, holds, and will hold for the class of entities named by the subject, such as 'Elephants have trunks'. </AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91558,12 +91558,12 @@
 <Questions>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(1) habitual: the situation is customary or usual, repeated on different occasion over a period of time. English 'used to' is past habitual; English 'Nancy sings' is present habitual.</AUni>
+<AUni ws="en">(1) habitual: the situation is customary or usual, repeated on different occasion over a period of time. English 'used to' is past habitual;  English 'Nancy sings' is present habitual.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(2) continuous: a single situation is viewed as in progress, as maintained over a period of time; also called "durative." The English "Progressive" is a continuous restricted to dynamic words. English 'I am reading; *I am knowing the number'.</AUni>
+<AUni ws="en">(2) continuous: a single situation is viewed as in progress, as maintained over a period of time;  also called "durative." The English "Progressive" is a continuous restricted to dynamic words. English 'I am reading;  *I am knowing the number'.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91588,7 +91588,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(7) iterative: the action is repeated on one occasion; usually restricted to dynamic words, often further restricted to semelfactive words.</AUni>
+<AUni ws="en">(7) iterative: the action is repeated on one occasion;  usually restricted to dynamic words, often further restricted to semelfactive words.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91603,7 +91603,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(10) perfective: the situation is viewed as bounded temporally. It cannot be simultaneous with the moment of speech; in the non-past it is sometimes interpreted as future.</AUni>
+<AUni ws="en">(10) perfective: the situation is viewed as bounded temporally. It cannot be simultaneous with the moment of speech;  in the non-past it is sometimes interpreted as future.</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
@@ -91888,7 +91888,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(10) root possibility: it is possible for the agent to carry out the action of the main verb; i.e. s/he is able and external conditions allow it: 'You can get that kind of paper at Ulbrich's'.</AUni>
+<AUni ws="en">(10) root possibility: it is possible for the agent to carry out the action of the main verb;  i.e. s/he is able and external conditions allow it: 'You can get that kind of paper at Ulbrich's'.</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">can</AUni>
@@ -92286,7 +92286,7 @@
 <Questions>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(1) possibility: the speaker is indicating that the situation described in the proposition is possibly true. Some markers with this meaning also indicate future time: 'He may arrive late because of the weather; It may snow again tomorrow; She could have already taken it'.</AUni>
+<AUni ws="en">(1) possibility: the speaker is indicating that the situation described in the proposition is possibly true. Some markers with this meaning also indicate future time: 'He may arrive late because of the weather;  It may snow again tomorrow;  She could have already taken it'.</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">may, could</AUni>
@@ -93336,7 +93336,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(8) complement to words of emotion (surprise, regret, happiness, sadness, etc.; the complement proposition is presupposed to be true)</AUni>
+<AUni ws="en">(8) complement to words of emotion (surprise, regret, happiness, sadness, etc.;  the complement proposition is presupposed to be true)</AUni>
 </Question>
 </CmDomainQ>
 <CmDomainQ>
