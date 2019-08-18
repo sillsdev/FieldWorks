@@ -77614,7 +77614,7 @@
 <AUni ws="en">(9) What words indicate how big a container is?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">how big, be (ten liters) in volume, hold, be (ten) cubic inches, be two meters long two meters wide and two meters high, be two by two by two</AUni>
+<AUni ws="en">how big, be (ten litres) in volume, hold, be (ten) cubic inches, be two meters long two meters wide and two meters high, be two by two by two</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -77630,7 +77630,7 @@
 <AUni ws="en">(11) What words refer to a unit of volume?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">cubic (inch, foot, yard), milliliter, centiliter, deciliter, liter, decaliter, kiloliter, hectoliter, cup, pint, quart, gallon, fluid ounce, dry ounce, peck, bushel, measure, batch</AUni>
+<AUni ws="en">cubic (inch, foot, yard), millilitre, centilitre, decilitre, litre, decalitre, kilolitre, hectolitre, cup, pint, quart, gallon, fluid ounce, dry ounce, peck, bushel, measure, batch</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -78542,7 +78542,7 @@
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
-<Run ws="en">What is the &lt;weight&gt; of a liter of water?</Run>
+<Run ws="en">What is the &lt;weight&gt; of a litre of water?</Run>
 </AStr>
 </ExampleSentences>
 </CmDomainQ>
