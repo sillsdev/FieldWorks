@@ -2044,7 +2044,7 @@
 <AUni ws="en">(5) What words refer to land covered by grass or bushes?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">grassland, prairie, savannah, bush, moor, moorland, brush, brake, heath, scrubby, scrubland, shrubby, steppe, tundra, veldt</AUni>
+<AUni ws="en">grassland, prairie, savannah, bush, moor, moorland, brush, brake, heath, scrubby, scrubland, shrubby, steppe, tundra, veld</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -4299,7 +4299,7 @@
 <AUni ws="en">(3) What types of trees are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">acacia, alder, almond, apple, apricot, ash, aspen, avocado, azalea, balsa, balsam, banyan, bayberry, beech, betel nut, birch, blackberry, blueberry, box, boxwood, Brazil, breadfruit, broom, camellia, cashew, cassia, catalpa, cedar, cherry, chestnut, chinaberry, cinnamon, cinchona, citron, citrus, clove, coca, coconut, coffee, cornel, cottonwood, cranberry, currant, cypress, date, dogwood, ebony, elder, elm, eucalyptus, fig, fir, forsythia, gardenia, gingko, grapefruit, guava, gum, hawthorn, hazel, hazelnut, hemlock, henna, hickory, ironwood, juniper, jute, kumquat, laburnum, larch, laurel, lemon, lignum, lilac, lime, linden, litchi, locust, magnolia, mahogany, mango, mangrove, manzanita, maple, marihuana, marijuana, mesquite, mimosa, mistletoe, mulberry, myrtle, nutmeg, oak, oleander, olive, orange, papaw, papaya, persimmon, peach, pear, pecan, persimmon, pine, pistachio, plane, plum, poinciana, pomegranate, poplar, quince, redwood, rosewood, sandalwood, sapling, sassafras, satinwood, saxifrage, scrub, senna, sequoia, sisal, spruce, spurge, stinkwood, sumac, sycamore, tamarack, tamarind, tamarisk, tangerine, teak, walnut, upas, willow, yew, ylang-ylang</AUni>
+<AUni ws="en">acacia, alder, almond, apple, apricot, ash, aspen, avocado, azalea, balsa, balsam, banyan, bayberry, beech, betel nut, birch, blackberry, blueberry, box, boxwood, Brazil, breadfruit, broom, camellia, cashew, cassia, catalpa, cedar, cherry, chestnut, chinaberry, cinnamon, cinchona, citron, citrus, clove, coca, coconut, coffee, cornel, cottonwood, cranberry, currant, cypress, date, dogwood, ebony, elder, elm, eucalyptus, fig, fir, forsythia, gardenia, ginkgo, grapefruit, guava, gum, hawthorn, hazel, hazelnut, hemlock, henna, hickory, ironwood, juniper, jute, kumquat, laburnum, larch, laurel, lemon, lignum, lilac, lime, linden, litchi, locust, magnolia, mahogany, mango, mangrove, manzanita, maple, marijuana, mesquite, mimosa, mistletoe, mulberry, myrtle, nutmeg, oak, oleander, olive, orange, papaw, papaya, persimmon, peach, pear, pecan, persimmon, pine, pistachio, plane, plum, poinciana, pomegranate, poplar, quince, redwood, rosewood, sandalwood, sapling, sassafras, satinwood, saxifrage, scrub, senna, sequoia, sisal, spruce, spurge, stinkwood, sumac, sycamore, tamarack, tamarind, tamarisk, tangerine, teak, walnut, upas, willow, yew, ylang-ylang</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -4993,7 +4993,7 @@
 <AUni ws="en">(1) What words refer to types of animals?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">phylum, class, order, family, genus, species, chordate, vertebrate, invertebrate, crustacean, rodent, insect, arthropod, mollusk, echidna, protozoa, protozoan, protozoon, amebic, amoeba, bacteriophage, cold-blooded, warm-blooded, multicellular, single-celled, unicellular, microorganism, germ, virus, viral, purebred, hybrid, quadruped, biped, two-footed, four-footed, diurnal, nocturnal, beast, brute, vermin, varmint, albino</AUni>
+<AUni ws="en">phylum, class, order, family, genus, species, chordate, vertebrate, invertebrate, crustacean, rodent, insect, arthropod, mollusk, echidna, protozoa, protozoan, protozoon, amoebic, amoeba, bacteriophage, cold-blooded, warm-blooded, multicellular, single-celled, unicellular, microorganism, germ, virus, viral, purebred, hybrid, quadruped, biped, two-footed, four-footed, diurnal, nocturnal, beast, brute, vermin, varmint, albino</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -5279,7 +5279,7 @@
 <AUni ws="en">(5) What species of hyrax are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">hyrax, coney, dassy</AUni>
+<AUni ws="en">hyrax, cony, dassie</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -5482,7 +5482,7 @@
 <AUni ws="en">(3) What species of bird are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">accipiter, accipitrine, anhinga, albatross, aquiline, auk, avocet, bittern, blackbird, blackcap, bluebird, blue jay, bobolink, bobwhite, booby, brant, bullfinch, bunting, bustard, buteo, buzzard, canary, caracara, cardinal, cassowary, catbird, chat, chickadee, chicken, cock, cockatoo, cormorant, condor, coot, crane, crepuscular, crow, cuckoo, curlew, cygnet, dove, drake, duck, duckling, dunlin, eagle, eaglet, egret, eider, emu, erne, falcon, fieldfare, finch, flamingo, flicker, flycatcher, fulmar, gallinule, gander, gannet, gnatcatcher, goatsucker, godwit, goldfinch, goose, goshawk, gosling, grackle, grebe, grouse, gull, gyrfalcon, hawk, hen, heron, hoopoe, hummingbird, ibis, jackdaw, jaeger, jay, junco, kea, kingbird, kingfisher, kite, kittiwake, kiwi, lapwing, lark, loon, lovebird, lyrebird, macaw, magpie, mallard, martin, merganser, mew, moa, mockingbird, myna, mynah, nighthawk, nightjar, nonpasserine, nuthatch, oriole, oscine, osprey, ostrich, owl, parakeet, passerine, parrot, partridge, peacock, peafowl, peahen, peewit, pelican, penguin, peregrine, petrel, pewee, pewit, phalarope, pheasant, pigeon, pintail, pipit, plover, ptarmigan, puffin, quail, quetzal, rail, ratite, raven, redbird, rhea, ricebird, ringdove, robin, rooster, rook, runner, sandpiper, sapsucker, scoter, seagull, shearwater, shelduck, siskin, skua, snipe, snowbird, sparrow, spoonbill, squab, starling, stilt, stork, swallow, swan, swift, tailorbird, tanager, teal, tern, thrasher, thrush, tit, titmouse, towhee, trumpeter, tumbler, turkey, turnstone, turtledove, vireo, vulture, vulturine, wading, warbler, waxwing, weaverbird, whistler, willet, woodcock, woodpecker, wren, yellowhammer, yellowlegs, yellowthroat</AUni>
+<AUni ws="en">accipiter, accipitrine, anhinga, albatross, aquiline, auk, avocet, bittern, blackbird, blackcap, bluebird, blue jay, bobolink, bobwhite, booby, brant, bullfinch, bunting, bustard, buteo, buzzard, canary, caracara, cardinal, cassowary, catbird, chat, chickadee, chicken, cock, cockatoo, cormorant, condor, coot, crane, crepuscular, crow, cuckoo, curlew, cygnet, dove, drake, duck, duckling, dunlin, eagle, eaglet, egret, eider, emu, erne, falcon, fieldfare, finch, flamingo, flicker, flycatcher, fulmar, gallinule, gander, gannet, gnatcatcher, goatsucker, godwit, goldfinch, goose, goshawk, gosling, grackle, grebe, grouse, gull, gyrfalcon, hawk, hen, heron, hoopoe, hummingbird, ibis, jackdaw, jaeger, jay, junco, kea, kingbird, kingfisher, kite, kittiwake, kiwi, lapwing, lark, loon, lovebird, lyrebird, macaw, magpie, mallard, martin, merganser, mew, moa, mockingbird, myna, nighthawk, nightjar, nonpasserine, nuthatch, oriole, oscine, osprey, ostrich, owl, parakeet, passerine, parrot, partridge, peacock, peafowl, peahen, peewit, pelican, penguin, peregrine, petrel, pewee, pewit, phalarope, pheasant, pigeon, pintail, pipit, plover, ptarmigan, puffin, quail, quetzal, rail, ratite, raven, redbird, rhea, ricebird, ringdove, robin, rooster, rook, runner, sandpiper, sapsucker, scoter, seagull, shearwater, shelduck, siskin, skua, snipe, snowbird, sparrow, spoonbill, squab, starling, stilt, stork, swallow, swan, swift, tailorbird, tanager, teal, tern, thrasher, thrush, tit, titmouse, towhee, trumpeter, tumbler, turkey, turnstone, turtledove, vireo, vulture, vulturine, wading, warbler, waxwing, weaverbird, whistler, willet, woodcock, woodpecker, wren, yellowhammer, yellowleg, yellowthroat</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -5838,7 +5838,7 @@
 <AUni ws="en">(2) What species of insects are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">ant, army ant, armyworm, bedbug, bee, beetle, bluebottle fly, botfly, bristletail, bumblebee, butterfly, carpenter bee, chigger, cicada, cockroach, cricket, daddy longlegs, damselfly, deerfly, dragonfly, dung beetle, earwig, firefly, flea, fly, glowworm, gnat, grasshopper, hawkmoth, hellgramite, honeybee, hornet, horsefly, housefly, inchworm, jigger, katydid, ladybug, leafhopper, lice, locust, long-horned beetle, louse, mantis, mayfly, midge, millipede, mite, monarch butterfly, mosquito, moth, mud wasp, nit, praying mantis, roach, sawfly, scarab, silkworm, silverfish, stinkbug, swallowtail, termite, tick, tsetse fly, tumblebug, walking stick, wasp, weevil, wiggler, wriggler</AUni>
+<AUni ws="en">ant, army ant, armyworm, bedbug, bee, beetle, bluebottle fly, botfly, bristletail, bumblebee, butterfly, carpenter bee, chigger, cicada, cockroach, cricket, daddy longlegs, damselfly, deerfly, dragonfly, dung beetle, earwig, firefly, flea, fly, glowworm, gnat, grasshopper, hawkmoth, hellgramite, honeybee, hornet, horsefly, housefly, inchworm, jigger, katydid, ladybug, leaf-hopper, lice, locust, long-horned beetle, louse, mantis, mayfly, midge, millipede, mite, monarch butterfly, mosquito, moth, mud wasp, nit, praying mantis, roach, sawfly, scarab, silkworm, silverfish, stinkbug, swallowtail, termite, tick, tsetse fly, tumblebug, walking stick, wasp, weevil, wiggler, wriggler</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -5854,7 +5854,7 @@
 <AUni ws="en">(4) What words describe insects?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">borer, carnivorous, cosmopolitan, crawling, creeping, diurnal, dauber, flying, hopper, hopping, insectile, larva, larval, nocturnal, pest, predacious, predator, pupa, queen, segmented, stinging, two-winged, venomous, winged, wingless</AUni>
+<AUni ws="en">borer, carnivorous, cosmopolitan, crawling, creeping, diurnal, dauber, flying, hopper, hopping, insectile, larva, larval, nocturnal, pest, predaceous, predator, pupa, queen, segmented, stinging, two-winged, venomous, winged, wingless</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -6034,7 +6034,7 @@
 <AUni ws="en">(15) What words refer to brachiopods--animals with two shells and two arms (phylum Brachiopoda)?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">brachiopod, lampshell</AUni>
+<AUni ws="en">brachiopod, lamp shell</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -6234,7 +6234,7 @@
 <AUni ws="en">(1) What are the parts of insects?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">head, abdomen, thorax, carapace, exoskeleton, wing, horn, stinger, sting, segment, antenna, feeler, forewing, proboscis, compound eye, spinneret</AUni>
+<AUni ws="en">head, abdomen, thorax, carapace, exoskeleton, wing, horn, stinger, sting, segment, antenna, feeler, fore wing, hind wing, proboscis, compound eye, spinneret</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -12146,7 +12146,7 @@
 <AUni ws="en">(5) What words refer to a person's physical condition?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">health, wellbeing, condition, physiology</AUni>
+<AUni ws="en">health, well-being, condition, physiology</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -15018,7 +15018,7 @@
 <AUni ws="en">(1) What words refer to the process of arranging a marriage?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">arrange a marriage, arranged marriage, marriage negotiations, match, espousals, marry off</AUni>
+<AUni ws="en">arrange a marriage, arranged marriage, marriage negotiations, match, espousal, marry off</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -16191,7 +16191,7 @@
 <AUni ws="en">(2) What words refer to a doctor operating on a woman to deliver a baby?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">Caesarean</AUni>
+<AUni ws="en">Caesarean section</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -19214,7 +19214,7 @@
 <AUni ws="en">(5) What words refer to a person who studies something?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">astronomer, biologist, botanist, detective, investigator, linguist, mathematician, operative, reconnoiterer, scientist, scout, spy, undercover agent, zoologist</AUni>
+<AUni ws="en">astronomer, biologist, botanist, detective, investigator, linguist, mathematician, operative, reconnoitrer, scientist, scout, spy, undercover agent, zoologist</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -21490,7 +21490,7 @@
 <AUni ws="en">(5) What words refer to the quality of being determined?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">determination, ambition, commitment, drive, endurance, perseverance, pertinacity, resolve, spirit, fighting spirit, steadfastness, stick-to-itiveness, tenacity, will, willpower</AUni>
+<AUni ws="en">determination, ambition, commitment, drive, endurance, perseverance, pertinacity, resolve, spirit, fighting spirit, steadfastness, sticktoitiveness, tenacity, will, willpower</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -21564,7 +21564,7 @@
 <AUni ws="en">(4) What words refer to the quality of being stubborn?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">stubbornness, inflexibility, obstinacy, tenacity, stick-to-itiveness</AUni>
+<AUni ws="en">stubbornness, inflexibility, obstinacy, tenacity, sticktoitiveness</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -22004,7 +22004,7 @@
 <AUni ws="en">(6) What words refer to someone who gives advice?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">advisor, counselor, consultant, guru, mentor, coach</AUni>
+<AUni ws="en">adviser, counselor, consultant, guru, mentor, coach</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -22555,7 +22555,7 @@
 <AUni ws="en">(1) What words refer to preventing someone from doing something.</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">prevent someone from, keep someone from, avert, avoid, check, frustrate, nip in the bud, obviate, pre-empt, pre-emption, prevention, prohibit, stave off, stop, stopping, constrain, impose, hinder, impede, limit, overcome, prevail</AUni>
+<AUni ws="en">prevent someone from, keep someone from, avert, avoid, check, frustrate, nip in the bud, obviate, preempt, preemption, prevention, prohibit, stave off, stop, stopping, constrain, impose, hinder, impede, limit, overcome, prevail</AUni>
 </ExampleWords>
 <ExampleSentences>
 <AStr ws="en">
@@ -26842,7 +26842,7 @@
 <AUni ws="en">(2) What words refer to speaking for a long time?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">loquacious, verbose, wordy, run on, longwinded, compendious, interminable</AUni>
+<AUni ws="en">loquacious, verbose, wordy, run on, long-winded, compendious, interminable</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -28631,7 +28631,7 @@
 <AUni ws="en">(4) What words describe a person who boasts?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">boastful, vain, proud, bigheaded, be all talk, be all bluster</AUni>
+<AUni ws="en">boastful, vain, proud, big-headed, be all talk, be all bluster</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -29901,7 +29901,7 @@
 <AUni ws="en">(1) What words refer to foolish talk?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">foolish talk, foolishness, babble, balderdash, bilge, blather, chit-chat, drivel, falderal, gossipy, hooey, humbug, idle talk, joking, nonsense, prate, prattle, stupidity, twaddle</AUni>
+<AUni ws="en">foolish talk, foolishness, babble, balderdash, bilge, blather, chit-chat, drivel, folderol, gossipy, hooey, humbug, idle talk, joking, nonsense, prate, prattle, stupidity, twaddle</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -30861,7 +30861,7 @@
 <AUni ws="en">(3) What words describe something that has two meanings?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">ambiguous, double meaning, doubletalk</AUni>
+<AUni ws="en">ambiguous, double meaning, double talk</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -30900,7 +30900,7 @@
 <AUni ws="en">(3) What words refer to something that has no meaning?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">nonsense, gibberish, babble, drivel, hocus-pocus, mumbo-jumbo, gobbledygook</AUni>
+<AUni ws="en">nonsense, gibberish, babble, drivel, hocus-pocus, mumbo jumbo, gobbledygook</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -32437,7 +32437,7 @@
 <AUni ws="en">(2) What words refer to dividing a social group or more than one social group?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">divide, sow dissention, set at odds, pit against, part company with, have a falling out, differ, clash, disagree</AUni>
+<AUni ws="en">divide, sow dissension, set at odds, pit against, part company with, have a falling out, differ, clash, disagree</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -32888,7 +32888,7 @@
 <AUni ws="en">(2) What words refer to your ancestors?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">ancestor, forefather, forbearer, patriarch, matriarch, progenitor, background, origins</AUni>
+<AUni ws="en">ancestor, forefather, forebear, patriarch, matriarch, progenitor, background, origins</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -35203,7 +35203,7 @@
 <AUni ws="en">(3) What are the names of specific board games?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">bingo, blackjack, bridge, cards, checkers, chess, charades, craps, dice, dominoes, gin, hearts, jacks, lotto, mahjongg, marbles, Monopoly, Parcheesi, poker, roulette, solitaire</AUni>
+<AUni ws="en">bingo, blackjack, bridge, cards, checkers, chess, charades, craps, dice, dominoes, gin, hearts, jacks, lotto, mahjong, marbles, Monopoly, Parcheesi, poker, roulette, solitaire</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -37182,7 +37182,7 @@
 <AUni ws="en">(6) What words describe someone who is proud?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">proud, aloof, arrogant, bigheaded, boastful, brash, conceited, contemptuous, egocentric, egotistic, egotistical, hoity-toity, imperious, inflated, lofty, ostentatious, pretentious, prideful, proud hearted, puffed up, self-aggrandizing, self-confident, uppity, vain</AUni>
+<AUni ws="en">proud, aloof, arrogant, big-headed, boastful, brash, conceited, contemptuous, egocentric, egotistic, egotistical, hoity-toity, imperious, inflated, lofty, ostentatious, pretentious, prideful, proud hearted, puffed up, self-aggrandizing, self-confident, uppity, vain</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -38514,7 +38514,7 @@
 <AUni ws="en">(3) What words refer to someone who deceives?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">deceiver, magician, conjuror</AUni>
+<AUni ws="en">deceiver, magician, conjurer</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -38530,7 +38530,7 @@
 <AUni ws="en">(5) What words refer to someone who pretends to be someone else?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">imposter, charlatan, fraud, fake, pretender, quack, wolf in sheep's clothing</AUni>
+<AUni ws="en">impostor, charlatan, fraud, fake, pretender, quack, wolf in sheep's clothing</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -39297,7 +39297,7 @@
 <AUni ws="en">(1) What general words refer to prosperity and trouble?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">prosperity and trouble, good and evil, ying and yang</AUni>
+<AUni ws="en">prosperity and trouble, good and evil, yin and yang</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -39657,7 +39657,7 @@
 <AUni ws="en">(6) What words refer to something that causes someone to suffer?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">adversity, hardship, hell, injury, tormenter, torturer</AUni>
+<AUni ws="en">adversity, hardship, hell, injury, tormentor, torturer</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -44503,7 +44503,7 @@
 <AUni ws="en">(1) What words refer to rioting?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">riot (v), loot, disturb the peace, go on a frenzy, go on a rampage, be in an uproar, run amuck</AUni>
+<AUni ws="en">riot (v), loot, disturb the peace, go on a frenzy, go on a rampage, be in an uproar, run amok</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -45026,7 +45026,7 @@
 <AUni ws="en">(11) What words refer to the person or group that people think will win?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">frontrunner, strong contender, be the favorite, be in the running</AUni>
+<AUni ws="en">front runner, strong contender, be the favorite, be in the running</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -45392,7 +45392,7 @@
 <AUni ws="en">(2) What are the military ranks?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">rank, enlisted man, noncommissioned officer, commissioned officer, officer, commanding officer, commander, commandant, rank and file</AUni>
+<AUni ws="en">rank, enlisted man, non-commissioned officer, commissioned officer, officer, commanding officer, commander, commandant, rank and file</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -45597,7 +45597,7 @@
 <AUni ws="en">(3) What types of guns are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">gun, firearm, rifle, pistol, revolver, repeater, shotgun, six-gun, six-shooter, smoothbore, machinegun</AUni>
+<AUni ws="en">gun, firearm, rifle, pistol, revolver, repeater, shotgun, six-gun, six-shooter, smoothbore, machine gun</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -45725,7 +45725,7 @@
 <AUni ws="en">(19) What types of armor are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">armor, shield, helmet, breastplate, greaves, buckler, corselet, mail, panoply, plate, plating, bullet proof vest, visor</AUni>
+<AUni ws="en">armor, shield, helmet, breastplate, greave, buckler, corselet, mail, panoply, plate, plating, bullet proof vest, visor</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -46634,7 +46634,7 @@
 <AUni ws="en">(4) What is a person called who practices sorcery?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">sorcerer, magician, witch, wizard, shaman, witchdoctor, conjuror, necromancer, warlock, charmer, medicine man, alchemist, medium</AUni>
+<AUni ws="en">sorcerer, magician, witch, wizard, shaman, witchdoctor, conjurer, necromancer, warlock, charmer, medicine man, alchemist, medium</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -47783,7 +47783,7 @@
 <AUni ws="en">(1) What words are used to talk about Islam?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">Islam, Islamic, Muslim, Allah, Mohammed, the Prophet, Koran, Kaaba, mosque, sharia, Ramadan, hajj</AUni>
+<AUni ws="en">Islam, Islamic, Muslim, Allah, Mohammad, the Prophet, Koran, Kaaba, mosque, sharia, Ramadan, hajj</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -48760,7 +48760,7 @@
 <AUni ws="en">(4) What tools are used to grind flour?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">mill, flourmill, grind stone, millstone, grinder, grinding mill, flour sack</AUni>
+<AUni ws="en">mill, flour mill, grind stone, millstone, grinder, grinding mill, flour sack</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -48852,7 +48852,7 @@
 <AUni ws="en">(9) What appliances are used to cook food?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">oven, stove, grill, broiler, toaster, toaster oven, microwave oven, barbeque, fireplace</AUni>
+<AUni ws="en">oven, stove, grill, broiler, toaster, toaster oven, microwave oven, barbecue, fireplace</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -49531,7 +49531,7 @@
 <AUni ws="en">(4) What utensils are used for catching spilled food?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">bib, napkin (serviette), placemat</AUni>
+<AUni ws="en">bib, napkin (serviette), place mat</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -50304,7 +50304,7 @@
 <AUni ws="en">(4) What types of foods are made primarily from meat?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">roast beef, steak, fried chicken, fish and chips, hamburger, hotdog, pizza, spaghetti, casserole, lasagna, stew</AUni>
+<AUni ws="en">roast beef, steak, fried chicken, fish and chips, hamburger, hot dog, pizza, spaghetti, casserole, lasagna, stew</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -50360,7 +50360,7 @@
 <AUni ws="en">(11) What types of condiments are there (foods that people only eat a little of, because they are expensive, strong tasting, or are added to other foods to flavor them)?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">condiment, garnish, pickle, olive, black olive, green olive, tomato sauce, catsup, mustard, mayonnaise, peanut butter, jam, jelly, preserves</AUni>
+<AUni ws="en">condiment, garnish, pickle, olive, black olive, green olive, tomato sauce, ketchup, mustard, mayonnaise, peanut butter, jam, jelly, preserves</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -50985,7 +50985,7 @@
 <AUni ws="en">(1) What special clothes are worn by police or soldiers?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">uniform, dress uniform, fatigues, camouflage, helmet, beret, cap, gasmask, braid</AUni>
+<AUni ws="en">uniform, dress uniform, fatigues, camouflage, helmet, beret, cap, gas mask, braid</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -51573,7 +51573,7 @@
 <AUni ws="en">(1) What words refer to cutting hair?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">cut, trim, haircut, barber, scissors, haircutters</AUni>
+<AUni ws="en">cut, trim, haircut, barber, scissors, haircutter</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -51597,7 +51597,7 @@
 <AUni ws="en">(4) What tools are used to cut hair?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">scissors, haircutters, shears</AUni>
+<AUni ws="en">scissors, haircutter, shears</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -51628,7 +51628,7 @@
 <AUni ws="en">(2) What tools are used to shave?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">razor, safety razor, razorblade, razor strap, shaving cream, shaving soap, shaving brush</AUni>
+<AUni ws="en">razor, safety razor, razor blade, razor strap, shaving cream, shaving soap, shaving brush</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -52531,7 +52531,7 @@
 <AUni ws="en">(1) Where do people light fires?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">fireplace, stove, lamp, lantern, candle, trash heap, firepot, incinerator, furnace, heater, kiln, barbeque, forge, blast furnace, crematorium, brazier, range, cooker, gas ring, burner</AUni>
+<AUni ws="en">fireplace, stove, lamp, lantern, candle, trash heap, firepot, incinerator, furnace, heater, kiln, barbecue, forge, blast furnace, crematorium, brazier, range, cooker, gas ring, burner</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -52775,7 +52775,7 @@
 <AUni ws="en">(3) Who does the laundry?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">washerwoman, drycleaners</AUni>
+<AUni ws="en">washerwoman, dry cleaner</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -56684,7 +56684,7 @@
 <AUni ws="en">(4) What types of dogs are there?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">basset, beagle, bloodhound, boxer, bulldog, Chihuahua, collie, dachshund, Doberman, German shepherd, greyhound, husky, Pekinese, poodle, retriever, setter, spaniel, terrier</AUni>
+<AUni ws="en">basset, beagle, bloodhound, boxer, bulldog, Chihuahua, collie, dachshund, Doberman, German shepherd, greyhound, husky, Pekingese, poodle, retriever, setter, spaniel, terrier</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -60702,7 +60702,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(4) What words refer to using waterpower?</AUni>
+<AUni ws="en">(4) What words refer to using water power?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">water-power, water mill, water-wheel</AUni>
@@ -60710,7 +60710,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(5) What words are used of generating electricity using waterpower?</AUni>
+<AUni ws="en">(5) What words are used of generating electricity using water power?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">dam, hydroelectric power plant, electric generating plant, dynamo</AUni>
@@ -67770,7 +67770,7 @@
 <AUni ws="en">(2) What words describe something that cannot be moved?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">immoveable, fixed, fast, set, permanent</AUni>
+<AUni ws="en">immovable, fixed, fast, set, permanent</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -71099,7 +71099,7 @@
 <AUni ws="en">(3) What tools and methods are used for organizing things?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">table, matrix, chart, organizational chart, flow chart, grid, cubby hole, pigeon hole, in basket, out basket</AUni>
+<AUni ws="en">table, matrix, chart, organizational chart, flow chart, grid, cubbyhole, pigeonhole, in basket, out basket</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -75823,7 +75823,7 @@
 <AUni ws="en">(3) What words refer to the bad part that remains after the good part has been taken?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">butt, dregs, leavings, offscourings, rags, scraps, sweepings</AUni>
+<AUni ws="en">butt, dregs, leavings, offscouring, rags, scrap, sweepings</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -76283,7 +76283,7 @@
 <AUni ws="en">(2) What words describe something that is very small?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">tiny, minute, miniscule, microscopic, infinitesimal, wee, diminutive</AUni>
+<AUni ws="en">tiny, minute, minuscule, microscopic, infinitesimal, wee, diminutive</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -78551,7 +78551,7 @@
 <AUni ws="en">(3) What words refer to a unit of weight?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">ounce, pound, ton, milligram, centigram, decigram, gram, dekagram, kilo, kilogram, metric ton, kiloton, megaton, atomic weight, carat, dram, grain, hundredweight, pennyweight, stone, talent, gross weight, net weight</AUni>
+<AUni ws="en">ounce, pound, ton, milligram, centigram, decigram, gram, decagram, kilo, kilogram, metric ton, kiloton, megaton, atomic weight, carat, dram, grain, hundredweight, pennyweight, stone, talent, gross weight, net weight</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -80657,7 +80657,7 @@
 <AUni ws="en">(4) What are the shades of orange?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">orange, apricot, cadmium, carrottop, carroty, ocher, peach, salmon, tangerine</AUni>
+<AUni ws="en">orange, apricot, cadmium, carrot top, carroty, ocher, peach, salmon, tangerine</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -80665,7 +80665,7 @@
 <AUni ws="en">(5) What are the shades of yellow?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">yellow, amber, banana, blond, blonde, canary, chartreuse, chrome yellow, citron, cream, flaxen, gold, golden, goldilocks, jaundice, lemon, saffron, sallow, straw-colored, sulfur, tawny, terra cotta, yellow ocher, xanthous</AUni>
+<AUni ws="en">yellow, amber, banana, blond, blonde, canary, chartreuse, chrome yellow, citron, cream, flaxen, gold, golden, goldilocks, jaundice, lemon, saffron, sallow, straw-colored, sulfur, tawny, terracotta, yellow ocher, xanthous</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -81206,7 +81206,7 @@
 <AUni ws="en">(14) What happens to people when they get cold?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">shiver, be blue with cold, goose pimples, goosebumps, gooseflesh, someone's teeth are chattering, frostbite, frostbitten, freeze to death, die of cold</AUni>
+<AUni ws="en">shiver, be blue with cold, goose pimples, goosebumps, goose flesh, someone's teeth are chattering, frostbite, frostbitten, freeze to death, die of cold</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -86436,7 +86436,7 @@
 <AUni ws="en">(8) What words describe a new idea or way of doing something?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">new, new-fangled, avant-garde, contemporary, forward-looking, fresh, futuristic, go-ahead, be in its infancy, innovative, inventive, modern, ultra-modern, move with the times, novel, original, originality, pioneering, present-day, progressive, revolutionary, up-to-date, up-to-the-minute, ahead of your time</AUni>
+<AUni ws="en">new, newfangled, avant-garde, contemporary, forward-looking, fresh, futuristic, go-ahead, be in its infancy, innovative, inventive, modern, ultra-modern, move with the times, novel, original, originality, pioneering, present-day, progressive, revolutionary, up-to-date, up-to-the-minute, ahead of your time</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -86518,7 +86518,7 @@
 <AUni ws="en">(3) What words describe something that is old and belongs to an early period of history?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">primeval, antediluvian, mediaeval, primordial</AUni>
+<AUni ws="en">primeval, antediluvian, medieval, primordial</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -87100,7 +87100,7 @@
 <AUni ws="en">(1) What words refer to continuing to do something?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">continue (doing something), remain at (something), keep on (doing something), stay at (it), stick to (it), hold on, keep (going), keep at (it), stick-to-itiveness, sustain</AUni>
+<AUni ws="en">continue (doing something), remain at (something), keep on (doing something), stay at (it), stick to (it), hold on, keep (going), keep at (it), sticktoitiveness, sustain</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -88339,7 +88339,7 @@
 <AUni ws="en">(3) What words describe something that is toward one of the directions of the compass?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">northern, southern, eastern, western, boreal, austral, oriental, occidental, Midwestern, Fareast</AUni>
+<AUni ws="en">northern, southern, eastern, western, boreal, austral, oriental, occidental, Midwestern, Far East</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -89940,7 +89940,7 @@
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain for words that indicate event propositions. Event propositions are similar in that they are normally expressed by a subject and a verb, possibly including an object, indirect object, or complement clause. However there are multiple ways in which a language can express an event, such as a passive construction, noun phrase, or subordinate clause. In addition each event type is different in its primary cases, and in the ways those cases are marked. Each event type has subtypes, such as intransitive, transitive, and bitransitive verbs. A great deal of research is needed in order to identify all the variations. Ultimately every verb must be investigated to determine how it behaves in each syntactic construction and how its case relations are marked. No two verbs are entirely alike.</Run>
+<Run ws="en">Use this domain for words that indicate event propositions. Event propositions are similar in that they are normally expressed by a subject and a verb, possibly including an object, indirect object, or complement clause. However there are multiple ways in which a language can express an event, such as a passive construction, noun phrase, or subordinate clause. In addition each event type is different in its primary cases, and in the ways those cases are marked. Each event type has subtypes, such as intransitive, transitive, and ditransitive verbs. A great deal of research is needed in order to identify all the variations. Ultimately every verb must be investigated to determine how it behaves in each syntactic construction and how its case relations are marked. No two verbs are entirely alike.</Run>
 </AStr>
 </Description>
 <Questions>
@@ -91280,7 +91280,7 @@
 <AUni ws="en">(1) What words indicate that something is done to a complete degree?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">completely, fully, totally, entirely, wholly, absolutely, utterly, positively, in every way, in every respect, in every sense, through and through, whole-heartedly, altogether, out-and-out, outright, perfect, perfectly, roundly, solid, solidly, thoroughly, unmitigated, unqualified, utter</AUni>
+<AUni ws="en">completely, fully, totally, entirely, wholly, absolutely, utterly, positively, in every way, in every respect, in every sense, through and through, wholeheartedly, altogether, out-and-out, outright, perfect, perfectly, roundly, solid, solidly, thoroughly, unmitigated, unqualified, utter</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -92390,7 +92390,7 @@
 <AUni ws="en">(5) What words indicate that something is certain to happen and nothing can be done to stop it?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">inevitable, whether you like it or not, willy nilly, be fated to, be destined to, predestined, be meant to be, pre-ordained, doomed, the inevitable</AUni>
+<AUni ws="en">inevitable, whether you like it or not, willy-nilly, be fated to, be destined to, predestined, be meant to be, pre-ordained, doomed, the inevitable</AUni>
 </ExampleWords>
 </CmDomainQ>
 <CmDomainQ>
@@ -95042,7 +95042,7 @@
 <AUni ws="en">(1) What words indicate that something had no result?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">without result, without effect, in vain, to no avail, with no result, have no discernable effect, pointless, useless, worthless, be left with nothing, not yield</AUni>
+<AUni ws="en">without result, without effect, in vain, to no avail, with no result, have no discernible effect, pointless, useless, worthless, be left with nothing, not yield</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
