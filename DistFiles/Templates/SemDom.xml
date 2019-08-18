@@ -29826,7 +29826,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>1210 Archaeological Excavation Methods;  1211 Dating Methods in Archaeology;  1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology;  1213 Comparative Data [in Reconstructing History];  129 Archaiological Survey Methods;  138 Post Depositional Processes in Archaeological Sites;  159 Life History Materials;  170 History and Culture Change;  171 Comparative Evidence;  Distributional Evidence;  1710 Cultural Revitalization and Ethnogenesis;  172 Prehistory;  Archaeology;  173 Traditional History;  174 Historical Reconstruction;  175 History;  Recorded History;  176 Innovation;  177 Acculturation and Culture Contact;  178 Sociocultural Trends;  910 Archaeological Measures, Techniques and Analysis;  911 Chronologies and Cultural Sequences;  912 Cultural Stratigraphy;  913 Functional Specialization;  914 Typologies and Classification;  915 Archaeological Inventories</Uni>
+<Uni>1210 Archaeological Excavation Methods;  1211 Dating Methods in Archaeology;  1212 Laboratory Analysis of Materials Other Than Dating Methods in Archaeology;  1213 Comparative Data [in Reconstructing History];  129 Archaeological Survey Methods;  138 Post Depositional Processes in Archaeological Sites;  159 Life History Materials;  170 History and Culture Change;  171 Comparative Evidence;  Distributional Evidence;  1710 Cultural Revitalization and Ethnogenesis;  172 Prehistory;  Archaeology;  173 Traditional History;  174 Historical Reconstruction;  175 History;  Recorded History;  176 Innovation;  177 Acculturation and Culture Contact;  178 Sociocultural Trends;  910 Archaeological Measures, Techniques and Analysis;  911 Chronologies and Cultural Sequences;  912 Cultural Stratigraphy;  913 Functional Specialization;  914 Typologies and Classification;  915 Archaeological Inventories</Uni>
 </OcmCodes>
 <Questions>
 <CmDomainQ>
@@ -33639,7 +33639,7 @@
 </AStr>
 </Description>
 <OcmCodes>
-<Uni>590 Family;  144 Racial Identification;  Racial Affinities;  591 Residence;  592 Household;  593 Family Relationships;  594 Nuclear Family;  595 Polygamy;  596 Extended Families;  610 Kin Groups;  611 Rule of Descent;  612 Kindreds and Ramages;  613 Lineages;  614 Sibs;  615 Phratries;  616 Moieties;  617 Bilinear Kin Groups;  618 Clans;  619 Tribe and Nation</Uni>
+<Uni>590 Family;  144 Racial Identification;  Racial Affinities;  591 Residence;  592 Household;  593 Family Relationships;  594 Nuclear Family;  595 Polygamy;  596 Extended Families;  610 Kin Groups;  611 Rule of Descent;  612 Kindreds and Ramages;  613 Lineages;  614 Clans;  615 Phratries;  616 Moieties;  617 Bilineal Kin Groups;  618 Localized Kin Groups;  619 Tribe and Nation</Uni>
 </OcmCodes>
 <LouwNidaCodes>
 <Uni>11D Ethnic-Cultural</Uni>
