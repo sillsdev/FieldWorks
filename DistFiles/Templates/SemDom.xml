@@ -65000,7 +65000,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(6) What idiophones are used of moving quickly?</AUni>
+<AUni ws="en">(6) What onomatopoeic words refer to moving quickly?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">zip, zoom, whiz, vroom, chop chop</AUni>
@@ -65050,7 +65050,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(4) What idiophones are used of moving slowly?</AUni>
+<AUni ws="en">(4) What onomatopoeic words refer to moving slowly?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">chug</AUni>
@@ -90855,17 +90855,17 @@
 <AUni ws="en">9.2.8</AUni>
 </Abbreviation>
 <Name>
-<AUni ws="en">Idiophones</AUni>
+<AUni ws="en">Onomatopoeic words</AUni>
 </Name>
 <Description>
 <AStr ws="en">
-<Run ws="en">Use this domain to list all idiophones. If there are many idiophones in your language, it is probably not worth the trouble to list them here. The Shoebox program (and other dictionary programs) can sort your dictionary by part of speech.</Run>
+<Run ws="en">Use this domain to list all onomatopoeic words. If there are many onomatopoeic words in your language, it is probably not worth the trouble to list them here. The Shoebox program (and other dictionary programs) can sort your dictionary by part of speech.</Run>
 </AStr>
 </Description>
 <Questions>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(1) What idiophones are in your language?</AUni>
+<AUni ws="en">(1) What onomatopoeic words are in your language?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">knick-knack, flimflam</AUni>
