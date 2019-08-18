@@ -49719,7 +49719,7 @@
 <AUni ws="en">(5) What other types of seeds are eaten?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">cottonseed, pumpkin seeds, sunflower seeds</AUni>
+<AUni ws="en">cottonseed, flaxseed, hayseed, linseed, pumpkin seeds, sunflower seeds</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
@@ -49745,7 +49745,7 @@
 <AUni ws="en">(1) What types of fruit are eaten?</AUni>
 </Question>
 <ExampleWords>
-<AUni ws="en">apple, apricot, avocado, banana, berry, blueberry, breadfruit, carob, citrus, cranberry, date, fig, flaxseed, grape, grapefruit, hayseed, jackfruit, legume, lemon, lime, linseed, mango, olive, orange, papaya, passion fruit, pea, peach, pear, pineapple, plantain, plum, prune, raisin, raspberry, strawberry, tomato</AUni>
+<AUni ws="en">apple, apricot, avocado, banana, berry, blueberry, breadfruit, carob, citrus, cranberry, date, fig, grape, grapefruit, jackfruit, legume, lemon, lime, mango, olive, orange, papaya, passion fruit, pea, peach, pear, pineapple, plantain, plum, prune, raisin, raspberry, strawberry, tomato</AUni>
 </ExampleWords>
 </CmDomainQ>
 </Questions>
