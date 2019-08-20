@@ -144,7 +144,6 @@ private:
     Slot *m_prev;
     unsigned short m_glyphid;        // glyph id
     uint16 m_realglyphid;
-	// REVIEW (Hasso) 2019.08: m_original and m_after always seem to be the same. Why are both needed?
     uint32 m_original;      // charinfo that originated this slot (e.g. for feature values)
 	// REVIEW (Hasso) 2019.08: m_begin and m_end seem like they would be better names than m_before and m_after.
 	// Since m_before and m_after are the inclusive range of characters, and there is usually one character per slot,
