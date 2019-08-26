@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(xWorksStrings.BeginCompressingDataForWebonary);
-			using(var zipFile = new ZipFile())
+			using(var zipFile = new ZipFile(Encoding.UTF8))
 			{
 				RecursivelyAddFilesToZip(zipFile, tempDirectoryToCompress, "", webonaryView);
 				zipFile.Save(zipFileToUpload);
