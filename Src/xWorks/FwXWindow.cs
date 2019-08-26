@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using L10NSharp;
 using Microsoft.Win32;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Flag indicating whether or not this instance of MainWnd is a copy of
 		/// another Wnd (i.e. created by choosing the "Window/New Window" menu).
 		/// </summary>
-		protected bool m_fWindowIsCopy = false;
+		protected bool m_fWindowIsCopy;
 
 		/// <summary>
 		/// Configuration file pathname.
@@ -78,8 +77,6 @@ namespace SIL.FieldWorks.XWorks
 		protected List<IVwVirtualHandler> m_installedVirtualHandlers;
 
 		static bool m_fInUndoRedo; // true while executing an Undo/Redo command.
-
-		private static LocalizationManager s_localizationMgr;
 
 		/// <summary>
 		/// The stylesheet used for all views in this window.
