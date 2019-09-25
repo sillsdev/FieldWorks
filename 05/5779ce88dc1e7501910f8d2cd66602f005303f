@@ -1,0 +1,8 @@
+Verified+1: Jason Naylor <jason_naylor@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Randy Regnier <rbregnier@gmail.com>
+Submitted-at: Wed, 25 Sep 2019 15:23:38 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/7004
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
