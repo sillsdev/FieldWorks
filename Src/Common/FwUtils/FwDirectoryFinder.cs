@@ -33,9 +33,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ksFlexFolderName = "Language Explorer";
 
-
 		/// <summary>The style sheet for all FLEx styles (including scripture).</summary>
 		public const string kFlexStylesFilename = "FlexStyles.xml";
+
+		/// <summary>The filename standard OCM list.</summary>
+		public const string ksOCMListFilename = "OCM.xml";
+
+		/// <summary>The filename for the enhanced OCM list ("FRAME").</summary>
+		public const string ksOCMFrameFilename = "OCM-Frame.xml";
+
 		private const string ksProjectsDir = "ProjectsDir";
 
 		private const string CompanyName = "SIL";

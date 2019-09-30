@@ -680,6 +680,16 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		AuxiliaryResource,
 		/// <summary/>
 		MarbleResource,
+		/// <summary/>
+		TransliterationWithEncoder,
+		/// <summary/>
+		ConsultantNotes,
+		/// <summary/>
+		GlobalAnthropologyNotes,
+		/// <summary/>
+		StudyBibleAdditions,
+		/// <summary/>
+		Unknown
 	}
 
 	/// <summary/>

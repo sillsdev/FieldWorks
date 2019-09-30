@@ -40,6 +40,15 @@ namespace SIL.FieldWorks.XWorks
 			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 
+		public bool IsSortingOnAlphaHeaders()
+		{
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+			int[] entriesToSave;
+			var publicationDecorator =
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, "Dictionary");
+			return RecordClerk.IsClerkSortingByHeadword(clerk);
+		}
+
 		#region Disposal
 		protected virtual void Dispose(bool disposing)
 		{
@@ -94,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(xWorksStrings.BeginCompressingDataForWebonary);
-			using(var zipFile = new ZipFile())
+			using(var zipFile = new ZipFile(Encoding.UTF8))
 			{
 				RecursivelyAddFilesToZip(zipFile, tempDirectoryToCompress, "", webonaryView);
 				zipFile.Save(zipFileToUpload);
@@ -162,6 +171,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
+
 			if (zipFileToUpload == null)
 				throw new ArgumentNullException("zipFileToUpload");
 			if(model == null)

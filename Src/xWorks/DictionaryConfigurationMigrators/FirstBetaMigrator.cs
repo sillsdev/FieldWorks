@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -197,6 +197,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 20;
 				case 20:
 					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
+					goto case 21;
+				case 21:
+					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(

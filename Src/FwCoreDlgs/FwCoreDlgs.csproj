@@ -139,6 +139,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -220,10 +229,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Lexicon.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
@@ -292,8 +297,21 @@
     <Compile Include="AddNewUserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.Designer.cs">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvancedScriptRegionVariantModel.cs" />
+    <Compile Include="AdvancedScriptRegionVariantView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvancedScriptRegionVariantView.Designer.cs">
+      <DependentUpon>AdvancedScriptRegionVariantView.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveWithRamp.cs">
       <SubType>Form</SubType>
@@ -366,11 +384,34 @@
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FwCharacterCategorizer.cs" />
-    <Compile Include="FwCheckAnthroListDlg.cs">
-      <SubType>Form</SubType>
+    <Compile Include="FwChooseAnthroListCtrl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <Compile Include="FwChooseAnthroListCtrl.Designer.cs">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwChooseAnthroListModel.cs" />
+    <Compile Include="FwNewLangProject.Designer.cs">
+      <DependentUpon>FwNewLangProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjectModel.cs" />
+    <Compile Include="FwNewLangProjMoreWsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FwStylesModifiedDlg.cs">
       <SubType>Form</SubType>
@@ -384,6 +425,13 @@
     <Compile Include="FwUpdateReportDlg.Designer.cs">
       <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="FwWritingSystemSetupDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwWritingSystemSetupDlg.Designer.cs">
+      <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwWritingSystemSetupModel.cs" />
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -412,9 +460,6 @@
     </Compile>
     <Compile Include="FwApplyStyleDlg.Designer.cs">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DuplicateProjectFoundDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
@@ -509,8 +554,11 @@
     <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.Designer.cs">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="WritingSystemPropertiesDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="WizardStep.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WizardStep.Designer.cs">
+      <DependentUpon>WizardStep.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AddCnvtrDlg.resx">
       <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
@@ -530,9 +578,15 @@
       <DependentUpon>AddNewUserDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="AddNewVernLangWarningDlg.resx">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdvancedEncProps.resx">
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdvancedScriptRegionVariantView.resx">
+      <DependentUpon>AdvancedScriptRegionVariantView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveWithRamp.resx">
       <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
@@ -570,8 +624,17 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <EmbeddedResource Include="FwChooseAnthroListCtrl.resx">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjMoreWsControl.resx">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjWritingSystemsControl.resx">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewProjectProjectNameControl.resx">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwStylesModifiedDlg.resx">
       <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
@@ -597,10 +660,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
-      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwChooserDlg.resx">
@@ -678,13 +737,16 @@
     <EmbeddedResource Include="WarningNotUsingDefaultLinkedFilesLocation.resx">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WritingSystemPropertiesDialog.resx">
-      <DependentUpon>WritingSystemPropertiesDialog.cs</DependentUpon>
+    <EmbeddedResource Include="FwWritingSystemSetupDlg.resx">
+      <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="WizardStep.resx">
+      <DependentUpon>WizardStep.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\FwCopyRight.png" />
@@ -702,6 +764,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\WizardConnectToStep.png" />
+    <Content Include="Resources\WizardStepComplete.png" />
+    <None Include="Resources\WizardNotComplete.png" />
     <None Include="Resources\Bullet.png" />
     <None Include="Resources\wait22trans.gif" />
     <Content Include="Resources\Warning.png" />

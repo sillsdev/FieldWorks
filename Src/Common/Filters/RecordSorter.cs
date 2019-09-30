@@ -1487,10 +1487,20 @@ namespace SIL.FieldWorks.Filters
 				// Handle surrogate pairs carefully!
 				int ch;
 				char ch1 = rgch[i];
-				if (Surrogates.IsLeadSurrogate(ch1))
+				// if the character is a lead surrogate, and there is a following character
+				if (Surrogates.IsLeadSurrogate(ch1) && i < rgch.Length)
 				{
-					char ch2 = rgch[++i];
-					ch = Surrogates.Int32FromSurrogates(ch1, ch2);
+					char ch2 = rgch[i + 1];
+					// if the following char is the other half then make the char from it
+					if (Surrogates.IsTrailSurrogate(ch2))
+					{
+						ch = Surrogates.Int32FromSurrogates(ch1, ch2);
+						++i;
+					}
+					else // otherwise it is half a surrogate pair (bad data)
+					{
+						ch = (int) ch1;
+					}
 				}
 				else
 				{
@@ -2197,7 +2207,13 @@ namespace SIL.FieldWorks.Filters
 		public int Compare(object x, object y)
 		{
 			if (m_ws == null)
+			{
 				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsId);
+			}
+			if (!m_ws.DefaultCollation.IsValid && m_ws.DefaultCollation.Type.ToLower() == "system")
+			{
+				m_ws.DefaultCollation = new SystemCollationDefinition();
+			}
 			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}
 		#endregion

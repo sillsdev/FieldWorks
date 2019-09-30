@@ -26,7 +26,7 @@
     </SccProvider>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <ApplicationIcon>BookOnCubeVersion.ico</ApplicationIcon>
+    <ApplicationIcon>BookOnCube.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -105,6 +105,10 @@
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Lexicon.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -331,7 +335,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BookOnCubeVersion.ico" />
+    <Content Include="BookOnCube.ico" />
     <None Include="Resources\OpenFile.png" />
     <None Include="Resources\DatabaseNew.png" />
     <None Include="Resources\chorus32x32.png" />
@@ -339,7 +343,7 @@
     <Content Include="Resources\Import28x28.png" />
     <None Include="Resources\SendReceiveGetArrow32x32.png" />
     <None Include="Resources\Info.png" />
-    <Content Include="SmallBookOnCubeVersion.ico" />
+    <Content Include="SmallBookOnCube.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />

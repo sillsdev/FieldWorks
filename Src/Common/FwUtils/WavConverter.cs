@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var fileWriter = new LameMP3FileWriter(outputStream, fileReader.WaveFormat, 128))
 			{
 				fileReader.CopyTo(fileWriter);
+				fileWriter.Flush();
 				var mp3Bytes = outputStream.ToArray();
 				SaveBytes(destinationFilePath, mp3Bytes);
 			}

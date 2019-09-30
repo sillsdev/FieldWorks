@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 	/// ------------------------------------------------------------------------------------
 	class ReapRamp
 	{
-		private static LocalizationManager s_localizationMgr;
+		private static ILocalizationManager s_localizationMgr;
 
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			if (s_localizationMgr == null)
 			{
 				s_localizationMgr = LocalizationManager.Create(
-					uiLocale,
+					TranslationMemory.Tmx, uiLocale,
 					localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
 					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"),
 					Path.Combine(Application.CompanyName, appName),

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -434,7 +434,11 @@ namespace SIL.FieldWorks
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
 		{
-			return projectId.Type == BackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
+			if (!LcmSettings.IsProjectSharingEnabled(projectId.ProjectFolder))
+			{
+				return true;
+			}
+			return projectId.Type == BackendProviderType.kSharedXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1434,7 +1438,7 @@ namespace SIL.FieldWorks
 			if (app != s_flexApp)
 				throw new ArgumentException("Invalid application", "app");
 
-			if (projectId.Equals(s_projectId))
+			if (s_projectId != null && projectId.Equals(s_projectId))
 			{
 				// We're trying to open this same project. Just open a new window for the
 				// specified application
@@ -1790,21 +1794,28 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new FwNewLangProject())
+			FwNewLangProjectModel model = null;
+			using (var progress = new ProgressDialogWithTask(s_threadHelper))
 			{
-				dlg.SetDialogProperties(helpTopicProvider);
+				progress.Title = "Loading language data";
+				progress.IsIndeterminate = true;
+				progress.AllowCancel = false;
+				progress.RunTask((args, obj) => model = new FwNewLangProjectModel());
+			}
+			using (var dlg = new FwNewLangProject(model, helpTopicProvider))
+			{
 				switch (dlg.DisplayDialog(dialogOwner))
 				{
 					case DialogResult.OK:
 						if (dlg.IsProjectNew)
-							return new ProjectId(dlg.GetDatabaseFile());
+							return new ProjectId(dlg.DatabaseName);
 						else
 						{
 							// The user tried to create a new project which already exists and
 							// then choose to open the project. Therefore open the project and return
 							// null for the ProjectId so the caller of this method does not try to
 							// create a new project.
-							ProjectId projectId = new ProjectId(dlg.GetDatabaseFile());
+							ProjectId projectId = new ProjectId(dlg.DatabaseName);
 							OpenExistingProject(projectId, app, dialogOwner);
 							return null;
 						}
@@ -3449,6 +3460,9 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
+			var processArch = Environment.Is64BitProcess ? 64 : 32;
+			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
+			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
 			ulong diskSize;
 			ulong diskFree;
 			int cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);

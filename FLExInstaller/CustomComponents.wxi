@@ -156,7 +156,7 @@
 
 	<DirectoryRef Id='HARVESTDATAFOLDER'>
 		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
-			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[HARVESTDATAFOLDER]\Icu54" />
+			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54" />
 		</Component>
 	</DirectoryRef>
 

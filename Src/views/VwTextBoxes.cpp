@@ -2131,6 +2131,11 @@ public:  // we can make anything public since the whole class is private to this
 
 		Assert(m_ichMinString < 0);
 		Assert(m_pboxNextNonStr && !dynamic_cast<VwStringBox *>(m_pboxNextNonStr));
+		// I have no idea if this is a good plan, but let's at least not crash for Pete's sake
+		if (!m_pboxNextNonStr)
+		{
+			return;
+		}
 
 		// A non-string box needs to be laid out. It is allowed to use all the space,
 		// not just what is on this line; if need be we will put it on the next line.
@@ -2564,7 +2569,7 @@ public:  // we can make anything public since the whole class is private to this
 			&dichLimSeg, &dxWidth, &est,
 			m_psegPrevContext);
 
-		if (!qlseg && m_twsh != ktwshAll)
+		if (!qlseg && m_twsh != ktwshAll && est != kestMoreLines)
 		{
 			// If we are separating out visible text and white-space, and we didn't get
 			// any of what we were expecting, try the other.

@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	///
 	/// </summary>
-	public class DummyWritingSystemPropertiesDialog : WritingSystemPropertiesDialog
+	public class DummyWritingSystemPropertiesDialog : FwWritingSystemSetupDlg
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyWritingSystemPropertiesDialog"/> class.
@@ -489,7 +489,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	[TestFixture]
 	[InitializeRealKeyboardController]
 	[SetCulture("en-US")]
-	public class WritingSystemPropertiesDialogTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
+	public class FwWritingSystemSetupDlgTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private DummyWritingSystemPropertiesDialog m_dlg;
 		private CoreWritingSystemDefinition m_wsKalabaIpa;
@@ -637,8 +637,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressDeleteButton();
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)" });
 			// Switch tabs, so we can test that Add New Ws will switch to General Tab.
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsFonts);
 			m_dlg.VerifyAddWsContextMenuItems(new[] { "&Writing System for Kalaba..." });
 			// Click on Add Button...selecting "Add New..." option.
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
@@ -646,12 +646,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsGeneral);
 			// Verify Switching context is not OK (force user to make unique Ws)
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts,
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsGeneral);
 			// make sure we can't select a different ethnologue code.
 			m_dlg.SelectEthnologueCodeDlg("", "", "", DialogResult.OK,
 				new[] { DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs },
@@ -678,7 +678,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyLoadedForListBoxSelection("Kala");
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)", "Kala (Phonetic)" });
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts,
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
 			m_dlg.PressDeleteButton();
@@ -701,8 +701,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void General_AddExistingWs_OK()
 		{
 			m_dlg.ShowDialog(m_wsTestIpa);
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsFonts);
 			m_dlg.VerifyAddWsContextMenuItems(new[] { "TestOnly", "&Writing System for TestOnly..." });
 			// Click on Add Button...selecting "Add New..." option.
 			m_dlg.PressBtnAdd("TestOnly");
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// verify we stayed on the Fonts Tab
 			// Review gjm: Can we really do this through the UI; that is, create a new 'same' ws?
 			// There is already a separate test of 'copy'?).
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsFonts);
 			// first, make sure we can remove the newly added writing system.
 			m_dlg.PressDeleteButton();
 			m_dlg.VerifyListBox(new[] { "TestOnly (International Phonetic Alphabet)" });
@@ -736,8 +736,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)" });
 			// Switch tabs, so we can test that Add New Ws will switch to General Tab.
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsFonts);
 			// Click on Copy Button
 			m_dlg.PressBtnCopy();
 			// Verify WsList has new item and it is selected
@@ -745,12 +745,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyWritingSystemsAreEqual(1, 2);
 			// verify we automatically switched back to General Tab.
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsGeneral);
 			// Verify Switching context is not OK (force user to make unique Ws)
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts,
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsGeneral);
 			// Change Region or Variant info.
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Phonetic)" });
@@ -838,7 +838,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (Arabic)", "Kalaba (Arabic)", "Kalaba (International Phonetic Alphabet)" });
 
 			// expect msgbox error.
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts,
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
 		}
@@ -851,11 +851,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ShowDialog(m_wsKalaba);
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsGeneral);
 			m_dlg.SetVariantName("International Phonetic Alphabet");
 			m_dlg.VerifyListBox(new[] { "Kalaba (International Phonetic Alphabet)", "Kalaba (International Phonetic Alphabet)" });
 			// expect msgbox error.
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts,
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
 		}
@@ -870,8 +870,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Verify Remove doesn't (yet) do anything for Wss already in the Database.
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)" });
 			// Switch tabs, so we can test that Add New Ws will switch to General Tab.
-			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts);
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.SwitchTab(FwWritingSystemSetupDlg.kWsFonts);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsFonts);
 			m_dlg.VerifyAddWsContextMenuItems(new[] { "&Writing System for Kalaba..." });
 			// Click on Add Button...selecting "Add New..." option.
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
@@ -879,7 +879,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
-			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			m_dlg.VerifyTab(FwWritingSystemSetupDlg.kWsGeneral);
 			// Change Region info.
 			m_dlg.SetCustomRegionName("Minnesota");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" });

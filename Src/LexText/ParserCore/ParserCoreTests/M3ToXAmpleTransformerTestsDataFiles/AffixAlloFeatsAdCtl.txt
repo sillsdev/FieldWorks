@@ -1,4 +1,4 @@
-
+﻿
 \ca W Prt Linker
 \cr W W
 
@@ -25,6 +25,7 @@
 	AND (left orderclassmax < current orderclassmax) )
 	OR (current orderclass = 0)
 	OR ((current orderclass = -1) AND (left orderclass = -1))
+	OR ((current orderclass = -1) AND (left orderclass = 0))
 OR ((current orderclass = -32000) AND (left orderclass = -32000))
 OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
 OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))

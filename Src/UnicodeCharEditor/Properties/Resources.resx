@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -166,7 +166,7 @@
 	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm</value>
   </data>
   <data name="khtpUnicodeEditorCharTab" xml:space="preserve">
-	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Characters_tab.htm</value>
+	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Add_or_modify_custom_characters.htm</value>
   </data>
   <data name="khtpWsAddPUAChar" xml:space="preserve">
 	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm</value>

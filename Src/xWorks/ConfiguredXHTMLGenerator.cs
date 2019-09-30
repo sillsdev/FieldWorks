@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -237,13 +238,6 @@ namespace SIL.FieldWorks.XWorks
 			return xhtmlPath;
 		}
 
-		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
-		{
-			if (clerk.SortName == null) return false;
-			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
-				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
-		}
-
 		private static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
@@ -264,7 +258,7 @@ namespace SIL.FieldWorks.XWorks
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
-			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (RecordClerk.IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -527,7 +521,12 @@ namespace SIL.FieldWorks.XWorks
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
 			if (headWord.Length == 0)
 				return string.Empty;
-			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
+			var length = ConfiguredExport.GetLetterLengthAt(headWord, 0);
+			if (headWord.Length > length && !justFirstLetter)
+			{
+				length += ConfiguredExport.GetLetterLengthAt(headWord, length);
+			}
+			return TsStringUtils.Compose(headWord.Substring(0, length));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -2996,38 +2995,67 @@ namespace SIL.FieldWorks.XWorks
 				// use the passed in writing system unless null
 				// otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
 				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+				try
 				{
-					var rightToLeft = settings.RightToLeft;
-					if (fieldValue.RunCount > 1)
+					using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
 					{
-						xw.WriteStartElement("span");
-						writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
-						xw.WriteAttributeString("lang", writingSystem);
-						var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
-						if (rightToLeft != wsRtl)
+						var rightToLeft = settings.RightToLeft;
+						if (fieldValue.RunCount > 1)
 						{
-							rightToLeft = wsRtl; // the outer WS direction will be used to identify embedded runs of the opposite direction.
-							xw.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction.
-							xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
+							xw.WriteStartElement("span");
+							writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions,
+																settings.Cache);
+							xw.WriteAttributeString("lang", writingSystem);
+							var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
+							if (rightToLeft != wsRtl)
+							{
+								rightToLeft = wsRtl; // the outer WS direction will be used to identify embedded runs of the opposite direction.
+								xw.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction.
+								xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
+							}
+						}
+
+						for (int i = 0; i < fieldValue.RunCount; i++)
+						{
+							var text = fieldValue.get_RunText(i);
+							var props = fieldValue.get_Properties(i);
+							var style = props.GetStrPropValue((int) FwTextPropType.ktptNamedStyle);
+							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
+							GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text,
+								linkTarget, rightToLeft);
+						}
+
+						if (fieldValue.RunCount > 1)
+						{
+							if (rightToLeft != settings.RightToLeft)
+								xw.WriteEndElement(); // </span> (dir)
+							xw.WriteEndElement(); // </span> (lang)
+						}
+
+						xw.Flush();
+						return bldr.ToString();
+					}
+				}
+				catch (Exception)
+				{
+					// We had some sort of error processing the string, possibly an unmatched surrogate pair.
+					// Generate a span with 3 invalid unicode markers and an xml comment instead.
+					var badStrBuilder = new StringBuilder();
+					var unicodeChars = StringInfo.GetTextElementEnumerator(fieldValue.Text);
+					while (unicodeChars.MoveNext())
+					{
+						if (unicodeChars.GetTextElement().Length == 1 &&
+							char.IsSurrogate(unicodeChars.GetTextElement().ToCharArray()[0]))
+						{
+							badStrBuilder.Append("\u0FFF"); // Generate the 'character not found' char in place of the bad surrogate
+						}
+						else
+						{
+							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
-					for (int i = 0; i < fieldValue.RunCount; i++)
-					{
-						var text = fieldValue.get_RunText(i);
-						var props = fieldValue.get_Properties(i);
-						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, linkTarget, rightToLeft);
-					}
-					if (fieldValue.RunCount > 1)
-					{
-						if (rightToLeft != settings.RightToLeft)
-							xw.WriteEndElement(); // </span> (dir)
-						xw.WriteEndElement(); // </span> (lang)
-					}
-					xw.Flush();
-					return bldr.ToString();
+					return string.Format("<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{0}' invalid surrogate pairs replaced with \\u0fff --></span>",
+						badStrBuilder);
 				}
 			}
 			return string.Empty;

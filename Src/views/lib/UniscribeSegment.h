@@ -22,10 +22,6 @@ ATTACH_GUID_TO_CLASS(class, 61299C3B-54D6-4c46-ACE5-72B9128F2048, UniscribeSegme
 // necessary for Korean and some Arabic fonts to work properly.
 #define UNISCRIBE_NFC 1
 
-// These constants are currently defined in RomRenderSegment.h; this component needs them too.
-//const kdzptInch = 72;
-//const kdzmpInch = 72000;
-
 typedef Vector<WORD> WordVec; // Hungarian vw
 typedef Vector<SCRIPT_VISATTR> ScrVisAttrVec; // Hungarian vsva
 typedef Vector<int> IntVec; // Hungarian vi (or specific meaning)

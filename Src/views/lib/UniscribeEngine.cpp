@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -248,9 +248,9 @@ int * UniscribeEngine::CalculateStretchValues(int cglyph, const Vector<int>& vGl
 	even on one line. For such layouts, pass a large dxMaxWidth, but still expect
 	possibly multiple segments.
 	Arguments:
-	[in]	pgjus				NULL if no justification will ever be needed for the resulting segment
 	[in]	pvg					Pointer to graphics interface.
 	[in]	pts					Pointer to text source interface.
+	[in]	pvjus				NULL if no justification will ever be needed for the resulting segment
 	[in]	ichMinSeg			Index of the first char in the text that is of interest.
 	[in]	ichLimText			Index of the last char in the text that is of interest (+ 1).
 	[in]	ichLimBacktrack		Index of last char that may be included in the segment;
@@ -267,11 +267,6 @@ int * UniscribeEngine::CalculateStretchValues(int cglyph, const Vector<int>& vGl
 	[out]	pdxWidth			Width of new segment, if any.
 	[out]	pest				What caused the segment to end?
 	[in]	cbPrev				(Not used.)
-	[in]	pbPrevSegDat		(Not used.)
-	[in]	cbNextMax			(Not used.)
-	[out]	pbNextSegDat		(Not used.)
-	[out]	pcbNextSegDat		(*pcbNextSegDat always set to zero.)
-	[out]	pdichContext		(*pdichContext always set to zero.)
 
 	TODO 1441 (SharonC): handle fParaRtoL; specifically, if the paragraph direction is
 	right-to-left, trailing white-space characters should be reversed.

@@ -32,7 +32,7 @@ namespace TestViews
 
 		void testBreakPointing()
 		{
-			RenderEngineTestBase::VerifyBreakPointing();
+			RenderEngineTestBase::VerifyBreakPointing(35);
 		}
 
 		TestUniscribeEngine();

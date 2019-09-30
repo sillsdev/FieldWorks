@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using L10NSharp;
 using Microsoft.Win32;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Flag indicating whether or not this instance of MainWnd is a copy of
 		/// another Wnd (i.e. created by choosing the "Window/New Window" menu).
 		/// </summary>
-		protected bool m_fWindowIsCopy = false;
+		protected bool m_fWindowIsCopy;
 
 		/// <summary>
 		/// Configuration file pathname.
@@ -78,8 +77,6 @@ namespace SIL.FieldWorks.XWorks
 		protected List<IVwVirtualHandler> m_installedVirtualHandlers;
 
 		static bool m_fInUndoRedo; // true while executing an Undo/Redo command.
-
-		private static LocalizationManager s_localizationMgr;
 
 		/// <summary>
 		/// The stylesheet used for all views in this window.
@@ -1146,7 +1143,10 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = true;
+			// Some areas have different RecordClerks which can crash when used with the
+			// the upload to webonary controller, so enable only in lexicon area for now
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			display.Enabled = areaChoice == "lexicon";
 			return true;
 		}
 
@@ -1201,7 +1201,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFileProjectProperties(object command)
 		{
-			LaunchProjPropertiesDlg(false);
+			LaunchProjPropertiesDlg();
 			return true;
 		}
 
@@ -1225,7 +1225,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
 		/// ------------------------------------------------------------------------------------
-		private void LaunchProjPropertiesDlg(bool startOnWSPage)
+		private void LaunchProjPropertiesDlg()
 		{
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
@@ -1236,9 +1236,7 @@ namespace SIL.FieldWorks.XWorks
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app))
 			{
-				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
-				if (startOnWSPage)
-					dlg.StartWithWSPage();
+				dlg.ProjectPropertiesChanged += OnWritingSystemListChanged;
 				if (dlg.ShowDialog(this) != DialogResult.Abort)
 				{
 					fDbRenamed = dlg.ProjectNameChanged();
@@ -1264,20 +1262,18 @@ namespace SIL.FieldWorks.XWorks
 				m_app.FwManager.RenameProject(sProject, m_app);
 		}
 
-		private void OnProjectPropertiesChanged(object sender, EventArgs eventArgs)
+		private void OnWritingSystemListChanged(object sender, EventArgs eventArgs)
 		{
-			// this event is fired before the Project Properties dialog is closed, so that we have a chance
+			// this event is fired before the WritingSystemProperties dialog is closed, so that we have a chance
 			// to refresh everything before Paint events start getting fired, which can cause problems if
 			// any writing systems are removed that a rootsite is currently displaying
-			var dlg = (FwProjPropertiesDlg) sender;
-			if (dlg.WritingSystemsChanged())
+			if (m_app is FwXApp)
 			{
-				if (m_app is FwXApp)
-					((FwXApp)m_app).OnMasterRefresh(null);
-
-				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
-					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
+				((FwXApp)m_app).OnMasterRefresh(null);
 			}
+
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+				m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, m_app.Cache.ProjectId.Name);
 		}
 
 		/// <summary>
@@ -1321,29 +1317,48 @@ namespace SIL.FieldWorks.XWorks
 			return oldName;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Display the project properties dialog, but starting with the WS page.
+		/// Show the writing systems properties dialog with the Vernacular list.
 		/// </summary>
-		/// <param name="arg"></param>
 		/// ------------------------------------------------------------------------------------
-		public bool OnWritingSystemProperties(object arg)
+		public bool OnVernWritingSystemProperties(object arg)
 		{
 			CheckDisposed();
 
-			LaunchProjPropertiesDlg(true);
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is very similar to OnUpdateEditCut, but for xCore applications.
+		/// Show the writing systems properties dialog with the Analysis list.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayWritingSystemProperties(object commandObject,
+		public bool OnAnalyWritingSystemProperties(object arg)
+		{
+			CheckDisposed();
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayVernWritingSystemProperties(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			display.Enabled = true;
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayAnalyWritingSystemProperties(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();

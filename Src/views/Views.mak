@@ -79,8 +79,6 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\UniscribeSegment.obj\
 	$(INT_DIR)\autopch\GraphiteEngine.obj\
 	$(INT_DIR)\autopch\GraphiteSegment.obj\
-	$(INT_DIR)\autopch\RomRenderEngine.obj\
-	$(INT_DIR)\autopch\RomRenderSegment.obj\
 	$(INT_DIR)\autopch\LgLineBreaker.obj\
 	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
 	$(INT_DIR)\autopch\TsString.obj\

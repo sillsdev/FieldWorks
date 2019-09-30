@@ -56,7 +56,19 @@ namespace SIL.FieldWorks.IText
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
 
 		public InterlinVc Vc { get; set; }
-		public PropertyTable PropertyTable { get; set; }
+
+		// Necessary for IInterlinConfigurable
+		public PropertyTable PropertyTable
+		{
+			get
+			{
+				return m_propertyTable;
+			}
+			set
+			{
+				m_propertyTable = value;
+			}
+		}
 		public IVwRootBox Rootb { get; set; }
 
 		public InterlinDocRootSiteBase()

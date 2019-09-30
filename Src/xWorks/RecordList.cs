@@ -2626,8 +2626,8 @@ namespace SIL.FieldWorks.XWorks
 				// if we need to reload the list
 				// clear the views property until we are no longer suppressed, so dependent views don't try to access objects
 				// that have possibly been deleted.
-				if (m_owningObject != null && SortedObjects.Count > 0 &&
-					((Clerk.UpdateHelper != null && Clerk.UpdateHelper.ClearBrowseListUntilReload) || !Clerk.IsActiveInGui))
+				if (m_owningObject != null && SortedObjects.Count > 0 && Clerk.UpdateHelper != null &&
+					((Clerk.UpdateHelper.ClearBrowseListUntilReload) || !Clerk.IsActiveInGui))
 				{
 					m_indexToRestoreDuringReload = CurrentIndex;	// try to restore this index during reload.
 					// clear everything for now, including the current index, but don't issue a RecordNavigation.

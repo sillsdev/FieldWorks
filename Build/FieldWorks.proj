@@ -16,6 +16,7 @@
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="LogMetadata" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>
@@ -61,8 +62,8 @@
   <Import Project="Windows.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
-  <Import Project="Installer.targets"/>
+  <Import Project="Installer.targets" Condition="'$(OS)'=='Windows_NT'"/>
+  <Import Project="LocalLibrary.targets"/>
   <Import Project="Localize.targets"/>
   <Import Project="NuGet.targets"/>
-  <Import Project="LocalLibrary.targets"/>
 </Project>

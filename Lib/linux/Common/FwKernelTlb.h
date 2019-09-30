@@ -4,10 +4,10 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Jul 24 10:34:15 2018
+/* at Wed Aug 14 08:55:22 2019
  */
-/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\FwKernelTlb.idl:
-    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
+/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 

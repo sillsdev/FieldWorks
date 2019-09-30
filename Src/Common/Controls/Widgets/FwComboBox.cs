@@ -2211,22 +2211,25 @@ namespace SIL.FieldWorks.Common.Widgets
 		public void HideForm()
 		{
 			CheckDisposed();
-
-			// The order of the following two lines is very important!  On some
-			// machines the LT-2962 issue will show itself if this is changed.
-			// The summary statement is that making the form not visible causes
-			// the system to activate another application, and with out telling
-			// it before hand what to activate it would get confused and cycle
-			// through the applications that were currently running.  By
-			// activating the main form first and then hiding the little form
-			// the bug is not seen (and maybe not present...
-			// but that's much like the forest and a falling tree debate.)
-			//
-			// ** Dont change the order of the following two lines **
-			if (m_previousForm != null) // Somehow may not be, if no form is active when launched!
-				m_previousForm.Activate();
+			// There have been several historical bugs about Flex losing focus or failing to activate
+			// the right windows when dismissing combo boxes. LT-2962, LT-19219 and probably others.
+			// It seems that setting TopMost to false on the listForm before activating the previous form
+			// is the current right answer. But previous right answers were broken by updates to Windows.
+			var listTopMostValue = false;
 			if (m_listForm != null)
+			{
+				listTopMostValue = m_listForm.TopMost;
+				m_listForm.TopMost = false;
+			}
+
+			m_previousForm?.Activate();
+
+			if (m_listForm != null)
+			{
 				m_listForm.Visible = false;
+				// set the TopMost back after hiding just in case we re-show the combobox
+				m_listForm.TopMost = listTopMostValue;
+			}
 			// reset HighlightedItem to current selected.
 			HighlightedIndex = SelectedIndex;
 			if (m_comboMessageFilter != null)
@@ -2334,7 +2337,13 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private void m_ListForm_Deactivate(object sender, EventArgs e)
 		{
-			HideForm();
+			// If this event is processed after we have already hidden the form it does bad things to the
+			// focus when we try to show a dialog from a combo box item.
+			// So we only call HideForm if the ComboBox is visible.
+			if (Visible)
+			{
+				HideForm();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

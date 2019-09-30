@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -176,11 +176,13 @@
     <value>Writing System Properties</value>
     <comment>Message box header for error messages.</comment>
   </data>
-  <data name="kstidCantChangeUserWS" xml:space="preserve">
-    <value>You cannot change the full code "{0}" of the default user writing system.</value>
+  <data name="kstidCantChangeEnglishWS" xml:space="preserve">
+    <value>You cannot change the code "en" of the default writing system because it is used as a fallback when other writing systems are missing text.</value>
   </data>
-  <data name="kstidNwsCaption" xml:space="preserve">
-    <value>Distinguish New Writing System</value>
+  <data name="kstidCantChangeEnglishSRV" xml:space="preserve">
+    <value>You cannot change the script, region, or variant of the default "{0}" (en) writing system because it is used as a fallback when other writing systems are missing text.
+If you would like to create a variant of {0}, click the green plus (+).</value>
+    <comment>{0} is the display name of the Writing System with the code "en" (English)</comment>
   </data>
   <data name="ksPossibleDataLoss" xml:space="preserve">
     <value>Possible Data Loss</value>
@@ -398,12 +400,18 @@ your account write access to the appropriate directories, or else modify the wri
   <data name="ksFwWsSyncProblem" xml:space="preserve">
     <value>FieldWorks Project synchronization problem</value>
   </data>
-  <data name="ksIllegalChars" xml:space="preserve">
-    <value>Illegal characters</value>
+  <data name="ksIllegalNameExplanation" xml:space="preserve">
+    <value>The project name is used in file names, so unexpected characters can cause problems with Send/Receive and other tasks.</value>
   </data>
   <data name="ksIllegalNameMsg" xml:space="preserve">
     <value>The name cannot contain these characters:
 {0}</value>
+  </data>
+  <data name="ksIllegalNameWithDiacriticsMsg" xml:space="preserve">
+    <value>The name cannot contain "extended" letters or letters with diacritics (such as {0}).</value>
+  </data>
+  <data name="ksIllegalNameNonRomanMsg" xml:space="preserve">
+    <value>The name can contain only the letters A-Z (without diacritics), the numbers 0-9, and basic punctuation.</value>
   </data>
   <data name="ksInfixMenuCmd" xml:space="preserve">
     <value>{0} Infix</value>
@@ -558,10 +566,6 @@ Do you want to remove English now?</value>
     <value>{0} Simulfix</value>
     <comment>Menu Command: {0} is an example of a Simulfix</comment>
   </data>
-  <data name="ksSortSpecError" xml:space="preserve">
-    <value>Sort Specification Error</value>
-    <comment>message box caption</comment>
-  </data>
   <data name="ksSpecifiesActualEC" xml:space="preserve">
     <value>Specifies the actual encoding converter.</value>
     <comment>help string</comment>
@@ -624,9 +628,6 @@ Do you want to remove English now?</value>
   <data name="khtpBulkReplaceTitle" xml:space="preserve">
     <value>Bulk Replace Setup</value>
   </data>
-  <data name="ksWsAlreadyExists" xml:space="preserve">
-    <value>Writing System Already Exists</value>
-  </data>
   <data name="ksWSPropEthnologueEntryFor" xml:space="preserve">
     <value>Ethnologue entry for {0}</value>
   </data>
@@ -645,8 +646,9 @@ Do you want to remove English now?</value>
   <data name="ksWSPropGeneralWSname" xml:space="preserve">
     <value>This writing system for {0} is for:</value>
   </data>
-  <data name="kstidCantCreateDuplicateWS" xml:space="preserve">
-    <value>The "{0}" writing system already exists. To distinguish the new writing system you are creating from "{0}", add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, "{0}", if it meets your needs.</value>
+  <data name="kstidCantCauseDuplicateWS" xml:space="preserve">
+    <value>You cannot change the code of this writing system to "{0}" because the "{1}" writing system already exists.</value>
+    <comment>{0} is a 2- or 3-letter language code from the Ethnologue. {1} is the name of the language.</comment>
   </data>
   <data name="ksWSChangeWarning" xml:space="preserve">
     <value>You are changing the internal code for {0} writing systems related to {1}. This will affect every line of text in this project that uses this writing system.{2}{2}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to stop working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now.</value>
@@ -976,5 +978,116 @@ Delete the existing relationship before trying to add this one again.</value>
   </data>
   <data name="ksWhichIsComponent" xml:space="preserve">
     <value>Which item is really a component?</value>
+  </data>
+  <data name="FwWritingSystemSetupDlg_InvalidWsList" xml:space="preserve">
+    <value>Invalid writing system list</value>
+  </data>
+  <data name="FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX" xml:space="preserve">
+    <value>There should be no duplicate writing systems. Please remove the duplicate "{0}" or distinguish it by adding script, region, or variant information.</value>
+    <comment>{0} is the name of a writing system.</comment>
+  </data>
+  <data name="WritingSystemList_SelectAtLeastOneWs" xml:space="preserve">
+    <value>Select at least one writing system</value>
+    <comment>Message and tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
+  </data>
+  <data name="WritingSystemList_NormalTooltip" xml:space="preserve">
+    <value>Writing systems with selected checkboxes are always displayed.</value>
+    <comment>Tooltip for the writing system list in the writing system setup dialog</comment>
+  </data>
+  <data name="WritingSystemList_AddIpa" xml:space="preserve">
+    <value>Add IPA for {0}</value>
+    <comment>Menu item for adding an IPA writing system for the current writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddAudio" xml:space="preserve">
+    <value>Add Audio for {0}</value>
+    <comment>Menu item text for adding an audio input system for the selected writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddDialect" xml:space="preserve">
+    <value>Add variation of {0}</value>
+    <comment>Menu item text for adding a variation (dialect, script, ect.) of the current writing system</comment>
+  </data>
+  <data name="WritingSystemList_AddNewLanguage" xml:space="preserve">
+    <value>Add new language...</value>
+    <comment>Menu item for adding a different language to the writing system list (brings up a dialog)</comment>
+  </data>
+  <data name="WritingSystemList_DeleteWs" xml:space="preserve">
+    <value>Delete {0}</value>
+    <comment>Right click menu item in the writing system properties dialog for deleting a writing sytem. e.g. "Delete English"</comment>
+  </data>
+  <data name="WritingSystemList_MergeWs" xml:space="preserve">
+    <value>Merge...</value>
+    <comment>Right click menu item in the writing system list area. Brings up a dialog for merging one writing system into another.</comment>
+  </data>
+  <data name="WritingSystemSetup_SharingDataWithSldr" xml:space="preserve">
+    <value>Sharing data will benefit any other programs
+that also use the SIL Locale Data Repository</value>
+  </data>
+  <data name="WritingSystemSetup_SpecifyValidChars" xml:space="preserve">
+    <value>Specify the set of valid characters for {0}.</value>
+    <comment>{0} is the name of a Writing System</comment>
+  </data>
+  <data name="WritingSystemSetup_EncodingConverterForImporting" xml:space="preserve">
+    <value>&amp;Encoding converter for importing {0}:</value>
+    <comment>{0} is the name of a Writing System</comment>
+  </data>
+  <data name="NewLangProjWizard_AnalysisWritingSystemExplanation" xml:space="preserve">
+    <value>It is used for glosses, definitions, notes, text analyses, and so on.</value>
+    <comment>Used for the Analysis step in the New Project wizard</comment>
+  </data>
+  <data name="NewProjectWizard_AnalysisHeader" xml:space="preserve">
+    <value>Choose an analysis language</value>
+    <comment>Header label for analysis writing system step in the New Project wizard</comment>
+  </data>
+  <data name="NewProjectWizard_MonolingualMessage" xml:space="preserve">
+    <value>You chose the same vernacular and analysis writing systems.</value>
+    <comment>Message used to alert the user when they select a monolingual configuration. (this is a soft warning)</comment>
+  </data>
+  <data name="NewProjectWizard_MonolingualCaption" xml:space="preserve">
+    <value>Writing Systems Set Up for Monolingual Dictionary</value>
+    <comment>Caption for the dialog that alerts the user when they select a monolingual configuration. (this is a soft warning)</comment>
+  </data>
+  <data name="NewProjectWizard_Name_Step" xml:space="preserve">
+    <value>Name</value>
+    <comment>the text used at the top of the new project wizard for the Project Name step</comment>
+  </data>
+  <data name="NewProjectWizard_Vernacular_Step" xml:space="preserve">
+    <value>Vernacular</value>
+    <comment>label at the top of the new project wizard for selecting the default vernacular language</comment>
+  </data>
+  <data name="NewProjectWizard_Analysis_Step" xml:space="preserve">
+    <value>Analysis</value>
+    <comment>label at the top of the new project wizard for choosing the default analysis language</comment>
+  </data>
+  <data name="NewProjectWizard_More_Step" xml:space="preserve">
+    <value>More</value>
+    <comment>the label used at the top of the new project wizard where you can select 'more' writing system options</comment>
+  </data>
+  <data name="NewProjectWizard_Anthro_Step" xml:space="preserve">
+    <value>Anthropology</value>
+    <comment>label at the top of the new project wizard for picking the starting anthropology categories list</comment>
+  </data>
+  <data name="NewProjectWizard_EnterProjectName" xml:space="preserve">
+    <value>Enter a project name.</value>
+    <comment>This text is shown in the New Project Wizard when the project name field is empty</comment>
+  </data>
+  <data name="NewProjectWizard_DuplicateProjectName" xml:space="preserve">
+    <value>A project named {0} already exists. Choose a new name or click cancel and open the existing project.</value>
+    <comment>This error text is shown in the New Project Wizard when the user types a duplicate project name</comment>
+  </data>
+  <data name="FwProjProperties_DuplicateProjectName" xml:space="preserve">
+    <value>Another project named {0} already exists. Choose a new name or click cancel to change this project's name back to {1}.</value>
+    <comment>This error text is shown in the Project Properties Dialog when the user types a duplicate project name</comment>
+  </data>
+  <data name="FwProjProperties_PickDifferentProjName" xml:space="preserve">
+    <value>Pick a different project name</value>
+    <comment>This is the title for the dialog that is shown when the user has entered unsupported characters in the project name, or has entered the same name as another project</comment>
+  </data>
+  <data name="xCopy" xml:space="preserve">
+    <value>{0} (Copy)</value>
+    <comment>{0} is an item in a list. It is a copy of another item in the list.</comment>
+  </data>
+  <data name="xOriginal" xml:space="preserve">
+    <value>{0} (Original)</value>
+    <comment>{0} is an item in a list. There is a copy of this item in the list.</comment>
   </data>
 </root>

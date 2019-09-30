@@ -2890,25 +2890,11 @@ void VwPileBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst, int ys
 		// it's visible bottom (the bottom of the drop cap) may be below the bottom of the page/clip
 		// rectangle, but we still want to draw the following paragraph, which overlaps the bottom
 		// of the drop cap.
-// TODO-Linux: This breaks backtranslation-draftview -
-// Remove when we no longer use RomRender (this isn't neccessary the problem, but it could be)
-#if defined(WIN32) || defined(WIN64)
 		if (rcSrc.MapYTo(pbox->Bottom(), rcDst) > bottom ||
 			pbox->Bottom() >= ysTopOfPage + dysPageHeight)
 		{
 			return;
 		}
-#else
-		if (/*rcSrc.MapYTo(pbox->Bottom(), rcDst) > bottom  ||*/ //pbox->Bottom() > bottom ||
-			pbox->Bottom() >= ysTopOfPage + dysPageHeight)
-		{
-			return;
-		}
-
-#endif
-
-
-
 	}
 }
 

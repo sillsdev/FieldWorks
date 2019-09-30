@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -218,6 +219,13 @@ namespace SIL.FieldWorks.Discourse
 		internal void CallOnLoad(EventArgs eventArgs)
 		{
 			base.OnLoad(eventArgs);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			m_propertyTable.Dispose();
+			base.Dispose(disposing);
 		}
 	}
 }

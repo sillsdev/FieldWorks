@@ -371,14 +371,12 @@ namespace SIL.FieldWorks.IText
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
-				validChars.AddCharacter("-");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "-" }), true);
+				validChars.AddCharacter("-", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!validChars.IsWordForming('\''))
 			{
-				validChars.AddCharacter("'");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "'" }), true);
+				validChars.AddCharacter("'", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!fChangedSomething)

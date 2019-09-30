@@ -96,8 +96,6 @@ VIEWS_OBJS = \
 	$(VIEWS_LIB)/VwCacheDa.o \
 	$(VIEWS_LIB)/VwColor.o \
 	$(VIEWS_LIB)/VwUndo.o \
-	$(VIEWS_LIB)/RomRenderEngine.o \
-	$(VIEWS_LIB)/RomRenderSegment.o \
 	$(VIEWS_LIB)/GraphiteEngine.o \
 	$(VIEWS_LIB)/GraphiteSegment.o \
 	$(VIEWS_LIB)/LgLineBreaker.o \
@@ -159,7 +157,6 @@ $(INT_DIR)/Collection.cpp: \
 	TestVwTextBoxes.h \
 	TestVwTableBox.h \
 	TestLgLineBreaker.h \
-	TestRomRenderEngine.h \
 	TestGraphiteEngine.h \
 	RenderEngineTestBase.h \
 	MockRenderEngineFactory.h \

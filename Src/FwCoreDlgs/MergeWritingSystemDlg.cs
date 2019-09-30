@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.Windows.Forms.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -21,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private const string HelpTopic = "khtpProjPropsMergeWS";
 
-		private readonly CoreWritingSystemDefinition m_ws;
+		private readonly string m_wsToMerge;
 		private LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
@@ -35,15 +36,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_mergeLabel;
 		private Button m_backupButton;
 		private HelpProvider m_helpProvider;
+		private LcmCache cache;
+		private WritingSystemSetupModel currentWsSetupModel;
+		private IEnumerable<CoreWritingSystemDefinition> enumerable;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
 		/// </summary>
-		public MergeWritingSystemDlg(LcmCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
+		public MergeWritingSystemDlg(LcmCache cache, string wsToMerge, IEnumerable<WSListItemModel> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
-			m_ws = ws;
-
+			m_wsToMerge = wsToMerge;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -53,8 +56,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_infoPictureBox.Image = infoIcon.ToBitmap();
 			m_infoPictureBox.Size = infoIcon.Size;
 
-			foreach (CoreWritingSystemDefinition curWs in wss.Where(x => x.Handle > 0).Except(new[] { ws }))
-				m_wsListBox.Items.Add(curWs);
+			foreach (var ws in wss)
+			{
+				m_wsListBox.Items.Add(ws);
+			}
 			m_wsListBox.SelectedIndex = 0;
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -83,7 +88,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				return (CoreWritingSystemDefinition) m_wsListBox.SelectedItem;
+				return ((WSListItemModel) m_wsListBox.SelectedItem).WorkingWs;
 			}
 		}
 
@@ -190,7 +195,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_wsListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_mergeLabel.Text = string.Format(FwCoreDlgs.kstidMergeWritingSystems, m_ws, SelectedWritingSystem);
+			m_mergeLabel.Text = string.Format(FwCoreDlgs.kstidMergeWritingSystems, m_wsToMerge, SelectedWritingSystem);
 		}
 
 		private void m_backupButton_Click(object sender, EventArgs e)

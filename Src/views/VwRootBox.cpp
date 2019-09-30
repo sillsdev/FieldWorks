@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2015 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -2870,7 +2870,6 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 	m_ptDpiSrc.x = dpiX;
 	m_ptDpiSrc.y = dpiY;
 
-	//AssertNotifiersValid(); // This is a error checking function related to TE-2962
 	if (!m_fConstructed)
 		Construct(pvg, dxAvailWidth);
 	VwDivBox::DoLayout(pvg, dxAvailWidth, -1, true);

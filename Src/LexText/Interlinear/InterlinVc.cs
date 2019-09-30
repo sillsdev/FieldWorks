@@ -1751,11 +1751,11 @@ namespace SIL.FieldWorks.IText
 
 			private void DisplayWord(int choiceIndex, IAnalysis wag)
 			{
-				var tssRealForm = choiceIndex != 0 ? null : m_analysisOccurrence?.BaselineText;
-				if (tssRealForm != null && tssRealForm.Length > 0)
+				var baseLineForm = choiceIndex != 0 ? null : m_analysisOccurrence?.BaselineText;
+				if (baseLineForm != null && baseLineForm.Length > 0)
 				{
 					m_this.IsDoingRealWordForm = true;
-					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(tssRealForm, 0); // Cache the baseline WS for display of other specs
+					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(baseLineForm, 0); // Cache the baseline WS for display of other specs
 					// LT-12203 Text chart doesn't want multiple analyses highlighting
 					if (m_fshowMultipleAnalyses)
 					{
@@ -1771,7 +1771,13 @@ namespace SIL.FieldWorks.IText
 							}
 						}
 					}
-					m_vwenv.AddString(tssRealForm);
+					var spec = m_choices[choiceIndex];
+					var ws = m_this.GetRealWsOrBestWsForContext(m_hvoWordform, spec);
+					if (ws == m_analysisOccurrence.BaselineWs)
+						m_vwenv.AddString(baseLineForm);
+					else
+						m_vwenv.AddObj(m_hvoWordform, m_this, kfragLineChoices + choiceIndex);
+
 					m_this.IsDoingRealWordForm = false;
 					return;
 				}

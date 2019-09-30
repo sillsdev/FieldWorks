@@ -27,8 +27,8 @@ namespace Paratext8Plugin
 		public IEnumerable<string> ScrTextNames { get { return ScrTextCollection.ScrTexts(IncludeProjects.AllAccessible).Select(scrText => scrText.Name.ToLowerInvariant()); } }
 		public void Initialize()
 		{
-			ParatextData.Initialize();
 			Alert.Implementation = new ParatextAlert();
+			ParatextData.Initialize();
 		}
 
 		public void RefreshScrTexts()

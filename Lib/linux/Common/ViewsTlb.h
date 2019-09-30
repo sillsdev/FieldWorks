@@ -4,10 +4,10 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Jul 24 10:34:24 2018
+/* at Wed Aug 14 08:55:28 2019
  */
-/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\ViewsTlb.idl:
-    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
+/* Compiler settings for C:\fwrepo\fw\Output\Common\ViewsTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -126,18 +126,6 @@ typedef struct LgLineBreaker LgLineBreaker;
 #endif /* __cplusplus */
 
 #endif 	/* __LgLineBreaker_FWD_DEFINED__ */
-
-
-#ifndef __RomRenderEngine_FWD_DEFINED__
-#define __RomRenderEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class RomRenderEngine RomRenderEngine;
-#else
-typedef struct RomRenderEngine RomRenderEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __RomRenderEngine_FWD_DEFINED__ */
 
 
 #ifndef __UniscribeEngine_FWD_DEFINED__
@@ -907,11 +895,6 @@ ATTACH_GUID_TO_CLASS(class,
 LgLineBreaker
 );
 ATTACH_GUID_TO_CLASS(class,
-6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8
-,
-RomRenderEngine
-);
-ATTACH_GUID_TO_CLASS(class,
 1287735C-3CAD-41CD-986C-39D7C0DF0314
 ,
 UniscribeEngine
@@ -1137,7 +1120,7 @@ enum VwUnit
         kunRelative	= 2
     } 	VwUnit;
 
-typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0001_0079_0001
+typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0001_0078_0001
     {
     int nVal;
     VwUnit unit;
@@ -4171,14 +4154,6 @@ VwGraphicsWin32;
 
 class DECLSPEC_UUID("94FBFA34-21E5-4A1E-B576-BA5D76CC051A")
 LgLineBreaker;
-#endif
-
-#define CLSID_RomRenderEngine __uuidof(RomRenderEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8")
-RomRenderEngine;
 #endif
 
 #define CLSID_UniscribeEngine __uuidof(UniscribeEngine)

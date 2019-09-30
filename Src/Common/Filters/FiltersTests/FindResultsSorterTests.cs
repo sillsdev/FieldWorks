@@ -1,13 +1,16 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -75,6 +78,24 @@ namespace SIL.FieldWorks.Filters
 			var records = CreateRecords(new[] { "c", "bob", "a" });
 			resultsSorter.Sort(records);
 			VerifySortOrder(new[] { "bob", "a", "c" }, records);
+		}
+
+		[Test]
+		public void OtherLanguageSystemCollationWhenCollationInValid()
+		{
+			var enWs = Cache.DefaultAnalWs;
+			var matchString = TsStringUtils.MakeString("buburuq", enWs);
+
+			CoreWritingSystemDefinition mvpWs = (CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(enWs);
+			mvpWs.DefaultCollation = new SystemCollationDefinition { LanguageTag = "mvp" };
+
+			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, enWs),
+				new WritingSystemComparer(mvpWs)));
+
+			var resultsSorter = new FindResultSorter(matchString, sorter);
+			var records = CreateRecords(new[] { "Ramban", "buburuq" });
+			resultsSorter.Sort(records);
+			VerifySortOrder(new[] { "buburuq", "Ramban" }, records);
 		}
 
 		[Test]
