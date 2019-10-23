@@ -40,11 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		internal static Guid GetReversalIndexGuid(IPropertyTable propertyTable, IPublisher publisher)
 		{
-			var riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-			if (!riGuid.Equals(Guid.Empty))
-			{
-				return riGuid;
-			}
+			var riGuid = Guid.Empty;
 			try
 			{
 				riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");

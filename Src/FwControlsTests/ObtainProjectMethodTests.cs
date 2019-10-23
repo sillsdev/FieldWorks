@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
@@ -133,18 +132,6 @@ namespace SIL.FieldWorks.Common.Controls
 				Assert.That(analysisWs, Is.EqualTo("en"));
 			}
 		}
-
-		/// <summary />
-		[Test]
-		public void CallPickAnthro_PickAnthroListCanBeFound()
-		{
-			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroAssembly, ObtainProjectMethod.PickAnthroClass);
-			Assert.NotNull(type, "Class used for PickAnthroList moved.");
-			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod, new[] { typeof(string), typeof(IHelpTopicProvider) });
-			Assert.NotNull(method, "Method name changed, or parameters changed.");
-		}
-
 
 		/// <summary />
 		[Test]

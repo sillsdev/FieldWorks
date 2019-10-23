@@ -258,4 +258,7 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
 Do you want to continue with the export?</value>
   </data>
+  <data name="ksIllegalNameExplanation" xml:space="preserve">
+    <value>The project name is used in file names, so unexpected characters can cause problems with Send/Receive and other tasks.</value>
+  </data>
 </root>

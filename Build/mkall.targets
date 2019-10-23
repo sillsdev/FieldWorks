@@ -305,7 +305,7 @@
 		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
 		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
-		<HermitCrabBuildTag>fw-9.0.6.tcbuildtag</HermitCrabBuildTag>
+		<HermitCrabBuildTag>fw-9.0.8.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
@@ -342,6 +342,8 @@
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.pdb"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
@@ -608,6 +610,12 @@
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.8.1.7\lib\net461\PtxUtils.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Copy the libpalso dlls that ParatextData depends on -->
+		<ItemGroup>
+			<ParatextDeps Include="$(fwrt)/packages/SIL.Lib.5.0.7/lib/net46/SIL.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ParatextDeps)" DestinationFolder="$(dir-outputBase)/lib/ParatextDeps"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 

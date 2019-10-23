@@ -68,33 +68,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string InternalProductVersion
 		{
-			// Code copied from Mono implementation of Application.ProductVersion
 			get
 			{
-				var version = string.Empty;
 				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-				var infoVersion = Attribute.GetCustomAttribute(assembly, typeof (AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
-				if (infoVersion != null)
-				{
-					version = infoVersion.InformationalVersion;
-				}
-				// If [AssemblyFileVersion] is present it is used
-				// before resorting to assembly version
-				if (string.IsNullOrEmpty(version))
+				string productVersion, productDate;
+				ParseInformationalVersion(assembly, out productVersion, out productDate);
+				if (string.IsNullOrEmpty(productVersion))
 				{
 					var fileVersion = Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
 					if (fileVersion != null)
-					{
-						version = fileVersion.Version;
-					}
+                    {
+						productVersion = fileVersion.Version;
+                    }
 				}
 				// If neither [AssemblyInformationalVersionAttribute] nor [AssemblyFileVersion]
 				// are present, then use the assembly version
-				if (string.IsNullOrEmpty(version))
-				{
-					version = assembly.GetName().Version.ToString();
-				}
-				return version;
+				if (string.IsNullOrEmpty(productVersion))
+                {
+					productVersion = assembly.GetName().Version.ToString();
+                }
+				return productVersion;
 			}
 		}
 
@@ -148,24 +141,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				// Set the application version text
-				var attributes = m_assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				var appVersion = attributes.Length > 0 ? ((AssemblyFileVersionAttribute)attributes[0]).Version : InternalProductVersion;
-				// Extract the fourth (and final) field of the version to get a date value.
-				var ich = 0;
-				for (var i = 0; i < 3; i++)
-				{
-					ich = appVersion.IndexOf('.', ich + 1);
-				}
-				var productDate = string.Empty;
-				if (ich >= 0)
-				{
-					var iDate = Convert.ToInt32(appVersion.Substring(ich + 1));
-					if (iDate > 0)
-					{
-						var dt = DateTime.FromOADate(iDate);
-						productDate = dt.ToString("yyyy/MM/dd");
-					}
-				}
+				var appVersion = InternalProductVersion;
+				string productVersion, productDate;
+				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
 				string bitness;
 				switch (IntPtr.Size)
 				{
@@ -189,6 +167,49 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Find the AssemblyInformationalVersion and parse out the version, date, and product type.
+		/// Expects version similar to 9.0.6 5234532 Alpha, where the second part is an encoded date
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="productVersion">filled with version or empty string</param>
+		/// <param name="productDate">filled with build date or empty string</param>
+		private static void ParseInformationalVersion(Assembly assembly, out string productVersion, out string productDate)
+		{
+			var informationalVersionAttr = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+			var appInfoVersion = informationalVersionAttr.Length > 0
+				? ((AssemblyInformationalVersionAttribute)informationalVersionAttr[0]).InformationalVersion
+				: null;
+			var versionParts = appInfoVersion?.Split(new[] {' '}, 3);
+			productDate = string.Empty;
+			productVersion = string.Empty;
+			var productType = string.Empty;
+			switch (versionParts?.Length)
+			{
+				case 3:
+				{
+					productType = " " + versionParts[2];
+					goto case 2;
+				}
+				case 2:
+				{
+					int date = Convert.ToInt32(versionParts[1]);
+					if (date > 0)
+					{
+						DateTime dt = DateTime.FromOADate(date);
+						productDate = dt.ToString("yyyy/MM/dd");
+					}
+
+					goto case 1;
+				}
+				case 1:
+				{
+					productVersion = versionParts[0] + productType;
+					break;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets the version of FieldWorks.
 		/// </summary>
 		public string MajorVersion
@@ -196,9 +217,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				// Set the Fieldworks version text
-				var attributes = m_assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
-				var version = attributes.Length > 0 ? ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion : InternalProductVersion;
-				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, version);
+				string productVersion, productDate, productType;
+				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				// Fill the expected parts to document and avoid a crash if we get an odd informational version
+				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
+				var realParts = productVersion.Split('.', ' ');
+				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
+
+				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
 			}
 		}
 

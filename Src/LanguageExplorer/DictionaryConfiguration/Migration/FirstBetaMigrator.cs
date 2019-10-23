@@ -196,6 +196,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					goto case 20;
 				case 20:
 					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
+					goto case 21;
+				case 21:
+					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
 					logger.WriteLine($"Unable to migrate {oldConfigPart.Label}: no migration instructions for version {oldVersion}");

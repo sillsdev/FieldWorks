@@ -653,7 +653,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					sIllegalCharsKeyboard = sIllegalCharsKeyboard.Remove(index, 1);
 				}
 			}
-			MessageBox.Show(null, string.Format(FwUtilsStrings.ksIllegalNameMsg, sIllegalCharsKeyboard), FwUtilsStrings.ksIllegalChars, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(null, string.Format(FwUtilsStrings.ksIllegalNameMsg, sIllegalCharsKeyboard), FwUtilsStrings.ksIllegalNameExplanation, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			tb.Text = sProjName;
 			tb.Select(selectionPos, 0);
 			return false;

@@ -6,13 +6,21 @@
     {
       "label": "remakefw",
       "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
+      "command": "cd Build && build.bat /t:remakefw",
       "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
+        "command": ". environ && cd Build && ./build /t:remakefw"
       },
       "group": {
         "kind": "build",
         "isDefault": true
+      }
+    },
+    {
+      "label": "remakefw + test",
+      "type": "shell",
+      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
+      "linux": {
+        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
       }
     }
   ]

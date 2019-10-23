@@ -585,7 +585,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				sEntryT = sEntry;
 			} while (fChanged);
-			var cnt = GetFirstLetterLength(sEntry);
+			var cnt = GetLetterLengthAt(sEntry, 0);
 			var sFirst = sEntry.Substring(0, cnt);
 			foreach (var sChar in sortChars)
 			{
@@ -625,11 +625,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <returns>
-		/// 2 if the first letter in the string is composed of a Surrogate Pair; 1 otherwise
+		/// 2 if the letter at the index in the string is composed of a Surrogate Pair; 1 otherwise
 		/// </returns>
-		internal static int GetFirstLetterLength(string sEntry)
+		public static int GetLetterLengthAt(string sEntry, int ich)
 		{
-			return char.IsSurrogatePair(sEntry, 0) ? 2 : 1;
+			return char.IsSurrogatePair(sEntry, ich) ? 2 : 1;
 		}
 
 		/// <summary>

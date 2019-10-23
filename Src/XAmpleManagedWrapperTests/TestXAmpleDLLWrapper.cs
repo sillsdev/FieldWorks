@@ -109,5 +109,17 @@ namespace XAmpleManagedWrapperTests
 				Assert.IsNotNull(tracedString);
 			}
 		}
+
+		[Test]
+		public void TestDisposeBeforeInit()
+		{
+			Assert.DoesNotThrow(() =>
+			{
+				using (var xAmpleDllWrapper = new XAmpleDLLWrapper())
+				{
+					// prove that disposing the uninitialized wrapper does not throw
+				}
+			});
+		}
 	}
 }

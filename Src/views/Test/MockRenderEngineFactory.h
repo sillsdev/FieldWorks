@@ -55,11 +55,7 @@ public:
 	{
 		if (!m_qrenengUni)
 		{
-#if defined(WIN32) || defined(_M_X64)
 			m_qrenengUni.CreateInstance(CLSID_UniscribeEngine);
-#else
-			m_qrenengUni.CreateInstance(CLSID_RomRenderEngine);
-#endif //WIN32
 			if (!m_qrenengUni)
 				return E_UNEXPECTED;
 			ILgWritingSystemFactoryPtr qwsf;

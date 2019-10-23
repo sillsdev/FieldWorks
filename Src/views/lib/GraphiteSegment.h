@@ -158,8 +158,11 @@ protected:
 		return int(n < 0 ? n - 0.5 : n + 0.5);
 	}
 
+	// Will return 1 for normal characters and 2 for a surrogate
+	static int Utf16CharLength(StrUni& u16str, int charIndex);
+
 	void InterpretChrp(LgCharRenderProps& chrp);
-	void InitializeGlyphs(gr_segment* segment, gr_font* font);
+	void InitializeGlyphs(StrUni& segStr, gr_segment* segment, gr_font* font);
 	void Compute(int ichBase, IVwGraphics* pvg);
 	bool CanDrawIP(int ich, ComBool fAssocPrev);
 	bool CheckForOrcUs(int ich);

@@ -822,6 +822,69 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
+		public void GenerateCssForStyleName_Parallel_Passage_ReferenceRulesGenerated()
+		{
+			var grandChildStyleName = "Dictionary-Parallel-Passage-Reference-GrandBaby";
+			var childStyleName = "Dictionary-Parallel-Passage-Reference-Child";
+			var parentStyle = GenerateParagraphStyle("Dictionary-Parallel-Passage-Reference-Parent");
+			var childStyle = GenerateParagraphStyle(childStyleName);
+			var grandChildStyle = GenerateParagraphStyle(grandChildStyleName);
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
+			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
+			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
+			var exampleChild = new ConfigurableDictionaryNode { FieldDescription = "Example" };
+			var examples = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
+				Style = grandChildStyleName,
+				Children = new List<ConfigurableDictionaryNode> { exampleChild }
+			};
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subSubsenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "SubSubsenses",
+				DictionaryNodeOptions = SubSubSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = grandChildStyleName,
+			};
+			var subSense = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss, subSubsenses },
+				Style = childStyle.Name
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss, subSense },
+				Style = parentStyle.Name,
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			PopulateFieldsForTesting(entry);
+			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepWithNext, 0, 1);
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepTogether, 0, 1);
+			grandChildStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepWithNext, 0, 1);
+			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle), true);
+			Assert.That(grandChildDeclaration[0].ToString(), Contains.Substring("page-break-inside:initial"));
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyleName, CssGenerator.DefaultStyle, examples, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle), true);
+			Assert.That(childDeclaration[0].ToString(), Contains.Substring("page-break-inside:avoid"));
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, examples, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle), true);
+			Assert.That(parentDeclaration[0].ToString(), Contains.Substring("page-break-inside:initial"));
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_ParentMargin_DoesNotAffectCharacterStyle()
 		{
 			var childStyle = GenerateStyle("HeadWordStyle");

@@ -389,14 +389,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// REVIEW (EberhardB): .NETs Unicode character type is 16bit, whereas AppCore used
 			// 32bit (int), so how do we handle this?
-
-			//	TODO 1735(JohnT): handle surrogates! Currently we ignore them.
-			if (char.GetUnicodeCategory(keyChar) == UnicodeCategory.Surrogate)
-			{
-				MessageBox.Show("DEBUG: Got a surrogate!");
-				return;
-			}
-
 			if (Callbacks != null && Callbacks.EditedRootBox != null)
 			{
 				var ss = GetShiftStatus(modifiers);
@@ -449,6 +441,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// it gets deleted by a subsequent backspace).</param>
 		protected void CollectTypedInput(char chsFirst, StringBuilder buffer)
 		{
+			bool needToVerifySurrogates = char.IsSurrogate(chsFirst);
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
 			if (Platform.IsMono)
@@ -541,6 +534,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							buffer.Append(nextChar);
 							return; // only one del currently allowed.
 						default:
+							needToVerifySurrogates = needToVerifySurrogates || char.IsSurrogate(nextChar);
 							// regular characters get added to the buffer
 							buffer.Append(nextChar);
 							break;
@@ -549,6 +543,28 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 				{
 					break;
+				}
+			}
+			// If there were surrogate characters in the typed input verify that they are all matched pairs
+			// and clear out the buffer if they are not.
+			if (needToVerifySurrogates)
+			{
+				for (var i = 0; i < buffer.Length; ++i)
+				{
+					// if we see a trailing surrogate first, or if we see a leading surrogate with no trailing surrogate
+					// then alert and clear the buffer.
+					if (char.IsLowSurrogate(buffer[i]) ||
+						char.IsHighSurrogate(buffer[i]) && (i == buffer.Length || !char.IsLowSurrogate(buffer[i + 1])))
+					{
+						MessageBox.Show("Unmatched surrogate found in key presses.");
+						buffer.Clear();
+						break;
+					}
+					if (char.IsHighSurrogate(buffer[i]))
+					{
+						// If we get here we had a valid pair so skip the second half
+						++i;
+					}
 				}
 			}
 		}

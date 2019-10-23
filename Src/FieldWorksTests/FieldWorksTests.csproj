@@ -159,7 +159,6 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FwNewLangProjectTests.cs" />
     <Compile Include="RealSplashScreenTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\AssemblyInfoForTests.cs">

@@ -4,11 +4,11 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using LanguageExplorer.DictionaryConfiguration;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -59,30 +59,14 @@ namespace LanguageExplorer.Dumpster
 				// but return null if we can't get the info, otherwise we allow the user to
 				// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
 				var recordList = RecordList.RecordListRepository.ActiveRecordList;
-				if (recordList == null || recordList.CurrentObject == null)
-					return null;
-				var wfiWordform = recordList.CurrentObject as IWfiWordform;
-				if (wfiWordform == null)
-					return null;
-				var tssVern = wfiWordform.Form.BestVernacularAlternative;
+				var tssVern = (recordList?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
 				return tssVern;
 			}
 			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
-			if (app == null)
+			var roots = (app?.ActiveMainWindow as FwXWindow)?.ActiveView?.AllRootBoxes();
+			if (roots == null || roots.Count < 1 || roots[0] == null)
 				return null;
-			var window = app.ActiveMainWindow as IFwMainWnd;
-			if (window == null)
-				return null;
-			var activeView = window.ActiveView;
-			if (activeView == null)
-				return null;
-			var roots = activeView.AllRootBoxes();
-			if (roots.Count < 1)
-				return null;
-			var helper = SelectionHelper.Create(roots[0].Site);
-			if (helper == null)
-				return null;
-			var tssWord = helper.SelectedWord;
+			var tssWord = SelectionHelper.Create(roots[0].Site)?.SelectedWord;
 			if (tssWord != null)
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
@@ -206,7 +190,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName);
+				return (PropertyTable?.GetValue<string>(AreaServices.AreaChoice, null) == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 
@@ -218,7 +202,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return InFriendlyArea && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}") == AreaServices.AnalysesMachineName;
+				return InFriendlyArea && PropertyTable?.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}", null) == AreaServices.AnalysesMachineName;
 			}
 		}
 	}

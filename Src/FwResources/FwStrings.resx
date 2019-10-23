@@ -1397,7 +1397,7 @@ FieldWorks ReadMe for help in this area.</value>
     <comment>Dialog text to keep or change homograph numbering ws when default vernacular ws is changed</comment>
   </data>
   <data name="kstidChangeHomographNumberWsTitle" xml:space="preserve">
-    <value>Change Vernacular Writing System</value>
+    <value>Default Vernacular Writing System Has Changed</value>
     <comment>Dialog title for keeping or changing homograph numbering ws when default vernacular ws is changed</comment>
   </data>
   <data name="kstidAddingFwProject" xml:space="preserve">

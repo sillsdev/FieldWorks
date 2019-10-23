@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -219,14 +218,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Event handlers and helper methods
-
-		/// <summary>
-		/// Reports a load exception in the scrDataSource.
-		/// </summary>
-		private void LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, m_app.SettingsKey, m_app.SupportEmailAddress, ParentForm, false);
-		}
 
 		/// <summary>
 		/// Adjust the width of the columns so they just fit inside the client area of the grid.
@@ -445,7 +436,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					CheckToRun == CheckType.Punctuation ? "PunctuationCheck" : "CharactersCheck",
 					m_fileData,
 					ResourceHelper.GetResourceString("kstidFileLineRef"), m_chkParams,
-					new FwCharacterCategorizer(m_wsContainer.DefaultVernacularWritingSystem == null ? null : ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException)));
+					new FwCharacterCategorizer(m_wsContainer.DefaultVernacularWritingSystem == null ? null : ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem)));
 
 				tokens = data.GetReferences();
 			}

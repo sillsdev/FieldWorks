@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,6 +32,7 @@ namespace TestViews
 	{
 	public:
 		TxtSrc(int n, ILgWritingSystemFactory * pwsf);
+		TxtSrc(const wchar_t *, ILgWritingSystemFactory * pwsf);
 
 		// IUnknown methods.
 		STDMETHOD(QueryInterface)(REFIID iid, void ** ppv);
@@ -106,20 +107,20 @@ namespace TestViews
 		long m_cref;
 		StrUni m_stu;
 		Vector<int> m_vws;
+
+	private:
+		void Init(const wchar_t* s, ILgWritingSystemFactory * pwsf);
 	};
 
 	TxtSrc::TxtSrc(int n, ILgWritingSystemFactory * pwsf)
 	{
-		AssertPtr(pwsf);
-		m_cref = 1;
-
 		switch(n)
 		{
 		case 1:
-			m_stu.Assign(L"This is a relatively short input text.");
+			Init(L"This is a relatively short input text.", pwsf);
 			break;
 		case 2:
-			m_stu.Assign(
+			Init(
 				L"This is an input text 1 that goes on and on and on.  "
 				L"This is an input text 2 that goes on and on and on.  "
 				L"This is an input text 3 that goes on and on and on.  "
@@ -169,28 +170,40 @@ namespace TestViews
 				L"This is an input text 47 that goes on and on and on.  "
 				L"This is an input text 48 that goes on and on and on.  "
 				L"This is an input text 49 that goes on and on and on.  "
-				L"This is an input text 50 that goes on and on and on.  "
+				L"This is an input text 50 that goes on and on and on.  ", pwsf
 				);
 			break;
 		case 3:
-			m_stu.Assign(
-				L"This is an input text with hard breaks.\tThis was a tab.\rThis was a return. "
+			Init(
+				L"This is input\xd804\xdf3c text with hard breaks.\tThis was a tab\xd804\xdf3c.\rThis was a return. "
 				L"\x2028 This is a hard line break.\nThis was a new line."
-				L"\xfffc This was a object."
+				L"\xfffc This was a object.", pwsf
 				);
 			break;
 		case 4:
-			m_stu.Assign(L"\rShort text with hard break at beginning.");
+			Init(L"\rShort text with hard break at beginning.", pwsf);
 			break;
 		case 5:
-			m_stu.Assign(L"\x2028\x2028Two hard breaks at beginning.");
+			Init(L"\x2028\x2028Two hard breaks at beginning.", pwsf);
 			break;
 		}
+	}
+
+	TxtSrc::TxtSrc(const wchar_t* s, ILgWritingSystemFactory * pwsf)
+	{
+		Init(s, pwsf);
+	}
+
+	void TxtSrc::Init(const wchar_t* s, ILgWritingSystemFactory * pwsf)
+	{
+		AssertPtr(pwsf);
+		m_cref = 1;
+		m_stu.Assign(s);
 		int cws = 0;
 		pwsf->get_NumberOfWs(&cws);
 		m_vws.Resize(cws);
 		pwsf->GetWritingSystems(m_vws.Begin(), m_vws.Size());
-	};
+	}
 
 
 	STDMETHODIMP TxtSrc::QueryInterface(REFIID riid, void ** ppv)
@@ -399,7 +412,9 @@ namespace TestViews
 			}
 		}
 
-		void VerifyBreakPointing()
+		// Verifies that the rendering engine under test can find suitable points to break texts
+		// @Param cSegmentsInSuperLongText count of segments in the super-long text, since different engines break it slightly differently.
+		void VerifyBreakPointing(int cSegmentsInSuperLongText)
 		{
 #if defined(WIN32) || defined(_M_X64)
 			// Create an IVwGraphics object and initialize it.
@@ -422,7 +437,6 @@ namespace TestViews
 				int dichLimSeg;
 				int dxWidth;
 				LgEndSegmentType est;
-				//int cb0, dich0;			// output values always set to zero.
 
 				m_qre->get_WritingSystemFactory(&qwsf);
 
@@ -433,7 +447,6 @@ namespace TestViews
 				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax,
 					klbWordBreak, klbLetterBreak, ktwshAll, FALSE,
 					&qseg, &dichLimSeg, &dxWidth, &est,
-					//0, NULL, 0, NULL, &cb0, &dich0,
 					NULL);
 				unitpp::assert_eq("FindBreakPoint(Short string) HRESULT", S_OK, hr);
 				unitpp::assert_eq("Short string fits in one segment", cch, dichLimSeg);
@@ -444,22 +457,85 @@ namespace TestViews
 
 				// Do another test with a much longer IVwTextSource string.
 				TxtSrc ts2(2, qwsf);
-				int cSeg = VerifyBreakPoints(&ts2, dxMax, dichLimSeg, (IVwGraphics*)qvg);
+				int cSeg = VerifyBreakPoints(&ts2, dxMax, dichLimSeg, (IVwGraphics*)qvg, cSegmentsInSuperLongText);
+				unitpp::assert_eq("Unexpected number of segments found, but slight discrepancies are ok", cSegmentsInSuperLongText, cSeg);
 
 				// Do another test with a IVwTextSource string with hard breaks in it.
 				TxtSrc ts3(3, qwsf);
-				cSeg = VerifyBreakPoints(&ts3, dxMax, dichLimSeg, (IVwGraphics*)qvg);
+				cSeg = VerifyBreakPoints(&ts3, dxMax, dichLimSeg, (IVwGraphics*)qvg, 6);
 				unitpp::assert_eq("Unexpected number of segments found (ts3)", 6, cSeg);
 
 				// Do another test with a IVwTextSource string with hard breaks at beginning.
 				TxtSrc ts4(4, qwsf);
-				cSeg = VerifyBreakPoints(&ts4, dxMax, dichLimSeg, (IVwGraphics*)qvg);
+				cSeg = VerifyBreakPoints(&ts4, dxMax, dichLimSeg, (IVwGraphics*)qvg, 2);
 				unitpp::assert_eq("Unexpected number of segments found (ts4)", 2, cSeg);
 
 				// Do another test with a IVwTextSource string with hard breaks at beginning.
 				TxtSrc ts5(5, qwsf);
-				cSeg = VerifyBreakPoints(&ts5, dxMax, dichLimSeg, (IVwGraphics*)qvg);
+				cSeg = VerifyBreakPoints(&ts5, dxMax, dichLimSeg, (IVwGraphics*)qvg, 3);
 				unitpp::assert_eq("Unexpected number of segments found (ts5)", 3, cSeg);
+
+				// Test that whitespace is stripped
+				TxtSrc tsts(L"trailing space ", qwsf);
+				tsts.QueryInterface(IID_IVwTextSource, (void **)&qts);
+				hr = qts->get_Length(&cch);
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshNoWs, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(trailing space) HRESULT", S_OK, hr);
+				unitpp::assert_eq("A single trailing space should have been dropped", cch - 1, dichLimSeg);
+				unitpp::assert_eq("Trailing whitespace should be reported", kestMoreWhtsp, est);
+				unitpp::assert_true("output segment no wider than maximum", (uint)dxWidth <= (uint)dxMax);
+				qts.Clear();
+
+				// Test that a single space w/ twshNoWs doesn't crash (LT-19894)
+				TxtSrc tsss(L" ", qwsf);
+				tsss.QueryInterface(IID_IVwTextSource, (void **)&qts);
+				hr = qts->get_Length(&cch);
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshNoWs, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(single space, no whitespace) HRESULT", S_OK, hr);
+				unitpp::assert_eq("No whitespace should have been returned", 0, dichLimSeg);
+				unitpp::assert_false("no non-whitespace available; should be null", qseg);
+				// Test that a single space w/ twshOnlyWs returns null (LT-19894)
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshOnlyWs, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(single space, only whitespace) HRESULT", S_OK, hr);
+				unitpp::assert_eq("A single space should have been returned", 1, dichLimSeg);
+				unitpp::assert_eq("A single space fits in a single segment", kestNoMore, est);
+				unitpp::assert_true("output segment no wider than maximum", (uint)dxWidth <= (uint)dxMax);
+				qts.Clear();
+
+				// Test that a single letter w/ twshNoWs doesn't crash (LT-19894)
+				TxtSrc tssl(L"t", qwsf);
+				tssl.QueryInterface(IID_IVwTextSource, (void **)&qts);
+				hr = qts->get_Length(&cch);
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshNoWs, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(single letter, no whitespace) HRESULT", S_OK, hr);
+				unitpp::assert_eq("A single letter should have been returned", 1, dichLimSeg);
+				unitpp::assert_eq("A single letter fits in a single segment", kestNoMore, est);
+				unitpp::assert_true("output segment no wider than maximum", (uint)dxWidth <= (uint)dxMax);
+				// Test that a single letter w/ twshOnlyWs returns null (LT-19894)
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshOnlyWs, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(single letter, only whitespace) HRESULT", S_OK, hr);
+				unitpp::assert_eq("No non-whitespace should have been returned", 0, dichLimSeg);
+				unitpp::assert_false("no whitespace available; should be null", qseg);
+
+				// Test that a single letter that doesn't fit returns null
+				dxMax = 1;
+				hr = m_qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, dxMax, klbWordBreak, klbLetterBreak, ktwshAll, FALSE,
+					&qseg, &dichLimSeg, &dxWidth, &est,
+					NULL);
+				unitpp::assert_eq("FindBreakPoint(single letter, no space) HRESULT", S_OK, hr);
+				unitpp::assert_eq("No characters should have been returned", 0, dichLimSeg);
+				unitpp::assert_eq("A single pixel fits no letters", kestMoreLines, est);
+				qts.Clear();
 			}
 			catch(...)
 			{
@@ -477,7 +553,15 @@ namespace TestViews
 #endif
 		}
 
-		int VerifyBreakPoints(TxtSrc* ts, uint dxMax, int dichLimSeg, IVwGraphics* pvg)
+		int VerifyBreakPoints(TxtSrc* ts, uint dxMax, int dichLimSeg, IVwGraphics* pvg, int cSegmentsExpected)
+		{
+			int cSegments = VerifyBreakPointsInternal(ts, dxMax, dichLimSeg, pvg, TRUE);
+			unitpp::assert_eq("Unexpected number of segments found in some RTL text source", cSegmentsExpected, cSegments);
+
+			return VerifyBreakPointsInternal(ts, dxMax, dichLimSeg, pvg, FALSE);
+		}
+
+		int VerifyBreakPointsInternal(TxtSrc* ts, uint dxMax, int dichLimSeg, IVwGraphics* pvg, ComBool fParaRtL)
 		{
 			IVwTextSourcePtr qts;
 			ts->QueryInterface(IID_IVwTextSource, (void **)&qts);
@@ -494,9 +578,8 @@ namespace TestViews
 			for (ichMin = 0; ichMin < cch; ichMin += dichLimSeg)
 			{
 				hr = m_qre->FindBreakPoint(pvg, qts, NULL, ichMin, cch, cch, FALSE, fStart,
-					dxAvail, klbWordBreak, klbWordBreak, ktwshAll, FALSE,
+					dxAvail, klbWordBreak, klbWordBreak, ktwshAll, fParaRtL,
 					&qseg, &dichLimSeg, &dxWidth, &est,
-					//0, NULL, 0, NULL, &cb0, &dich0,
 					NULL);
 				fStart = TRUE;
 				unitpp::assert_eq("FindBreakPoint(long string) HRESULT", S_OK, hr);

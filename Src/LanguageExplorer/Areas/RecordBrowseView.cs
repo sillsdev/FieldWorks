@@ -567,7 +567,7 @@ namespace LanguageExplorer.Areas
 			var bvEnabled = BrowseViewer.Enabled;
 			if (e.RecordNavigationInfo.SuppressFocusChange && bvEnabled)
 			{
-                BrowseViewer.OwnerChanged(MyRecordList.OwningObject);
+				BrowseViewer.OwnerChanged(MyRecordList.OwningObject);
 			}
 			try
 			{

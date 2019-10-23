@@ -235,7 +235,7 @@
     <value>1</value>
   </data>
   <data name="openButton.Text" xml:space="preserve">
-    <value> Open a project...</value>
+    <value> &amp;Open a project...</value>
   </data>
   <data name="openButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -277,7 +277,7 @@
     <value>2</value>
   </data>
   <data name="receiveButton.Text" xml:space="preserve">
-    <value> Get project from a colleague...</value>
+    <value> &amp;Get project from a colleague...</value>
   </data>
   <data name="receiveButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -319,7 +319,7 @@
     <value>3</value>
   </data>
   <data name="createButton.Text" xml:space="preserve">
-    <value> Create a new project...</value>
+    <value> &amp;Create a new project...</value>
   </data>
   <data name="createButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -404,7 +404,7 @@
     <value>4</value>
   </data>
   <data name="importButton.Text" xml:space="preserve">
-    <value> Import Standard Format data into a new project...</value>
+    <value> &amp;Import Standard Format data into a new project...</value>
   </data>
   <data name="importButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -488,7 +488,7 @@
     <value>5</value>
   </data>
   <data name="restoreButton.Text" xml:space="preserve">
-    <value> Restore a project from a backup file...</value>
+    <value> &amp;Restore a project from a backup file...</value>
   </data>
   <data name="restoreButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -524,7 +524,7 @@
     <value>6</value>
   </data>
   <data name="alwaysOpenLastProjectCheckBox.Text" xml:space="preserve">
-    <value>When I start {0},  always open the last edited project automatically.</value>
+    <value>&amp;When I start {0}, always open the last edited project automatically.</value>
   </data>
   <data name="&gt;&gt;alwaysOpenLastProjectCheckBox.Name" xml:space="preserve">
     <value>alwaysOpenLastProjectCheckBox</value>

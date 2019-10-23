@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -356,6 +356,31 @@ STDMETHODIMP GraphiteEngine::get_ClassId(GUID * pguid)
 
 /*----------------------------------------------------------------------------------------------
 	Make a segment by finding a suitable break point in the specified range of text.
+	Note that it is appropriate for line layout to use this routine even if putting
+	text on a single line, because an old writing system may take advantage of line layout
+	to handle direction changes and style changes and generate multiple segments
+	even on one line. For such layouts, pass a large dxMaxWidth, but still expect
+	possibly multiple segments.
+	Arguments:
+	[in]	pvg					Pointer to graphics interface.
+	[in]	pts					Pointer to text source interface.
+	[in]	pvjus				NULL if no justification will ever be needed for the resulting segment (TODO 2012 or earlier: deprecate)
+	[in]	ichMinSeg			Index of the first char in the text that is of interest.
+	[in]	ichLimText			Index of the last char in the text that is of interest (+ 1).
+	[in]	ichLimBacktrack		Index of last char that may be included in the segment;
+								generally the same as ichLimText unless backtracking.
+	[in]	fNeedFinalBreak		True if backtracking is needed to shorten a line that is too long
+	[in]	fStartLine			True if the segment is logically first on the line. (TODO 2012 or earlier: deprecate)
+	[in]	dxMaxWidth			Whatever coordinates pvg is using.
+	[in]	lbPref				Try for longest seg of this weight.
+	[in]	lbMax				Max if no preferred break possible.
+	[in]	twsh				How we are handling trailing white-space.
+	[in]	fParaRtoL			Overall paragraph direction.
+	[out]	ppsegRet			Segment produced, or null if nothing works.
+	[out]	pdichLimSeg			Offset to last char of segment, first of next if any.
+	[out]	pdxWidth			Width of the new segment, if any.
+	[out]	pest				What caused the segment to end?
+	[in]	psegPrev			TODO (Hasso) 2019.08: remove
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	IVwGraphics * pvg, IVwTextSource * pts, IVwJustifier * pvjus,
@@ -463,7 +488,12 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	gr_font* font = gr_make_font_with_ops(float(MulDiv(chrp.dympHeight, dpiY, kdzmpInch)), pvg, &fontOps, m_face);
 	gr_segment* segment = NULL;
 	if (font != NULL)
-		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, segmentLen + (extraSlot ? 1 : 0), isRtl ? gr_rtl : 0);
+	{
+		const void * error = 0;
+		size_t usvCount = gr_count_unicode_characters(gr_utf16, segStr, segStr.Chars() + segmentLen, &error);
+		Assert(!error || usvCount >= 0); // Something went wrong trying to count the characters, maybe a bad surrogate pair in the segStr?
+		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, usvCount + (extraSlot ? 1 : 0), isRtl ? gr_rtl : 0);
+	}
 	if (segment == NULL && font != NULL)
 	{
 		gr_font_destroy(font);
@@ -541,14 +571,20 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 
 		if (s != NULL)
+		{
 			// preferred break
 			breakSlot = s;
+		}
 		else if (fallbackSlot != NULL)
+		{
 			// acceptable break
 			breakSlot = fallbackSlot;
+		}
 		else
+		{
 			// nothing fit
 			breakSlot = gr_seg_first_slot(segment);
+		}
 		est = kestMoreLines;
 	}
 
@@ -567,10 +603,11 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 		while (s != NULL)
 		{
-			int ich = (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
+			int ich = ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_original(s));
 			UCharDirection dir = u_charDirection(segStr[ich]);
-			if (dir != U_WHITE_SPACE_NEUTRAL)
+			if (dir != U_WHITE_SPACE_NEUTRAL) {
 				break;
+			}
 
 			wsSlot = s;
 			s = gr_slot_prev_in_segment(s);
@@ -598,9 +635,11 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	*pdxWidth = width;
 	*pest = est;
 
-	if (segmentLen > 0 && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
+	if (est != kestHardBreak && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
 	{
-		// Views expects a NULL segment when a non-zero length segment was requested and nothing fit
+		// Views expects a NULL segment when we cannot fulfill its request for a non-zero-length segment
+		// (either because nothing fit or nothing matched the whitespace restrictions (twsh); however,
+		// if we're breaking on a hard break, we should return a segment even if it's empty)
 		*pdichLimSeg = 0;
 		*ppsegRet = NULL;
 	}
@@ -608,7 +647,9 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	{
 		// if we had to break somewhere before the end, then recalculate segment length
 		if (breakSlot != NULL)
-			segmentLen = (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(breakSlot)));
+		{
+			segmentLen = ConvertGraphiteCharIndexToUtf16Index(segStr, gr_slot_after(gr_slot_prev_in_segment(breakSlot))) + 1;
+		}
 		bool wsOnly = segmentLen > 0;
 		if (twsh != ktwshOnlyWs)
 		{
@@ -623,7 +664,6 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 				}
 			}
 		}
-
 		*pdichLimSeg = segmentLen;
 		*ppsegRet = NewObj GraphiteSegment(pts, this, ichMinSeg, ichMinSeg + segmentLen, dirDepth, fParaRtoL, wsOnly);
 	}
@@ -797,4 +837,41 @@ float GraphiteEngine::GetAdvanceY(const void* appFontHandle, gr_uint16 glyphid)
 	int boundingWidth, boundingHeight, boundingX, boundingY, advanceX, advanceY;
 	CheckHr(pvg->GetGlyphMetrics(glyphid, &boundingWidth, &boundingHeight, &boundingX, &boundingY, &advanceX, &advanceY));
 	return (float) advanceY;
+}
+
+int GraphiteEngine::ConvertGraphiteCharIndexToUtf16Index(StrUni& utf16Str, int graphiteIndex)
+{
+	// graphite takes and gives the character index based on unicode scalar values
+	int usvIndex = 0;
+	int utf16CharCount = 0;
+	bool foundHalfSurrogate = false;
+	// iterate until the graphiteIndex is met or until the end of the utf16String (-1 because it has a null terminator)
+	for (; usvIndex < graphiteIndex && utf16CharCount < utf16Str.Length(); ++utf16CharCount)
+	{
+		/* UTF-16 surrogate values are illegal in UTF-32
+		   0xFFFF or 0xFFFE are both reserved values */
+		wchar_t uni16char = utf16Str[utf16CharCount];
+		if (uni16char <= 0x0000FFFF && uni16char >= 0xD800 && uni16char <= 0xDFFF)
+		{
+			// found a second half bump the count
+			if (foundHalfSurrogate)
+			{
+				++usvIndex;
+			}
+			// found a half, or a second half
+			foundHalfSurrogate = !foundHalfSurrogate;
+		}
+		else // not a surrogate pair
+		{
+			++usvIndex;
+			// We have some sort of invalid unicode, so count the half character we found
+			if (foundHalfSurrogate)
+			{
+				++usvIndex;
+				foundHalfSurrogate = false;
+			}
+		}
+	}
+	Assert(!foundHalfSurrogate);
+	return utf16CharCount; // Convert character count to 0 based index
 }

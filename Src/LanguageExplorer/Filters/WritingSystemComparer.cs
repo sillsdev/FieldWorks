@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorer.Filters
@@ -60,6 +61,10 @@ namespace LanguageExplorer.Filters
 			if (m_ws == null)
 			{
 				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(WsId);
+			}
+			if (!m_ws.DefaultCollation.IsValid && m_ws.DefaultCollation.Type.ToLower() == "system")
+			{
+				m_ws.DefaultCollation = new SystemCollationDefinition();
 			}
 			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}

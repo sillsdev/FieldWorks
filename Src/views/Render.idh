@@ -1161,10 +1161,6 @@ Description:
 	{
 		interface ILgLineBreaker;
 	};
-	DeclareCoClass(RomRenderEngine, 6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8)
-	{
-		interface IRenderEngine;
-	};
 	DeclareCoClass(UniscribeEngine, 1287735C-3CAD-41CD-986C-39D7C0DF0314)
 	{
 		interface IRenderEngine;

@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Filters
 {
@@ -83,6 +84,24 @@ namespace LanguageExplorerTests.Filters
 			var records = CreateRecords(new[] { "c", "bob", "a" });
 			resultsSorter.Sort(records);
 			VerifySortOrder(new[] { "bob", "a", "c" }, records);
+		}
+
+		[Test]
+		public void OtherLanguageSystemCollationWhenCollationInValid()
+		{
+			var enWs = Cache.DefaultAnalWs;
+			var matchString = TsStringUtils.MakeString("buburuq", enWs);
+
+			CoreWritingSystemDefinition mvpWs = (CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(enWs);
+			mvpWs.DefaultCollation = new SystemCollationDefinition { LanguageTag = "mvp" };
+
+			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, _citationFlid, enWs),
+				new WritingSystemComparer(mvpWs)));
+
+			var resultsSorter = new FindResultSorter(matchString, sorter);
+			var records = CreateRecords(new[] { "Ramban", "buburuq" });
+			resultsSorter.Sort(records);
+			VerifySortOrder(new[] { "buburuq", "Ramban" }, records);
 		}
 
 		[Test]

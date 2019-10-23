@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			if (MyCmObject != null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					switch (MyCmObject.ClassID)
 					{

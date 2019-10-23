@@ -1072,11 +1072,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (exportStyleInfo.HasKeepTogether)
 			{
-				throw new NotImplementedException("Keep Together style export not yet implemented.");
+				declaration.Add(new Property("page-break-inside") { Term = new PrimitiveTerm(UnitType.Ident, "avoid") });
 			}
 			if (exportStyleInfo.HasKeepWithNext)
 			{
-				throw new NotImplementedException("Keep With Next style export not yet implemented.");
+				declaration.Add(new Property("page-break-inside") { Term = new PrimitiveTerm(UnitType.Ident, "initial") });
 			}
 			if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
 			{

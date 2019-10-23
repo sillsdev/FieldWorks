@@ -88,6 +88,42 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Another project named {0} already exists. Choose a new name or click cancel to change this project&apos;s name back to {1}..
+        /// </summary>
+        public static string FwProjProperties_DuplicateProjectName {
+            get {
+                return ResourceManager.GetString("FwProjProperties_DuplicateProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick a different project name.
+        /// </summary>
+        public static string FwProjProperties_PickDifferentProjName {
+            get {
+                return ResourceManager.GetString("FwProjProperties_PickDifferentProjName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid writing system list.
+        /// </summary>
+        public static string FwWritingSystemSetupDlg_InvalidWsList {
+            get {
+                return ResourceManager.GetString("FwWritingSystemSetupDlg_InvalidWsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There should be no duplicate writing systems. Please remove the duplicate &quot;{0}&quot; or distinguish it by adding script, region, or variant information..
+        /// </summary>
+        public static string FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX {
+            get {
+                return ResourceManager.GetString("FwWritingSystemSetupDlg_RemoveOrDistinguishDuplicateWsX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bulk Replace Setup.
         /// </summary>
         public static string khtpBulkReplaceTitle {
@@ -472,6 +508,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksFwWsSyncProblem {
             get {
                 return ResourceManager.GetString("ksFwWsSyncProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name can contain only the letters A-Z (without diacritics), the numbers 0-9, and basic punctuation..
+        /// </summary>
+        public static string ksIllegalNameNonRomanMsg {
+            get {
+                return ResourceManager.GetString("ksIllegalNameNonRomanMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name cannot contain &quot;extended&quot; letters or letters with diacritics (such as {0})..
+        /// </summary>
+        public static string ksIllegalNameWithDiacriticsMsg {
+            get {
+                return ResourceManager.GetString("ksIllegalNameWithDiacriticsMsg", resourceCulture);
             }
         }
         
@@ -1012,15 +1066,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sort Specification Error.
-        /// </summary>
-        public static string ksSortSpecError {
-            get {
-                return ResourceManager.GetString("ksSortSpecError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Specifies the actual encoding converter..
         /// </summary>
         public static string ksSpecifiesActualEC {
@@ -1156,20 +1201,30 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot change the full code &quot;{0}&quot; of the default user writing system..
+        ///   Looks up a localized string similar to You cannot change the code of this writing system to &quot;{0}&quot; because the &quot;{1}&quot; writing system already exists..
         /// </summary>
-        public static string kstidCantChangeUserWS {
+        public static string kstidCantCauseDuplicateWS {
             get {
-                return ResourceManager.GetString("kstidCantChangeUserWS", resourceCulture);
+                return ResourceManager.GetString("kstidCantCauseDuplicateWS", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &quot;{0}&quot; writing system already exists. To distinguish the new writing system you are creating from &quot;{0}&quot;, add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, &quot;{0}&quot;, if it meets your needs..
+        ///   Looks up a localized string similar to You cannot change the script, region, or variant of the default &quot;{0}&quot; (en) writing system because it is used as a fallback when other writing systems are missing text.
+        ///If you would like to create a variant of {0}, click the green plus (+)..
         /// </summary>
-        public static string kstidCantCreateDuplicateWS {
+        public static string kstidCantChangeEnglishSRV {
             get {
-                return ResourceManager.GetString("kstidCantCreateDuplicateWS", resourceCulture);
+                return ResourceManager.GetString("kstidCantChangeEnglishSRV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot change the code &quot;en&quot; of the default writing system because it is used as a fallback when other writing systems are missing text..
+        /// </summary>
+        public static string kstidCantChangeEnglishWS {
+            get {
+                return ResourceManager.GetString("kstidCantChangeEnglishWS", resourceCulture);
             }
         }
         
@@ -1648,15 +1703,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Distinguish New Writing System.
-        /// </summary>
-        public static string kstidNwsCaption {
-            get {
-                return ResourceManager.GetString("kstidNwsCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}, Multiple Writing Systems.
         /// </summary>
         public static string kstidOneStyleMultipleWS {
@@ -1891,15 +1937,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Writing System Already Exists.
-        /// </summary>
-        public static string ksWsAlreadyExists {
-            get {
-                return ResourceManager.GetString("ksWsAlreadyExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You are changing the internal code for {0} writing systems related to {1}. This will affect every line of text in this project that uses this writing system.{2}{2}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to stop working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now..
         /// </summary>
         public static string ksWSChangeWarning {
@@ -2026,6 +2063,105 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is used for glosses, definitions, notes, text analyses, and so on..
+        /// </summary>
+        public static string NewLangProjWizard_AnalysisWritingSystemExplanation {
+            get {
+                return ResourceManager.GetString("NewLangProjWizard_AnalysisWritingSystemExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Analysis.
+        /// </summary>
+        public static string NewProjectWizard_Analysis_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Analysis_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose an analysis language.
+        /// </summary>
+        public static string NewProjectWizard_AnalysisHeader {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_AnalysisHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anthropology.
+        /// </summary>
+        public static string NewProjectWizard_Anthro_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Anthro_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A project named {0} already exists. Choose a new name or click cancel and open the existing project..
+        /// </summary>
+        public static string NewProjectWizard_DuplicateProjectName {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_DuplicateProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a project name..
+        /// </summary>
+        public static string NewProjectWizard_EnterProjectName {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_EnterProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing Systems Set Up for Monolingual Dictionary.
+        /// </summary>
+        public static string NewProjectWizard_MonolingualCaption {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_MonolingualCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You chose the same vernacular and analysis writing systems..
+        /// </summary>
+        public static string NewProjectWizard_MonolingualMessage {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_MonolingualMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        public static string NewProjectWizard_More_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_More_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string NewProjectWizard_Name_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Name_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vernacular.
+        /// </summary>
+        public static string NewProjectWizard_Vernacular_Step {
+            get {
+                return ResourceManager.GetString("NewProjectWizard_Vernacular_Step", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text Files (*.txt)|*.txt|All Files (*.*)|*.*.
         /// </summary>
         public static string ofDlg_Filter {
@@ -2067,6 +2203,124 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string TextFileFilter {
             get {
                 return ResourceManager.GetString("TextFileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Audio for {0}.
+        /// </summary>
+        public static string WritingSystemList_AddAudio {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add variation of {0}.
+        /// </summary>
+        public static string WritingSystemList_AddDialect {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddDialect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add IPA for {0}.
+        /// </summary>
+        public static string WritingSystemList_AddIpa {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddIpa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add new language....
+        /// </summary>
+        public static string WritingSystemList_AddNewLanguage {
+            get {
+                return ResourceManager.GetString("WritingSystemList_AddNewLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete {0}.
+        /// </summary>
+        public static string WritingSystemList_DeleteWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_DeleteWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge....
+        /// </summary>
+        public static string WritingSystemList_MergeWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_MergeWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing systems with selected checkboxes are always displayed..
+        /// </summary>
+        public static string WritingSystemList_NormalTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_NormalTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select at least one writing system.
+        /// </summary>
+        public static string WritingSystemList_SelectAtLeastOneWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Encoding converter for importing {0}:.
+        /// </summary>
+        public static string WritingSystemSetup_EncodingConverterForImporting {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_EncodingConverterForImporting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sharing data will benefit any other programs
+        ///that also use the SIL Locale Data Repository.
+        /// </summary>
+        public static string WritingSystemSetup_SharingDataWithSldr {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_SharingDataWithSldr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify the set of valid characters for {0}..
+        /// </summary>
+        public static string WritingSystemSetup_SpecifyValidChars {
+            get {
+                return ResourceManager.GetString("WritingSystemSetup_SpecifyValidChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Copy).
+        /// </summary>
+        public static string xCopy {
+            get {
+                return ResourceManager.GetString("xCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Original).
+        /// </summary>
+        public static string xOriginal {
+            get {
+                return ResourceManager.GetString("xOriginal", resourceCulture);
             }
         }
     }

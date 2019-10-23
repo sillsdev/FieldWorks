@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var projB = obj as ProjectId;
 			if (projB == null)
 			{
-				throw new ArgumentException("Argument is not a ProjectId.", "obj");
+				return false;
 			}
 			return Type == projB.Type && ProjectInfo.ProjectsAreSame(Handle, projB.Handle);
 		}

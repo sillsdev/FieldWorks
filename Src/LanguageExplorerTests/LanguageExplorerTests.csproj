@@ -276,9 +276,6 @@
     <Compile Include="Filters\RangeIntMatcherTests.cs" />
     <Compile Include="Filters\TestFilterPersistence.cs" />
     <Compile Include="Areas\WordformFiltersTests.cs" />
-    <Compile Include="Impls\FindCollectorEnvTests.cs" />
-    <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
-    <Compile Include="Impls\FwHelpAboutTests.cs" />
     <Compile Include="InventoryTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
@@ -337,7 +334,6 @@
     <Compile Include="Areas\Lexicon\ReversalEntryViewTests.cs" />
     <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />
-    <Compile Include="Impls\LexImportTests.cs" />
     <Compile Include="LIFT\LiftExportTests.cs" />
     <Compile Include="LIFT\LiftMergerTests.cs" />
     <Compile Include="Controls\MasterCategoryTests.cs" />
@@ -347,8 +343,6 @@
     <Compile Include="Repository\MefTestBase.cs" />
     <Compile Include="MGA\GlossListBoxTest.cs" />
     <Compile Include="Repository\NotebookAreaTests.cs" />
-    <Compile Include="Impls\PropertyTableTests.cs" />
-    <Compile Include="Impls\PubSubSystemTests.cs" />
     <Compile Include="SendReceive\LiftBridgeTests.cs" />
     <Compile Include="Controls\SilSidePane\ItemTests.cs" />
     <Compile Include="Controls\SilSidePane\NavPaneOptionsDlgTests.cs" />
@@ -385,22 +379,28 @@
     <Compile Include="DictionaryExportServiceTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeOptionsTests.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
-    <Compile Include="Impls\DummyFwMainWnd.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Areas\ExportDialogTests.cs" />
     <Compile Include="DictionaryConfiguration\HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\InterestingTextsTests.cs" />
     <Compile Include="DictionaryConfiguration\ItemClickedTests.cs" />
-    <Compile Include="Impls\MacroMenuHandlerTests.cs" />
-    <Compile Include="Impls\RecordListRepositoryTests.cs" />
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
-    <Compile Include="Impls\UploadToWebonaryControllerTests.cs" />
-    <Compile Include="Impls\UploadToWebonaryModelTests.cs" />
     <Compile Include="DictionaryConfiguration\WavConverterTests.cs" />
     <Compile Include="DictionaryConfiguration\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="DictionaryConfiguration\XhtmlDocViewTests.cs" />
+    <Compile Include="Impls\DummyFwMainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Impls\FindCollectorEnvTests.cs" />
+    <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
+    <Compile Include="Impls\FwHelpAboutTests.cs" />
+    <Compile Include="Impls\LexImportTests.cs" />
+    <Compile Include="Impls\MacroMenuHandlerTests.cs" />
+    <Compile Include="Impls\PropertyTableTests.cs" />
+    <Compile Include="Impls\PubSubSystemTests.cs" />
+    <Compile Include="Impls\RecordListRepositoryTests.cs" />
+    <Compile Include="Impls\UploadToWebonaryControllerTests.cs" />
+    <Compile Include="Impls\UploadToWebonaryModelTests.cs" />
     <Compile Include="AppTestBase.cs" />
     <Compile Include="DictionaryConfiguration\Migration\DictionaryConfigurationMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\FirstAlphaMigratorTests.cs" />

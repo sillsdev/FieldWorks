@@ -2543,7 +2543,7 @@
     <comment>help topic id for notebook fields list  column help topic ID for notebook fields list Subitems</comment>
   </data>
   <data name="khtpProjPropsMergeWS" xml:space="preserve">
-    <value>User_Interface/Menus/File/Project_Properties/Merge_writing_systems.htm</value>
+    <value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Merge_writing_systems.htm</value>
     <comment>Help Topic ID on Merge Writing System Dialog</comment>
   </data>
   <data name="khtpfield-cmPossibility-Status" xml:space="preserve">

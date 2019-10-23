@@ -109,17 +109,8 @@ namespace LanguageExplorer.Controls.DetailControls
 						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
 						var optionalWsSpec = XmlUtils.GetOptionalAttributeValue(node, "optionalWs");
 						var wsMagicOptional = WritingSystemServices.GetMagicWsIdFromName(optionalWsSpec);
-						var msSlice = reuseMap.GetSliceToReuse("MultiStringSlice") as MultiStringSlice;
-						if (msSlice == null)
-						{
-							newSlice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
-						}
-						else
-						{
-							sliceWasRecyled = true;
-							newSlice = msSlice;
-							msSlice.Reuse(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
-						}
+						// Create a new slice everytime for the MultiStringSlice - There are display glitches with height when reused
+						newSlice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						break;
 					}
 				case "defaultvectorreference": // second most common.

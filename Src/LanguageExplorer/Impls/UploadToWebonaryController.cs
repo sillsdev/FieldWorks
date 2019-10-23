@@ -45,6 +45,8 @@ namespace LanguageExplorer.Impls
 			m_publicationActivator = new PublicationActivator(propertyTable);
 		}
 
+		public bool IsSortingOnAlphaHeaders => PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList.IsSortingByHeadword;
+
 		#region Disposal
 		protected virtual void Dispose(bool disposing)
 		{
@@ -108,7 +110,7 @@ namespace LanguageExplorer.Impls
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(LanguageExplorerResources.BeginCompressingDataForWebonary);
-			using (var zipFile = new ZipFile())
+			using(var zipFile = new ZipFile(Encoding.UTF8))
 			{
 				RecursivelyAddFilesToZip(zipFile, tempDirectoryToCompress, "", webonaryView);
 				zipFile.Save(zipFileToUpload);

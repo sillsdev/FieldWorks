@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -74,8 +74,18 @@ namespace FwBuildTasks
 				fileContents = regex.Replace(fileContents, string.Format("{0:dd}", DateTime.Now));
 
 				regex = new Regex("\\$NUMBEROFDAYS");
-				fileContents = regex.Replace(fileContents,
-					Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString());
+				var numberOfDays = Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString();
+				fileContents = regex.Replace(fileContents, numberOfDays);
+
+				// Jenkins builds should set the BUILD_NUMBER in the environment
+				var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
+				if (string.IsNullOrEmpty(buildNumber))
+				{
+					// fall back to number of days if no BUILD_NUMBER is in the environment
+					buildNumber = numberOfDays;
+				}
+				regex = new Regex("\\$BUILDNUMBER");
+				fileContents = regex.Replace(fileContents, buildNumber);
 
 				regex = new Regex("\\$GENERATEDFILECOMMENT");
 				if (regex.IsMatch(fileContents))

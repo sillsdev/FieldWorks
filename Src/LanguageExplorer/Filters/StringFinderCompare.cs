@@ -278,10 +278,20 @@ namespace LanguageExplorer.Filters
 				// Handle surrogate pairs carefully!
 				int ch;
 				var ch1 = rgch[i];
-				if (Surrogates.IsLeadSurrogate(ch1))
+				// if the character is a lead surrogate, and there is a following character
+				if (Surrogates.IsLeadSurrogate(ch1) && i < rgch.Length)
 				{
-					var ch2 = rgch[++i];
-					ch = Surrogates.Int32FromSurrogates(ch1, ch2);
+					var ch2 = rgch[i + 1];
+					// if the following char is the other half then make the char from it
+					if (Surrogates.IsTrailSurrogate(ch2))
+					{
+						ch = Surrogates.Int32FromSurrogates(ch1, ch2);
+						++i;
+					}
+					else // otherwise it is half a surrogate pair (bad data)
+					{
+						ch = ch1;
+					}
 				}
 				else
 				{

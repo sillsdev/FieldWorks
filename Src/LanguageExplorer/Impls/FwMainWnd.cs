@@ -1316,7 +1316,7 @@ namespace LanguageExplorer.Impls
 			fileMenuDictionary.Add(Command.CmdDeleteProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Delete_Project, () => CanAlwaysSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdCreateProjectShortcut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Create_Shortcut_on_Desktop, () => CanAlwaysSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdArchiveWithRamp, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Archive_With_RAMP, () => CanCmdArchiveWithRamp));
-			fileMenuDictionary.Add(Command.CmdUploadToWebonary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(UploadToWebonary_Click, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdUploadToWebonary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(UploadToWebonary_Click, () => CanCmdUploadToWebonary));
 			fileMenuDictionary.Add(Command.CmdImportSFMLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Import_Standard_Format_Marker_Click, () => CanAlwaysSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdImportTranslatedLists, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_List_Content, () => CanAlwaysSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdClose, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_CloseWindow, () => CanAlwaysSeeAndDo));
@@ -2105,6 +2105,8 @@ namespace LanguageExplorer.Impls
 			var ramp = new ReapRamp();
 			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
 		}
+
+		private Tuple<bool, bool> CanCmdUploadToWebonary => new Tuple<bool, bool>(true, _currentArea.MachineName == AreaServices.LexiconAreaMachineName);
 
 		private void UploadToWebonary_Click(object sender, EventArgs e)
 		{

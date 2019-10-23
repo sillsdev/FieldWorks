@@ -64,10 +64,20 @@ morph/item
 		<item>
 			<xsl:copy-of select="@*[name()!='lang']"/>
 			<xsl:call-template name="GetMorphLangAttribute"/>
+			<xsl:apply-templates select="preceding-sibling::item[@type='glsPrepend']" mode="glsPrepend"/>
 			<xsl:apply-templates/>
 			<xsl:apply-templates select="following-sibling::item[@type='glsAppend']" mode="glsAppend"/>
 		</item>
 	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		morph/item[@type='glsPrepend']
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template match="morph/item[@type='glsPrepend']" mode="glsPrepend">
+			<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="morph/item[@type='glsPrepend']"/>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		morph/item[@type='glsAppend']

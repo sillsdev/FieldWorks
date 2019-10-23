@@ -2025,38 +2025,67 @@ namespace TestViews
 			//	MUSICAL_SYMBOL_SEMIBREVIS_WHITE MUSICAL_SYMBOL_COMBINING_STEM OleStringLiteral(L" sentence 1."));
 		}
 
-		// WANTPORT: We can no longer delete multiple characters, but if there isn't another relevant test
-		// we should perhaps think about one that ends in the middle of a surrogate.
-		//void testMultipleCharDeletions_DelEndsInSurrogate()
-		//{
-		//	// More tests for backspace and delete cases.
-		//	CreateTestDataForMultiCharDeletetions();
-		//	int wspend = -1;
+		// Tests pressing the delete key when the IP is before a surrogate pair
+		void testDeleteOfSurrogatePair()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" EXAMPLE_SURROGATE_PAIR L" problem if we can't delete " EXAMPLE_SURROGATE_PAIR);
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
 
-		//	// Delete 11 characters (which will end up in the middle of a surrogate pair)
-		//	m_qrootb->MakeSimpleSel(true, true, false, true, NULL);
-		//	HRESULT hr = m_qrootb->OnTyping(m_qvg32, NULL, 0, 11, L'\0', &wspend);
-		//	unitpp::assert_eq("OnTyping(..., NULL, 0, 11, NUL,...) [2] failed", S_OK, hr);
-		//	VerifyParaContents(0, OleStringLiteral(L" sentence 1."));
-		//}
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
 
-		// WANTPORT: We can no longer delete multiple characters, but if there isn't another relevant test
-		// we should perhaps think about one that ends in the middle of a surrogate.
-		//void testMultipleCharDeletions_BackspaceEndsInSurrogate()
-		//{
-		//	// More tests for backspace and delete cases.
-		//	CreateTestDataForMultiCharDeletetions();
+			// Delete just after 'a'
+			MakeSelection(0, 9, 9, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is a problem if we can't delete " EXAMPLE_SURROGATE_PAIR));
+		}
 
-		//	int wspend;
-		//	// Delete (backspace over) the last 13 chars of the doc.
-		//	m_qrootb->MakeSimpleSel(false, true, false, true, NULL);
-		//	HRESULT hr = m_qrootb->OnTyping(m_qvg32, NULL, 13, 0, L'\0', &wspend);
-		//	unitpp::assert_eq("OnTyping(..., NULL, 13, 0, NUL,...) [3] failed", S_OK, hr);
-		//	VerifyParaContents(0,
-		//		L"This is a" COMBINING_DIAERESIS COMBINING_MACRON OleStringLiteral(L" ")
-		//		MUSICAL_SYMBOL_SEMIBREVIS_WHITE);
-		//}
+		// Tests pressing the delete key when the IP is one simple char before a surrogate pair
+		void testDeleteOfCharBeforeSurrogate()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" EXAMPLE_SURROGATE_PAIR L" problem if we can't delete 'a'");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the first "a"
+			MakeSelection(0, 8, 8, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is " EXAMPLE_SURROGATE_PAIR " problem if we can't delete 'a'"));
+		}
 
 		// Tests pressing the delete key when the IP is in front of the base character (TE-6382)
 		void testDeleteInFrontOfBaseCharacter()
@@ -2072,6 +2101,70 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the first "a"
+			MakeSelection(0, 8, 8, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is  first test paragraph"));
+		}
+
+		// Tests pressing the delete key when the IP is in front of the base character
+		void testDeleteInFrontOfSurrogateCharWithSurrogateDiacritic()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is an" EXAMPLE_SURROGATE_PAIR SURROGATE_PAIR_DIACRITIC
+				L" ugly test case");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the EXAMPLE_SURROGATE_PAIR
+			MakeSelection(0, 10, 10, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is an ugly test case"));
+		}
+
+		// Tests pressing the delete key when the IP is in front of the base character
+		void testDeleteInFrontOfBaseCharWithSurrogateDiacritic()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" SURROGATE_PAIR_DIACRITIC COMBINING_MACRON SURROGATE_PAIR_DIACRITIC
+				L" first test paragraph");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
 			HVO hvoRootBox = 101;
 			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 

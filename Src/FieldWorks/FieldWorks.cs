@@ -451,7 +451,11 @@ namespace SIL.FieldWorks
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
 		{
-			return projectId.Type == BackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
+			if (!LcmSettings.IsProjectSharingEnabled(projectId.ProjectFolder))
+			{
+				return true;
+			}
+			return projectId.Type == BackendProviderType.kSharedXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// <summary>
@@ -1755,15 +1759,22 @@ namespace SIL.FieldWorks
 		/// </returns>
 		internal static ProjectId CreateNewProject()
 		{
-			using (var dlg = new FwNewLangProject())
+			FwNewLangProjectModel model = null;
+			using (var progress = new ProgressDialogWithTask(ThreadHelper))
 			{
-				dlg.SetDialogProperties(s_flexApp);
+				progress.Title = "Loading language data";
+				progress.IsIndeterminate = true;
+				progress.AllowCancel = false;
+				progress.RunTask((args, obj) => model = new FwNewLangProjectModel());
+			}
+			using (var dlg = new FwNewLangProject(model, GetHelpTopicProvider()))
+			{
 				switch (dlg.DisplayDialog(s_flexApp.ActiveMainWindow))
 				{
 					case DialogResult.OK:
 						if (dlg.IsProjectNew)
 						{
-							return new ProjectId(dlg.GetDatabaseFile());
+							return new ProjectId(dlg.DatabaseName);
 						}
 						else
 						{
@@ -1771,8 +1782,7 @@ namespace SIL.FieldWorks
 							// then choose to open the project. Therefore open the project and return
 							// null for the ProjectId so the caller of this method does not try to
 							// create a new project.
-							var projectId = new ProjectId(dlg.GetDatabaseFile());
-							OpenExistingProject(projectId);
+							OpenExistingProject(new ProjectId(dlg.DatabaseName));
 							return null;
 						}
 					case DialogResult.Abort:
@@ -1780,9 +1790,7 @@ namespace SIL.FieldWorks
 						// in the OnLoad method). We can't just catch that exception here (probably
 						// because of the extra message loop the dialog has), so we close the dialog
 						// and return Abort.
-						MessageBox.Show(s_flexApp.ActiveMainWindow,
-							ResourceHelper.GetResourceString("kstidNewProjError"),
-							ResourceHelper.GetResourceString("kstidMiscError"));
+						MessageBox.Show(s_flexApp.ActiveMainWindow, ResourceHelper.GetResourceString("kstidNewProjError"), ResourceHelper.GetResourceString("kstidMiscError"));
 						break;
 				}
 			}
@@ -3370,6 +3378,9 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			var mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
+			var processArch = Environment.Is64BitProcess ? 64 : 32;
+			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
+			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
 			ulong diskSize;
 			ulong diskFree;
 			var cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);

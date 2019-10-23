@@ -69,7 +69,7 @@ namespace LanguageExplorer.Impls
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog.
-			Shown += (sender, args) => { Height = Height - outputLogTextbox.Height; };
+			Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); Height = Height - outputLogTextbox.Height;};
 			// Handle localizable explanation area with link.
 			var explanationText = LanguageExplorerResources.toApplyForWebonaryAccountExplanation;
 			var explanationTextLink = LanguageExplorerResources.toApplyForWebonaryAccountLink;
@@ -115,6 +115,16 @@ namespace LanguageExplorer.Impls
 				}
 			}
 			howManyPubsAlertLabel.Text = string.Format(LanguageExplorerResources.PublicationEntriesLabel, countOfDictionaryEntries, middle);
+		}
+
+		public void ValidateSortingOnAlphaHeaders()
+		{
+			if (!m_controller.IsSortingOnAlphaHeaders)
+			{
+				MessageBox.Show(
+					"Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.",
+					"Letter Headings not Sorted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private void PopulatePublicationsList()

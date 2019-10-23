@@ -158,12 +158,12 @@ install-menuentries:
 	install -m 644 Src/LexText/LexTextExe/LT.png $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
 	install -m 644 Src/LexText/LexTextExe/LT64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
 	install -m 644 Src/LexText/LexTextExe/LT128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
-	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
+	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-applications.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/unicodechareditor.desktop
 
 install-packagemetadata:
 	install -d $(DESTDIR)/usr/share/appdata
-	install -m 644 DistFiles/Linux/fieldworks-flex.desktop.appdata.xml $(DESTDIR)/usr/share/appdata
+	install -m 644 DistFiles/Linux/fieldworks-applications.desktop.appdata.xml $(DESTDIR)/usr/share/appdata
 
 install: install-tree install-menuentries l10n-install install-packagemetadata
 
@@ -177,7 +177,7 @@ uninstall: uninstall-menuentries
 
 uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
-	rm -f $(DESTDIR)/usr/share/applications/fieldworks-flex.desktop
+	rm -f $(DESTDIR)/usr/share/applications/fieldworks-applications.desktop
 	rm -f $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
 	rm -f $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
 

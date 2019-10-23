@@ -204,6 +204,31 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_InvalidUnicodeHeadword_GeneratesErrorResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache, "\uD900");
+			var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string invalidCharsHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[text()='\u0fff\u0fff\u0fff']";
+			// change Headword back to something legal so that we don't crash trying to save bad data into the cache.
+			AddHeadwordToEntry(entry, "notbadanymore", Cache.DefaultVernWs);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(invalidCharsHeadwordTest, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_SortByHeadwordWithSpecificWsGeneratesLetterHeadings()
 		{
 			var firstAEntry = CreateInterestingLexEntry(Cache, "alpha1");
@@ -9298,6 +9323,24 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash");
 		}
+
+		[TestCase("Bob", false, "Bo")]
+		[TestCase("Bob", true, "B")]
+		[TestCase("a", false, "a")]
+		[TestCase("", false, "")]
+		// surrogate pairs
+		[TestCase("\ud81b\udf00\ud81b\udf55", true, "\ud81b\udf00")]
+		[TestCase("\ud81b\udf00\ud81b\udf55", false, "\ud81b\udf00\ud81b\udf55")]
+		[TestCase("a\ud81b\udf55", false, "a\ud81b\udf55")]
+		[TestCase("\ud81b\udf00test", false, "\ud81b\udf00t")]
+		public void GetIndexLettersOfHeadword(string headWord, bool onlyFirstLetter, string expected)
+		{
+			var actual = typeof(ConfiguredXHTMLGenerator)
+				.GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static)
+				.Invoke(null, new object[] {headWord, onlyFirstLetter});
+			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
+		}
+
 
 		[Test]
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()

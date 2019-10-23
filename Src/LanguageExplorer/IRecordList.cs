@@ -37,6 +37,7 @@ namespace LanguageExplorer
 		bool IsActiveInGui { get; }
 		bool IsControllingTheRecordTreeBar { get; set; }
 		bool IsDefaultSort { get; set; }
+		bool IsSortingByHeadword { get; }
 		void JumpToIndex(int index, bool suppressFocusChange = false);
 		void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false);
 		bool ListLoadingSuppressed { get; set; }

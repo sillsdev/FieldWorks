@@ -187,6 +187,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The project name is used in file names, so unexpected characters can cause problems with Send/Receive and other tasks..
+        /// </summary>
+        public static string ksIllegalNameExplanation {
+            get {
+                return ResourceManager.GetString("ksIllegalNameExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The name cannot contain these characters:
         ///{0}.
         /// </summary>

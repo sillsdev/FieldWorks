@@ -59,6 +59,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var fileWriter = new LameMP3FileWriter(outputStream, fileReader.WaveFormat, 128))
 			{
 				fileReader.CopyTo(fileWriter);
+				fileWriter.Flush();
 				var mp3Bytes = outputStream.ToArray();
 				SaveBytes(destinationFilePath, mp3Bytes);
 			}

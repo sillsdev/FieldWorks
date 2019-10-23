@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Clear();
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") { Characters = { "a", "b", "c", "d", "e" } });
-			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") { Characters = { "1", "2", "3", "4", "5" } });
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") { Characters = { "'", "-", "#" } });
 			var validChars = ValidCharacters.Load(ws);
 
@@ -45,7 +44,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Clear();
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") { Characters = { "a", "b", "c", "d", "e", "." } });
-			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") { Characters = { "1", "2", "3", "4", "5" } });
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") { Characters = { "'", "-", "#" } });
 			var validChars = ValidCharacters.Load(ws);
 
@@ -68,7 +66,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Clear();
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") { Characters = { "a", "b", "c" } });
-			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") { Characters = { "1", "2", "3", "4", "5" } });
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") { Characters = { "-", " " } });
 			var validChars = ValidCharacters.Load(ws);
 
@@ -91,7 +88,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Clear();
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") { Characters = { "a", "b", "c" } });
-			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") { Characters = { "1", "2", "3", "4", "5" } });
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") { Characters = { "-", " " } });
 			var validChars = ValidCharacters.Load(ws);
 
@@ -113,7 +109,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Clear();
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") { Characters = { "a", "b", "c", "d", "e" } });
-			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") { Characters = { "1", "2", "3", "4", "5" } });
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") { Characters = { "'", "-", "#" } });
 			var validChars = ValidCharacters.Load(ws);
 

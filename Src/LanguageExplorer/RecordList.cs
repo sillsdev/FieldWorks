@@ -778,6 +778,9 @@ namespace LanguageExplorer
 
 		public bool IsDefaultSort { get; set; }
 
+		public bool IsSortingByHeadword => !string.IsNullOrWhiteSpace(SortName) && (SortName.StartsWith("Headword") || SortName.StartsWith("Lexeme Form")
+							|| SortName.StartsWith("Citation Form") || SortName.StartsWith("Form") || SortName.StartsWith("Reversal Form"));
+
 		public void JumpToIndex(int index, bool suppressFocusChange = false)
 		{
 			// If we aren't changing the index, just bail out. (Fixes, LT-11401)
@@ -1332,7 +1335,8 @@ namespace LanguageExplorer
 			{
 				if (ReferenceEquals(m_owningObject, value))
 				{
-					return; // no need to reload.
+					// Old & new are the same, so skip the bother of reloading.
+					return;
 				}
 				var hasChangedOwner = m_owningObject != null && value != null;
 				m_owningObject = value;
@@ -3208,7 +3212,7 @@ namespace LanguageExplorer
 				// if we need to reload the list
 				// clear the views property until we are no longer suppressed, so dependent views don't try to access objects
 				// that have possibly been deleted.
-				if (m_owningObject != null && SortedObjects.Count > 0 && ((UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload) || !IsActiveInGui))
+				if (m_owningObject != null && SortedObjects.Count > 0 && UpdateHelper != null && (UpdateHelper.ClearBrowseListUntilReload || !IsActiveInGui))
 				{
 					// try to restore this index during reload.
 					m_indexToRestoreDuringReload = CurrentIndex;

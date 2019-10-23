@@ -29,7 +29,7 @@
     </SccProvider>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <ApplicationIcon>BookOnCubeVersion.ico</ApplicationIcon>
+    <ApplicationIcon>BookOnCube.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -127,6 +127,10 @@
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="SIL.Lexicon, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Lexicon.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -163,7 +167,7 @@
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -201,7 +205,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+    <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
@@ -232,8 +236,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
-      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
+    <Reference Include="icu.net">
+      <HintPath>..\..\Downloads\icu.net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -259,11 +263,8 @@
     </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwApplicationSettings.cs" />
-    <Compile Include="FwCheckAnthroListDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <Compile Include="FwNewLangProject.Designer.cs">
+      <DependentUpon>FwNewLangProject.cs</DependentUpon>
     </Compile>
     <Compile Include="FwNewLangProject.cs">
       <SubType>Form</SubType>
@@ -371,9 +372,6 @@
       <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwNewLangProject.resx">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -404,7 +402,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BookOnCubeVersion.ico" />
+    <Content Include="BookOnCube.ico" />
     <None Include="Resources\OpenFile.png" />
     <None Include="Resources\DatabaseNew.png" />
     <None Include="Resources\chorus32x32.png" />
@@ -414,7 +412,7 @@
     <None Include="Resources\SendReceiveGetArrow32x32.png" />
     <None Include="Resources\Info.png" />
     <None Include="Resources\wait22trans.gif" />
-    <Content Include="SmallBookOnCubeVersion.ico" />
+    <Content Include="SmallBookOnCube.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />

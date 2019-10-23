@@ -504,7 +504,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		private int RootStTextHvo => RootStText?.Hvo ?? 0;
-
 		/// <remarks>virtual for tests</remarks>
 		protected internal virtual IStText RootStText { get; private set; }
 
@@ -1070,8 +1069,8 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				return;
 			}
 			// Use a bookmark, if we've set one.
-			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid))
-			                       && m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
+			if (RootStText != null && RootStText.IsValidObject && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid))
+				&& m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
 			{
 				(CurrentInterlinearTabControl as IHandleBookmark)?.SelectBookmark(m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)]);
 			}

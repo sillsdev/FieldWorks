@@ -145,8 +145,12 @@ private:
     unsigned short m_glyphid;        // glyph id
     uint16 m_realglyphid;
     uint32 m_original;      // charinfo that originated this slot (e.g. for feature values)
-    uint32 m_before;        // charinfo index of before association
-    uint32 m_after;         // charinfo index of after association
+	// REVIEW (Hasso) 2019.08: m_begin and m_end seem like they would be better names than m_before and m_after.
+	// Since m_before and m_after are the inclusive range of characters, and there is usually one character per slot,
+	// they are usually the same. Combining diacritics, strangely, are in their own separate slots. The only time I
+	// (Hasso) have seen two chars in one slot is Tamil vowel signs; perhaps Hebrew and Thai vowel points would do the same.
+    uint32 m_before;        // charinfo index of before association (the first index in the slot)
+    uint32 m_after;         // charinfo index of after association (the last index in the slot)
     uint32 m_index;         // slot index given to this slot during finalising
     Slot *m_parent;         // index to parent we are attached to
     Slot *m_child;          // index to first child slot that attaches to us

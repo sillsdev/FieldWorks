@@ -1223,6 +1223,68 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual("Referenced Complex Forms", minorEntryChildren[0].Label, "should not have changed");
 		}
 
+		[Test]
+		public void MigrateFrom83Alpha_SelectsDialectLabels()
+		{
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name"
+			};
+
+			var abbreviationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation"
+			};
+
+			var dialectLabelsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DialectLabelsRS",
+				Label = "Dialect Labels",
+				IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { abbreviationNode, nameNode }
+			};
+
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { dialectLabelsNode }
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			var userModel = new DictionaryConfigurationModel
+			{
+				Version = DictionaryConfigurationServices.VersionCurrent,
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Main Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode> { mainEntryNode }
+					}
+				}
+			};
+			var betaModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = "Main Entry", FieldDescription = LexEntry }
+				}
+			};
+			_migrator.MigrateFrom83Alpha(_logger, userModel, betaModel); // SUT
+			var dialectLabels = userModel.Parts[0].Children[0].Children[0].Children[0].Children[0];
+			Assert.AreEqual("Dialect Labels", dialectLabels.Label, "should have Dialect Labels");
+			Assert.IsFalse(dialectLabels.IsEnabled, "dialectLabels should be false");
+			Assert.AreEqual(2, dialectLabels.Children.Count, "two children should have been created");
+		}
+
 		/// <summary>Apart from Category Info, all children of Gram. Info under (Other) Referenced Complex Forms should be removed</summary>
 		[Test]
 		public void MigrateFrom83Alpha_RemovesGramInfoUnderRefdComplexForms()

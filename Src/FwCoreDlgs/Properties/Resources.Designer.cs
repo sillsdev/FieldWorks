@@ -93,6 +93,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap chorus32 {
+            get {
+                object obj = ResourceManager.GetObject("chorus32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DownArrow {
             get {
                 object obj = ResourceManager.GetObject("DownArrow", resourceCulture);
@@ -402,12 +412,46 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
+        internal static System.Drawing.Bitmap wait22trans {
+            get {
+                object obj = ResourceManager.GetObject("wait22trans", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Warning {
             get {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WizardConnectToStep {
+            get {
+                object obj = ResourceManager.GetObject("WizardConnectToStep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WizardNotComplete {
+            get {
+                object obj = ResourceManager.GetObject("WizardNotComplete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WizardStepComplete {
+            get {
+                object obj = ResourceManager.GetObject("WizardStepComplete", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

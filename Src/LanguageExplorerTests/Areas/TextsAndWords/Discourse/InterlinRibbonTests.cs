@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using FieldWorks.TestUtilities.Attributes;
@@ -226,6 +227,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			internal void CallOnLoad(EventArgs eventArgs)
 			{
 				base.OnLoad(eventArgs);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				PropertyTable.Dispose();
+				base.Dispose(disposing);
 			}
 		}
 	}

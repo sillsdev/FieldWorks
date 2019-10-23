@@ -355,15 +355,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				else
 				{
 					var closedVal = featSpec as IFsClosedValue;
-					if (closedVal?.FeatureRA == null)
+					if (closedVal != null && closedVal.FeatureRA != null && closedVal.ValueRA != null)
 					{
-						continue;
-					}
-					var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
-					FeatureSymbol symbol;
-					if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
-					{
-						featStruct.AddValue(symFeat, symbol);
+					    var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
+					    FeatureSymbol symbol;
+					    if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
+					    {
+						    featStruct.AddValue(symFeat, symbol);
+					    }
 					}
 				}
 			}

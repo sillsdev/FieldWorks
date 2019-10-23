@@ -1,5 +1,4 @@
-
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +12,7 @@
 // with appropriate values, typically version numbers, by a custom build task
 // (Currently VersionEx in Nant, Substitute in the new MSBuild/XBuild approach).
 // Other directives are merely here because we want them to be the same for all FieldWorks projects.
+
 using System.Reflection;
 
 [assembly: AssemblyConfiguration("")]
@@ -22,9 +22,9 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Format: Version.Milestone.Year.MMDDL
-[assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$NUMBEROFDAYS")]
-// Format: FwMajorVersion.FwMinorVersion
-[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $!FWBETAVERSION")]
-// Format: Version.Milestone.0.Level
+// Format: Major.Minor.Revision.BuildNumber
+[assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER")]
+// Format: FwMajorVersion.FwMinorVersion Day Alpha/Beta/RC
+[assembly: AssemblyInformationalVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$!{BUILDNUMBER:0} $NUMBEROFDAYS $!FWBETAVERSION")]
+// Format: Major.Minor.Revision.BuildNumber?
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]
