@@ -99,13 +99,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="NAudio">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <HintPath>.\..\Output\Debug\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.Lame, Version=1.0.3.3048, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="NAudio.Lame">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
+      <HintPath>.\..\Output\Debug\NAudio.Lame.dll</HintPath>
     </Reference>
     <Reference Include="ParatextImport, Version=10.0.0.29576, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -115,7 +115,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+    <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
@@ -134,7 +134,7 @@
     <Reference Include="SIL.LCModel.FixData">
       <HintPath>..\..\Output\Debug\LCM\SIL.LCModel.FixData.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Media, Version=4.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="SIL.Media">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Media.dll</HintPath>
     </Reference>
@@ -164,6 +164,7 @@
       <HintPath>..\..\Output\Release\Framework.dll</HintPath>
     </Reference>
     <Reference Include="FwControls">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgs">
@@ -177,19 +178,18 @@
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core">
+      <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
       <HintPath>..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
+      <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="DotNetZip">
-      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <SpecificVersion>False</SpecificVersion>
@@ -267,7 +267,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Archiving.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms.Keyboarding" Condition="'$(OS)'=='Unix'">
+    <Reference Include="SIL.Windows.Forms.Keyboarding">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
@@ -1425,9 +1425,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LanguageExplorerControls.Designer.cs">
-      <DependentUpon>LanguageExplorerControls.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>LanguageExplorerControls.resx</DependentUpon>
     </Compile>
     <Compile Include="LIFT\LiftExporter.cs" />
     <Compile Include="LIFT\LiftImportDlg.cs">
@@ -1973,37 +1973,37 @@
       <SubType>UserControl</SubType>
     </Compile>
     <None Include="Resources\CustomEditParameters.xml" />
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
       <Link>XML\Combined\HierarchicalLCModel.xml</Link>
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
       <Link>XML\Combined\MasterLCModel.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
       <Link>XML\Combined\Fully_Merged_useful.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Layouts.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Layouts.xml">
       <Link>XML\Combined\Inventory_Layouts.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Parts.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Parts.xml">
       <Link>XML\Combined\Inventory_Parts.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
       <Link>XML\Combined\Merged_Parts_into_Layouts.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedLayout_detail.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedLayout_detail.xml">
       <Link>XML\Combined\MergedLayout_detail.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedParts_detail.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedParts_detail.xml">
       <Link>XML\Combined\MergedParts_detail.xml</Link>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Combined_details.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Combined_details.xml">
       <Link>XML\Combined\Merged_Combined_details.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
       <Link>XML\Combined\Merged_LCModel.xml</Link>
       <SubType>Designer</SubType>
     </None>
@@ -2397,7 +2397,7 @@
     <EmbeddedResource Include="Controls\LanguageExplorerControls.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>LanguageExplorerControls1.Designer.cs</LastGenOutput>
+      <LastGenOutput>LanguageExplorerControls.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="LIFT\LiftImportDlg.resx">
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
@@ -3943,11 +3943,11 @@
     <None Include="Resources\NotebookBrowseParameters.xml" />
     <None Include="Resources\NotebookDocumentParameters.xml" />
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
       <Link>XML\Combined\CombinedConfig_Develop.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
+    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
       <Link>XML\Combined\CombinedConfig_Master.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
@@ -3969,6 +3969,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
       <Link>XML\Parts\MorphologyParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
       <Link>XML\Parts\NotebookParts.xml</Link>
