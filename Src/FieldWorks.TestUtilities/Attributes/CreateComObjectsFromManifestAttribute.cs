@@ -46,7 +46,7 @@ namespace FieldWorks.TestUtilities.Attributes
 						prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// just ignore any errors we get
 				}

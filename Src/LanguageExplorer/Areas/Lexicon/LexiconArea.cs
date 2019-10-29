@@ -318,7 +318,11 @@ namespace LanguageExplorer.Areas.Lexicon
 
 				if (disposing)
 				{
+					_customFieldsMenuHelper.Dispose();
+					_fileExportMenuHelper.Dispose();
 				}
+				_customFieldsMenuHelper = null;
+				_fileExportMenuHelper = null;
 				_majorFlexComponentParameters = null;
 				_area = null;
 
