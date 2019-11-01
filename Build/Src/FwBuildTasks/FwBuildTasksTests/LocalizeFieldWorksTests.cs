@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
 

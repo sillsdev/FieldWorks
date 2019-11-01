@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
 
@@ -96,27 +97,54 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return resxFiles;
 		}
 
-		private void LocalizeResx(ResourceInfo resourceInfo, string resxPath)
+		/// <summary>
+		/// Finds all the strings in each .resx that match the key (original english) from the .po and replace them with the str (translated value)
+		/// </summary>
+		private void LocalizeResx(ResourceInfo resourceInfo, string resxPath, Dictionary<string, string> poMap)
 		{
 			var localizedResxPath = GetLocalizedResxPath(resourceInfo, resxPath);
 			Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
-			var stylesheet = Path.Combine(Options.RealBldFolder, "LocalizeResx.xsl");
-			var parameters = new List<BuildUtils.XsltParam>();
-			parameters.Add(new BuildUtils.XsltParam { Name = "lang", Value = Options.Locale });
-			// The output directory that the transform wants is not the one where it will write
-			// the file, but the base Output directory, where it expects to find that we have
-			// written the XML version of the PO file, [locale].xml.
-			parameters.Add(new BuildUtils.XsltParam { Name = "outputdir", Value = Options.OutputFolder });
-			//parameters.Add(new XsltParam() { Name = "verbose", Value = "true" });
-			BuildUtils.ApplyXslt(stylesheet, resxPath, localizedResxPath, parameters);
+			var resx = XDocument.Load(resxPath);
+			// ReSharper disable once AssignNullToNotNullAttribute -- There will always be a Root
+			// Select from the root the elements with localizable strings
+			// (resx data elements that are translatable strings have no type attribute,
+			// no mimetype attribute and have a name that doesn't start with '>>' or '$this')
+			var stringValues = resx.Root.XPathSelectElements("/*/data[not(@type) and not(@mimetype)]")
+				.Where(x => x.Attribute("name") != null && !x.Attribute("name").Value.StartsWith(">>") &&
+					!x.Attribute("name").Value.StartsWith("$this")).ToArray();
+
+			foreach (var elementToUpdate in stringValues)
+			{
+				var valueElement = elementToUpdate.Element("value");
+				var englishContent = valueElement?.Value;
+				// if the string is empty don't go looking for it's translation, also don't overwrite content with missing translations
+				if (!string.IsNullOrEmpty(englishContent) && poMap.ContainsKey(englishContent))
+				{
+					valueElement.Value = poMap[englishContent];
+				}
+			}
+			Options.LogMessage(MessageImportance.Low, "Saving {0} resx source in {1}", Options.Locale, localizedResxPath);
+			resx.Save(localizedResxPath);
 		}
 
 		private void CreateSources(ResourceInfo resourceInfo)
 		{
+			var poMap = new Dictionary<string, string>();
+			var poXmlDoc = XDocument.Load(Path.Combine(Options.OutputFolder, Options.Locale + ".xml"));
+			var msgElements = poXmlDoc.Root.Descendants("msg"); // There is one msg element for each unique string in the .po file
+			foreach (var msg in msgElements)
+			{
+				var key = msg.Element("key"); // the key is the original english value
+				var str = msg.Element("str"); // str is the translated value
+				if (!string.IsNullOrEmpty(key?.Value) && !string.IsNullOrEmpty(str?.Value))
+				{
+					poMap[key.Value] = str.Value;
+				}
+			}
 			foreach (var resxFile in resourceInfo.ResXFiles)
 			{
 				Options.LogMessage(MessageImportance.Low, "Creating source for {0}", resxFile);
-				LocalizeResx(resourceInfo, resxFile);
+				LocalizeResx(resourceInfo, resxFile, poMap);
 				Options.LogMessage(MessageImportance.Low, "Done creating source for {0}", resxFile);
 			}
 		}
