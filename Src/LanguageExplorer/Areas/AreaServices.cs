@@ -340,7 +340,25 @@ namespace LanguageExplorer.Areas
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
 			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(form, String.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
+			MessageBox.Show(form, string.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
+		}
+
+		internal static void ResetMainPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)
+		{
+			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdInsertPossibility], newText,
+				uiWidgetController.InsertToolBarDictionary[Command.CmdInsertPossibility], string.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
+		}
+
+		internal static void ResetSubitemPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)
+		{
+			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdDataTree_Insert_Possibility], newText,
+				uiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], string.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
+		}
+
+		private static void ResetInsertUiWidgetsText(ToolStripItem menu, string newText, ToolStripItem toolBarButton, string newToolTipText)
+		{
+			menu.Text = newText;
+			toolBarButton.ToolTipText = newToolTipText;
 		}
 
 		/// <summary>

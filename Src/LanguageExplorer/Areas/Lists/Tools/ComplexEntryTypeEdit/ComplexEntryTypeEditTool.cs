@@ -195,11 +195,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
 				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Complex_Form_Type);
+				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Complex_Form_Type);
 
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntryType_Click, () => CanCmdDataTree_Insert_LexEntryType));
-				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subtype);
+				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subtype);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubComplexEntryType, Create_mnuDataTree_SubComplexEntryType);
 

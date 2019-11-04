@@ -1580,6 +1580,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Category (or Part of Speech)....
+        /// </summary>
+        internal static string PartOfSpeech {
+            get {
+                return ResourceManager.GetString("PartOfSpeech", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing exported data into final form.
         /// </summary>
         internal static string ProcessingIntoFinalForm {

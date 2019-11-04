@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -70,8 +71,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Categories_withTreeBarHandler, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new PosEditToolMenuHelper(majorFlexComponentParameters, this);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
+			_toolMenuHelper = new PosEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
@@ -154,19 +155,129 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private sealed class PosEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private IRecordList _recordList;
+			private DataTree _dataTree;
+			private ISharedEventHandlers _sharedEventHandlers;
 
-			internal PosEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
+			internal PosEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordList, DataTree dataTree)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// Use common: CmdInsertPossibility & CmdDataTree_Insert_Possibility, rather than the now removed as obsolete: CmdInsertPOS & CmdDataTree_Insert_POS_SubPossibilities
-#endif
+				_recordList = recordList;
+				_dataTree = dataTree;
+
+				SetupUiWidgets(tool);
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Insert menu & tool bar for CmdInsertPossibility and CmdDataTree_Insert_Possibility.
+				_partiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
+				_partiallySharedForToolsWideMenuHelper.SetupCmdDataTree_Insert_Possibility(toolUiWidgetParameterObject, () => CanCmdDataTree_Insert_POS_SubPossibilities);
+				// Insert menu commands: CmdDataTree_Insert_POS_AffixTemplate
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_AffixTemplate, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_AffixTemplate_Click, ()=> CanCmdDataTree_Insert_POS_AffixTemplate));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
+				RegisterSliceLeftEdgeMenus();
+			}
+
+			private void RegisterSliceLeftEdgeMenus()
+			{
+				// <menu id="mnuDataTree_POS_AffixTemplates">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixTemplates, Create_mnuDataTree_POS_AffixTemplates);
+				// <menu id="mnuDataTree_POS_AffixTemplate">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixTemplate, Create_mnuDataTree_POS_AffixTemplate);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplates(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixTemplates, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixTemplates.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_AffixTemplates">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_AffixTemplates.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_POS_AffixTemplate" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_POS_AffixTemplate_Clicked, GrammarResources.Insert_Affix_Template);
+
+				// End: <menu id="mnuDataTree_POS_AffixTemplates">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_POS_AffixTemplate_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("AffixTemplates", MoInflAffixTemplateTags.kClassName, PartOfSpeechTags.kClassName);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplate(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixTemplate, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixTemplate.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_AffixTemplate">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_AffixTemplate.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_POS_AffixTemplate" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Template, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				/*
+      <item command="CmdDataTree_Copy_POS_AffixTemplate" />
+		    <command id="CmdDataTree_Copy_POS_AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
+		      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
+		    </command>
+    </menu>
+				*/
+				// // <item command="CmdDataTree_Insert_POS_AffixTemplate" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Copy_POS_AffixTemplate_Clicked, GrammarResources.Copy_Affix_Template);
+
+				// End: <menu id="mnuDataTree_POS_AffixTemplate">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_POS_SubPossibilities => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
+
+			private static Tuple<bool, bool> CanCmdDataTree_Insert_POS_AffixTemplate => new Tuple<bool, bool>(true, true);
+
+			private void CmdDataTree_Insert_POS_AffixTemplate_Click(object sender, EventArgs e)
+			{
+				// Owner: POS:AffixTemplates
+				// Class: MoInflAffixTemplate
+				UowHelpers.UndoExtension(GrammarResources.Affix_Template, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					((IPartOfSpeech)_recordList.CurrentObject).AffixTemplatesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoInflAffixTemplateFactory>().Create());
+				});
+			}
+
+			private void Copy_POS_AffixTemplate_Clicked(object sender, EventArgs e)
+			{
+				UowHelpers.UndoExtension(GrammarResources.Copy_Affix_Template, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					var currentAffixTemplate = (IMoInflAffixTemplate)_dataTree.CurrentSlice.MyCmObject;
+					var newAffixTemplate = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoInflAffixTemplateFactory>().Create();
+					((IPartOfSpeech)_recordList.CurrentObject).AffixTemplatesOS.Add(newAffixTemplate);
+					currentAffixTemplate.SetCloneProperties(newAffixTemplate);
+				});
 			}
 
 			#region Implementation of IDisposable
@@ -201,8 +312,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 				if (disposing)
 				{
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_recordList = null;
+				_dataTree = null;
+				_sharedEventHandlers = null;
 
 				_isDisposed = true;
 			}

@@ -24,7 +24,8 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		private ISharedEventHandlers _sharedEventHandlers;
 		private FileExportMenuHelper _fileExportMenuHelper;
 		private IListArea Area => (IListArea)_tool.Area;
-		private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+
+		internal PartiallySharedForToolsWideMenuHelper MyPartiallySharedForToolsWideMenuHelper { get; private set; }
 
 		internal SharedListToolsUiWidgetMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, ICmPossibilityList list, IRecordList recordList, DataTree dataTree)
 		{
@@ -41,7 +42,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			_recordList = recordList;
 			_dataTree = dataTree;
 			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-			_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+			MyPartiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 			Register_PossibilityList_Slice_Context_Menus();
 		}
 
@@ -94,10 +95,10 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				switch (command)
 				{
 					case Command.CmdAddToLexicon:
-						_partiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
+						MyPartiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
 						break;
 					case Command.CmdLexiconLookup:
-						_partiallySharedForToolsWideMenuHelper.SetupCmdLexiconLookup(toolUiWidgetParameterObject, _dataTree, () => CanCmdLexiconLookup);
+						MyPartiallySharedForToolsWideMenuHelper.SetupCmdLexiconLookup(toolUiWidgetParameterObject, _dataTree, () => CanCmdLexiconLookup);
 						break;
 					case Command.CmdExport:
 						// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
@@ -107,36 +108,18 @@ namespace LanguageExplorer.Areas.Lists.Tools
 						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
 						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
 						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
-						ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item]);
+						AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item]);
 						break;
 					case Command.CmdDataTree_Insert_Possibility: // Add to Hashset
 						// <command id="CmdDataTree_Insert_Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 						insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
 						insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
-						ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Subitem]);
+						AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Subitem]);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException($"Don't know how to process command: '{command.ToString()}'");
 				}
 			}
-		}
-
-		internal void ResetMainPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText)
-		{
-			ResetInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdInsertPossibility],
-				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdInsertPossibility], newText);
-		}
-
-		internal void ResetSubitemPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText)
-		{
-			ResetInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdDataTree_Insert_Possibility],
-				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], newText);
-		}
-
-		private static void ResetInsertUiWidgetsText(ToolStripItem menu, ToolStripItem toolBarButton, string newText)
-		{
-			menu.Text = newText;
-			toolBarButton.ToolTipText = newText;
 		}
 
 		private void Register_PossibilityList_Slice_Context_Menus()
@@ -326,7 +309,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			if (disposing)
 			{
 				_fileExportMenuHelper.Dispose();
-				_partiallySharedForToolsWideMenuHelper.Dispose();
+				MyPartiallySharedForToolsWideMenuHelper.Dispose();
 			}
 			_majorFlexComponentParameters = null;
 			_tool = null;
@@ -334,7 +317,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			_recordList = null;
 			_dataTree = null;
 			_fileExportMenuHelper = null;
-			_partiallySharedForToolsWideMenuHelper = null;
+			MyPartiallySharedForToolsWideMenuHelper = null;
 			_sharedEventHandlers = null;
 
 

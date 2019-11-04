@@ -3,9 +3,7 @@
 <window label="FieldWorks Language Explorer" settingsId="Language Explorer">
   <!-- The main sections of this file are the following
 	commands
-	menubar
 	contextMenus
-	toolbars
 	contexthelpstrings
 
 NB: When this file  only has the root (window) element in it,
@@ -111,15 +109,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdDataTree_Delete_POS_AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
       <parameters field="AffixSlots" className="MoInflAffixSlot" />
-    </command>
-    <command id="CmdDataTree_Insert_POS_AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
-      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdDataTree_Copy_POS_AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
-      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdDataTree_Delete_POS_AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
-      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
     </command>
     <command id="CmdDataTree_Insert_POS_InflectionClass_Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
       <parameters field="Subclasses" className="MoInflClass" />
@@ -339,13 +328,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuDataTree_POS_AffixSlot">
       <item command="CmdDataTree_Delete_POS_AffixSlot" />
-    </menu>
-    <menu id="mnuDataTree_POS_AffixTemplates">
-      <item command="CmdDataTree_Insert_POS_AffixTemplate" />
-    </menu>
-    <menu id="mnuDataTree_POS_AffixTemplate">
-      <item command="CmdDataTree_Delete_POS_AffixTemplate" />
-      <item command="CmdDataTree_Copy_POS_AffixTemplate" />
     </menu>
     <menu id="mnuDataTree_POS_InflectionClass_Subclasses">
       <item command="CmdDataTree_Insert_POS_InflectionClass_Subclasses" />

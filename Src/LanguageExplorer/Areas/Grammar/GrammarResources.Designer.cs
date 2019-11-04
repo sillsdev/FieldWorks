@@ -79,6 +79,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Affix Template.
+        /// </summary>
+        internal static string Affix_Template {
+            get {
+                return ResourceManager.GetString("Affix_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters toolId=&quot;bulkEditPhonemes&quot; clerk=&quot;phonemes&quot; treeBarAvailability=&quot;NotAllowed&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;PhPhoneme&quot; selectColumn=&quot;true&quot; altTitleId=&quot;PhPhoneme-Plural&quot;&gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;false&quot; enableBEClickCopy=&quot;false&quot; enableBEProcess=&quot;false&quot; enableBEFindReplace=&quot;false&quot; enableBEOther=&quot;false&quot; bulkEditListItemsGhostFields=&quot;PhonFeats&quot; bulkEditListItemsClasses=&quot;PhPhoneme&quot;/&gt;
@@ -103,6 +112,24 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string CompoundRuleAdvancedEditToolParameters {
             get {
                 return ResourceManager.GetString("CompoundRuleAdvancedEditToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy AffixTemplate.
+        /// </summary>
+        internal static string Copy_Affix_Template {
+            get {
+                return ResourceManager.GetString("Copy_Affix_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Affix Template.
+        /// </summary>
+        internal static string Delete_Affix_Template {
+            get {
+                return ResourceManager.GetString("Delete_Affix_Template", resourceCulture);
             }
         }
         
@@ -167,6 +194,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string GrammarSketchTransforms {
             get {
                 return ResourceManager.GetString("GrammarSketchTransforms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Affix Template.
+        /// </summary>
+        internal static string Insert_Affix_Template {
+            get {
+                return ResourceManager.GetString("Insert_Affix_Template", resourceCulture);
             }
         }
         

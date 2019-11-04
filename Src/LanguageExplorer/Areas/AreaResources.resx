@@ -781,4 +781,7 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Show_Category_in_Concordance" xml:space="preserve">
     <value>Show Category in Concordance</value>
   </data>
+  <data name="PartOfSpeech" xml:space="preserve">
+    <value>Category (or Part of Speech)...</value>
+  </data>
 </root>

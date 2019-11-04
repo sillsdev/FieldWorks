@@ -351,6 +351,55 @@ namespace LanguageExplorer.Areas
 			LinkHandler.PublishFollowLinkMessage((IPublisher)tagList[0], new FwLinkArgs((string)tagList[1], jumpToGuid));
 		}
 
+		internal void SetupCmdInsertPossibility(ToolUiWidgetParameterObject toolUiWidgetParameterObject, Func<Tuple<bool, bool>> seeAndDo)
+		{
+			_eventuallySharedCommands.Add(Command.CmdInsertPossibility);
+			_sharedEventHandlers.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, seeAndDo));
+			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+			insertMenuDictionary.Add(Command.CmdInsertPossibility, _sharedEventHandlers.Get(Command.CmdInsertPossibility));
+			insertToolbarDictionary.Add(Command.CmdInsertPossibility, _sharedEventHandlers.Get(Command.CmdInsertPossibility));
+			AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.PartOfSpeech, AreaResources.Add_a_new_category);
+		}
+
+		private void CmdInsertPOS_Click(object sender, EventArgs e)
+		{
+			// Insert in main list.
+			InsertPossibility();
+		}
+
+		internal void SetupCmdDataTree_Insert_Possibility(ToolUiWidgetParameterObject toolUiWidgetParameterObject, Func<Tuple<bool, bool>> seeAndDo)
+		{
+			_eventuallySharedCommands.Add(Command.CmdDataTree_Insert_Possibility);
+			_sharedEventHandlers.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, seeAndDo));
+			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+			var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+			insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, _sharedEventHandlers.Get(Command.CmdDataTree_Insert_Possibility));
+			insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, _sharedEventHandlers.Get(Command.CmdDataTree_Insert_Possibility));
+			AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subcategory);
+		}
+
+		private void CmdDataTree_Insert_POS_SubPossibilities_Click(object sender, EventArgs e)
+		{
+			InsertPossibility(_recordList.CurrentObject as IPartOfSpeech);
+		}
+
+		private void InsertPossibility(IPartOfSpeech selectedCategoryOwner = null)
+		{
+			IPartOfSpeech newPossibility;
+			using (var dlg = new MasterCategoryListDlg())
+			{
+				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				dlg.SetDlginfo(_majorFlexComponentParameters.LcmCache.LanguageProject.PartsOfSpeechOA, propertyTable, true, selectedCategoryOwner);
+				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
+				newPossibility = dlg.SelectedPOS;
+			}
+			if (newPossibility != null)
+			{
+				_recordList.UpdateRecordTreeBar();
+			}
+		}
+
 		internal void SetupCmdAddToLexicon(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
 		{
 			_eventuallySharedCommands.Add(Command.CmdAddToLexicon);

@@ -264,15 +264,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
 				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar for both.
-				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPOS_Click, () => CanCmdInsertPOS));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, () => CanCmdInsertPOS);
+				// Override labels.
+				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
 
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
-				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_SubPossibilities_Click, () => CanCmdDataTree_Insert_POS_SubPossibilities));
-				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subcategory);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdDataTree_Insert_Possibility(toolUiWidgetParameterObject, () => CanCmdDataTree_Insert_POS_SubPossibilities);
 
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveMainReversalPOS, Create_mnuDataTree_MoveMainReversalPOS);
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalPOS, Create_mnuDataTree_MoveReversalPOS);
@@ -534,34 +530,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
 
-			private void CmdInsertPOS_Click(object sender, EventArgs e)
-			{
-				// Insert in main list.
-				InsertPossibility();
-			}
-
 			private Tuple<bool, bool> CanCmdDataTree_Insert_POS_SubPossibilities => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
-
-			private void CmdDataTree_Insert_POS_SubPossibilities_Click(object sender, EventArgs e)
-			{
-				InsertPossibility(_recordList.CurrentObject as IPartOfSpeech);
-			}
-
-			private void InsertPossibility(IPartOfSpeech selectedCategoryOwner = null)
-			{
-				IPartOfSpeech newPossibility;
-				using (var dlg = new MasterCategoryListDlg())
-				{
-					var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-					dlg.SetDlginfo(_list, propertyTable, true, selectedCategoryOwner);
-					dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
-					newPossibility = dlg.SelectedPOS;
-				}
-				if (newPossibility != null)
-				{
-					_recordList.UpdateRecordTreeBar();
-				}
-			}
 
 			#region Implementation of IDisposable
 			private bool _isDisposed;

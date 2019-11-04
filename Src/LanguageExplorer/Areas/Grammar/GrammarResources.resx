@@ -122,6 +122,9 @@
     <value>..\..\Resources\AdhocCoprohibitionRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
+  <data name="Affix_Template" xml:space="preserve">
+    <value>Affix Template</value>
+  </data>
   <data name="BulkEditPhonemesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\BulkEditPhonemesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
@@ -129,6 +132,12 @@
   <data name="CompoundRuleAdvancedEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\CompoundRuleAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
+  </data>
+  <data name="Copy_Affix_Template" xml:space="preserve">
+    <value>Copy AffixTemplate</value>
+  </data>
+  <data name="Delete_Affix_Template" xml:space="preserve">
+    <value>Delete Affix Template</value>
   </data>
   <data name="EnvironmentEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\EnvironmentEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -144,6 +153,9 @@
   </data>
   <data name="GrammarSketchTransforms" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\GrammarSketchTransforms.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Insert_Affix_Template" xml:space="preserve">
+    <value>Insert Affix Template</value>
   </data>
   <data name="LexiconProblemsParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconProblemsParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

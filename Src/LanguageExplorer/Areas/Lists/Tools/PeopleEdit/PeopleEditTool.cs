@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 				// Insert menu & Insert tool bar (but no sub-person).
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, ()=> CanCmdInsertPerson));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, () => CanCmdInsertPerson));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Person);
+				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Person);
 			}
 
 			private static Tuple<bool, bool> CanCmdInsertPerson => new Tuple<bool, bool>(true, true);

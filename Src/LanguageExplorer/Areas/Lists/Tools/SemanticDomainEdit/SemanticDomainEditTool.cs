@@ -196,10 +196,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				// Insert menu & tool bar
 				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> CanCmdInsertSemDom));
 				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => CanCmdInsertSemDom));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Semantic_Domain);
+				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Semantic_Domain);
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
-				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subdomain);
+				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subdomain);
 
 				/*
 					<part id="CmSemanticDomain-Detail-Questions" type="Detail">

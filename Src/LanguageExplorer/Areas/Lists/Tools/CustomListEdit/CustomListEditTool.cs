@@ -184,13 +184,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				// <command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
 				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, ()=> CanCmdInsertCustomItem));
 				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, () => CanCmdInsertCustomItem));
-				_sharedListToolsUiWidgetMenuHelper.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.List_Item);
+				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.List_Item);
 
 				// Goes in Insert menu & Insert toolbar
 				// <command id="CmdDataTree_Insert_CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
-				_sharedListToolsUiWidgetMenuHelper.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
+				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
