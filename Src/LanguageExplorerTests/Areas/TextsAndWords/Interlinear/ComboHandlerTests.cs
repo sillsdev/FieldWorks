@@ -120,7 +120,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var vwsel = MockRepository.GenerateMock<IVwSelection>();
 			vwsel.Stub(s => s.IsValid).Return(false);
-			Assert.That(() => InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
+			Assert.That(() => InterlinComboHandler.MakeCombo(null, null, vwsel, null, true), Throws.ArgumentException);
 		}
 	}
 }

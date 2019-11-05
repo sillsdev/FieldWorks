@@ -693,7 +693,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					tagIcon = SandboxBase.ktagWordPosIcon;
 					break;
 			}
-			return InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as InterlinComboHandler;
+			return InterlinComboHandler.MakeCombo(null, null, tagIcon, sandbox, morphIndex) as InterlinComboHandler;
 		}
 
 		/// <summary>

@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// call Activate to add the combo to its controls (thus making it visible)
 		// or display the ComboListBox if a non-null value
 		// is returned.
-		internal static IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider, IVwSelection vwselNew, SandboxBase sandbox, bool fMouseDown)
+		internal static IComboHandler MakeCombo(Form mainFlexWindow, IHelpTopicProvider helpTopicProvider, IVwSelection vwselNew, SandboxBase sandbox, bool fMouseDown)
 		{
 			if (!vwselNew.IsValid)
 			{
@@ -199,18 +199,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				hvoMorph = hvoSelObject = rgvsli[0].hvo;
 			}
-			return MakeCombo(helpTopicProvider, tagTextProp, sandbox, hvoMorph, rgvsli, hvoSelObject);
+			return MakeCombo(mainFlexWindow, helpTopicProvider, tagTextProp, sandbox, hvoMorph, rgvsli, hvoSelObject);
 		}
 
 		/// <summary>
 		/// make a combo handler based upon the given comboIcon and morph
 		/// </summary>
-		internal static IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider, int tagComboIcon, SandboxBase sandbox, int imorph)
+		internal static IComboHandler MakeCombo(Form mainFlexWindow, IHelpTopicProvider helpTopicProvider, int tagComboIcon, SandboxBase sandbox, int imorph)
 		{
-			return MakeCombo(helpTopicProvider, tagComboIcon, sandbox, sandbox.Caches.DataAccess.get_VecItem(SandboxBase.kSbWord, SandboxBase.ktagSbWordMorphs, imorph), null, 0);
+			return MakeCombo(mainFlexWindow, helpTopicProvider, tagComboIcon, sandbox, sandbox.Caches.DataAccess.get_VecItem(SandboxBase.kSbWord, SandboxBase.ktagSbWordMorphs, imorph), null, 0);
 		}
 
-		private static IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider, int tagComboIcon, SandboxBase sandbox, int hvoMorph, SelLevInfo[] rgvsli, int hvoSelObject)
+		private static IComboHandler MakeCombo(Form mainFlexWindow, IHelpTopicProvider helpTopicProvider, int tagComboIcon, SandboxBase sandbox, int hvoMorph, SelLevInfo[] rgvsli, int hvoSelObject)
 		{
 			var rootb = sandbox.RootBox;
 			var hvoSbWord = sandbox.RootWordHvo;
@@ -228,7 +228,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					handler = new IhWordPos();
 					break;
 				case SandboxBase.ktagAnalysisIcon:
-					var clb2 = new ComboListBox();
+					var clb2 = new ComboListBox(mainFlexWindow);
 					clb2.StyleSheet = sandbox.StyleSheet;
 					var caHandler = new ChooseAnalysisHandler(caches.MainCache, hvoSbWord, sandbox.Analysis, clb2);
 					caHandler.Owner = sandbox;
@@ -256,7 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Use the base class handler for most handlers. Override where needed.
 			if (!(handler is IhWordPos))
 			{
-				var clb = new ComboListBox();
+				var clb = new ComboListBox(mainFlexWindow);
 				handler.ComboList = clb;
 				clb.SelectedIndexChanged += handler.HandleComboSelChange;
 				clb.SameItemSelected += handler.HandleComboSelSame;

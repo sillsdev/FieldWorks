@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add inflectional affix(es) to XXX.
+        /// </summary>
+        internal static string Add_inflectional_affix_es_to_XXX {
+            get {
+                return ResourceManager.GetString("Add_inflectional_affix_es_to_XXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
@@ -100,6 +109,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change Optionality of XXX Slot.
+        /// </summary>
+        internal static string Change_Optionality_of_XXX_Slot {
+            get {
+                return ResourceManager.GetString("Change_Optionality_of_XXX_Slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
@@ -116,20 +134,20 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copy AffixTemplate.
-        /// </summary>
-        internal static string Copy_Affix_Template {
-            get {
-                return ResourceManager.GetString("Copy_Affix_Template", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Affix Template.
         /// </summary>
         internal static string Delete_Affix_Template {
             get {
                 return ResourceManager.GetString("Delete_Affix_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate AffixTemplate.
+        /// </summary>
+        internal static string Duplicate_Affix_Template {
+            get {
+                return ResourceManager.GetString("Duplicate_Affix_Template", resourceCulture);
             }
         }
         
@@ -207,6 +225,24 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Slot after XXX.
+        /// </summary>
+        internal static string Insert_Slot_after_XXX {
+            get {
+                return ResourceManager.GetString("Insert_Slot_after_XXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Slot before XXX.
+        /// </summary>
+        internal static string Insert_Slot_before_XXX {
+            get {
+                return ResourceManager.GetString("Insert_Slot_before_XXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;parameters persistContext=&quot;problems&quot; layout=&quot;Edit&quot; emptyTitleId=&quot;No-Problems&quot;/&gt;
@@ -216,6 +252,24 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string LexiconProblemsParameters {
             get {
                 return ResourceManager.GetString("LexiconProblemsParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move XXX back one Slot.
+        /// </summary>
+        internal static string Move_XXX_back_one_Slot {
+            get {
+                return ResourceManager.GetString("Move_XXX_back_one_Slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move XXX forward one Slot.
+        /// </summary>
+        internal static string Move_XXX_forward_one_Slot {
+            get {
+                return ResourceManager.GetString("Move_XXX_forward_one_Slot", resourceCulture);
             }
         }
         
@@ -300,6 +354,24 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string ProdRestrictEditToolParameters {
             get {
                 return ResourceManager.GetString("ProdRestrictEditToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove XXX Slot.
+        /// </summary>
+        internal static string Remove_XXX_Slot {
+            get {
+                return ResourceManager.GetString("Remove_XXX_Slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove YYY from XXX.
+        /// </summary>
+        internal static string Remove_YYY_from_XXX {
+            get {
+                return ResourceManager.GetString("Remove_YYY_from_XXX", resourceCulture);
             }
         }
     }

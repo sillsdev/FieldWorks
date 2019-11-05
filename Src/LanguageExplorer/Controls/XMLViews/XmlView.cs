@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -90,8 +89,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected string m_layoutName;
 		/// <summary />
-		protected XElement m_xnSpec;
-		/// <summary />
 		protected XmlVc m_xmlVc;
 		/// <summary />
 		protected IFwMetaDataCache m_mdc;
@@ -107,9 +104,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		public XmlView(int hvoRoot, XElement xnSpec)
+		public XmlView(int hvoRoot)
 		{
-			InitXmlViewRootSpec(hvoRoot, xnSpec);
+			InitXmlViewRootSpec(hvoRoot);
 		}
 
 		/// <summary>
@@ -138,11 +135,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			DecoratedDataAccess = sda;
 		}
 
-		private void InitXmlViewRootSpec(int hvoRoot, XElement xnSpec)
+		private void InitXmlViewRootSpec(int hvoRoot)
 		{
 			m_hvoRoot = hvoRoot;
-			Debug.Assert(xnSpec != null, "Creating an XMLView with null spec");
-			m_xnSpec = xnSpec;
 		}
 
 		/// <summary>
@@ -199,7 +194,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_xmlVc = null;
 			m_layoutName = null;
-			m_xnSpec = null;
 			m_mdc = null;
 		}
 

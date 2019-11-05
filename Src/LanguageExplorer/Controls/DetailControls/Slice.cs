@@ -2230,31 +2230,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		}
 
 		/// <summary />
-		public virtual void HandleCopyCommand(Slice newSlice, string label)
-		{
-			var origObj = GetObjectForMenusToOperateOn();
-			if (origObj == null)
-			{
-				throw new FwConfigurationException("OriginalSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
-			}
-			var newObj = newSlice.GetObjectForMenusToOperateOn();
-			if (newObj == null)
-			{
-				throw new FwConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
-			}
-			if (origObj is ICloneableCmObject)
-			{
-				var undoMsg = $"Undo {label}";
-				var redoMsg = $"Redo {label}";
-				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, Cache.ActionHandlerAccessor, () => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
-			}
-			else
-			{
-				throw new NotSupportedException($"{origObj.ClassName} is not set up for copying!");
-			}
-		}
-
-		/// <summary />
 		public virtual void HandleEditCommand()
 		{
 		}

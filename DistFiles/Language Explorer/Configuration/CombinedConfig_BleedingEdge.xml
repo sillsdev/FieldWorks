@@ -146,33 +146,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree_Insert_Env_OptionalItem" label="Insert Optional Item" message="InsertOptionalItem" />
     <command id="CmdDataTree_Insert_Env_HashMark" label="Insert Word Boundary" message="InsertHashMark" />
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
-    <command id="CmdInflAffixTemplate_Help" label="Help..." icon="Help" message="InflAffixTemplateHelp" />
-    <command id="CmdInflAffixTemplate_Insert_Slot_Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Insert_Slot_After" label="Insert Slot after XXX" message="InflTemplateInsertSlotAfter">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Move_Slot_Left" label="Move XXX back one Slot" message="InflTemplateMoveSlotLeft" icon="Left">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Move_Slot_Right" label="Move XXX forward one Slot" message="InflTemplateMoveSlotRight" icon="Right">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Remove_Slot" label="Remove XXX Slot" message="InflTemplateRemoveSlot" icon="Remove">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Toggle_Slot_Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Add_InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
-      <parameters field="Slots" className="MoInflAffixTemplate" />
-    </command>
-    <command id="CmdInflAffixTemplate_Remove_InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
-      <parameters field="AffixCategory" className="MoInflAffMsa" />
-    </command>
-    <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
     <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
       <params className="PartOfSpeech" />
     </command>
@@ -364,23 +337,6 @@ so I can look at that in the develop branch.
       <item command="CmdDataTree_Insert_Env_HashMark" />
     </menu>
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuInflAffixTemplate_Help">
-      <item command="CmdInflAffixTemplate_Help" />
-    </menu>
-    <menu id="mnuInflAffixTemplate_TemplateTable">
-      <item command="CmdInflAffixTemplate_Add_InflAffixMsa" />
-      <item command="CmdInflAffixTemplate_Insert_Slot_Before" />
-      <item command="CmdInflAffixTemplate_Insert_Slot_After" />
-      <item command="CmdInflAffixTemplate_Move_Slot_Left" />
-      <item command="CmdInflAffixTemplate_Move_Slot_Right" />
-      <item command="CmdInflAffixTemplate_Toggle_Slot_Optionality" />
-      <item command="CmdInflAffixTemplate_Remove_Slot" />
-      <item command="CmdInflAffixTemplate_Remove_InflAffixMsa" />
-      <item command="CmdEntryJumpToDefault" />
-      <item command="CmdInflAffixTemplate_Help" />
-    </menu>
-    <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
   <contexthelpstrings>

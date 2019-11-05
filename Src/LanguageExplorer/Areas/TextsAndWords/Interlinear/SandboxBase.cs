@@ -2024,7 +2024,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			HideCombos();
 			// No matter what, we are fixin to get rid of the old value.
 			DisposeComboHandler();
-			m_ComboHandler = !m_fInMouseDrag ? InterlinComboHandler.MakeCombo(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), vwselNew, this, fMouseDown) : null;
+			m_ComboHandler = !m_fInMouseDrag ? InterlinComboHandler.MakeCombo(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), vwselNew, this, fMouseDown) : null;
 			m_fMakingCombo = false;
 			m_fLockCombo = false; // nothing typed in it yet.
 			if (m_ComboHandler == null)
@@ -3456,7 +3456,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				existingGloss = Caches.MainCache.ServiceLocator.GetInstance<IWfiGlossRepository>().GetObject(WordGlossHvo);
 			}
-			return new GetRealAnalysisMethod(
+			return new GetRealAnalysisMethod(PropertyTable.GetValue<Form>(FwUtils.window),
 				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), this, Caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
 				InterlinLineChoices, FormOfWordform, fWantOnlyWfiAnalysis);

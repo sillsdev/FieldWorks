@@ -238,15 +238,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 				// <item command="CmdDataTree_Delete_POS_AffixTemplate" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Template, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
-				/*
-      <item command="CmdDataTree_Copy_POS_AffixTemplate" />
-		    <command id="CmdDataTree_Copy_POS_AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
-		      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
-		    </command>
-    </menu>
-				*/
-				// // <item command="CmdDataTree_Insert_POS_AffixTemplate" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Copy_POS_AffixTemplate_Clicked, GrammarResources.Copy_Affix_Template);
+				// <item command="CmdDataTree_Copy_POS_AffixTemplate" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Copy_POS_AffixTemplate_Clicked, GrammarResources.Duplicate_Affix_Template);
 
 				// End: <menu id="mnuDataTree_POS_AffixTemplate">
 
@@ -271,7 +264,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			private void Copy_POS_AffixTemplate_Clicked(object sender, EventArgs e)
 			{
-				UowHelpers.UndoExtension(GrammarResources.Copy_Affix_Template, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension(GrammarResources.Duplicate_Affix_Template, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
 					var currentAffixTemplate = (IMoInflAffixTemplate)_dataTree.CurrentSlice.MyCmObject;
 					var newAffixTemplate = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoInflAffixTemplateFactory>().Create();

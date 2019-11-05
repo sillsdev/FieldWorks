@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
@@ -134,7 +135,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					tagIcon = ktagWordPosIcon;
 					break;
 			}
-			return InterlinComboHandler.MakeCombo(propertyTable?.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), tagIcon, this, morphIndex) as InterlinComboHandler;
+			return InterlinComboHandler.MakeCombo(propertyTable?.GetValue<Form>(FwUtils.window), propertyTable?.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), tagIcon, this, morphIndex) as InterlinComboHandler;
 		}
 
 		internal List<int> GetComboItems(IPropertyTable propertyTable, int flid, int morphIndex)

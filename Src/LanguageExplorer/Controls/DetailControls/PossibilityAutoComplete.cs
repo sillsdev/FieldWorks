@@ -38,7 +38,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_control = control;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
-			m_listBox = new ComboListBox { DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false };
+			m_listBox = new ComboListBox(propertyTable.GetValue<Form>(FwUtils.window))
+			{
+				DropDownStyle = ComboBoxStyle.DropDownList,
+				ActivateOnShow = false
+			};
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
 			m_listBox.StyleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);

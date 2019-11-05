@@ -49,7 +49,10 @@ namespace LanguageExplorer.Controls
 		protected override IDropDownBox CreateDropDownBox()
 		{
 			// Create the list.
-			var comboListBox = new ComboListBox { LaunchButton = m_button };
+			var comboListBox = new ComboListBox(Form.ActiveForm)
+			{
+				LaunchButton = m_button
+			};
 			comboListBox.SelectedIndexChanged += m_listBox_SelectedIndexChanged;
 			comboListBox.SameItemSelected += m_listBox_SameItemSelected;
 			comboListBox.TabStopControl = TextBox;

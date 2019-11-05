@@ -1264,9 +1264,6 @@ namespace LanguageExplorer
 		CmdDataTree_Insert_Env_OptionalItem,
 		CmdDataTree_Insert_Env_HashMark,
 
-		//<menu id="mnuInflAffixTemplate_Help">
-		CmdInflAffixTemplate_Help,
-
 		//<menu id="mnuInflAffixTemplate_TemplateTable">
 		CmdInflAffixTemplate_Add_InflAffixMsa,
 		CmdInflAffixTemplate_Insert_Slot_Before,

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		// We track the form that was active when we launched, in hopes of working around
 		// a peculiar bug that brings another window to the front when we close on some
 		// systems (LT-2962).
-		Form m_previousForm;
+		Form m_mainFlexForm;
 		// This filter captures clicks outside the list box while it is displayed.
 		FwComboMessageFilter m_comboMessageFilter;
 		// This flag determines whether we close the Dropdown List during a selection.
@@ -182,10 +183,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		#region Construction and disposal
 
-
 		/// <summary />
-		public ComboListBox()
+		public ComboListBox(Form mainFlexForm)
 		{
+			if (mainFlexForm == null)
+			{
+				// Some tests have no main window.
+				mainFlexForm = Form.ActiveForm;
+			}
+
 			m_activateOnShow = true;
 			HasBorder = true;
 			// It fills the list form.
@@ -195,9 +201,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Form.Controls.Add(this);
 			Form.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
-
 			// Make sure this isn't null, allow launch to update its value
-			m_previousForm = Form.ActiveForm;
+			m_mainFlexForm = mainFlexForm;
 		}
 
 		#region IDisposable & Co. implementation
@@ -275,14 +280,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// that the list is to appear on.</param>
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
-			m_previousForm = Form.ActiveForm;
 			if (Platform.IsMono)
 			{
 				// FWNX-908: Crash closing combobox.
 				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-				if (m_previousForm == null || m_previousForm == Form)
+				if (m_mainFlexForm == null || m_mainFlexForm == Form)
 				{
-					m_previousForm = LaunchingForm;
+					m_mainFlexForm = LaunchingForm;
 				}
 			}
 			// this is mainly to prevent it showing in the task bar.
@@ -316,11 +320,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			if (m_activateOnShow)
 			{
-				Form.Show(m_previousForm);
+				Form.Show(m_mainFlexForm);
 			}
 			else
 			{
-				ShowInactiveTopmost(m_previousForm, Form);
+				ShowInactiveTopmost(m_mainFlexForm, Form);
 			}
 
 			if (m_comboMessageFilter != null)
@@ -391,7 +395,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				listTopMostValue = Form.TopMost;
 				Form.TopMost = false;
 			}
-			m_previousForm?.Activate();
+			m_mainFlexForm?.Activate();
 			if (Form != null)
 			{
 				Form.Visible = false;

@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal class XmlDocItemView : XmlView, IChangeRootObject
 	{
 		private string m_configObjectName;
+		private readonly XElement m_xnSpec;
 
 		#region implemention of IChangeRootObject
 

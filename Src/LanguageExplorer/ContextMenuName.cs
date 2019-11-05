@@ -181,7 +181,6 @@ namespace LanguageExplorer
 		mnuDataTree_Phoneme_Codes,
 		mnuDataTree_Phoneme_Code,
 		mnuDataTree_StringRepresentation_Insert,
-		mnuInflAffixTemplate_Help,
 		mnuInflAffixTemplate_TemplateTable,
 		mnuPhRegularRule,
 		mnuPhMetathesisRule,

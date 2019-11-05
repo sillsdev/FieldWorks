@@ -33,6 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected IWfiAnalysis m_wa;
 		protected bool m_fWantOnlyWfiAnalysis;
 		protected InterlinLineChoices m_choices;
+		private readonly Form _mainFlexWindow;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected ISilDataAccess m_sda;
 		protected ISilDataAccess m_sdaMain;
@@ -49,10 +50,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		public GetRealAnalysisMethod(IHelpTopicProvider helpTopicProvider, SandboxBase owner, CachePair caches, int hvoSbWord, AnalysisTree oldAnalysis, IWfiAnalysis wa,
+		public GetRealAnalysisMethod(Form mainFlexWindow, IHelpTopicProvider helpTopicProvider, SandboxBase owner, CachePair caches, int hvoSbWord, AnalysisTree oldAnalysis, IWfiAnalysis wa,
 			IWfiGloss gloss, InterlinLineChoices choices, ITsString tssForm, bool fWantOnlyWfiAnalysis)
 			: this()
 		{
+			_mainFlexWindow = mainFlexWindow;
 			m_helpTopicProvider = helpTopicProvider;
 			m_sandbox = owner;
 			m_caches = caches;
@@ -148,7 +150,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var matchingMorphItem = new MorphItem(0, null);
 				// go through the combo options for lex entries / senses to see if we can find any existing matches.
-				using (var handler = InterlinComboHandler.MakeCombo(m_helpTopicProvider, SandboxBase.ktagWordGlossIcon, m_sandbox, 0) as IhMorphEntry)
+				using (var handler = InterlinComboHandler.MakeCombo(_mainFlexWindow, m_helpTopicProvider, SandboxBase.ktagWordGlossIcon, m_sandbox, 0) as IhMorphEntry)
 				{
 					var morphItems = handler.MorphItems;
 					// see if we can use an existing Sense, if it matches the word gloss and word MSA

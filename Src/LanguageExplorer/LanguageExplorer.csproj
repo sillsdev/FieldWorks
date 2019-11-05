@@ -327,7 +327,6 @@
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
@@ -2675,11 +2674,6 @@
     <Compile Include="Areas\Grammar\Tools\PhonemeEdit\RegRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateEventArgs.cs" />
-    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateMenuHandler.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
