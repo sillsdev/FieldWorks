@@ -142,6 +142,12 @@
     <value>..\..\Resources\CompoundRuleAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
+  <data name="Create_a_new_headed_compound" xml:space="preserve">
+    <value>Create a new headed compound.</value>
+  </data>
+  <data name="Create_a_new_non_headed_compound" xml:space="preserve">
+    <value>Create a new non-headed compound.</value>
+  </data>
   <data name="Delete_Affix_Slot" xml:space="preserve">
     <value>Delete Affix Slot</value>
   </data>
@@ -184,8 +190,14 @@
   <data name="Insert_Feature_Set" xml:space="preserve">
     <value>Insert Feature Set</value>
   </data>
+  <data name="Insert_Headed_Compound" xml:space="preserve">
+    <value>Insert Headed Compound</value>
+  </data>
   <data name="Insert_Inflection_Class" xml:space="preserve">
     <value>Insert Inflection Class</value>
+  </data>
+  <data name="Insert_Non_headed_Compound" xml:space="preserve">
+    <value>Insert Non-headed Compound</value>
   </data>
   <data name="Insert_Slot_after_XXX" xml:space="preserve">
     <value>Insert Slot after XXX</value>

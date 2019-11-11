@@ -143,6 +143,24 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a new headed compound..
+        /// </summary>
+        internal static string Create_a_new_headed_compound {
+            get {
+                return ResourceManager.GetString("Create_a_new_headed_compound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a new non-headed compound..
+        /// </summary>
+        internal static string Create_a_new_non_headed_compound {
+            get {
+                return ResourceManager.GetString("Create_a_new_non_headed_compound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Affix Slot.
         /// </summary>
         internal static string Delete_Affix_Slot {
@@ -288,11 +306,29 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Headed Compound.
+        /// </summary>
+        internal static string Insert_Headed_Compound {
+            get {
+                return ResourceManager.GetString("Insert_Headed_Compound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Inflection Class.
         /// </summary>
         internal static string Insert_Inflection_Class {
             get {
                 return ResourceManager.GetString("Insert_Inflection_Class", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Non-headed Compound.
+        /// </summary>
+        internal static string Insert_Non_headed_Compound {
+            get {
+                return ResourceManager.GetString("Insert_Non_headed_Compound", resourceCulture);
             }
         }
         

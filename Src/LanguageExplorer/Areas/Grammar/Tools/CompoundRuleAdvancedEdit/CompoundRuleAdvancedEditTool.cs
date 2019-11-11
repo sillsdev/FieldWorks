@@ -167,6 +167,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			private RecordBrowseActiveView _recordBrowseActiveView;
 			private IRecordList _recordList;
 			private ToolStripMenuItem _menu;
+			private IMoMorphData _moMorphData;
+			private LcmCache _cache;
 
 			internal CompoundRuleAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
 			{
@@ -177,15 +179,49 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
 				_dataTree = dataTree;
 				_recordBrowseActiveView = recordBrowseActiveView;
 				_recordList = recordList;
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_cache = _majorFlexComponentParameters.LcmCache;
+				_moMorphData = _cache.LanguageProject.MorphologicalDataOA;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				SetupUiWidgets(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			{
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+
+				// <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
+				insertMenuDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => CanCmdInsertEndocentricCompound));
+				insertToolBarDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => CanCmdInsertEndocentricCompound));
+
+				// <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
+				insertMenuDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => CanCmdInsertExocentricCompound));
+				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => CanCmdInsertExocentricCompound));
+			}
+
+			private Tuple<bool, bool> CanCmdInsertEndocentricCompound => new Tuple<bool, bool>(true, true);
+
+			private void InsertEndocentricCompound_Clicked(object sender, EventArgs e)
+			{
+				UowHelpers.UndoExtension(GrammarResources.Insert_Headed_Compound, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					_moMorphData.CompoundRulesOS.Add(_cache.ServiceLocator.GetInstance<IMoEndoCompoundFactory>().Create());
+				});
+			}
+
+			private Tuple<bool, bool> CanCmdInsertExocentricCompound => new Tuple<bool, bool>(true, true);
+
+			private void InsertInsertExocentricCompound_Clicked(object sender, EventArgs e)
+			{
+				UowHelpers.UndoExtension(GrammarResources.Insert_Non_headed_Compound, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					_moMorphData.CompoundRulesOS.Add(_cache.ServiceLocator.GetInstance<IMoExoCompoundFactory>().Create());
+				});
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -272,6 +308,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				_dataTree = null;
 				_recordBrowseActiveView = null;
 				_recordList = null;
+				_menu = null;
+				_moMorphData = null;
 
 				_isDisposed = true;
 			}

@@ -119,12 +119,6 @@ so I can look at that in the develop branch.
     <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
       <params className="PartOfSpeech" />
     </command>
-    <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
-      <params className="MoEndoCompound" />
-    </command>
-    <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
-      <params className="MoExoCompound" />
-    </command>
     <command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
       <params className="CmPossibility" restrictToClerkID="ProdRestrict" />
     </command>
@@ -305,8 +299,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
-      <item id="CmdInsertEndocentricCompound">Create a new headed compound.</item>
-      <item id="CmdInsertExocentricCompound">Create a new non-headed compound.</item>
       <item id="CmdInsertPhoneme">Create a new phoneme.</item>
       <item id="CmdInsertSegmentNaturalClasses">Create a new natural class, defined by listing phonemes.</item>
       <item id="CmdInsertFeatureNaturalClasses">Create a new natural class, defined by features.</item>
