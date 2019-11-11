@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lists;
+using LanguageExplorer.Areas.Lists.Tools;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
@@ -155,7 +156,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private sealed class PosEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 			private IRecordList _recordList;
 			private DataTree _dataTree;
 			private ISharedEventHandlers _sharedEventHandlers;
@@ -176,12 +177,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			private void SetupUiWidgets(ITool tool)
 			{
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(_majorFlexComponentParameters, tool, _majorFlexComponentParameters.LcmCache.LanguageProject.PartsOfSpeechOA, _recordList, _dataTree);
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Insert menu & tool bar for CmdInsertPossibility and CmdDataTree_Insert_Possibility.
-				_partiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
-				_partiallySharedForToolsWideMenuHelper.SetupCmdDataTree_Insert_Possibility(toolUiWidgetParameterObject, () => CanCmdDataTree_Insert_POS_SubPossibilities);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdDataTree_Insert_Possibility(toolUiWidgetParameterObject, () => CanCmdDataTree_Insert_POS_SubPossibilities);
 				// Insert menu commands: CmdDataTree_Insert_POS_AffixTemplate
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_AffixTemplate, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_AffixTemplate_Click, ()=> CanCmdDataTree_Insert_POS_AffixTemplate));
@@ -197,6 +198,229 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixTemplates, Create_mnuDataTree_POS_AffixTemplates);
 				// <menu id="mnuDataTree_POS_AffixTemplate">
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixTemplate, Create_mnuDataTree_POS_AffixTemplate);
+				// < menu id = "mnuDataTree_POS_AffixSlots" >
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixSlots, Create_mnuDataTree_POS_AffixSlots);
+				// <menu id="mnuDataTree_POS_AffixSlot">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_AffixSlot, Create_mnuDataTree_POS_AffixSlot);
+				// <menu id="mnuDataTree_POS_InflectionClasses">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_InflectionClasses, Create_mnuDataTree_POS_InflectionClasses);
+				// <menu id="mnuDataTree_POS_InflectionClass">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_InflectionClass, Create_mnuDataTree_POS_InflectionClass);
+				// <menu id="mnuDataTree_POS_InflectionClass_Subclasses">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses, Create_mnuDataTree_POS_InflectionClass_Subclasses);
+				// <menu id="mnuDataTree_POS_StemNames">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_StemNames, Create_mnuDataTree_POS_StemNames);
+				// <menu id="mnuDataTree_POS_StemName">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_StemName, Create_mnuDataTree_POS_StemName);
+				// <menu id="mnuDataTree_MoStemName_Regions">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoStemName_Regions, Create_mnuDataTree_MoStemName_Regions);
+				// <menu id="mnuDataTree_MoStemName_Region">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoStemName_Region, Create_mnuDataTree_MoStemName_Region);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemName(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_StemName, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_StemName.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_StemName">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_StemName.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_POS_StemName" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Stem_Name, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_POS_StemName">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Region(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoStemName_Region, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoStemName_Region.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_MoStemName_Region">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_MoStemName_Region.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_MoStemName_Region" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Set, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_MoStemName_Region">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Regions(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoStemName_Regions, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoStemName_Regions.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_MoStemName_Regions">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_MoStemName_Regions.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_MoStemName_Region" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_MoStemName_Region_Clicked, GrammarResources.Insert_Feature_Set);
+
+				// End: <menu id="mnuDataTree_MoStemName_Regions">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_MoStemName_Region_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("Regions", FsFeatStrucTags.kClassName, FsFeatStrucTags.kClassName);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemNames(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_StemNames, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_StemNames.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_StemNames">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_StemNames.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_POS_StemName" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_POS_StemName_Clicked, GrammarResources.Insert_Stem_Name);
+
+				// End: <menu id="mnuDataTree_POS_StemNames">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_POS_StemName_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("StemNames", MoStemNameTags.kClassName, PartOfSpeechTags.kClassName);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass_Subclasses(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_InflectionClass_Subclasses">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="mnuDataTree_POS_InflectionClass_Subclasses" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, POS_InflectionClass_Subclasses_Clicked, GrammarResources.Insert_Inflection_Class);
+
+				// End: <menu id="mnuDataTree_POS_InflectionClasses">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void POS_InflectionClass_Subclasses_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("Subclasses", MoInflClassTags.kClassName, MoInflClassTags.kClassName);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClass, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClass.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_InflectionClass">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_InflectionClass.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_POS_InflectionClass" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Inflection_Class, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_POS_InflectionClass">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClasses(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClasses, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClasses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_InflectionClasses">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_InflectionClasses.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_POS_InflectionClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_POS_InflectionClass_Clicked, GrammarResources.Insert_Inflection_Class);
+
+				// End: <menu id="mnuDataTree_POS_InflectionClasses">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_POS_InflectionClass_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("InflectionClasses", MoInflClassTags.kClassName, PartOfSpeechTags.kClassName);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlot(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixSlot, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixSlot.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_AffixSlot">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_AffixSlot.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_POS_AffixSlot" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Slot, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_POS_AffixSlot">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlots(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixSlots, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixSlots.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_POS_AffixSlots">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_POS_AffixSlots.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_POS_AffixSlot" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_POS_AffixSlot_Clicked, GrammarResources.Insert_Affix_Slot);
+
+				// End: <menu id="mnuDataTree_POS_AffixSlots">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_POS_AffixSlot_Clicked(object sender, EventArgs e)
+			{
+				_dataTree.CurrentSlice.HandleInsertCommand("AffixSlots", MoInflAffixSlotTags.kClassName, PartOfSpeechTags.kClassName);
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplates(Slice slice, ContextMenuName contextMenuId)
@@ -305,10 +529,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 				if (disposing)
 				{
-					_partiallySharedForToolsWideMenuHelper.Dispose();
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
-				_partiallySharedForToolsWideMenuHelper = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 				_recordList = null;
 				_dataTree = null;
 				_sharedEventHandlers = null;

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add_a_subcategory" xml:space="preserve">
+    <value>Add a subcategory...</value>
+  </data>
   <data name="Add_inflectional_affix_es_to_XXX" xml:space="preserve">
     <value>Add inflectional affix(es) to XXX</value>
   </data>
@@ -139,8 +142,20 @@
     <value>..\..\Resources\CompoundRuleAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
+  <data name="Delete_Affix_Slot" xml:space="preserve">
+    <value>Delete Affix Slot</value>
+  </data>
   <data name="Delete_Affix_Template" xml:space="preserve">
     <value>Delete Affix Template</value>
+  </data>
+  <data name="Delete_Feature_Set" xml:space="preserve">
+    <value>Delete Feature Set</value>
+  </data>
+  <data name="Delete_Inflection_Class" xml:space="preserve">
+    <value>Delete Inflection Class</value>
+  </data>
+  <data name="Delete_Stem_Name" xml:space="preserve">
+    <value>Delete Stem Name</value>
   </data>
   <data name="Duplicate_Affix_Template" xml:space="preserve">
     <value>Duplicate AffixTemplate</value>
@@ -160,14 +175,26 @@
   <data name="GrammarSketchTransforms" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\GrammarSketchTransforms.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="Insert_Affix_Slot" xml:space="preserve">
+    <value>Insert Affix Slot</value>
+  </data>
   <data name="Insert_Affix_Template" xml:space="preserve">
     <value>Insert Affix Template</value>
+  </data>
+  <data name="Insert_Feature_Set" xml:space="preserve">
+    <value>Insert Feature Set</value>
+  </data>
+  <data name="Insert_Inflection_Class" xml:space="preserve">
+    <value>Insert Inflection Class</value>
   </data>
   <data name="Insert_Slot_after_XXX" xml:space="preserve">
     <value>Insert Slot after XXX</value>
   </data>
   <data name="Insert_Slot_before_XXX" xml:space="preserve">
     <value>Insert Slot before XXX</value>
+  </data>
+  <data name="Insert_Stem_Name" xml:space="preserve">
+    <value>Insert Stem Name</value>
   </data>
   <data name="LexiconProblemsParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconProblemsParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

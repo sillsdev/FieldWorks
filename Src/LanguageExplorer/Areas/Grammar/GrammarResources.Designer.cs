@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add a subcategory....
+        /// </summary>
+        internal static string Add_a_subcategory {
+            get {
+                return ResourceManager.GetString("Add_a_subcategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add inflectional affix(es) to XXX.
         /// </summary>
         internal static string Add_inflectional_affix_es_to_XXX {
@@ -134,11 +143,47 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Affix Slot.
+        /// </summary>
+        internal static string Delete_Affix_Slot {
+            get {
+                return ResourceManager.GetString("Delete_Affix_Slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Affix Template.
         /// </summary>
         internal static string Delete_Affix_Template {
             get {
                 return ResourceManager.GetString("Delete_Affix_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Feature Set.
+        /// </summary>
+        internal static string Delete_Feature_Set {
+            get {
+                return ResourceManager.GetString("Delete_Feature_Set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Inflection Class.
+        /// </summary>
+        internal static string Delete_Inflection_Class {
+            get {
+                return ResourceManager.GetString("Delete_Inflection_Class", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Stem Name.
+        /// </summary>
+        internal static string Delete_Stem_Name {
+            get {
+                return ResourceManager.GetString("Delete_Stem_Name", resourceCulture);
             }
         }
         
@@ -216,11 +261,38 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Affix Slot.
+        /// </summary>
+        internal static string Insert_Affix_Slot {
+            get {
+                return ResourceManager.GetString("Insert_Affix_Slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Affix Template.
         /// </summary>
         internal static string Insert_Affix_Template {
             get {
                 return ResourceManager.GetString("Insert_Affix_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Feature Set.
+        /// </summary>
+        internal static string Insert_Feature_Set {
+            get {
+                return ResourceManager.GetString("Insert_Feature_Set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Inflection Class.
+        /// </summary>
+        internal static string Insert_Inflection_Class {
+            get {
+                return ResourceManager.GetString("Insert_Inflection_Class", resourceCulture);
             }
         }
         
@@ -239,6 +311,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Insert_Slot_before_XXX {
             get {
                 return ResourceManager.GetString("Insert_Slot_before_XXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Stem Name.
+        /// </summary>
+        internal static string Insert_Stem_Name {
+            get {
+                return ResourceManager.GetString("Insert_Stem_Name", resourceCulture);
             }
         }
         

@@ -104,36 +104,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
       <parameters field="Values" className="FsSymFeatVal" />
     </command>
-    <command id="CmdDataTree_Insert_POS_AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
-      <parameters field="AffixSlots" className="MoInflAffixSlot" />
-    </command>
-    <command id="CmdDataTree_Delete_POS_AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
-      <parameters field="AffixSlots" className="MoInflAffixSlot" />
-    </command>
-    <command id="CmdDataTree_Insert_POS_InflectionClass_Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
-      <parameters field="Subclasses" className="MoInflClass" />
-    </command>
-    <command id="CmdDataTree_Insert_POS_InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
-      <parameters field="InflectionClasses" className="MoInflClass" />
-    </command>
-    <command id="CmdDataTree_Delete_POS_InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
-      <parameters field="InflectionClasses" className="MoInflClass" />
-    </command>
-    <command id="CmdDataTree_Insert_POS_StemName" label="Insert Stem Name" message="DataTreeInsert">
-      <parameters field="StemNames" className="MoStemName" />
-    </command>
-    <command id="CmdDataTree_Delete_POS_StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
-      <parameters field="StemNames" className="MoStemName" />
-    </command>
-    <command id="CmdDataTree_Insert_MoStemName_Region" label="Insert Feature Set" message="DataTreeInsert">
-      <parameters field="Regions" className="FsFeatStruc" />
-    </command>
-    <command id="CmdDataTree_Delete_MoStemName_Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
-      <parameters field="Regions" className="FsFeatStruc" />
-    </command>
-    <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
-    </command>
     <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
       <parameters field="Codes" className="PhCode" />
     </command>
@@ -296,33 +266,6 @@ so I can look at that in the develop branch.
     <menu id="mnuDataTree_ClosedFeature_Value">
       <item command="CmdDataTree_Delete_ClosedFeature_Value" />
     </menu>
-    <menu id="mnuDataTree_POS_AffixSlots">
-      <item command="CmdDataTree_Insert_POS_AffixSlot" />
-    </menu>
-    <menu id="mnuDataTree_POS_AffixSlot">
-      <item command="CmdDataTree_Delete_POS_AffixSlot" />
-    </menu>
-    <menu id="mnuDataTree_POS_InflectionClass_Subclasses">
-      <item command="CmdDataTree_Insert_POS_InflectionClass_Subclasses" />
-    </menu>
-    <menu id="mnuDataTree_POS_InflectionClasses">
-      <item command="CmdDataTree_Insert_POS_InflectionClass" />
-    </menu>
-    <menu id="mnuDataTree_POS_InflectionClass">
-      <item command="CmdDataTree_Delete_POS_InflectionClass" />
-    </menu>
-    <menu id="mnuDataTree_POS_StemNames">
-      <item command="CmdDataTree_Insert_POS_StemName" />
-    </menu>
-    <menu id="mnuDataTree_POS_StemName">
-      <item command="CmdDataTree_Delete_POS_StemName" />
-    </menu>
-    <menu id="mnuDataTree_MoStemName_Regions">
-      <item command="CmdDataTree_Insert_MoStemName_Region" />
-    </menu>
-    <menu id="mnuDataTree_MoStemName_Region">
-      <item command="CmdDataTree_Delete_MoStemName_Region" />
-    </menu>
     <menu id="mnuDataTree_Phoneme_Codes">
       <item command="CmdDataTree_Insert_Phoneme_Code" label="Insert Grapheme" />
     </menu>
@@ -380,7 +323,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
-      <item id="CmdDataTree_Insert_POS_SubPossibilities">Add a subcategory...</item>
       <!-- Tools menu -->
       <item id="Entries">Show the entries and edit them.</item>
       <item id="Problems">See a list of entries with problems.</item>
