@@ -63,8 +63,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 			_toolMenuHelper = new CategoryBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, _recordBrowseView);
 		}
 
 		/// <summary>
@@ -160,14 +160,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_partiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
 			}
+
+			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
 
 			private void CreateBrowseViewContextMenu()
 			{
