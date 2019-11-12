@@ -567,7 +567,7 @@ namespace LanguageExplorer.Areas
 
 		protected virtual void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
-			featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
+			featChooser.SetDlgInfo(m_cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 		}
 
 		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
@@ -876,28 +876,29 @@ namespace LanguageExplorer.Areas
 				var ctxt = (IPhSimpleContextNC)CurrentContext;
 				var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
 				featChooser.Title = AreaResources.ksRuleFeatsChooserTitle;
+				var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 				if (m_obj is IPhSegRuleRHS)
 				{
 					featChooser.ShowFeatureConstraintValues = true;
 					if (natClass.FeaturesOA != null)
 					{
 						var rule = m_obj as IPhSegRuleRHS;
-						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, rule.OwningRule, ctxt);
+						featChooser.SetDlgInfo(m_cache, flexComponentParameters, rule.OwningRule, ctxt);
 					}
 					else
 					{
-						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, natClass, PhNCFeaturesTags.kflidFeatures);
+						featChooser.SetDlgInfo(m_cache, flexComponentParameters, natClass, PhNCFeaturesTags.kflidFeatures);
 					}
 				}
 				else
 				{
 					if (natClass.FeaturesOA != null)
 					{
-						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, natClass.FeaturesOA);
+						featChooser.SetDlgInfo(m_cache, flexComponentParameters, natClass.FeaturesOA);
 					}
 					else
 					{
-						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
+						featChooser.SetDlgInfo(m_cache, flexComponentParameters);
 					}
 				}
 				// FWR-2405: Setting the Help topic requires that the Mediator be already set!

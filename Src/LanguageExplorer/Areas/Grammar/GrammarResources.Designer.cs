@@ -188,6 +188,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Grapheme.
+        /// </summary>
+        internal static string Delete_Grapheme {
+            get {
+                return ResourceManager.GetString("Delete_Grapheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Inflection Class.
         /// </summary>
         internal static string Delete_Inflection_Class {
@@ -302,6 +311,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Insert_Feature_Set {
             get {
                 return ResourceManager.GetString("Insert_Feature_Set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Grapheme.
+        /// </summary>
+        internal static string Insert_Grapheme {
+            get {
+                return ResourceManager.GetString("Insert_Grapheme", resourceCulture);
             }
         }
         

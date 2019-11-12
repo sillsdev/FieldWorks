@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => CanCmdInsertExocentricCompound));
 			}
 
-			private Tuple<bool, bool> CanCmdInsertEndocentricCompound => new Tuple<bool, bool>(true, true);
+			private static Tuple<bool, bool> CanCmdInsertEndocentricCompound => new Tuple<bool, bool>(true, true);
 
 			private void InsertEndocentricCompound_Clicked(object sender, EventArgs e)
 			{
@@ -214,7 +214,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				});
 			}
 
-			private Tuple<bool, bool> CanCmdInsertExocentricCompound => new Tuple<bool, bool>(true, true);
+			private static Tuple<bool, bool> CanCmdInsertExocentricCompound => new Tuple<bool, bool>(true, true);
 
 			private void InsertInsertExocentricCompound_Clicked(object sender, EventArgs e)
 			{

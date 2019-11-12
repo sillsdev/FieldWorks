@@ -578,7 +578,7 @@ namespace LanguageExplorer.Controls
 					// See if we need to adjust the height of the gloss
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
-				m_msaGroupBox.Initialize(cache, PropertyTable, Publisher, m_lnkAssistant, this);
+				m_msaGroupBox.Initialize(cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				var oldHeight = m_msaGroupBox.Height;
 				var newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);

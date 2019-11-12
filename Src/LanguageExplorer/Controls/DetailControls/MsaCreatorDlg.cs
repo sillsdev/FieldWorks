@@ -21,8 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	public class MsaCreatorDlg : Form
 	{
 		private LcmCache m_cache;
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
+		private FlexComponentParameters _flexComponentParameters;
 		private Button btnCancel;
 		private Button btnOk;
 		private Button btnHelp;
@@ -50,13 +49,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initialize the dialog before showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider, IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider, FlexComponentParameters flexComponentParameters, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			Debug.Assert(m_cache == null);
 			m_cache = cache;
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
+			_flexComponentParameters = flexComponentParameters;
 			if (useForEdit)
 			{
 				// Change the window title and the OK button text.
@@ -64,7 +62,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				s_helpTopic = "khtpEditGrammaticalFunction";
 				btnOk.Text = LanguageExplorerControls.ks_OK;
 			}
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
+			var helpTopicProvider = _flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -74,14 +72,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;
-			m_fwtbCitationForm.AdjustForStyleSheet(this, null, m_propertyTable);
+			m_fwtbCitationForm.AdjustForStyleSheet(this, null, _flexComponentParameters.PropertyTable);
 			m_fwtbCitationForm.AdjustStringHeight = false;
 			m_fwtbCitationForm.Tss = entry.HeadWord;
 			m_fwtbCitationForm.HasBorder = false;
 			m_fwtbSenses.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbSenses.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbSenses.WritingSystemCode = defVernWs.Handle;
-			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
+			m_fwtbSenses.AdjustForStyleSheet(this, null, _flexComponentParameters.PropertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
 			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
@@ -105,7 +103,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			m_fwtbSenses.Tss = tisb.GetString();
 			m_fwtbSenses.HasBorder = false;
-			m_msaGroupBox.Initialize(m_cache, m_propertyTable, m_publisher, this, sandboxMsa);
+			m_msaGroupBox.Initialize(m_cache, _flexComponentParameters, this, sandboxMsa);
 			var oldHeight = m_msaGroupBox.Height;
 			var newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
 			var delta = newHeight - oldHeight;
@@ -118,7 +116,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Reset window location.
 			// Get location to the stored values, if any.
 			Point dlgLocation;
-			if (m_propertyTable.TryGetValue("msaCreatorDlgLocation", out dlgLocation))
+			if (_flexComponentParameters.PropertyTable.TryGetValue("msaCreatorDlgLocation", out dlgLocation))
 			{
 				// JohnT: this dialog can't be resized. So it doesn't make sense to
 				// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
@@ -261,12 +259,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void MsaCreatorDlg_Closed(object sender, System.EventArgs e)
 		{
-			m_propertyTable?.SetProperty("msaCreatorDlgLocation", Location, true, true);
+			_flexComponentParameters.PropertyTable?.SetProperty("msaCreatorDlgLocation", Location, true, true);
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
+			ShowHelp.ShowHelpTopic(_flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		#endregion Event handlers

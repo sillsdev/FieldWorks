@@ -92,12 +92,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
+			// Too early before now. Do not change the order of the following three calls.
+			_toolMenuHelper = new PhonemeEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			_toolMenuHelper = new PhonemeEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 		}
 
@@ -160,25 +159,117 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		private sealed class PhonemeEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedListToolsUiWidgetMenuHelper;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
+			private DataTree _dataTree;
+			private ISharedEventHandlers _sharedEventHandlers;
 
-			internal PhonemeEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
+			internal PhonemeEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_dataTree = dataTree;
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				_partiallySharedListToolsUiWidgetMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				// <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
+				insertMenuDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
+				insertToolBarDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
+				// <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => CanCmdDataTree_Insert_Phoneme_Code));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
+				RegisterSliceLeftEdgeMenus();
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertPhoneme => new Tuple<bool, bool>(true, true);
+
+			private void InsertPhoneme_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
+					<params className="PhPhoneme" />
+				</command>
+				*/
+				_dataTree.CurrentSlice.HandleInsertCommand("Phonemes", PhPhonemeTags.kClassName);
+			}
+
+			private static Tuple<bool, bool> CanCmdDataTree_Insert_Phoneme_Code => new Tuple<bool, bool>(true, true);
+
+			private void Insert_Phoneme_Code_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
+					<parameters field="Codes" className="PhCode" />
+				</command>
+				*/
+				_dataTree.CurrentSlice.HandleInsertCommand("Codes", PhCodeTags.kClassName);
+			}
+
+			private void RegisterSliceLeftEdgeMenus()
+			{
+				// <menu id="mnuDataTree_Phoneme_Codes">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Phoneme_Codes, Create_mnuDataTree_Phoneme_Codes);
+				// <menu id="mnuDataTree_Phoneme_Code">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Phoneme_Code, Create_mnuDataTree_Phoneme_Code);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Codes(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Codes, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Phoneme_Codes">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_Phoneme_Code" label="Insert Grapheme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Phoneme_Code_Clicked, GrammarResources.Insert_Grapheme);
+
+				// End: <menu id="mnuDataTree_Phoneme_Codes">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Code(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Code, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Code.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Phoneme_Code">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Phoneme_Code.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_Phoneme_Code" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Grapheme, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_Phoneme_Code">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -240,6 +331,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 				if (disposing)
 				{
+					_partiallySharedListToolsUiWidgetMenuHelper.Dispose();
 					if (_recordBrowseView?.ContextMenuStrip != null)
 					{
 						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
@@ -248,8 +340,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					}
 				}
 				_majorFlexComponentParameters = null;
+				_partiallySharedListToolsUiWidgetMenuHelper = null;
 				_recordBrowseView = null;
 				_recordList = null;
+				_dataTree = null;
+				_sharedEventHandlers = null;
 
 				_isDisposed = true;
 			}

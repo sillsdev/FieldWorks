@@ -66,14 +66,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 						}
 						break;
 				}
-
+				var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 				if (originalFs == null)
 				{
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, parentSlice.MyCmObject, owningFlid);
+					dlg.SetDlgInfo(m_cache, flexComponentParameters, parentSlice.MyCmObject, owningFlid);
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, originalFs);
+					dlg.SetDlgInfo(m_cache, flexComponentParameters, originalFs);
 				}
 				var result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)

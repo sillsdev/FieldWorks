@@ -837,7 +837,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// which causes bad problems.
 			using (var dlg = new AddNewSenseDlg(m_helpTopicProvider))
 			{
-				dlg.SetDlgInfo(tssForm, le, m_sandbox.PropertyTable, m_sandbox.Publisher);
+				dlg.SetDlgInfo(tssForm, le, new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
 				var mainWnd = m_sandbox.FindForm();
 				// Making the form active fixes problems like LT-2619.
 				// I'm (RandyR) not sure what adverse impact might show up by doing this.

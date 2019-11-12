@@ -104,12 +104,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
       <parameters field="Values" className="FsSymFeatVal" />
     </command>
-    <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
-      <parameters field="Codes" className="PhCode" />
-    </command>
-    <command id="CmdDataTree_Delete_Phoneme_Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
-      <parameters field="Codes" className="PhCode" />
-    </command>
     <command id="CmdDataTree_Insert_Env_Slash" label="Insert Environment slash" message="InsertSlash" />
     <command id="CmdDataTree_Insert_Env_Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
     <command id="CmdDataTree_Insert_Env_NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
@@ -130,9 +124,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
       <params className="FsComplexFeature" restrictToClerkID="features" />
-    </command>
-    <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
-      <params className="PhPhoneme" />
     </command>
     <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
       <params className="PhEnvironment" />
@@ -260,12 +251,6 @@ so I can look at that in the develop branch.
     <menu id="mnuDataTree_ClosedFeature_Value">
       <item command="CmdDataTree_Delete_ClosedFeature_Value" />
     </menu>
-    <menu id="mnuDataTree_Phoneme_Codes">
-      <item command="CmdDataTree_Insert_Phoneme_Code" label="Insert Grapheme" />
-    </menu>
-    <menu id="mnuDataTree_Phoneme_Code">
-      <item command="CmdDataTree_Delete_Phoneme_Code" />
-    </menu>
     <menu id="mnuDataTree_StringRepresentation_Insert">
       <item command="CmdDataTree_Insert_Env_Slash" />
       <item command="CmdDataTree_Insert_Env_Underscore" />
@@ -299,7 +284,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
-      <item id="CmdInsertPhoneme">Create a new phoneme.</item>
       <item id="CmdInsertSegmentNaturalClasses">Create a new natural class, defined by listing phonemes.</item>
       <item id="CmdInsertFeatureNaturalClasses">Create a new natural class, defined by features.</item>
       <item id="CmdInsertPhEnvironment">Create a new environment.</item>

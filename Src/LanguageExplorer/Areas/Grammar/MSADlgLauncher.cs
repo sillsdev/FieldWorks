@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Grammar
 			{
 				var originalMsa = m_obj as IMoMorphSynAnalysis;
 				var entry = originalMsa.Owner as ILexEntry;
-				dlg.SetDlgInfo(m_cache, m_persistProvider, PropertyTable, Publisher, entry, SandboxGenericMSA.Create(originalMsa), originalMsa.Hvo, true,
+				dlg.SetDlgInfo(m_cache, m_persistProvider, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), entry, SandboxGenericMSA.Create(originalMsa), originalMsa.Hvo, true,
 					string.Format(LanguageExplorerResources.ksEditX, Slice.Label));
 				if (dlg.ShowDialog(FindForm()) != DialogResult.OK)
 				{

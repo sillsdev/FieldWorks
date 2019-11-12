@@ -21,8 +21,7 @@ namespace LanguageExplorer.Controls
 		private const int kLine = -1;
 		private const int kMore = -2;
 		private PopupTree m_popupTree;
-		protected IPropertyTable m_propertyTable;
-		protected IPublisher m_publisher;
+		protected FlexComponentParameters _flexComponentParameters;
 		// It's conceivable to have a subclass that isn't based on a possibility list,
 		// but we haven't needed it yet, and it would be easy to just pass null if
 		// we need to make one. So it's handy to have it in the common code.
@@ -52,41 +51,40 @@ namespace LanguageExplorer.Controls
 		#endregion Events
 
 		/// <summary />
-		protected PopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		protected PopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			TreeCombo = treeCombo;
-			Init(cache, propertyTable, publisher, list, ws, useAbbr, parent);
+			Init(cache, flexComponentParameters, list, ws, useAbbr, parent);
 			TreeCombo.BeforeSelect += m_treeCombo_BeforeSelect;
 			TreeCombo.AfterSelect += m_treeCombo_AfterSelect;
 			TreeCombo.Tree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
 		/// <summary />
-		protected PopupTreeManager(PopupTree popupTree, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		protected PopupTreeManager(PopupTree popupTree, LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_popupTree = popupTree;
-			Init(cache, propertyTable, publisher, list, ws, useAbbr, parent);
+			Init(cache, flexComponentParameters, list, ws, useAbbr, parent);
 			popupTree.BeforeSelect += m_treeCombo_BeforeSelect;
 			popupTree.AfterSelect += m_treeCombo_AfterSelect;
 			popupTree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
-		private void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		private void Init(LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
+			_flexComponentParameters = flexComponentParameters;
 			if (parent == null)
 			{
-				if (m_propertyTable != null)
+				if (_flexComponentParameters != null)
 				{
-					var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+					var app = _flexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 					if (app != null)
 					{
 						parent = app.ActiveMainWindow;
 					}
 					if (parent == null)
 					{
-						parent = m_propertyTable.GetValue<Form>(FwUtils.window);
+						parent = _flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window);
 					}
 				}
 				if (parent == null)

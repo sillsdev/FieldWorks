@@ -25,14 +25,14 @@ namespace LanguageExplorer.Controls
 		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? AreaServices.PosEditMachineName : AreaServices.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary />
-		public POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
-			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+			: base(treeCombo, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}
 
 		/// <summary />
-		public POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
-			: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+			: base(popupTree, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}
 
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls
 				GetPopupTree().HideForm(false);
 				using (var dlg = new MasterCategoryListDlg())
 				{
-					dlg.SetDlginfo(List, m_propertyTable, false, null);
+					dlg.SetDlginfo(List, _flexComponentParameters.PropertyTable, false, null);
 					switch (dlg.ShowDialog(ParentForm))
 					{
 						case DialogResult.OK:
@@ -112,7 +112,7 @@ namespace LanguageExplorer.Controls
 								// NOTE: We use PostMessage here, rather than SendMessage which
 								// disposes of the PopupTree before we and/or our parents might
 								// be finished using it (cf. LT-2563).
-								LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+								LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the master POS dlg,

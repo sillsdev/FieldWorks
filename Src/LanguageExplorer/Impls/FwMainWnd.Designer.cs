@@ -2847,7 +2847,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertPhoneme.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertPhoneme.Name = "Toolbar_CmdInsertPhoneme";
 			this.Toolbar_CmdInsertPhoneme.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertPhoneme.ToolTipText = "Create a new phoneme.";
+			this.Toolbar_CmdInsertPhoneme.ToolTipText = "Create a new phoneme. (CTRL+I)";
 			this.Toolbar_CmdInsertPhoneme.Visible = false;
 			// 
 			// Toolbar_CmdInsertSegmentNaturalClasses

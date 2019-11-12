@@ -16,8 +16,8 @@ namespace LanguageExplorer.LcmUi
 	public class InflectionClassPopupTreeManager : PopupTreeManager
 	{
 		/// <summary />
-		public InflectionClassPopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, bool useAbbr, Form parent, int wsDisplay)
-			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public InflectionClassPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, bool useAbbr, Form parent, int wsDisplay)
+			: base(treeCombo, cache, flexComponentParameters, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
 

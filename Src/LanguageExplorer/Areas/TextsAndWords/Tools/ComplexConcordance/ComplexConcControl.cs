@@ -620,13 +620,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private void m_insertControl_Insert(object sender, InsertEventArgs e)
 		{
 			ComplexConcPatternNode node = null;
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			switch (((InsertOption)e.Option).Type)
 			{
 				case ComplexConcordanceInsertType.Morph:
 					using (var dlg = new ComplexConcMorphDlg())
 					{
 						var morphNode = new ComplexConcMorphNode();
-						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
+						dlg.SetDlgInfo(m_cache, flexComponentParameters, morphNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = morphNode;
@@ -637,7 +638,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					using (var dlg = new ComplexConcWordDlg())
 					{
 						var wordNode = new ComplexConcWordNode();
-						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
+						dlg.SetDlgInfo(m_cache, flexComponentParameters, wordNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = wordNode;
@@ -648,7 +649,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					using (var dlg = new ComplexConcTagDlg())
 					{
 						var tagNode = new ComplexConcTagNode();
-						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
+						dlg.SetDlgInfo(m_cache, flexComponentParameters, tagNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = tagNode;
@@ -789,11 +790,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var nodes = CurrentNodes;
 			var wordNode = nodes[0] as ComplexConcWordNode;
 			var fwMainWnd = PropertyTable.GetValue<Form>(FwUtils.window);
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			if (wordNode != null)
 			{
 				using (var dlg = new ComplexConcWordDlg())
 				{
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
+					dlg.SetDlgInfo(m_cache, flexComponentParameters, wordNode);
 					if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 					{
 						return;
@@ -807,7 +809,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				{
 					using (var dlg = new ComplexConcMorphDlg())
 					{
-						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
+						dlg.SetDlgInfo(m_cache, flexComponentParameters, morphNode);
 						if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 						{
 							return;
@@ -821,7 +823,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						using (var dlg = new ComplexConcTagDlg())
 						{
-							dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
+							dlg.SetDlgInfo(m_cache, flexComponentParameters, tagNode);
 							if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 							{
 								return;

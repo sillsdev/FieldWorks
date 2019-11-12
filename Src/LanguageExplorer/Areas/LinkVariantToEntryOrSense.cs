@@ -129,7 +129,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (m_tcManager == null)
 			{
-				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache, PropertyTable, Publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs, false, this);
+				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs, false, this);
 			}
 			m_tcManager.LoadPopupTree(hvoTarget);
 		}

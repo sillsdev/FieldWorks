@@ -57,10 +57,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcWordNode node)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, ComplexConcWordNode node)
 		{
 			m_cache = cache;
 			m_node = node;
+			var propertyTable = flexComponentParameters.PropertyTable;
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_formTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
@@ -80,7 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			SetTextBoxValue(m_node.Form, m_formTextBox, m_formWsComboBox, true);
 			SetTextBoxValue(m_node.Gloss, m_glossTextBox, m_glossWsComboBox, false);
 			m_catPopupTreeManager = new PossibilityComboController(m_categoryComboBox, m_cache, m_cache.LanguageProject.PartsOfSpeechOA,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, propertyTable.GetValue<Form>(FwUtils.window));
 			if (m_node.Category != null)
 			{
 				m_categoryNotCheckBox.Checked = m_node.NegateCategory;

@@ -24,8 +24,7 @@ namespace LanguageExplorer.Controls
 	{
 		#region Data members
 
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
+		private FlexComponentParameters _flexComponentParameters;
 		private Form m_parentForm;
 		private LcmCache m_cache;
 		private Control m_ctrlAssistant;
@@ -444,23 +443,22 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Initialize the control.
 		/// </summary>
-		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Control ctrlAssistant, Form parentForm)
+		public void Initialize(LcmCache cache, FlexComponentParameters flexComponentParameters, Control ctrlAssistant, Form parentForm)
 		{
 			Debug.Assert(ctrlAssistant != null);
 			m_ctrlAssistant = ctrlAssistant;
-			Initialize(cache, propertyTable, publisher, parentForm, new SandboxGenericMSA());
+			Initialize(cache, flexComponentParameters, parentForm, new SandboxGenericMSA());
 		}
 
 		/// <summary>
 		/// Initialize the control.
 		/// </summary>
-		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Form parentForm, SandboxGenericMSA sandboxMSA)
+		public void Initialize(LcmCache cache, FlexComponentParameters flexComponentParameters, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			m_parentForm = parentForm;
+			_flexComponentParameters = flexComponentParameters;
 			m_cache = cache;
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
-			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var defAnalWsFont = defAnalWs.DefaultFontName;
@@ -489,14 +487,14 @@ namespace LanguageExplorer.Controls
 			m_selectedMainPOS = sandboxMSA.MainPOS;
 			m_fwcbAffixTypes.SelectedIndex = 0;
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
-			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, m_propertyTable, m_publisher, m_parentForm)
+			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, _flexComponentParameters, m_parentForm)
 			{
 				NotSureIsAny = true
 			};
 			m_mainPOSPopupTreeManager.LoadPopupTree(m_selectedMainPOS?.Hvo ?? 0);
 			m_mainPOSPopupTreeManager.AfterSelect += m_mainPOSPopupTreeManager_AfterSelect;
 			m_fwcbSlots.SelectedIndexChanged += HandleComboSlotChange;
-			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, m_propertyTable, m_publisher, m_parentForm)
+			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, _flexComponentParameters, m_parentForm)
 			{
 				NotSureIsAny = true
 			};
@@ -678,7 +676,7 @@ namespace LanguageExplorer.Controls
 			if (m_morphType == null)
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
-				var lex = m_propertyTable.GetValue<ILexEntry>("ActiveListSelectedObject");
+				var lex = _flexComponentParameters.PropertyTable.GetValue<ILexEntry>("ActiveListSelectedObject");
 				if (lex != null)
 				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);

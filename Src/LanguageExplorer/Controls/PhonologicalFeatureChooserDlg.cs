@@ -35,8 +35,7 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	public class PhonologicalFeatureChooserDlg : Form
 	{
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
+		private FlexComponentParameters _flexComponentParameters;
 		private LcmCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
@@ -193,60 +192,59 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Init the dialog with an existing context.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, ((IPhNCFeatures)ctxt.FeatureStructureRA).FeaturesOA, rule, ctxt);
+			SetDlgInfo(cache, flexComponentParameters, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, ((IPhNCFeatures)ctxt.FeatureStructureRA).FeaturesOA, rule, ctxt);
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, IPhRegularRule rule)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, rule, null);
+			SetDlgInfo(cache, flexComponentParameters, 0, 0, null, rule, null);
 		}
 
 		/// <summary>
 		/// Init the dialog with an existing FS.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IFsFeatStruc fs)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, IFsFeatStruc fs)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
+			SetDlgInfo(cache, flexComponentParameters, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
 
 		/// <summary>
 		/// Init the dialog with a PhPhoneme (or PhNCFeatures) and flid that does not yet contain a feature structure.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, ICmObject cobj, int owningFlid)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, cobj.Hvo, owningFlid, null, null, null);
+			SetDlgInfo(cache, flexComponentParameters, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, null, null);
+			SetDlgInfo(cache, flexComponentParameters, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			FS = fs;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = hvoOwner;
 			m_rule = rule;
 			m_ctxt = ctxt;
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
-			if (m_propertyTable != null)
+			_flexComponentParameters = flexComponentParameters;
+			if (_flexComponentParameters != null)
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
 				Point dlgLocation;
 				Size dlgSize;
-				if (m_propertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
+				if (_flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation) && _flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
 				{
 					var rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
-				var helpTopicProvider = (m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+				var helpTopicProvider = (_flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 				if (helpTopicProvider != null) // Will be null when running tests
 				{
 					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -256,7 +254,7 @@ namespace LanguageExplorer.Controls
 			}
 			m_cache = cache;
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
+			m_valuesCombo.StyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			LoadPhonFeats(FS);
 			BuildInitialBrowseView();
 		}
@@ -272,14 +270,14 @@ namespace LanguageExplorer.Controls
 		public void SetHelpTopic(string helpTopic)
 		{
 			m_helpTopic = helpTopic;
-			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(helpTopic));
+			m_helpProvider.SetHelpKeyword(this, _flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(helpTopic));
 		}
 
 		public void HandleJump()
 		{
 			if (m_link != null)
 			{
-				LinkHandler.PublishFollowLinkMessage(m_publisher, m_link);
+				LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, m_link);
 			}
 		}
 
@@ -431,32 +429,26 @@ namespace LanguageExplorer.Controls
 
 		private void BuildInitialBrowseView()
 		{
-#if RANDYTODO
-			// TODO: Nobody will be home.
-#endif
-			var configurationParameters = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
-
+			var doc = XDocument.Parse(XMLViewsStrings.SimpleChooserParameters);
+			var toolNode = doc.XPathSelectElement("guicontrols/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
 			m_listPanel.SuspendLayout();
 			var sortedFeatureHvos = m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.OrderBy(s => s.Name.BestAnalysisAlternative.Text).Select(s => s.Hvo);
 			var featureHvos = sortedFeatureHvos.ToArray();
 			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
-#if RANDYTODO
-			// TODO: call Init Flex Comp after creating BrowseViewer.
-			// TODO: Call FinishInitialization on m_bvList and feed it PhonologicalFeaturePublisher.ListFlid for the 'madeUpFieldIdentifier' parameter.
-#endif
 			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, m_cache, null, m_sda);
+			m_bvList.InitializeFlexComponent(_flexComponentParameters);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			m_bvList.ScrollBar.ValueChanged += ScrollBar_ValueChanged;
 			m_bvList.Scroller.Scroll += ScrollBar_Scroll;
 			m_bvList.ColumnsChanged += BrowseViewer_ColumnsChanged;
 			m_bvList.Resize += m_bvList_Resize;
 			m_bvList.TabStop = true;
-			m_bvList.StyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
+			m_bvList.StyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			m_bvList.Dock = DockStyle.Fill;
 			m_bvList.BackColor = SystemColors.Window;
 			m_listPanel.Controls.Add(m_bvList);
 			m_listPanel.ResumeLayout(false);
+			m_bvList.FinishInitialization(m_hvoOwner, PhonologicalFeaturePublisher.ListFlid);
 		}
 
 		private void ScrollBar_Scroll(object sender, ScrollEventArgs e)
@@ -722,10 +714,10 @@ namespace LanguageExplorer.Controls
 						});
 				}
 			}
-			if (m_propertyTable != null)
+			if (_flexComponentParameters != null)
 			{
-				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, true, true);
-				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, true, true);
+				_flexComponentParameters.PropertyTable.SetProperty("phonFeatListDlgLocation", Location, true, true);
+				_flexComponentParameters.PropertyTable.SetProperty("phonFeatListDlgSize", Size, true, true);
 			}
 		}
 
@@ -781,16 +773,16 @@ namespace LanguageExplorer.Controls
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			if (m_propertyTable.GetValue<string>(AreaServices.ToolChoice).Substring(0, 7) == "natural")
+			if (_flexComponentParameters.PropertyTable.GetValue<string>(AreaServices.ToolChoice).Substring(0, 7) == "natural")
 			{
 				m_helpTopic = "khtpChoose-Phonemes";
 			}
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
+			ShowHelp.ShowHelpTopic(_flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 
 		private sealed class PhonologicalFeaturePublisher : ObjectListPublisher
 		{
-			private const int ListFlid = 89999988;
+			internal const int ListFlid = 89999988;
 			public const int ValueFlid = 89999977;
 			public const int PolarityFlid = 89999966;
 			private Dictionary<int, string> m_unicodeProps;

@@ -230,8 +230,7 @@ namespace LanguageExplorer.LcmUi
 					List,
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 					false,
-					PropertyTable,
-					Publisher,
+					new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
 					PropertyTable.GetValue<Form>(FwUtils.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}

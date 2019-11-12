@@ -43,15 +43,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			base.Dispose(disposing);
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcTagNode node)
+		public void SetDlgInfo(LcmCache cache, FlexComponentParameters flexComponentParameters, ComplexConcTagNode node)
 		{
 			m_cache = cache;
 			m_node = node;
 			m_tagComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_posPopupTreeManager = new PossibilityComboController(m_tagComboBox, m_cache, m_cache.LanguageProject.TextMarkupTagsOA,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag?.Hvo ?? 0);
-			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
+			m_helpTopicProvider = flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

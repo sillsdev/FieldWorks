@@ -48,10 +48,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public AtomicReferencePOSSlice(LcmCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
+		public AtomicReferencePOSSlice(LcmCache cache, ICmObject obj, int flid, FlexComponentParameters flexComponentParameters)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
 			var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			Tree = new TreeCombo
 			{
@@ -85,7 +85,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
 				Tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try

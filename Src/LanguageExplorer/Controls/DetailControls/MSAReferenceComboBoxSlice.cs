@@ -71,7 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_tree.StyleSheet = stylesheet;
 			var list = Cache.LanguageProject.PartsOfSpeechOA;
-			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window));
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, flexComponentParameters, PropertyTable.GetValue<Form>(FwUtils.window));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 			m_MSAPopupTreeManager.Sense = MyCmObject as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
@@ -309,8 +309,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public MSAPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
-				: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+			public MSAPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+				: base(treeCombo, cache, flexComponentParameters, list, ws, useAbbr, parent)
 			{
 				LoadStrings();
 			}
@@ -318,8 +318,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public MSAPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
-				: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+			public MSAPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+				: base(popupTree, cache, flexComponentParameters, list, ws, useAbbr, parent)
 			{
 				LoadStrings();
 			}
@@ -576,7 +576,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 				// now launch the dialog
 				using (var dlg = new MasterCategoryListDlg())
 				{
-					dlg.SetDlginfo(List, m_propertyTable, false, null);
+					dlg.SetDlginfo(List, _flexComponentParameters.PropertyTable, false, null);
 					switch (dlg.ShowDialog(ParentForm))
 					{
 						case DialogResult.OK:
@@ -597,7 +597,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
+							LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
 							if (ParentForm != null && ParentForm.Modal)
 							{
 								// Close the dlg that opened the master POS dlg,
@@ -641,7 +641,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				using (var dlg = new MsaCreatorDlg())
 				{
 					var dummyMsa = new SandboxGenericMSA { MsaType = Sense.GetDesiredMsaType() };
-					dlg.SetDlgInfo(Cache, PersistenceProvider, m_propertyTable, m_publisher, Sense.Entry, dummyMsa, 0, false, null);
+					dlg.SetDlgInfo(Cache, PersistenceProvider, _flexComponentParameters, Sense.Entry, dummyMsa, 0, false, null);
 					if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName));
@@ -674,7 +674,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				var dummyMsa = SandboxGenericMSA.Create(Sense.MorphoSyntaxAnalysisRA);
 				using (var dlg = new MsaCreatorDlg())
 				{
-					dlg.SetDlgInfo(Cache, PersistenceProvider, m_propertyTable, m_publisher, Sense.Entry, dummyMsa, Sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
+					dlg.SetDlgInfo(Cache, PersistenceProvider, _flexComponentParameters, Sense.Entry, dummyMsa, Sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
 					if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName));

@@ -14,8 +14,8 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	public class PossibilityListPopupTreeManager : PopupTreeManager
 	{
-		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
-			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+			: base(treeCombo, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}
 

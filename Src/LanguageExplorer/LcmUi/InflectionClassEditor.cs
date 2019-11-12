@@ -29,6 +29,7 @@ namespace LanguageExplorer.LcmUi
 		private TreeCombo m_tree;
 		private LcmCache m_cache;
 		private IPublisher m_publisher;
+		private ISubscriber _subscriber;
 		protected XMLViewsDataCache m_sda;
 		private InflectionClassPopupTreeManager m_InflectionClassTreeManager;
 		private int m_selectedHvo;
@@ -45,10 +46,11 @@ namespace LanguageExplorer.LcmUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionClassEditor(IPublisher publisher, XElement configurationNode)
+		public InflectionClassEditor(IPublisher publisher, ISubscriber subscriber, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
+			_subscriber = subscriber;
 			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
 		}
@@ -189,7 +191,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (m_InflectionClassTreeManager == null)
 			{
-				m_InflectionClassTreeManager = new InflectionClassPopupTreeManager(m_tree, m_cache, PropertyTable, m_publisher, false, PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
+				m_InflectionClassTreeManager = new InflectionClassPopupTreeManager(m_tree, m_cache, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), false, PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
 				m_InflectionClassTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_InflectionClassTreeManager.LoadPopupTree(0);

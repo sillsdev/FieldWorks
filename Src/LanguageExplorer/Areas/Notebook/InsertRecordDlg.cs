@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.Notebook
 			AdjustControlAndDialogHeight(m_typeCombo, m_typeCombo.PreferredHeight);
 
 			var recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
-			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, PropertyTable, Publisher, recTypes, cache.DefaultAnalWs, false, this);
+			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), recTypes, cache.DefaultAnalWs, false, this);
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();

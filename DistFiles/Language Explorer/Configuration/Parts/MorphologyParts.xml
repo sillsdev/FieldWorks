@@ -1368,9 +1368,7 @@
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-			<slice id="TemplateTable" label="Table" editor="inflaffixtemplate" layout="TemplateTablex" helpTopicID="khtpField-MoInflAffixTemplate-Table">
-				<deParams menu="mnuInflAffixTemplate_TemplateTable"/>
-			</slice>
+			<slice id="TemplateTable" label="Table" editor="inflaffixtemplate" layout="TemplateTablex" helpTopicID="khtpField-MoInflAffixTemplate-Table" />
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
 			<slice editor="jtview" layout="default" editable="no" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
@@ -2482,7 +2480,7 @@
 			<slice field="Name" label="Refer to as" editor="multistring" ws="all vernacular" />
 		</part>
 	<part id="PhPhoneme-Detail-BasicIPASymbol" type="Detail">
-	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.BasicIPASymbolSlice" ws="pronunciation" />
+	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="basicipasymbol" ws="pronunciation" />
 	</part>
 	<part id="PhPhoneme-Jt-BasicIPASymbol" type="jtview">
 	  <string field="BasicIPASymbol" />

@@ -157,6 +157,9 @@
   <data name="Delete_Feature_Set" xml:space="preserve">
     <value>Delete Feature Set</value>
   </data>
+  <data name="Delete_Grapheme" xml:space="preserve">
+    <value>Delete Grapheme</value>
+  </data>
   <data name="Delete_Inflection_Class" xml:space="preserve">
     <value>Delete Inflection Class</value>
   </data>
@@ -189,6 +192,9 @@
   </data>
   <data name="Insert_Feature_Set" xml:space="preserve">
     <value>Insert Feature Set</value>
+  </data>
+  <data name="Insert_Grapheme" xml:space="preserve">
+    <value>Insert Grapheme</value>
   </data>
   <data name="Insert_Headed_Compound" xml:space="preserve">
     <value>Insert Headed Compound</value>

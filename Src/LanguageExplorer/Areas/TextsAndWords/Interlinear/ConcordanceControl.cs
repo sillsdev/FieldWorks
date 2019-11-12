@@ -327,8 +327,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private sealed class POSComboController : POSPopupTreeManager
 		{
 			/// <summary />
-			public POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
-				base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
+			public POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent) :
+				base(treeCombo, cache, list, ws, useAbbr, flexComponentParameters, parent)
 			{
 				Sorted = true;
 			}
@@ -473,18 +473,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			m_pOSPopupTreeManager?.Dispose();
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			switch (line)
 			{
 				case ConcordanceLines.kTags:
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
-							m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window))
+							m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, PropertyTable.GetValue<Form>(FwUtils.window))
 					{
 						Sorted = false
 					};
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, m_cache.LanguageProject.PartsOfSpeechOA,
-						m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window));
+						m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, PropertyTable.GetValue<Form>(FwUtils.window));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;

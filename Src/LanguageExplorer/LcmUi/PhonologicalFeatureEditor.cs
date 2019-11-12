@@ -29,6 +29,7 @@ namespace LanguageExplorer.LcmUi
 		private TreeCombo m_tree;
 		private LcmCache m_cache;
 		private IPublisher m_publisher;
+		private ISubscriber _subscriber;
 		protected XMLViewsDataCache m_sda;
 		private PhonologicalFeaturePopupTreeManager m_PhonologicalFeatureTreeManager;
 		private int m_displayWs;
@@ -44,10 +45,11 @@ namespace LanguageExplorer.LcmUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public PhonologicalFeatureEditor(IPublisher publisher, XElement configurationNode)
+		public PhonologicalFeatureEditor(IPublisher publisher, ISubscriber subscriber, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
+			_subscriber = subscriber;
 			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
 			var layout = XmlUtils.GetOptionalAttributeValue(configurationNode, "layout");
@@ -214,7 +216,7 @@ namespace LanguageExplorer.LcmUi
 						m_closedFeature = featDefns.First() as IFsClosedFeature;
 					}
 				}
-				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree, m_cache, false, PropertyTable, m_publisher, PropertyTable.GetValue<Form>(FwUtils.window),
+				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtils.window),
 																						   m_displayWs, m_closedFeature);
 				m_PhonologicalFeatureTreeManager.AfterSelect += m_PhonFeaturePopupTreeManager_AfterSelect;}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);
@@ -544,8 +546,8 @@ namespace LanguageExplorer.LcmUi
 			private List<ICmBaseAnnotation> m_annotations = new List<ICmBaseAnnotation>();
 
 			/// <summary />
-			public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
-				: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+			public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+				: base(treeCombo, cache, flexComponentParameters, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 			{
 				ClosedFeature = closedFeature;
 			}
@@ -633,7 +635,7 @@ namespace LanguageExplorer.LcmUi
 						{
 							Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerControls.ksUndoInsertPhonologicalFeature, LanguageExplorerControls.ksRedoInsertPhonologicalFeature);
 							var fs = CreateEmptyFeatureStructureInAnnotation(null);
-							dlg.SetDlgInfo(Cache, m_propertyTable, m_publisher, fs);
+							dlg.SetDlgInfo(Cache, _flexComponentParameters, fs);
 							dlg.ShowIgnoreInsteadOfDontCare = true;
 							dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
 							var result = dlg.ShowDialog(ParentForm);

@@ -12,8 +12,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	internal class PossibilityComboController : POSPopupTreeManager
 	{
 		/// <summary />
-		public PossibilityComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
-			base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
+		public PossibilityComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent) :
+			base(treeCombo, cache, list, ws, useAbbr, flexComponentParameters, parent)
 		{
 			Sorted = true;
 		}

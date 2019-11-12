@@ -852,7 +852,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		protected override void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
 			featChooser.ShowFeatureConstraintValues = true;
-			featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, Rhs.OwningRule);
+			featChooser.SetDlgInfo(m_cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), Rhs.OwningRule);
 		}
 
 		/// <summary>

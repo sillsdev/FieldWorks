@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This sets the original citation form into the dialog.
 		/// </summary>
-		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, IPropertyTable propertyTable, IPublisher publisher)
+		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, FlexComponentParameters flexComponentParameters)
 		{
 			Guard.AgainstNull(tssCitationForm, nameof(tssCitationForm));
 			Guard.AgainstNull(le, nameof(le));
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, 10);
 			m_fwtbGloss.Font = new Font(defAnalWs.DefaultFontName, 10);
-			var stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+			var stylesheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
 			// Set writing system factory and code for the two edit boxes.
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;
@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_fwtbCitationForm.Tss = tssCitationForm;
 			m_fwtbGloss.Text = string.Empty;
 			m_fwtbCitationForm.HasBorder = false;
-			m_msaGroupBox.Initialize(m_cache, propertyTable, publisher, this, new SandboxGenericMSA());
+			m_msaGroupBox.Initialize(m_cache, flexComponentParameters, this, new SandboxGenericMSA());
 			// get the current morph type from the lexical entry.
 			foreach (var mf in le.AlternateFormsOS)
 			{

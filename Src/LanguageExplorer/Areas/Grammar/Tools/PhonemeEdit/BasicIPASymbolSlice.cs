@@ -26,26 +26,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		private bool m_justChangedDescription;
 		private bool m_justChangedFeatures;
 
-		/// <summary>
-		/// Constructor invoked via the editor="customWithParams" slice XML configuration
-		/// </summary>
-		public BasicIPASymbolSlice(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
+		/// <summary />
+		public BasicIPASymbolSlice(ICmObject obj, int flid, int ws)
 			: base(obj, flid, ws)
 		{
 			var phoneme = (IPhPhoneme)MyCmObject;
 			phoneme.BasicIPASymbolChanged += UpdatePhoneme;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing)
-			{
-				var phoneme = (IPhPhoneme)MyCmObject;
-				phoneme.BasicIPASymbolChanged -= UpdatePhoneme;
-			}
-
-			base.Dispose(disposing);
 		}
 
 		private void UpdatePhoneme(object sender, EventArgs e)
@@ -147,6 +133,24 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				m_justChangedFeatures = false;
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				var phoneme = (IPhPhoneme)MyCmObject;
+				phoneme.BasicIPASymbolChanged -= UpdatePhoneme;
+			}
+
+			base.Dispose(disposing);
 		}
 	}
 }

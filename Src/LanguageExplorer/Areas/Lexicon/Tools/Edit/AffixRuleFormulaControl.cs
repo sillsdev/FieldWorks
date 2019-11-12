@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -808,11 +809,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				using (var featChooser = new PhonologicalFeatureChooserDlg())
 				{
+					var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 					var obj = CurrentObject;
 					switch (obj.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
+							featChooser.SetDlgInfo(m_cache, flexComponentParameters);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								// create a new natural class behind the scenes
@@ -836,7 +838,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							break;
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput)obj;
-							featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, modify.ModificationRA.FeaturesOA);
+							featChooser.SetDlgInfo(m_cache, flexComponentParameters, modify.ModificationRA.FeaturesOA);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								if (modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count == 0)

@@ -31,6 +31,7 @@ namespace LanguageExplorer.LcmUi
 		private TreeCombo m_tree;
 		private LcmCache m_cache;
 		private IPublisher m_publisher;
+		private ISubscriber _subscriber;
 		protected XMLViewsDataCache m_sda;
 		private InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		private int m_selectedHvo;
@@ -47,10 +48,12 @@ namespace LanguageExplorer.LcmUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionFeatureEditor(IPublisher publisher, XmlNode configurationNode)
+		public InflectionFeatureEditor(IPublisher publisher, ISubscriber subscriber, XmlNode configurationNode)
 			: this()
 		{
-			string displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
+			m_publisher = publisher;
+			_subscriber = subscriber;
+			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
 		}
 
@@ -194,7 +197,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (m_InflectionFeatureTreeManager == null)
 			{
-				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree, m_cache, false, PropertyTable, m_publisher, PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
+				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_InflectionFeatureTreeManager.LoadPopupTree(0);
@@ -533,8 +536,8 @@ namespace LanguageExplorer.LcmUi
 			private const int kMore = -2;
 
 			/// <summary />
-			public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay)
-				: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+			public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent, int wsDisplay)
+				: base(treeCombo, cache, flexComponentParameters, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 			{
 			}
 
@@ -589,7 +592,7 @@ namespace LanguageExplorer.LcmUi
 							var parentNode = selectedNode.Parent as HvoTreeNode;
 							var hvoPos = parentNode.Hvo;
 							var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
-							dlg.SetDlgInfo(Cache, m_propertyTable, pos);
+							dlg.SetDlgInfo(Cache, _flexComponentParameters.PropertyTable, pos);
 							switch (dlg.ShowDialog(ParentForm))
 							{
 								case DialogResult.OK:
@@ -614,7 +617,7 @@ namespace LanguageExplorer.LcmUi
 								case DialogResult.Yes:
 									{
 										// go to m_highestPOS in editor
-										LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
+										LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
 										if (ParentForm != null && ParentForm.Modal)
 										{
 											// Close the dlg that opened the popup tree,

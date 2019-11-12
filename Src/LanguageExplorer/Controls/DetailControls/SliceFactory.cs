@@ -275,7 +275,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "atomicreferencepos":
 					{
-						newSlice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
+						newSlice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameters);
 						break;
 					}
 				case "possatomicreference":
@@ -285,7 +285,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "atomicreferenceposdisabled":
 					{
-						newSlice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
+						newSlice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters);
 						break;
 					}
 
@@ -509,6 +509,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						break;
 					}
+				case "basicipasymbol":
+				{
+					newSlice = new BasicIPASymbolSlice(obj, flid, cache.DefaultPronunciationWs);
+					break;
+				}
 				default:
 					{
 						//Since the editor has not been implemented yet,

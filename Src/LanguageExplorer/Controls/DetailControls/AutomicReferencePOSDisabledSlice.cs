@@ -14,8 +14,8 @@ namespace LanguageExplorer.Controls.DetailControls
 	internal class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
 	{
 		/// <summary />
-		internal AutomicReferencePOSDisabledSlice(LcmCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
-			: base(cache, obj, flid, propertyTable, publisher)
+		internal AutomicReferencePOSDisabledSlice(LcmCache cache, ICmObject obj, int flid, FlexComponentParameters flexComponentParameters)
+			: base(cache, obj, flid, flexComponentParameters)
 		{
 			if (Tree != null)
 			{
