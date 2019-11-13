@@ -29,9 +29,9 @@ namespace LanguageExplorer.LcmUi
 		{ }
 
 		///  <summary />
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
 		{
-			return new BulkEditBarPhonologicalFeatures(bv, spec, propertyTable, cache);
+			return new BulkEditBarPhonologicalFeatures(bv, spec, flexComponentParameters, cache);
 		}
 
 		/// <summary>
@@ -45,10 +45,10 @@ namespace LanguageExplorer.LcmUi
 			/// <param name="bv">The BrowseViewer that it is part of.</param>
 			/// <param name="spec">The parameters element of the BV, containing the
 			/// 'columns' elements that specify the BE bar (among other things).</param>
-			/// <param name="propertyTable"></param>
+			/// <param name="flexComponentParameters"></param>
 			/// <param name="cache"></param>
-			public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache) :
-				base(bv, spec, propertyTable, cache)
+			public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache) :
+				base(bv, spec, flexComponentParameters, cache)
 			{
 				m_operationsTabControl.Controls.Remove(BulkCopyTab);
 				m_operationsTabControl.Controls.Remove(ClickCopyTab);

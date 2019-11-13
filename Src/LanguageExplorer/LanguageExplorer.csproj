@@ -301,6 +301,7 @@
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\CustomFieldsMenuHelper.cs" />
     <Compile Include="Areas\FileExportMenuHelper.cs" />
+    <Compile Include="Areas\Grammar\GrammarAreaServices.cs" />
     <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>

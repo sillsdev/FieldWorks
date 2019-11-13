@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -68,7 +69,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.StatusBar, GrammarArea.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarAreaServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarAreaServices.PhonemesFactoryMethod);
 			}
 			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new BulkEditPhonemesToolMenuHelper(majorFlexComponentParameters, this, _assignFeaturesToPhonemesView, _recordList);
@@ -136,6 +137,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 			private IRecordList _recordList;
+			private GrammarAreaServices _grammarAreaServices;
 
 			internal BulkEditPhonemesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, AssignFeaturesToPhonemes assignFeaturesToPhonemes, IRecordList recordList)
 			{
@@ -147,12 +149,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_assignFeaturesToPhonemesView = assignFeaturesToPhonemes;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				_grammarAreaServices = new GrammarAreaServices();
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+
+				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -232,6 +241,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				_majorFlexComponentParameters = null;
 				_assignFeaturesToPhonemesView = null;
 				_recordList = null;
+				_grammarAreaServices = null;
 
 				_isDisposed = true;
 			}

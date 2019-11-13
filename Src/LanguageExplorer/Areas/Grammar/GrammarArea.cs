@@ -6,11 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar
 {
@@ -24,7 +20,7 @@ namespace LanguageExplorer.Areas.Grammar
 		[ImportMany(AreaServices.GrammarAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
-		internal const string Phonemes = "phonemes";
+
 		[Import]
 		private IPropertyTable _propertyTable;
 		private Dictionary<string, ITool> _dictionaryOfAllTools;
@@ -166,17 +162,5 @@ namespace LanguageExplorer.Areas.Grammar
 		public ITool ActiveTool { get; set; }
 
 		#endregion
-
-		internal static IRecordList PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == Phonemes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Phonemes}'.");
-			/*
-            <clerk id="phonemes">
-              <recordList owner="MorphologicalData" property="Phonemes" />
-            </clerk>
-			*/
-			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes", PhPhonemeSetTags.kflidPhonemes));
-		}
 	}
 }

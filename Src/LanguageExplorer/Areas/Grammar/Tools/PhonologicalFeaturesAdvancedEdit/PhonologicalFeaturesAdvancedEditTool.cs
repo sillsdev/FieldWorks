@@ -349,6 +349,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 				if (disposing)
 				{
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 					if (_recordBrowseView?.ContextMenuStrip != null)
 					{
 						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
@@ -357,6 +358,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 					}
 				}
 				_majorFlexComponentParameters = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
+				_recordBrowseView = null;
+				_recordList = null;
+				_dataTree = null;
+				_menu = null;
+				_cache = null;
+				_featureSystem = null;
+				_sharedEventHandlers = null;
 
 				_isDisposed = true;
 			}

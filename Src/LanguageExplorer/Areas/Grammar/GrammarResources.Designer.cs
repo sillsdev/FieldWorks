@@ -378,6 +378,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Phoneme.
+        /// </summary>
+        internal static string Insert_Phoneme {
+            get {
+                return ResourceManager.GetString("Insert_Phoneme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Slot after XXX.
         /// </summary>
         internal static string Insert_Slot_after_XXX {

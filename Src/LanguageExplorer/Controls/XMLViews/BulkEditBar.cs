@@ -15,6 +15,7 @@ using ECInterfaces;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Filters;
 using LanguageExplorer.Impls;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -35,7 +36,7 @@ using SilEncConverters40;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
-	internal class BulkEditBar : UserControl, IPropertyTableProvider
+	internal class BulkEditBar : UserControl, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
 	{
 		/// <summary />
 		protected VSTabControl m_operationsTabControl;
@@ -155,12 +156,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="bv">The BrowseViewer that it is part of.</param>
 		/// <param name="spec">The parameters element of the BV, containing the
 		/// 'columns' elements that specify the BE bar (among other things).</param>
-		/// <param name="propertyTable"></param>
+		/// <param name="flexComponentParameters"></param>
 		/// <param name="cache">The cache.</param>
-		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
+		public BulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
 			: this()
 		{
-			PropertyTable = propertyTable;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 			m_bv = bv;
 			m_bv.FilterChanged += BrowseViewFilterChanged;
 			m_bv.RefreshCompleted += BrowseViewSorterChanged;
@@ -624,6 +627,9 @@ namespace LanguageExplorer.Controls.XMLViews
 						MessageBox.Show(XMLViewsStrings.ksBarElementFailed);
 						return null;
 					}
+					break;
+				case "phonemeFlatListItem":
+					besc = new PhonologicalFeatureEditor(Publisher, Subscriber, colSpec);
 					break;
 				case "atomicFlatListItem":
 					flid = GetFlidFromClassDotName(colSpec, "field");
@@ -3168,6 +3174,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		public IPropertyTable PropertyTable { get; }
 
 		#endregion
+
+		/// <summary />
+		public IPublisher Publisher { get; }
+
+		/// <summary />
+		public ISubscriber Subscriber { get; }
 
 		/// <summary>
 		/// keeps track of a row selection (for DeleteTab)

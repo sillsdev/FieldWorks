@@ -214,6 +214,9 @@
   <data name="Insert_Non_headed_Compound" xml:space="preserve">
     <value>Insert Non-headed Compound</value>
   </data>
+  <data name="Insert_Phoneme" xml:space="preserve">
+    <value>Insert Phoneme</value>
+  </data>
   <data name="Insert_Slot_after_XXX" xml:space="preserve">
     <value>Insert Slot after XXX</value>
   </data>

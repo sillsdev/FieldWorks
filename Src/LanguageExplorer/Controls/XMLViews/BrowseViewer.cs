@@ -774,7 +774,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			xa = m_configParamsElement.Attribute("bulkEdit");
 			if (xa != null && xa.Value == "true")
 			{
-				BulkEditBar = CreateBulkEditBar(this, m_configParamsElement, PropertyTable, Cache);
+				BulkEditBar = CreateBulkEditBar(this, m_configParamsElement, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), Cache);
 				BulkEditBar.Dock = DockStyle.Bottom;
 				BulkEditBar.Name = "BulkEditBar";
 				BulkEditBar.AccessibleName = "BulkEditBar";
@@ -917,9 +917,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
 		{
-			return new BulkEditBar(bv, spec, propertyTable, cache);
+			return new BulkEditBar(bv, spec, flexComponentParameters, cache);
 		}
 
 		/// <summary/>

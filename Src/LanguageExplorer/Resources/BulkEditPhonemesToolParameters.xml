@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <parameters toolId="bulkEditPhonemes" clerk="phonemes" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
 	<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
@@ -6,7 +6,7 @@
 		<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 		<!-- Phonological Feature Defns (generated)-->
 		<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
-			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
+			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="phonemeFlatListItem" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
 					<args>
 						<arg name="xpathToConfigurationNode" value="ancestor::column"/>

@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.StatusBar, GrammarArea.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarAreaServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarAreaServices.PhonemesFactoryMethod);
 			}
 			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
@@ -164,6 +164,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			private IRecordList _recordList;
 			private DataTree _dataTree;
 			private ISharedEventHandlers _sharedEventHandlers;
+			private GrammarAreaServices _grammarAreaServices;
 
 			internal PhonemeEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
@@ -186,30 +187,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				_partiallySharedListToolsUiWidgetMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				_grammarAreaServices = new GrammarAreaServices();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				// <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
-				insertMenuDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
-				insertToolBarDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
+				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
 				// <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => CanCmdDataTree_Insert_Phoneme_Code));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => CanCmdDataTree_Insert_Phoneme_Code));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
 				RegisterSliceLeftEdgeMenus();
-			}
-
-			private static Tuple<bool, bool> CanCmdInsertPhoneme => new Tuple<bool, bool>(true, true);
-
-			private void InsertPhoneme_Clicked(object sender, EventArgs e)
-			{
-				/*
-				<command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
-					<params className="PhPhoneme" />
-				</command>
-				*/
-				_dataTree.CurrentSlice.HandleInsertCommand("Phonemes", PhPhonemeTags.kClassName);
 			}
 
 			private static Tuple<bool, bool> CanCmdDataTree_Insert_Phoneme_Code => new Tuple<bool, bool>(true, true);
@@ -345,6 +331,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				_recordList = null;
 				_dataTree = null;
 				_sharedEventHandlers = null;
+				_grammarAreaServices = null;
 
 				_isDisposed = true;
 			}
