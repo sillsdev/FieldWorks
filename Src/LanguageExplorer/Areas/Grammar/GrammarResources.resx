@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add_a_phonological_feature" xml:space="preserve">
+    <value>Add a phonological feature.</value>
+  </data>
   <data name="Add_a_subcategory" xml:space="preserve">
     <value>Add a subcategory...</value>
   </data>
@@ -157,6 +160,9 @@
   <data name="Delete_Feature_Set" xml:space="preserve">
     <value>Delete Feature Set</value>
   </data>
+  <data name="Delete_Feature_Value" xml:space="preserve">
+    <value>Delete Feature Value</value>
+  </data>
   <data name="Delete_Grapheme" xml:space="preserve">
     <value>Delete Grapheme</value>
   </data>
@@ -192,6 +198,9 @@
   </data>
   <data name="Insert_Feature_Set" xml:space="preserve">
     <value>Insert Feature Set</value>
+  </data>
+  <data name="Insert_Feature_Value" xml:space="preserve">
+    <value>Insert Feature Value</value>
   </data>
   <data name="Insert_Grapheme" xml:space="preserve">
     <value>Insert Grapheme</value>
@@ -239,6 +248,9 @@
   <data name="PhonologicalRuleEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\PhonologicalRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
+  </data>
+  <data name="Phonological_Feature" xml:space="preserve">
+    <value>Phonological Feature...</value>
   </data>
   <data name="ProdRestrictEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ProdRestrictEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

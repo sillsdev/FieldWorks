@@ -1089,7 +1089,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
 
 				var newValue = value.Y;
-				var minValue = 0;
+				const int minValue = 0;
 				var maxValue = ScrollPositionMaxUserReachable;
 				if (newValue < minValue)
 				{
@@ -1104,8 +1104,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(m_bv.ScrollBar.Maximum >= 0, "ScrollBar.Maximum is unexpectedly a negative value");
 				// The assignment to 'Value' can (and was LT-3091) throw an exception
 				Debug.Assert(m_bv.ScrollBar.Minimum <= minValue, "minValue setting could allow attempt to set out of bounds");
-				Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
-				// to minimise recursive calls, don't set the scroll bar unless it's wrong.
+				//Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
+				// to minimize recursive calls, don't set the scroll bar unless it's wrong.
 				if (m_bv.ScrollBar.Value != newValue)
 				{
 					m_bv.ScrollBar.Value = newValue;

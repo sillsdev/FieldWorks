@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.Lists.Tools;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -84,12 +86,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
+			// Too early before now.
+			_toolMenuHelper = new PhonologicalFeaturesAdvancedEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			_toolMenuHelper = new PhonologicalFeaturesAdvancedEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 		}
 
@@ -164,26 +165,123 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		private sealed class PhonologicalFeaturesAdvancedEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
+			private DataTree _dataTree;
 			private ToolStripMenuItem _menu;
+			private LcmCache _cache;
+			private IFsFeatureSystem _featureSystem;
+			private ISharedEventHandlers _sharedEventHandlers;
 
-			internal PhonologicalFeaturesAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
+			internal PhonologicalFeaturesAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_dataTree = dataTree;
+				_cache = _majorFlexComponentParameters.LcmCache;
+				_featureSystem = _cache.LanguageProject.PhFeatureSystemOA;
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(_majorFlexComponentParameters, tool, _majorFlexComponentParameters.LcmCache.LanguageProject.PartsOfSpeechOA, _recordList, _dataTree);
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				// Add to Insert menu & Insert tool bar:
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				insertMenuDictionary.Add(Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => CanCmdInsertPhonologicalClosedFeature));
+				insertToolBarDictionary.Add(Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => CanCmdInsertPhonologicalClosedFeature));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_ClosedFeature_Value, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ClosedFeature_Value_Clicked, () => CanCmdDataTree_Insert_ClosedFeature_Value));
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
+				RegisterSliceLeftEdgeMenus();
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertPhonologicalClosedFeature => new Tuple<bool, bool>(true, true);
+
+			private void InsertPhonologicalClosedFeature_Clicked(object sender, EventArgs e)
+			{
+				/*
+	<command id="CmdInsertPhonologicalClosedFeature" label="_Phonological Feature..." message="InsertItemInVector" icon="addFeature">
+	  <params className="FsClosedFeature" restrictToClerkID="phonologicalfeatures" />
+	</command>
+				*/
+				using (var dlg = new MasterPhonologicalFeatureListDlg("FsClosedFeature"))
+				{
+					dlg.SetDlginfo(_featureSystem, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, "masterPhonFeatListDlg", Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "PhonFeatsEticGlossList.xml"));
+					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_ClosedFeature_Value => new Tuple<bool, bool>(_recordList.ListSize > 0, true);
+
+			private void Insert_ClosedFeature_Value_Clicked(object sender, EventArgs e)
+			{
+				UowHelpers.UndoExtension(GrammarResources.Phonological_Feature, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					var currentFsClosedFeature = (IFsClosedFeature)_recordList.CurrentObject;
+					currentFsClosedFeature.ValuesOC.Add(_cache.ServiceLocator.GetInstance<IFsSymFeatValFactory>().Create());
+				});
+			}
+
+			private void RegisterSliceLeftEdgeMenus()
+			{
+				// <menu id="mnuDataTree_ClosedFeature_Values">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ClosedFeature_Values, Create_mnuDataTree_ClosedFeature_Values);
+				// <menu id="mnuDataTree_ClosedFeature_Value">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ClosedFeature_Value, Create_Delete_ClosedFeature_Value_Values);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_Delete_ClosedFeature_Value_Values(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Value, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_ClosedFeature_Value">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Value, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_ClosedFeature_Value">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ClosedFeature_Values(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Values, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Values.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_ClosedFeature_Values">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_ClosedFeature_Value" label="Insert Feature Value" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ClosedFeature_Value_Clicked, GrammarResources.Insert_Feature_Value);
+
+				// End: <menu id="mnuDataTree_ClosedFeature_Values">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -196,7 +294,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("FsFeatDefn", StringTable.ClassNames)));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("FsClosedFeature", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -257,7 +355,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 						_recordBrowseView.ContextMenuStrip.Dispose();
 						_recordBrowseView.ContextMenuStrip = null;
 					}
-                }
+				}
 				_majorFlexComponentParameters = null;
 
 				_isDisposed = true;

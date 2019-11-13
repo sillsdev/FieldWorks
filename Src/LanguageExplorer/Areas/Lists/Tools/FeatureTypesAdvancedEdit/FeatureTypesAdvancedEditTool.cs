@@ -258,7 +258,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			{
 				using (var dlg = new MasterInflectionFeatureListDlg("FsFeatDefn"))
 				{
-					dlg.SetDlginfo(_featureSystem, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, true);
+					dlg.SetDlginfo(_featureSystem, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable);
 					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
 				}
 			}

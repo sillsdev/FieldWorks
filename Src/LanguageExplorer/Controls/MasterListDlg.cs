@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls
 	internal class MasterListDlg : Form
 	{
 		protected ILcmOwningCollection<IFsFeatDefn> m_featureList;
-		protected bool m_launchedFromInsertMenu;
 		protected IPropertyTable m_propertyTable;
 		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
@@ -120,18 +119,17 @@ namespace LanguageExplorer.Controls
 		public IFsFeatDefn SelectedFeatDefn { get; protected set; }
 
 		///  <summary />
-		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
+		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable)
 		{
 			// default to inflection features
-			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml"));
+			SetDlginfo(featSys, propertyTable, "masterInflFeatListDlg", Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml"));
 		}
 
 		///  <summary />
-		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string eticGlossListXmlPathname)
+		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, string sWindowKey, string eticGlossListXmlPathname)
 		{
 			m_featureSystem = featSys;
 			m_featureList = featSys.FeaturesOC;
-			m_launchedFromInsertMenu = launchedFromInsertMenu;
 			m_propertyTable = propertyTable;
 			if (m_propertyTable != null)
 			{

@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add a phonological feature..
+        /// </summary>
+        internal static string Add_a_phonological_feature {
+            get {
+                return ResourceManager.GetString("Add_a_phonological_feature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add a subcategory....
         /// </summary>
         internal static string Add_a_subcategory {
@@ -184,6 +193,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Delete_Feature_Set {
             get {
                 return ResourceManager.GetString("Delete_Feature_Set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Feature Value.
+        /// </summary>
+        internal static string Delete_Feature_Value {
+            get {
+                return ResourceManager.GetString("Delete_Feature_Value", resourceCulture);
             }
         }
         
@@ -315,6 +333,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Feature Value.
+        /// </summary>
+        internal static string Insert_Feature_Value {
+            get {
+                return ResourceManager.GetString("Insert_Feature_Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Grapheme.
         /// </summary>
         internal static string Insert_Grapheme {
@@ -439,6 +466,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string PhonemeEditToolParameters {
             get {
                 return ResourceManager.GetString("PhonemeEditToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phonological Feature....
+        /// </summary>
+        internal static string Phonological_Feature {
+            get {
+                return ResourceManager.GetString("Phonological_Feature", resourceCulture);
             }
         }
         

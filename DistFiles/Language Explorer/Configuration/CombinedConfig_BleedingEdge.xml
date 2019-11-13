@@ -98,12 +98,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
-    <command id="CmdDataTree_Insert_ClosedFeature_Value" label="Insert Feature Value" message="DataTreeInsert">
-      <parameters field="Values" className="FsSymFeatVal" />
-    </command>
-    <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
-      <parameters field="Values" className="FsSymFeatVal" />
-    </command>
     <command id="CmdDataTree_Insert_Env_Slash" label="Insert Environment slash" message="InsertSlash" />
     <command id="CmdDataTree_Insert_Env_Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
     <command id="CmdDataTree_Insert_Env_NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
@@ -115,9 +109,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
       <params className="CmPossibility" restrictToClerkID="ProdRestrict" />
-    </command>
-    <command id="CmdInsertPhonologicalClosedFeature" label="_Phonological Feature..." message="InsertItemInVector" icon="addFeature">
-      <params className="FsClosedFeature" restrictToClerkID="phonologicalfeatures" />
     </command>
     <command id="CmdInsertClosedFeature" label="_Feature..." message="InsertItemInVector" icon="addFeature">
       <params className="FsClosedFeature" restrictToClerkID="features" />
@@ -245,12 +236,6 @@ so I can look at that in the develop branch.
     <menu id="mnuDataTree_FeatureStructure_Feature">
       <item command="CmdDataTree_Delete_FeatureStructure_Feature" />
     </menu>
-    <menu id="mnuDataTree_ClosedFeature_Values">
-      <item command="CmdDataTree_Insert_ClosedFeature_Value" />
-    </menu>
-    <menu id="mnuDataTree_ClosedFeature_Value">
-      <item command="CmdDataTree_Delete_ClosedFeature_Value" />
-    </menu>
     <menu id="mnuDataTree_StringRepresentation_Insert">
       <item command="CmdDataTree_Insert_Env_Slash" />
       <item command="CmdDataTree_Insert_Env_Underscore" />
@@ -296,7 +281,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
       <item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
       <item id="CmdInsertText">Add a new text to the corpus.</item>
-      <item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
       <!-- Tools menu -->

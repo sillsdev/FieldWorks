@@ -30,7 +30,7 @@ namespace LanguageExplorer.MGA
 			SetCheckedValueOfAllDaughterNodes(tn);
 		}
 
-		private void ToggleCheckBoxImage(TreeNode tn)
+		private static void ToggleCheckBoxImage(TreeNode tn)
 		{
 			if (tn.Checked)
 			{
@@ -42,7 +42,7 @@ namespace LanguageExplorer.MGA
 			}
 		}
 
-		private void SetCheckedValueOfAllDaughterNodes(TreeNode tn)
+		private static void SetCheckedValueOfAllDaughterNodes(TreeNode tn)
 		{
 			foreach (TreeNode node in tn.Nodes)
 			{

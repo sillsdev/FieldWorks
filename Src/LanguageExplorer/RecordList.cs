@@ -1090,8 +1090,8 @@ namespace LanguageExplorer
 						SuppressSaveOnChangeRecord = true;
 						try
 						{
-							RemoveItemsFor(thingToDelete.Hvo);
 							UowHelpers.UndoExtension(uowBaseText, m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+							RemoveItemsFor(thingToDelete.Hvo);
 							UpdateRecordTreeBar();
 						}
 						finally
