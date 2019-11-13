@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,14 +12,15 @@ using Microsoft.Build.Framework;
 using NUnit.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
 
-namespace FwBuildTasks
+namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
 	[TestFixture]
 	public class LocalizeFieldWorksTests
 	{
 		InstrumentedLocalizeFieldWorks m_sut;
 		private string m_rootPath;
-		private string m_stringsEnPath;
+		private string m_l10nFolder;
+		private string m_srcFolder;
 		private string m_FdoFolder;
 		private string m_commonFolder;
 		private string m_FieldWorksFolder;
@@ -28,6 +29,18 @@ namespace FwBuildTasks
 		private string m_FieldWorksPropertiesFolder;
 		private string m_FieldWorksTestsFolder;
 		private string m_sideBarFolder;
+
+		private const string LocaleEs = "es";
+		private const string SampleStringEn = "A category";
+		private const string SampleStringEs = "Una categoría";
+
+		private const string LocaleGe = "ge";
+
+		private const string FieldWorksNamespace = "SIL.FieldWorks";
+		private const string FdoNamespace = "SIL.FDO";
+		private const string FieldWorksStringsFilenameNoExt = "FieldWorks-strings";
+		private const string MoreStringsFilenameNoExt = "Properties.more strings";
+		private const string FdoStringsFilenameNoExt = "FDO-strings";
 
 		[SetUp]
 		public void Setup()
@@ -39,17 +52,7 @@ namespace FwBuildTasks
 			if (Directory.Exists(m_rootPath))
 				Directory.Delete(m_rootPath, true);
 			Directory.CreateDirectory(m_rootPath);
-			Directory.CreateDirectory(m_sut.PoFileDirectory);
-
-			CreateTestPoFile("es", " first", "A browse view {0}{0:F1}", "Una vista examinar{0}{0:F1}", " second", "A category", "Una categoría",
-				". /Language Explorer/Configuration/Lexicon/areaConfiguration.xml::/root/menuAddOn/menu/item/@label", "A_llomorph", "A_lomorfo",
-				". /Language Explorer/Configuration/Parts/MorphologyParts.xml::/PartInventory/bin/part[@id=\"MoAlloAdhocProhib-Jt-Type\"]/lit", "lit1", "litTrans1",
-				". /Language Explorer/Configuration/ContextHelp.xml::/strings/item[@id=\"AffixForm\"]", "An allomorph of the affix.", "Un alomorfo del afijo.");
-			CreateStringsXml();
-
-			CreateProjects();
-
-			CreateAssemblyInfo();
+			Directory.CreateDirectory(m_sut.L10nFileDirectory);
 		}
 
 		[TearDown]
@@ -58,7 +61,35 @@ namespace FwBuildTasks
 			InstrumentedProjectLocalizer.Reset();
 		}
 
-		// Create a minimal CommonAssemblyInfo.cs file with just the lines we care about.
+		/// <summary>Set up Assembly Info and localized projects for tests</summary>
+		private void FullSetup()
+		{
+			CreateLocalizedProjects();
+
+			CreateAssemblyInfo();
+
+			CreateLocalizedFiles();
+		}
+
+		/// <summary>Sets up the bare minimum to test localization: strings.**.xml, a project (FDO), and assembly info</summary>
+		private void SimpleSetupFDO(string locale, string localizedStringsXml = "safe sample text", string localizedProjStrings = "safe sample text")
+		{
+			CreateStringsXml(m_sut.StringsXmlSourcePath(locale), localizedStringsXml);
+			m_srcFolder = m_sut.SrcFolder;
+			m_l10nFolder = Path.Combine(m_sut.L10nFileDirectory, locale);
+			m_FdoFolder = CreateLocalizedProject(m_srcFolder, "FDO", "FDO", locale, localizedProjStrings);
+			CreateAssemblyInfo();
+		}
+
+		/// <summary>Sets up the bare minimum to test the localization of a single string</summary>
+		/// <returns>The path to the localized ResX containing the test string</returns>
+		private string SimpleSetupWithResX(string locale, string english, string localized)
+		{
+			SimpleSetupFDO(locale);
+			return CreateLocalizedResX(m_FdoFolder, "FDO", "simple_sample", locale, english, localized);
+		}
+
+		/// <summary>Create a minimal CommonAssemblyInfo.cs file</summary>
 		private void CreateAssemblyInfo()
 		{
 			var writer = new StreamWriter(m_sut.AssemblyInfoPath, false, Encoding.UTF8);
@@ -68,57 +99,65 @@ namespace FwBuildTasks
 			writer.Close();
 		}
 
-		// We want to create a hierarchy of projects under Src.
-		// To test certain cases, we need
-		// - a folder with a .csproj ("FDO").
-		// - a folder with no .csproj ("Common").
-		// - a child folder with a .csproj ("Common/FieldWorks").
-		// - a child of a .csproj that has no .csproj (but will have resx files): ("Common/FieldWorks/Properties")
-		// - a folder whose name ends in "Tests"
-		// - a folder whose name is exactly SidebarLibrary
-		// - a child of a folder with .csproj that has its own .csproj (xCore and xCore/xCoreInterfaces).
-		private void CreateProjects()
+		/// <remarks>
+		/// We want to create a hierarchy of projects under Src.
+		/// To test certain cases, we need
+		/// - a folder with a .csproj ("FDO").
+		/// - a folder with no .csproj ("Common").
+		/// - a child folder with a .csproj ("Common/FieldWorks").
+		/// - a child of a .csproj that has no .csproj (but will have resx files): ("Common/FieldWorks/Properties")
+		/// - a folder whose name ends in "Tests"
+		/// - a folder whose name is exactly SidebarLibrary
+		/// - a child of a folder with .csproj that has its own .csproj (xCore and xCore/xCoreInterfaces).
+		/// - a project whose assembly name is different from its folder and filenames (xCoreInterfaces named xCoreIntName)
+		/// </remarks>
+		private void CreateLocalizedProjects()
 		{
-			var m_srcFolder = m_sut.SrcFolder;
-			m_FdoFolder = CreateProject(m_srcFolder, "FDO");
+			CreateStringsXml(m_sut.StringsEnPath, SampleStringEn);
+			CreateStringsXml(m_sut.StringsXmlSourcePath(LocaleEs), SampleStringEs); // REVIEW (Hasso) 2019.11: where?
+
+			m_srcFolder = m_sut.SrcFolder;
+			m_l10nFolder = Path.Combine(m_sut.L10nFileDirectory, LocaleEs);
+			m_FdoFolder = CreateLocalizedProject(m_srcFolder, "FDO");
 			m_commonFolder = CreateFolder(m_srcFolder, "Common");
-			m_FieldWorksFolder = CreateProject(m_commonFolder, "FieldWorks");
+			m_FieldWorksFolder = CreateLocalizedProject(m_commonFolder, "FieldWorks");
 			m_FieldWorksPropertiesFolder = CreateFolder(m_FieldWorksFolder, "Properties");
-			m_FieldWorksTestsFolder = CreateProject(m_FieldWorksFolder, "FieldWorksTests");
-			m_sideBarFolder = CreateProject(m_srcFolder, "SidebarLibrary");
-			m_xCoreFolder = CreateProject(m_srcFolder, "xCore");
-			m_xCoreInterfacesFolder = CreateProject(m_xCoreFolder, "xCoreInterfaces", "xCoreIntName");
-			CreateResX(m_FieldWorksPropertiesFolder, "more strings");
-			CreateResX(m_FieldWorksFolder, "strings");
+			m_FieldWorksTestsFolder = CreateLocalizedProject(m_FieldWorksFolder, "FieldWorksTests");
+			m_sideBarFolder = CreateLocalizedProject(m_srcFolder, "SidebarLibrary");
+			m_xCoreFolder = CreateLocalizedProject(m_srcFolder, "xCore");
+			m_xCoreInterfacesFolder = CreateLocalizedProject(m_xCoreFolder, "xCoreInterfaces", "xCoreIntName");
+			CreateLocalizedResX(m_FieldWorksPropertiesFolder, "FieldWorks", "more strings");
+			CreateLocalizedResX(m_FieldWorksFolder, "FieldWorks", "strings");
 		}
 
-		string CreateFolder(string parent, string name)
+		private static string CreateFolder(string parent, string name)
 		{
 			var result = Path.Combine(parent, name);
 			Directory.CreateDirectory(result);
 			return result;
 		}
+
 		/// <summary>
 		/// Create a minimal convertible project in the specified folder (with default assembly name same as project).
 		/// </summary>
-		/// <param name="folder"></param>
-		string CreateProject(string parent, string name)
+		private string CreateLocalizedProject(string parent, string name)
 		{
-			return CreateProject(parent, name, name);
+			return CreateLocalizedProject(parent, name, name);
 		}
 
 		/// <summary>
 		/// Create a minimal convertible project in the specified folder.
 		/// </summary>
-		/// <param name="folder"></param>
-		string CreateProject(string parent, string name, string assemblyName)
+		private string CreateLocalizedProject(string parent, string name, string assemblyName,
+			string locale = LocaleEs, string projectStringsText = SampleStringEs)
 		{
-			var result = CreateFolder(parent, name);
-			CreateProjectInExistingFolder(result, name, assemblyName);
-			return result;
+			var projectFolder = CreateFolder(parent, name);
+			CreateProjectInExistingFolder(projectFolder, name, assemblyName);
+			CreateLocalizedResXFor(projectFolder, name, $"{name}-strings", locale, projectStringsText);
+			return projectFolder;
 		}
 
-		private void CreateProjectInExistingFolder(string folder, string project, string assemblyName)
+		private static void CreateProjectInExistingFolder(string folder, string project, string assemblyName)
 		{
 			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
 			var doc = new XDocument(
@@ -138,44 +177,55 @@ namespace FwBuildTasks
 							new XAttribute("Include", "ApplicationBusyDialog.resx")))));
 			string projectPath = Path.ChangeExtension(Path.Combine(folder, project), "csproj");
 			doc.Save(projectPath);
-			CreateResX(folder, project + "-strings");
+			CreateResX(folder, project + "-strings", SampleStringEn);
 		}
 
-		private void CreateResX(string folder, string fileName)
+		private void CreateLocalizedFiles()
+		{
+			CreateResX(m_FieldWorksFolder.Replace(m_srcFolder, m_l10nFolder),
+				$"{FieldWorksNamespace}.{FieldWorksStringsFilenameNoExt}.{LocaleEs}.resx", SampleStringEs);
+			CreateResX(m_FieldWorksPropertiesFolder.Replace(m_srcFolder, m_l10nFolder),
+				$"{FieldWorksNamespace}.{MoreStringsFilenameNoExt}.{LocaleEs}.resx", SampleStringEs);
+			CreateResX(m_FdoFolder.Replace(m_srcFolder, m_l10nFolder),
+				$"{FdoNamespace}.{FdoStringsFilenameNoExt}.{LocaleEs}.resx", SampleStringEs);
+		}
+
+		/// <summary>creates an English and a localized version of the same ResX file</summary>
+		/// <returns>the path to the localized version of the ResX file</returns>
+		private string CreateLocalizedResX(string projectFolder, string projectName, string fileNameNoExt,
+			string locale = LocaleEs, string englishText = SampleStringEn, string localizedText = SampleStringEs)
+		{
+			CreateResX(projectFolder, fileNameNoExt, englishText);
+			return CreateLocalizedResXFor(projectFolder, projectName, fileNameNoExt, locale, localizedText);
+		}
+
+		private string CreateLocalizedResXFor(string projectFolder, string projectName,
+			string fileNameNoExt, string locale, string localizedText)
+		{
+			// REVIEW (Hasso) 2019.11: "SIL.Subnamespace" should be rootier (expected: SIL.FieldWorks; actual: SIL.Project)
+			return CreateResX(projectFolder.Replace(m_srcFolder, m_l10nFolder),
+				$"SIL.{projectName}.{fileNameNoExt}.{locale}.resx", localizedText);
+		}
+
+		private static string CreateResX(string folder, string fileName, string textValue)
 		{
 			var doc = new XDocument(
 				new XElement("root",
 					new XElement("data",
 						new XAttribute("name", "ksTest"),
 						new XElement("value",
-							new XText("A category")))));
-			string projectPath = Path.ChangeExtension(Path.Combine(folder, fileName), "resx");
-			doc.Save(projectPath);
-		}
-
-		private string CreateTestPoFile(string locale, params string[] data)
-		{
-			Assert.That(data.Length % 3, Is.EqualTo(0));
-			var poPath = Path.Combine(m_sut.PoFileDirectory, LocalizeFieldWorks.PoFileLeadIn + locale + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-			for (int i = 0; i < data.Length; i += 3 )
-			{
-				writer.WriteLine("#" + data[i]);
-				writer.WriteLine("msgid \"" + data[i + 1] + "\"");
-				writer.WriteLine("msgstr \"" + data[i + 2] + "\"");
-				writer.WriteLine();
-
-			}
-			writer.Close();
-			return poPath;
+							new XText(textValue)))));
+			var path = Path.ChangeExtension(Path.Combine(folder, fileName), "resx");
+			Directory.CreateDirectory(folder);
+			doc.Save(path);
+			return path;
 		}
 
 		/// <summary>
 		/// Create some test data in DistFiles/Language Explorer/Configuration/strings-en.txt which we can try to localize.
 		/// </summary>
-		void CreateStringsXml()
+		private static void CreateStringsXml(string path, string txt)
 		{
-			m_stringsEnPath = m_sut.StringsEnPath;
 			var doc = new XDocument(
 				new XElement("strings",
 					new XElement("group",
@@ -185,87 +235,39 @@ namespace FwBuildTasks
 							new XAttribute("txt", "try out")),
 						new XElement("string",
 							new XAttribute("id", "fix"),
-							new XAttribute("txt", "A category")))));
-			Directory.CreateDirectory(Path.GetDirectoryName(m_stringsEnPath));
-			doc.Save(m_stringsEnPath);
+							new XAttribute("txt", txt)))));
+			// ReSharper disable once AssignNullToNotNullAttribute - StringsEnPath will always have a directory name
+			Directory.CreateDirectory(Path.GetDirectoryName(path));
+			doc.Save(path);
 		}
 
 		[Test]
 		public void DoIt()
 		{
+			FullSetup();
+
 			var result = m_sut.Execute();
 
-			Assert.That(result, Is.True);
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
 			var stringsEsPath = m_sut.StringsXmlPath("es");
 			Assert.That(File.Exists(stringsEsPath));
-			var doc = XDocument.Load(stringsEsPath);
+			// TODO (Hasso) 2019.11: further verification of strings-es.xml?
 
-			// Any txt attribute in the input file whose value matches a msgid in the PO file should be translated.
-			// Note: I don't think it's essential that the added elements come last. It may be necessary at some point
-			// to enhance this test to look for the "Misc" group, like the later tests look for the added ones.
-			var translation = doc.Root.Element("group").Elements("string").ToList()[1].Attribute("txt").Value;
-			Assert.That(translation, Is.EqualTo("Una categoría"));
+			VerifyExpectedResx(m_FieldWorksFolder, FieldWorksStringsFilenameNoExt, FieldWorksNamespace);
+			VerifyExpectedResx(m_FieldWorksPropertiesFolder, MoreStringsFilenameNoExt, FieldWorksNamespace);
+			VerifyExpectedResx(m_FdoFolder, FdoStringsFilenameNoExt, FdoNamespace);
 
-			// The output strings.xml should have a group with id LocalizedAttributes.
-			// It should have a text item for each thing in the PO file that looks like the Allomorph entry in the example
-			// (and a few other cases...this test is not yet comprehensive)
-			// with the translation.
-			VerifyGroup(doc, "LocalizedAttributes", "A_llomorph", "A_lomorfo");
-			// The output strings.xml should have a group with id LocalizedLiterals.
-			// It should have a text item for each thing in the PO file that looks like the Literal entry in the example
-			// with the translation.
-			VerifyGroup(doc, "LocalizedLiterals", "lit1", "litTrans1");
-			// The output strings.xml should have a group with id LocalizedContextHelp.
-			// It should have a text item for each thing in the PO file that looks like the Context help entry in the example
-			// with the translation. Here the ID is taken from the comment.
-			VerifyGroup(doc, "LocalizedContextHelp", "AffixForm", "Un alomorfo del afijo.");
-
-			// We're checking an intermediate here, but it's almost impossible to verify the final output,
-			// so checking some steps in the process is about the best we can do to check the right things
-			// are happening.
-			// We should generate es.xml in the Output directory (a form of the PO file suitable for including in an XSLT transform).
-			var esXmlPath = m_sut.XmlPoFilePath("es");
-			Assert.That(File.Exists(esXmlPath));
-			doc = XDocument.Load(esXmlPath);
-			Assert.That(doc.Root.Name.LocalName, Is.EqualTo("messages"));
-			var firstMsg = doc.Root.Element("msg");
-			Assert.That(firstMsg, Is.Not.Null);
-			var key = firstMsg.Element("key");
-			Assert.That(key, Is.Not.Null);
-			Assert.That(key.Value, Is.EqualTo("A browse view {0}{0:F1}"));
-			var str = firstMsg.Element("str");
-			Assert.That(str, Is.Not.Null);
-			Assert.That(str.Value, Is.EqualTo("Una vista examinar{0}{0:F1}"));
-			var comment = firstMsg.Element("comment");
-			Assert.That(comment, Is.Not.Null);
-			Assert.That(comment.Value, Is.EqualTo("first"));
-
-			// XML transformation should procude for each resx a file in  ${dir.fwoutput}/${language}/${partialDir}/
-			// whose name is ${RootNamespace}.${fileName}.${language}.resx. That is,
-			// The folder is
-			// - Output
-			// - plus the locale
-			// - plus the path from Src to the folder that has the resx
-			// The file name is
-			// - the root namespace from the .csproj
-			// - plus the name of the resx
-			// - plus the locale again
-			// - plus .resx
-			VerifyExpectedResx(m_FieldWorksFolder, "FieldWorks-strings", "SIL.FieldWorks");
-			VerifyExpectedResx(m_FieldWorksPropertiesFolder, "Properties.more strings", "SIL.FieldWorks");
-			VerifyExpectedResx(m_FdoFolder, "FDO-strings", "SIL.FDO");
-
-			VerifyExpectedResGenArgs(m_FieldWorksFolder, "FieldWorks-strings", "SIL.FieldWorks");
-			VerifyExpectedResGenArgs(m_FieldWorksPropertiesFolder, "Properties.more strings", "SIL.FieldWorks");
-			VerifyExpectedResGenArgs(m_FdoFolder, "FDO-strings", "SIL.FDO");
+			VerifyExpectedResGenArgs(m_FieldWorksFolder, FieldWorksStringsFilenameNoExt, FieldWorksNamespace);
+			VerifyExpectedResGenArgs(m_FieldWorksPropertiesFolder, MoreStringsFilenameNoExt, FieldWorksNamespace);
+			VerifyExpectedResGenArgs(m_FdoFolder, FdoStringsFilenameNoExt, FdoNamespace);
 
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
 			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
-			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FDO.resources.dll"), new EmbedInfo[] {
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FDO.resources.dll"), new[] {
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "FDO", "SIL.FDO.FDO-strings.es.resources"),
 							  "SIL.FDO.FDO-strings.es.resources")
 				});
-			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FieldWorks.resources.dll"), new EmbedInfo[] {
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FieldWorks.resources.dll"), new[] {
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "SIL.FieldWorks.FieldWorks-strings.es.resources"),
 							  "SIL.FieldWorks.FieldWorks-strings.es.resources"),
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "SIL.FieldWorks.strings.es.resources"),
@@ -273,7 +275,7 @@ namespace FwBuildTasks
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "Properties", "SIL.FieldWorks.Properties.more strings.es.resources"),
 							  "SIL.FieldWorks.Properties.more strings.es.resources")
 				});
-			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "xCoreIntName.resources.dll"), new EmbedInfo[] {
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "xCoreIntName.resources.dll"), new[] {
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "xCore", "xCoreInterfaces", "SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources"),
 							  "SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources")
 				});
@@ -282,10 +284,12 @@ namespace FwBuildTasks
 		[Test]
 		public void DoIt_SourceOnly()
 		{
+			FullSetup();
+
 			m_sut.Build = "SourceOnly";
 			var result = m_sut.Execute();
 
-			Assert.That(result, Is.True);
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
 			var stringsEsPath = m_sut.StringsXmlPath("es");
 			Assert.That(File.Exists(stringsEsPath));
 
@@ -297,25 +301,26 @@ namespace FwBuildTasks
 		public void DoIt_BinaryOnly()
 		{
 			// Setup
+			FullSetup();
 			m_sut.Build = "SourceOnly";
-			m_sut.Execute();
+			var result = m_sut.Execute();
+			Assert.That(result, Is.True, $"setup failed:{Environment.NewLine}{m_sut.ErrorMessages}");
 
 			// Execute
 			m_sut.Build = "BinaryOnly";
-			var result = m_sut.Execute();
+			result = m_sut.Execute();
 
-			Assert.That(result, Is.True);
+			Assert.That(result, Is.True, $"SUT failed:{Environment.NewLine}{m_sut.ErrorMessages}");
 
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
 			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
 		}
 
-		private void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources )
+		private static void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources)
 		{
-			string locale = "es";
 			var index = InstrumentedProjectLocalizer.LinkerPath.IndexOf(linkerPath);
-			Assert.That(index >= 0);
-			Assert.That(InstrumentedProjectLocalizer.LinkerCulture[index], Is.EqualTo(locale));
+			Assert.That(index, Is.GreaterThanOrEqualTo(0), $"LinkerPath not found: {linkerPath}");
+			Assert.That(InstrumentedProjectLocalizer.LinkerCulture[index], Is.EqualTo(LocaleEs));
 			Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
 			Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
 			Assert.That(InstrumentedProjectLocalizer.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
@@ -326,21 +331,27 @@ namespace FwBuildTasks
 				Assert.That(embeddedResources, Has.Member(resource));
 		}
 
+		/// <summary>
+		/// Verify that the specified resx file has had its translated version copied to
+		/// ${dir.fwoutput}/${language}/${partialDir}/${fileName}.${language}.resx. That is:
+		/// The folder is Output/[locale]/[the path from Src to the folder that has the resx]
+		/// The file name is [the root namespace from the csproj].[the original filename (no extension)].[locale].resx
+		/// </summary>
 		private void VerifyExpectedResx(string folder, string filename, string rootNamespace)
 		{
-			string locale = "es";
+			const string locale = "es";
 			var partialDir = folder.Substring(m_sut.SrcFolder.Length);
 			var expectedFolder = Path.Combine(m_sut.OutputFolder, locale) + partialDir; // Todo: Linux?
 			var expectedFileName = rootNamespace + "." + filename + "." + locale + ".resx";
 			var expectedPath = Path.Combine(expectedFolder, expectedFileName);
-			Assert.That(File.Exists(expectedPath));
+			Assert.That(File.Exists(expectedPath), $"should exist: {expectedPath}");
 			var doc = XDocument.Load(expectedPath);
 			var translation = doc.Descendants("value").First().Value;
 			// We generate .resx files where the first (currently only) Value element is the child of a data element which
-			// the stylesheet should try to translate. We give it the contents "A category" (see CreateResx).
+			// the stylesheet should try to translate. We give it the contents SampleStringEn (see CreateResx).
 			// The generated PO file (see Setup() is configured to translate this to the string below.
 			// This confirms that the transformation is actually doing localization.
-			Assert.That(translation, Is.EqualTo("Una categoría"));
+			Assert.That(translation, Is.EqualTo(SampleStringEs));
 		}
 
 		private void VerifyExpectedResGenArgs(string folder, string filename, string rootNamespace)
@@ -357,23 +368,13 @@ namespace FwBuildTasks
 			Assert.That(InstrumentedProjectLocalizer.ResGenOriginalFolders, Has.Member(folder));
 		}
 
-		private static void VerifyGroup(XDocument doc, string groupName, string expectedId, string expectedTxt)
-		{
-			XElement localAttrGroup = doc.Root.Elements("group").FirstOrDefault(x => x.Attribute("id").Value == groupName);
-			Assert.That(localAttrGroup, Is.Not.Null);
-			var stringItem = localAttrGroup.Element("string");
-			Assert.That(stringItem, Is.Not.Null);
-
-			Assert.That(stringItem.Attribute("id").Value, Is.EqualTo(expectedId));
-
-			Assert.That(stringItem.Attribute("txt").Value, Is.EqualTo(expectedTxt));
-		}
-
 		[Test]
 		public void SelectsCorrectProjects()
 		{
+			FullSetup();
+
 			m_sut.Execute();
-			List<string> projects= m_sut.GetProjectFolders();
+			List<string> projects = m_sut.GetProjectFolders();
 			Assert.That(projects.Contains(m_FieldWorksFolder));
 			Assert.That(projects.Contains(m_xCoreFolder));
 			Assert.That(projects.Contains(m_xCoreInterfacesFolder));
@@ -383,240 +384,168 @@ namespace FwBuildTasks
 			Assert.That(projects.Contains(m_FieldWorksPropertiesFolder), Is.False); // Review: we want to do the resx here, but it isn't a true project folder.
 		}
 
-		/// <summary>
-		/// Create a test Po file with only one string that should be ignored. That will result in a loud complaint for an empty PO file.
-		/// </summary>
-		[Test]
-		public void FuzzyStringsIgnored()
-		{
-			CreateTestPoFile("ge", " comment", "testmsgid", "testmessagestr\"" + Environment.NewLine + "#, fuzzy");
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining("VOID PO FILE"));
-		}
-
 		[Test]
 		public void BadBraceLetterReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0}", "test {o}");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0}", "test {o}");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
-		public void MisMatchedFinalBraceReported()
+		public void MismatchedFinalBraceReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0}", "test {0{");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0}", "test {0{");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
+
 		[Test]
-		public void MisMatchedInitialBraceReported()
+		public void MismatchedFinalBraceInPrecedingReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0}", "test }3}");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "{0} test {1}", "{0 test {1}");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[Test]
+		public void MismatchedInitialBraceReported()
+		{
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0}", "test }3}");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[Test]
+		public void MismatchedInitialBraceInFollowingReported()
+		{
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "{0} test {1}", "{0} test 1}");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
 		public void MissingOpenBraceReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0}", "test 0}");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0}", "test 0}");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
-		public void ExtraStringArgInMsgStrreported()
+		[Ignore("not implemented")]
+		public void InsideOutBracesReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0} {1}", "test {2} {1} {0}");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0} test", "test }0{ text");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
-		public void MissingMsgIdOpenQuoteReported()
+		[Ignore("Crowdin does this better than we used to, and it's now harder for us to match localized with original strings")]
+		// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missings args (only when the original string has args). Should we?
+		// see <c>Localizer.CheckMsgidAndMsgstr</c>
+		public void ExtraStringArgInMsgStrReported()
 		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid idWithNoOpenQuote\"");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.Close();
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0} {1}", "test {2} {1} {0}");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
-		public void MissingStrReported()
+		[Ignore("not yet implemented")]
+		public void AddedOrMissingStringsReported()
 		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id no str\"");
-			writer.WriteLine("msgid \"id2\"");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-
-		[Test]
-		public void MissingStrReportedWithCommentsBetween()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id no str\"");
-			writer.WriteLine("# comment");
-			writer.WriteLine("");
-			writer.WriteLine("msgid \"id2\"");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-
-		[Test]
-		public void MissingKeyReported()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id\"");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.WriteLine("# comment");
-			writer.WriteLine("");
-			writer.WriteLine("msgstr \"translation wit no id\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-
-		[Test]
-		public void DuplicateKeyReported()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id\"");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.WriteLine("msgid \"id\"");
-			writer.WriteLine("msgstr \"another translation of the same id\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-
-		[Test]
-		public void MissingMsgIdCloseQuoteReported()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"idWithNoCloseQuote");
-			writer.WriteLine("msgstr \"translation\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-
-		[Test]
-		public void MissingMsgStrOpenQuoteReported()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id\"");
-			writer.WriteLine("msgstr translation With No Open Quote\"");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
-		}
-		[Test]
-		public void MissingMsgStrCloseQuoteReported()
-		{
-			var poPath = Path.Combine(m_sut.PoFileDirectory,
-				LocalizeFieldWorks.PoFileLeadIn + "es" + LocalizeFieldWorks.PoFileExtension);
-			var writer = new StreamWriter(poPath, false, Encoding.UTF8);
-
-			writer.WriteLine("# comment");
-			writer.WriteLine("msgid \"id\"");
-			writer.WriteLine("msgstr \"translation With No Close Quote");
-			writer.Close();
-
-			var result = m_sut.Execute();
-
-			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(poPath));
+			// TODO (Hasso) 2019.12: test the following cases:
+			// - a resx file has not been localized
+			// - a resx file is missing strings that the original has
+			// - a resx file has strings that the original does not
+			throw new NotImplementedException();
 		}
 
 		[Test]
 		public void MissingFinalBraceReported()
 		{
-			string badPoFile = CreateTestPoFile("ge", "test", "test {0}", "test {0");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0}", "test {0 things");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badPoFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[Test]
+		public void ArgOrderChanged_OK()
+		{
+			SimpleSetupWithResX(LocaleGe, "test {0} {1}", "{1} le'Test {0}");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
+		}
+
+		[Test]
+		public void DoubleDigitArgs_OK()
+		{
+			SimpleSetupWithResX(LocaleGe, "test {10}", "{10} le'Test");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
+		}
+
+		[Test]
+		public void ErrorsReportedInStringsXml()
+		{
+			SimpleSetupFDO(LocaleGe, localizedStringsXml: "test {o}");
+			var badXmlFilePath = m_sut.StringsXmlSourcePath(LocaleGe);
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badXmlFilePath));
+		}
+
+		[Test]
+		public void ErrorsReportedInProjStringsResX()
+		{
+			SimpleSetupFDO(LocaleGe, localizedProjStrings: "test {o}");
+			var badResXFilePath = Path.Combine(m_l10nFolder, "FDO", $"SIL.FDO.FDO-strings.{LocaleGe}.resx");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
 		}
 
 		[Test]
 		public void MultipleCsProjFilesReported()
 		{
+			FullSetup();
 			CreateProjectInExistingFolder(m_FieldWorksFolder, "BadProject", "BadProject");
 
 			var result = m_sut.Execute();
@@ -627,7 +556,7 @@ namespace FwBuildTasks
 		}
 	}
 
-	class MockBuildEngine : IBuildEngine
+	internal class MockBuildEngine : IBuildEngine
 	{
 		#region IBuildEngine Members
 

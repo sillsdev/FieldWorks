@@ -1,27 +1,21 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using FwBuildTasks;
+using System.Xml.XPath;
 using Microsoft.Build.Framework;
 
 namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	/// <summary>
-	/// This class exists to perform the work on one PO file.
-	/// The main reason for having it is so that we can have member variables like CurrentFile,
+	/// This class exists to perform the work for one locale.
+	/// The main reason for having it is so that we can have member variables like CurrentLocaleDir,
 	/// and so that data for one parallel task is quite separate from others.
 	/// </summary>
 	public class Localizer
@@ -30,7 +24,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		public readonly List<string> Errors = new List<string>();
 
-		private string CurrentFile { get; set; }
+		/// <summary>the directory of localizations currently being processed (includes the locale subdirectory)</summary>
+		internal string CurrentLocaleDir { get; private set; } // REVIEW (Hasso) 2019.11: better name?
 
 		internal string Locale { get; set; }
 
@@ -38,13 +33,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		internal string FileVersion { get; set; }
 		internal string InformationVersion { get; set; }
 
-		public void Initialize(string currentFile, LocalizerOptions options)
+		public void Initialize(string currentDir, LocalizerOptions options)
 		{
 			Options = options;
-			CurrentFile = currentFile;
-			var currentFileName = Path.GetFileName(currentFile);
-			Locale = currentFileName.Substring(LocalizeFieldWorks.PoFileLeadIn.Length,
-				currentFileName.Length - LocalizeFieldWorks.PoFileLeadIn.Length - LocalizeFieldWorks.PoFileExtension.Length);
+			CurrentLocaleDir = currentDir;
+			Locale = Path.GetFileName(currentDir);
 		}
 
 		internal void LogError(string message)
@@ -59,16 +52,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				if (Options.BuildSource)
 				{
-					if (!CheckForPoFileProblems())
-						return;
-
-					CreateStringsXml();
-
-					CreateXmlMappingFromPo();
+					CopyStringsXml();
 				}
 
-				List<string> projectFolders;
-				if (!GetProjectFolders(out projectFolders))
+				if (!GetProjectFolders(out var projectFolders))
 					return;
 
 				using (var reader = new StreamReader(Options.AssemblyInfoPath, Encoding.UTF8))
@@ -94,14 +81,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (string.IsNullOrEmpty(Version))
 					Version = FileVersion;
 
-				//Parallel.ForEach(projectFolders, currentFolder =>
 				foreach (var currentFolder in projectFolders)
 				{
 					var projectLocalizer = CreateProjectLocalizer(currentFolder,
 						new ProjectLocalizerOptions(this, Options));
 					projectLocalizer.ProcessProject();
 				}
-				//);
 			}
 			catch (Exception ex)
 			{
@@ -119,6 +104,38 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var start = line.IndexOf("\"", StringComparison.Ordinal);
 			var end = line.LastIndexOf("\"", StringComparison.Ordinal);
 			return line.Substring(start + 1, end - start - 1);
+		}
+
+		private void CopyStringsXml()
+		{
+			var xmlFileName = string.Format(LocalizeFieldWorks.StringsXmlPattern, Locale);
+			var localizedXmlPath = Options.StringsXmlPath(Locale);
+			var localizedXmlSourcePath = Options.StringsXmlSourcePath(Locale);
+			// ReSharper disable once AssignNullToNotNullAttribute - localizedXmlPath is in a valid directory
+			Directory.CreateDirectory(Path.GetDirectoryName(localizedXmlPath));
+			if (File.Exists(localizedXmlSourcePath))
+			{
+				// check for errors
+				var xmlDoc = XDocument.Load(localizedXmlSourcePath);
+				// ReSharper disable once AssignNullToNotNullAttribute -- there will always be a root
+				var elts = xmlDoc.Root.XPathSelectElements("/strings/group/string");
+				var hasErrors = false;
+				foreach (var elt in elts)
+				{
+					if (CheckForErrors(localizedXmlSourcePath, elt.Attribute("txt")?.Value))
+						hasErrors = true;
+				}
+				if (hasErrors)
+					return;
+
+				// copy
+				File.Copy(localizedXmlSourcePath, localizedXmlPath, overwrite: true);
+				Options.LogMessage(MessageImportance.Low, "copying {0} to {1}", xmlFileName, localizedXmlPath);
+			}
+			else
+			{
+				throw new FileNotFoundException($"{xmlFileName} not found", localizedXmlSourcePath);
+			}
 		}
 
 		internal bool GetProjectFolders(out List<string> projectFolders)
@@ -165,295 +182,43 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return true;
 		}
 
-		private void CreateStringsXml()
+
+		/// <returns><c>true</c> if the given string has errors in string.Format variables</returns>
+		internal bool CheckForErrors(string filename, string localizedText)
 		{
-			Options.LogMessage(MessageImportance.Low, "Create StringsXml for {0}", CurrentFile);
-			var input = Options.StringsEnPath;
-			var output = Options.StringsXmlPath(Locale);
-			StoreLocalizedStrings(input, output);
+			const string MistypedSubMarker1InFile0 =
+				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker ";
+			if (string.IsNullOrEmpty(localizedText?.Trim()))
+				return false; // an empty string has no errors
+			// Check for translator using a look-alike character in place of digit 0 or 1 in string.Format control string.
+			return CheckForError(filename, localizedText, new Regex("{[oOlLiI]}"),
+					MistypedSubMarker1InFile0 + "using a letter in place of digit 0 or 1") ||
+				CheckForError(filename, localizedText, new Regex("[{}][0-9]{1-2}{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("}[0-9]{1-2}[{}]"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("{[^}]*{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("}[^{]*}"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("^[^{]*[0-9]}"), MistypedSubMarker1InFile0 + "with a missing opening brace") ||
+				CheckForError(filename, localizedText, new Regex("{[0-9][^}]*$"), MistypedSubMarker1InFile0 + "with a missing closing brace");
+			//// TODO (Hasso) 2019.12: if (!CheckMsgidAndMsgstr(englishText, localizedText)) return true;
 		}
 
-		private void StoreLocalizedStrings(string sEngFile, string sNewFile)
+		/// <returns><c>true</c> if the given string matches the pattern (has errors)</returns>
+		private bool CheckForError(string filename, string localizedText, Regex pattern,
+			string message)
 		{
-			if (File.Exists(sNewFile))
-				File.Delete(sNewFile);
-			PoString posHeader;
-			var dictTrans = LoadPOFile(CurrentFile, out posHeader);
-			if (dictTrans.Count == 0)
-			{
-				// Todo: test/convert
-				Console.WriteLine("No translations found in PO file!");
-				throw new Exception("VOID PO FILE");
-			}
-			var xdoc = new XmlDocument();
-			xdoc.Load(sEngFile);
-			TranslateStringsElements(xdoc.DocumentElement, dictTrans);
-			StoreTranslatedAttributes(xdoc.DocumentElement, dictTrans);
-			StoreTranslatedLiterals(xdoc.DocumentElement, dictTrans);
-			StoreTranslatedContextHelp(xdoc.DocumentElement, dictTrans);
-			xdoc.Save(sNewFile);
-		}
-
-		/// <summary>
-		/// This nicely recursive method replaces the English txt attribute values with the
-		/// corresponding translated values if they exist.
-		/// </summary>
-		/// <param name="xel"></param>
-		/// <param name="dictTrans"></param>
-		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static void TranslateStringsElements(XmlElement xel,
-			Dictionary<string, PoString> dictTrans)
-		{
-			if (xel.Name == "string")
-			{
-				PoString pos;
-				var sEnglish = xel.GetAttribute("txt");
-				if (dictTrans.TryGetValue(sEnglish, out pos))
-				{
-					var sTranslation = pos.MsgStrAsString();
-					xel.SetAttribute("txt", sTranslation);
-					xel.SetAttribute("English", sEnglish);
-				}
-			}
-			foreach (XmlNode xn in xel.ChildNodes)
-			{
-				if (xn is XmlElement)
-					TranslateStringsElements(xn as XmlElement, dictTrans);
-			}
-		}
-
-		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static void StoreTranslatedThing(XmlElement xelRoot,
-			Dictionary<string, PoString> enStrings, string whatThing,
-			Func<string, bool> skipCommentMethod,
-			Func<PoString, string, string> idMethod)
-		{
-			var xelGroup = xelRoot.OwnerDocument.CreateElement("group");
-			xelGroup.SetAttribute("id", whatThing);
-			foreach (var current in enStrings)
-			{
-				var pos = current.Value;
-				var sValue = pos.MsgStrAsString();
-				if (string.IsNullOrEmpty(sValue))
-					continue;
-				var autoComments = pos.AutoComments;
-				if (autoComments == null)
-					continue;
-				foreach (var comment in autoComments)
-				{
-					if (skipCommentMethod(comment))
-						continue;
-
-					var xelString = xelRoot.OwnerDocument.CreateElement("string");
-					xelString.SetAttribute("id", idMethod(pos, comment));
-					xelString.SetAttribute("txt", sValue);
-					xelGroup.AppendChild(xelString);
-					break;
-				}
-			}
-			xelRoot.AppendChild(xelGroup);
-		}
-
-		private static void StoreTranslatedAttributes(XmlElement xelRoot,
-			Dictionary<string, PoString> enStrings)
-		{
-			StoreTranslatedThing(xelRoot, enStrings, "LocalizedAttributes",
-				comment => comment == null || (!comment.StartsWith("/") && !comment.StartsWith("file:///")) || !IsFromXmlAttribute(comment),
-				(pos, comment) => pos.MsgIdAsString());
-		}
-
-		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static void StoreTranslatedLiterals(XmlElement xelRoot,
-			Dictionary<string, PoString> enStrings)
-		{
-			StoreTranslatedThing(xelRoot, enStrings, "LocalizedLiterals",
-				comment => comment == null || !comment.StartsWith("/") || !comment.EndsWith("/lit"),
-				(pos, comment) => pos.MsgIdAsString());
-		}
-
-		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static void StoreTranslatedContextHelp(XmlElement xelRoot,
-			Dictionary<string, PoString> enStrings)
-		{
-			StoreTranslatedThing(xelRoot, enStrings, "LocalizedContextHelp",
-				comment => string.IsNullOrEmpty(FindContextHelpId(comment)),
-				(pos1, comment) => FindContextHelpId(comment));
-		}
-
-		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static string FindContextHelpId(string comment)
-		{
-			const string ksContextMarker = "/ContextHelp.xml::/strings/item[@id=\"";
-			if (comment == null || !comment.StartsWith("/"))
-				return null;
-
-			var idx = comment.IndexOf(ksContextMarker);
-			if (idx <= 0)
-				return null;
-
-			var sId = comment.Substring(idx + ksContextMarker.Length);
-			var idxEnd = sId.IndexOf('"');
-			return idxEnd > 0 ? sId.Remove(idxEnd) : null;
-		}
-
-		private static bool IsFromXmlAttribute(string sComment)
-		{
-			var idx = sComment.LastIndexOf("/");
-			if (idx < 0 || sComment.Length == idx + 1)
-				return false;
-			if (sComment[idx + 1] != '@')
-				return false;
-			return sComment.Length > idx + 2;
-		}
-
-		private static Dictionary<string, PoString> LoadPOFile(string sMsgFile, out PoString posHeader)
-		{
-			using (var inputStream = new StreamReader(sMsgFile, Encoding.UTF8))
-			{
-				var dictTrans = new Dictionary<string, PoString>();
-				posHeader = PoString.ReadFromFile(inputStream);
-				var pos = PoString.ReadFromFile(inputStream);
-				while (pos != null)
-				{
-					if (!pos.HasEmptyMsgStr && (pos.Flags == null || !pos.Flags.Contains("fuzzy")))
-						dictTrans.Add(pos.MsgIdAsString(), pos);
-					pos = PoString.ReadFromFile(inputStream);
-				}
-				inputStream.Close();
-				return dictTrans;
-			}
-		}
-
-		private void CreateXmlMappingFromPo()
-		{
-			Options.LogMessage(MessageImportance.Low, "Create XML mapping from PO for {0}", CurrentFile);
-			var output = Options.XmlPoFilePath(Locale);
-			Directory.CreateDirectory(Path.GetDirectoryName(output));
-			var converter = new Po2XmlConverter { PoFilePath = CurrentFile, XmlFilePath = output };
-			converter.Run();
-		}
-
-		private enum PoState
-		{
-			Start,		// beginning of file
-			MsgId,		// msgid seen most recently
-			MsgStr		// msgstr seen most recently
-		}
-
-		private bool CheckForPoFileProblems()
-		{
-			Options.LogMessage(MessageImportance.Low, "Checking for PO file problems for {0}", CurrentFile);
-			var retval = true;
-			var keys = new HashSet<string>();
-			var state = PoState.Start;
-			var currentId = string.Empty;
-			var currentValue = string.Empty;
-			foreach (var line in File.ReadLines(CurrentFile))
-			{
-				if (string.IsNullOrEmpty(line.Trim()) || line.StartsWith("#"))
-					continue;
-				// Check for translator using a look-alike character in place of digit 0 or 1 in string.Format control string.
-				if (CheckForError(line, new Regex("{[oOlLiI]}"),
-					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker using a letter in place of digit 0 or 1"))
-					retval = false;
-				if (CheckForError(line, new Regex("[{}][0-9]{"),
-					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
-					retval = false;
-				if (CheckForError(line, new Regex("}[0-9][{}]"),
-					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
-					retval = false;
-				if (CheckForError(line, new Regex("^(msgid|msgstr)[^{]*[0-9]}"),
-					"{0} contains a suspicious string in ({1}) that is probably a mis-typed string substitution marker with a missing opening brace"))
-					retval = false;
-				if (CheckForError(line, new Regex("{[0-9][^}]*$"),
-					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with a missing closing brace"))
-					retval = false;
-				if (CheckForError(line, new Regex("^(msgid|msgstr)[ \\t]+[^\"]"),
-					"{0} contains a suspicious line starting with ({1}) that is probably a key or value with missing required open quote"))
-					retval = false;
-				if (CheckForError(line, new Regex("^(msgid|msgstr)[ \\t]+\"[^\"]*$"),
-					"{0} contains a suspicious line ({1}) that is probably a key or value with missing required closing quote"))
-					retval = false;
-				if (line.StartsWith("msgid"))
-				{
-					if (state == PoState.MsgStr)
-					{
-						// We've collected the full Id and Value, so check them.
-						if (!CheckMsgidAndMsgstr(keys, currentId, currentValue))
-							retval = false;
-					}
-					if (state == PoState.MsgId)
-					{
-						LogError($"{CurrentFile} contains a key with no corresponding value: ({currentId})");
-						retval = false;
-					}
-					state = PoState.MsgId;
-					currentId = ExtractMsgValue(line);
-					currentValue = string.Empty;
-				}
-				else if (line.StartsWith("msgstr"))
-				{
-					currentValue = ExtractMsgValue(line);
-					if (state != PoState.MsgId)
-					{
-						LogError($"{CurrentFile} contains a value with no corresponding key: ({currentValue})");
-						retval = false;
-					}
-					state = PoState.MsgStr;
-				}
-				else
-				{
-					switch (state)
-					{
-						case PoState.MsgId:
-							var id = ExtractMsgValue(line);
-							if (!string.IsNullOrEmpty(id))
-								currentId = currentId + id;
-							break;
-						case PoState.MsgStr:
-							var val = ExtractMsgValue(line);
-							if (!string.IsNullOrEmpty(val))
-								currentValue = currentValue + val;
-							break;
-					}
-				}
-			}
-			// We need to check the final msgid/msgstr pair.
-			if (!CheckMsgidAndMsgstr(keys, currentId, currentValue))
-				retval = false;
-			return retval;
-		}
-
-		private bool CheckForError(string contents, Regex pattern, string message)
-		{
-			var matches = pattern.Matches(contents);
+			var matches = pattern.Matches(localizedText);
 			if (matches.Count == 0)
 				return false; // all is well.
-			LogError(string.Format(message, CurrentFile, matches[0].Value));
+			LogError(string.Format(message, filename, matches[0].Value));
 			return true;
 		}
 
-		private static string ExtractMsgValue(string line)
-		{
-			var idxMin = line.IndexOf('"');
-			var idxLim = line.LastIndexOf('"');
-			if (idxMin < 0 || idxLim <= idxMin)
-				return string.Empty;
-			++idxMin;	//step past the quote
-			return line.Substring(idxMin, idxLim - idxMin);
-		}
-
-		private bool CheckMsgidAndMsgstr(ISet<string> keys, string msgid, string msgstr)
+		private bool CheckMsgidAndMsgstr(string msgid, string msgstr)
 		{
 			// allow empty data without complaint
 			if (string.IsNullOrEmpty(msgid) && string.IsNullOrEmpty(msgstr))
 				return true;
-			if (keys.Contains(msgid))
-			{
-				LogError($"{CurrentFile} contains a duplicate key: {msgid}");
-				return false;
-			}
-			keys.Add(msgid);
+
 			var argRegEx = new Regex("{[0-9]}");
 			var maxArg = -1;
 			foreach (Match idmatch in argRegEx.Matches(msgid))
@@ -463,12 +228,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (Convert.ToInt32(strmatch.Value[1]) <= maxArg)
 					continue;
 
-				LogError(
-					$"{CurrentFile} contains a key/value pair where the value ({msgstr}) has more arguments than the key ({msgid})");
+				// TODO (Hasso) 2019.12: LogError(
+				//	$"{CurrentFile} contains a key/value pair where the value ({msgstr}) has more arguments than the key ({msgid})");
 				return false;
 			}
 			return true;
 		}
-
 	}
 }

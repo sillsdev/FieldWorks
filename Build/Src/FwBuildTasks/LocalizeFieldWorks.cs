@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,28 +6,24 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
 using Task = Microsoft.Build.Utilities.Task;
 
-namespace FwBuildTasks
+namespace SIL.FieldWorks.Build.Tasks
 {
 	/// <summary>
 	/// This class implements a complex process required to generate various resource DLLs for
 	/// the localization of fieldworks. The main input of the process is a set of files kept
-	/// under Localizations following the pattern messages.[locale].po, which contain
-	/// translations of the many English strings in FieldWorks for the specified [locale]
-	/// (e.g., fr, es).
+	/// under Localizations/l10ns/[locale], which are translated versions of resx and other files
+	/// in FieldWorks for the specified [locale] (e.g., fr, es, zh-CN).
 	///
-	/// We first apply some sanity checks, making sure String.Format markers like {0}, {1} etc
-	/// have not been obviously mangled in translation.
+	/// We first apply some sanity checks, making sure String.Format markers like {0}, {1}, etc.
+	/// have not been obviously mangled in translation. TODO (Hasso) 2019.11: test and reimplement these checks if necessary
 	///
-	/// The first stage of the process applies these substitutions to certain strings in
-	/// DistFiles/Language Explorer/Configuration/strings-en.txt to produce
-	/// a strings-[locale].txt for each locale (in the same place).
+	/// The first stage of the process copies localized strings-[locale].xml files to
+	/// DistFiles/Language Explorer/Configuration (the same place as strings-en.xml). TODO (Hasso) 2019.11: reimplement
 	///
 	/// The second stage generates a resources.dll for each (non-test) project under Src, in
 	/// Output/[config]/[locale]/[project].resources.dll. For example, in a release build
@@ -36,20 +32,16 @@ namespace FwBuildTasks
 	///
 	/// The second stage involves multiple steps to get to the resources DLL (done in parallel
 	/// for each locale).
-	/// - First we generate a lookup table (for an XSLT) which contains a transformation of the
-	///   .PO file, Output/[locale].xml, e.g., Output/fr.xml.
 	/// - For each non-test project,
 	///     - for each .resx file in the project folder or a direct subfolder
-	///         - apply an xslt, Build/LocalizeResx.xsl, to [path]/File.resx, producing
-	///           Output[path]/[namespace].File.Strings.[locale].resx. (resx files are
-	///           internally xml)
-	///           (LocalizeResx.xsl includes the Output/fr.xml file created in the first step
-	///           and uses it to translate appropriate items in the resx.)
+	///         - copy the localized resx from
+	///           Localizations/l10ns/[locale]/[path]/[filename].[locale].resx to
+	///           Output[path]/[namespace].File.Strings.[locale].resx
 	///           (Namespace is the fully qualified namespace of the project, which is made
 	///           part of the filename.)
 	///         - run an external program, resgen, which converts the resx to a .resources file
 	///           in the same location, with otherwise the same name.
-	///     - run an external program, al (assembly linker) which assembles all the .resources
+	///     - run an external program, al (assembly linker), which assembles all the .resources
 	///       files into the final localized resources.dll
 	/// </summary>
 	public class LocalizeFieldWorks: Task
@@ -65,7 +57,7 @@ namespace FwBuildTasks
 		internal object SyncObj = new object();
 
 		/// <summary>
-		/// The directory in which it all happens, corresponding to the main ww directory in source control.
+		/// The directory in which it all happens, corresponding to the main fw directory in source control.
 		/// </summary>
 		[Required]
 		public string RootDirectory { get; set; }
@@ -80,26 +72,24 @@ namespace FwBuildTasks
 		/// </summary>
 		public string Config { get; set; }
 
-		internal static readonly string PoFileRelative = "Localizations"; // relative to root directory.
+		internal static readonly string L10nFileRelative = Path.Combine("Localizations", "l10ns"); // relative to root directory.
 
-		internal string PoFileDirectory => Path.Combine(RootDirectory, PoFileRelative);
+		internal string L10nFileDirectory => Path.Combine(RootDirectory, L10nFileRelative);
 
-		internal static readonly string PoFileLeadIn = "messages.";
-		internal static readonly string PoFileExtension = ".po";
+		internal const string L10nDirSuffix = "-l10n";
 
-		internal static readonly string DistFilesFolderName = "DistFiles";
-		internal static readonly string LExFolderName = "Language Explorer";
-		internal static readonly string ConfigFolderName = "Configuration";
-		internal static readonly string OutputFolderName = "Output";
-		internal static readonly string SrcFolderName = "Src";
-		internal static readonly string BldFolderName = "Build";
+		internal const string DistFilesFolderName = "DistFiles";
+		internal const string LExFolderName = "Language Explorer";
+		internal const string ConfigFolderName = "Configuration";
+		internal const string OutputFolderName = "Output";
+		internal const string SrcFolderName = "Src";
+		internal const string BldFolderName = "Build";
 
 		internal static readonly string AssemblyInfoName = "CommonAssemblyInfo.cs";
 
 		internal string AssemblyInfoPath => Path.Combine(SrcFolder, AssemblyInfoName);
 
-		internal string ConfigurationFolder => Path.Combine(Path.Combine(Path.Combine(RootDirectory, DistFilesFolderName), LExFolderName),
-			ConfigFolderName);
+		internal string ConfigurationFolder => Path.Combine(RootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
 
 		internal string OutputFolder => Path.Combine(RootDirectory, OutputFolderName);
 
@@ -117,89 +107,83 @@ namespace FwBuildTasks
 		/// </summary>
 		internal string StringsXmlFolder => ConfigurationFolder;
 
-		internal static readonly string EnglishLocale = "en";
+		internal const string EnglishLocale = "en";
 
-		internal static readonly string StringsXmlPattern = "strings-{0}.xml";
+		internal const string StringsXmlPattern = "strings-{0}.xml";
 		internal Localizer[] m_localizers;
 
 		internal string StringsEnPath => StringsXmlPath(EnglishLocale);
 
 		/// <summary>
-		/// The path where wer expect to store a file like strings-es.xml for a given locale.
+		/// The destination path for localized strings-[locale].xml files (DistFiles\Language Explorer\Configuration\strings-[locale].xml)
 		/// </summary>
-		/// <param name="locale"></param>
-		/// <returns></returns>
 		internal string StringsXmlPath(string locale)
 		{
 			return Path.Combine(StringsXmlFolder, string.Format(StringsXmlPattern, locale));
 		}
 
-
 		/// <summary>
-		/// The path where we expect to store a temporary form of the .PO file for a particular locale,
-		/// such as Output/es.xml.
+		/// The source path for localized strings-[locale].xml files (Localizations\l10ns\[locale]\strings-[locale].xml)
 		/// </summary>
-		internal string XmlPoFilePath(string locale)
+		internal string StringsXmlSourcePath(string locale)
 		{
-			return Path.Combine(OutputFolder, Path.ChangeExtension(locale, ".xml"));
+			return Path.Combine(L10nFileDirectory, locale, string.Format(StringsXmlPattern, locale));
 		}
 
-		private Localizer CreateLocalizer(string currentFile, LocalizeFieldWorks parent)
+		private Localizer CreateLocalizer(string currentDir)
 		{
-			var localizer = Activator.CreateInstance(LocalizerType) as Localizer;
-			localizer.Initialize(currentFile, new LocalizerOptions(this));
+			var localizer = (Localizer) Activator.CreateInstance(LocalizerType);
+			localizer.Initialize(currentDir, new LocalizerOptions(this));
 			return localizer;
 		}
 
 		/// <summary>
 		/// The main entry point invoked by a line in the build script.
 		/// </summary>
-		/// <returns></returns>
 		public override bool Execute()
 		{
 #if DEBUG
 			string test = RealFwRoot;
-			Debug.WriteLine("RealFwRoot => '{0}'", test);	// keeps compiler from complaining.
+			Debug.WriteLine("RealFwRoot => '{0}'", test);   // keeps compiler from complaining.
 #endif
-			Log.LogMessage(MessageImportance.Low, "PoFileDirectory is set to {0}.", PoFileDirectory);
+			Log.LogMessage(MessageImportance.Low, "L10nFileDirectory is set to {0}.", L10nFileDirectory);
 
-			// Get all the .po files paths:
-			string[] poFiles = Directory.GetFiles(PoFileDirectory, PoFileLeadIn + "*" + PoFileExtension);
+			// Get all the directories containing localized .resx files:
+			string[] l10nDirs = Directory.GetDirectories(L10nFileDirectory);
 
-			Log.LogMessage(MessageImportance.Low, "{0} .po files found.", poFiles.Length);
+			Log.LogMessage(MessageImportance.Low, "{0} l10n dirs found.", l10nDirs.Length);
 
-			// Prepare to get responses from processing each .po file
-			m_localizers = new Localizer[poFiles.Length];
+			// Prepare to get responses from processing each locale
+			m_localizers = new Localizer[l10nDirs.Length];
 
 			Log.LogMessage(MessageImportance.Normal, "Generating localization assemblies...");
 
 			// Main loop for each language:
-			Parallel.ForEach(poFiles, currentFile =>
+			Parallel.ForEach(l10nDirs, currentDir =>
 			{
-				// Process current .po file:
-				var localizer = CreateLocalizer(currentFile, this);
+				// Process current l10n dir:
+				var localizer = CreateLocalizer(currentDir);
 				localizer.ProcessFile();
 
 				// Slot current localizer into array at index matching current language.
 				// This allows us to output any errors in a coherent manner.
-				var index = Array.FindIndex(poFiles, poFile => poFile == currentFile);
+				var index = Array.FindIndex(l10nDirs, dir => dir == currentDir);
 				if (index != -1)
 					m_localizers[index] = localizer;
-			}
-			);
+			});
 
 			var buildFailed = false;
 			// Output all processing results to console:
-			for (var i = 0; i < poFiles.Length; i++)
+			for (var i = 0; i < l10nDirs.Length; i++)
 			{
 				if (m_localizers[i] == null)
 				{
-					LogError($"ERROR: localization of {poFiles[i]} was not done!");
+					LogError($"ERROR: localization of {l10nDirs[i]} was not done!");
 					buildFailed = true;
 				}
 				else if (m_localizers[i].Errors.Count > 0)
 				{
-					LogError($"Got Errors localizing {poFiles[i]}:");
+					LogError($"Got Errors localizing {l10nDirs[i]}:");
 					foreach (var message in m_localizers[i].Errors)
 					{
 						LogError(message);
@@ -229,11 +213,10 @@ namespace FwBuildTasks
 		/// </summary>
 		protected virtual string RealFwRoot => RootDirectory;
 
-		// for testing only: get the project folders of the first Localizer
+		/// <remarks>for testing only: get the project folders of the first Localizer</remarks>
 		internal List<string> GetProjectFolders()
 		{
-			List<string> result;
-			m_localizers[0].GetProjectFolders(out result);
+			m_localizers[0].GetProjectFolders(out var result);
 			return result;
 		}
 	}

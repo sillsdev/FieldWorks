@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,8 +13,9 @@ using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using FwBuildTasks;
 using Microsoft.Build.Framework;
+
+// ReSharper disable AssignNullToNotNullAttribute - System.IO is hypocritical in its null handling
 
 namespace SIL.FieldWorks.Build.Tasks.Localization
 {
@@ -35,7 +36,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			try
 			{
-				var x = new CultureInfo(Options.Locale);
+				// ReSharper disable once ObjectCreationAsStatement - Instantiating only to see if it is possible
+				new CultureInfo(Options.Locale);
 				LocaleIsSupported = true;
 			}
 			catch
@@ -58,7 +60,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return; // nothing to localize; in particular we should NOT call al with no inputs.
 
 			if (Options.BuildSource)
-				CreateSources(resourceInfo);
+				CopySources(resourceInfo);
 
 			if (Options.BuildBinaries)
 				CreateResourceAssemblies(resourceInfo);
@@ -66,7 +68,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		private static ResourceInfo GetResourceInfo(string projectFolder)
 		{
-			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
+			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // called only if there is exactly one.
 			var doc = XDocument.Load(projectFile);
 			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
 
@@ -98,54 +100,26 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		/// <summary>
-		/// Finds all the strings in each .resx that match the key (original english) from the .po and replace them with the str (translated value)
+		/// Copies localized resx files from the Localizations repository to the Output directory, adding the namespace to the filename
 		/// </summary>
-		private void LocalizeResx(ResourceInfo resourceInfo, string resxPath, Dictionary<string, string> poMap)
+		private void CopySources(ResourceInfo resourceInfo)
 		{
-			var localizedResxPath = GetLocalizedResxPath(resourceInfo, resxPath);
-			Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
-			var resx = XDocument.Load(resxPath);
-			// ReSharper disable once AssignNullToNotNullAttribute -- There will always be a Root
-			// Select from the root the elements with localizable strings
-			// (resx data elements that are translatable strings have no type attribute,
-			// no mimetype attribute and have a name that doesn't start with '>>' or '$this')
-			var stringValues = resx.Root.XPathSelectElements("/*/data[not(@type) and not(@mimetype)]")
-				.Where(x => x.Attribute("name") != null && !x.Attribute("name").Value.StartsWith(">>") &&
-					!x.Attribute("name").Value.StartsWith("$this")).ToArray();
-
-			foreach (var elementToUpdate in stringValues)
-			{
-				var valueElement = elementToUpdate.Element("value");
-				var englishContent = valueElement?.Value;
-				// if the string is empty don't go looking for it's translation, also don't overwrite content with missing translations
-				if (!string.IsNullOrEmpty(englishContent) && poMap.ContainsKey(englishContent))
-				{
-					valueElement.Value = poMap[englishContent];
-				}
-			}
-			Options.LogMessage(MessageImportance.Low, "Saving {0} resx source in {1}", Options.Locale, localizedResxPath);
-			resx.Save(localizedResxPath);
-		}
-
-		private void CreateSources(ResourceInfo resourceInfo)
-		{
-			var poMap = new Dictionary<string, string>();
-			var poXmlDoc = XDocument.Load(Path.Combine(Options.OutputFolder, Options.Locale + ".xml"));
-			var msgElements = poXmlDoc.Root.Descendants("msg"); // There is one msg element for each unique string in the .po file
-			foreach (var msg in msgElements)
-			{
-				var key = msg.Element("key"); // the key is the original english value
-				var str = msg.Element("str"); // str is the translated value
-				if (!string.IsNullOrEmpty(key?.Value) && !string.IsNullOrEmpty(str?.Value))
-				{
-					poMap[key.Value] = str.Value;
-				}
-			}
 			foreach (var resxFile in resourceInfo.ResXFiles)
 			{
-				Options.LogMessage(MessageImportance.Low, "Creating source for {0}", resxFile);
-				LocalizeResx(resourceInfo, resxFile, poMap);
-				Options.LogMessage(MessageImportance.Low, "Done creating source for {0}", resxFile);
+				var localizedResxPath = GetLocalizedResxPath(resourceInfo, resxFile);
+				var localizedResxSourcePath = GetLocalizedResxSourcePath(resourceInfo, resxFile);
+				Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
+				if (File.Exists(localizedResxSourcePath))
+				{
+					if (CheckResXForErrors(localizedResxSourcePath))
+						continue;
+					File.Copy(localizedResxSourcePath, localizedResxPath, overwrite: true);
+					Options.LogMessage(MessageImportance.Low, "copying {0} resx to {1}", Options.Locale, localizedResxPath);
+				}
+				else
+				{
+					Options.LogError($"{Options.Locale} resx not found at {localizedResxSourcePath}");
+				}
 			}
 		}
 
@@ -162,6 +136,45 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				subFolder = Path.GetFileName(partialDir) + ".";
 			var fileName = $"{resourceInfo.RootNameSpace}.{subFolder}{resxFileName}.{Options.Locale}.resx";
 			return Path.Combine(outputFolder, fileName);
+		}
+
+		private string GetLocalizedResxSourcePath(ResourceInfo resourceInfo, string resxPath)
+		{
+			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
+			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.SrcFolder.Length + 1));
+			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
+			// This is the relative path from the project folder to the resx file folder.
+			// It needs to go into the file name if not empty, but with a dot instead of folder separator.
+			var projectPartialDir = resourceInfo.ProjectFolder.Substring(Options.SrcFolder.Length + 1);
+			var subFolder = "";
+			if (partialDir.Length > projectPartialDir.Length)
+				subFolder = Path.GetFileName(partialDir) + ".";
+			var fileName = $"{resourceInfo.RootNameSpace}.{subFolder}{resxFileName}.{Options.Locale}.resx";
+			// TODO (Hasso) 2019.11: var fileName = $"{resxFileName}.{Options.Locale}.resx";
+			return Path.Combine(sourceFolder, fileName);
+		}
+
+		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>
+		private bool CheckResXForErrors(string resxPath)
+		{
+			var resx = XDocument.Load(resxPath);
+			// ReSharper disable once AssignNullToNotNullAttribute -- There will always be a Root
+			// ReSharper disable PossibleNullReferenceException -- R# doesn't recognize that x.Attribute("name") *is* checked for null
+			// Select from the root the elements with localizable strings
+			// (resx data elements that are translatable strings have no type attribute,
+			// have no mimetype attribute, and have a name that doesn't start with '>>' or '$this')
+			var stringValues = resx.Root.XPathSelectElements("/*/data[not(@type) and not(@mimetype)]")
+				.Where(x => x.Attribute("name") != null && !x.Attribute("name").Value.StartsWith(">>") &&
+							!x.Attribute("name").Value.StartsWith("$this")).ToArray();
+			// ReSharper restore PossibleNullReferenceException
+
+			var hasErrors = false;
+			foreach (var elementToUpdate in stringValues)
+			{
+				if (Options.CheckForErrors(resxPath, elementToUpdate.Element("value")?.Value))
+					hasErrors = true;
+			}
+			return hasErrors;
 		}
 
 		private void CreateResourceAssemblies(ResourceInfo resourceInfo)
@@ -230,8 +243,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var fileName = IsUnix ? "al" : "al.exe";
 			var arguments = BuildLinkerArgs(outputDllPath, culture, fileversion,
 				productVersion, version, resources);
-			var stdOutput = string.Empty;
-			var exitCode = RunProcess(fileName, arguments, out stdOutput);
+			var exitCode = RunProcess(fileName, arguments, out var stdOutput);
 			if (exitCode != 0)
 			{
 				throw new ApplicationException(
@@ -259,6 +271,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 						process.OutputDataReceived += (sender, e) =>
 						{
 							if (e.Data == null)
+								// ReSharper disable once AccessToDisposedClosure - we wait for the process to exit before disposing the handle
 								outputWaitHandle.Set();
 							else
 								output = e.Data;
@@ -317,10 +330,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 				arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
 			}
-			var stdOutput = string.Empty;
 			// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
 			// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
-			var exitCode = RunProcess(fileName, arguments, out stdOutput, workdir: originalResxFolder);
+			var exitCode = RunProcess(fileName, arguments, out var stdOutput, workdir: originalResxFolder);
 			if (exitCode != 0)
 			{
 				throw new ApplicationException($"Resgen returned error {exitCode} for {localizedResxPath}.\n" +
