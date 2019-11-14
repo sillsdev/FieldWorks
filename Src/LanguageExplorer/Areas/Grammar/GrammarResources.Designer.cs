@@ -369,6 +369,24 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Natural Class (Features).
+        /// </summary>
+        internal static string Insert_Natural_Class_Features {
+            get {
+                return ResourceManager.GetString("Insert_Natural_Class_Features", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Natural Class (Phonemes).
+        /// </summary>
+        internal static string Insert_Natural_Class_Phonemes {
+            get {
+                return ResourceManager.GetString("Insert_Natural_Class_Phonemes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Non-headed Compound.
         /// </summary>
         internal static string Insert_Non_headed_Compound {

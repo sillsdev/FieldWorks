@@ -211,6 +211,12 @@
   <data name="Insert_Inflection_Class" xml:space="preserve">
     <value>Insert Inflection Class</value>
   </data>
+  <data name="Insert_Natural_Class_Features" xml:space="preserve">
+    <value>Insert Natural Class (Features)</value>
+  </data>
+  <data name="Insert_Natural_Class_Phonemes" xml:space="preserve">
+    <value>Insert Natural Class (Phonemes)</value>
+  </data>
   <data name="Insert_Non_headed_Compound" xml:space="preserve">
     <value>Insert Non-headed Compound</value>
   </data>

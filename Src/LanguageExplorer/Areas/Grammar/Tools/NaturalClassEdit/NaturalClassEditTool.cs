@@ -84,12 +84,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
+			// Too early before now.
+			_toolMenuHelper = new NaturalClassEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			_toolMenuHelper = new NaturalClassEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 		}
 
@@ -167,6 +166,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
 			private ToolStripMenuItem _menu;
+			private IPhPhonData _phPhonData;
 
 			internal NaturalClassEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
@@ -178,12 +178,54 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert]; ;
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				// <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+				insertMenuDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => CanDoItAll));
+				insertToolBarDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => CanDoItAll));
+				// <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
+				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => CanDoItAll));
+				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => CanDoItAll));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private static Tuple<bool, bool> CanDoItAll => new Tuple<bool, bool>(true, true);
+
+			private void InsertSegmentNaturalClasses_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+					<params className="PhNCSegments" />
+				</command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Phonemes, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create());
+				});
+			}
+
+			private void InsertFeatureNaturalClasses_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
+					<params className="PhNCFeatures" />
+				</command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Features, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create());
+				});
 			}
 
 			private void CreateBrowseViewContextMenu()

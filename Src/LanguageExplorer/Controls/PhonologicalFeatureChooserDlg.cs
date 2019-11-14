@@ -148,7 +148,7 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		private IPhFeatureConstraint RemoveFeatureConstraint(ILcmReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
+		private static IPhFeatureConstraint RemoveFeatureConstraint(ILcmReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
 			var constrToRemove = GetFeatureConstraint(featConstrs, feat);
 			if (constrToRemove != null)
@@ -158,7 +158,7 @@ namespace LanguageExplorer.Controls
 			return constrToRemove;
 		}
 
-		private IPhFeatureConstraint GetFeatureConstraint(IEnumerable<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
+		private static IPhFeatureConstraint GetFeatureConstraint(IEnumerable<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
 			return featConstrs.FirstOrDefault(curConstr => curConstr.FeatureRA == feat);
 		}
@@ -313,6 +313,7 @@ namespace LanguageExplorer.Controls
 				m_valuesCombo.SendToBack();
 			}
 		}
+
 		private bool IsValuesComboBoxVisible(HScrollProperties hprops)
 		{
 			var iVerticalScrollBarWidth = (m_bvList.ScrollBar.Visible) ? SystemInformation.VerticalScrollBarWidth : 0;
@@ -331,6 +332,7 @@ namespace LanguageExplorer.Controls
 			}
 			return m_valuesCombo.Left >= m_listPanel.Left;
 		}
+
 		private void PopulateValuesCombo()
 		{
 			var selIndex = m_bvList.SelectedIndex;

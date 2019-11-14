@@ -119,12 +119,6 @@ so I can look at that in the develop branch.
     <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
       <params className="PhEnvironment" />
     </command>
-    <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
-      <params className="PhNCSegments" />
-    </command>
-    <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
-      <params className="PhNCFeatures" />
-    </command>
     <command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
       <params className="PhRegularRule" />
     </command>
@@ -269,8 +263,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
-      <item id="CmdInsertSegmentNaturalClasses">Create a new natural class, defined by listing phonemes.</item>
-      <item id="CmdInsertFeatureNaturalClasses">Create a new natural class, defined by features.</item>
       <item id="CmdInsertPhEnvironment">Create a new environment.</item>
       <item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
       <item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
