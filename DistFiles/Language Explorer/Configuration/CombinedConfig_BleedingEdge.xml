@@ -111,12 +111,6 @@ so I can look at that in the develop branch.
     <command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
       <params className="FsComplexFeature" restrictToClerkID="features" />
     </command>
-    <command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
-      <params className="PhRegularRule" />
-    </command>
-    <command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
-      <params className="PhMetathesisRule" />
-    </command>
     <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
       <params className="MoMorphAdhocProhib" />
     </command>

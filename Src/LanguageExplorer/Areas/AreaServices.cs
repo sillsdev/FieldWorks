@@ -509,5 +509,13 @@ namespace LanguageExplorer.Areas
 				{ BaseUowMessage, baseUowMessage }
 			};
 		}
+
+		internal static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
+		{
+			toolBarDictionary.Add(key, currentTuple);
+			menuDictionary.Add(key, currentTuple);
+		}
+
+		internal static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
 	}
 }

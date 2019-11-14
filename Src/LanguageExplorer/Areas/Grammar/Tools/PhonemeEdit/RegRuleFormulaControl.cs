@@ -61,7 +61,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			_view.Init(obj.Hvo, this, new RegRuleFormulaVc(cache, PropertyTable), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
 
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);

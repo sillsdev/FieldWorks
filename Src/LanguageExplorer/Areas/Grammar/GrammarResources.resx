@@ -214,6 +214,9 @@
   <data name="Insert_Inflection_Class" xml:space="preserve">
     <value>Insert Inflection Class</value>
   </data>
+  <data name="Insert_Metathesis_Rule" xml:space="preserve">
+    <value>Insert Metathesis Rule</value>
+  </data>
   <data name="Insert_Natural_Class_Features" xml:space="preserve">
     <value>Insert Natural Class (Features)</value>
   </data>
@@ -225,6 +228,9 @@
   </data>
   <data name="Insert_Phoneme" xml:space="preserve">
     <value>Insert Phoneme</value>
+  </data>
+  <data name="Insert_Phonological_Rule" xml:space="preserve">
+    <value>Insert Phonological Rule</value>
   </data>
   <data name="Insert_Slot_after_XXX" xml:space="preserve">
     <value>Insert Slot after XXX</value>

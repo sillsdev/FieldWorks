@@ -23,14 +23,10 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			_cache = cache;
 
-			var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-			var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 			// <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
-			insertMenuDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
-			insertToolBarDictionary.Add(Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, () => CanCmdInsertPhoneme));
+			AreaServices.InsertPair(toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert], toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert],
+				Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, ()=> AreaServices.CanSeeAndDo));
 		}
-
-		private static Tuple<bool, bool> CanCmdInsertPhoneme => new Tuple<bool, bool>(true, true);
 
 		private void InsertPhoneme_Clicked(object sender, EventArgs e)
 		{

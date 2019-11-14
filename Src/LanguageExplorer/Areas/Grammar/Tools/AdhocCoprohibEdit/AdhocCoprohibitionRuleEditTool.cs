@@ -234,18 +234,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
       <params className="MoAdhocProhibGr" />
     </command>
 				*/
-				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> CanSeeAndDo));
-				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => CanSeeAndDo));
-				InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> AreaServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => AreaServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => AreaServices.CanSeeAndDo));
 			}
-
-			private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
-			{
-				toolBarDictionary.Add(key, currentTuple);
-				menuDictionary.Add(key, currentTuple);
-			}
-
-			private static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertMorphemeACP_Click(object sender, EventArgs e)
 			{

@@ -378,6 +378,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Metathesis Rule.
+        /// </summary>
+        internal static string Insert_Metathesis_Rule {
+            get {
+                return ResourceManager.GetString("Insert_Metathesis_Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Natural Class (Features).
         /// </summary>
         internal static string Insert_Natural_Class_Features {
@@ -410,6 +419,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Insert_Phoneme {
             get {
                 return ResourceManager.GetString("Insert_Phoneme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Phonological Rule.
+        /// </summary>
+        internal static string Insert_Phonological_Rule {
+            get {
+                return ResourceManager.GetString("Insert_Phonological_Rule", resourceCulture);
             }
         }
         

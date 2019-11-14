@@ -168,6 +168,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			private DataTree _dataTree;
 			private RecordBrowseActiveView _recordBrowseActiveView;
 			private IRecordList _recordList;
+			private ToolStripMenuItem _menu;
+			private IPhPhonData _phPhonData;
 
 			internal PhonologicalRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
 			{
@@ -181,13 +183,53 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				_dataTree = dataTree;
 				_recordBrowseActiveView = recordBrowseActiveView;
 				_recordList = recordList;
+				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
 
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhRegularRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhRegularRule_Click, () => AreaServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhMetathesisRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhMetathesisRule_Click, () => AreaServices.CanSeeAndDo));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private void CmdInsertPhRegularRule_Click(object sender, EventArgs e)
+			{
+				/*
+			<command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
+				<params className="PhRegularRule" />
+			</command>
+				*/
+				IPhRegularRule newbie = null;
+				UowHelpers.UndoExtension(GrammarResources.Insert_Phonological_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+					_phPhonData.PhonRulesOS.Add(newbie);
+				});
+				_recordList.JumpToRecord(newbie.Hvo);
+			}
+
+			private void CmdInsertPhMetathesisRule_Click(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
+					<params className="PhMetathesisRule" />
+				</command>
+				*/
+				IPhMetathesisRule newbie = null;
+				UowHelpers.UndoExtension(GrammarResources.Insert_Metathesis_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhMetathesisRuleFactory>().Create();
+					_phPhonData.PhonRulesOS.Add(newbie);
+				});
+				_recordList.JumpToRecord(newbie.Hvo);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -200,7 +242,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhSegmentRule", StringTable.ClassNames)));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PhSegmentRule", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -210,6 +252,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			{
 				_recordBrowseActiveView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseActiveView.ContextMenuStrip.Visible)
+				{
+					return;
+				}
+				// Set to correct class
+				_menu.ResetTextIfDifferent(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, StringTable.ClassNames)));
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
@@ -266,6 +314,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				_dataTree = null;
 				_recordBrowseActiveView = null;
 				_recordList = null;
+				_menu = null;
+				_phPhonData = null;
 
 				_isDisposed = true;
 			}
