@@ -84,11 +84,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
+			// Too early before now.
+			_toolMenuHelper = new EnvironmentEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			_toolMenuHelper = new EnvironmentEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 		}
 
@@ -165,23 +164,90 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
+			private DataTree _dataTree;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
+			private IPhPhonData _phPhonData;
 
-			internal EnvironmentEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
+			internal EnvironmentEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				_dataTree = dataTree;
+				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+
+				// {Command.CmdInsertPhEnvironment, CmdInsertPhEnvironment},
+				// {Command.CmdInsertPhEnvironment, Toolbar_CmdInsertPhEnvironment},
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => CanCmdInsertPhEnvironment));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => CanCmdInsertPhEnvironment));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
+				RegisterSliceLeftEdgeMenus();
+			}
+
+			private static Tuple<bool, bool> CanCmdInsertPhEnvironment => new Tuple<bool, bool>(true, true);
+
+			private void CmdInsertPhEnvironment_Click(object sender, EventArgs e)
+			{
+				/*
+			    <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
+					<params className="PhEnvironment" />
+			    </command>
+				*/
+				IPhEnvironment newbie = null;
+				UowHelpers.UndoExtension(GrammarResources.Insert_Environment, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+					_phPhonData.EnvironmentsOS.Add(newbie);
+				});
+				_recordList.JumpToRecord(newbie.Hvo);
+			}
+
+			private void RegisterSliceLeftEdgeMenus()
+			{
+				/*
+				<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
+					<slice field="StringRepresentation" label="String Representation" editor="phenvstrrepresentation" menu="mnuDataTree_StringRepresentation_Insert">
+						<deParams ws="vernacular"/>
+					</slice>
+				</part>
+				*/
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_StringRepresentation_Insert, Create_mnuDataTree_StringRepresentation_Insert);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_StringRepresentation_Insert(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_StringRepresentation_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_StringRepresentation_Insert">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
+
+				PartiallySharedForToolsWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(slice, menuItems, contextMenuStrip);
+
+				// End: <menu id="mnuDataTree_StringRepresentation_Insert">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -238,12 +304,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 				if (disposing)
 				{
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_recordBrowseView.ContextMenuStrip.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
 				_recordBrowseView = null;
 				_recordList = null;
+				_dataTree = null;
+				_partiallySharedForToolsWideMenuHelper = null;
+				_phPhonData = null;
 
 				_isDisposed = true;
 			}

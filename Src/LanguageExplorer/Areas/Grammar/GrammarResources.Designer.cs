@@ -324,6 +324,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Environment.
+        /// </summary>
+        internal static string Insert_Environment {
+            get {
+                return ResourceManager.GetString("Insert_Environment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Feature Set.
         /// </summary>
         internal static string Insert_Feature_Set {

@@ -2921,7 +2921,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertPhEnvironment.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertPhEnvironment.Name = "Toolbar_CmdInsertPhEnvironment";
 			this.Toolbar_CmdInsertPhEnvironment.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertPhEnvironment.ToolTipText = "Create a new environment.";
+			this.Toolbar_CmdInsertPhEnvironment.ToolTipText = "Create a new environment. (CTRL+I)";
 			this.Toolbar_CmdInsertPhEnvironment.Visible = false;
 			// 
 			// Toolbar_CmdInsertPhRegularRule

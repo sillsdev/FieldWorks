@@ -98,11 +98,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
-    <command id="CmdDataTree_Insert_Env_Slash" label="Insert Environment slash" message="InsertSlash" />
-    <command id="CmdDataTree_Insert_Env_Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
-    <command id="CmdDataTree_Insert_Env_NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
-    <command id="CmdDataTree_Insert_Env_OptionalItem" label="Insert Optional Item" message="InsertOptionalItem" />
-    <command id="CmdDataTree_Insert_Env_HashMark" label="Insert Word Boundary" message="InsertHashMark" />
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
     <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
       <params className="PartOfSpeech" />
@@ -115,9 +110,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
       <params className="FsComplexFeature" restrictToClerkID="features" />
-    </command>
-    <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
-      <params className="PhEnvironment" />
     </command>
     <command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
       <params className="PhRegularRule" />
@@ -230,13 +222,6 @@ so I can look at that in the develop branch.
     <menu id="mnuDataTree_FeatureStructure_Feature">
       <item command="CmdDataTree_Delete_FeatureStructure_Feature" />
     </menu>
-    <menu id="mnuDataTree_StringRepresentation_Insert">
-      <item command="CmdDataTree_Insert_Env_Slash" />
-      <item command="CmdDataTree_Insert_Env_Underscore" />
-      <item command="CmdDataTree_Insert_Env_NaturalClass" />
-      <item command="CmdDataTree_Insert_Env_OptionalItem" />
-      <item command="CmdDataTree_Insert_Env_HashMark" />
-    </menu>
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
@@ -263,7 +248,6 @@ so I can look at that in the develop branch.
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
-      <item id="CmdInsertPhEnvironment">Create a new environment.</item>
       <item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
       <item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
       <item id="CmdInsertMorphemeACP">Create a rule to prevent morphemes from co-occurring.</item>

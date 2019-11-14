@@ -196,6 +196,9 @@
   <data name="Insert_Affix_Template" xml:space="preserve">
     <value>Insert Affix Template</value>
   </data>
+  <data name="Insert_Environment" xml:space="preserve">
+    <value>Insert Environment</value>
+  </data>
   <data name="Insert_Feature_Set" xml:space="preserve">
     <value>Insert Feature Set</value>
   </data>
