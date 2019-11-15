@@ -189,11 +189,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		private sealed class AdhocCoprohibitionRuleEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedListToolsUiWidgetMenuHelper;
 			private DataTree _dataTree;
 			private IRecordList _recordList;
 			private RecordBrowseView _recordBrowseView;
 			private string _extendedPropertyName;
 			private ToolStripMenuItem _menu;
+			private ISharedEventHandlers _sharedEventHandlers;
 
 			internal AdhocCoprohibitionRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, string extendedPropertyName)
 			{
@@ -210,41 +212,168 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				_dataTree = dataTree;
 				_extendedPropertyName = extendedPropertyName;
 
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				SetupUiWidgets(toolUiWidgetParameterObject);
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
 
-			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			private void SetupUiWidgets(ITool tool)
 			{
+				_partiallySharedListToolsUiWidgetMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				/* On Insert menu & Insert toolbar
-    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
-      <params className="MoMorphAdhocProhib" />
-    </command>
-    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
-      <params className="MoAlloAdhocProhib" />
-    </command>
-    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
-      <params className="MoAdhocProhibGr" />
-    </command>
-				*/
 				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> AreaServices.CanSeeAndDo));
 				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => AreaServices.CanSeeAndDo));
 				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => AreaServices.CanSeeAndDo));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+
+				RegisterSliceLeftEdgeMenus();
+			}
+
+			private void RegisterSliceLeftEdgeMenus()
+			{
+				// <menu id="mnuDataTree_Adhoc_Group_Members">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Adhoc_Group_Members, Create_mnuDataTree_Adhoc_Group_Members);
+				// <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme, Create_mnuDataTree_Delete_Adhoc_Morpheme);
+				// <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph, Create_mnuDataTree_Delete_Adhoc_Allomorph);
+				// <menu id="mnuDataTree_Delete_Adhoc_Group">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Delete_Adhoc_Group, Create_mnuDataTree_Delete_Adhoc_Group);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Morpheme(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_Adhoc_Group_Members_Morpheme" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Morpheme_Rule, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Allomorph(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_Adhoc_Group_Members_Allomorph" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Allomorph_Rule, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Group(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Group, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Group.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Delete_Adhoc_Group">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Group.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Delete_Adhoc_Group_Members_Group" />
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Nested_Group, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+
+				// End: <menu id="mnuDataTree_Delete_Adhoc_Group">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Adhoc_Group_Members(Slice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Adhoc_Group_Members, $"Expected argument value of '{ContextMenuName.mnuDataTree_Adhoc_Group_Members.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_Adhoc_Group_Members">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_Adhoc_Group_Members.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <item command="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Adhoc_Group_Members_Morpheme_Clicked, GrammarResources.Insert_Morpheme_Rule);
+				// <item command="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Adhoc_Group_Members_Allomorph_Clicked, GrammarResources.Insert_Allomorph_Rule);
+				// <item command="CmdDataTree_Insert_Adhoc_Group_Members_Group" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Adhoc_Group_Members_Group_Clicked, GrammarResources.Insert_Nested_Group);
+
+				// End: <menu id="mnuDataTree_Adhoc_Group_Members">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private void Insert_Adhoc_Group_Members_Morpheme_Clicked(object sender, EventArgs e)
+			{
+				/* Owning class: IMoAdhocProhibGr: Members prop holds: MoAdhocProhib
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
+      <parameters field="Members" className="MoMorphAdhocProhib" />
+    </command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Morpheme_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					((IMoAdhocProhibGr)_recordList.CurrentObject).MembersOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoMorphAdhocProhibFactory>().Create());
+				});
+			}
+
+			private void Insert_Adhoc_Group_Members_Allomorph_Clicked(object sender, EventArgs e)
+			{
+				/* Owning class: IMoAdhocProhibGr: Members prop holds: MoAdhocProhib
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
+      <parameters field="Members" className="MoAlloAdhocProhib" />
+    </command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Allomorph_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					((IMoAdhocProhibGr)_recordList.CurrentObject).MembersOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAlloAdhocProhibFactory>().Create());
+				});
+			}
+
+			private void Insert_Adhoc_Group_Members_Group_Clicked(object sender, EventArgs e)
+			{
+				/* Owning class: IMoAdhocProhibGr: Members prop holds: MoAdhocProhib
+    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Group" label="Insert Nested Group" message="DataTreeInsert">
+      <parameters field="Members" className="MoAdhocProhibGr" />
+    </command>
+    </menu>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Nested_Group, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					((IMoAdhocProhibGr)_recordList.CurrentObject).MembersOC.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create());
+				});
 			}
 
 			private void CmdInsertMorphemeACP_Click(object sender, EventArgs e)
 			{
 				/*
-    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
-      <params className="MoMorphAdhocProhib" />
-    </command>
+				<command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
+					<params className="MoMorphAdhocProhib" />
+				</command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
 				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoMorphAdhocProhib", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
@@ -256,9 +385,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			private void CmdInsertAllomorphACP_Click(object sender, EventArgs e)
 			{
 				/*
-    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
-      <params className="MoAlloAdhocProhib" />
-    </command>
+				<command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
+					<params className="MoAlloAdhocProhib" />
+				</command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
 				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAlloAdhocProhib", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
@@ -270,9 +399,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			private void CmdInsertACPGroup_Click(object sender, EventArgs e)
 			{
 				/*
-    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
-      <params className="MoAdhocProhibGr" />
-    </command>
+				<command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
+					<params className="MoAdhocProhibGr" />
+				</command>
 				*/
 				var cache = _majorFlexComponentParameters.LcmCache;
 				UowHelpers.UndoExtension($"Create {StringTable.Table.GetString("MoAdhocProhibGr", StringTable.ClassNames)}", cache.ActionHandlerAccessor, () =>
@@ -352,6 +481,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 				if (disposing)
 				{
+					_partiallySharedListToolsUiWidgetMenuHelper.Dispose();
 					if (_recordBrowseView?.ContextMenuStrip != null)
 					{
 						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
@@ -360,10 +490,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 					}
 				}
 				_majorFlexComponentParameters = null;
+				_partiallySharedListToolsUiWidgetMenuHelper = null;
 				_dataTree = null;
 				_recordList = null;
 				_recordBrowseView = null;
+				_menu = null;
 				_extendedPropertyName = null;
+				_sharedEventHandlers = null;
 
 				_isDisposed = true;
 			}

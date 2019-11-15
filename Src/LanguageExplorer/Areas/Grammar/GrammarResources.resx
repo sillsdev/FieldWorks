@@ -157,6 +157,9 @@
   <data name="Delete_Affix_Template" xml:space="preserve">
     <value>Delete Affix Template</value>
   </data>
+  <data name="Delete_Allomorph_Rule" xml:space="preserve">
+    <value>Delete Allomorph Rule</value>
+  </data>
   <data name="Delete_Feature_Set" xml:space="preserve">
     <value>Delete Feature Set</value>
   </data>
@@ -168,6 +171,12 @@
   </data>
   <data name="Delete_Inflection_Class" xml:space="preserve">
     <value>Delete Inflection Class</value>
+  </data>
+  <data name="Delete_Morpheme_Rule" xml:space="preserve">
+    <value>Delete Morpheme Rule</value>
+  </data>
+  <data name="Delete_Nested_Group" xml:space="preserve">
+    <value>Delete Nested Group</value>
   </data>
   <data name="Delete_Stem_Name" xml:space="preserve">
     <value>Delete Stem Name</value>
@@ -196,6 +205,9 @@
   <data name="Insert_Affix_Template" xml:space="preserve">
     <value>Insert Affix Template</value>
   </data>
+  <data name="Insert_Allomorph_Rule" xml:space="preserve">
+    <value>Insert Allomorph Rule</value>
+  </data>
   <data name="Insert_Environment" xml:space="preserve">
     <value>Insert Environment</value>
   </data>
@@ -217,11 +229,17 @@
   <data name="Insert_Metathesis_Rule" xml:space="preserve">
     <value>Insert Metathesis Rule</value>
   </data>
+  <data name="Insert_Morpheme_Rule" xml:space="preserve">
+    <value>Insert Morpheme Rule</value>
+  </data>
   <data name="Insert_Natural_Class_Features" xml:space="preserve">
     <value>Insert Natural Class (Features)</value>
   </data>
   <data name="Insert_Natural_Class_Phonemes" xml:space="preserve">
     <value>Insert Natural Class (Phonemes)</value>
+  </data>
+  <data name="Insert_Nested_Group" xml:space="preserve">
+    <value>Insert Nested Group</value>
   </data>
   <data name="Insert_Non_headed_Compound" xml:space="preserve">
     <value>Insert Non-headed Compound</value>

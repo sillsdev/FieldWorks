@@ -188,6 +188,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Allomorph Rule.
+        /// </summary>
+        internal static string Delete_Allomorph_Rule {
+            get {
+                return ResourceManager.GetString("Delete_Allomorph_Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Feature Set.
         /// </summary>
         internal static string Delete_Feature_Set {
@@ -220,6 +229,24 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Delete_Inflection_Class {
             get {
                 return ResourceManager.GetString("Delete_Inflection_Class", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Morpheme Rule.
+        /// </summary>
+        internal static string Delete_Morpheme_Rule {
+            get {
+                return ResourceManager.GetString("Delete_Morpheme_Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Nested Group.
+        /// </summary>
+        internal static string Delete_Nested_Group {
+            get {
+                return ResourceManager.GetString("Delete_Nested_Group", resourceCulture);
             }
         }
         
@@ -324,6 +351,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Allomorph Rule.
+        /// </summary>
+        internal static string Insert_Allomorph_Rule {
+            get {
+                return ResourceManager.GetString("Insert_Allomorph_Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Environment.
         /// </summary>
         internal static string Insert_Environment {
@@ -387,6 +423,15 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Morpheme Rule.
+        /// </summary>
+        internal static string Insert_Morpheme_Rule {
+            get {
+                return ResourceManager.GetString("Insert_Morpheme_Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Natural Class (Features).
         /// </summary>
         internal static string Insert_Natural_Class_Features {
@@ -401,6 +446,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Insert_Natural_Class_Phonemes {
             get {
                 return ResourceManager.GetString("Insert_Natural_Class_Phonemes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Nested Group.
+        /// </summary>
+        internal static string Insert_Nested_Group {
+            get {
+                return ResourceManager.GetString("Insert_Nested_Group", resourceCulture);
             }
         }
         

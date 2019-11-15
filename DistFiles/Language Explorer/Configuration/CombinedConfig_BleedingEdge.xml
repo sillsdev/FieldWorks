@@ -74,24 +74,6 @@ so I can look at that in the develop branch.
     <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
       <parameters tool="notebookEdit" className="RnGenericRec" />
     </command>
-    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
-      <parameters field="Members" className="MoAlloAdhocProhib" />
-    </command>
-    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
-      <parameters field="Members" className="MoMorphAdhocProhib" />
-    </command>
-    <command id="CmdDataTree_Insert_Adhoc_Group_Members_Group" label="Insert Nested Group" message="DataTreeInsert">
-      <parameters field="Members" className="MoAdhocProhibGr" />
-    </command>
-    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
-      <parameters field="Members" className="MoAlloAdhocProhib" />
-    </command>
-    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
-      <parameters field="Members" className="MoMorphAdhocProhib" />
-    </command>
-    <command id="CmdDataTree_Delete_Adhoc_Group_Members_Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
-      <parameters field="Members" className="MoAdhocProhibGr" />
-    </command>
     <command id="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
@@ -194,20 +176,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuTextInfo_Notebook">
       <item command="CmdJumpToNotebook" />
-    </menu>
-    <menu id="mnuDataTree_Adhoc_Group_Members">
-      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Morpheme" />
-      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Allomorph" />
-      <item command="CmdDataTree_Insert_Adhoc_Group_Members_Group" />
-    </menu>
-    <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
-      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Morpheme" />
-    </menu>
-    <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
-      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Allomorph" />
-    </menu>
-    <menu id="mnuDataTree_Delete_Adhoc_Group">
-      <item command="CmdDataTree_Delete_Adhoc_Group_Members_Group" />
     </menu>
     <menu id="mnuDataTree_CompoundRule_LinkerAffixAllomorph">
       <item command="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" />
