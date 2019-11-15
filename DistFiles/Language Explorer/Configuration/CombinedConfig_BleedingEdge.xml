@@ -81,26 +81,8 @@ so I can look at that in the develop branch.
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
-      <params className="PartOfSpeech" />
-    </command>
     <command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
       <params className="CmPossibility" restrictToClerkID="ProdRestrict" />
-    </command>
-    <command id="CmdInsertClosedFeature" label="_Feature..." message="InsertItemInVector" icon="addFeature">
-      <params className="FsClosedFeature" restrictToClerkID="features" />
-    </command>
-    <command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
-      <params className="FsComplexFeature" restrictToClerkID="features" />
-    </command>
-    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
-      <params className="MoMorphAdhocProhib" />
-    </command>
-    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
-      <params className="MoAlloAdhocProhib" />
-    </command>
-    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
-      <params className="MoAdhocProhibGr" />
     </command>
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
   </commands>
@@ -208,19 +190,15 @@ so I can look at that in the develop branch.
       <item id="ShowHiddenFields">Display all possible fields.</item>
       <!-- Insert menu -->
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
-      <item id="CmdInsertPOS">Add a new category.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
       <item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
       <item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
-      <item id="CmdInsertMorphemeACP">Create a rule to prevent morphemes from co-occurring.</item>
       <item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
       <item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
       <item id="CmdAddNote">Insert a note.</item>
       <item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
       <item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
       <item id="CmdInsertText">Add a new text to the corpus.</item>
-      <item id="CmdInsertClosedFeature">Add a feature.</item>
-      <item id="CmdInsertComplexFeature">Add a complex feature.</item>
       <!-- Tools menu -->
       <item id="Entries">Show the entries and edit them.</item>
       <item id="Problems">See a list of entries with problems.</item>

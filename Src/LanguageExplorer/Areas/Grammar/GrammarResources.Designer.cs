@@ -360,11 +360,29 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Complex Feature.
+        /// </summary>
+        internal static string Insert_Complex_Feature {
+            get {
+                return ResourceManager.GetString("Insert_Complex_Feature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Environment.
         /// </summary>
         internal static string Insert_Environment {
             get {
                 return ResourceManager.GetString("Insert_Environment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Feature.
+        /// </summary>
+        internal static string Insert_Feature {
+            get {
+                return ResourceManager.GetString("Insert_Feature", resourceCulture);
             }
         }
         
@@ -651,6 +669,15 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string Remove_YYY_from_XXX {
             get {
                 return ResourceManager.GetString("Remove_YYY_from_XXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Feature Value.
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
     }

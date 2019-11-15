@@ -272,9 +272,6 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdLastRecord = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdFLExLiftBridge = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
-			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
-			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
@@ -319,15 +316,14 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.Toolbar_WritingSystemList = new System.Windows.Forms.ToolStripComboBox();
 			this.Toolbar_CombinedStylesList = new System.Windows.Forms.ToolStripComboBox();
+			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
+			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
+			this._rightPanel = new System.Windows.Forms.Panel();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
-			this.mainContainer.Panel1.SuspendLayout();
-			this.mainContainer.Panel2.SuspendLayout();
-			this.mainContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
@@ -335,6 +331,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.SuspendLayout();
 			this.toolStripInsert.SuspendLayout();
 			this.toolStripFormat.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+			this.mainContainer.Panel1.SuspendLayout();
+			this.mainContainer.Panel2.SuspendLayout();
+			this.mainContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _menuStrip
@@ -1625,7 +1625,7 @@ namespace LanguageExplorer.Impls
 			// 
 			this.CmdDataTree_Insert_ClosedFeature_Value.Name = "CmdDataTree_Insert_ClosedFeature_Value";
 			this.CmdDataTree_Insert_ClosedFeature_Value.Size = new System.Drawing.Size(296, 22);
-			this.CmdDataTree_Insert_ClosedFeature_Value.Text = "Insert Feature Value";
+			this.CmdDataTree_Insert_ClosedFeature_Value.Text = "Feature Value";
 			this.CmdDataTree_Insert_ClosedFeature_Value.Visible = false;
 			// 
 			// CmdInsertPhoneme
@@ -2491,50 +2491,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
 			// 
-			// mainContainer
-			// 
-			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
-			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
-			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mainContainer.FirstControl = this._sidePane;
-			this.mainContainer.FirstLabel = "Sidebar";
-			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.mainContainer.IsInitializing = false;
-			this.mainContainer.Location = new System.Drawing.Point(0, 0);
-			this.mainContainer.Name = "mainContainer";
-			// 
-			// mainContainer.Panel1
-			// 
-			this.mainContainer.Panel1.Controls.Add(this._sidePane);
-			this.mainContainer.Panel1MinSize = 16;
-			// 
-			// mainContainer.Panel2
-			// 
-			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
-			this.mainContainer.Panel2MinSize = 16;
-			this.mainContainer.SecondControl = this._rightPanel;
-			this.mainContainer.SecondLabel = "All Content";
-			this.mainContainer.Size = new System.Drawing.Size(791, 381);
-			this.mainContainer.SplitterDistance = 140;
-			this.mainContainer.TabIndex = 0;
-			this.mainContainer.TabStop = false;
-			// 
-			// _sidePane
-			// 
-			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._sidePane.Location = new System.Drawing.Point(0, 0);
-			this._sidePane.Name = "_sidePane";
-			this._sidePane.Size = new System.Drawing.Size(140, 381);
-			this._sidePane.TabIndex = 1;
-			// 
-			// _rightPanel
-			// 
-			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._rightPanel.Location = new System.Drawing.Point(0, 0);
-			this._rightPanel.Name = "_rightPanel";
-			this._rightPanel.Size = new System.Drawing.Size(647, 381);
-			this._rightPanel.TabIndex = 1;
-			// 
 			// _statusbar
 			// 
 			this._statusbar.Location = new System.Drawing.Point(0, 381);
@@ -2871,7 +2827,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertClosedFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertClosedFeature.Name = "Toolbar_CmdInsertClosedFeature";
 			this.Toolbar_CmdInsertClosedFeature.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertClosedFeature.ToolTipText = "Add a feature.";
+			this.Toolbar_CmdInsertClosedFeature.ToolTipText = "Feature...";
 			this.Toolbar_CmdInsertClosedFeature.Visible = false;
 			// 
 			// Toolbar_CmdInsertComplexFeature
@@ -2881,7 +2837,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertComplexFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertComplexFeature.Name = "Toolbar_CmdInsertComplexFeature";
 			this.Toolbar_CmdInsertComplexFeature.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertComplexFeature.ToolTipText = "Add a complex feature.";
+			this.Toolbar_CmdInsertComplexFeature.ToolTipText = "Complex Feature...";
 			this.Toolbar_CmdInsertComplexFeature.Visible = false;
 			// 
 			// Toolbar_CmdInsertPhoneme
@@ -3002,6 +2958,50 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CombinedStylesList.Size = new System.Drawing.Size(121, 25);
 			this.Toolbar_CombinedStylesList.ToolTipText = "Styles";
 			// 
+			// mainContainer
+			// 
+			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
+			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
+			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mainContainer.FirstControl = this._sidePane;
+			this.mainContainer.FirstLabel = "Sidebar";
+			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.mainContainer.IsInitializing = false;
+			this.mainContainer.Location = new System.Drawing.Point(0, 0);
+			this.mainContainer.Name = "mainContainer";
+			// 
+			// mainContainer.Panel1
+			// 
+			this.mainContainer.Panel1.Controls.Add(this._sidePane);
+			this.mainContainer.Panel1MinSize = 16;
+			// 
+			// mainContainer.Panel2
+			// 
+			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
+			this.mainContainer.Panel2MinSize = 16;
+			this.mainContainer.SecondControl = this._rightPanel;
+			this.mainContainer.SecondLabel = "All Content";
+			this.mainContainer.Size = new System.Drawing.Size(791, 381);
+			this.mainContainer.SplitterDistance = 140;
+			this.mainContainer.TabIndex = 0;
+			this.mainContainer.TabStop = false;
+			// 
+			// _sidePane
+			// 
+			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._sidePane.Location = new System.Drawing.Point(0, 0);
+			this._sidePane.Name = "_sidePane";
+			this._sidePane.Size = new System.Drawing.Size(140, 381);
+			this._sidePane.TabIndex = 1;
+			// 
+			// _rightPanel
+			// 
+			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rightPanel.Location = new System.Drawing.Point(0, 0);
+			this._rightPanel.Name = "_rightPanel";
+			this._rightPanel.Size = new System.Drawing.Size(647, 381);
+			this._rightPanel.TabIndex = 1;
+			// 
 			// FwMainWnd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3021,10 +3021,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripContainer.TopToolStripPanel.PerformLayout();
 			this.toolStripContainer.ResumeLayout(false);
 			this.toolStripContainer.PerformLayout();
-			this.mainContainer.Panel1.ResumeLayout(false);
-			this.mainContainer.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
-			this.mainContainer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
@@ -3035,6 +3031,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripInsert.PerformLayout();
 			this.toolStripFormat.ResumeLayout(false);
 			this.toolStripFormat.PerformLayout();
+			this.mainContainer.Panel1.ResumeLayout(false);
+			this.mainContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
+			this.mainContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

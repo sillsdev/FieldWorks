@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -208,8 +208,14 @@
   <data name="Insert_Allomorph_Rule" xml:space="preserve">
     <value>Insert Allomorph Rule</value>
   </data>
+  <data name="Insert_Complex_Feature" xml:space="preserve">
+    <value>Insert Complex Feature</value>
+  </data>
   <data name="Insert_Environment" xml:space="preserve">
     <value>Insert Environment</value>
+  </data>
+  <data name="Insert_Feature" xml:space="preserve">
+    <value>Insert Feature</value>
   </data>
   <data name="Insert_Feature_Set" xml:space="preserve">
     <value>Insert Feature Set</value>
@@ -297,5 +303,8 @@
   </data>
   <data name="Remove_YYY_from_XXX" xml:space="preserve">
     <value>Remove YYY from XXX</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Insert Feature Value</value>
   </data>
 </root>
