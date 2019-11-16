@@ -214,6 +214,9 @@
   <data name="Insert_Environment" xml:space="preserve">
     <value>Insert Environment</value>
   </data>
+  <data name="Insert_Exception_Feature" xml:space="preserve">
+    <value>Insert Exception Feature</value>
+  </data>
   <data name="Insert_Feature" xml:space="preserve">
     <value>Insert Feature</value>
   </data>
@@ -303,8 +306,5 @@
   </data>
   <data name="Remove_YYY_from_XXX" xml:space="preserve">
     <value>Remove YYY from XXX</value>
-  </data>
-  <data name="String1" xml:space="preserve">
-    <value>Insert Feature Value</value>
   </data>
 </root>

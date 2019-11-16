@@ -1594,7 +1594,7 @@ namespace LanguageExplorer.Impls
 			this.CmdInsertExceptionFeature.Image = ((System.Drawing.Image)(resources.GetObject("CmdInsertExceptionFeature.Image")));
 			this.CmdInsertExceptionFeature.Name = "CmdInsertExceptionFeature";
 			this.CmdInsertExceptionFeature.Size = new System.Drawing.Size(296, 22);
-			this.CmdInsertExceptionFeature.Text = "&Exception Feature...";
+			this.CmdInsertExceptionFeature.Text = "Exception \"Feature\"";
 			this.CmdInsertExceptionFeature.Visible = false;
 			// 
 			// CmdInsertPhonologicalClosedFeature
@@ -2807,7 +2807,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertExceptionFeature.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertExceptionFeature.Name = "Toolbar_CmdInsertExceptionFeature";
 			this.Toolbar_CmdInsertExceptionFeature.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertExceptionFeature.ToolTipText = "Create a new {0}.";
+			this.Toolbar_CmdInsertExceptionFeature.ToolTipText = "Exception \"Feature\"";
 			this.Toolbar_CmdInsertExceptionFeature.Visible = false;
 			// 
 			// Toolbar_CmdInsertPhonologicalClosedFeature

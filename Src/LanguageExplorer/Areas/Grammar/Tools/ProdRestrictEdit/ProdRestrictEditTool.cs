@@ -84,12 +84,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
+			// Too early before now.
+			_toolMenuHelper = new ProdRestrictEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
-
-			// Too early before now.
-			_toolMenuHelper = new ProdRestrictEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			recordEditView.FinishInitialization();
 		}
 
@@ -184,12 +183,36 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				// Insert menu and tool bar.
+				/*
+				*/
+				// There are two always visible menus/buttons, and one menu that shows for two of the three classes that can be in the owning property.
+				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert],
+					Command.CmdInsertExceptionFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertExceptionFeature_Clicked, () => AreaServices.CanSeeAndDo));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private void InsertExceptionFeature_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
+					<params className="CmPossibility" restrictToClerkID="ProdRestrict" />
+				</command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Exception_Feature, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					var currentOwner = _majorFlexComponentParameters.LcmCache.LanguageProject.MorphologicalDataOA.ProdRestrictOA;
+					currentOwner.PossibilitiesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create());
+				});
 			}
 
 			private void CreateBrowseViewContextMenu()

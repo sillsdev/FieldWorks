@@ -66,7 +66,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg" />
     <!-- END include: "Words/areaConfiguration.xml" query="root/commands/*" -->
-    <!-- START include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
     <command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
       <parameters tool="interlinearEdit" className="Text" />
@@ -81,10 +80,6 @@ so I can look at that in the develop branch.
       <parameters field="Linker" className="MoAffixAllomorph" />
     </command>
     <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
-      <params className="CmPossibility" restrictToClerkID="ProdRestrict" />
-    </command>
-    <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
   </commands>
   <!-- ************************ contextMenus *********************** -->
   <contextMenus>
@@ -190,7 +185,6 @@ so I can look at that in the develop branch.
       <item id="ShowHiddenFields">Display all possible fields.</item>
       <!-- Insert menu -->
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
-      <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
       <item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
       <item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
       <item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
