@@ -246,7 +246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				*/
 				var insertMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert];
 				insertMenuDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
-				insertMenuDictionary.Add(Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, () => CanCmdImportWordSet));
+				insertMenuDictionary.Add(Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, () => UiWidgetServices.CanSeeAndDo));
 				insertMenuDictionary.Add(Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
 				var insertToolBarDictionary = areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert];
 				insertToolBarDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
@@ -270,8 +270,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				MessageBox.Show(@"TODO: Adding new human approved analysis here.");
 			}
-
-			private Tuple<bool, bool> CanCmdImportWordSet => new Tuple<bool, bool>(true, true);
 
 			private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
 			{

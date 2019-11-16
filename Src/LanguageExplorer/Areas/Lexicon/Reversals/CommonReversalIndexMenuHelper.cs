@@ -38,14 +38,12 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdGoToReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoReversalEntryClicked, ()=> CanCmdGoToReversalEntry));
 			insertToolBarDictionary.Add(Command.CmdGoToReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoReversalEntryClicked, () => CanCmdGoToReversalEntry));
 			// <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
-			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, () => CanCmdInsertReversalEntry));
-			insertToolBarDictionary.Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, ()=> CanCmdInsertReversalEntry));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, () => UiWidgetServices.CanSeeAndDo));
+			insertToolBarDictionary.Add(Command.CmdInsertReversalEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertReversalEntryClicked, ()=> UiWidgetServices.CanSeeAndDo));
 			// <command id="CmdConfigureDictionary" label="{0}" message="ConfigureDictionary"/>
-			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => CanCmdConfigureDictionary));
+			toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdConfigureDictionary].Text = LexiconResources.ReversalIndex;
 		}
-
-		private static Tuple<bool, bool> CanCmdConfigureDictionary => new Tuple<bool, bool>(true, true);
 
 		private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
 		{
@@ -55,8 +53,6 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 				mainWnd.RefreshAllViews();
 			}
 		}
-
-		private static Tuple<bool, bool> CanCmdInsertReversalEntry => new Tuple<bool, bool>(true, true);
 
 		private void InsertReversalEntryClicked(object sender, EventArgs e)
 		{

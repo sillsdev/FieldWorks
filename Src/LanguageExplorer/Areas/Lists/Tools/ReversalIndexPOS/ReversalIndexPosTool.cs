@@ -264,7 +264,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				// <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
 				// <command id="CmdDataTree_Insert_POS_SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar for both.
-				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, () => CanCmdInsertPOS);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, () => UiWidgetServices.CanSeeAndDo);
 				// Override labels.
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Category);
 
@@ -527,8 +527,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 						break;
 				}
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
 
 			private Tuple<bool, bool> CanCmdDataTree_Insert_POS_SubPossibilities => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
 

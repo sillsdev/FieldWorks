@@ -193,15 +193,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 				// {Command.CmdInsertPhEnvironment, CmdInsertPhEnvironment},
 				// {Command.CmdInsertPhEnvironment, Toolbar_CmdInsertPhEnvironment},
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => CanCmdInsertPhEnvironment));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => CanCmdInsertPhEnvironment));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
 				RegisterSliceLeftEdgeMenus();
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertPhEnvironment => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertPhEnvironment_Click(object sender, EventArgs e)
 			{

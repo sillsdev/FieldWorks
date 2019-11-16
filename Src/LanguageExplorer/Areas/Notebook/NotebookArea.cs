@@ -211,14 +211,12 @@ namespace LanguageExplorer.Areas.Notebook
 				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
 				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
 				// Add Edit menu item that is available in all Notebook tools.
-				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// File->Export menu is visible and maybe enabled in this tool. (Area)
-				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File].Add(Command.CmdImportSFMNotebook, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportSFMNotebook_Clicked, () => CanCmdImportSFMNotebook));
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File].Add(Command.CmdImportSFMNotebook, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportSFMNotebook_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
-				areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => CanCmdGoToRecord));
+				areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			}
-
-			private Tuple<bool, bool> CanCmdGoToRecord => new Tuple<bool, bool>(true, true);
 
 			private void GotoRecord_Clicked(object sender, EventArgs e)
 			{
@@ -238,8 +236,6 @@ namespace LanguageExplorer.Areas.Notebook
 					}
 				}
 			}
-
-			private Tuple<bool, bool> CanCmdImportSFMNotebook => new Tuple<bool, bool>(true, true);
 
 			private void ImportSFMNotebook_Clicked(object sender, EventArgs e)
 			{

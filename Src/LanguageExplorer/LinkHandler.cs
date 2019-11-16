@@ -49,7 +49,7 @@ namespace LanguageExplorer
 			standardToolBarDictionary.Add(Command.CmdHistoryBack, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryBack_Clicked, ()=> CanCmdHistoryBack));
 			standardToolBarDictionary.Add(Command.CmdHistoryForward, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryForward_Clicked, () => CanCmdHistoryForward));
 			// CmdCopyLocationAsHyperlink is on the Edit menu.
-			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit].Add(Command.CmdCopyLocationAsHyperlink, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CopyLocationAsHyperlink_Clicked, ()=> CanCmdCopyLocationAsHyperlink));
+			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit].Add(Command.CmdCopyLocationAsHyperlink, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CopyLocationAsHyperlink_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
 			_backStack = new LinkedList<FwLinkArgs>();
 			_forwardStack = new LinkedList<FwLinkArgs>();
 			CurrentContext = null;
@@ -158,8 +158,6 @@ namespace LanguageExplorer
 			}
 			CurrentContext = newHistoryLink;
 		}
-
-		private static Tuple<bool, bool> CanCmdCopyLocationAsHyperlink => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Handle the "Copy Location as Hyperlink" menu

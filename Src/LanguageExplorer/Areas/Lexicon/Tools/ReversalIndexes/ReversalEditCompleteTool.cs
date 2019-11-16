@@ -210,8 +210,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 				_reversalIndexRepository.EnsureReversalIndicesExist(_cache, _propertyTable);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => UiWidgetServices.CanSeeAndDo));
 				_commonReversalIndexMenuHelper = new CommonReversalIndexMenuHelper(_majorFlexComponentParameters, recordList);
 				_commonReversalIndexMenuHelper.SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -271,8 +271,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 				return ((ReferenceVectorSlice)slice).Create_mnuReorderVector(contextMenuId);
 			}
-
-			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
 
 			private void EditFindMenu_Click(object sender, EventArgs e)
 			{

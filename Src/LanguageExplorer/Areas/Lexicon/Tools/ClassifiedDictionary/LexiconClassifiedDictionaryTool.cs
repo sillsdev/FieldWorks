@@ -154,12 +154,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
 				var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
-				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
 				editMenuDictionary.Add(Command.CmdReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdCmdReplaceText_Click, () => CanCmdCmdReplaceText));
 			}
-
-			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
 
 			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
 			{

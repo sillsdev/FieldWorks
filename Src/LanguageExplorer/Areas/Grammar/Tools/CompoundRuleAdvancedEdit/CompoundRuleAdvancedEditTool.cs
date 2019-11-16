@@ -196,15 +196,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 
 				// <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
-				insertMenuDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => CanCmdInsertEndocentricCompound));
-				insertToolBarDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => CanCmdInsertEndocentricCompound));
+				insertMenuDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				// <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
-				insertMenuDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => CanCmdInsertExocentricCompound));
-				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => CanCmdInsertExocentricCompound));
+				insertMenuDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertEndocentricCompound => new Tuple<bool, bool>(true, true);
 
 			private void InsertEndocentricCompound_Clicked(object sender, EventArgs e)
 			{
@@ -213,8 +211,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 					_moMorphData.CompoundRulesOS.Add(_cache.ServiceLocator.GetInstance<IMoEndoCompoundFactory>().Create());
 				});
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertExocentricCompound => new Tuple<bool, bool>(true, true);
 
 			private void InsertInsertExocentricCompound_Clicked(object sender, EventArgs e)
 			{

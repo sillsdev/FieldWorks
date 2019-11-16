@@ -190,14 +190,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// Both insert menu & Insert tool bar. (No sub-item, since they are not nested.)
 				// <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, ()=> CanCmdInsertLexRefType));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, () => CanCmdInsertLexRefType));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, ()=> UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexRefType_click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Lexical_Relation);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertLexRefType => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertLexRefType_click(object sender, EventArgs e)
 			{

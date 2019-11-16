@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				{
 					// Add handler stuff.
 					var userController = new UserControlUiWidgetParameterObject(this);
-					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => CanShowPrintMenu));
+					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdPrint, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(PrintMenu_Click, () => UiWidgetServices.CanSeeAndDo));
 					_uiWidgetController.AddHandlers(userController);
 				}
 				else
@@ -722,8 +722,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
-
-		private static Tuple<bool, bool> CanShowPrintMenu => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)

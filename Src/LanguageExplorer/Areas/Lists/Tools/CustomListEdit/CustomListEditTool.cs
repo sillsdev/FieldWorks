@@ -176,14 +176,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				var menuItemsDictionary = toolUiWidgetParameterObject.MenuItemsForTool;
 				// <command id = "CmdDeleteCustomList" label="Delete Custom _List" message="DeleteCustomList" />
-				menuItemsDictionary[MainMenu.Edit].Add(Command.CmdDeleteCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DeleteCustomList_Click, ()=> CanCmdDeleteCustomList));
+				menuItemsDictionary[MainMenu.Edit].Add(Command.CmdDeleteCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DeleteCustomList_Click, ()=> UiWidgetServices.CanSeeAndDo));
 				// Goes in Insert menu
 				var insertMenuDictionary = menuItemsDictionary[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// Goes in Insert menu & Insert toolbar
 				// <command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, ()=> CanCmdInsertCustomItem));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, () => CanCmdInsertCustomItem));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomItem_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.List_Item);
 
 				// Goes in Insert menu & Insert toolbar
@@ -195,15 +195,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private static Tuple<bool, bool> CanCmdDeleteCustomList => new Tuple<bool, bool>(true, true);
-
 			private void DeleteCustomList_Click(object sender, EventArgs e)
 			{
 				UowHelpers.UndoExtension(ListResources.CustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run(_list));
 				Area.OnRemoveCustomListTool(_tool);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertCustomItem => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertCustomItem_Click(object sender, EventArgs e)
 			{

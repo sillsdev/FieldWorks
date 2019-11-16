@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 						toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
 						break;
 					case Command.CmdInsertRecord:
-						var cmdInsertRecordTuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Record_Clicked, () => CanCmdInsertRecord);
+						var cmdInsertRecordTuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Record_Clicked, () => UiWidgetServices.CanSeeAndDo);
 						insertMenuDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
 						insertToolBarDictionary.Add(Command.CmdInsertRecord, cmdInsertRecordTuple);
 						break;
@@ -104,8 +104,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 			}
 		}
-
-		private Tuple<bool, bool> CanCmdInsertRecord => new Tuple<bool, bool>(true, true);
 
 		private void Insert_Record_Clicked(object sender, EventArgs e)
 		{

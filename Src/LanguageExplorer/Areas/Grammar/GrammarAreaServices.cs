@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Grammar
 
 			// <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
 			AreaServices.InsertPair(toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert], toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert],
-				Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, ()=> AreaServices.CanSeeAndDo));
+				Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
 		}
 
 		private void InsertPhoneme_Clicked(object sender, EventArgs e)

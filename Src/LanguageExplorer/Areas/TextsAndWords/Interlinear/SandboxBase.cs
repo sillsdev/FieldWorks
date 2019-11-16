@@ -828,7 +828,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (_needSharedHandlers)
 				{
-					SharedEventHandlers.Add(Command.SandboxJumpToTool, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SandboxJumpToTool_Clicked, SharedEventHandlers.SeeAndDo));
+					SharedEventHandlers.Add(Command.SandboxJumpToTool, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SandboxJumpToTool_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
 					_needSharedHandlers = false;
 				}
 				EditMonitor.StartMonitoring();

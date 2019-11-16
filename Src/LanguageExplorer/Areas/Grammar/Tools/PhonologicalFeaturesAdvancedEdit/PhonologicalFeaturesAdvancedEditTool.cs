@@ -200,14 +200,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], insertMenuDictionary,
-					Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => CanCmdInsertPhonologicalClosedFeature));
+					Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_ClosedFeature_Value, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ClosedFeature_Value_Clicked, () => CanCmdDataTree_Insert_ClosedFeature_Value));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
 				RegisterSliceLeftEdgeMenus();
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertPhonologicalClosedFeature => new Tuple<bool, bool>(true, true);
 
 			private void InsertPhonologicalClosedFeature_Clicked(object sender, EventArgs e)
 			{

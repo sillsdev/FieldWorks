@@ -127,11 +127,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => CanCmdExport));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
-
-			private static Tuple<bool, bool> CanCmdExport => new Tuple<bool, bool>(true, true);
 
 			private void FileExportMenu_Click(object sender, EventArgs e)
 			{
@@ -141,8 +139,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
 				}
 			}
-
-			private static Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, false);
 
 			#region IDisposable
 			private bool _isDisposed;

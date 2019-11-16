@@ -197,8 +197,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				// Insert menu & tool bar
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => CanCmdInsertLexEntryType));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => UiWidgetServices.CanSeeAndDo));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLexEntryType_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Variant_Type);
 
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_LexEntrySubitem_Click, () => CanCmdDataTree_Insert_LexEntrySubitem));
@@ -230,8 +230,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertLexEntryType => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertLexEntryType_Click(object sender, EventArgs e)
 			{

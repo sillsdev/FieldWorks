@@ -53,5 +53,7 @@ namespace LanguageExplorer
 		{
 			return $"{LanguageExplorerResources.ShowFailingItems}_{toolMachineName}";
 		}
+
+		internal static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
 	}
 }

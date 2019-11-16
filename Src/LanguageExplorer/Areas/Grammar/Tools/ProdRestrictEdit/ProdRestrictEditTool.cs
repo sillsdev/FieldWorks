@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 				*/
 				// There are two always visible menus/buttons, and one menu that shows for two of the three classes that can be in the owning property.
 				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert],
-					Command.CmdInsertExceptionFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertExceptionFeature_Clicked, () => AreaServices.CanSeeAndDo));
+					Command.CmdInsertExceptionFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertExceptionFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

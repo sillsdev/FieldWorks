@@ -69,11 +69,7 @@ namespace LanguageExplorer.SendReceive
 			_globalUiWidgetParameterObject = globalParameterObject;
 		}
 
-		private Tuple<bool, bool> CanDoCmdHelpChorus => new Tuple<bool, bool>(true, true);
-
 		private Tuple<bool, bool> CanDoCmdCheckForFlexBridgeUpdates => new Tuple<bool, bool>(!MiscUtils.IsUnix, !MiscUtils.IsUnix);
-
-		private Tuple<bool, bool> CanDoCmdHelpAboutFLEXBridge => new Tuple<bool, bool>(true, true);
 
 		private Tuple<bool, bool> CanDoCmdFLExLiftBridge
 		{
@@ -152,9 +148,9 @@ namespace LanguageExplorer.SendReceive
 			// Common to Project and LIFT S/R.
 			// S/R menu
 			var srMenuDictionary = _globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.SendReceive];
-			srMenuDictionary.Add(Command.CmdHelpChorus, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpChorus_Click, () => CanDoCmdHelpChorus));
+			srMenuDictionary.Add(Command.CmdHelpChorus, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpChorus_Click, () => UiWidgetServices.CanSeeAndDo));
 			srMenuDictionary.Add(Command.CmdCheckForFlexBridgeUpdates, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CheckForFlexBridgeUpdates_Click, () => CanDoCmdCheckForFlexBridgeUpdates));
-			srMenuDictionary.Add(Command.CmdHelpAboutFLEXBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpAboutFLEXBridge_Click, () => CanDoCmdHelpAboutFLEXBridge));
+			srMenuDictionary.Add(Command.CmdHelpAboutFLEXBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HelpAboutFLEXBridge_Click, () => UiWidgetServices.CanSeeAndDo));
 			// Tool bar button
 			_globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard].Add(Command.CmdFLExLiftBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Flex_Or_Lift_Bridge_Clicked, () => CanDoCmdFLExLiftBridge));
 		}

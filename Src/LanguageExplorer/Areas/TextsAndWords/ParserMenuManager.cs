@@ -110,9 +110,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			parserMenuDictionary.Add(Command.CmdParseWordsInCurrentText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseWordsInText_Click, () => CanCmdParseWordsInCurrentText));
 			parserMenuDictionary.Add(Command.CmdParseCurrentWord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ParseCurrentWord_Click, () => CanCmdParseCurrentWord));
 			parserMenuDictionary.Add(Command.CmdClearSelectedWordParserAnalyses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClearCurrentParserAnalyses_Click, () => CanCmdClearSelectedWordParserAnalyses));
-			parserMenuDictionary.Add(Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser));
-			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => CanChooseParser));
-			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => CanChooseParser));
+			parserMenuDictionary.Add(Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
+			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
+			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => UiWidgetServices.CanSeeAndDo));
 
 			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
 			Subscriber.Subscribe("StopParser", StopParser_Handler);
@@ -206,8 +206,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return new Tuple<bool, bool>(enable, enable);
 			}
 		}
-
-		private Tuple<bool, bool> CanChooseParser => new Tuple<bool, bool>(true, true);
 
 		private void ParserMenu_DropDownOpening(object sender, EventArgs e)
 		{

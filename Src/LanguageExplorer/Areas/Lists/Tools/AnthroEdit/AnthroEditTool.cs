@@ -192,8 +192,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				// <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolbarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, ()=> CanCmdInsertAnthroCategory));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => CanCmdInsertAnthroCategory));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Anthropology_Category);
 
 				// <command id="CmdDataTree_Insert_AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
@@ -224,8 +224,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertAnthroCategory => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertAnthroCategory_Click(object sender, EventArgs e)
 			{

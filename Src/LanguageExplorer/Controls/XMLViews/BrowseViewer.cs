@@ -848,7 +848,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
 			// Tools->Configure->Columns menu is visible and enabled in this tool.
-			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureColumns, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureColumns_Click, () => CanCmdConfigureColumns));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureColumns, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureColumns_Click, () => UiWidgetServices.CanSeeAndDo));
 		}
 
 		/// <summary>
@@ -2071,8 +2071,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			return BrowseView.Vc.HasSelectColumn ? 1 : 0;
 		}
-
-		private Tuple<bool, bool> CanCmdConfigureColumns => new Tuple<bool, bool>(true, true);
 
 		// Handle the 'more column choices' item.
 		private void ConfigureColumns_Click(object sender, EventArgs args)

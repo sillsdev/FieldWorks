@@ -47,13 +47,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			var userControlUiWidgetParameterObject = new UserControlUiWidgetParameterObject(this);
 
 			// Handle tool bar button on View tool bar.
-			userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => CanCmdChooseTexts));
+			userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			// Handle menu item in View menu.
-			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => CanCmdChooseTexts));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.View].Add(Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			_uiWidgetController.AddHandlers(userControlUiWidgetParameterObject);
 		}
-
-		public Tuple<bool, bool> CanCmdChooseTexts => new Tuple<bool, bool>(true, true);
 
 		#region Implementation of IPropertyTableProvider
 

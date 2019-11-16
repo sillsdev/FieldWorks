@@ -142,8 +142,6 @@ namespace LanguageExplorer.Impls
 			return false;
 		}
 
-		public Func<Tuple<bool, bool>> SeeAndDo => () => new Tuple<bool, bool>(true, true);
-
 		#endregion
 
 		private static Tuple<bool, bool> DefaultStatusChecker()

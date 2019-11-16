@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas
 			_uiWidgetController = uiWidgetController;
 			// Add handler stuff.
 			var userController = new UserControlUiWidgetParameterObject(this);
-			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => CanCmdConfigureXmlDocView));
+			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			_uiWidgetController.ToolsMenuDictionary[Command.CmdConfigureXmlDocView].Text = string.IsNullOrWhiteSpace(configureText) ? LanguageExplorerResources.ConfigureDocument : configureText;
 
 			_uiWidgetController.AddHandlers(userController);
@@ -1070,8 +1070,6 @@ namespace LanguageExplorer.Areas
 			// Change it if it's actually changed.
 			SetInfoBarText();
 		}
-
-		private Tuple<bool, bool> CanCmdConfigureXmlDocView => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Launch the configure dialog.

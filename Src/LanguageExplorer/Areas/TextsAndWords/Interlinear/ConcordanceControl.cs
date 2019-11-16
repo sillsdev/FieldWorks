@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
 			m_tbSearchText.SuppressEnter = true;
-			_sharedEventHandlers.Add(Command.JumpToConcordance, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(JumpToConcordance_Clicked, _sharedEventHandlers.SeeAndDo));
+			_sharedEventHandlers.Add(Command.JumpToConcordance, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(JumpToConcordance_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
 		}
 
 		#region Overrides of ConcordanceControlBase

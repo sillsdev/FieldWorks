@@ -37,12 +37,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not expected to call this method.");
 			}
 			var fileMenuItemsForTool = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File];
-			fileMenuItemsForTool.Add(Command.CmdImportInterlinearSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearSfm_Click, () => CanCmdImportInterlinearSfm));
-			fileMenuItemsForTool.Add(Command.CmdImportWordsAndGlossesSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordsAndGlossesSfm_Click, () => CanCmdImportWordsAndGlossesSfm));
-			fileMenuItemsForTool.Add(Command.CmdImportInterlinearData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearData_Click, () => CanCmdImportInterlinearData));
+			fileMenuItemsForTool.Add(Command.CmdImportInterlinearSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearSfm_Click, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuItemsForTool.Add(Command.CmdImportWordsAndGlossesSfm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordsAndGlossesSfm_Click, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuItemsForTool.Add(Command.CmdImportInterlinearData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportInterlinearData_Click, () => UiWidgetServices.CanSeeAndDo));
 		}
-
-		private Tuple<bool, bool> CanCmdImportInterlinearSfm => new Tuple<bool, bool>(true, true);
 
 		private void ImportInterlinearSfm_Click(object sender, EventArgs e)
 		{
@@ -52,8 +50,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			}
 		}
 
-		private Tuple<bool, bool> CanCmdImportWordsAndGlossesSfm => new Tuple<bool, bool>(true, true);
-
 		private void ImportWordsAndGlossesSfm_Click(object sender, EventArgs e)
 		{
 			using (var importWizardDlg = new WordsSfmImportWizard())
@@ -61,8 +57,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 			}
 		}
-
-		private Tuple<bool, bool> CanCmdImportInterlinearData => new Tuple<bool, bool>(true, true);
 
 		private void ImportInterlinearData_Click(object sender, EventArgs e)
 		{

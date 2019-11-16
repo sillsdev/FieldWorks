@@ -1307,19 +1307,19 @@ namespace LanguageExplorer.Impls
 			_macroMenuHandler.Initialize(_majorFlexComponentParameters, globalUiWidgetParameterObject);
 			// Add any other global type items where the event handler is defined in this window.
 			var fileMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.File];
-			fileMenuDictionary.Add(Command.CmdNewLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_New_FieldWorks_Project, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdChooseLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Open, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdProjectProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_FieldWorks_Project_Properties, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Back_up_this_Project, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdRestoreFromBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Restore_a_Project, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdNewLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_New_FieldWorks_Project, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdChooseLangProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Open, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdProjectProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_FieldWorks_Project_Properties, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Back_up_this_Project, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdRestoreFromBackup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Restore_a_Project, () => UiWidgetServices.CanSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdProjectLocation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Project_Location, () => CanCmdProjectLocation));
-			fileMenuDictionary.Add(Command.CmdDeleteProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Delete_Project, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdCreateProjectShortcut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Create_Shortcut_on_Desktop, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdDeleteProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Delete_Project, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdCreateProjectShortcut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Create_Shortcut_on_Desktop, () => UiWidgetServices.CanSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdArchiveWithRamp, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Archive_With_RAMP, () => CanCmdArchiveWithRamp));
 			fileMenuDictionary.Add(Command.CmdUploadToWebonary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(UploadToWebonary_Click, () => CanCmdUploadToWebonary));
-			fileMenuDictionary.Add(Command.CmdImportSFMLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Import_Standard_Format_Marker_Click, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdImportTranslatedLists, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_List_Content, () => CanAlwaysSeeAndDo));
-			fileMenuDictionary.Add(Command.CmdClose, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_CloseWindow, () => CanAlwaysSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdImportSFMLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Import_Standard_Format_Marker_Click, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdImportTranslatedLists, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_List_Content, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdClose, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_CloseWindow, () => UiWidgetServices.CanSeeAndDo));
 
 			var editMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit];
 			editMenuDictionary.Add(Command.CmdUndo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Undo_Click, () => CanCmdUndo));
@@ -1340,34 +1340,34 @@ namespace LanguageExplorer.Impls
 			insertMenuDictionary.Add(Command.CmdShowCharMap, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SpecialCharacterToolStripMenuItem_Click, () => CanCmdShowCharMap));
 
 			var formatMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Format];
-			formatMenuDictionary.Add(Command.CmdFormatStyle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Format_Styles_Click, () => CanAlwaysSeeAndDo));
+			formatMenuDictionary.Add(Command.CmdFormatStyle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Format_Styles_Click, () => UiWidgetServices.CanSeeAndDo));
 			formatMenuDictionary.Add(Command.CmdFormatApplyStyle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(applyStyleToolStripMenuItem_Click, () => CanCmdFormatApplyStyle));
-			formatMenuDictionary.Add(Command.CmdVernacularWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdVernacularWritingSystemProperties_Click, () => CanAlwaysSeeAndDo));
-			formatMenuDictionary.Add(Command.CmdAnalysisWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAnalysisWritingSystemProperties_Click, () => CanAlwaysSeeAndDo));
+			formatMenuDictionary.Add(Command.CmdVernacularWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdVernacularWritingSystemProperties_Click, () => UiWidgetServices.CanSeeAndDo));
+			formatMenuDictionary.Add(Command.CmdAnalysisWritingSystemProperties, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAnalysisWritingSystemProperties_Click, () => UiWidgetServices.CanSeeAndDo));
 
 			var toolsMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Tools];
-			toolsMenuDictionary.Add(Command.CmdRestoreDefaults, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(restoreDefaultsToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
-			toolsMenuDictionary.Add(Command.CmdUseVernSpellingDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(showVernacularSpellingErrorsToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
-			toolsMenuDictionary.Add(Command.CmdProjectUtilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(utilitiesToolStripMenuItem_Click, () => CanAlwaysSeeAndDo));
-			toolsMenuDictionary.Add(Command.CmdToolsOptions, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Options_Click, () => CanAlwaysSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdRestoreDefaults, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(restoreDefaultsToolStripMenuItem_Click, () => UiWidgetServices.CanSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdUseVernSpellingDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(showVernacularSpellingErrorsToolStripMenuItem_Click, () => UiWidgetServices.CanSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdProjectUtilities, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(utilitiesToolStripMenuItem_Click, () => UiWidgetServices.CanSeeAndDo));
+			toolsMenuDictionary.Add(Command.CmdToolsOptions, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Options_Click, () => UiWidgetServices.CanSeeAndDo));
 
-			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Window].Add(Command.CmdNewWindow, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NewWindow_Clicked, () => CanAlwaysSeeAndDo));
+			globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Window].Add(Command.CmdNewWindow, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NewWindow_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 			var helpMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Help];
-			helpMenuDictionary.Add(Command.CmdHelpLanguageExplorer, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_LanguageExplorer, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpTraining, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpDemoMovies, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_DemoMovies, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpLexicographyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Lexicography_Clicked, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpMorphologyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Parsing_Click, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpNotesSendReceive, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_on_FieldWorks_Send_Receive, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpNotesSFMDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Techinical_Notes_On_SFM_Database_Import_Click, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpNotesLinguaLinksDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_LinguaLinks_Import_Click, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpNotesInterlinearImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_Interlinear_Import_Click, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpNotesWritingSystems, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training_Writing_Systems, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpXLingPap, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_XLingPaper, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpReportBug, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_ReportProblem, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpMakeSuggestion, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Make_a_Suggestion, () => CanAlwaysSeeAndDo));
-			helpMenuDictionary.Add(Command.CmdHelpAbout, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_About_Language_Explorer, () => CanAlwaysSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpLanguageExplorer, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_LanguageExplorer, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpTraining, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpDemoMovies, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_DemoMovies, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpLexicographyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Lexicography_Clicked, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpMorphologyIntro, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Introduction_To_Parsing_Click, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesSendReceive, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_on_FieldWorks_Send_Receive, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesSFMDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Techinical_Notes_On_SFM_Database_Import_Click, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesLinguaLinksDatabaseImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_LinguaLinks_Import_Click, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesInterlinearImport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Technical_Notes_On_Interlinear_Import_Click, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpNotesWritingSystems, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Training_Writing_Systems, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpXLingPap, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_XLingPaper, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpReportBug, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_ReportProblem, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpMakeSuggestion, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_Make_a_Suggestion, () => UiWidgetServices.CanSeeAndDo));
+			helpMenuDictionary.Add(Command.CmdHelpAbout, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Help_About_Language_Explorer, () => UiWidgetServices.CanSeeAndDo));
 
 			// Standard is set, above: var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
 			standardToolBarDictionary.Add(Command.CmdUndo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Undo_Click, () => CanCmdUndo));
@@ -1385,8 +1385,6 @@ namespace LanguageExplorer.Impls
 			toolBarDictionary.Add(key, currentTuple);
 			menuDictionary.Add(key, currentTuple);
 		}
-
-		private static Tuple<bool, bool> CanAlwaysSeeAndDo => new Tuple<bool, bool>(true, true);
 
 		/// <summary>
 		/// Gets a Rectangle representing the position and size of the window in its

@@ -43,15 +43,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				{
 					case Command.CmdGoToEntry:
 						// <item command="CmdGoToEntry" />
-						InsertPair(insertToolBarDictionary, toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit], Command.CmdGoToEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToEntry_Clicked, () => CanCmdGoToEntry));
+						InsertPair(insertToolBarDictionary, toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit], Command.CmdGoToEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToEntry_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						break;
 					case Command.CmdInsertLexEntry:
 						// <item command="CmdInsertLexEntry" defaultVisible="false" />
-						InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertLexEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Entry_Clicked, () => CanCmdInsertLexEntry));
+						InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertLexEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Entry_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						break;
 					case Command.CmdConfigureDictionary:
 						// <command id="CmdConfigureDictionary" label="{0}" message="ConfigureDictionary"/>
-						toolsMenuDictionary.Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => CanCmdConfigureDictionary));
+						toolsMenuDictionary.Add(Command.CmdConfigureDictionary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Tools_Configure_Dictionary_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						_majorFlexComponentParameters.UiWidgetController.ToolsMenuDictionary[Command.CmdConfigureDictionary].Text = AreaResources.ConfigureDictionary;
 						break;
 					default:
@@ -66,8 +66,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			menuDictionary.Add(key, currentTuple);
 		}
 
-		private static Tuple<bool, bool> CanCmdConfigureDictionary => new Tuple<bool, bool>(true, true);
-
 		private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
 		{
 			var mainWnd = _majorFlexComponentParameters.MainWindow;
@@ -76,8 +74,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				mainWnd.RefreshAllViews();
 			}
 		}
-
-		private static readonly Tuple<bool, bool> CanCmdGoToEntry = new Tuple<bool, bool>(true, true);
 
 		private void GoToEntry_Clicked(object sender, EventArgs e)
 		{
@@ -98,8 +94,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				}
 			}
 		}
-
-		private static Tuple<bool, bool> CanCmdInsertLexEntry => new Tuple<bool, bool>(true, true);
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
 		{

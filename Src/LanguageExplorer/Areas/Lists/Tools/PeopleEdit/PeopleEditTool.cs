@@ -194,12 +194,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, commands: new HashSet<Command> { Command.CmdAddToLexicon, Command.CmdExport, Command.CmdLexiconLookup });
 				// <item command="CmdInsertPerson" defaultVisible="false" />
 				// Insert menu & Insert tool bar (but no sub-person).
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, ()=> CanCmdInsertPerson));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, () => CanCmdInsertPerson));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPerson_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Person);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertPerson => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertPerson_Click(object sender, EventArgs e)
 			{

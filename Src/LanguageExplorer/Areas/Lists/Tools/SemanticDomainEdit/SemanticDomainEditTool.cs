@@ -194,8 +194,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				// <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
 				// <command id="CmdDataTree_Insert_SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
 				// Insert menu & tool bar
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> CanCmdInsertSemDom));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => CanCmdInsertSemDom));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertSemDom_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Semantic_Domain);
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_SemanticDomain_Click, () => CanCmdDataTree_Insert_SemanticDomain));
@@ -298,8 +298,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertSemDom => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertSemDom_Click(object sender, EventArgs e)
 			{

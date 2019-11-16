@@ -194,8 +194,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhRegularRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhRegularRule_Click, () => AreaServices.CanSeeAndDo));
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhMetathesisRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhMetathesisRule_Click, () => AreaServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhRegularRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhRegularRule_Click, () => UiWidgetServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhMetathesisRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhMetathesisRule_Click, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

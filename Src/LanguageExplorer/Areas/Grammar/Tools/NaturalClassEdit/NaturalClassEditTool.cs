@@ -191,16 +191,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert]; ;
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
-				insertMenuDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => CanDoItAll));
-				insertToolBarDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => CanDoItAll));
+				insertMenuDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
-				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => CanDoItAll));
-				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => CanDoItAll));
+				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
-
-			private static Tuple<bool, bool> CanDoItAll => new Tuple<bool, bool>(true, true);
 
 			private void InsertSegmentNaturalClasses_Clicked(object sender, EventArgs e)
 			{

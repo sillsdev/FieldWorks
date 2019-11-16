@@ -515,7 +515,5 @@ namespace LanguageExplorer.Areas
 			toolBarDictionary.Add(key, currentTuple);
 			menuDictionary.Add(key, currentTuple);
 		}
-
-		internal static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
 	}
 }

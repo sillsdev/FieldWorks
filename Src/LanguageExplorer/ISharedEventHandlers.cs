@@ -90,7 +90,5 @@ namespace LanguageExplorer
 		/// <param name="eventHandler">The event handler handler, or null if <paramref name="key"/> has not been registered.</param>
 		/// <returns>'true', if the  <paramref name="key"/> has been registered, otherwise 'false'.</returns>
 		bool TryGetEventHandler(Command key, out EventHandler eventHandler);
-
-		Func<Tuple<bool, bool>> SeeAndDo { get; }
 	}
 }

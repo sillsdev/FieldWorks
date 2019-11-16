@@ -191,14 +191,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
 				// <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => CanCmdDataTree_Insert_Phoneme_Code));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
 				RegisterSliceLeftEdgeMenus();
 			}
-
-			private static Tuple<bool, bool> CanCmdDataTree_Insert_Phoneme_Code => new Tuple<bool, bool>(true, true);
 
 			private void Insert_Phoneme_Code_Clicked(object sender, EventArgs e)
 			{

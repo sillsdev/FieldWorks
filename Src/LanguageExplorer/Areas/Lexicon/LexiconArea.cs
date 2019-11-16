@@ -260,13 +260,11 @@ namespace LanguageExplorer.Areas.Lexicon
 				var fileMenuItemsForTool = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File];
 				// Add two lexicon area-wide import options.
 				// <item command="CmdImportLinguaLinksData" />
-				fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => CanCmdImportLinguaLinksData));
+				fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdImportLiftData" />
-				fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => CanCmdImportLiftData));
+				fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}
-
-			private static Tuple<bool, bool> CanCmdImportLinguaLinksData => new Tuple<bool, bool>(true, true);
 
 			private void ImportLinguaLinksData_Clicked(object sender, EventArgs e)
 			{
@@ -275,8 +273,6 @@ namespace LanguageExplorer.Areas.Lexicon
 					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 				}
 			}
-
-			private Tuple<bool, bool> CanCmdImportLiftData => new Tuple<bool, bool>(true, true);
 
 			private void ImportLiftData_Clicked(object sender, EventArgs e)
 			{

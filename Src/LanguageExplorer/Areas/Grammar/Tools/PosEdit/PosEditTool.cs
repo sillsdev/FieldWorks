@@ -181,11 +181,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Insert menu & tool bar for CmdInsertPossibility and CmdDataTree_Insert_Possibility.
-				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
+				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> UiWidgetServices.CanSeeAndDo);
 				_sharedListToolsUiWidgetMenuHelper.MyPartiallySharedForToolsWideMenuHelper.SetupCmdDataTree_Insert_Possibility(toolUiWidgetParameterObject, () => CanCmdDataTree_Insert_POS_SubPossibilities);
 				// Insert menu commands: CmdDataTree_Insert_POS_AffixTemplate
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_AffixTemplate, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_AffixTemplate_Click, ()=> CanCmdDataTree_Insert_POS_AffixTemplate));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_POS_AffixTemplate, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_POS_AffixTemplate_Click, ()=> UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 
@@ -470,11 +470,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
-
 			private Tuple<bool, bool> CanCmdDataTree_Insert_POS_SubPossibilities => new Tuple<bool, bool>(true, _recordList.CurrentObject != null);
-
-			private static Tuple<bool, bool> CanCmdDataTree_Insert_POS_AffixTemplate => new Tuple<bool, bool>(true, true);
 
 			private void CmdDataTree_Insert_POS_AffixTemplate_Click(object sender, EventArgs e)
 			{

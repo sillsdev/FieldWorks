@@ -214,8 +214,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Add to Insert menu & Insert toolbar
 				// <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, ()=> CanCmdInsertFeatureType));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, () => CanCmdInsertFeatureType));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertFeatureType, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureType_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// Change Text.
 				_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdInsertFeatureType].Text = ListResources.Feature_Type;
 				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdInsertFeatureType].ToolTipText = ListResources.Feature_Type;
@@ -251,8 +251,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			{
 				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertFeatureType => new Tuple<bool, bool>(true, true);
 
 			private void InsertFeatureType_Clicked(object sender, EventArgs e)
 			{

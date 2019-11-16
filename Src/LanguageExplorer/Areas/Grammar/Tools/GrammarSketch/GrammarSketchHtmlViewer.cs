@@ -311,7 +311,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			var directory = Path.GetDirectoryName(outPath);
 			if (string.IsNullOrWhiteSpace(directory))
 			{
-				throw new ArgumentException("'outPath' parameter cannot be null, an empoty string, or only whitespace.");
+				throw new ArgumentException("'outPath' parameter cannot be null, an empty string, or only whitespace.");
 			}
 			if (!Directory.Exists(directory))
 			{

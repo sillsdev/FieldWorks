@@ -162,12 +162,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				_recordList = recordList;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-				_partiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> CanCmdInsertPOS);
+				_partiallySharedForToolsWideMenuHelper.SetupCmdInsertPossibility(toolUiWidgetParameterObject, ()=> UiWidgetServices.CanSeeAndDo);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertPOS => new Tuple<bool, bool>(true, true);
 
 			private void CreateBrowseViewContextMenu()
 			{

@@ -199,8 +199,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 			{
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => CanCmdFindAndReplaceText));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
+				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
 				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command> { Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 			}
 
@@ -337,8 +337,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true);
 				DocView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
 			}
-
-			private static Tuple<bool, bool> CanCmdFindAndReplaceText => new Tuple<bool, bool>(true, true);
 
 			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
 			{

@@ -223,9 +223,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> AreaServices.CanSeeAndDo));
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => AreaServices.CanSeeAndDo));
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => AreaServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertMorphemeACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertMorphemeACP_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertAllomorphACP, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAllomorphACP_Click, () => UiWidgetServices.CanSeeAndDo));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertACPGroup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertACPGroup_Click, () => UiWidgetServices.CanSeeAndDo));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 

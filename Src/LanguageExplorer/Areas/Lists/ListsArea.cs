@@ -247,12 +247,10 @@ namespace LanguageExplorer.Areas.Lists
 			private void SetupAreaUiWidgets()
 			{
 				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
-				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert].Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => CanCmdAddCustomList));
+				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert].Add(Command.CmdAddCustomList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomList_Click, () => UiWidgetServices.CanSeeAndDo));
 				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools].Add(Command.CmdConfigureList, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureList_Click, () => CanCmdConfigureList));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}
-
-			private static Tuple<bool, bool> CanCmdAddCustomList => new Tuple<bool, bool>(true, true);
 
 			private void AddCustomList_Click(object sender, EventArgs e)
 			{

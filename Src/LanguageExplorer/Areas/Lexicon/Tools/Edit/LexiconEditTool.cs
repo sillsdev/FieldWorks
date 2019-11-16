@@ -313,29 +313,29 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
 
 				// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, () => CanShow_DictionaryPubPreview));
+				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				((ToolStripMenuItem)_majorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.Show_DictionaryPubPreview]).Checked = _propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 
 				// Was: LexiconEditToolInsertMenuManager
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				// <item command="CmdInsertSense" defaultVisible="false" />;
-				insertMenuDictionary.Add(Command.CmdInsertSense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sense_Clicked, () => CanCmdInsertSense));
+				insertMenuDictionary.Add(Command.CmdInsertSense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sense_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdInsertSubsense" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertSubsense, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Subsense_Clicked, () => CanCmdInsertSubsense));
 				// <item command="CmdDataTree_Insert_AlternateForm" label="A_llomorph" defaultVisible="false" />
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_AlternateForm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Allomorph_Clicked, () => CanCmdDataTree_Insert_AlternateForm));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_AlternateForm, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Allomorph_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdDataTree_Insert_Etymology" defaultVisible="false" />
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Etymology, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Etymology_Clicked, () => CanCmdDataTree_Insert_Etymology));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Etymology, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Etymology_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdDataTree_Insert_Pronunciation" defaultVisible="false" />
-				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Pronunciation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Pronunciation_Clicked, () => CanCmdDataTree_Insert_Pronunciation));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Pronunciation, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Pronunciation_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdInsertExtNote" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertExtNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ExtendedNote_Clicked, () => CanCmdInsertExtNote));
 				// <item command="CmdInsertPicture" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertPicture, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Picture_Clicked, () => CanCmdInsertPicture));
 				// <item command="CmdInsertVariant" defaultVisible="false" />
-				insertMenuDictionary.Add(Command.CmdInsertVariant, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Variant_Clicked, () => CanCmdInsertVariant));
+				insertMenuDictionary.Add(Command.CmdInsertVariant, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Variant_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdInsertMediaFile" defaultVisible="false" />
-				insertMenuDictionary.Add(Command.CmdInsertMediaFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sound_Or_Movie_File_Clicked, () => CanCmdInsertMediaFile));
+				insertMenuDictionary.Add(Command.CmdInsertMediaFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sound_Or_Movie_File_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				// Was: LexiconEditToolToolsMenuManager
 				var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
@@ -361,8 +361,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_rightClickContextMenuManager = new RightClickContextMenuManager(_majorFlexComponentParameters, toolUiWidgetParameterObject.Tool, _dataTree, _recordList);
 			}
 
-			private static Tuple<bool, bool> CanShow_DictionaryPubPreview => new Tuple<bool, bool>(true, true);
-
 			private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
 			{
 				var menuItem = (ToolStripMenuItem)sender;
@@ -382,8 +380,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var currentSlice = _dataTree.CurrentSlice;
 				currentSlice.HandleSplitCommand();
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertSense => new Tuple<bool, bool>(true, true);
 
 			private void Insert_Sense_Clicked(object sender, EventArgs e)
 			{
@@ -429,8 +425,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				LexSenseUi.CreateNewLexSense(_cache, owningSense);
 			}
 
-			private static Tuple<bool, bool> CanCmdDataTree_Insert_AlternateForm => new Tuple<bool, bool>(true, true);
-
 			private void Insert_Allomorph_Clicked(object sender, EventArgs e)
 			{
 				var lexEntry = (ILexEntry)_recordList.CurrentObject;
@@ -440,8 +434,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				});
 			}
 
-			private static Tuple<bool, bool> CanCmdDataTree_Insert_Etymology => new Tuple<bool, bool>(true, true);
-
 			private void Insert_Etymology_Clicked(object sender, EventArgs e)
 			{
 				UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Insert_Etymology, LexiconResources.Redo_Insert_Etymology, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
@@ -450,7 +442,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				});
 			}
 
-			private static Tuple<bool, bool> CanCmdDataTree_Insert_Pronunciation => new Tuple<bool, bool>(true, true);
 
 			private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
 			{
@@ -501,8 +492,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 
-			private static Tuple<bool, bool> CanCmdInsertVariant => new Tuple<bool, bool>(true, true);
-
 			private void Insert_Variant_Clicked(object sender, EventArgs e)
 			{
 				using (var dlg = new InsertVariantDlg())
@@ -514,8 +503,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					dlg.ShowDialog();
 				}
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertMediaFile => new Tuple<bool, bool>(true, true);
 
 			private void Insert_Sound_Or_Movie_File_Clicked(object sender, EventArgs e)
 			{

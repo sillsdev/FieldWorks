@@ -195,8 +195,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				var insertToolbarDictionary = toolBarItemsDictionary[ToolBar.Insert];
 				// <item command="CmdInsertLocation" defaultVisible="false" />
 				// <item command="CmdDataTree_Insert_Location" defaultVisible="false" label="Subitem" />
-				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> CanCmdInsertLocation));
-				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => CanCmdInsertLocation));
+				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> UiWidgetServices.CanSeeAndDo));
+				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Location);
 
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
@@ -236,8 +236,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
-
-			private static Tuple<bool, bool> CanCmdInsertLocation => new Tuple<bool, bool>(true, true);
 
 			private void CmdInsertLocation_Click(object sender, EventArgs e)
 			{

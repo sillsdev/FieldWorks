@@ -106,8 +106,8 @@ namespace LanguageExplorer.Areas.Lists.Tools
 						break;
 					case Command.CmdInsertPossibility: // Add to Hashset
 						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
-						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
-						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => CanCmdInsertPossibility));
+						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => UiWidgetServices.CanSeeAndDo));
+						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => UiWidgetServices.CanSeeAndDo));
 						AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item]);
 						break;
 					case Command.CmdDataTree_Insert_Possibility: // Add to Hashset
@@ -245,8 +245,6 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				return new Tuple<bool, bool>(true, enabled);
 			}
 		}
-
-		private static Tuple<bool, bool> CanCmdInsertPossibility => new Tuple<bool, bool>(true, true);
 
 		private void CmdInsertPossibility_Click(object sender, EventArgs e)
 		{
