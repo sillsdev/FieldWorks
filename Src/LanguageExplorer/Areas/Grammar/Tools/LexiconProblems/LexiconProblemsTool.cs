@@ -156,12 +156,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
-#endif
+
+				SetupUiWidgets(tool);
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
 			#region Implementation of IDisposable

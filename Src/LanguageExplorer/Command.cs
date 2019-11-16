@@ -1184,15 +1184,6 @@ namespace LanguageExplorer
 		CmdDataTree_Delete_Adhoc_Group_Members_Group,
 		//<!-- <item command="CmdDataTree_Help"/> -->
 
-		//<menu id="mnuDataTree_CompoundRule_LinkerAffixAllomorph">
-		CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph,
-		CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph,
-		//<!-- <item command="CmdDataTree_Help"/> -->
-
-		//<menu id="mnuDataTree_FeatureStructure_Feature">
-		CmdDataTree_Delete_FeatureStructure_Feature,
-		//<!-- <item command="CmdDataTree_Help"/> -->
-
 		//<menu id="mnuDataTree_ClosedFeature_Values">
 		//CmdDataTree_Insert_ClosedFeature_Value,
 		//<!-- <item command="CmdDataTree_Help"/> -->

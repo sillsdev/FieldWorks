@@ -66,20 +66,6 @@ so I can look at that in the develop branch.
     </command>
     <command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg" />
     <!-- END include: "Words/areaConfiguration.xml" query="root/commands/*" -->
-    <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
-      <parameters tool="interlinearEdit" className="Text" />
-    </command>
-    <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
-      <parameters tool="notebookEdit" className="RnGenericRec" />
-    </command>
-    <command id="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
-      <parameters field="Linker" className="MoAffixAllomorph" />
-    </command>
-    <command id="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
-      <parameters field="Linker" className="MoAffixAllomorph" />
-    </command>
-    <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
   </commands>
   <!-- ************************ contextMenus *********************** -->
   <contextMenus>
@@ -146,23 +132,6 @@ so I can look at that in the develop branch.
       <item command="CmdDataTree_Delete_WordGloss" />
     </menu>
     <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <!-- START include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuDataTree_Text">
-      <item command="CmdJumpToText" />
-    </menu>
-    <menu id="mnuTextInfo_Notebook">
-      <item command="CmdJumpToNotebook" />
-    </menu>
-    <menu id="mnuDataTree_CompoundRule_LinkerAffixAllomorph">
-      <item command="CmdDataTree_Create_CompoundRule_LinkerAffixAllomorph" />
-      <item command="CmdDataTree_Delete_CompoundRule_LinkerAffixAllomorph" />
-    </menu>
-    <menu id="mnuDataTree_FeatureStructure_Feature">
-      <item command="CmdDataTree_Delete_FeatureStructure_Feature" />
-    </menu>
-    <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
   <contexthelpstrings>
     <!-- START include: "ContextHelp.xml" query="strings" -->

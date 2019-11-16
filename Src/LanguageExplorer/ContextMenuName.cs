@@ -161,7 +161,6 @@ namespace LanguageExplorer
 		mnuDataTree_Delete_Adhoc_Morpheme,
 		mnuDataTree_Delete_Adhoc_Allomorph,
 		mnuDataTree_Delete_Adhoc_Group,
-		mnuDataTree_CompoundRule_LinkerAffixAllomorph,
 		mnuDataTree_FeatureStructure_Feature,
 		mnuDataTree_ClosedFeature_Values,
 		mnuDataTree_ClosedFeature_Value,
