@@ -545,35 +545,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				switch (m_tabCtrl.SelectedIndex)
 				{
-					case ktpsRawText:
-						if (ParentForm == Form.ActiveForm)
-						{
-							m_rtPane.Focus();
-						}
-						if (m_rtPane.RootBox != null && m_rtPane.RootBox.Selection == null && RootStText != null)
-						{
-							m_rtPane.RootBox.MakeSimpleSel(true, false, false, true);
-						}
-						break;
-					case ktpsCChart:
-						if (RootStText == null)
-						{
-							m_constChartPane.Enabled = false;
-							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
-						}
-						else
-						{
-							// LT-7733 Warning dialog for Text Chart
-							MessageBoxExManager.Trigger("TextChartNewFeature");
-							m_constChartPane.Enabled = true;
-							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = ShouldSetupUiWidgets;
-						}
-						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
-						if (ParentForm == Form.ActiveForm)
-						{
-							m_constChartPane.Focus();
-						}
-						break;
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
@@ -593,8 +564,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							m_infoPane.BackColor = Color.White;
 						}
 						break;
-					case ktpsPrint:
-						m_printViewPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+					case ktpsRawText:
+						if (ParentForm == Form.ActiveForm)
+						{
+							m_rtPane.Focus();
+						}
+						if (m_rtPane.RootBox != null && m_rtPane.RootBox.Selection == null && RootStText != null)
+						{
+							m_rtPane.RootBox.MakeSimpleSel(true, false, false, true);
+						}
 						break;
 					case ktpsGloss:
 						m_idcGloss.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
@@ -604,6 +582,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					case ktpsTagging:
 						m_taggingPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						break;
+					case ktpsPrint:
+						m_printViewPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						break;
+					case ktpsCChart:
+						if (RootStText == null)
+						{
+							m_constChartPane.Enabled = false;
+							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
+						}
+						else
+						{
+							// LT-7733 Warning dialog for Text Chart
+							MessageBoxExManager.Trigger("TextChartNewFeature");
+							m_constChartPane.Enabled = true;
+							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = ShouldSetupUiWidgets;
+						}
+						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
+						if (ParentForm == Form.ActiveForm)
+						{
+							m_constChartPane.Focus();
+						}
 						break;
 				}
 				SelectAnnotation();

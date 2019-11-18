@@ -235,6 +235,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private CustomFieldsMenuHelper _customFieldsMenuHelper;
 
+			internal ITool ActiveTool { private get; set; }
+
 			internal TextAndWordsAreaMenuHelper(IArea area, MajorFlexComponentParameters majorFlexComponentParameters)
 			{
 				Guard.AgainstNull(area, nameof(area));
@@ -282,9 +284,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 #if RANDYTODO
 		// TODO: Make the event handler work and be enabled.
 #endif
-			private Tuple<bool, bool> CanCmdInsertHumanApprovedAnalysis => new Tuple<bool, bool>(true, false);
-
-			internal ITool ActiveTool { private get; set; }
+			private Tuple<bool, bool> CanCmdInsertHumanApprovedAnalysis
+			{
+				get
+				{
+					var visible = false;
+					var enabled = false;
+					return new Tuple<bool, bool>(visible, visible);
+				}
+			}
 
 			private void InsertHumanApprovedAnalysis_Click(object sender, EventArgs e)
 			{

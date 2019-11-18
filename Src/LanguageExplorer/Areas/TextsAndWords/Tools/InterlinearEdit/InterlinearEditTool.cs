@@ -14,6 +14,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -175,11 +176,36 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 			private void SetupUiWidgets(ITool tool)
 			{
+				/*
+			//
+			// m_tabCtrl
+			//
+			resources.ApplyResources(this.m_tabCtrl, "m_tabCtrl");
+			this.m_tabCtrl.Controls.Add(this.m_tpInfo);
+			this.m_tabCtrl.Controls.Add(this.m_tpRawText);
+			this.m_tabCtrl.Controls.Add(this.m_tpGloss);
+			this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);
+			this.m_tabCtrl.Controls.Add(this.m_tpTagging);
+			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);
+			this.m_tabCtrl.Controls.Add(this.m_tpCChart);
+			this.m_tabCtrl.Name = "m_tabCtrl";
+			this.m_tabCtrl.SelectedIndex = 0;
+			this.m_tabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.m_tabCtrl_Selected);
+			this.m_tabCtrl.GotFocus += new System.EventHandler(this.m_tabCtrl_GotFocus);
+			this.m_tabCtrl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.m_tabCtrl_Deselecting);
+				*/
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				//var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
+				//editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
+			{
+				_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(true, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 			}
 
 			private void CreateBrowseViewContextMenu()

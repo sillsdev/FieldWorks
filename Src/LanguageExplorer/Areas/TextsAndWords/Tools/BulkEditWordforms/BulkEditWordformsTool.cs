@@ -165,9 +165,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit],
+					Command.CmdGoToWfiWordform, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToWfiWordform_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				_jumpMenus = new List<ToolStripMenuItem>(2);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void GoToWfiWordform_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
+					<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
+				</command>
+				*/
+				using (var dlg = new WordformGoDlg())
+				{
+					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+					dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, null);
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+					}
+				}
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -181,7 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				// <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Category_Edit);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Word_Analyses);
 				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.AnalysesMachineName, _recordList };
 				_jumpMenus.Add(menu);
 

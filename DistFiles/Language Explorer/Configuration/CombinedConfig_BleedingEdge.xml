@@ -30,9 +30,6 @@ so I can look at that in the develop branch.
     <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />
     <command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks" />
     <command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear" />
-    <command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
-      <parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
-    </command>
     <command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc" />
     <command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc" />
     <command id="CmdDataTree_Delete_HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
@@ -137,7 +134,6 @@ so I can look at that in the develop branch.
       <!-- LexText menus -->
       <!-- Words items -->
       <item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
-      <item id="CmdGoToWfiWordform">Find a wordform.</item>
       <!-- File menu -->
       <item id="CmdImport">Import an existing lexicon.</item>
       <!-- View menu -->

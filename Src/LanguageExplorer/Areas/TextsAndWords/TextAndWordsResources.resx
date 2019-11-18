@@ -273,4 +273,7 @@
   <data name="Set_occurrence_min_and_max" xml:space="preserve">
     <value>Set occurrence (min. and max.)...</value>
   </data>
+  <data name="SimpleWordListParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\SimpleWordListParameter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

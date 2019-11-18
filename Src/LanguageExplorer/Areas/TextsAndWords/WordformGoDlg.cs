@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -47,39 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override void InitializeMatchingObjects()
 		{
-			/*
-			 * The "WordformsBrowseView" control uses the following 'matchingWords' record list.
-        <clerk id="matchingWords" shouldHandleDeletion="false">
-          <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordClerk" />
-          <recordList owner="WordformInventory" property="Wordforms">
-            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordList" />
-          </recordList>
-          <filters />
-          <sortMethods />
-        </clerk>
-			<guicontrol id="WordformsBrowseView">
-				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
-					filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
-					hscroll="true" editable="false">
-					<columns>
-						<column label="Wordform" ws="$ws=best vernacular" editable="false"
-							width="100%" field="Form">
-							<span>
-								<properties>
-									<editable value="false"/>
-								</properties>
-								<string field="Form" ws="$ws=best vernacular"/>
-							</span>
-						</column>
-					</columns>
-				</parameters>
-			</guicontrol>
-			*/
-#if RANDYTODO
-			// TODO: Nobody will be home.
-#endif
-			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
+			var configNode = XElement.Parse(TextAndWordsResources.SimpleWordListParameter);
 			var searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 			// start building index

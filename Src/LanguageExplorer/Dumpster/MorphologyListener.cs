@@ -143,47 +143,6 @@ namespace LanguageExplorer.Dumpster
 			return true;
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayGotoWfiWordform(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (InFriendlyArea && m_mediator != null)
-			{
-				var recordList = RecordList.RecordListRepository.ActiveRecordList;
-				if (recordList != null && !recordList.IsDisposed && recordList.Id == "concordanceWords")
-				{
-					display.Visible = true;
-
-					// we only want to enable if we have more than one, because there's no point in finding
-					// the one we've already selected.
-					display.Enabled = m_wordformRepos.Count > 1;
-					return true;
-				}
-			}
-			// Unless everything lines up to make the command workable disable it.
-			display.Enabled = display.Visible = false;
-			return true; //we've handled this
-		}
-#endif
-
-		/// <summary>
-		/// Handles the xCore message to go to a wordform.
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnGotoWfiWordform(object argument)
-		{
-			using (var dlg = new WordformGoDlg())
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.SetDlgInfo(Cache, null);
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
-				}
-			}
-			return true;
-		}
-
 		/// <summary>
 		///
 		/// </summary>

@@ -380,6 +380,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
+    <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="GlobalUiWidgetParameterObject.cs" />
     <Compile Include="HelpTopicPaths.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -1975,6 +1976,7 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\SimpleWordListParameter.xml" />
     <None Include="Resources\CustomEditParameters.xml" />
     <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
       <Link>XML\Combined\HierarchicalLCModel.xml</Link>

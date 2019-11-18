@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
+            filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+            hscroll="true" editable="false">
+  <columns>
+    <column label="Wordform" ws="$ws=best vernacular" editable="false"
+            width="100%" field="Form">
+      <span>
+        <properties>
+          <editable value="false"/>
+        </properties>
+        <string field="Form" ws="$ws=best vernacular"/>
+      </span>
+    </column>
+  </columns>
+</parameters>
