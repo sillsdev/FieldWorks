@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Language
 				return;
 			}
 			var icuLocale = new Locale(m_stuLocale).Name;
-			m_collator = Collator.Create(icuLocale);
+			m_collator = Collator.Create(icuLocale, Collator.Fallback.FallbackAllowed);
 		}
 
 		internal void DoneCleanup()

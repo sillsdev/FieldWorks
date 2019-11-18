@@ -208,8 +208,7 @@ namespace LanguageExplorer.Areas.Notebook
 			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
 			{
 				_area = areaUiWidgetParameterObject.Area;
-				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
-				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area, areaUiWidgetParameterObject);
 				// Add Edit menu item that is available in all Notebook tools.
 				areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Edit].Add(Command.CmdGoToRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GotoRecord_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// File->Export menu is visible and maybe enabled in this tool. (Area)

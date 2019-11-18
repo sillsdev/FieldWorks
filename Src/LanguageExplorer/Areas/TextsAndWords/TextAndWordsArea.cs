@@ -33,6 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		[Import]
 		private IPropertyTable _propertyTable;
 		private Dictionary<string, ITool> _dictionaryOfAllTools;
+		private ITool _activeTool;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -77,10 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
 			}
-			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(this);
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus(areaUiWidgetParameterObject);
-			majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(this, majorFlexComponentParameters);
 		}
 
 		/// <summary>
@@ -179,8 +177,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Set the active tool for the area, or null, if no tool is active.
 		/// </summary>
-		public ITool ActiveTool { get; set; }
-
+		public ITool ActiveTool
+		{
+			get { return _activeTool; }
+			set
+			{
+				_activeTool = value;
+				_textAndWordsAreaMenuHelper.ActiveTool = value;
+			}
+		}
 		#endregion
 
 		internal static IRecordList ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -230,30 +235,43 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private CustomFieldsMenuHelper _customFieldsMenuHelper;
 
-			internal TextAndWordsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+			internal TextAndWordsAreaMenuHelper(IArea area, MajorFlexComponentParameters majorFlexComponentParameters)
 			{
+				Guard.AgainstNull(area, nameof(area));
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+
+				SetupUiWidgets(area);
 			}
 
-			internal void InitializeAreaWideMenus(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
+			private void SetupUiWidgets(IArea area)
 			{
-				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, areaUiWidgetParameterObject.Area);
-				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
+				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(area);
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, area, areaUiWidgetParameterObject);
 				/*
 					<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/> // Only Insert menu
 				*/
 				var insertMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert];
-				insertMenuDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
 				insertMenuDictionary.Add(Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, () => UiWidgetServices.CanSeeAndDo));
-				insertMenuDictionary.Add(Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
 				var insertToolBarDictionary = areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert];
-				insertToolBarDictionary.Add(Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
-				insertToolBarDictionary.Add(Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
+					Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
+				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
+					Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
+				AreaServices.InsertPair(areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.View], areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.View],
+					Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}
 
-			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList is InterlinearTextsRecordList);
+			private void AddTexts_Clicked(object sender, EventArgs e)
+			{
+				var recordList = (InterlinearTextsRecordList)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				recordList.AddTexts();
+			}
+
+			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, ActiveTool.MachineName == AreaServices.InterlinearEditMachineName);
 
 			private void CmdInsertText_Click(object sender, EventArgs e)
 			{
@@ -265,6 +283,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		// TODO: Make the event handler work and be enabled.
 #endif
 			private Tuple<bool, bool> CanCmdInsertHumanApprovedAnalysis => new Tuple<bool, bool>(true, false);
+
+			internal ITool ActiveTool { private get; set; }
 
 			private void InsertHumanApprovedAnalysis_Click(object sender, EventArgs e)
 			{

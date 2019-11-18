@@ -25,10 +25,6 @@ so I can look at that in the develop branch.
     <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" />
     <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" />
     <!-- START include: "Words/areaConfiguration.xml" query="root/commands/*" -->
-    <command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
-      <parameters className="StText" />
-    </command>
-    <command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture" />
     <command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary" />
     <command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote" />
     <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />

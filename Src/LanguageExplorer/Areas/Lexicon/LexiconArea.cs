@@ -252,8 +252,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				_area = area;
 
 				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
-				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area);
-				_customFieldsMenuHelper.SetupToolsCustomFieldsMenu(areaUiWidgetParameterObject);
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area, areaUiWidgetParameterObject);
 				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
 				// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
 				_fileExportMenuHelper.SetupFileExportMenu(areaUiWidgetParameterObject);

@@ -80,14 +80,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordBrowseView, _recordList);
 			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, "Texts", new PaneBar(), _interlinMaster, "Text", new PaneBar());
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
-			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
-			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordBrowseView, _recordList);
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 		}
@@ -155,7 +154,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		private sealed class InterlinearEditToolMenuHelper : IDisposable
 		{
-			private ITool _tool;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
@@ -167,15 +165,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
-				_tool = tool;
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(_tool);
-				// Do nothing registration is needed, in case there are any user controls that want to register.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -236,7 +240,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
-				_tool = null;
 				_majorFlexComponentParameters = null;
 				_recordBrowseView = null;
 				_recordList = null;

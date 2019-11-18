@@ -79,7 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			{
 				_subservientRecordList = recordListRepository.GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _recordListProvidingOwner, _subservientRecordList);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -99,6 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
 			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _mainRecordBrowseView, _recordListProvidingOwner, _subservientRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -111,7 +111,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _mainRecordBrowseView, "Concordance", new PaneBar(), _nestedMultiPane, "Tabs", new PaneBar());
 
-			_toolMenuHelper.SetupUiWidgets(this, _mainRecordBrowseView);
 			// The next method call will add UserControl event handlers.
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
@@ -204,27 +203,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			private FileExportMenuHelper _fileExportMenuHelper;
 			private RecordBrowseView _mainRecordBrowseView;
 
-			internal WordListConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IRecordList recordListProvidingOwner, IRecordList subservientRecordList)
+			internal WordListConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView mainRecordBrowseView, IRecordList recordListProvidingOwner, IRecordList subservientRecordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
+				Guard.AgainstNull(mainRecordBrowseView, nameof(mainRecordBrowseView));
 				Guard.AgainstNull(recordListProvidingOwner, nameof(recordListProvidingOwner));
 				Guard.AgainstNull(subservientRecordList, nameof(subservientRecordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_mainRecordBrowseView = mainRecordBrowseView;
 				_recordListProvidingOwner = recordListProvidingOwner;
 				_subservientRecordList = subservientRecordList;
 
-				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);
+				SetupUiWidgets(tool);
 			}
 
-			internal void SetupUiWidgets(ITool tool, RecordBrowseView mainRecordBrowseView)
+			private void SetupUiWidgets(ITool tool)
 			{
-				Guard.AgainstNull(tool, nameof(tool));
-				Guard.AgainstNull(mainRecordBrowseView, nameof(mainRecordBrowseView));
-
-				_mainRecordBrowseView = mainRecordBrowseView;
-
+				_fileExportMenuHelper = new FileExportMenuHelper(_majorFlexComponentParameters);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

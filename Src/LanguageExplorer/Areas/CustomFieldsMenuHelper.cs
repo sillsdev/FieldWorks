@@ -23,10 +23,11 @@ namespace LanguageExplorer.Areas
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 
-		internal CustomFieldsMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IArea area)
+		internal CustomFieldsMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IArea area, AreaUiWidgetParameterObject areaUiWidgetParameterObject)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(area, nameof(area));
+			Guard.AgainstNull(area, nameof(areaUiWidgetParameterObject));
 			var supportedAreas = new HashSet<string>
 			{
 				AreaServices.LexiconAreaMachineName,
@@ -52,12 +53,13 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new NotSupportedException($"'{area.MachineName}' does not support custom fields.");
 			}
+			SetupUiWidgets(areaUiWidgetParameterObject);
 		}
 
 		/// <summary>
 		/// Setup the Tools->Configure->CustomFields menu.
 		/// </summary>
-		internal void SetupToolsCustomFieldsMenu(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
+		private void SetupUiWidgets(AreaUiWidgetParameterObject areaUiWidgetParameterObject)
 		{
 			// Tools->Configure->CustomFields menu is visible and enabled in this area.
 			areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools].Add(Command.CmdAddCustomField, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddCustomField_Click, () => CanAddCustomField));

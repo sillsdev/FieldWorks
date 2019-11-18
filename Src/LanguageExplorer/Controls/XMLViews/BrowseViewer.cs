@@ -643,8 +643,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController = null)
 			: this(configParamsElement, hvoRoot, cache, sortItemProvider, sda)
 		{
-			// Should be null for nested instance (cf. WordListConcordanceTool).
-			// Otherwise, UI widgets will be registered more than once.
+			if (uiWidgetController == null)
+			{
+				// Should be null for nested instance (cf. WordListConcordanceTool).
+				// Otherwise, UI widgets will be registered more than once.
+				return;
+			}
 			_uiWidgetController = uiWidgetController;
 			var userController = new UserControlUiWidgetParameterObject(this);
 			// Add handler stuff from this class and possibly from subclasses.

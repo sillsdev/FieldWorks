@@ -69,6 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
+			_toolMenuHelper = new ComplexConcordanceToolMenuHelper(majorFlexComponentParameters, this);
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -110,7 +111,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
-			_toolMenuHelper = new ComplexConcordanceToolMenuHelper(majorFlexComponentParameters, this);
 			_interlinMasterNoTitleBar.FinishInitialization();
 		}
 
