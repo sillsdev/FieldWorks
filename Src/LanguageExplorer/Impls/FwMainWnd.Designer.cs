@@ -2687,7 +2687,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdInsertHumanApprovedAnalysis.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.Toolbar_CmdInsertHumanApprovedAnalysis.Name = "Toolbar_CmdInsertHumanApprovedAnalysis";
 			this.Toolbar_CmdInsertHumanApprovedAnalysis.Size = new System.Drawing.Size(23, 22);
-			this.Toolbar_CmdInsertHumanApprovedAnalysis.ToolTipText = "Create new approved analysis";
+			this.Toolbar_CmdInsertHumanApprovedAnalysis.ToolTipText = "Add Approved Analysis...";
 			this.Toolbar_CmdInsertHumanApprovedAnalysis.Visible = false;
 			// 
 			// Toolbar_CmdGoToWfiWordform

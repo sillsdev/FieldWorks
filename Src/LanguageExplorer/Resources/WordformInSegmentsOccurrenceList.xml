@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
+            defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+            editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
+            ShowOwnerShortname="true">
+</parameters>

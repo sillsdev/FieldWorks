@@ -30,34 +30,6 @@ so I can look at that in the develop branch.
     <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />
     <command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks" />
     <command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear" />
-    <command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc" />
-    <command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc" />
-    <command id="CmdDataTree_Delete_HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
-      <parameters field="Analyses" className="WfiAnalysis" />
-    </command>
-    <command id="CmdDataTree_Delete_ParserProducedAnalysis" label="Delete Candidate..." message="DataTreeDelete" icon="Delete">
-      <parameters field="Analyses" className="WfiAnalysis" />
-    </command>
-    <command id="CmdDataTree_Delete_HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
-      <parameters field="Analyses" className="WfiAnalysis" />
-    </command>
-    <command id="CmdAnalysisApprove" label="Approve" message="AnalysisApprove" />
-    <command id="CmdAnalysisUnknown" label="Unknown" message="AnalysisUnknown" />
-    <command id="CmdAnalysisDisapprove" label="Disapprove" message="AnalysisDisapprove" />
-    <command id="CmdShowWordGlossConc" label="Assign Analysis..." message="ShowWordGlossConc" />
-    <command id="CmdDataTree_Merge_WordGloss" label="Merge Gloss..." message="DataTreeMerge">
-      <parameters field="Meanings" className="WfiGloss" />
-    </command>
-    <command id="CmdDataTree_Delete_WordGloss" label="Delete Gloss..." message="DataTreeDelete" icon="Delete">
-      <parameters field="Meanings" className="WfiGloss" />
-    </command>
-    <command id="CmdDataTree_Insert_WordGloss" label="Add Word Gloss" message="DataTreeInsert">
-      <parameters field="Meanings" className="WfiGloss" />
-    </command>
-    <command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis" a10status="PLACEHOLDER">
-      <parameters field="Analyses" className="WfiAnalysis" />
-    </command>
-    <command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg" />
     <!-- END include: "Words/areaConfiguration.xml" query="root/commands/*" -->
   </commands>
   <!-- ************************ contextMenus *********************** -->
@@ -67,63 +39,6 @@ so I can look at that in the develop branch.
       <item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local" />
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields_interlinearEdit" defaultVisible="false" settingsGroup="local" />
     </menu>
-    <menu id="mnuDataTree_MainWordform">
-      <item command="CmdShowWordformConc" />
-      <item command="CmdRespeller" />
-      <item command="CmdDataTree_Delete_MainWordform" />
-    </menu>
-    <menu id="mnuDataTree_WordformSpelling">
-      <item command="CmdRespeller" />
-    </menu>
-    <menu id="mnuDataTree_MainWordform_Hotlinks">
-      <item command="CmdShowWordformConc" />
-    </menu>
-    <menu id="mnuDataTree_HumanApprovedAnalysisSummary">
-      <item command="CmdInsertHumanApprovedAnalysis" />
-    </menu>
-    <menu id="mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks">
-      <item command="CmdInsertHumanApprovedAnalysis" />
-    </menu>
-    <menu id="mnuDataTree_HumanApprovedAnalysis">
-      <item command="CmdShowHumanApprovedAnalysisConc" />
-      <item command="CmdAnalysisJumpToConcordance" />
-      <menu id="mnuDataTree_HumanApprovedStatus" label="User Opinion">
-        <item command="CmdAnalysisApprove" />
-        <item command="CmdAnalysisUnknown" />
-        <item command="CmdAnalysisDisapprove" />
-      </menu>
-      <item command="CmdDataTree_Insert_WordGloss" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Delete_HumanApprovedAnalysis" />
-    </menu>
-    <menu id="mnuDataTree_HumanApprovedAnalysis_Hotlinks">
-      <item command="CmdShowHumanApprovedAnalysisConc" />
-    </menu>
-    <menu id="mnuDataTree_ParserProducedAnalysis">
-      <menu id="mnuDataTree_ParserProducedStatus" label="User Opinion">
-        <item command="CmdAnalysisApprove" />
-        <item command="CmdAnalysisUnknown" />
-        <item command="CmdAnalysisDisapprove" />
-      </menu>
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Delete_ParserProducedAnalysis" />
-    </menu>
-    <menu id="mnuDataTree_HumanDisapprovedAnalysis">
-      <menu id="mnuDataTree_HumanDisapprovedStatus" label="User Opinion">
-        <item command="CmdAnalysisApprove" />
-        <item command="CmdAnalysisUnknown" />
-        <item command="CmdAnalysisDisapprove" />
-      </menu>
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Delete_HumanDisapprovedAnalysis" />
-    </menu>
-    <menu id="mnuDataTree_WordGlossForm">
-      <item command="CmdShowWordGlossConc" />
-      <item command="CmdWordGlossJumpToConcordance" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDataTree_Merge_WordGloss" />
-      <item command="CmdDataTree_Delete_WordGloss" />
-    </menu>
     <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
   <contexthelpstrings>
@@ -132,8 +47,6 @@ so I can look at that in the develop branch.
       <item id="NoHelp" caption="No Help" />
       <item id="MissingHelpId" caption="No Help">Sorry, there's no help available for this item (missing id).</item>
       <!-- LexText menus -->
-      <!-- Words items -->
-      <item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
       <!-- File menu -->
       <item id="CmdImport">Import an existing lexicon.</item>
       <!-- View menu -->

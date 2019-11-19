@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
+            defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+            editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
+            ShowOwnerShortname="true">
+</parameters>

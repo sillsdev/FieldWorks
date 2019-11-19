@@ -130,9 +130,6 @@
   <data name="ErrorReadingXMLFile0" xml:space="preserve">
     <value>There was an error while reading in the XML file: {0}.</value>
   </data>
-  <data name="ksUndoChangingApprovalStatus" xml:space="preserve">
-    <value>Undo Changing Approval Status</value>
-  </data>
   <data name="ksInvalidResourceFileVersion" xml:space="preserve">
     <value>Invalid version attribute in {0}</value>
     <comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
@@ -623,9 +620,6 @@
   <data name="FLExBridgeListener_UndoExport_Error_exporting_LIFT" xml:space="preserve">
     <value>Error exporting LIFT data; could not complete Send/Receive</value>
     <comment>Message displayed if an error occurred during "Send/Receive Lexicon" while the export of the LIFT data was going on.</comment>
-  </data>
-  <data name="ksRedoChangingApprovalStatus" xml:space="preserve">
-    <value>Redo Changing Approval Status</value>
   </data>
   <data name="ksDeleteEntriesSenses" xml:space="preserve">
     <value>Delete Entries and Senses that are not used in interlinear</value>

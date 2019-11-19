@@ -1976,6 +1976,10 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
+    <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
+    <Content Include="Resources\SrcSentencesList.xml" />
+    <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
     <None Include="Resources\SimpleWordListParameter.xml" />
     <None Include="Resources\CustomEditParameters.xml" />
     <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
@@ -3070,7 +3074,6 @@
     <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\WordformApplicationServices.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\WordsEditToolMenuHandler.cs" />
     <Compile Include="FlexHelpTopicProvider.cs" />
     <Compile Include="IArea.cs">
       <SubType>Code</SubType>

@@ -276,4 +276,67 @@
   <data name="SimpleWordListParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\SimpleWordListParameter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="Add_Approved_Analysis" xml:space="preserve">
+    <value>Add Approved Analysis...</value>
+  </data>
+  <data name="Assign_Analysis" xml:space="preserve">
+    <value>Assign Analysis...</value>
+  </data>
+  <data name="AnalysisInSegmentsOccurrenceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\AnalysisInSegmentsOccurrenceList.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GlossInSegmentsOccurrenceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\GlossInSegmentsOccurrenceList.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="WordformInSegmentsOccurrenceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\WordformInSegmentsOccurrenceList.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Change_Spelling" xml:space="preserve">
+    <value>Change Spelling...</value>
+  </data>
+  <data name="Delete_Gloss" xml:space="preserve">
+    <value>Delete Gloss...</value>
+  </data>
+  <data name="Delete_Wordform" xml:space="preserve">
+    <value>Delete Wordform...</value>
+  </data>
+  <data name="Merge_Gloss" xml:space="preserve">
+    <value>Merge Gloss...</value>
+  </data>
+  <data name="Show_Word_Gloss_in_Concordance" xml:space="preserve">
+    <value>Show Word Gloss in Concordance</value>
+  </data>
+  <data name="SrcSentencesList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\SrcSentencesList.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Add_Word_Gloss" xml:space="preserve">
+    <value>Add Word Gloss</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Changing_Approval_Status" xml:space="preserve">
+    <value>Changing Approval Status</value>
+  </data>
+  <data name="Delete_Analysis" xml:space="preserve">
+    <value>Delete Analysis...</value>
+  </data>
+  <data name="Delete_Candidate" xml:space="preserve">
+    <value>Delete Candidate...</value>
+  </data>
+  <data name="Delete_Disapproved_Analysis" xml:space="preserve">
+    <value>Delete Disapproved Analysis...</value>
+  </data>
+  <data name="Disapprove" xml:space="preserve">
+    <value>Disapprove</value>
+  </data>
+  <data name="Insert_Word_Gloss" xml:space="preserve">
+    <value>Insert Word Gloss</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="User_Opinion" xml:space="preserve">
+    <value>User Opinion</value>
+  </data>
 </root>

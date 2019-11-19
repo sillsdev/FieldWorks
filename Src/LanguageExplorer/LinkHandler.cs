@@ -220,7 +220,6 @@ namespace LanguageExplorer
 		private void FollowActiveLink()
 		{
 #if RANDYTODO
-			// TODO: Make it work.
 			try
 			{
 				if (_linkActive.ToolName == "default")
@@ -294,7 +293,6 @@ namespace LanguageExplorer
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
 					PropertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
-
 				var messages = new List<string>();
 				var newValues = new List<object>();
 				// 1. IF _linkActive.ToolName is in a different area, then the old area and its current tool both need to deactivated.
@@ -316,7 +314,7 @@ namespace LanguageExplorer
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
 						// 'guid' can be 'Guid.Empty'.
-						var guid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+						var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
 							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);

@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Filters;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -45,15 +45,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private string _filterMessage = string.Empty;
 		private IWfiWordform _wordform;
 		private LcmCache _cache;
-		private XmlNode _configurationNode;
-		private RecordBrowseView _currentBrowseView = null;
-		private Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
+		private RecordBrowseView _currentBrowseView;
+		private Dictionary<int, XElement> _configurationNodes = new Dictionary<int, XElement>(3);
 		private Dictionary<int, IRecordList> _recordLists = new Dictionary<int, IRecordList>(3);
-		private Dictionary<string, bool> _originalRecordListIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
-
-		private ConcDecorator ConcSda => ((DomainDataByFlidDecoratorBase)_specialSda.BaseSda).BaseSda as ConcDecorator;
+		private const string HelpTopic = "khtpAssignAnalysisUsage";
+		private const string SegmentOccurrencesOfWfiWordform = "segmentOccurrencesOfWfiWordform";
+		private const string SegmentOccurrencesOfWfiAnalysis = "segmentOccurrencesOfWfiAnalysis";
+		private const string SegmentOccurrencesOfWfiGloss = "segmentOccurrencesOfWfiGloss";
 
 		#region Data Members (designer managed)
 
@@ -68,13 +68,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Label label4;
 		private Label label5;
 		private Button btnHelp;
-		private const string s_helpTopic = "khtpAssignAnalysisUsage";
-
 		private HelpProvider helpProvider;
 		private StatusStrip _statusStrip;
 		private ToolStripProgressBar _toolStripProgressBar;
 		private ToolStripStatusLabel _toolStripFilterStatusLabel;
 		private ToolStripStatusLabel _toolStripRecordStatusLabel;
+		private StatusBar _mainWindowStatusBar;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -86,10 +85,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Construction, Initialization, Disposal
 
-		public ConcordanceDlg(ICmObject sourceObject)
+		public ConcordanceDlg(StatusBar mainWindowStatusBar, ICmObject sourceObject)
 		{
+			Guard.AgainstNull(mainWindowStatusBar, nameof(mainWindowStatusBar));
+			Guard.AgainstNull(sourceObject, nameof(sourceObject));
+
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+			_mainWindowStatusBar = mainWindowStatusBar;
 			helpProvider = new HelpProvider();
 			CheckAssignBtnEnabling();
 			if (sourceObject is IWfiWordform)
@@ -147,103 +150,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			helpProvider.HelpNamespace = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile;
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(s_helpTopic));
+			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(HelpTopic));
 			helpProvider.SetShowHelp(this, true);
-
-			_progAdvInd = new ProgressReporting(_toolStripProgressBar);
-
-#if RANDYTODO
-			// TODO: Use this xml
-/*
-			<guicontrol id="WordformConcordanceBrowseView">
-				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
-					ShowOwnerShortname="true">
-<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
-<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-				</parameters>
-			</guicontrol>
-*/
-			// Gather up the nodes.
-			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
-			var xpath = string.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
-			var configNode = m_configurationNode.SelectSingleNode(xpath);
+			PropertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
+			// Gather up the elements.
+			var concordanceColumnsElement = XDocument.Parse(TextAndWordsResources.ConcordanceColumns).Root.Element("columns");
+			var configurationElement = XElement.Parse(TextAndWordsResources.WordformInSegmentsOccurrenceList);
+			configurationElement.Add(concordanceColumnsElement);
 			// And create the RecordLists.
-<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
-    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
-    <recordList class="WfiWordform" field="ExactOccurrences">
-    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-    </recordList>
-    <filters />
-    <sortMethods />
-</clerk>
-			var recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			recordList.ProgressReporter = m_progAdvInd;
-			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
-			recordList.IgnoreStatusPanel = true;
+			var recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiWordformFactoryMethod);
 			_recordLists[WfiWordformTags.kClassId] = recordList;
-			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
-
-/*
-			<guicontrol id="AnalysisConcordanceBrowseView">
-				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
-					ShowOwnerShortname="true">
-<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
-<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-				</parameters>
-			</guicontrol>
-*/
-			xpath = string.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
-			configNode = m_configurationNode.SelectSingleNode(xpath);
-<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
-    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
-    <recordList class="WfiAnalysis" field="ExactOccurrences">
-    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-    </recordList>
-    <filters />
-    <sortMethods />
-</clerk>
-			recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			recordList.ProgressReporter = m_progAdvInd;
-			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
-			recordList.IgnoreStatusPanel = true;
+			_configurationNodes[WfiWordformTags.kClassId] = configurationElement;
+			configurationElement = XElement.Parse(TextAndWordsResources.AnalysisInSegmentsOccurrenceList);
+			configurationElement.Add(concordanceColumnsElement);
+			recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiAnalysisFactoryMethod);
 			_recordLists[WfiAnalysisTags.kClassId] = recordList;
-			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
-
-/*
-			<guicontrol id="GlossConcordanceBrowseView">
-				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true"
-					ShowOwnerShortname="true">
-<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
-<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
-				</parameters>
-			</guicontrol>
-*/
-			xpath = string.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
-			configNode = m_configurationNode.SelectSingleNode(xpath);
-<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
-    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
-    <recordList class="WfiGloss" field="ExactOccurrences">
-    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-    </recordList>
-    <filters />
-    <sortMethods />
-</clerk>
-			recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			recordList.ProgressReporter = m_progAdvInd;
-			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
-			recordList.IgnoreStatusPanel = true;
+			_configurationNodes[WfiAnalysisTags.kClassId] = configurationElement;
+			configurationElement = XElement.Parse(TextAndWordsResources.GlossInSegmentsOccurrenceList);
+			configurationElement.Add(concordanceColumnsElement);
+			recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiGlossFactoryMethod);
 			_recordLists[WfiGlossTags.kClassId] = recordList;
-			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
-#endif
+			_configurationNodes[WfiGlossTags.kClassId] = configurationElement;
 			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
 			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
 			var srcTnWf = new TreeNode();
@@ -309,6 +236,63 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Subscriber.Subscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 		}
 
+		private static IRecordList SegmentOccurrencesOfWfiWordformFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == SegmentOccurrencesOfWfiWordform, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{SegmentOccurrencesOfWfiWordform}'.");
+			/*
+			<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
+			    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+			    <recordList class="WfiWordform" field="ExactOccurrences">
+			    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+			    </recordList>
+			    <filters />
+			    <sortMethods />
+			</clerk>
+			*/
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new RecordList(recordListId, statusBar, concDecorator, false,
+				new VectorPropertyParameterObject(cache.LanguageProject, "AllWordforms", concDecorator.MetaDataCache.GetFieldId(WfiWordformTags.kClassName, "ExactOccurrences", false)));
+		}
+
+		private static IRecordList SegmentOccurrencesOfWfiAnalysisFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == SegmentOccurrencesOfWfiAnalysis, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{SegmentOccurrencesOfWfiAnalysis}'.");
+			/*
+<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
+<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+<recordList class="WfiAnalysis" field="ExactOccurrences">
+<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+</recordList>
+<filters />
+<sortMethods />
+</clerk>
+*/
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new RecordList(recordListId, statusBar, concDecorator, false,
+				new VectorPropertyParameterObject(cache.LanguageProject, "AllWordforms", concDecorator.MetaDataCache.GetFieldId(WfiAnalysisTags.kClassName, "ExactOccurrences", false)));
+		}
+
+		private static IRecordList SegmentOccurrencesOfWfiGlossFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == SegmentOccurrencesOfWfiGloss, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{SegmentOccurrencesOfWfiGloss}'.");
+			/*
+<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
+<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+<recordList class="WfiGloss" field="ExactOccurrences">
+<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+</recordList>
+<filters />
+<sortMethods />
+</clerk>
+*/
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new RecordList(recordListId, statusBar, concDecorator, false,
+				new VectorPropertyParameterObject(cache.LanguageProject, "AllWordforms", concDecorator.MetaDataCache.GetFieldId(WfiGlossTags.kClassName, "ExactOccurrences", false)));
+		}
+
 		private void DialogFilterStatus_Handler(object newValue)
 		{
 			_filterMessage = ((string)newValue).Trim();
@@ -329,9 +313,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (disposing)
 			{
 				components?.Dispose();
+				PropertyTable.RemoveProperty("IgnoreStatusPanel");
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
+				var repository = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 				foreach (var recordList in _recordLists.Values)
 				{
+					repository.RemoveRecordList(recordList);
 					recordList.Dispose();
 				}
 				_recordLists.Clear();
@@ -339,110 +326,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			base.Dispose(disposing);
 
+			helpProvider = null;
 			_recordLists = null;
 			_wordform = null;
 			_cache = null;
-			_configurationNode = null;
 			_currentBrowseView = null;
+			_configurationNodes = null;
 			_specialSda = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			_mainWindowStatusBar = null;
 		}
 
 		#endregion Construction, Initialization, Disposal
-
-		/// <summary>
-		/// This class provides access to the status strip's progress bar.
-		/// </summary>
-		private sealed class ProgressReporting : IProgress
-		{
-			event CancelEventHandler IProgress.Canceling
-			{
-				add { throw new NotSupportedException(); }
-				remove { throw new NotSupportedException(); }
-			}
-
-			private readonly ToolStripProgressBar _progressBar;
-
-			public ProgressReporting(ToolStripProgressBar bar)
-			{
-				_progressBar = bar;
-				_progressBar.Step = 1;
-				_progressBar.Minimum = 0;
-				_progressBar.Maximum = 100;
-				_progressBar.Value = 0;
-				_progressBar.Style = ProgressBarStyle.Continuous;
-			}
-
-			#region IProgress Members
-
-			public int Minimum
-			{
-				get { return _progressBar.Minimum; }
-				set { _progressBar.Minimum = value; }
-			}
-
-			public int Maximum
-			{
-				get { return _progressBar.Maximum; }
-				set { _progressBar.Maximum = value; }
-			}
-
-			public bool Canceled => false;
-
-			/// <summary>
-			/// Gets an object to be used for ensuring that required tasks are invoked on the main
-			/// UI thread.
-			/// </summary>
-			public ISynchronizeInvoke SynchronizeInvoke => _progressBar.Control;
-
-			public Form Form => _progressBar.Control.FindForm();
-
-			public bool IsIndeterminate
-			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
-			}
-
-			public bool AllowCancel
-			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
-			}
-
-			public string Message
-			{
-				get { return _progressBar.ToolTipText; }
-				set { _progressBar.ToolTipText = value; }
-			}
-
-			public int Position
-			{
-				get { return _progressBar.Value; }
-				set { _progressBar.Value = value; }
-			}
-
-			public void Step(int nStepAmt)
-			{
-				_progressBar.Increment(nStepAmt);
-			}
-
-			public int StepSize
-			{
-				get { return _progressBar.Step; }
-				set { _progressBar.Step = value; }
-			}
-
-			public string Title
-			{
-				get { return string.Empty; }
-				set { }
-			}
-			#endregion
-		}
-
-		private ProgressReporting _progAdvInd;
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -624,6 +521,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					_currentBrowseView.Dispose();
 					_currentBrowseView = null;
 				}
+				XElement configurationElement;
 				IRecordList recordList;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
@@ -631,17 +529,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
+						configurationElement = _configurationNodes[WfiWordformTags.kClassId];
 						recordList = _recordLists[WfiWordformTags.kClassId];
 						break;
 					case WfiAnalysisTags.kClassId:
+						configurationElement = _configurationNodes[WfiAnalysisTags.kClassId];
 						recordList = _recordLists[WfiAnalysisTags.kClassId];
 						break;
 					case WfiGlossTags.kClassId:
+						configurationElement = _configurationNodes[WfiGlossTags.kClassId];
 						recordList = _recordLists[WfiGlossTags.kClassId];
 						break;
 				}
 				recordList.OwningObject = selObj;
-				_currentBrowseView = new RecordBrowseView();
+				_currentBrowseView = new RecordBrowseView(configurationElement, _cache, recordList);
 				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = recordList.Id + "_AlwaysRecomputeVirtualOnReloadList";
@@ -710,9 +611,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void SetRecordStatus()
 		{
-			var cobj = _currentBrowseView.MyRecordList.ListSize;
-			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : $"{_currentBrowseView.BrowseViewer.SelectedIndex + 1}/{cobj}";
-			_toolStripRecordStatusLabel.Text = sMsg;
+			var objectCount = _currentBrowseView.MyRecordList.ListSize;
+			var message = objectCount == 0 ? LanguageExplorerResources.ksNoRecords : $"{_currentBrowseView.BrowseViewer.SelectedIndex + 1}/{objectCount}";
+			_toolStripRecordStatusLabel.Text = message;
 			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;    // clear the progress bar
 		}
 
@@ -737,9 +638,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAssignAnalyses, LanguageExplorerResources.ksRedoAssignAnalyses, _specialSda.GetActionHandler(), () =>
 				{
-					var concSda = ConcSda;
-					var originalValues = concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier)
-						.ToDictionary(originalHvo => originalHvo, originalHvo => concSda.OccurrenceFromHvo(originalHvo));
+					var concSda = ((DomainDataByFlidDecoratorBase)_specialSda.BaseSda).BaseSda as ConcDecorator;
+					var originalValues = concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier).ToDictionary(originalHvo => originalHvo, originalHvo => concSda.OccurrenceFromHvo(originalHvo));
 					foreach (var fakeHvo in checkedItems)
 					{
 						originalValues.Remove(fakeHvo);
@@ -768,7 +668,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), HelpTopic);
 		}
 
 		#endregion Event Handlers

@@ -122,9 +122,7 @@ namespace LanguageExplorer.Areas
 		protected ViewBase(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
 			: this()
 		{
-			m_configurationParametersElement = configurationParametersElement;
-			Cache = cache;
-			MyRecordList = recordList;
+			ConstructorSurrogate(configurationParametersElement, cache, recordList);
 		}
 
 		/// <summary>
@@ -168,7 +166,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// LCM cache.
 		/// </summary>
-		protected LcmCache Cache { get; }
+		protected LcmCache Cache { get; private set; }
 
 		/// <summary>
 		/// Get/Set the record list used by the view.
@@ -176,6 +174,13 @@ namespace LanguageExplorer.Areas
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IRecordList MyRecordList { get; set; }
+
+		internal virtual void ConstructorSurrogate(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+		{
+			m_configurationParametersElement = configurationParametersElement;
+			Cache = cache;
+			MyRecordList = recordList;
+		}
 
 		public IPaneBar MainPaneBar
 		{

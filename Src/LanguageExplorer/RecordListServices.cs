@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 
 namespace LanguageExplorer
 {
@@ -22,28 +20,28 @@ namespace LanguageExplorer
 	/// </remarks>
 	internal static class RecordListServices
 	{
-		private static Dictionary<IntPtr, Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>> _mapping = new Dictionary<IntPtr, Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>>();
+		private static readonly Dictionary<IntPtr, Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>> Mapping = new Dictionary<IntPtr, Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>>();
 
 		internal static void Setup(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			var handle = ((Form)majorFlexComponentParameters.MainWindow).Handle;
-			if (_mapping.ContainsKey(handle))
+			if (Mapping.ContainsKey(handle))
 			{
 				throw new InvalidOperationException("Do not setup the window more than once.");
 			}
-			_mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository)));
+			Mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository)));
 		}
 
 		internal static void TearDown(IntPtr handle)
 		{
-			_mapping.Remove(handle);
+			Mapping.Remove(handle);
 		}
 
 		internal static void SetRecordList(IntPtr handle, IRecordList recordList)
 		{
-			var dataForWindow = _mapping[handle];
+			var dataForWindow = Mapping[handle];
 			dataForWindow.Item1.RecordList = recordList;
 			dataForWindow.Item2.MyRecordList = recordList;
 			dataForWindow.Item3.ActiveRecordList = recordList;

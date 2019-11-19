@@ -59,9 +59,14 @@ namespace LanguageExplorer.Areas
 			m_fullyInitialized = false;
 			InitializeComponent();
 			AccNameDefault = "RecordView";
+		}
+
+		internal override void ConstructorSurrogate(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+		{
+			base.ConstructorSurrogate(configurationParametersElement, cache, recordList);
+
 			MyRecordList.RecordChanged += RecordList_RecordChanged_Handler;
 			MyRecordList.OwningObjectChanged += MyRecordList_OwningObjectChanged;
-
 		}
 
 		protected virtual void MyRecordList_OwningObjectChanged(object sender, RecordNavigationEventArgs e)

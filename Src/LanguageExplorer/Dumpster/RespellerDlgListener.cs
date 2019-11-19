@@ -24,26 +24,6 @@ namespace LanguageExplorer.Dumpster
 	/// </summary>
 	public class RespellerDlgListener : DlgListenerBase
 	{
-	#region Data members
-		/// <summary>
-		/// used to store the size and location of dialogs
-		/// </summary>
-		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
-
-	#endregion Data members
-
-	#region Properties
-
-		/// <summary>
-		/// Override to get a suitable label.
-		/// </summary>
-		protected string PersistentLabel
-		{
-			get { return "RespellerDlg"; } // Was on DlgListenerBase base class
-		}
-
-	#endregion Properties
-
 	#region XCORE Message Handlers
 
 		/// <summary>
@@ -80,77 +60,13 @@ namespace LanguageExplorer.Dumpster
 		}
 
 #if RANDYTODO
-		/// <summary>
-		/// Determine whether to show (and enable) the command to launch the respeller dialog.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayLaunchRespellerDlg(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Visible = InFriendlyArea;		// See LT-8641.
-			display.Enabled = display.Visible && ActiveWord() != null;
-			return true; //we've handled this
-		}
-#endif
-
-		/// <summary>
-		/// Launch the Respeller dlg.
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnLaunchRespellerDlg(object argument)
-		{
+			// TODO: Used for respelling in:
 			if (!InFriendliestTool)		// See LT-8641.
 			{
 				LaunchRespellerDlgOnWord(ActiveWord());
 				return true;
 			}
-			var recordList = RecordList.RecordListRepository.ActiveRecordList;
-			using (var luh = new ListUpdateHelper(recordList))
-			{
-				var changesWereMade = false;
-				// Launch the Respeller Dlg.
-				using (var dlg = new RespellerDlg())
-				{
-					dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-#if RANDYTODO
-					// TODO: That null in the next call used to be the xml config node.
 #endif
-					if (dlg.SetDlgInfo(null))
-					{
-						dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window));
-						changesWereMade = dlg.ChangesWereMade;
-					}
-					else
-					{
-						MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
-					}
-				}
-				// The Respeller dialog can't make all necessary updates, since things like occurrence
-				// counts depend on which texts are included, not just the data. So make sure we reload.
-				luh.TriggerPendingReloadOnDispose = changesWereMade;
-				if (changesWereMade)
-				{
-					// further try to refresh occurrence counts.
-					var sda = recordList.VirtualListPublisher;
-					while (sda != null)
-					{
-						if (sda is ConcDecorator)
-						{
-							((ConcDecorator)sda).Refresh();
-							break;
-						}
-						if (!(sda is DomainDataByFlidDecoratorBase))
-							break;
-						sda = ((DomainDataByFlidDecoratorBase) sda).BaseSda;
-					}
-				}
-			}
-			return true;
-		}
-
 		private void LaunchRespellerDlgOnWord(ITsString tss)
 		{
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
@@ -182,29 +98,5 @@ namespace LanguageExplorer.Dumpster
 		}
 
 	#endregion XCORE Message Handlers
-
-		/// <summary>
-		/// The entire "Texts & Words" area is our friend.  See LT-8641.
-		/// </summary>
-		private bool InFriendlyArea
-		{
-			get
-			{
-				return (PropertyTable?.GetValue<string>(AreaServices.AreaChoice, null) == AreaServices.TextAndWordsAreaMachineName);
-			}
-		}
-
-		/// <summary>
-		/// Inside "Analyses" tool is handled differently than elsewhere in the "Texts & Words" area.
-		/// (But of course we must be in that area to be in the friendliest tool.)
-		/// </summary>
-		private bool InFriendliestTool
-		{
-			get
-			{
-				return InFriendlyArea && PropertyTable?.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}", null) == AreaServices.AnalysesMachineName;
-			}
-		}
-	}
 #endif
 }

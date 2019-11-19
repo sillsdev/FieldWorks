@@ -259,8 +259,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var insertToolBarDictionary = areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert];
 				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
 					Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
-					Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => CanCmdInsertHumanApprovedAnalysis));
 				AreaServices.InsertPair(areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.View], areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.View],
 					Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
@@ -279,24 +277,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var recordList = (InterlinearTextsRecordList)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 				recordList.OnInsertInterlinText();
-			}
-
-#if RANDYTODO
-		// TODO: Make the event handler work and be enabled.
-#endif
-			private Tuple<bool, bool> CanCmdInsertHumanApprovedAnalysis
-			{
-				get
-				{
-					var visible = false;
-					var enabled = false;
-					return new Tuple<bool, bool>(visible, visible);
-				}
-			}
-
-			private void InsertHumanApprovedAnalysis_Click(object sender, EventArgs e)
-			{
-				MessageBox.Show(@"TODO: Adding new human approved analysis here.");
 			}
 
 			private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)

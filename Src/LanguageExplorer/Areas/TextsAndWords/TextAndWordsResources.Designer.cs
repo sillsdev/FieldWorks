@@ -61,12 +61,62 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Approved Analysis....
+        /// </summary>
+        internal static string Add_Approved_Analysis {
+            get {
+                return ResourceManager.GetString("Add_Approved_Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Word Gloss.
+        /// </summary>
+        internal static string Add_Word_Gloss {
+            get {
+                return ResourceManager.GetString("Add_Word_Gloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;false&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; PaneBarGroupId=&quot;PaneBar_WordformDetail&quot; altTitleId=&quot;WfiWordform-Full&quot; defaultLabelWidth=&quot;100&quot; /&gt;.
         /// </summary>
         internal static string AnalysesRecordEditViewParameters {
             get {
                 return ResourceManager.GetString("AnalysesRecordEditViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;AnalysisInSegmentsOccurrenceList&quot; selectColumn=&quot;true&quot;
+        ///            defaultChecked=&quot;true&quot; omitFromHistory=&quot;true&quot; allowInsertDeleteRecord=&quot;false&quot;
+        ///            editable=&quot;false&quot; clerk=&quot;segmentOccurrencesOfWfiAnalysis&quot; filterBar=&quot;true&quot;
+        ///            ShowOwnerShortname=&quot;true&quot;&gt;
+        ///&lt;/parameters&gt;.
+        /// </summary>
+        internal static string AnalysisInSegmentsOccurrenceList {
+            get {
+                return ResourceManager.GetString("AnalysisInSegmentsOccurrenceList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Approve.
+        /// </summary>
+        internal static string Approve {
+            get {
+                return ResourceManager.GetString("Approve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign Analysis....
+        /// </summary>
+        internal static string Assign_Analysis {
+            get {
+                return ResourceManager.GetString("Assign_Analysis", resourceCulture);
             }
         }
         
@@ -79,6 +129,24 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string BulkEditWordformsToolParameters {
             get {
                 return ResourceManager.GetString("BulkEditWordformsToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Spelling....
+        /// </summary>
+        internal static string Change_Spelling {
+            get {
+                return ResourceManager.GetString("Change_Spelling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing Approval Status.
+        /// </summary>
+        internal static string Changing_Approval_Status {
+            get {
+                return ResourceManager.GetString("Changing_Approval_Status", resourceCulture);
             }
         }
         
@@ -144,6 +212,75 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Analysis....
+        /// </summary>
+        internal static string Delete_Analysis {
+            get {
+                return ResourceManager.GetString("Delete_Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Candidate....
+        /// </summary>
+        internal static string Delete_Candidate {
+            get {
+                return ResourceManager.GetString("Delete_Candidate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Disapproved Analysis....
+        /// </summary>
+        internal static string Delete_Disapproved_Analysis {
+            get {
+                return ResourceManager.GetString("Delete_Disapproved_Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Gloss....
+        /// </summary>
+        internal static string Delete_Gloss {
+            get {
+                return ResourceManager.GetString("Delete_Gloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Wordform....
+        /// </summary>
+        internal static string Delete_Wordform {
+            get {
+                return ResourceManager.GetString("Delete_Wordform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disapprove.
+        /// </summary>
+        internal static string Disapprove {
+            get {
+                return ResourceManager.GetString("Disapprove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;GlossInSegmentsOccurrenceList&quot; selectColumn=&quot;true&quot;
+        ///            defaultChecked=&quot;true&quot; omitFromHistory=&quot;true&quot; allowInsertDeleteRecord=&quot;false&quot;
+        ///            editable=&quot;false&quot; clerk=&quot;segmentOccurrencesOfWfiGloss&quot; filterBar=&quot;true&quot;
+        ///            ShowOwnerShortname=&quot;true&quot;&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string GlossInSegmentsOccurrenceList {
+            get {
+                return ResourceManager.GetString("GlossInSegmentsOccurrenceList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Group.
         /// </summary>
         internal static string Group {
@@ -176,6 +313,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string Import_Standard_Format_Words_and_Glosses {
             get {
                 return ResourceManager.GetString("Import_Standard_Format_Words_and_Glosses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Word Gloss.
+        /// </summary>
+        internal static string Insert_Word_Gloss {
+            get {
+                return ResourceManager.GetString("Insert_Word_Gloss", resourceCulture);
             }
         }
         
@@ -441,6 +587,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Gloss....
+        /// </summary>
+        internal static string Merge_Gloss {
+            get {
+                return ResourceManager.GetString("Merge_Gloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Occurs exactly once.
         /// </summary>
         internal static string Occurs_exactly_once {
@@ -486,6 +641,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Word Gloss in Concordance.
+        /// </summary>
+        internal static string Show_Word_Gloss_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Word_Gloss_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;simpleWordList&quot; listItemsClass=&quot;WfiWordform&quot; clerk=&quot;matchingWords&quot;
         ///            filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot;
@@ -502,6 +666,57 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string SimpleWordListParameter {
             get {
                 return ResourceManager.GetString("SimpleWordListParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;srcSentencesList&quot; selectColumn=&quot;true&quot; defaultChecked=&quot;true&quot; allowInsertDeleteRecord=&quot;false&quot; editable=&quot;false&quot; clerk=&quot;SrcWfiWordformConc&quot; filterBar=&quot;false&quot; ShowOwnerShortname=&quot;true&quot; selectionStyle=&quot;none&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Ref&quot; width=&quot;60000&quot;&gt;
+        ///      &lt;span&gt;
+        ///        &lt;properties&gt;
+        ///          &lt;editable value=&quot;false&quot; /&gt;
+        ///        &lt;/properties&gt;
+        ///        &lt;string class=&quot;FakeOccurrence&quot; field=&quot;Reference&quot; ws=&quot;$ws=best vernoranal&quot; /&gt;
+        ///      &lt;/span&gt;
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SrcSentencesList {
+            get {
+                return ResourceManager.GetString("SrcSentencesList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string Unknown {
+            get {
+                return ResourceManager.GetString("Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Opinion.
+        /// </summary>
+        internal static string User_Opinion {
+            get {
+                return ResourceManager.GetString("User_Opinion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;WordformInSegmentsOccurrenceList&quot; selectColumn=&quot;true&quot;
+        ///            defaultChecked=&quot;true&quot; omitFromHistory=&quot;true&quot; allowInsertDeleteRecord=&quot;false&quot;
+        ///            editable=&quot;false&quot; clerk=&quot;segmentOccurrencesOfWfiWordform&quot; filterBar=&quot;true&quot;
+        ///            ShowOwnerShortname=&quot;true&quot;&gt;
+        ///&lt;/parameters&gt;.
+        /// </summary>
+        internal static string WordformInSegmentsOccurrenceList {
+            get {
+                return ResourceManager.GetString("WordformInSegmentsOccurrenceList", resourceCulture);
             }
         }
         

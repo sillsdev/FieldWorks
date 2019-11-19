@@ -2253,15 +2253,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Changing Approval Status.
-        /// </summary>
-        internal static string ksRedoChangingApprovalStatus {
-            get {
-                return ResourceManager.GetString("ksRedoChangingApprovalStatus", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo clear chart.
         /// </summary>
         internal static string ksRedoClearChart {
@@ -2905,15 +2896,6 @@ namespace LanguageExplorer {
         internal static string ksUndoChangeTemplate {
             get {
                 return ResourceManager.GetString("ksUndoChangeTemplate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Changing Approval Status.
-        /// </summary>
-        internal static string ksUndoChangingApprovalStatus {
-            get {
-                return ResourceManager.GetString("ksUndoChangingApprovalStatus", resourceCulture);
             }
         }
         

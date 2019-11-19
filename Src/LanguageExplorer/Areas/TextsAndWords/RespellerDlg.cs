@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary />
 	public partial class RespellerDlg : Form, IFlexComponent
 	{
+		private const string SrcWfiWordformConc = "SrcWfiWordformConc";
 		private LcmCache m_cache;
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
@@ -36,10 +37,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		// Preview related
 		private bool m_previewOn;
 		// original display of occurrences, when preview off
-		private XElement m_oldOccurrenceColumn = null;
+		private XElement m_oldOccurrenceColumn;
 		// special preview display of occurrences, with string truncated after occurrence
 		private XElement m_previewOccurrenceColumn;
-		private string m_previewButtonText = null; // original text of the button (before changed to e.g. Clear).
+		private string m_previewButtonText; // original text of the button (before changed to e.g. Clear).
 		RespellUndoAction m_respellUndoaction; // created when we do a preview, used when check boxes change.
 		// items still enabled.
 		readonly HashSet<int> m_enabledItems = new HashSet<int>();
@@ -51,6 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		IRecordList m_wordformRecordList;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 		ISegmentRepository m_repoSeg;
+		private StatusBar _statusBar;
 
 		public RespellerDlg()
 		{
@@ -161,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// build the concordance, but on FLEx's list, and we can assume all the parts and layouts
 		/// are loaded.
 		/// </summary>
-		internal bool SetDlgInfo(IWfiWordform wf, XElement configurationParams)
+		internal bool SetDlgInfo(IWfiWordform wordForm)
 		{
 			using (var dlg = new ProgressDialogWorkingOn())
 			{
@@ -178,10 +180,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				dlg.BringToFront();
 				try
 				{
-					var cache = wf.Cache;
-					m_srcwfiWordform = wf;
-					m_cache = cache;
-					return SetDlgInfoPrivate(configurationParams);
+					m_srcwfiWordform = wordForm;
+					m_cache = wordForm.Cache;
+					return SetDlgInfoPrivate();
 				}
 				finally
 				{
@@ -190,8 +191,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		internal bool SetDlgInfo(XElement configurationParameters)
+		internal bool SetDlgInfo(StatusBar statusBar)
 		{
+			_statusBar = statusBar;
 			m_wordformRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
 			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
@@ -204,10 +206,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterestingTextsIfNeeded(); //Trigger the parsing
 			}
 			m_srcwfiWordform = (IWfiWordform)m_wordformRecordList.CurrentObject;
-			return SetDlgInfoPrivate(configurationParameters);
+			return SetDlgInfoPrivate();
 		}
 
-		private bool SetDlgInfoPrivate(XElement configurationParameters)
+		private bool SetDlgInfoPrivate()
 		{
 			using (new WaitCursor(this))
 			{
@@ -258,25 +260,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				SetSuggestions();
 				m_btnApply.Enabled = false;
 				m_cbNewSpelling.TextChanged += m_dstWordform_TextChanged;
-
-#if RANDYTODO
-				/*
-          <clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
-            <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerTemporaryRecordClerk" />
-            <recordList class="WfiWordform" field="Occurrences">
-              <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerRecordList" />
-              <decoratorClass assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellingSda" />
-            </recordList>
-            <filters />
-            <sortMethods />
-          </clerk>
-				*/
 				// Setup source browse view.
-				var toolNode = configurationParameters.SelectSingleNode("controls/control[@id='srcSentences']/parameters");
-				m_srcRecordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-				m_srcRecordList.OwningObject = m_srcwfiWordform;
-#endif
-				m_sourceSentences.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+				var sda = new RespellingSda(m_cache, m_cache.ServiceLocator);
+				sda.InitializeFlexComponent(flexComponentParameters);
+				var toolNode = XElement.Parse(TextAndWordsResources.SrcSentencesList);
+				/*
+		  <clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
+			<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerTemporaryRecordClerk" />
+			<recordList class="WfiWordform" field="Occurrences">
+			  <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerRecordList" />
+			  <decoratorClass assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellingSda" />
+			</recordList>
+			<filters />
+			<sortMethods />
+		  </clerk>
+				*/
+				m_srcRecordList = new RespellerTemporaryRecordList(SrcWfiWordformConc, _statusBar, sda, false,
+					new VectorPropertyParameterObject(m_srcwfiWordform, "Occurrences", sda.MetaDataCache.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false)));
+				m_srcRecordList.InitializeFlexComponent(flexComponentParameters);
+				m_sourceSentences.ConstructorSurrogate(toolNode, m_cache, m_srcRecordList);
+				m_sourceSentences.InitializeFlexComponent(flexComponentParameters);
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
 				m_specialSda = m_sourceSentences.BrowseViewer.SpecialCache;
 				m_moreMinSize = Size;
@@ -607,7 +611,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			using (new WaitCursor(this))
 			{
-				// NB: occurrence may ref. wf, anal, or gloss.
+				// NB: occurrence may ref. wordForm, anal, or gloss.
 				// NB: Need to support selective spelling change.
 				//	(gunaa->gwnaa when it means woman, but not for gu-naa, IMP+naa)
 				if (m_respellUndoaction == null)
