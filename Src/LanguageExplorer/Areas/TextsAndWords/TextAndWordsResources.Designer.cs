@@ -79,6 +79,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Words to Lexicon.
+        /// </summary>
+        internal static string Add_Words_to_Lexicon {
+            get {
+                return ResourceManager.GetString("Add_Words_to_Lexicon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;false&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; PaneBarGroupId=&quot;PaneBar_WordformDetail&quot; altTitleId=&quot;WfiWordform-Full&quot; defaultLabelWidth=&quot;100&quot; /&gt;.
         /// </summary>
@@ -685,6 +694,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string SrcSentencesList {
             get {
                 return ResourceManager.GetString("SrcSentencesList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Texts.
+        /// </summary>
+        internal static string Texts {
+            get {
+                return ResourceManager.GetString("Texts", resourceCulture);
             }
         }
         

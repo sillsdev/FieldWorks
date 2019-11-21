@@ -85,8 +85,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable,
-			IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey)
+		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			var tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
 			if (tssContext == null)
@@ -145,10 +144,10 @@ namespace LanguageExplorer.LcmUi
 					}
 				}
 			}
-			DisplayEntries(cache, owner, propertyTable, publisher, subscriber, helpProvider, helpFileKey, tssWf, wfa);
+			DisplayEntries(cache, owner, flexComponentParameters, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
+		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			var tssWf = tssWfIn;
 			LexEntryUi leui = null;
@@ -171,11 +170,11 @@ namespace LanguageExplorer.LcmUi
 					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
-				EnsureWindowConfiguration(propertyTable);
-				var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+				EnsureWindowConfiguration(flexComponentParameters.PropertyTable);
+				var styleSheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
 				if (leui == null)
 				{
-					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
 					if (entry == null)
 					{
 						return;
@@ -190,14 +189,14 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-		public static void DisplayEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		public static void DisplayEntries(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			var tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
-			var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+			var styleSheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
 			if (entries == null || entries.Count == 0)
 			{
-				var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
+				var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
 				if (entry == null)
 				{
 					return;
@@ -205,10 +204,10 @@ namespace LanguageExplorer.LcmUi
 
 				entries = new List<ILexEntry>(1) { entry };
 			}
-			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+			DisplayEntriesRecursive(cache, owner, flexComponentParameters, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
 
-		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
+		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey, List<ILexEntry> entries, ITsString tssWf)
 		{
 			// Loop showing the SummaryDialogForm as long as the user clicks the Other button
@@ -216,7 +215,7 @@ namespace LanguageExplorer.LcmUi
 			bool otherButtonClicked;
 			do
 			{
-				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), helpProvider, helpFileKey, stylesheet, cache, propertyTable))
+				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), helpProvider, helpFileKey, stylesheet, cache, flexComponentParameters.PropertyTable))
 				{
 					SetCurrentModalForm(sdform);
 					if (owner == null)
@@ -234,7 +233,7 @@ namespace LanguageExplorer.LcmUi
 				{
 					// Look for another entry to display.  (If the user doesn't select another
 					// entry, loop back and redisplay the current entry.)
-					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
 					if (entry != null)
 					{
 						// We need a list that contains the entry we found to display on the
@@ -361,11 +360,11 @@ namespace LanguageExplorer.LcmUi
 		/// Launch the Find Entry dialog, and if one is created or selected return it.
 		/// </summary>
 		/// <returns>The HVO of the selected or created entry</returns>
-		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssForm, IWin32Window owner)
+		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, FlexComponentParameters flexComponentParameters, ITsString tssForm, IWin32Window owner)
 		{
 			using (var entryGoDlg = new EntryGoDlg())
 			{
-				entryGoDlg.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+				entryGoDlg.InitializeFlexComponent(flexComponentParameters);
 				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
 				// but reset after activated.
 				SetCurrentModalForm(entryGoDlg);
@@ -407,7 +406,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(MyCmObject.Cache, PropertyTable, Publisher, Subscriber, tssWf, owner);
+				var entry = ShowFindEntryDialog(MyCmObject.Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))

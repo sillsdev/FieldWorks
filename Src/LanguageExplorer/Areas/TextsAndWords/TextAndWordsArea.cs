@@ -12,7 +12,11 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -27,6 +31,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IEnumerable<ITool> _myTools;
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string InterlinearTexts = "interlinearTexts";
+		internal const string Respeller = "Respeller";
+		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
+		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
@@ -73,7 +80,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 
-				_propertyTable.SetDefault(InterlinDocForAnalysis.ITexts_AddWordsToLexicon, false, true);
+				_propertyTable.SetDefault(ITexts_AddWordsToLexicon, false, true);
+				_propertyTable.SetDefault(ShowHiddenFields_interlinearEdit, false, true);
 				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, true);
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
@@ -234,6 +242,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private CustomFieldsMenuHelper _customFieldsMenuHelper;
+			private IWfiWordformRepository _wordformRepos;
+			private IPropertyTable _propertyTable;
+			private LcmCache _cache;
+			private IArea _area;
+			private ISharedEventHandlers _sharedEventHandlers;
 
 			internal ITool ActiveTool { private get; set; }
 
@@ -243,14 +256,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				_cache = _majorFlexComponentParameters.LcmCache;
+				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				_wordformRepos = _cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+				_area = area;
+				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
+				_sharedEventHandlers.Add(Respeller, Respeller_Click);
 
-				SetupUiWidgets(area);
+				SetupUiWidgets();
 			}
 
-			private void SetupUiWidgets(IArea area)
+			private void SetupUiWidgets()
 			{
-				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(area);
-				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, area, areaUiWidgetParameterObject);
+				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
+				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area, areaUiWidgetParameterObject);
 				/*
 					<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/> // Only Insert menu
 				*/
@@ -261,13 +280,38 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
 				AreaServices.InsertPair(areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.View], areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.View],
 					Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				var toolMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools];
+				toolMenuDictionary.Add(Command.CmdEditSpellingStatus, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditSpellingStatus_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
+				toolMenuDictionary.Add(Command.CmdViewIncorrectWords, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ViewIncorrectWords_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				toolMenuDictionary.Add(Command.CmdChangeSpelling, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Respeller_Click, () => CanCmdChangeSpelling));
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}
 
+			private void ViewIncorrectWords_Clicked(object sender, EventArgs e)
+			{
+				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.AnalysesMachineName, ActiveWordform(_wordformRepos, _propertyTable));
+				var additionalProps = link.LinkProperties;
+				additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+				additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, link);
+			}
+
+			private void EditSpellingStatus_Clicked(object sender, EventArgs e)
+			{
+				// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
+				// fields for the ActiveWordform() result, it's too likely that the user
+				// will get a puzzling "Target not found" message popping up.  See LT-8717.
+				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.BulkEditWordformsMachineName, Guid.Empty);
+				var additionalProps = link.LinkProperties;
+				additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+				additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, link);
+			}
+
 			private void AddTexts_Clicked(object sender, EventArgs e)
 			{
-				var recordList = (InterlinearTextsRecordList)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				var recordList = (InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 				recordList.AddTexts();
 			}
 
@@ -275,15 +319,158 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			private void CmdInsertText_Click(object sender, EventArgs e)
 			{
-				var recordList = (InterlinearTextsRecordList)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				var recordList = (InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 				recordList.OnInsertInterlinText();
 			}
 
 			private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
 			{
-				using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
+				using (var dlg = new ImportWordSetDlg(_cache, _majorFlexComponentParameters.FlexApp, _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
 				{
 					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+				}
+			}
+
+			/// <summary>
+			/// Try to find a WfiWordform object corresponding the the focus selection.
+			/// If successful return its guid, otherwise, return Guid.Empty.
+			/// </summary>
+			/// <returns></returns>
+			private static Guid ActiveWordform(IWfiWordformRepository wordformRepos, IPropertyTable propertyTable)
+			{
+				var app = propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				var window = app?.ActiveMainWindow as IFwMainWnd;
+				var activeView = window?.ActiveView;
+				if (activeView == null)
+				{
+					return Guid.Empty;
+				}
+				var roots = activeView.AllRootBoxes();
+				if (!roots.Any())
+				{
+					return Guid.Empty;
+				}
+				var helper = SelectionHelper.Create(roots[0].Site);
+				var word = helper?.SelectedWord;
+				if (word == null || word.Length == 0)
+				{
+					return Guid.Empty;
+				}
+				IWfiWordform wordform;
+				return wordformRepos.TryGetObject(word, out wordform) ? wordform.Guid : Guid.Empty;
+			}
+
+			private Tuple<bool, bool> CanCmdChangeSpelling => new Tuple<bool, bool>(true, string.IsNullOrWhiteSpace(ActiveWord?.Text));
+
+			private void Respeller_Click(object sender, EventArgs e)
+			{
+				if (!InFriendliestTool)
+				{
+					// See LT-8641.
+					LaunchRespellerDlgOnWord(ActiveWord);
+					return;
+				}
+				var recordList = (IRecordList)((ToolStripMenuItem)sender).Tag;
+				using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = recordList }))
+				{
+					var changesWereMade = false;
+					using (var dlg = new RespellerDlg())
+					{
+						dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+						if (dlg.SetDlgInfo(_majorFlexComponentParameters.StatusBar))
+						{
+							dlg.ShowDialog((Form)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IFwMainWnd>(FwUtils.window));
+							changesWereMade = dlg.ChangesWereMade;
+						}
+						else
+						{
+							MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
+						}
+					}
+					// The Respeller dialog can't make all necessary updates, since things like occurrence
+					// counts depend on which texts are included, not just the data. So make sure we reload.
+					luh.TriggerPendingReloadOnDispose = changesWereMade;
+					if (changesWereMade)
+					{
+						// further try to refresh occurrence counts.
+						var sda = recordList.VirtualListPublisher;
+						while (sda != null)
+						{
+							if (sda is ConcDecorator)
+							{
+								((ConcDecorator)sda).Refresh();
+								break;
+							}
+							if (!(sda is DomainDataByFlidDecoratorBase))
+							{
+								break;
+							}
+							sda = ((DomainDataByFlidDecoratorBase)sda).BaseSda;
+						}
+					}
+				}
+			}
+
+			private void LaunchRespellerDlgOnWord(ITsString tss)
+			{
+				using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList }))
+				{
+					// Launch the Respeller Dlg.
+					using (var dlg = new RespellerDlg())
+					{
+						dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+						if (dlg.SetDlgInfo(WordformApplicationServices.GetWordformForForm(_cache, tss)))
+						{
+							dlg.ShowDialog((Form)_propertyTable.GetValue<IFwMainWnd>(FwUtils.window));
+						}
+						else
+						{
+							MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
+						}
+					}
+				}
+			}
+
+			private bool InFriendliestTool => _area.ActiveTool.MachineName == AreaServices.AnalysesMachineName;
+
+			/// <summary>
+			/// Try to find a WfiWordform object corresponding the the focus selection.
+			/// If successful return its guid, otherwise, return Guid.Empty.
+			/// </summary>
+			/// <returns></returns>
+			private ITsString ActiveWord
+			{
+				get
+				{
+					if (InFriendliestTool)
+					{
+						// we should be able to get our info from the current record list.
+						// but return null if we can't get the info, otherwise we allow the user to
+						// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
+						var recordList = _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+						var tssVern = (recordList?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
+						return tssVern;
+					}
+					var window = _majorFlexComponentParameters.MainWindow;
+					var roots = window.ActiveView?.AllRootBoxes();
+					if (roots == null || roots.Count < 1 || roots[0] == null)
+					{
+						return null;
+					}
+					var tssWord = SelectionHelper.Create(roots[0].Site)?.SelectedWord;
+					if (tssWord != null)
+					{
+						// Check for a valid vernacular writing system.  (See LT-8892.)
+						var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
+						var cache = _propertyTable.GetValue<LcmCache>(FwUtils.cache);
+						var wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+						if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(
+							wsObj))
+						{
+							return tssWord;
+						}
+					}
+					return null;
 				}
 			}
 
@@ -319,10 +506,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				if (disposing)
 				{
+					_sharedEventHandlers.Remove(Respeller);
 					_customFieldsMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;
 				_customFieldsMenuHelper = null;
+				_wordformRepos = null;
+				_propertyTable = null;
+				_cache = null;
+				_area = null;
+				_sharedEventHandlers = null;
 
 				_isDisposed = true;
 			}

@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer.Areas;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -18,8 +20,8 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private readonly int m_ws;
 
-		internal StTextSlice(ICmObject obj, int flid, int ws)
-			: base(new StTextView(), obj, flid)
+		internal StTextSlice(ISharedEventHandlers sharedEventHandlers, ICmObject obj, int flid, int ws)
+			: base(new StTextView(sharedEventHandlers), obj, flid)
 		{
 			m_ws = ws;
 		}
@@ -59,6 +61,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void SelectAt(int ich)
 		{
 			((StTextView)Control).SelectAt(ich);
+		}
+
+		internal void LexiconLookup()
+		{
+			AreaServices.LexiconLookup(Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), this);
+		}
+
+		internal void AddToLexicon()
+		{
+			AreaServices.AddToLexicon(Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), this);
 		}
 	}
 }

@@ -44,10 +44,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
-			//var userControlUiWidgetParameterObject = new UserControlUiWidgetParameterObject(this);
-
-			// Handle tool bar button on View tool bar and View menu.
-			//_uiWidgetController.AddHandlers(userControlUiWidgetParameterObject);
 		}
 
 		#region Implementation of IPropertyTableProvider

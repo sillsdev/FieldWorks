@@ -198,6 +198,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		private sealed class WordListConcordanceToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 			private IRecordList _recordListProvidingOwner;
 			private IRecordList _subservientRecordList;
 			private FileExportMenuHelper _fileExportMenuHelper;
@@ -223,6 +224,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			{
 				_fileExportMenuHelper = new FileExportMenuHelper(_majorFlexComponentParameters);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				// NB: The nested browse view on the right has no popup menu.
@@ -298,6 +301,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 					_mainRecordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
+				_partiallySharedTextsAndWordsToolsMenuHelper = null;
 				_fileExportMenuHelper = null;
 				_recordListProvidingOwner = null;
 				_subservientRecordList = null;

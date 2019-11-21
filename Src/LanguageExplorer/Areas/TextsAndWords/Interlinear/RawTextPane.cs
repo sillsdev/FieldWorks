@@ -681,7 +681,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
 		}
 

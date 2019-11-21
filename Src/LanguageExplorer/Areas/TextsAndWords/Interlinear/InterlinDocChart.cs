@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			throw new NotSupportedException();
 		}
 
-		public virtual bool OnConfigureInterlinear(object argument)
+		internal virtual void OnConfigureInterlinear()
 		{
 			throw new NotSupportedException();
 		}

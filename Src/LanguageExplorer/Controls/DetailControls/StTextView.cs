@@ -3,8 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -15,6 +18,15 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private StVc m_vc;
 		private IStText m_text;
+		private ISharedEventHandlers _sharedEventHandlers;
+		private ContextMenuStrip _contextMenuStrip;
+
+		internal StTextView(ISharedEventHandlers sharedEventHandlers)
+		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
+
+			_sharedEventHandlers = sharedEventHandlers;
+		}
 
 		/// <summary>
 		/// Gets or sets the StText object.
@@ -93,8 +105,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				_contextMenuStrip?.Dispose();
 			}
 			m_vc = null;
+			_sharedEventHandlers = null;
+			_contextMenuStrip = null;
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 		}
@@ -116,35 +131,54 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 		}
 
-		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
+		protected override bool DoContextMenu(IVwSelection invSel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot))
-			{
-				return true;
-			}
-			var mainWind = ParentForm as IFwMainWnd;
+			var mainWind = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			var sel = RootBox?.Selection;
 			if (mainWind == null || sel == null)
 			{
 				return false;
 			}
-#if RANDYTODO
-// The original code sent it to the window, who then passed it on as in:
-// ((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
-// The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
-			mainWind.ShowContextMenu("mnuStTextChoices", new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
-#endif
-			/*
-			    <menu id="mnuStTextChoices">
-			      <item command="CmdCut" />
-			      <item command="CmdCopy" />
-			      <item command="CmdPaste" />
-			      <item label="-" translate="do not translate" />
-			      <item command="CmdLexiconLookup" />
-			      <item command="CmdAddToLexicon" />
-			    </menu>
-			*/
+			if (_contextMenuStrip == null)
+			{
+				// Start: <menu id="mnuStTextChoices">
+				const string mnuStTextChoices = "mnuStTextChoices";
+				_contextMenuStrip = new ContextMenuStrip
+				{
+					Name = mnuStTextChoices
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
+				/*
+				_sharedEventHandlers should have the cut, copy & paste handlers.
+				<menu id="mnuStTextChoices">
+					<item command="CmdCut" />
+					<item command="CmdCopy" />
+					<item command="CmdPaste" />
+					<item label="-" translate="do not translate" />
+					<item command="CmdLexiconLookup" />
+					<item command="CmdAddToLexicon" />
+				</menu>
+				*/
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCut), LanguageExplorerResources.Cut);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCopy), LanguageExplorerResources.Copy);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdPaste), LanguageExplorerResources.Paste);
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(_contextMenuStrip);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, LexiconLookup_Clicked, LanguageExplorerResources.Find_in_Dictionary);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, AddToLexicon_Clicked, LanguageExplorerResources.Entry);
+			}
+			_contextMenuStrip.Show(this, pt);
+
 			return true;
+		}
+
+		private void LexiconLookup_Clicked(object sender, EventArgs e)
+		{
+			((StTextSlice)Parent).LexiconLookup();
+		}
+
+		private void AddToLexicon_Clicked(object sender, EventArgs e)
+		{
+			((StTextSlice)Parent).AddToLexicon();
 		}
 	}
 }

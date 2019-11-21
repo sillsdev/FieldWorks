@@ -215,6 +215,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string Copy {
+            get {
+                return ResourceManager.GetString("Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cut.
+        /// </summary>
+        internal static string Cut {
+            get {
+                return ResourceManager.GetString("Cut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon DefaultIcon {
@@ -300,6 +318,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entry....
+        /// </summary>
+        internal static string Entry {
+            get {
+                return ResourceManager.GetString("Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was an error while reading in the XML file: {0}..
         /// </summary>
         internal static string ErrorReadingXMLFile0 {
@@ -369,6 +396,15 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("Find_and_Replace_Text", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find in &amp;Dictionary....
+        /// </summary>
+        internal static string Find_in_Dictionary {
+            get {
+                return ResourceManager.GetString("Find_in_Dictionary", resourceCulture);
             }
         }
         
@@ -3578,6 +3614,15 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("password_reveal_eye_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste.
+        /// </summary>
+        internal static string Paste {
+            get {
+                return ResourceManager.GetString("Paste", resourceCulture);
             }
         }
         

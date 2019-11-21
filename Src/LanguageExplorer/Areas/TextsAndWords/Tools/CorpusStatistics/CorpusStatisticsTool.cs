@@ -119,15 +119,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-				// TODO: Set up factory method for the browse view.
-#endif
 			}
 
 			#region Implementation of IDisposable

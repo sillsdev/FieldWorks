@@ -1479,4 +1479,19 @@ you expect.</value>
   <data name="Insert_Sub_Cat" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Morphology\Insert_Sub_Cat.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Cut" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="Entry" xml:space="preserve">
+    <value>Entry...</value>
+  </data>
+  <data name="Find_in_Dictionary" xml:space="preserve">
+    <value>Find in &amp;Dictionary...</value>
+  </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
 </root>

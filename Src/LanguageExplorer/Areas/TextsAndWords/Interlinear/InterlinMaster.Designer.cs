@@ -29,6 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				_paneBarButtons?.Clear();
 				m_rtPane.IsCurrentTabForInterlineMaster = false;
 				m_taggingPane.IsCurrentTabForInterlineMaster = false;
 				m_idcGloss.IsCurrentTabForInterlineMaster = false;
@@ -50,7 +51,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			m_tcPane = null;
 			m_rtPane = null;
 			m_infoPane = null;
@@ -64,6 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_panelTagging = null;
 			m_panelPrintView = null;
 			_majorFlexComponentParameters = null;
+			_paneBarButtons = null;
 
 			base.Dispose(disposing);
 		}

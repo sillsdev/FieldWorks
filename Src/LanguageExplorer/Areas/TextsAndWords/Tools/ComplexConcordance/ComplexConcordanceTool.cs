@@ -192,6 +192,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private sealed class ComplexConcordanceToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 
 			internal ComplexConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool)
 			{
@@ -199,8 +200,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				// NB: No popup menu on the browse view.
 			}
 
@@ -237,6 +240,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				if (disposing)
 				{
 				}
+				_partiallySharedTextsAndWordsToolsMenuHelper = null;
 
 				_isDisposed = true;
 			}

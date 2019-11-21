@@ -488,7 +488,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item command="CmdShowWordformConc" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowWordformConc_Click, TextAndWordsResources.Assign_Analysis);
 				// <item command="CmdRespeller" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Respeller_Click, TextAndWordsResources.Change_Spelling);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(TextAndWordsArea.Respeller), TextAndWordsResources.Change_Spelling);
 				// <item command="CmdDataTree_Delete_MainWordform" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Wordform, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
 
@@ -530,53 +530,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdRespeller" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Respeller_Click, TextAndWordsResources.Change_Spelling);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(TextAndWordsArea.Respeller), TextAndWordsResources.Change_Spelling);
 
 				// End: <menu id="mnuDataTree_WordformSpelling">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-			}
-
-			private void Respeller_Click(object sender, EventArgs e)
-			{
-				using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = _recordList }))
-				{
-					var changesWereMade = false;
-					using (var dlg = new RespellerDlg())
-					{
-						dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-						if (dlg.SetDlgInfo(_majorFlexComponentParameters.StatusBar))
-						{
-							dlg.ShowDialog((Form)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IFwMainWnd>(FwUtils.window));
-							changesWereMade = dlg.ChangesWereMade;
-						}
-						else
-						{
-							MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
-						}
-					}
-					// The Respeller dialog can't make all necessary updates, since things like occurrence
-					// counts depend on which texts are included, not just the data. So make sure we reload.
-					luh.TriggerPendingReloadOnDispose = changesWereMade;
-					if (changesWereMade)
-					{
-						// further try to refresh occurrence counts.
-						var sda = _recordList.VirtualListPublisher;
-						while (sda != null)
-						{
-							if (sda is ConcDecorator)
-							{
-								((ConcDecorator)sda).Refresh();
-								break;
-							}
-							if (!(sda is DomainDataByFlidDecoratorBase))
-							{
-								break;
-							}
-							sda = ((DomainDataByFlidDecoratorBase)sda).BaseSda;
-						}
-					}
-				}
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_WordGlossForm(Slice slice, ContextMenuName contextMenuId)

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.RootSites;
@@ -34,6 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal partial class InterlinMaster : InterlinMasterBase, IFocusablePanePortion
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private Dictionary<string, PanelButton> _paneBarButtons;
 		// Controls
 		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
@@ -66,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, bool showTitlePane = true)
+		internal InterlinMaster(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, Dictionary<string, PanelButton> paneBarButtons = null, bool showTitlePane = true)
 			: base(configurationParametersElement, majorFlexComponentParameters.LcmCache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -77,6 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_rtPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_rtPane.ConfigurationParameters = configurationParametersElement;
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_paneBarButtons = paneBarButtons;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			m_taggingPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_idcGloss.MyMajorFlexComponentParameters = majorFlexComponentParameters;
@@ -93,6 +96,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var insertToolBarButtonsForUserControl = userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.Insert];
 			insertToolBarButtonsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
 			insertToolBarButtonsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureInterlinear, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureInterlinear_Clicked, ()=> CanConfigureInterlinear));
 		}
 
 		/// <summary>
@@ -193,7 +197,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (m_tabCtrl.SelectedIndex)
 			{
 				case (int)TabPageSelection.Gloss:
-					return PropertyTable.GetValue(InterlinDocForAnalysis.ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
+					return PropertyTable.GetValue(TextAndWordsArea.ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 				case (int)TabPageSelection.ConstituentChart:
 					return InterlinMode.Chart;
 				case (int)TabPageSelection.TaggingView:
@@ -522,6 +526,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_idcGloss.IsCurrentTabForInterlineMaster = false;
 				m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
 				m_printViewPane.IsCurrentTabForInterlineMaster = false;
+				if (_paneBarButtons != null)
+				{
+					foreach (var panelButton in _paneBarButtons.Values)
+					{
+						panelButton.Visible = panelButton.Enabled = false;
+					}
+				}
 			}
 			if (m_constChartPane != null)
 			{
@@ -543,6 +554,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return; // nothing to show.
 				}
+
+				PanelButton panelButton;
 				switch (m_tabCtrl.SelectedIndex)
 				{
 					case ktpsInfo:
@@ -563,6 +576,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							m_infoPane.BackColor = Color.White;
 						}
+						if (_paneBarButtons != null)
+						{
+							panelButton = _paneBarButtons[TextAndWordsArea.ShowHiddenFields_interlinearEdit];
+							panelButton.Visible = panelButton.Enabled = true;
+						}
 						break;
 					case ktpsRawText:
 						if (ParentForm == Form.ActiveForm)
@@ -576,6 +594,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					case ktpsGloss:
 						m_idcGloss.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						if (_paneBarButtons != null)
+						{
+							panelButton = _paneBarButtons[TextAndWordsArea.ITexts_AddWordsToLexicon];
+							panelButton.Visible = panelButton.Enabled = true;
+						}
 						break;
 					case ktpsAnalyze:
 						m_idcAnalyze.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
@@ -1205,35 +1228,28 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			}
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Enable the "Configure Interlinear" command. Can be done any time this view is a target.
-		/// </summary>
-		public bool OnDisplayConfigureInterlinear(object commandObject, ref UIItemDisplayProperties display)
+		private Tuple<bool, bool> CanConfigureInterlinear
 		{
-			bool fShouldDisplay = (CurrentInterlinearTabControl != null &&
-				(CurrentInterlinearTabControl is InterlinDocRootSiteBase ||
-				CurrentInterlinearTabControl is InterlinDocChart));
-			display.Visible = fShouldDisplay;
-			display.Enabled = fShouldDisplay;
-			return true;
+			get
+			{
+				var shouldDisplay = CurrentInterlinearTabControl != null && (CurrentInterlinearTabControl is InterlinDocRootSiteBase || CurrentInterlinearTabControl is InterlinDocChart);
+				return new Tuple<bool, bool>(shouldDisplay, shouldDisplay);
+			}
 		}
-#endif
 
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results
 		/// </summary>
-		public bool OnConfigureInterlinear(object argument)
+		private void ConfigureInterlinear_Clicked(object sender, EventArgs e)
 		{
 			if (CurrentInterlinearTabControl is InterlinDocRootSiteBase)
 			{
-				((InterlinDocRootSiteBase)CurrentInterlinearTabControl).OnConfigureInterlinear(argument);
+				((InterlinDocRootSiteBase)CurrentInterlinearTabControl).OnConfigureInterlinear();
 			}
 			else if (CurrentInterlinearTabControl is InterlinDocChart)
 			{
-				((InterlinDocChart)CurrentInterlinearTabControl).OnConfigureInterlinear(argument);
+				((InterlinDocChart)CurrentInterlinearTabControl).OnConfigureInterlinear();
 			}
-			return true; // We handled this
 		}
 
 		/// <summary>
@@ -1294,35 +1310,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		}
 
 #if RANDYTODO
-		/// <summary>
-		/// Mode for populating the Lexicon with monomorphemic glosses
-		/// </summary>
-		public bool OnDisplayITexts_AddWordsToLexicon(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Gloss;
-			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
-			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
-			return true;
-		}
-
-		/// <summary>
-		/// ShowHiddenFields for Info tab. We use the suffix interlinearEdit here because it is
-		/// the toolName when the data tree is initializing the info tab. The name actually applies to
-		/// the whole interlinear view, but fortunately so far only the Info tab contains a data tree.
-		/// </summary>
-		/// <note>This handles enabling the 'menu item' defined in the menu PaneBar_ITextContent in the interlinear area configuration file.
-		/// The property name is actually ShowHiddenFields_interlinearEdit but a trick in Choice.GetDisplayProperties allows us
-		/// to have a valid method name with an underscore in it.
-		/// If you are thinking of cleaning up this hack, note that various code in DataTree is aware of a multitude of properties
-		/// starting with "ShowHiddenFields_", and they are persisted in settings.</note>
-		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;
-			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
-			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
-			return true;
-		}
-
 		/// <summary>
 		/// handle the message to see if the menu item should be displayed
 		/// </summary>

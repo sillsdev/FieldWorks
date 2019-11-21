@@ -316,7 +316,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "sttext":
 					{
-						newSlice = new StTextSlice(obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
+						newSlice = new StTextSlice(sharedEventHandlers, obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
 						break;
 					}
 				case "featuresysteminflectionfeaturelistdlglauncher":
@@ -488,7 +488,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// case "integer": // added back in to behave as "int" above
 					throw new Exception("use of obsolete editor type (message->lit, integer->int)");
 				case "autocustom":
-					newSlice = MakeAutoCustomSlice(cache, obj, caller, node);
+					newSlice = MakeAutoCustomSlice(sharedEventHandlers, cache, obj, caller, node);
 					if (newSlice == null)
 					{
 						return null;
@@ -543,7 +543,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// appropriate default slice for the custom field indicated in the param attribute of
 		/// the caller.
 		/// </summary>
-		private static Slice MakeAutoCustomSlice(LcmCache cache, ICmObject obj, XElement caller, XElement configurationNode)
+		private static Slice MakeAutoCustomSlice(ISharedEventHandlers sharedEventHandlers, LcmCache cache, ICmObject obj, XElement caller, XElement configurationNode)
 		{
 			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			var flid = GetCustomFieldFlid(caller, mdc, obj);
@@ -588,7 +588,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var dstClsid = mdc.GetDstClsId(flid);
 					if (dstClsid == StTextTags.kClassId)
 					{
-						slice = new StTextSlice(obj, flid, cache.DefaultAnalWs);
+						slice = new StTextSlice(sharedEventHandlers, obj, flid, cache.DefaultAnalWs);
 					}
 					break;
 				case CellarPropertyType.ReferenceAtomic:

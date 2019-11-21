@@ -1982,44 +1982,6 @@
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
     <None Include="Resources\SimpleWordListParameter.xml" />
     <None Include="Resources\CustomEditParameters.xml" />
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
-      <Link>XML\Combined\HierarchicalLCModel.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
-      <Link>XML\Combined\MasterLCModel.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
-      <Link>XML\Combined\Fully_Merged_useful.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Layouts.xml">
-      <Link>XML\Combined\Inventory_Layouts.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Parts.xml">
-      <Link>XML\Combined\Inventory_Parts.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
-      <Link>XML\Combined\Merged_Parts_into_Layouts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedLayout_detail.xml">
-      <Link>XML\Combined\MergedLayout_detail.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedParts_detail.xml">
-      <Link>XML\Combined\MergedParts_detail.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Combined_details.xml">
-      <Link>XML\Combined\Merged_Combined_details.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
-      <Link>XML\Combined\Merged_LCModel.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
-      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Resources\Copy.bmp" />
     <None Include="Resources\NotebookRecordGoDlgParameters.xml" />
     <None Include="Resources\SimpleChooserParameters.xml" />
@@ -3068,10 +3030,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dumpster\AreaListener.cs" />
-    <Compile Include="Dumpster\MorphologyListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />
-    <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\WordformApplicationServices.cs" />
     <Compile Include="FlexHelpTopicProvider.cs" />
@@ -3820,18 +3780,6 @@
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\DistFiles\Parts\GeneratedParts.xml">
-      <Link>XML\Parts\GeneratedParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Parts\Generated.fwlayout">
-      <Link>XML\Parts\Generated.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Parts\StandardParts.xml">
-      <Link>XML\Parts\StandardParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Parts\Standard.fwlayout">
-      <Link>XML\Parts\Standard.fwlayout</Link>
-    </None>
     <None Include="Controls\DetailControls\atomicNode.bmp" />
     <None Include="Controls\DetailControls\CollectionNode.bmp" />
     <None Include="Controls\DetailControls\SequenceSmall.bmp" />
@@ -3947,75 +3895,6 @@
     <None Include="Resources\NotebookBrowseParameters.xml" />
     <None Include="Resources\NotebookDocumentParameters.xml" />
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
-      <Link>XML\Combined\CombinedConfig_Develop.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\..\Users\regnr\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
-      <Link>XML\Combined\CombinedConfig_Master.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
-      <Link>XML\ConstituentChartStyleInfo.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
-      <Link>XML\Parts\CellarParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibilityParts.xml">
-      <Link>XML\Parts\CmPossibilityParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
-      <Link>XML\Parts\LexEntryParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
-      <Link>XML\Parts\LexSenseParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
-      <Link>XML\Parts\MorphologyParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
-      <Link>XML\Parts\NotebookParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\ReversalParts.xml">
-      <Link>XML\Parts\ReversalParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
-      <Link>XML\Parts\WFIParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
-      <Link>XML\Parts\Cellar.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibility.fwlayout">
-      <Link>XML\Parts\CmPossibility.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
-      <Link>XML\Parts\LexEntry.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
-      <Link>XML\Parts\LexSense.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
-      <Link>XML\Parts\Morphology.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Notebook.fwlayout">
-      <Link>XML\Parts\Notebook.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Reversal.fwlayout">
-      <Link>XML\Parts\Reversal.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
-      <Link>XML\Parts\WFI.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
-      <Link>XML\strings-en.xml</Link>
-    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

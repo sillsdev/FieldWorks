@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	internal class InflAffixTemplateSlice : ViewSlice
 	{
 		/// <summary>
-		/// Therefore this method, called once we have a cache and object, is our first chance to
+		/// This method, called once we have a cache and object, is our first chance to
 		/// actually create the embedded control.
 		/// </summary>
 		public override void FinishInit()

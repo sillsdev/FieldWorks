@@ -10,10 +10,12 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas
@@ -514,6 +516,60 @@ namespace LanguageExplorer.Areas
 		{
 			toolBarDictionary.Add(key, currentTuple);
 			menuDictionary.Add(key, currentTuple);
+		}
+
+		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, StTextSlice textSlice)
+		{
+			int ichMin;
+			int ichLim;
+			int hvo;
+			int tag;
+			int ws;
+			ITsString tss;
+			textSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			if (ichLim > ichMin)
+			{
+				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtils.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+			}
+		}
+
+		internal static void AddToLexicon(LcmCache lcmCache, FlexComponentParameters flexComponentParameters, StTextSlice currentSliceAsStTextSlice)
+		{
+			int ichMin;
+			int ichLim;
+			int hvoDummy;
+			int Dummy;
+			int ws;
+			ITsString tss;
+			currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
+			if (ws == 0)
+			{
+				ws = tss.GetWsFromString(ichMin, ichLim);
+			}
+			if (ichLim <= ichMin || ws != lcmCache.DefaultVernWs)
+			{
+				return;
+			}
+			var tsb = tss.GetBldr();
+			if (ichLim < tsb.Length)
+			{
+				tsb.Replace(ichLim, tsb.Length, null, null);
+			}
+
+			if (ichMin > 0)
+			{
+				tsb.Replace(0, ichMin, null, null);
+			}
+			var tssForm = tsb.GetString();
+			using (var dlg = new InsertEntryDlg())
+			{
+				dlg.InitializeFlexComponent(flexComponentParameters);
+				dlg.SetDlgInfo(lcmCache, tssForm);
+				if (dlg.ShowDialog(flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+				{
+					// is there anything special we want to do, such as jump to the new entry?
+				}
+			}
 		}
 	}
 }

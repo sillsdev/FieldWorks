@@ -175,18 +175,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results.
 		/// </summary>
-		public override bool OnConfigureInterlinear(object argument)
+		internal override void OnConfigureInterlinear()
 		{
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
-
 			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					UpdateForNewLineChoices(dlg.Choices);
 				}
-				return true; // We handled this
 			}
 		}
 

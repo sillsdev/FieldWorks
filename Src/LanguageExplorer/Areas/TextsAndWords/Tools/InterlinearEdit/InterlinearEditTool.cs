@@ -79,12 +79,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultPrintPane = "ITextContent",
 				DefaultFocusControl = "InterlinMaster"
 			};
+			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
+			var interlinMasterPaneBar = new PaneBar();
+			var panelButtonShowHiddenFields = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			{
+				Dock = DockStyle.Right,
+				Visible = false
+			};
+			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, TextAndWordsArea.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
+			{
+				Dock = DockStyle.Right,
+				Visible = false
+			};
+			var paneBarButtons = new Dictionary<string, PanelButton>
+			{
+				{ TextAndWordsArea.ShowHiddenFields_interlinearEdit, panelButtonShowHiddenFields },
+				{ TextAndWordsArea.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
+			};
+			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonShowHiddenFields, panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordBrowseView, _recordList);
-			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList);
+			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, "Texts", new PaneBar(), _interlinMaster, "Text", new PaneBar());
+				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, TextAndWordsResources.Texts, new PaneBar(), _interlinMaster, "Text", interlinMasterPaneBar);
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
@@ -156,6 +174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		private sealed class InterlinearEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
+			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
 
@@ -195,6 +214,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			this.m_tabCtrl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.m_tabCtrl_Deselecting);
 				*/
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				//var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
 				//editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
@@ -267,6 +288,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
+				_partiallySharedTextsAndWordsToolsMenuHelper = null;
 				_recordBrowseView = null;
 				_recordList = null;
 

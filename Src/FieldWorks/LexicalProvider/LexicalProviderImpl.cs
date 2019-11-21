@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
 				var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 				styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
+				LexEntryUi.DisplayEntries(FieldWorks.Cache, null, new FlexComponentParameters(propertyTable, publisher, subscriber), new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
 			});
 		}
 

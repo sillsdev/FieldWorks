@@ -1324,9 +1324,15 @@ namespace LanguageExplorer.Impls
 			var editMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit];
 			editMenuDictionary.Add(Command.CmdUndo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Undo_Click, () => CanCmdUndo));
 			editMenuDictionary.Add(Command.CmdRedo, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Redo_Click, () => CanCmdRedo));
-			editMenuDictionary.Add(Command.CmdCut, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Cut, () => CanCmdCut));
-			editMenuDictionary.Add(Command.CmdCopy, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Copy, () => CanCmdCopy));
-			editMenuDictionary.Add(Command.CmdPaste, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Paste, () => CanCmdPaste));
+			var tuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Cut, () => CanCmdCut);
+			editMenuDictionary.Add(Command.CmdCut, tuple);
+			_sharedEventHandlers.Add(Command.CmdCut, tuple);
+			tuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Copy, () => CanCmdCopy);
+			editMenuDictionary.Add(Command.CmdCopy, tuple);
+			_sharedEventHandlers.Add(Command.CmdCopy, tuple);
+			tuple = new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Paste, () => CanCmdPaste);
+			editMenuDictionary.Add(Command.CmdPaste, tuple);
+			_sharedEventHandlers.Add(Command.CmdPaste, tuple);
 			editMenuDictionary.Add(Command.CmdSelectAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Select_All, () => CanCmdSelectAll));
 			editMenuDictionary.Add(Command.CmdPasteHyperlink, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Paste_Hyperlink, () => CanCmdPasteHyperlink));
 			editMenuDictionary.Add(Command.CmdDeleteRecord, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Edit_Delete_Click, () => CanCmdDeleteRecord));
@@ -1608,6 +1614,9 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(Command.CmdCut);
+				_sharedEventHandlers.Remove(Command.CmdCopy);
+				_sharedEventHandlers.Remove(Command.CmdPaste);
 				Cache.DomainDataByFlid.RemoveNotification(this);
 				foreach (var helper in _idleProcessingHelpers)
 				{
@@ -1957,12 +1966,51 @@ namespace LanguageExplorer.Impls
 
 		private void CmdVernacularWritingSystemProperties_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show(this, "This feature needs a merge from release9.0 into develop, before it can be finished.", "Please be patient");
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			using (var view = new FwWritingSystemSetupDlg(model, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
+			{
+				view.ShowDialog(this);
+			}
+			model.WritingSystemListUpdated -= OnWritingSystemListChanged;
 		}
 
 		private void CmdAnalysisWritingSystemProperties_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show(this, "This feature needs a merge from release9.0 into develop, before it can be finished.", "Please be patient");
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			using (var view = new FwWritingSystemSetupDlg(model, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
+			{
+				view.ShowDialog(this);
+			}
+			model.WritingSystemListUpdated -= OnWritingSystemListChanged;
+		}
+
+		private void OnWritingSystemListChanged(object sender, EventArgs eventArgs)
+		{
+			// this event is fired before the WritingSystemProperties dialog is closed, so that we have a chance
+			// to refresh everything before Paint events start getting fired, which can cause problems if
+			// any writing systems are removed that a rootsite is currently displaying
+			var allWindows = new List<IFwMainWnd>();
+			foreach (var window in _flexApp.MainWindows)
+			{
+				window.PrepareToRefresh();
+				if (window != this)
+				{
+					allWindows.Add(window);
+				}
+			}
+			foreach (var window in allWindows)
+			{
+				window.FinishRefresh();
+				window.RefreshAllViews();
+			}
+			FinishRefresh();
+			RefreshAllViews();
+			Activate();
+
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(Cache.ServiceLocator.WritingSystemManager,
+				Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, Cache.ProjectId.Name);
 		}
 
 		private void SetWindowTitle()

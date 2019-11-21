@@ -31,13 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </remarks>
 	internal partial class InterlinDocForAnalysis : InterlinDocRootSiteBase
 	{
-		/// <summary>
-		/// Review(EricP) consider making a subclass of InterlinDocForAnalysis (i.e. InterlinDocForGlossing)
-		/// so we can put all AddWordsToLexicon related code there rather than having this
-		/// class do double duty.
-		/// </summary>
-		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
-
 		public InterlinDocForAnalysis()
 		{
 			InitializeComponent();
@@ -268,7 +261,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdAddWordGlossesToFreeTrans, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddWordGlossesToFreeTransClick, () => CanCmdAddWordGlossesToFreeTrans));
 			// There are two instances of InterlinDocForAnalysis on InterlinMaster, but only one should be subscribed at a time.
-			Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
+			Subscriber.Subscribe(TextAndWordsArea.ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 			MyMajorFlexComponentParameters.SharedEventHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAll_Click, null));
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 		}
@@ -279,7 +272,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			RightMouseClickedEvent -= InterlinDocForAnalysis_RightMouseClickedEvent;
 			MyMajorFlexComponentParameters.SharedEventHandlers.Remove(Command.CmdApproveAll);
-			Subscriber.Unsubscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
+			Subscriber.Unsubscribe(TextAndWordsArea.ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 		}
 		#endregion
 
@@ -891,7 +884,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal InterlinMode GetSelectedLineChoiceMode()
 		{
-			return PropertyTable.GetValue(ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
+			return PropertyTable.GetValue(TextAndWordsArea.ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 		}
 
 		#endregion

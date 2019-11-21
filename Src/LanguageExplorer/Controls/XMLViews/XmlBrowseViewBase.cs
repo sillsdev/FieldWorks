@@ -1104,7 +1104,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(m_bv.ScrollBar.Maximum >= 0, "ScrollBar.Maximum is unexpectedly a negative value");
 				// The assignment to 'Value' can (and was LT-3091) throw an exception
 				Debug.Assert(m_bv.ScrollBar.Minimum <= minValue, "minValue setting could allow attempt to set out of bounds");
-				//Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
+#if RANDYTODO
+				// TODO: Called multiple times, and it throws in an early call. Figure out to make it not be called more than once.
+				Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
+#endif
 				// to minimize recursive calls, don't set the scroll bar unless it's wrong.
 				if (m_bv.ScrollBar.Value != newValue)
 				{

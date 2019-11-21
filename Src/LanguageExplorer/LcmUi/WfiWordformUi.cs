@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
@@ -47,7 +48,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		protected bool OnFindInDictionary(object args)
 		{
-			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, PropertyTable, Publisher, Subscriber, null, null,
+			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), null, null,
 				((IWfiWordform)MyCmObject).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
 			return true;
 		}

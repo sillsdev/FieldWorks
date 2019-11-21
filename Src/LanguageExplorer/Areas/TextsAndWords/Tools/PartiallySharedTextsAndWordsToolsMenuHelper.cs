@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
@@ -21,18 +20,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		}
 
 		/// <summary>
-		/// Several T & W area tools don't want these menus, but all other T & W area tools do want them.
+		/// All T & W area tools, except the "Concordance" tool are to call this..
 		/// </summary>
 		internal void AddMenusForExpectedTextAndWordsTools(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-			var toolsThatAreNotExpectedCallThisMethod = new HashSet<string>
-			{
-				AreaServices.ComplexConcordanceMachineName,
-				AreaServices.ConcordanceMachineName,
-				AreaServices.InterlinearEditMachineName,
-				AreaServices.WordListConcordanceMachineName
-			};
-			if (toolsThatAreNotExpectedCallThisMethod.Contains(toolUiWidgetParameterObject.Tool.MachineName))
+			if (toolUiWidgetParameterObject.Tool.MachineName == AreaServices.ConcordanceMachineName)
 			{
 				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not expected to call this method.");
 			}

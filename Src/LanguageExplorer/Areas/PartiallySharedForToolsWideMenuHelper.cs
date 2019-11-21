@@ -8,13 +8,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas
 {
@@ -41,7 +39,6 @@ namespace LanguageExplorer.Areas
 		private const string InsertOptionalItem = "InsertOptionalItem";
 		private const string InsertHashMark = "InsertHashMark";
 		private const string ShowEnvironmentError = "ShowEnvironmentError";
-		private const string CmdAddToLexicon = "CmdAddToLexicon"; // Insert menu, mnuStTextChoices, Insert tool bar
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -413,43 +410,7 @@ namespace LanguageExplorer.Areas
 
 		private void CmdAddToLexicon_Clicked(object sender, EventArgs e)
 		{
-			var dataTree = (DataTree)((ToolStripItem)sender).Tag;
-			var currentSlice = dataTree.CurrentSliceAsStTextSlice;
-			int ichMin;
-			int ichLim;
-			int hvoDummy;
-			int Dummy;
-			int ws;
-			ITsString tss;
-			currentSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
-			if (ws == 0)
-			{
-				ws = tss.GetWsFromString(ichMin, ichLim);
-			}
-			if (ichLim <= ichMin || ws != _majorFlexComponentParameters.LcmCache.DefaultVernWs)
-			{
-				return;
-			}
-			var tsb = tss.GetBldr();
-			if (ichLim < tsb.Length)
-			{
-				tsb.Replace(ichLim, tsb.Length, null, null);
-			}
-
-			if (ichMin > 0)
-			{
-				tsb.Replace(0, ichMin, null, null);
-			}
-			var tssForm = tsb.GetString();
-			using (var dlg = new InsertEntryDlg())
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, tssForm);
-				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
-				{
-					// is there anything special we want to do, such as jump to the new entry?
-				}
-			}
+			AreaServices.AddToLexicon(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice);
 		}
 
 		internal void SetupCmdLexiconLookup(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
@@ -466,19 +427,7 @@ namespace LanguageExplorer.Areas
 
 		private void LexiconLookup_Clicked(object sender, EventArgs e)
 		{
-			var dataTree = (DataTree)((ToolStripItem)sender).Tag;
-			var currentSlice = dataTree.CurrentSliceAsStTextSlice;
-			int ichMin;
-			int ichLim;
-			int hvo;
-			int tag;
-			int ws;
-			ITsString tss;
-			currentSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
-			if (ichLim > ichMin)
-			{
-				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>(FwUtils.window), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
-			}
+			AreaServices.LexiconLookup(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice);
 		}
 	}
 }

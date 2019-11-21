@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
-			: base(configurationParametersElement, majorFlexComponentParameters, recordList, false)
+			: base(configurationParametersElement, majorFlexComponentParameters, recordList, showTitlePane: false)
 		{
 			InitializeComponent();
 			Dock = DockStyle.Fill;
