@@ -20,13 +20,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		protected XmlNode m_configurationParameters;
 		protected LcmCache m_cache;
-		protected MatchingConcordanceItems m_recordList;
+		protected MatchingConcordanceRecordList m_recordList;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
 		public ConcordanceControlBase()
 		{}
 
-		internal ConcordanceControlBase(MatchingConcordanceItems recordList)
+		internal ConcordanceControlBase(MatchingConcordanceRecordList recordList)
 		{
 			m_recordList = recordList;
 		}
@@ -74,6 +74,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_recordList.ConcordanceControl = this;
 		}
 
 		#endregion

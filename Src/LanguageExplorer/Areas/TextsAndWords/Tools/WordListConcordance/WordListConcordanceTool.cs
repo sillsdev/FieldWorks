@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			}
 			if (_subservientRecordList == null)
 			{
-				_subservientRecordList = recordListRepository.GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_subservientRecordList = recordListRepository.GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.StatusBar, SubservientListFactoryMethod);
 			}
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		private IRecordList SubservientListFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{OccurrencesOfSelectedWordform}'.");
 			/*
@@ -191,8 +191,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			*/
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new SubservientRecordList(recordListId, statusBar, concDecorator, false, ConcDecorator.kflidWfOccurrences,
-				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
+			return new SubservientRecordList(recordListId, statusBar, concDecorator, false, ConcDecorator.kflidWfOccurrences, _recordListProvidingOwner);
 		}
 
 		private sealed class WordListConcordanceToolMenuHelper : IDisposable

@@ -40,7 +40,7 @@ namespace LanguageExplorer
 		/// <remarks>
 		/// Only used by RecordList's UpdateStatusBarRecordNumber method
 		/// </remarks>
-		internal const string StatusPanelRecordNumber = "statusBarPanelRecordNumber";
+		internal const string StatusBarPanelRecordNumber = "statusBarPanelRecordNumber";
 
 		#endregion Statusbar
 

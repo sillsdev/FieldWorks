@@ -19,14 +19,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	///
 	/// The contents of this list are a result of parsing the texts and passing the results through a decorator.
 	/// </summary>
-	internal class ConcordanceWordList : InterlinearTextsRecordList
+	internal class ConcordanceRecordList : InterlinearTextsRecordList
 	{
 		//the ReloadList() on the RecordList class will trigger if this is true
 		//set when the index in the list is changed
-		private bool selectionChanged = true;
+		private bool _selectionChanged = true;
 
 		/// <summary />
-		internal ConcordanceWordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
+		internal ConcordanceRecordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
 			: base(TextAndWordsArea.ConcordanceWords, statusBar, decorator, false, new VectorPropertyParameterObject(languageProject, "Wordforms", ObjectListPublisher.OwningFlid), new RecordFilterParameterObject(new WordsUsedOnlyElsewhereFilter(languageProject.Cache)))
 		{
 			_filterProvider = new WfiRecordFilterListProvider();
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//indicate that a refresh is desired so ReloadList would be triggered by an index change
 			ReloadRequested = true;
 			//indicate that the selection has changed, ReloadList will now actually reload the list
-			selectionChanged = true;
+			_selectionChanged = true;
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			set
 			{
-				selectionChanged = true;
+				_selectionChanged = true;
 				base.CurrentIndex = value;
 				// if no one has actually asked for the list to be reloaded it would be a waste to do so
 				if (ReloadRequested)
@@ -103,9 +103,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void ReloadList()
 		{
-			if (selectionChanged || CurrentIndex == -1)
+			if (_selectionChanged || CurrentIndex == -1)
 			{
-				ReloadRequested = selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
+				ReloadRequested = _selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
 				base.ReloadList();
 			}
 			else

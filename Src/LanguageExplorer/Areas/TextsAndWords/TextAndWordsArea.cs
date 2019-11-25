@@ -203,7 +203,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
             <clerk id="concordanceWords">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
               <recordList owner="LangProject" property="Wordforms">
-                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceWordList" />
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceRecordList" />
                 <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
               </recordList>
               <filters>
@@ -218,7 +218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// NB: The constructor supplies the id, so no need to pass it on.
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new ConcordanceWordList(statusBar, cache.LanguageProject, concDecorator);
+			return new ConcordanceRecordList(statusBar, cache.LanguageProject, concDecorator);
 		}
 
 		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

@@ -368,7 +368,7 @@ namespace LanguageExplorer.Areas
 		{
 			var oldTexts = InterestingTexts.ToArray();
 			m_scriptureTexts = new List<IStText>();
-			var excludedGuids = new HashSet<Guid>(from obj in AllCoreTexts select obj.Guid);
+			var excludedGuids = new HashSet<Guid>(AllCoreTexts.Select(obj => obj.Guid));
 			foreach (var obj in stTexts)
 			{
 				if (obj.Owner is IText)

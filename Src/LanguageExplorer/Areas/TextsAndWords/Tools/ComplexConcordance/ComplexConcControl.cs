@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			InitializeComponent();
 		}
 
-		internal ComplexConcControl(MatchingConcordanceItems recordList)
+		internal ComplexConcControl(MatchingConcordanceRecordList recordList)
 			: base(recordList)
 		{
 			InitializeComponent();

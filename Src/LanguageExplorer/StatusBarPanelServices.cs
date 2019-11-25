@@ -15,9 +15,9 @@ namespace LanguageExplorer
 	internal static class StatusBarPanelServices
 	{
 		/// <summary />
-		internal static void SetStatusPanelMessage(StatusBar statusBar, string newConent)
+		internal static void SetStatusPanelMessage(StatusBar statusBar, string newContent)
 		{
-			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newConent;
+			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newContent;
 		}
 
 		internal static StatusBarProgressPanel GetStatusBarProgressPanel(StatusBar statusBar)
@@ -26,25 +26,25 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		internal static void SetStatusBarPanelSort(StatusBar statusBar, string newConent)
+		internal static void SetStatusBarPanelSort(StatusBar statusBar, string newContent)
 		{
 			var statusBarPanelSort = (StatusBarTextBox)statusBar.Panels[LanguageExplorerConstants.StatusBarPanelSort];
-			statusBarPanelSort.TextForReal = newConent;
-			statusBarPanelSort.BackBrush = string.IsNullOrEmpty(newConent) ? Brushes.Transparent : Brushes.Lime;
+			statusBarPanelSort.TextForReal = newContent;
+			statusBarPanelSort.BackBrush = string.IsNullOrEmpty(newContent) ? Brushes.Transparent : Brushes.Lime;
 		}
 
 		/// <summary />
-		internal static void SetStatusBarPanelFilter(StatusBar statusBar, string newConent)
+		internal static void SetStatusBarPanelFilter(StatusBar statusBar, string newContent)
 		{
 			var statusBarPanelFilter = (StatusBarTextBox)statusBar.Panels[LanguageExplorerConstants.StatusBarPanelFilter];
-			statusBarPanelFilter.TextForReal = newConent;
-			statusBarPanelFilter.BackBrush = string.IsNullOrEmpty(newConent) ? Brushes.Transparent : Brushes.Yellow;
+			statusBarPanelFilter.TextForReal = newContent;
+			statusBarPanelFilter.BackBrush = string.IsNullOrEmpty(newContent) ? Brushes.Transparent : Brushes.Yellow;
 		}
 
 		/// <summary />
-		internal static void SetStatusPanelRecordNumber(StatusBar statusBar, string newConent)
+		internal static void SetStatusPanelRecordNumber(StatusBar statusBar, string newContent)
 		{
-			statusBar.Panels[LanguageExplorerConstants.StatusPanelRecordNumber].Text = newConent;
+			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelRecordNumber].Text = newContent;
 		}
 
 		internal static void ClearBasicStatusBars(StatusBar statusBar)
@@ -53,6 +53,19 @@ namespace LanguageExplorer
 			SetStatusBarPanelSort(statusBar, string.Empty);
 			SetStatusBarPanelFilter(statusBar, string.Empty);
 			SetStatusPanelRecordNumber(statusBar, StringTable.Table.GetString("No Records", StringTable.Misc));
+		}
+
+		/// <summary>
+		/// NB: Only to be used by tests.
+		/// </summary>
+		internal static StatusBar CreateStatusBarFor_TESTS()
+		{
+			var statusBarFor_TESTS = new StatusBar();
+			statusBarFor_TESTS.Panels.Add(new StatusBarPanel { Name = LanguageExplorerConstants.StatusBarPanelMessage });
+			statusBarFor_TESTS.Panels.Add(new StatusBarPanel { Name = LanguageExplorerConstants.StatusBarPanelProgress });
+			statusBarFor_TESTS.Panels.Add(new StatusBarPanel { Name = "statusBarPanelArea" });
+			statusBarFor_TESTS.Panels.Add(new StatusBarPanel { Name = LanguageExplorerConstants.StatusBarPanelRecordNumber });
+			return statusBarFor_TESTS;
 		}
 	}
 }

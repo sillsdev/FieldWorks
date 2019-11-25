@@ -214,7 +214,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			set
 			{
 				m_writingSystemCombo.Items.Clear();
-				m_writingSystemCombo.Items.AddRange((from item in value select item as object).ToArray());
+				m_writingSystemCombo.Items.AddRange((value.Select(item => item as object)).ToArray());
 			}
 		}
 

@@ -15,14 +15,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// We fudge the owning object, since the decorator doesn't care what class it is, but
 	/// the base class does care that it is some kind of real object.
 	/// </summary>
-	internal class MatchingConcordanceItems : InterlinearTextsRecordList
+	internal class MatchingConcordanceRecordList : InterlinearTextsRecordList
 	{
 		ConcordanceControlBase _concordanceControl;
 
 		/// <summary>
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
-		public MatchingConcordanceItems(string id, StatusBar statusBar, ConcDecorator decorator)
+		public MatchingConcordanceRecordList(string id, StatusBar statusBar, ConcDecorator decorator)
 			: base(id, statusBar, decorator, false, new VectorPropertyParameterObject(decorator.PropertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject, "ConcOccurrences", decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false)))
 		{
 		}

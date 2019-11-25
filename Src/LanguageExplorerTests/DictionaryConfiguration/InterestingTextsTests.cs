@@ -170,7 +170,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private List<IStText> CurrentTexts(MockTextRepository mockTextRep)
 		{
-			return (from text in mockTextRep.m_texts select text.ContentsOA).ToList();
+			return (mockTextRep.m_texts.Select(text => text.ContentsOA)).ToList();
 		}
 
 		private void RemoveText(MockTextRepository mockTextRep, InterestingTextList testObj, int index)

@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
@@ -24,7 +23,7 @@ namespace LanguageExplorerTests.Impls
 			try
 			{
 				using (var dummyWindow = new DummyFwMainWnd())
-				using (var statusBar = new StatusBar())
+				using (var statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS())
 				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, flexComponentParameters))
 				{
 					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);

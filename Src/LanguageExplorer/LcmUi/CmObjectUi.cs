@@ -536,7 +536,7 @@ namespace LanguageExplorer.LcmUi
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
 				var activeRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
-				if (activeRecordList is MatchingConcordanceItems)
+				if (activeRecordList is MatchingConcordanceRecordList)
 				{
 					// We don't want this either.  See LT-6101.
 					return true;

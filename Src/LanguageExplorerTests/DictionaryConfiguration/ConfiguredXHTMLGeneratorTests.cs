@@ -48,10 +48,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private const string TestVariantName = "Crazy Variant";
 		private StringBuilder XHTMLStringBuilder { get; set; }
 		private const string DictionaryNormal = "Dictionary-Normal";
-		private BaseStyleInfo DictionaryNormalStyle { get { return FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal]; } }
-
+		private BaseStyleInfo DictionaryNormalStyle => FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal];
 		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
-
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
 		[TestFixtureSetUp]
@@ -68,7 +66,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			_recordListRepositoryForTools = new RecordListRepository(Cache, _flexComponentParameters);
 			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
-			_statusBar = new StatusBar();
+			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
 			_recordList = CreateRecordList();
 			_recordListRepositoryForTools.AddRecordList(_recordList);
 			_recordListRepositoryForTools.ActiveRecordList = _recordList;

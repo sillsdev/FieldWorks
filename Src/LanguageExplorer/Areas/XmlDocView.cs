@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas
 			var layoutList = new List<Tuple<string, string>>();
 			layoutList.AddRange(GetBuiltInLayouts(PropertyTable.GetValue<XElement>("currentContentControlParameters", null)));
 			var builtInLayoutList = new List<string>();
-			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
+			builtInLayoutList.AddRange(layoutList.Select(layout => layout.Item2));
 			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
 			layoutList.AddRange(GetUserDefinedDictLayouts(builtInLayoutList, userLayouts));
 			return layoutList;

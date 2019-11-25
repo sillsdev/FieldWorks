@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_concordanceControl = new ConcordanceControl(majorFlexComponentParameters.SharedEventHandlers, (MatchingConcordanceItems)_recordList);
+			_concordanceControl = new ConcordanceControl(majorFlexComponentParameters.SharedEventHandlers, (MatchingConcordanceRecordList)_recordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
 			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
             <clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
               <recordList class="LangProject" field="ConcOccurrences">
-                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems" />
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceRecordList" />
                 <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
               </recordList>
               <sortMethods />
@@ -184,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			*/
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new MatchingConcordanceItems(recordListId, statusBar, concDecorator);
+			return new MatchingConcordanceRecordList(recordListId, statusBar, concDecorator);
 		}
 
 		private sealed class ConcordanceToolMenuHelper : IDisposable

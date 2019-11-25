@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_complexConcControl = new ComplexConcControl((MatchingConcordanceItems)_recordList)
+			_complexConcControl = new ComplexConcControl((MatchingConcordanceRecordList)_recordList)
 			{
 				Dock = DockStyle.Fill
 			};
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
             <clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
               <recordList class="LangProject" field="ConcOccurrences">
-                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems" />
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceRecordList" />
                 <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
               </recordList>
               <sortMethods />
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			*/
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new MatchingConcordanceItems(recordListId, statusBar, concDecorator);
+			return new MatchingConcordanceRecordList(recordListId, statusBar, concDecorator);
 		}
 
 		private sealed class ComplexConcordanceToolMenuHelper : IDisposable

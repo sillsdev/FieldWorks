@@ -807,6 +807,7 @@ namespace LanguageExplorer
 			}
 			// This broadcast will often cause a save of the record, which clears the undo stack.
 			BroadcastChange(suppressFocusChange);
+			ResetStatusBar();
 		}
 
 		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false)
@@ -1006,7 +1007,7 @@ namespace LanguageExplorer
 				// If some parts are not user visible we should not remove them.
 				var af = (AndFilter)Filter;
 				var children = af.Filters;
-				var childrenToKeep = from RecordFilter filter in children where !filter.IsUserVisible select filter;
+				var childrenToKeep = children.Cast<RecordFilter>().Where(filter => !filter.IsUserVisible);
 				var count = childrenToKeep.Count();
 				if (count == 1)
 				{
@@ -1597,12 +1598,12 @@ namespace LanguageExplorer
 
 		public virtual void UpdateRecordTreeBar()
 		{
-			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+			// Subclasses that actually know about a record tree bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
 		}
 
 		public virtual void UpdateRecordTreeBarIfNeeded()
 		{
-			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+			// Subclasses that actually know about a record tree bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
 		}
 
 		public void UpdateStatusBarRecordNumber(string noRecordsText)
@@ -3338,11 +3339,19 @@ namespace LanguageExplorer
 				SendPropChangedOnListChange(newCurrentIndex, newSortedObjects, actions);
 				//YiSpeed 6.5 secs (mostly filling tree bar)
 				FinishedReloadList();
+				// Set status bar text (Message & count).
+				ResetStatusBar();
 			}
 			finally
 			{
 				m_reloadingList = false;
 			}
+		}
+
+		private void ResetStatusBar()
+		{
+			ResetStatusBarMessageForCurrentObject();
+			UpdateStatusBarRecordNumber(StringTable.Table.GetString("No Records", StringTable.Misc));
 		}
 
 		protected virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)

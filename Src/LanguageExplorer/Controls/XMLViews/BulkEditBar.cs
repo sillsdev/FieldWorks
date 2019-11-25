@@ -1799,7 +1799,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return result; // Unordered is fine for preview
 			}
 			var repo = m_cache.ServiceLocator.ObjectRepository;
-			var objects = (from hvo in result select repo.GetObject(hvo)).ToList();
+			var objects = result.Select(hvo => repo.GetObject(hvo)).ToList();
 			// The objective is to sort them so that we modify anything that affects a homograph number before we modify
 			// anything that affects the HN of a homograph of the same entry. Thus, things like LexemeForm that affect
 			// the owning entry are sorted by the owning entry.
@@ -1831,7 +1831,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				return entry1.HomographNumber.CompareTo(entry2.HomographNumber);
 			});
-			return (from obj in objects select obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
+			return objects.Select(obj => obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
 		}
 
 		internal ISet<int> ItemsToChangeSet(bool fOnlyIfSelected)

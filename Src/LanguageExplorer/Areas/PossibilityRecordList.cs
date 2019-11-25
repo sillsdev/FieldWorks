@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas
 
 		protected override IEnumerable<int> GetObjectSet()
 		{
-			return from obj in OwningList.ReallyReallyAllPossibilities select obj.Hvo;
+			return OwningList.ReallyReallyAllPossibilities.Select(obj => obj.Hvo);
 		}
 
 		protected override ClassAndPropInfo GetMatchingClass(string className)

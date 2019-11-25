@@ -608,7 +608,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\IStyleSheet.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\LanguageMapping.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\LineOption.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MatchingConcordanceItems.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MatchingConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphComboItem.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphItem.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphItemOptions.cs" />
@@ -2814,7 +2814,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControlBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceWordList.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ConfigureInterlinDialog.cs">
       <SubType>Form</SubType>
     </Compile>

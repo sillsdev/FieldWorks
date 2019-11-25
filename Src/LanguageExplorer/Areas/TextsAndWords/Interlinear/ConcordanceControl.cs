@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ConstructorSurrogate();
 		}
 
-		internal ConcordanceControl(ISharedEventHandlers sharedEventHandlers, MatchingConcordanceItems recordList)
+		internal ConcordanceControl(ISharedEventHandlers sharedEventHandlers, MatchingConcordanceRecordList recordList)
 			: base(recordList)
 		{
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));

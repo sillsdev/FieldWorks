@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas
 			var wf = analysis.Wordform;
 			var bag = wf.OccurrencesBag;
 			var valuesList = new List<int>(bag.Count);
-			foreach (var seg in from item in bag.Items where BelongsToInterestingText(item) select item)
+			foreach (var seg in bag.Items.Where(item => BelongsToInterestingText(item)))
 			{
 				foreach (var occurrence in seg.GetOccurrencesOfAnalysis(analysis, bag.Occurrences(seg), includeChildren))
 				{
@@ -326,7 +326,7 @@ namespace LanguageExplorer.Areas
 			foreach (IWfiAnalysis wa in (bundles.Select(bundle => bundle.Owner)).Distinct())
 			{
 				var bag = ((IWfiWordform)wa.Owner).OccurrencesBag;
-				foreach (var seg in from item in bag.Items where BelongsToInterestingText(item) select item)
+				foreach (var seg in bag.Items.Where(item => BelongsToInterestingText(item)))
 				{
 					foreach (var occurrence in seg.GetOccurrencesOfAnalysis(wa, bag.Occurrences(seg), true))
 					{
@@ -380,7 +380,7 @@ namespace LanguageExplorer.Areas
 					var text = GetStText(hvo);
 					if (text != null)
 					{
-						return (from poss in text.GenreCategories select poss.Hvo).ToArray();
+						return (text.GenreCategories.Select(poss => poss.Hvo)).ToArray();
 					}
 					return new int[0];
 			}

@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// We want a collection of LexEntries as the current values. If we're displaying lex entry refs we want their owners.
 			if (fPropContainsEntryRefs)
 			{
-				oldValue = from obj in oldValue select obj.Owner;
+				oldValue = oldValue.Select(obj => obj.Owner);
 			}
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, options, m_displayNameProperty, displayWs);
 			using (var chooser = new ReallySimpleListChooser(null, labels, fieldName, m_cache, oldValue, false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))

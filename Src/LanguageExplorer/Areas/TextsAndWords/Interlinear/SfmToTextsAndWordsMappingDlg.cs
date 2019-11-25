@@ -120,10 +120,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_destinationsListBox.BeginUpdate();
 			m_destinationsListBox.Items.Clear();
-			var items = (from dest in m_destinationsToDisplay
-						 let name = GetDestinationName(dest)
-						 where dest != InterlinDestination.Ignored
-						 select new DestinationItem() { Name = name, Dest = dest }).ToList();
+			var items = m_destinationsToDisplay
+				.Select(dest => new { dest, name = GetDestinationName(dest) })
+				.Where(@t => @t.dest != InterlinDestination.Ignored)
+				.Select(@t => new DestinationItem() { Name = @t.name, Dest = @t.dest }).ToList();
 			// Sort most of the names, but force 'Ignored' to come first
 			items.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
 			items.Insert(0, new DestinationItem() { Name = GetDestinationName(InterlinDestination.Ignored), Dest = InterlinDestination.Ignored });
