@@ -25,6 +25,7 @@ namespace LanguageExplorer
 		void ActivateUI(bool updateStatusBar = true);
 		void BecomeInactive();
 		bool CanChangeFilterClearAll { get; }
+		bool CanDelete { get; }
 		IReadOnlyDictionary<Navigation, bool> CanMoveToOptions { get; }
 		int CurrentIndex { get; set; }
 		ICmObject CurrentObject { get; }

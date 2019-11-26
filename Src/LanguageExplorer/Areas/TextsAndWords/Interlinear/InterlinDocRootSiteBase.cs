@@ -127,6 +127,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void TearDownUiWidgets()
 		{
+			foreach (var userControl in Controls.OfType<UserControl>())
+			{
+				MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(userControl);
+			}
 			MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
 		}
 

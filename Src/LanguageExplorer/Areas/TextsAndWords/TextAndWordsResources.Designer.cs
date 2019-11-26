@@ -650,6 +650,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Record in Notebook.
+        /// </summary>
+        internal static string Show_Record_in_Notebook {
+            get {
+                return ResourceManager.GetString("Show_Record_in_Notebook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Word Gloss in Concordance.
         /// </summary>
         internal static string Show_Word_Gloss_in_Concordance {

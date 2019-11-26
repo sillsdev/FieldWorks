@@ -1,4 +1,3 @@
-//#define RANDYTODOTEMP // TODO: Remove in the end
 // Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -9,9 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-#if RANDYTODOTEMP // TODO: Remove in the end
-using System.IO;
-#endif
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -947,12 +943,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_layoutInventory = layouts;
 			m_partInventory = parts;
-#if RANDYTODOTEMP
-			// TODO: Remove in the end
-			var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DevWork", "NewDevWork", "05_Remove use of main xml config files", "Configuration");
-			layouts.Root.Save(Path.Combine(baseDir, "Inventory_Layouts.xml"));
-			parts.Root.Save(Path.Combine(baseDir, "Inventory_Parts.xml"));
-#endif
 			InitializeBasic(cache, fHasSplitter);
 			InitializeComponent();
 			InitializeAdvanced();
@@ -3680,7 +3670,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 

@@ -1088,12 +1088,14 @@ namespace LanguageExplorer.Impls
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
 			// Insert last, so it ends up first in the three that are inserted.
-			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar)
+			var progressPanel = new StatusBarProgressPanel(_statusbar)
 			{
 				Name = LanguageExplorerConstants.StatusBarPanelProgressBar,
 				MinWidth = 150,
 				AutoSize = StatusBarPanelAutoSize.Contents
-			});
+			};
+			PropertyTable.SetProperty("ProgressBar", progressPanel);
+			_statusbar.Panels.Insert(3, progressPanel);
 			_statusbar.ResumeLayout(true);
 		}
 
@@ -1539,6 +1541,11 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+		public ProgressState CreateSimpleProgressState()
+		{
+			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
+			return panel == null ? new NullProgressState() : new ProgressState(panel);
+		}
 		#endregion
 
 		#region Implementation of IApplicationIdleEventHandler
@@ -2821,7 +2828,7 @@ very simple minor adjustments. ;)"
 					else
 					{
 						// Let record list handle it (maybe).
-						enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
+						enableDelete = activeRecordList.Editable && activeRecordList.CanDelete;
 					}
 				}
 				Toolbar_CmdDeleteRecord.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;

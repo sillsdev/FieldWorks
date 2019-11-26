@@ -51,14 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// We can only delete Texts in this view, not scripture sections.
 		/// </summary>
-		protected override bool CanDelete()
-		{
-			if (CurrentObject is IWfiWordform)
-			{
-				return true;
-			}
-			return CurrentObject.Owner is IText;
-		}
+		public override bool CanDelete => CurrentObject is IWfiWordform || CurrentObject.Owner is IText;
 
 		protected override void ReportCannotDelete()
 		{

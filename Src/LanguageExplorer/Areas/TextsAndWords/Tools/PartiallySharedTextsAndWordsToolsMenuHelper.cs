@@ -20,9 +20,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		}
 
 		/// <summary>
-		/// All T & W area tools, except the "Concordance" tool are to call this..
+		/// All T & W area tools, except the "Concordance" tool are to call this.
 		/// </summary>
-		internal void AddMenusForExpectedTextAndWordsTools(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+		internal void AddFileMenusForExpectedTextAndWordsTools(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
 			if (toolUiWidgetParameterObject.Tool.MachineName == AreaServices.ConcordanceMachineName)
 			{

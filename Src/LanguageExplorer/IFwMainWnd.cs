@@ -5,6 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -118,5 +119,10 @@ namespace LanguageExplorer
 		/// Get the ListView of RecordBarControl, or null if not present, or it is not showing a list.
 		/// </summary>
 		ListView ListStyleRecordList { get; }
+
+		/// <summary>
+		/// Create a simple progress state which is already hooked up to the correct progress panel
+		/// </summary>
+		ProgressState CreateSimpleProgressState();
 	}
 }

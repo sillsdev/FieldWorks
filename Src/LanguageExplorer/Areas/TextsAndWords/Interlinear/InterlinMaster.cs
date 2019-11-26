@@ -96,7 +96,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var insertToolBarButtonsForUserControl = userControlUiWidgetParameterObject.ToolBarItemsForUserControl[ToolBar.Insert];
 			insertToolBarButtonsForUserControl.Add(Command.CmdAddNote, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdAddNoteClick, () => CanCmdAddNote));
 			insertToolBarButtonsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
-			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureInterlinear, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureInterlinear_Clicked, ()=> CanConfigureInterlinear));
+			var toolsMenuForUserControl = userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools];
+			toolsMenuForUserControl.Add(Command.CmdConfigureInterlinear, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureInterlinear_Clicked, ()=> CanConfigureInterlinear));
+			AreaServices.InsertPair(insertToolBarButtonsForUserControl, toolsMenuForUserControl, Command.CmdLexiconLookup,
+				new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LexiconLookup_Clicked, ()=> CanCmdLexiconLookup));
+		}
+
+		private bool InFriendlyTab => m_tabCtrl.SelectedTab == m_tpRawText;
+
+		private Tuple<bool, bool> CanCmdLexiconLookup => new Tuple<bool, bool>(true, InFriendlyTab);
+
+		private void LexiconLookup_Clicked(object sender, EventArgs e)
+		{
+			AreaServices.LexiconLookup(Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_rtPane);
 		}
 
 		/// <summary>

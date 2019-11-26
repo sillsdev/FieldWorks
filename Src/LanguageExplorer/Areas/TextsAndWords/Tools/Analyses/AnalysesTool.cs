@@ -254,7 +254,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				_fileExportMenuHelper = new FileExportMenuHelper(_majorFlexComponentParameters);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
-				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,

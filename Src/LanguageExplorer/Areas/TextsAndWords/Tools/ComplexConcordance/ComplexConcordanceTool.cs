@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
-				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				// NB: No popup menu on the browse view.
 			}

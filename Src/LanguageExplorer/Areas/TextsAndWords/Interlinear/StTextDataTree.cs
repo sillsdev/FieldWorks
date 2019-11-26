@@ -2,7 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -22,6 +28,48 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Cache = cache;
 			InitializeBasic(cache, false);
 			InitializeComponent();
+		}
+
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+
+			// Set up Slice menu: "mnuTextInfo_Notebook"
+			this.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuTextInfo_Notebook, Create_mnuTextInfo_Notebook);
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuTextInfo_Notebook(Slice slice, ContextMenuName contextMenuId)
+		{
+			Require.That(contextMenuId == ContextMenuName.mnuTextInfo_Notebook, $"Expected argument value of '{ContextMenuName.mnuTextInfo_Notebook.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+			// Start: <menu id="mnuTextInfo_Notebook">
+
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = ContextMenuName.mnuTextInfo_Notebook.ToString()
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+			// <item command="CmdJumpToNotebook"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToNotebook_Clicked, TextAndWordsResources.Show_Record_in_Notebook);
+
+			// End: <menu id="mnuTextInfo_Notebook">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void JumpToNotebook_Clicked(object sender, EventArgs e)
+		{
+			/*
+			<command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
+				<parameters tool="notebookEdit" className="RnGenericRecord"/>
+			</command>
+			*/
+			var currentObject = CurrentSlice.MyCmObject;
+			if (currentObject is IText)
+			{
+				currentObject = ((IText)currentObject).AssociatedNotebookRecord;
+			}
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NotebookEditToolMachineName, currentObject.Guid));
 		}
 
 		protected override void SetDefaultCurrentSlice(bool suppressFocusChange)

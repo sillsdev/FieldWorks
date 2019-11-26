@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -223,6 +224,10 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		ListView IFwMainWnd.ListStyleRecordList => null;
 
+		public ProgressState CreateSimpleProgressState()
+		{
+			throw new NotImplementedException();
+		}
 		#endregion
 
 		#region Implementation of IVwNotifyChange

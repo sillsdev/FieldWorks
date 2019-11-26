@@ -345,4 +345,7 @@
   <data name="Texts" xml:space="preserve">
     <value>Texts</value>
   </data>
+  <data name="Show_Record_in_Notebook" xml:space="preserve">
+    <value>Show Record in Notebook</value>
+  </data>
 </root>

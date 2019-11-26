@@ -13,6 +13,7 @@ using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -520,13 +521,18 @@ namespace LanguageExplorer.Areas
 
 		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, StTextSlice textSlice)
 		{
+			LexiconLookup(cache, flexComponentParameters, textSlice.RootSite);
+		}
+
+		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, RootSite rootSite)
+		{
 			int ichMin;
 			int ichLim;
 			int hvo;
 			int tag;
 			int ws;
 			ITsString tss;
-			textSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtils.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");

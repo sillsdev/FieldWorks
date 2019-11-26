@@ -6,8 +6,10 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -155,32 +157,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var vernacularTexts = from st in m_cache.LangProject.Texts select st.ContentsOA;
 			// Filtered list that excludes IScrBookAnnotations.
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
-			var count = (from text in texts from para in text.ParagraphsOS select para).Count();
+			var count = texts.SelectMany(text => text.ParagraphsOS).Count();
 			var done = 0;
-#if RANDYTODO
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
+			using (var progress = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).CreateSimpleProgressState())
 			{
 				progress.SetMilestone(ITextStrings.ksParsing);
-				foreach (var text in texts)
+				foreach (var para in texts.SelectMany(text => text.ParagraphsOS.Cast<IStTxtPara>()))
 				{
-					foreach (IStTxtPara para in text.ParagraphsOS)
+					done++;
+					var newPercentDone = done * 100 / count;
+					if (newPercentDone != progress.PercentDone)
 					{
-						done++;
-						int newPercentDone = done * 100 / count;
-						if (newPercentDone != progress.PercentDone)
-						{
-							progress.PercentDone = newPercentDone;
-							progress.Breath();
-						}
-						if (para.ParseIsCurrent)
-						{
-							continue;
-						}
-						ParagraphParser.ParseParagraph(para);
+						progress.PercentDone = newPercentDone;
+						progress.Breath();
 					}
+					if (para.ParseIsCurrent)
+					{
+						continue;
+					}
+					ParagraphParser.ParseParagraph(para);
 				}
 			}
-#endif
 		}
 
 		private bool IsInterestingScripture(IStText text)

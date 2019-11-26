@@ -76,8 +76,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					userController.MenuItemsForUserControl[MainMenu.View].Add(Command.ShowInvisibleSpaces, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ShowInvisibleSpaces_Click, () => CanShowInvisibleSpaces));
 					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.CmdGuessWordBreaks, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdGuessWordBreaks_Click, () => CanCmdGuessWordBreaks));
 					userController.MenuItemsForUserControl[MainMenu.Insert].Add(Command.ClickInvisibleSpace, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ClickInvisibleSpace_Click, () => CanClickInvisibleSpace));
-					userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
-					userController.ToolBarItemsForUserControl[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
 					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 				}
 				else

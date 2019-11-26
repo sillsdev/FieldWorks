@@ -604,6 +604,11 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
 
+		/// <summary>
+		/// Override this if there are special cases where you need more control over which objects can be deleted.
+		/// </summary>
+		public virtual bool CanDelete => CurrentObject.CanDelete;
+
 		public IReadOnlyDictionary<Navigation, bool> CanMoveToOptions
 		{
 			get
@@ -1054,7 +1059,7 @@ namespace LanguageExplorer
 				return true;
 			}
 			// Don't allow an object to be deleted if it shouldn't be deleted.
-			if (!CanDelete())
+			if (!CanDelete)
 			{
 				ReportCannotDelete();
 				return true;
@@ -1363,7 +1368,7 @@ namespace LanguageExplorer
 
 		public IRecordList ParentList { get; }
 
-		public string PersistedIndexProperty { get; }
+		public string PersistedIndexProperty => $"{Id}-Index";
 
 		public void PersistListOn(string pathname)
 		{
@@ -2677,14 +2682,6 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Override this if there are special cases where you need more control over which objects can be deleted.
-		/// </summary>
-		protected virtual bool CanDelete()
-		{
-			return CurrentObject.CanDelete;
-		}
-
-		/// <summary>
 		/// By default we just silently don't delete things that shouldn't be. Override if you want to give a message.
 		/// </summary>
 		protected virtual void ReportCannotDelete()
@@ -3242,9 +3239,6 @@ namespace LanguageExplorer
 						// is greater than 0.
 						// so, try to force to restore the current index to what we persist.
 						CurrentIndex = -1;
-#if RANDYTODO
-// As of 21JUL17 nobody cares about that 'PersistedIndexProperty' changing, so skip the broadcast.
-#endif
 						PropertyTable.SetProperty(PersistedIndexProperty, m_indexToRestoreDuringReload, true, settingsGroup: SettingsGroup.LocalSettings);
 						m_indexToRestoreDuringReload = -1;
 					}

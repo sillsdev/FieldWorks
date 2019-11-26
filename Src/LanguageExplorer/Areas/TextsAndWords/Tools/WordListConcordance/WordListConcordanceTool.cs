@@ -224,8 +224,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_fileExportMenuHelper = new FileExportMenuHelper(_majorFlexComponentParameters);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
-				_partiallySharedTextsAndWordsToolsMenuHelper.AddMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
+
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				// NB: The nested browse view on the right has no popup menu.
 				CreateBrowseViewContextMenu();
