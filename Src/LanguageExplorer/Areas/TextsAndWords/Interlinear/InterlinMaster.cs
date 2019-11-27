@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -558,7 +558,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// This is the first time on this tab, do lazy creation
 					CreateCChart();
 				}
-				RefreshPaneBar();
 				// search through the current tab page controls until we find one implementing IInterlinearTabControl
 				var currentTabControl = FindControls<IInterlinearTabControl>(m_tabCtrl.SelectedTab.Controls).FirstOrDefault();
 				SetCurrentInterlinearTabControl(currentTabControl as IInterlinearTabControl);
@@ -595,6 +594,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsRawText:
+						m_rtPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
 						if (ParentForm == Form.ActiveForm)
 						{
 							m_rtPane.Focus();
@@ -684,43 +684,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private void RefreshPaneBar()
-		{
-			// if we're in the context of a PaneBar, refresh the bar so the menu items will
-			// reflect the current tab.
-			var paneBarAsControl = MainPaneBar as UserControl;
-			var parentAsPaneBarContainer = paneBarAsControl?.Parent as IPaneBarContainer;
-			if (parentAsPaneBarContainer == null)
-			{
-				return;
-			}
-#if RANDYTODO
-			// TODO: This is the original code.
-			parentAsPaneBarContainer.RefreshPaneBar();
-// TODO: RefreshPaneBar no longer exists on IPaneBarContainer, so figure out how to replicate its behavior, which is:
-/// <summary>
-/// refresh (reload) the menu items on the PaneBar.
-/// </summary>
-public void RefreshPaneBar()
-{
-	if (m_paneBar != null)
-		ReloadPaneBar(m_paneBar);
-}
-
-private void ReloadPaneBar(IPaneBar paneBar)
-{
-	string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
-	if (groupId != null)
-	{
-		XWindow window = (XWindow)m_mediator.PropertyTable.GetValue(LanguageExplorerConstants.window);
-		ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
-		group.PopulateNow();
-		paneBar.AddGroup(group);
-	}
-}
-#endif
-		}
-
 		#region Overrides of ViewBase
 
 		/// <summary>
@@ -785,8 +748,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		private void SetInitialTabPage()
 		{
-			// If the record list has remembered we're IsPersistedForAnInterlinearTabPage,
-			// and we haven't already switched to that tab page, do so now.
+			// If we haven't already switched to that tab page, do so now.
 			if (Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 			{
 				// Switch to the persisted tab page index.
@@ -832,7 +794,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			InitializeInterlinearTabControl(m_tcPane);
 			InitializeInterlinearTabControl(CurrentInterlinearTabControl);
 			m_fullyInitialized = true;
-			RefreshPaneBar();
 		}
 
 
@@ -1205,29 +1166,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			get
 			{
-#if RANDYTODO
-				// TODO: How can it be null?
-				if (PropertyTable == null)
-					return TabPageSelection.RawText;
-#endif
 				var val = PropertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
-				TabPageSelection tabSelection;
-				if (string.IsNullOrEmpty(val))
+				if (Enum.GetNames(typeof(TabPageSelection)).Contains(val))
 				{
-					// This could be done by just catching the exception, but it's annoying when debugging.
-					tabSelection = TabPageSelection.RawText;
-					InterlinearTab = tabSelection;
-					return tabSelection;
+					return (TabPageSelection)Enum.Parse(typeof(TabPageSelection), val);
 				}
-				try
-				{
-					tabSelection = (TabPageSelection)Enum.Parse(typeof(TabPageSelection), val);
-				}
-				catch
-				{
-					tabSelection = TabPageSelection.RawText;
-					InterlinearTab = tabSelection;
-				}
+				const TabPageSelection tabSelection = TabPageSelection.RawText;
+				InterlinearTab = tabSelection;
 				return tabSelection;
 			}
 			set
@@ -1265,23 +1210,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		}
 
 		/// <summary>
-		/// Use this to determine whether the last selected tab page which was
-		/// persisted in the PropertyTable, pertains to an interlinear document.
-		/// Currently, two tabs share an interlinear document (Gloss and Interlinearizer (Analyze)).
-		/// </summary>
-		protected bool IsPersistedForAnInterlinearTabPage
-		{
-			get
-			{
-				if (PropertyTable == null)
-				{
-					return false; // apparently not quite setup to determine true or false.
-				}
-				return InterlinearTab == TabPageSelection.Interlinearizer || InterlinearTab == TabPageSelection.Gloss;
-			}
-		}
-
-		/// <summary>
 		/// create and register a URL describing the current context, for use in going backwards
 		/// and forwards
 		/// </summary>
@@ -1308,29 +1236,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		}
 
 		/// <summary>
-		/// determine if this is the correct place [it's the only one that handles the message, and
-		/// it defaults to false, so it should be]
+		/// Determine if this is the correct place. [It's the only one that handles the message, and
+		/// it defaults to false, so it should be.]
 		/// </summary>
-		protected bool InFriendlyArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
-
-		/// <summary>
-		/// determine if we're in the (given) tool
-		/// </summary>
-		protected bool InFriendlyTool(string desiredTool)
-		{
-			return PropertyTable.GetValue($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}", string.Empty) == desiredTool;
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// handle the message to see if the menu item should be displayed
-		/// </summary>
-		public virtual bool OnDisplayShowMorphBundles(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea && InFriendlyTool(AreaServices.InterlinearEditMachineName);
-			return true; //we've handled this
-		}
-#endif
+		private bool InFriendlyArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
 
 		private void m_tabCtrl_Selected(object sender, TabControlEventArgs e)
 		{

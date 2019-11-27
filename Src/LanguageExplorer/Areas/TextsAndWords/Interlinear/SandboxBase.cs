@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2019 SIL International
+// Copyright (c) 2006-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -179,8 +179,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool m_fLockCombo;
 		// True to lay out with infinite width, expecting to be fully visible.
 		private bool m_fSizeToContent;
-		// We'd like to just use the VC's copy, but it may not get made in time.
-		private bool m_fShowMorphBundles = true;
 
 		// Flag used to prevent mouse move events from entering CallMouseMoveDrag multiple
 		// times before prior ones have exited.  Otherwise we get lines displayed multiple
@@ -216,8 +214,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// The analysis we guessed (may actually be a WfiGloss). If we didn't guess, it's the actual
 		// analysis we started with.
 		int m_hvoAnalysisGuess;
-
-		private SpellCheckHelper m_spellCheckHelper;
 		private int m_wsRawWordform;
 		#endregion Data members
 
@@ -377,7 +373,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var cmorphs = MorphCount;
 				if (cmorphs == 0)
 				{
-					//Debug.Assert(!ShowMorphBundles); // if showing should always have one.
 					// JohnT: except when the user turned on morphology while the Sandbox was active...
 					return true;
 				}
@@ -487,23 +482,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// (Only available after MakeRoot)
 		/// </summary>
 		public bool RightToLeftWritingSystem => m_vc != null && m_vc.RightToLeft;
-
-		// Controls whether to display the morpheme bundles.
-		public bool ShowMorphBundles
-		{
-			get
-			{
-				return m_fShowMorphBundles;
-			}
-			set
-			{
-				m_fShowMorphBundles = value;
-				if (m_vc != null)
-				{
-					m_vc.ShowMorphBundles = value;
-				}
-			}
-		}
 
 		/// <summary>
 		/// Finds the interlinDoc that this Sandbox is embedded in.
@@ -1069,11 +1047,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					cda.CacheObjProp(hvoSbWord, ktagSbWordPos, hvoWordPos);
 					cda.CacheIntProp(hvoWordPos, ktagSbNamedObjGuess, fGuessing);
 				}
-
-				if (!ShowMorphBundles)
-				{
-					return fGuessing != 0;
-				}
 				var bldrError = new StringBuilder();
 				foreach (var mb in analysis.MorphBundlesOS)
 				{
@@ -1236,10 +1209,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// No analysis, default or otherwise. We immediately, however, fill in a single
 				// dummy morpheme, if showing morphology.
 				fGuessing = 0;  // distinguish between a 'guess' (defaults) and courtesy filler info (cf. LT-5858).
-				if (!ShowMorphBundles)
-				{
-					return fGuessing != 0;
-				}
 				var hvoMbSec = Caches.DataAccess.MakeNewObject(kclsidSbMorph, hvoSbWord, ktagSbWordMorphs, 0);
 				var tssForm = Caches.DataAccess.get_MultiStringAlt(hvoSbWord, ktagSbWordForm, RawWordformWs);
 				// Possibly adjust case of tssForm.
@@ -3488,7 +3457,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_vc = new SandboxVc(Caches, InterlinLineChoices, IconsForAnalysisChoices, this)
 			{
-				ShowMorphBundles = m_fShowMorphBundles,
 				MultipleOptionBGColor = MultipleAnalysisColor,
 				BackColor = (int)CmObjectUi.RGB(BackColor),
 				IsMorphemeFormEditable = IsMorphemeFormEditable
@@ -3534,17 +3502,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Overide this to provide a context menu for some subclass.
+		/// Override this to provide a context menu for some subclass.
 		/// </summary>
 		protected override bool DoContextMenu(IVwSelection invSel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			return SpellCheckHelper.ShowContextMenu(pt, this) || base.DoContextMenu(invSel, pt, rcSrcRoot, rcDstRoot);
+			return SpellCheckServices.ShowContextMenu(Cache, pt, this) || base.DoContextMenu(invSel, pt, rcSrcRoot, rcDstRoot);
 		}
-
-		/// <summary>
-		/// Gets (creating if necessary) the SpellCheckHelper
-		/// </summary>
-		private SpellCheckHelper SpellCheckHelper => m_spellCheckHelper ?? (m_spellCheckHelper = new SpellCheckHelper(Cache));
 
 		/// <summary>
 		/// Handle a problem deleting some selection in the sandbox. So far, the only cases we
@@ -3825,7 +3788,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Process right mouse button down.  In particular, handle CTRL+Right Mouse Click.
+		/// Process right mouse button down. In particular, handle CTRL+Right Mouse Click.
 		/// </summary>
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
@@ -3833,7 +3796,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true; //discard this event
 			}
-
 			if (RootBox == null)
 			{
 				return false;
@@ -3846,7 +3808,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// appropriate.  (CLevels includes the string property itself, but
 				// AllTextSelInfo doesn't need it.)
 				var cvsli = sel.CLevels(false) - 1;
-
 				// Out variables for AllTextSelInfo.
 				int ihvoRoot;
 				int tagRightClickTextProp;
@@ -3857,7 +3818,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bool fAssocPrev;
 				int ihvoEnd;
 				ITsTextProps ttpBogus;
-				// Main array of information retrived from sel that made combo.
+				// Main array of information retrieved from sel that made combo.
 				SelLevInfo.AllTextSelInfo(sel, cvsli,
 					out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
@@ -3870,18 +3831,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				tagRightClickTextProp = GetInfoForJumpToTool(sel, out hvoReal);
 				if (hvoReal != 0)
 				{
-					//IxCoreColleague spellingColleague = null;
 					if (tagRightClickTextProp == ktagSbWordGloss)
 					{
-						if (SpellCheckHelper.ShowContextMenu(pt, this))
+						if (SpellCheckServices.ShowContextMenu(Cache, pt, this))
 						{
 							return true;
 						}
-						// This is an alternative approach, currently not fully implmented, which allows the spell check
+						// This is an alternative approach, currently not fully implemented, which allows the spell check
 						// menu items to be added to a menu that has further options.
 						//spellingColleague = EditingHelper.MakeSpellCheckColleague(pt, m_rootb, rcSrcRoot, rcDstRoot);
 					}
-
 					if (HandleRightClickOnObject(hvoReal))
 					{
 						return true;

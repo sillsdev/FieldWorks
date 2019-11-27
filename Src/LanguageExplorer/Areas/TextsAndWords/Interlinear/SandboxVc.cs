@@ -194,8 +194,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_sandbox.RootBox?.Reconstruct();
 			}
 		}
-		// Controls whether to display the morpheme bundles.
-		public bool ShowMorphBundles { get; set; } = true;
 
 		public bool ShowWordGlossIcon { get; private set; }
 
@@ -546,10 +544,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void DisplayMorphBundles(IVwEnv vwenv, int hvo)
 		{
-			if (!ShowMorphBundles)
-			{
-				return;
-			}
 			// Don't allow direct editing of the morph bundle lines.
 			MakeNextFlowObjectReadOnly(vwenv);
 			if (vwenv.DataAccess.get_VecSize(hvo, SandboxBase.ktagSbWordMorphs) == 0)

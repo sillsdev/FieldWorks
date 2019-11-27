@@ -199,19 +199,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			//
 			// m_tabCtrl
 			//
-			resources.ApplyResources(this.m_tabCtrl, "m_tabCtrl");
-			this.m_tabCtrl.Controls.Add(this.m_tpInfo);
-			this.m_tabCtrl.Controls.Add(this.m_tpRawText);
-			this.m_tabCtrl.Controls.Add(this.m_tpGloss);
-			this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);
-			this.m_tabCtrl.Controls.Add(this.m_tpTagging);
-			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);
-			this.m_tabCtrl.Controls.Add(this.m_tpCChart);
-			this.m_tabCtrl.Name = "m_tabCtrl";
-			this.m_tabCtrl.SelectedIndex = 0;
-			this.m_tabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.m_tabCtrl_Selected);
-			this.m_tabCtrl.GotFocus += new System.EventHandler(this.m_tabCtrl_GotFocus);
-			this.m_tabCtrl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.m_tabCtrl_Deselecting);
+DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPane
+			this.m_tabCtrl.Controls.Add(this.m_tpRawText);		Baseline	m_rtPane:			RawTextPane
+			this.m_tabCtrl.Controls.Add(this.m_tpGloss);		Gloss		m_panelGloss:		Panel:			m_idcGloss:			InterlinDocForAnalysis
+			this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);	Analyze		m_panelAnalyzeView:	Panel:			m_idcAnalyze:		InterlinDocForAnalysis
+			this.m_tabCtrl.Controls.Add(this.m_tpTagging);		Tagging		m_panelTagging:		Panel:			m_taggingPane:		InterlinTaggingChild
+			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);	Print View	m_panelPrintView:	Panel:			m_printViewPane:	InterlinPrintChild
+			this.m_tabCtrl.Controls.Add(this.m_tpCChart);		Text Chart	m_constChartPane:	InterlinDocChart
 				*/
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);

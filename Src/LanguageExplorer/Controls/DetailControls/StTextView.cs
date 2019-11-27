@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private StVc m_vc;
 		private IStText m_text;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private ContextMenuStrip _contextMenuStrip;
 
 		internal StTextView(ISharedEventHandlers sharedEventHandlers)
 		{
@@ -105,11 +104,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				_contextMenuStrip?.Dispose();
+				ContextMenuStrip?.Dispose();
 			}
 			m_vc = null;
 			_sharedEventHandlers = null;
-			_contextMenuStrip = null;
+			ContextMenuStrip = null;
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 		}
@@ -139,34 +138,48 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-			if (_contextMenuStrip == null)
+			if (ContextMenuStrip != null)
 			{
-				// Start: <menu id="mnuStTextChoices">
-				const string mnuStTextChoices = "mnuStTextChoices";
-				_contextMenuStrip = new ContextMenuStrip
-				{
-					Name = mnuStTextChoices
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
-				/*
-				_sharedEventHandlers should have the cut, copy & paste handlers.
-				<menu id="mnuStTextChoices">
-					<item command="CmdCut" />
-					<item command="CmdCopy" />
-					<item command="CmdPaste" />
-					<item label="-" translate="do not translate" />
-					<item command="CmdLexiconLookup" />
-					<item command="CmdAddToLexicon" />
-				</menu>
-				*/
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCut), LanguageExplorerResources.Cut);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCopy), LanguageExplorerResources.Copy);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdPaste), LanguageExplorerResources.Paste);
-				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(_contextMenuStrip);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, LexiconLookup_Clicked, LanguageExplorerResources.Find_in_Dictionary);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, _contextMenuStrip, AddToLexicon_Clicked, LanguageExplorerResources.Entry);
+				var currentIndex = 0;
+				var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdCut);
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdCopy);
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdPaste);
+				currentIndex++;
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= LexiconLookup_Clicked;
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= AddToLexicon_Clicked;
+				ContextMenuStrip.Dispose();
+				ContextMenuStrip = null;
 			}
-			_contextMenuStrip.Show(this, pt);
+			// Start: <menu id="mnuStTextChoices">
+			const string mnuStTextChoices = "mnuStTextChoices";
+			ContextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuStTextChoices
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
+			/*
+			_sharedEventHandlers should have the cut, copy & paste handlers.
+			<menu id="mnuStTextChoices">
+				<item command="CmdCut" />
+				<item command="CmdCopy" />
+				<item command="CmdPaste" />
+				<item label="-" translate="do not translate" />
+				<item command="CmdLexiconLookup" />
+				<item command="CmdAddToLexicon" />
+			</menu>
+			*/
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCut), LanguageExplorerResources.Cut);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdCopy), LanguageExplorerResources.Copy);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdPaste), LanguageExplorerResources.Paste);
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, LexiconLookup_Clicked, LanguageExplorerResources.Find_in_Dictionary);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, AddToLexicon_Clicked, LanguageExplorerResources.Entry);
+			ContextMenuStrip.Show(this, pt);
 
 			return true;
 		}

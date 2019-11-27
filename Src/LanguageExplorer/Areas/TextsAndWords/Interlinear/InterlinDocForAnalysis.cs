@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2019 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -66,7 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InterlinDocForAnalysis_RightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
 			e.EventHandled = true;
-			var helper = new SpellCheckHelper(Cache);
 			// for the moment we always claim to have handled it.
 			using (var menu = new ContextMenuStrip())
 			{
@@ -76,7 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					int hvoObj, tagAnchor;
 					if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) && (tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation || tagAnchor == NoteTags.kflidContent))
 					{
-						helper.MakeSpellCheckMenuOptions(e.MouseLocation, this, menu);
+						SpellCheckServices.MakeSpellCheckMenuOptions(Cache, e.MouseLocation, this, menu);
 					}
 					int hvoNote;
 					if (CanDeleteNote(e.Selection, out hvoNote))
@@ -99,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				finally
 				{
-					helper.UnwireEventHandlers(menu);
+					SpellCheckServices.UnwireEventHandlers(menu);
 					foreach (var item in menu.Items)
 					{
 						var asToolStripMenuItem = item as ToolStripMenuItem;

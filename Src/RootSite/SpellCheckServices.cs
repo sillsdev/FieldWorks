@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,56 +19,52 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Class to facilitate adding spell-check items to menus and handling their events.
 	/// </summary>
-	public class SpellCheckHelper
+	public static class SpellCheckServices
 	{
-		/// <summary>The Cache</summary>
-		protected LcmCache m_cache;
-
-		/// <summary />
-		public SpellCheckHelper(LcmCache cache)
-		{
-			m_cache = cache;
-		}
-
 		/// <summary>
 		/// Creates and shows a context menu with spelling suggestions.
 		/// </summary>
+		/// <param name="cache"></param>
 		/// <param name="pt">The location on the screen of the word for which we want spelling
 		/// suggestions (usually the mouse position)</param>
 		/// <param name="rootsite">The focused rootsite</param>
 		/// <returns><c>true</c> if a menu was created and shown (with at least one item);
 		/// <c>false</c> otherwise</returns>
-		public bool ShowContextMenu(Point pt, SimpleRootSite rootsite)
+		public static bool ShowContextMenu(LcmCache cache, Point pt, SimpleRootSite rootsite)
 		{
-			using (var menu = new ContextMenuStrip())
+			TearDownContextMenu(rootsite);
+			var menu = new ContextMenuStrip();
+			rootsite.ContextMenuStrip = menu;
+			MakeSpellCheckMenuOptions(cache, pt, rootsite, menu);
+			if (menu.Items.Count == 0)
 			{
-				try
-				{
-					MakeSpellCheckMenuOptions(pt, rootsite, menu);
-					if (menu.Items.Count == 0)
-					{
-						return false;
-					}
-					menu.Show(rootsite, pt);
-				}
-				finally
-				{
-					UnwireEventHandlers(menu);
-				}
+				TearDownContextMenu(rootsite);
+				return false;
 			}
+			menu.Show(rootsite, pt);
 			return true;
+		}
+
+		private static void TearDownContextMenu(Control rootsite)
+		{
+			if (rootsite.ContextMenuStrip != null)
+			{
+				UnwireEventHandlers(rootsite.ContextMenuStrip);
+				rootsite.ContextMenuStrip.Dispose();
+				rootsite.ContextMenuStrip = null;
+			}
 		}
 
 		/// <summary>
 		/// Unwire event handlers added to submenus
 		/// </summary>
-		public void UnwireEventHandlers(ContextMenuStrip menu)
+		public static void UnwireEventHandlers(ContextMenuStrip menu)
 		{
 			foreach (var submenu in menu.Items)
 			{
 				if (submenu is AddToDictMenuItem || submenu is SpellCorrectMenuItem)
 				{
-					((ToolStripMenuItem)submenu).Click -= spellingMenuItemClick;
+					((ToolStripMenuItem)submenu).Click -= SpellingMenuItemClick;
 				}
 			}
 		}
@@ -77,12 +73,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// If the mousePos is part of a word that is not properly spelled, add to the menu
 		/// options for correcting it.
 		/// </summary>
+		/// <param name="cache"></param>
 		/// <param name="pt">The location on the screen of the word for which we want spelling
 		/// suggestions (usually the mouse position)</param>
 		/// <param name="rootsite">The focused rootsite</param>
 		/// <param name="menu">to add items to.</param>
 		/// <returns>the number of menu items added (not counting a possible separator line)</returns>
-		public virtual int MakeSpellCheckMenuOptions(Point pt, SimpleRootSite rootsite, ContextMenuStrip menu)
+		public static int MakeSpellCheckMenuOptions(LcmCache cache, Point pt, SimpleRootSite rootsite, ContextMenuStrip menu)
 		{
 			int hvoObj, tag, wsAlt, wsText;
 			string word;
@@ -109,7 +106,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var rootb = rootsite.RootBox;
 			foreach (var subItem in suggestions)
 			{
-				subItem.Click += spellingMenuItemClick;
+				subItem.Click += SpellingMenuItemClick;
 				if (cSuggestions++ < RootSiteEditingHelper.kMaxSpellingSuggestionsInRootMenu)
 				{
 					Font createdFont = null;
@@ -145,21 +142,21 @@ namespace SIL.FieldWorks.Common.RootSites
 				menu.Items.Insert(iMenuItem++, noSuggestItems);
 				noSuggestItems.Enabled = false;
 			}
-			ToolStripMenuItem itemAdd = new AddToDictMenuItem(dict, word, rootb, hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, m_cache);
+			ToolStripMenuItem itemAdd = new AddToDictMenuItem(dict, word, rootb, hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, cache);
 			if (nonSpellingError)
 			{
 				itemAdd.Enabled = false;
 			}
 			menu.Items.Insert(iMenuItem++, itemAdd);
 			itemAdd.Image = Resources.ResourceHelper.SpellingIcon;
-			itemAdd.Click += spellingMenuItemClick;
+			itemAdd.Click += SpellingMenuItemClick;
 			return iMenuItem;
 		}
 
 		/// <summary>
 		/// Handler for the Click event for items on the spelling context menu.
 		/// </summary>
-		private static void spellingMenuItemClick(object sender, EventArgs e)
+		private static void SpellingMenuItemClick(object sender, EventArgs e)
 		{
 			var item = sender as SpellCorrectMenuItem;
 			if (item == null)
@@ -189,7 +186,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// spelling engine. Much of this information is already known to the
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
-		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
+		internal static ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
 			out string word, out ISpellEngine dict, out bool nonSpellingError)
 		{
@@ -308,7 +305,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// or -1 if the start of the string is reached, or string.Length if the end is reached.
 		/// For our purposes here, ORC (0xfffc) is considered word-forming.
 		/// </summary>
-		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward, int ichStart, int lim)
+		private static int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward, int ichStart, int lim)
 		{
 			int ich;
 			for (ich = NextCharIndex(tss, forward, ichStart); !BeyondLim(forward, ich, lim); ich = NextCharIndex(tss, forward, ich))
@@ -381,7 +378,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// affect the menu options offered, but they must not be replaced by a new spelling. If these are found, we update
 		/// tssWord to something that does not contain them, and retain the orcs to append to any substitutions (returned in tssKeepOrcs).
 		/// </summary>
-		private IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
+		private static IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, out ITsString tssKeepOrcs)
 		{
 			var result = new List<SpellCorrectMenuItem>();
@@ -469,8 +466,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets a collection of suggestions for what to do when a "word" consists of multiple
 		/// writing systems
 		/// </summary>
-		private ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord,
-			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim)
+		private static ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord, List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim)
 		{
 			var result = new List<SpellCorrectMenuItem>(wss.Count + 1);
 			// Make an item with inserted spaces.
@@ -491,7 +487,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			var suggest = bldr.GetString();
 			var menuItemText = suggest.Text;
 			result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, menuItemText, suggest));
-
 			// And items for each writing system.
 			foreach (var ws in wss)
 			{

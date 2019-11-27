@@ -116,7 +116,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
 			m_vc = new InterlinVc(m_cache)
 			{
-				ShowMorphBundles = true,
 				ShowDefaultSense = true,
 				LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsFirstVern, m_cache.DefaultAnalWs)
 			};

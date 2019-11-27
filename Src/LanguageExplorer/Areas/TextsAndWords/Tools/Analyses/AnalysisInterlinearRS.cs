@@ -113,7 +113,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
 			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
 			var isEditable = IsEditable;
-			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
 			if (m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultParserAgent) == Opinions.approves && m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultUserAgent) != Opinions.approves)
 			{

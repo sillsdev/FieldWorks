@@ -86,7 +86,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// We want to get notified when anything changes.
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
-			Vc.ShowMorphBundles = PropertyTable.GetValue("ShowMorphBundles", true);
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 			RootBox.DataAccess = m_cache.MainCacheAccessor;

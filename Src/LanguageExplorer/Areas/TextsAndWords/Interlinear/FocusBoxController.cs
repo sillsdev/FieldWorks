@@ -212,7 +212,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sandbox = new Sandbox(_sharedEventHandlers, selected.Analysis.Cache, _stylesheet, _lineChoices, selected, this)
 			{
 				SizeToContent = true,
-				ShowMorphBundles = true,
 				StyleSheet = _stylesheet
 			};
 			sandbox.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));

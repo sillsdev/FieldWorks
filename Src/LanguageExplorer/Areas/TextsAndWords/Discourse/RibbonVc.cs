@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 					vwenv.OpenDiv();
 					vwenv.OpenParagraph();
-					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
+					AddLabelPile(vwenv, m_cache, true);
 					vwenv.AddObjVecItems(m_ribbon.OccurenceListId, this, InterlinVc.kfragBundle);
 					vwenv.CloseParagraph();
 					vwenv.CloseDiv();

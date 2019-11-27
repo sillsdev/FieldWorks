@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,9 +32,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Member variables
-		/// <summary>The LCM cache</summary>
-		protected LcmCache m_cache;
-		private SpellCheckHelper m_spellCheckHelper;
 		private int m_undoCountBeforeMerge;
 		#endregion
 
@@ -57,14 +54,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Setter, normally only used if the client view's cache was not yet set at the time
 		/// of creating the editing helper.
 		/// </summary>
-		public LcmCache Cache
-		{
-			get { return m_cache; }
-			internal set
-			{
-				m_cache = value;
-			}
-		}
+		public LcmCache Cache { get; protected internal set; }
 
 		/// <summary>
 		/// Gets whether the current selection is in back translation data.
@@ -81,15 +71,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the writing system factory
 		/// </summary>
-		protected override ILgWritingSystemFactory WritingSystemFactory => m_cache == null ? base.WritingSystemFactory : m_cache.WritingSystemFactory;
+		protected override ILgWritingSystemFactory WritingSystemFactory => Cache == null ? base.WritingSystemFactory : Cache.WritingSystemFactory;
 		#endregion
 
 		#region Spelling stuff
-
-		/// <summary>
-		/// Gets (creating if necessary) the SpellCheckHelper
-		/// </summary>
-		private SpellCheckHelper SpellCheckHelper => m_spellCheckHelper ?? (m_spellCheckHelper = new SpellCheckHelper(Cache));
 
 		/// <summary>
 		/// Gets a value indicating what the status of the spell checking system is for the
@@ -143,7 +128,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			string word;
 			ISpellEngine dict;
 			bool nonSpellingError;
-			ICollection<SpellCorrectMenuItem> suggestions = SpellCheckHelper.GetSuggestions(mousePos, rootsite,
+			ICollection<SpellCorrectMenuItem> suggestions = SpellCheckServices.GetSuggestions(mousePos, rootsite,
 				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
 
 			IVwRootBox rootb = rootsite.RootBox;
@@ -249,7 +234,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootsite">The focused rootsite</param>
 		internal bool DoSpellCheckContextMenu(Point pt, RootSite rootsite)
 		{
-			return SpellCheckHelper.ShowContextMenu(pt, rootsite);
+			return SpellCheckServices.ShowContextMenu(Cache, pt, rootsite);
 		}
 		#endregion
 
@@ -319,7 +304,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					ISegment segment;
 					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
 					{
-						segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+						segment = Cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
 					}
 					else
 					{
@@ -382,16 +367,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public sealed override void SelectionChanged()
 		{
-			if (m_cache != null)
+			if (Cache != null)
 			{
-				if (m_cache.ActionHandlerAccessor.CurrentDepth > 0 ||
-					m_cache.ActionHandlerAccessor.SuppressSelections)
+				if (Cache.ActionHandlerAccessor.CurrentDepth > 0 ||
+					Cache.ActionHandlerAccessor.SuppressSelections)
 				{
 					// Make sure that between the time this method is called and the time we actually
 					// fire the deferred event, we don't use an out-of-date cached selection.
 					ClearCurrentSelection();
 
-					((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).DoAtEndOfPropChanged(HandleSelectionChange);
+					((IActionHandlerExtensions)Cache.ActionHandlerAccessor).DoAtEndOfPropChanged(HandleSelectionChange);
 					return;
 				}
 			}
@@ -948,15 +933,15 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			using (var undoTaskHelper = new UndoTaskHelper(actionHandler, EditedRootBox.Site, RootSiteStrings.ksUndoInsertLink, RootSiteStrings.ksRedoInsertLink))
 			{
-				if (m_cache != null && m_cache.ProjectId != null)
+				if (Cache != null && Cache.ProjectId != null)
 				{
-					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, m_cache.ProjectId.Name);
+					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, Cache.ProjectId.Name);
 				}
-				var filename = StringServices.MarkTextInBldrAsHyperlink(tsb, 0, tsb.Length, clip, hyperlinkStyle, m_cache.LanguageProject.LinkedFilesRootDir);
+				var filename = StringServices.MarkTextInBldrAsHyperlink(tsb, 0, tsb.Length, clip, hyperlinkStyle, Cache.LanguageProject.LinkedFilesRootDir);
 				if (FileUtils.IsFilePathValid(filename))
 				{
-					Debug.Assert(m_cache.LangProject.FilePathsInTsStringsOA != null, "Somehow migration #30 did not add the FilePathsInTsStrings CmFolder. Fix by modifying FindOrCreateFolder()");
-					DomainObjectServices.FindOrCreateFile(m_cache.LangProject.FilePathsInTsStringsOA, filename);
+					Debug.Assert(Cache.LangProject.FilePathsInTsStringsOA != null, "Somehow migration #30 did not add the FilePathsInTsStrings CmFolder. Fix by modifying FindOrCreateFolder()");
+					DomainObjectServices.FindOrCreateFile(Cache.LangProject.FilePathsInTsStringsOA, filename);
 				}
 
 				tssLink = tsb.GetString();

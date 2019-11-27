@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_cache = null;
+			Cache = null;
 		}
 
 		#endregion IDisposable override
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Common.Framework
 		public void InsertPicture(string srcFilename, ITsString captionTss, string sFolder)
 		{
 			// Create the picture and add the ORC to the text at the insertion point.
-			InsertPicture(m_cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(srcFilename, captionTss, sFolder));
+			InsertPicture(Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(srcFilename, captionTss, sFolder));
 		}
 		#endregion
 
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Common.Framework
 				ICmPicture picture = null;
 				if (helper != null && helper.LevelInfo.Length > 0)
 				{
-					m_cache.ServiceLocator.GetInstance<ICmPictureRepository>().TryGetObject(helper.LevelInfo[0].hvo, out picture);
+					Cache.ServiceLocator.GetInstance<ICmPictureRepository>().TryGetObject(helper.LevelInfo[0].hvo, out picture);
 				}
 				return picture;
 			}
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (propTag == SimpleRootSite.kTagUserPrompt)
 			{
 				ich = 0;
-				tss = TsStringUtils.EmptyString(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+				tss = TsStringUtils.EmptyString(Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				propTag = StTxtParaTags.kflidContents;
 				helper.SetTextPropId(SelLimitType.Anchor, StTxtParaTags.kflidContents);
 				helper.SetTextPropId(SelLimitType.End, StTxtParaTags.kflidContents);
@@ -339,11 +339,11 @@ namespace SIL.FieldWorks.Common.Framework
 			var newTss = pict.InsertORCAt(tss, ich);
 			if (ws == 0)
 			{
-				m_cache.DomainDataByFlid.SetString(hvoObj, propTag, newTss);
+				Cache.DomainDataByFlid.SetString(hvoObj, propTag, newTss);
 			}
 			else
 			{
-				m_cache.DomainDataByFlid.SetMultiStringAlt(hvoObj, propTag, ws, newTss);
+				Cache.DomainDataByFlid.SetMultiStringAlt(hvoObj, propTag, ws, newTss);
 			}
 		}
 
