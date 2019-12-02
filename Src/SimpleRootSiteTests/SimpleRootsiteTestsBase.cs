@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_basicView.Dispose();
 			m_basicView = null;
-			_flexComponentParameters.PropertyTable.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 		}
 

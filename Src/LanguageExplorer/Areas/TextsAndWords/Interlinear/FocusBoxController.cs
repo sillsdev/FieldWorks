@@ -209,7 +209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			var sandbox = new Sandbox(_sharedEventHandlers, selected.Analysis.Cache, _stylesheet, _lineChoices, selected, this)
+			var sandbox = new Sandbox(selected.Analysis.Cache, _stylesheet, _lineChoices, selected, this)
 			{
 				SizeToContent = true,
 				StyleSheet = _stylesheet
@@ -625,7 +625,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					wantSeparator = false;
 				}
 				// <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
-				// Image is locked in InterlinearImageHolder
 				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdRepeatLastMoveRight];
 				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, handlerAndFunction.Item1, menuItem.Text, shortcutKeys: menuItem.ShortcutKeys);
 				currentMenu.Enabled = handlerAndFunction.Item2.Invoke().Item2;
@@ -638,6 +637,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(mainMenuStrip);
 				}
 				// <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
+				// Image is locked in InterlinearImageHolder
 				menuItem = (ToolStripMenuItem)_dataMenuDictionary[Command.CmdApproveAll];
 				currentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, handlerAndFunction.Item1, menuItem.Text, menuItem.ToolTipText, image: menuItem.Image);
 				currentMenu.Visible = currentMenu.Enabled = Visible;
@@ -648,8 +648,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// consider updating the button state in another way
 		protected override void OnParentChanged(EventArgs e)
 		{
+			if (_uiWidgetController == null)
+			{
+				// Tests aren't happy without it.
+				return;
+			}
+			if (Disposing)
+			{
+				// Don't bother.
+				return;
+			}
 			base.OnParentChanged(e);
 
+			_uiWidgetController.DataMenuDictionary[Command.ApproveAnalysisMovementMenu].Visible = false;
+			_uiWidgetController.DataMenuDictionary[Command.BrowseMovementMenu].Visible = false;
 			_uiWidgetController?.RemoveUserControlHandlers(this);
 			if (Parent != null)
 			{
@@ -668,7 +680,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Wire up handlers for the main Data menu items of interest.
 			var dataMenuHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
 			{
-				{ Command.CmdApproveAndMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndMoveNext_Click, ()=> CanJoinWords) },
+				{ Command.CmdApproveAndMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndMoveNext_Click, ()=> CanApproveAndMoveNext) },
 				{ Command.CmdApproveForWholeTextAndMoveNext, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveForWholeTextAndMoveNext_Click, ()=> CanApproveForWholeTextAndMoveNext) },
 				{ Command.CmdNextIncompleteBundle, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(NextIncompleteBundle_Click, ()=> CanNextIncompleteBundle) },
 				{ Command.CmdApprove, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ApproveAndStayPut_Click, ()=> CanApproveAndStayPut) },
@@ -702,8 +714,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdApproveAll, out handlerAndFunction))
 			{
 				// <item command="CmdApproveAll" />
-				dataMenuHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => CanDoCmdApproveAll));
-				insertToolBarHandlers.Add(Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => CanDoCmdApproveAll));
+				UiWidgetServices.InsertPair(insertToolBarHandlers, dataMenuHandlers, Command.CmdApproveAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => CanDoCmdApproveAll));
 			}
 			var userController = new UserControlUiWidgetParameterObject(this);
 			var dataMenuDictionary = userController.MenuItemsForUserControl[MainMenu.Data];
@@ -711,8 +722,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				dataMenuDictionary.Add(dataMenuKvp.Key, dataMenuKvp.Value);
 			}
+			_uiWidgetController.DataMenuDictionary[Command.ApproveAnalysisMovementMenu].Visible = true;
+			_uiWidgetController.DataMenuDictionary[Command.BrowseMovementMenu].Visible = true;
 			var insertToolBarDictionary = userController.ToolBarItemsForUserControl[ToolBar.Insert];
-			foreach (var toolBarKvp in insertToolBarDictionary)
+			foreach (var toolBarKvp in insertToolBarHandlers)
 			{
 				insertToolBarDictionary.Add(toolBarKvp.Key, toolBarKvp.Value);
 			}

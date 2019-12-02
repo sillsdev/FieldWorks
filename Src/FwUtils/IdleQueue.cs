@@ -22,8 +22,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
-		private readonly PriorityQueue<IdleQueuePriority, IdleQueueTask> m_queue = new PriorityQueue<IdleQueuePriority, IdleQueueTask>();
-		private bool m_paused;
+		private readonly PriorityQueue<IdleQueuePriority, IdleQueueTask> _queue = new PriorityQueue<IdleQueuePriority, IdleQueueTask>();
+		private bool _paused;
 
 		/// <summary />
 		public IdleQueue()
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (disposing)
 			{
 				Application.Idle -= Application_Idle;
-				m_queue.Clear();
+				_queue.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -121,20 +121,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return m_paused;
+				return _paused;
 			}
 
 			set
 			{
-				if (value && !m_paused)
+				if (value && !_paused)
 				{
 					Application.Idle -= Application_Idle;
 				}
-				else if (!value && m_paused)
+				else if (!value && _paused)
 				{
 					Application.Idle += Application_Idle;
 				}
-				m_paused = value;
+				_paused = value;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			lock (SyncRoot)
 			{
-				m_queue.Enqueue(priority, new IdleQueueTask(priority, del, parameter), update);
+				_queue.Enqueue(priority, new IdleQueueTask(priority, del, parameter), update);
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			lock (SyncRoot)
 			{
-				return m_queue.Remove(new IdleQueueTask(del));
+				return _queue.Remove(new IdleQueueTask(del));
 			}
 		}
 
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			lock (SyncRoot)
 			{
-				return m_queue.Contains(new IdleQueueTask(del));
+				return _queue.Contains(new IdleQueueTask(del));
 			}
 		}
 
@@ -236,9 +236,9 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 					IdleQueueTask task;
 					lock (SyncRoot)
 					{
-						if (!m_queue.IsEmpty)
+						if (!_queue.IsEmpty)
 						{
-							task = m_queue.Dequeue();
+							task = _queue.Dequeue();
 						}
 						else
 						{
@@ -265,7 +265,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 				{
 					foreach (var task in incompleteTasks)
 					{
-						m_queue.Enqueue(task.Priority, task);
+						_queue.Enqueue(task.Priority, task);
 					}
 				}
 			}
@@ -299,7 +299,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			IdleQueueTask[] tasks;
 			lock (SyncRoot)
 			{
-				tasks = m_queue.ToArray();
+				tasks = _queue.ToArray();
 			}
 			foreach (var task in tasks)
 			{
@@ -321,7 +321,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			lock (SyncRoot)
 			{
-				m_queue.Enqueue(task.Priority, task);
+				_queue.Enqueue(task.Priority, task);
 			}
 		}
 
@@ -330,7 +330,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			lock (SyncRoot)
 			{
-				m_queue.Clear();
+				_queue.Clear();
 			}
 		}
 
@@ -339,7 +339,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			lock (SyncRoot)
 			{
-				return m_queue.Contains(task);
+				return _queue.Contains(task);
 			}
 		}
 
@@ -348,7 +348,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			lock (SyncRoot)
 			{
-				m_queue.CopyTo(array, arrayIndex);
+				_queue.CopyTo(array, arrayIndex);
 			}
 		}
 
@@ -357,7 +357,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			lock (SyncRoot)
 			{
-				return m_queue.Remove(task);
+				return _queue.Remove(task);
 			}
 		}
 
@@ -368,7 +368,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				lock (SyncRoot)
 				{
-					return m_queue.Count;
+					return _queue.Count;
 				}
 			}
 		}

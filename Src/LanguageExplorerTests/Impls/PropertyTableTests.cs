@@ -20,6 +20,7 @@ namespace LanguageExplorerTests.Impls
 	[TestFixture]
 	public class PropertyTableTests
 	{
+		private FlexComponentParameters _flexComponentParameters;
 		private IPropertyTable _propertyTable;
 		private string _originalSettingsPath;
 
@@ -50,8 +51,8 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void SetUp()
 		{
-			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-			_propertyTable = flexComponentParameters.PropertyTable;
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_propertyTable = _flexComponentParameters.PropertyTable;
 			_propertyTable.LocalSettingsId = "TestLocal";
 			_propertyTable.UserSettingDirectory = _originalSettingsPath;
 
@@ -62,7 +63,8 @@ namespace LanguageExplorerTests.Impls
 		[TearDown]
 		public void TearDown()
 		{
-			_propertyTable.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			_flexComponentParameters = null;
 			_propertyTable = null;
 		}
 
@@ -852,7 +854,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			const string initialAreaKey = "db$Testlocal$InitialArea";
 			_propertyTable.SetProperty(initialAreaKey, "lexicon", false);
-			string initialAreaValue = _propertyTable.GetValue<string>(initialAreaKey);
+			var initialAreaValue = _propertyTable.GetValue<string>(initialAreaKey);
 			Assert.AreEqual("lexicon", initialAreaValue, "Default value not set.");
 			LoadOriginalSettings();
 			initialAreaValue = _propertyTable.GetValue<string>(initialAreaKey);

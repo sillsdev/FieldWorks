@@ -38,7 +38,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
-
+			// Just in case it is called more than once.
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			m_constChart = new ConstituentChart(Cache, new SharedEventHandlers(), m_logic);
 			m_constChart.InitializeFlexComponent(_flexComponentParameters);
@@ -52,7 +53,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			m_chartBody.Dispose();
 			m_constChart.Dispose();
-			_flexComponentParameters?.PropertyTable?.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 
 			base.TestTearDown();

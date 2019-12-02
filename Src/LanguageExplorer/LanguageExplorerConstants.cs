@@ -74,6 +74,7 @@ namespace LanguageExplorer
 		internal const string SliceSplitterBaseDistance = "SliceSplitterBaseDistance";
 		internal const string SelectedPublication = "SelectedPublication";
 		internal const string ShowHiddenFields = "ShowHiddenFields";
+		internal const string ShowFailingItems = "ShowFailingItems";
 
 		#endregion Misc
 	}

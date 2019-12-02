@@ -199,7 +199,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], insertMenuDictionary,
+				UiWidgetServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], insertMenuDictionary,
 					Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_ClosedFeature_Value, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ClosedFeature_Value_Clicked, () => CanCmdDataTree_Insert_ClosedFeature_Value));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

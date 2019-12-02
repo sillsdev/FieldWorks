@@ -4,7 +4,6 @@
 
 using System;
 using System.Linq;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -24,7 +23,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IText _text;
 		private SandboxForTests _sandbox;
 		private FlexComponentParameters _flexComponentParameters;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		/// <summary/>
 		[TestFixtureSetUp]
@@ -58,7 +56,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			{
 				// Dispose managed resources here.
 				_sandbox?.Dispose();
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)
@@ -75,9 +73,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Gloss);
-			_sandbox = new SandboxForTests(_sharedEventHandlers, Cache, lineChoices);
+			_sandbox = new SandboxForTests(Cache, lineChoices);
 			_sandbox.InitializeFlexComponent(_flexComponentParameters);
 		}
 		/// <summary>

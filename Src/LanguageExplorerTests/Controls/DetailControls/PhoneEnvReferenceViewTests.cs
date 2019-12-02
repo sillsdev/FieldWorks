@@ -47,7 +47,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 	}

@@ -4,7 +4,6 @@
 
 using System;
 using System.Linq;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -23,8 +22,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	{
 		private IText m_text1;
 		private SandboxForTests m_sandbox;
+		private FlexComponentParameters _flexComponentParameters;
 		private IPropertyTable _propertyTable;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		/// <summary />
 		[TestFixtureSetUp]
@@ -69,9 +68,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			{
 				// Dispose managed resources here.
 				m_sandbox?.Dispose();
-				_propertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				m_sandbox = null;
 				_propertyTable = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -88,10 +88,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.GlossAddWordsToLexicon);
-			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
-			_propertyTable = flexComponentParameters.PropertyTable;
-			m_sandbox = new SandboxForTests(_sharedEventHandlers, Cache, lineChoices);
-			m_sandbox.InitializeFlexComponent(flexComponentParameters);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
+			_propertyTable = _flexComponentParameters.PropertyTable;
+			m_sandbox = new SandboxForTests(Cache, lineChoices);
+			m_sandbox.InitializeFlexComponent(_flexComponentParameters);
 		}
 
 		internal static void CompareTss(ITsString tssExpected, ITsString tssActual)

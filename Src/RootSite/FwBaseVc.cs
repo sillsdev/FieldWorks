@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,9 +21,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-#if RANDYTODO
-	// TODO: Consider moving FwBaseVc to FwCoreDlgs.
-#endif
 	/// <remarks>
 	/// FwBaseVc is the base view constructor with low-level FW-specific methods that other
 	/// view constructors can use as a base.

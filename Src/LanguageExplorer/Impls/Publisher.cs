@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-//#define SHOWDEBUGMESSAGES
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -15,13 +15,18 @@ namespace LanguageExplorer.Impls
 	/// Implementation of IPublisher interface.
 	/// </summary>
 	[Export(typeof(IPublisher))]
-	internal sealed class Publisher : IPublisher
+	internal sealed class Publisher : IPublisher, IDisposable
 	{
+		private IdleQueue _idleQueue;
 		[Import]
 		private ISubscriber _subscriber;
 
 		internal Publisher()
 		{
+			_idleQueue = new IdleQueue
+			{
+				IsPaused = true
+			};
 		}
 
 		/// <summary>
@@ -47,7 +52,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Publish an ordered sequence of messages, each of which has a newValue (which may be null).
 		/// </summary>
-		/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (shich may be null).</param>
+		/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (which may be null).</param>
 		/// <param name="newValues">Ordered list of new values. Each value matches a message.</param>
 		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="messages"/> or <paramref name="newValues"/> are null.</exception>
 		/// <exception cref="InvalidOperationException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
@@ -63,13 +68,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-#if SHOWDEBUGMESSAGES
-#if RANDYTODO
-		// TODO: remove '_lastMessage' & '_lastNewValue' in the end. They are useful for debugging some kinds of re-entrant issues, but not otherwise needed.
-#endif
-		private string _lastMessage;
-		private object _lastNewValue;
-#endif
 		/// <summary>
 		/// Publish the message using the new value.
 		/// </summary>
@@ -79,30 +77,19 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNullOrEmptyString(message, nameof(message));
 
-			try
+			using (var detector = Detect.Reentry(this, "Publish"))
 			{
-#if SHOWDEBUGMESSAGES
-				if (_lastMessage == message && _lastNewValue.ToString() == newValue.ToString())
+				if (detector.DidReenter)
 				{
-					Console.WriteLine($@"Why, pray tell, do we need to redo the very same message ({message}) with the very same new value?");
+					_idleQueue.Add(new IdleQueueTask(IdleQueuePriority.High, DeferredPublish, new DeferredMessage(message, newValue)));
+					_idleQueue.IsPaused = false;
 				}
 				else
 				{
-					Console.WriteLine($@"About to publish: '{message}'.");
-				}
-#endif
-				using (Detect.Reentry(this, "Publish").AndThrow())
-				{
-#if SHOWDEBUGMESSAGES
-					_lastMessage = message;
-					_lastNewValue = newValue;
-#endif
+					_idleQueue.IsPaused = true;
 					HashSet<Action<object>> subscribers;
 					if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
 					{
-#if SHOWDEBUGMESSAGES
-						Console.WriteLine($@"Nobody likes me ({message}), everybody hates me, guess I'll go eat some worms....");
-#endif
 						return;
 					}
 					foreach (var subscriberAction in subscribers)
@@ -114,19 +101,77 @@ namespace LanguageExplorer.Impls
 						subscriberAction(newValue);
 					}
 				}
-#if SHOWDEBUGMESSAGES
-				Console.WriteLine($@"Finished publishing: '{message}'.");
-#endif
-			}
-			finally
-			{
-#if SHOWDEBUGMESSAGES
-				_lastMessage = null;
-				_lastNewValue = null;
-#endif
 			}
 		}
 
-#endregion
+		private bool DeferredPublish(object arg)
+		{
+			var deferredMessage = (DeferredMessage)arg;
+			Publish(deferredMessage.Message, deferredMessage.NewValue);
+			return true;
+		}
+		#endregion
+
+		#region Implementation of IDisposable
+
+		private bool _isDisposed;
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. _isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~Publisher()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SuppressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+				_idleQueue?.Dispose();
+			}
+			_idleQueue = null;
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+
+			_isDisposed = true;
+		}
+		#endregion
+
+		private sealed class DeferredMessage
+		{
+			internal string Message { get; }
+			internal object NewValue { get; }
+
+			internal DeferredMessage(string message, object newValue)
+			{
+				Message = message;
+				NewValue = newValue;
+			}
+		}
 	}
 }

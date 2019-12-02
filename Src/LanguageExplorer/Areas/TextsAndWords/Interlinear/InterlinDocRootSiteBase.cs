@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
-	internal partial class InterlinDocRootSiteBase : RootSite, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices, IInterlinConfigurable
+	internal partial class InterlinDocRootSiteBase : RootSite, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices, IInterlinConfigurable, IInterlinearConfigurator
 	{
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -767,7 +767,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void configLink_Click(object sender, EventArgs e)
 		{
-			OnConfigureInterlinear();
+			((IInterlinearConfigurator)this).ConfigureInterlinear();
 		}
 
 		private void m_labelContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -850,7 +850,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results
 		/// </summary>
-		internal void OnConfigureInterlinear()
+		void IInterlinearConfigurator.ConfigureInterlinear()
 		{
 			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Vc.LineChoices.Clone() as InterlinLineChoices))
 			{

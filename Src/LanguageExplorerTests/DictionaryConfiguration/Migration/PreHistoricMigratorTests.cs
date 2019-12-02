@@ -57,8 +57,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.GenDate, Guid.Empty);
 			_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1, CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_lcmStyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			_migrator = new PreHistoricMigrator(string.Empty, Cache, null, _flexComponentParameters.PropertyTable);
 		}
@@ -75,7 +74,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				{
 					_migrator.SetTestLogger = null;
 				}
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 
 				_cf1 = null;
 				_cf2 = null;

@@ -57,8 +57,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.FixtureSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			var styles = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles;
 			if (!styles.Contains(DictionaryNormal))
 			{
@@ -97,7 +96,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				_statusBar?.Dispose();
 				_recordListRepositoryForTools?.Dispose();
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_recordListRepositoryForTools = null;
 				_statusBar = null;
 				_recordList = null;

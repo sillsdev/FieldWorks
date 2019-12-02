@@ -247,7 +247,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				analysis = m_wordform;
 			}
 			RootBox.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
-			m_tryAWordSandbox = new TryAWordSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, analysis)
+			m_tryAWordSandbox = new TryAWordSandbox(m_cache, StyleSheet, m_vc.LineChoices, analysis)
 			{
 				Visible = false
 			};

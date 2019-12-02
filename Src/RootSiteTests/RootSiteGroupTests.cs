@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 

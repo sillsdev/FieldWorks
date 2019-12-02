@@ -276,9 +276,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var insertMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Insert];
 				insertMenuDictionary.Add(Command.CmdImportWordSet, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportWordSetToolStripMenuItemOnClick, () => UiWidgetServices.CanSeeAndDo));
 				var insertToolBarDictionary = areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.Insert];
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
+				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
 					Command.CmdInsertText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertText_Click, () => CanCmdInsertText));
-				AreaServices.InsertPair(areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.View], areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.View],
+				UiWidgetServices.InsertPair(areaUiWidgetParameterObject.ToolBarItemsForArea[ToolBar.View], areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.View],
 					Command.CmdChooseTexts, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(AddTexts_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				var toolMenuDictionary = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.Tools];
 				toolMenuDictionary.Add(Command.CmdEditSpellingStatus, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditSpellingStatus_Clicked, ()=> UiWidgetServices.CanSeeAndDo));

@@ -448,7 +448,13 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the id of the context menu that should be shown for our object
 		/// </summary>
-		protected virtual ContextMenuName ContextMenuId => ContextMenuName.mnuObjectChoices;
+		protected virtual ContextMenuName ContextMenuId
+		{
+			get
+			{
+				throw new NotSupportedException("Subclasses that have a menu, need to override this.");
+			}
+		}
 
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.

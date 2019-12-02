@@ -23,7 +23,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -43,8 +42,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			base.TestSetup();
 
 			_model = new DictionaryConfigurationModel();
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
 			var styles = FwUtils.StyleSheetFromPropertyTable(_propertyTable).Styles;
@@ -57,9 +55,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			try
 			{
-				_propertyTable = null;
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
+				_propertyTable = null;
 				_model = null;
 			}
 			catch (Exception err)

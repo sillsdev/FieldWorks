@@ -112,8 +112,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.TestSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_configurations = new List<DictionaryConfigurationModel>
 			{
 				new DictionaryConfigurationModel { Label = "configuration0", Publications = new List<string>() },
@@ -136,7 +135,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				_configurations.Clear();
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 				_controller = null;
 				_configurations = null;

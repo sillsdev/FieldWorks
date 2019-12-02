@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2019 SIL International
+// Copyright (c) 2002-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -180,7 +180,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>/returns>
 		public int RealHvo(int secHvo)
 		{
-			return m_SdaToLcm.ContainsKey(secHvo) ? m_SdaToLcm[secHvo] : 0;
+			int realHvo;
+			return m_SdaToLcm.TryGetValue(secHvo, out realHvo) ? realHvo : 0;
 		}
 
 		/// <summary>

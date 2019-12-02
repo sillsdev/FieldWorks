@@ -227,9 +227,6 @@
   <data name="ksChartTemplateWarning" xml:space="preserve">
     <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
   </data>
-  <data name="ShowFailingItems" xml:space="preserve">
-    <value>ShowFailingItems</value>
-  </data>
   <data name="ksChooseWhereToShowSubentry" xml:space="preserve">
     <value>Choose where to show subentry</value>
   </data>

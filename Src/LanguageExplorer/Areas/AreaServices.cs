@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -349,13 +349,13 @@ namespace LanguageExplorer.Areas
 		internal static void ResetMainPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)
 		{
 			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdInsertPossibility], newText,
-				uiWidgetController.InsertToolBarDictionary[Command.CmdInsertPossibility], string.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
+				uiWidgetController.InsertToolBarDictionary[Command.CmdInsertPossibility], String.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
 		}
 
 		internal static void ResetSubitemPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)
 		{
 			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdDataTree_Insert_Possibility], newText,
-				uiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], string.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
+				uiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], String.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
 		}
 
 		private static void ResetInsertUiWidgetsText(ToolStripItem menu, string newText, ToolStripItem toolBarButton, string newToolTipText)
@@ -513,12 +513,6 @@ namespace LanguageExplorer.Areas
 			};
 		}
 
-		internal static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
-		{
-			toolBarDictionary.Add(key, currentTuple);
-			menuDictionary.Add(key, currentTuple);
-		}
-
 		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, StTextSlice textSlice)
 		{
 			LexiconLookup(cache, flexComponentParameters, textSlice.RootSite);
@@ -575,6 +569,63 @@ namespace LanguageExplorer.Areas
 				{
 					// is there anything special we want to do, such as jump to the new entry?
 				}
+			}
+		}
+
+		internal static bool CanJumpToTool(string currentToolMachineName, string targetToolMachineNameForJump, LcmCache cache, ICmObject rootObject, ICmObject currentObject, string className)
+		{
+			if (currentToolMachineName == targetToolMachineNameForJump)
+			{
+				return (ReferenceEquals(rootObject, currentObject) || currentObject.IsOwnedBy(rootObject));
+			}
+			if (currentObject is IWfiWordform)
+			{
+				var concordanceTools = new HashSet<string>
+				{
+					WordListConcordanceMachineName,
+					ConcordanceMachineName
+				};
+				return concordanceTools.Contains(targetToolMachineNameForJump);
+			}
+			// Do it the hard way.
+			var specifiedClsid = 0;
+			var mdc = cache.GetManagedMetaDataCache();
+			if (mdc.ClassExists(className)) // otherwise is is a 'magic' class name treated specially in other OnDisplays.
+			{
+				specifiedClsid = mdc.GetClassId(className);
+			}
+			if (specifiedClsid == 0)
+			{
+				// Not visible or enabled.
+				return false; // a special magic class id, only enabled explicitly.
+			}
+			if (currentObject.ClassID == specifiedClsid)
+			{
+				// Visible & enabled.
+				return true;
+			}
+
+			// Visible & enabled are the same at this point.
+			return cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentObject.ClassID) == specifiedClsid;
+		}
+
+		/// <summary>
+		/// It will add the menu (and optional separator) only if the menu will be both visible and enabled.
+		/// </summary>
+		internal static void ConditionallyAddJumpToToolMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, LcmCache cache, IPublisher publisher,
+			ICmObject rootObject, ICmObject selectedObject, EventHandler eventHandler,
+			string currentToolMachineName, string targetToolName, ref bool wantSeparator, string className, string menuLabel, int separatorInsertLocation = 0)
+		{
+			var visibleAndEnabled = CanJumpToTool(currentToolMachineName, targetToolName, cache, rootObject, selectedObject, className);
+			if (visibleAndEnabled)
+			{
+				if (wantSeparator)
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
+					wantSeparator = false;
+				}
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, eventHandler, menuLabel);
+				menu.Tag = new List<object> { publisher, targetToolName, selectedObject };
 			}
 		}
 	}

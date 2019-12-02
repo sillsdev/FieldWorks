@@ -46,14 +46,20 @@ namespace LanguageExplorer
 
 		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
 		{
-			return $"{LanguageExplorerResources.ksShowHiddenFields}_{toolMachineName}";
+			return $"{LanguageExplorerConstants.ShowHiddenFields}_{toolMachineName}";
 		}
 
 		internal static string CreateShowFailingItemsPropertyName(string toolMachineName)
 		{
-			return $"{LanguageExplorerResources.ShowFailingItems}_{toolMachineName}";
+			return $"{LanguageExplorerConstants.ShowFailingItems}_{toolMachineName}";
 		}
 
 		internal static Tuple<bool, bool> CanSeeAndDo => new Tuple<bool, bool>(true, true);
+
+		internal static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
+		{
+			toolBarDictionary.Add(key, currentTuple);
+			menuDictionary.Add(key, currentTuple);
+		}
 	}
 }

@@ -18,8 +18,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	{
 		private InterlinDocForAnalysis m_mockInterlinDoc;
 
-		internal SandboxForTests(ISharedEventHandlers sharedEventHandlers, LcmCache cache, InterlinLineChoices lineChoices)
-			: base(sharedEventHandlers, cache, null, lineChoices)
+		internal SandboxForTests(LcmCache cache, InterlinLineChoices lineChoices)
+			: base(cache, null, lineChoices)
 		{
 		}
 

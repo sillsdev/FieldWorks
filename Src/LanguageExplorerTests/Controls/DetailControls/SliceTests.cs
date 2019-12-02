@@ -45,7 +45,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				_dummyWindow?.Dispose();
 				_slice?.Dispose();
 				_dataTree?.Dispose();
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 
 				_dummyWindow = null;
 				_slice = null;

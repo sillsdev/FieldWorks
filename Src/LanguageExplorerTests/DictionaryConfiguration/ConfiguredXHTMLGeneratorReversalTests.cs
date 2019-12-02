@@ -44,8 +44,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.TestSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_flexComponentParameters.PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{AreaServices.LexiconAreaMachineName}", AreaServices.ReversalEditCompleteMachineName);
 			XHTMLStringBuilder = new StringBuilder();
 		}
@@ -54,7 +53,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			try
 			{
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 				XHTMLStringBuilder = null;
 			}

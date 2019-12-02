@@ -26,7 +26,7 @@ namespace LanguageExplorerTests.Impls
 	[TestFixture]
 	public class MacroMenuHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable _propertyTable;
+		private FlexComponentParameters _flexComponentParameters;
 		private MacroMenuHandler _macroMenuHandler;
 
 		#region Overrides of LcmTestBase
@@ -34,10 +34,9 @@ namespace LanguageExplorerTests.Impls
 		{
 			base.TestSetup();
 
-			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-			_propertyTable = flexComponentParameters.PropertyTable;
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			_macroMenuHandler = new MacroMenuHandler();
-			_propertyTable.SetProperty("cache", Cache);
+			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
 			_macroMenuHandler.InitializeForTests(Cache);
 		}
 
@@ -46,10 +45,9 @@ namespace LanguageExplorerTests.Impls
 			try
 			{
 				_macroMenuHandler?.Dispose();
-				_propertyTable?.Dispose();
-
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_macroMenuHandler = null;
-				_propertyTable = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{

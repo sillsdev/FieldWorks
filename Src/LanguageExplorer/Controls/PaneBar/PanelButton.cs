@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2019 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -149,7 +149,8 @@ namespace LanguageExplorer.Controls.PaneBar
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
 				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, _isChecked);
+				var message = _property.Contains(LanguageExplorerConstants.ShowHiddenFields) ? LanguageExplorerConstants.ShowHiddenFields : _property;
+				_publisher.Publish(message, _isChecked);
 			}
 		}
 

@@ -10,10 +10,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -104,7 +106,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// This is used to store an object corresponding to WfiMorphBundle.InflType.
 		internal const int ktagSbNamedObjInflType = 6903020;
 
-
 		// This group identify the pull-down icons. They must be the only tags in the range
 		// 6905000-6905999.
 		internal const int ktagMinIcon = 6905000;
@@ -137,16 +138,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#region Data members
 
 		private int m_hvoLastSelEntry; // HVO in real cache of last selected lex entry.
-
 		// This object monitors property changes in the sandbox, primarily for edits to the morpheme breakdown.
 		// It can also be used to implement some problem deletions.
-
 		/// <summary>
 		/// This object monitors property changes in the sandbox, primarily for edits to the morpheme breakdown.
 		/// It can also be used to implement some problem deletions.
 		/// </summary>
 		internal SandboxEditMonitor EditMonitor { get; private set; }
-
 		protected int m_hvoInitialWag;
 		private IVwStylesheet m_stylesheet;
 		// The original value of m_hvoWordform, to which we return if the user chooses
@@ -163,11 +161,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// If m_hvoWordform is set to zero, this should be set to the actual text that should be
 		// assigned to the new Wordform that will be created if GetRealAnalysis is called.
 		// The original Gloss we started with. ReviewP: Can we get rid of this?
-
 		private bool m_fSuppressShowCombo = true; // set to prevent SelectionChanged displaying combo.
-
 		internal IComboHandler m_ComboHandler; // handles most kinds of combo box.
-		protected SandboxVc m_vc;
+		private SandboxVc m_vc;
 		private Point m_LastMouseMovePos;
 		// Rectangle containing last selection passed to ShowComboForSelection.
 		private Rect m_locLastShowCombo;
@@ -179,35 +175,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool m_fLockCombo;
 		// True to lay out with infinite width, expecting to be fully visible.
 		private bool m_fSizeToContent;
-
 		// Flag used to prevent mouse move events from entering CallMouseMoveDrag multiple
 		// times before prior ones have exited.  Otherwise we get lines displayed multiple
 		// times while scrolling during a selection.
 		private bool m_fMouseInProcess;
-
 		// This is set true by CallMouseMoveDrag if m_fNewSelection is true, and set false by
 		// either CallMouseDown or CallMouseUp.  It controls whether CallMouseUp creates a
 		// range selection, and also controls whether ShowComboForSelection actually creates
 		// and shows the dropdown list.
 		private bool m_fInMouseDrag;
-
 		// This is set true by CallMouseDown after a new selection is created, and reset to
 		// false by CallMouseUp.
 		private bool m_fNewSelection;
-
 		// This flag handles keeping the combo dropdown list open after you click on the arrow
 		// but then proceed to drag before letting up on the mouse button.
 		private bool m_fMouseDownActivatedCombo;
-
 		// Normally we return a 'real' analysis in GetRealAnalysis() only if something in the
 		// cache changed (the user made some edit). In certain cases (guessing, choosing a
 		// different base form) we must return it even if nothing in the cache changed.
 		//private bool m_fForceReturnNewAnalysis;
-
 		private bool m_fHaveUndone; // tells whether an Undo has occurred since Sandbox started on this word.
-
-		private int m_rgbGuess = NoGuessColor;
-
 		// During processing of a right-click menu item, this is the morpheme the user clicked on
 		// (from the sandbox cache).
 		int m_hvoRightClickMorph;
@@ -215,6 +202,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// analysis we started with.
 		int m_hvoAnalysisGuess;
 		private int m_wsRawWordform;
+		bool m_fHandlingRightClickMenu;
+		private readonly bool _runningInTests;
 		#endregion Data members
 
 		#region Properties
@@ -258,8 +247,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_rawWordform = null;
 			}
 		}
-
-		private ISharedEventHandlers SharedEventHandlers { get; set; }
 
 		internal InterlinLineChoices InterlinLineChoices { get; set; }
 
@@ -716,7 +703,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SuppressPrintHandling = true; // The SandBox is never the control that should print.
 		}
 
-		public SandboxBase(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -729,16 +716,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for example, automatically setting the correct keyboard.
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 			Caches.CreateSecCache();
-			SharedEventHandlers = sharedEventHandlers;
 			InterlinLineChoices = choices;
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
 			EditMonitor = new SandboxEditMonitor(this); // after creating sec cache.
 		}
 
-		public SandboxBase(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: this(sharedEventHandlers, cache, ss, choices)
+		public SandboxBase(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis, bool runningInTests = false)
+			: this(cache, ss, choices)
 		{
+			_runningInTests = runningInTests;
 			// finish setup with the WordBundleAnalysis
 			LoadForWordBundleAnalysis(hvoAnalysis);
 		}
@@ -793,7 +780,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private bool _needSharedHandlers = true;
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
@@ -804,27 +790,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (Visible)
 			{
-				if (_needSharedHandlers)
-				{
-					SharedEventHandlers.Add(Command.SandboxJumpToTool, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SandboxJumpToTool_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
-					_needSharedHandlers = false;
-				}
 				EditMonitor.StartMonitoring();
 			}
 			else
 			{
-				Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
-				if (SharedEventHandlers.TryGetEventHandler(Command.SandboxJumpToTool, out handlerAndFunction))
-				{
-					SharedEventHandlers.Remove(Command.SandboxJumpToTool);
-					_needSharedHandlers = true;
-				}
 				EditMonitor.StopMonitoring();
 			}
 		}
-
-		// Cf. the SandboxBase.Designer.cs file for this method.
-		//protected override void Dispose(bool disposing)
 
 		#endregion Construction, initialization & Disposal
 
@@ -869,15 +841,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-				// The "new normal": Adding the handler to SharedEventHandlers is deferred,
-				// until the control becomes Visible,
-				// which does not happen for tests.
-				// Even then, it is removed, when the control is not visible, so see if it still exists, before removing it now.
-				Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
-				if (SharedEventHandlers.TryGetEventHandler(Command.SandboxJumpToTool, out handlerAndFunction))
-				{
-					SharedEventHandlers.Remove(Command.SandboxJumpToTool);
-				}
 				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 			}
 
@@ -905,7 +868,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_vc = null;
 			m_rawWordform = null;
 			FormOfWordform = null;
-			SharedEventHandlers = null;
 		}
 
 		#region Other methods
@@ -1244,12 +1206,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal static bool IsAnalysisHumanApproved(LcmCache cache, IWfiAnalysis analysis)
 		{
-			if (analysis == null)
-			{
-				// non-existent analysis can't be approved.
-				return false;
-			}
-			return (analysis.EvaluationsRC.Where(ae => ae.Approves && (ae.Owner as ICmAgent).Human)).FirstOrDefault() != null;
+			// non-existent analysis can't be approved.
+			return (analysis?.EvaluationsRC).FirstOrDefault(ae => ae.Approves && (ae.Owner as ICmAgent).Human) != null;
 		}
 
 		/// <summary>
@@ -2531,21 +2489,249 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return !tsi.Selection.IsEditable && SelectTextNearestToNextIcon(m_vc.RightToLeft);
 		}
 
-		bool m_fHandlingRightClickMenu;
-		private bool HandleRightClickOnObject(int hvoReal)
+		private bool HandleRightClickOnObject(ICmObject realObject, Point pt)
 		{
-			using (var rightClickUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, hvoReal))
+			if (ContextMenuStrip != null)
 			{
-				rightClickUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				m_fHandlingRightClickMenu = true;
-				try
+				ContextMenuStrip.Dispose();
+				ContextMenuStrip = null;
+			}
+			ContextMenuStrip = new ContextMenuStrip
+			{
+				Name = ContextMenuName.mnuObjectChoices.ToString()
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(19);
+			/*
+			<item command="CmdEntryJumpToDefault" />
+			<command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
+				<parameters tool="lexiconEdit" className="LexEntry" />
+			</command>
+			*/
+			var haveEarlyItem = false;
+			m_fHandlingRightClickMenu = true;
+			var currentToolMachineName = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			ToolStripMenuItem menu;
+			if (CanJumpToTool(currentToolMachineName, LexEntryTags.kClassName))
+			{
+				haveEarlyItem = true;
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.ksShowEntryInLexicon);
+				menu.Tag = new List<object> { AreaServices.LexiconEditMachineName, LexEntryTags.kClassName };
+			}
+			/*
+			<item command="CmdWordformJumpToAnalyses" />
+			<command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
+				<parameters tool="Analyses" className="WfiWordform" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, WfiWordformTags.kClassName))
+			{
+				haveEarlyItem = true;
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Word_Analyses);
+				menu.Tag = new List<object> { AreaServices.AnalysesMachineName, WfiWordformTags.kClassName };
+			}
+			var concordanceMenuHolder = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(ContextMenuStrip, AreaResources.Show_Concordance_of);
+			/*
+			<item command="CmdWordformJumpToConcordance" label="Wordform" />
+			<command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="WfiWordform" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, WfiWordformTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.ksFldWordform);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiWordformTags.kClassName };
+			}
+			/*
+			<item command="CmdAnalysisJumpToConcordance" label="Analysis" />
+			<command id="CmdAnalysisJumpToConcordance" label="Show Analysis in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="WfiAnalysis" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, WfiAnalysisTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Analysis);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiAnalysisTags.kClassName };
+			}
+			/*
+			<item command="CmdMorphJumpToConcordance" label="Morph" />
+			<command id="CmdMorphJumpToConcordance" label="Show Morph in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="MoForm" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, MoFormTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Morph);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, MoFormTags.kClassName };
+			}
+			/*
+			<item command="CmdEntryJumpToConcordance" label="Entry" />
+			<command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="LexEntry" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, LexEntryTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Entry);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, LexEntryTags.kClassName };
+			}
+			/*
+			<item command="CmdSenseJumpToConcordance" label="Sense" />
+			<command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="LexSense" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, LexSenseTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Sense);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, LexSenseTags.kClassName };
+			}
+			/*
+			<command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
+				<parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, AreaServices.PartOfSpeechGramInfo))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Lex_Gram_Info);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, AreaServices.PartOfSpeechGramInfo, AreaServices.PartOfSpeechGramInfo };
+			}
+			/*
+			<item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
+			<command id="CmdWordGlossJumpToConcordance" label="Show Word Gloss in Concordance" message="JumpToTool">
+				<parameters tool="concordance" className="WfiGloss" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, WfiGlossTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Word_Gloss);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiGlossTags.kClassName };
+			}
+			/*
+			<command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
+				<parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Show_Word_Category_in_Concordance);
+				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
+			}
+			// </menu>  End of "Show Concordance of" menu.
+
+			/*
+			<item command="CmdPOSJumpToDefault" />
+			<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
+				<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Category_Edit);
+				menu.Tag = new List<object> { AreaServices.PosEditMachineName, PartOfSpeechTags.kClassName };
+			}
+			/*
+			<item command="CmdWordPOSJumpToDefault" />
+			<command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
+				<parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Show_Word_Category_in_Category_Edit);
+				menu.Tag = new List<object> { AreaServices.PosEditMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
+			}
+			/*
+			<item command="CmdEndoCompoundRuleJumpToDefault" />
+			<command id="CmdEndoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
+				<parameters tool="compoundRuleAdvancedEdit" className="MoEndoCompound" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, MoEndoCompoundTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Compound_Rules_Editor);
+				menu.Tag = new List<object> { AreaServices.CompoundRuleAdvancedEditMachineName, MoEndoCompoundTags.kClassName };
+			}
+			/*
+			<item command="CmdExoCompoundRuleJumpToDefault" />
+			<command id="CmdExoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
+				<parameters tool="compoundRuleAdvancedEdit" className="MoExoCompound" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, MoExoCompoundTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Compound_Rules_Editor);
+				menu.Tag = new List<object> { AreaServices.CompoundRuleAdvancedEditMachineName, MoExoCompoundTags.kClassName };
+			}
+			/*
+			<item command="CmdPhonemeJumpToDefault" />
+			<command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
+				<parameters tool="phonemeEdit" className="PhPhoneme" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, PhPhonemeTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Phonemes_Editor);
+				menu.Tag = new List<object> { AreaServices.PhonemeEditMachineName, PhPhonemeTags.kClassName };
+			}
+			/*
+			<item command="CmdNaturalClassJumpToDefault" />
+			<command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
+				<parameters tool="naturalClassedit" className="PhNCSegments" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, PhNCSegmentsTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Natural_Classes_Editor);
+				menu.Tag = new List<object> { AreaServices.NaturalClassEditMachineName, PhNCSegmentsTags.kClassName };
+			}
+			/*
+			<item command="CmdEnvironmentsJumpToDefault" />
+			<command id="CmdEnvironmentsJumpToDefault" label="Show in Environments Editor" message="JumpToTool">
+				<parameters tool="EnvironmentEdit" className="PhEnvironment" />
+			</command>
+			*/
+			if (CanJumpToTool(currentToolMachineName, PhEnvironmentTags.kClassName))
+			{
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Environments_Editor);
+				menu.Tag = new List<object> { AreaServices.EnvironmentEditMachineName, PhEnvironmentTags.kClassName };
+			}
+			if (realObject.CanDelete && (realObject is IWfiMorphBundle || realObject is IWfiAnalysis))
+			{
+				// <item label="-" translate="do not translate" />
+				var separatorInsertLocation = menuItems.Count - 1;
+				var wantSeparator = separatorInsertLocation > 0;
+				if (wantSeparator)
 				{
-					return rightClickUiObj.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip, separatorInsertLocation);
+					wantSeparator = false;
 				}
-				finally
-				{
-					m_fHandlingRightClickMenu = false;
-				}
+				/*Delete_selected_0
+				<item command="CmdDeleteSelectedObject" />
+				<!--This is on the popup menu, and is for non - record level objects. -->
+				<command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
+				*/
+				// Instead of deleting a single WfiMorphBundle (which is what would normally happen
+				// in our automated handling, delete the owning WfiAnalysis. (See LT-6217.)
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, DeleteAnalysis_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(WfiAnalysisTags.kClassName, StringTable.ClassNames)));
+				menu.Tag = realObject.OwnerOfClass(WfiAnalysisTags.kClassId);
+			}
+
+			// First one gets (Ctrl-Click) appended.
+			if (menuItems.Count > 0 && haveEarlyItem)
+			{
+				menuItems[0].Item1.Text += $" {AreaResources.CtrlClick}";
+			}
+			ContextMenuStrip.Show(this, pt);
+			m_fHandlingRightClickMenu = false;
+			return true;
+		}
+
+		private void DeleteAnalysis_Clicked(object sender, EventArgs e)
+		{
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, ((IWfiAnalysis)((ToolStripMenuItem)sender).Tag).Hvo))
+			{
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				ui.DeleteUnderlyingObject();
 			}
 		}
 
@@ -2712,7 +2898,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		///
 		private bool SelectOnOrBeyondLine(int startLine, int limitLine, int increment, int iMorph, bool fSkipIconToTextField, bool fWrapToNextLine)
 		{
-			if (ParentForm == Form.ActiveForm)
+			if (ParentForm == null && Form.ActiveForm == null && !_runningInTests)
+			{
+				return false;
+			}
+			if (ReferenceEquals(ParentForm, Form.ActiveForm))
 			{
 				Focus();
 			}
@@ -3800,60 +3990,53 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			try
+			// Create a selection where we right clicked
+			var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+			// Figure what property is selected and create a suitable class if
+			// appropriate.  (CLevels includes the string property itself, but
+			// AllTextSelInfo doesn't need it.)
+			var cvsli = sel.CLevels(false) - 1;
+			// Out variables for AllTextSelInfo.
+			int ihvoRoot;
+			int tagRightClickTextProp;
+			int cpropPrevious;
+			int ichAnchor;
+			int ichEnd;
+			int ws;
+			bool fAssocPrev;
+			int ihvoEnd;
+			ITsTextProps ttpBogus;
+			// Main array of information retrieved from sel that made combo.
+			SelLevInfo.AllTextSelInfo(sel, cvsli,
+				out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
+				out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			if (tagRightClickTextProp >= ktagMinIcon && tagRightClickTextProp < ktagLimIcon) // it's an icon
 			{
-				// Create a selection where we right clicked
-				var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
-				// Figure what property is selected and create a suitable class if
-				// appropriate.  (CLevels includes the string property itself, but
-				// AllTextSelInfo doesn't need it.)
-				var cvsli = sel.CLevels(false) - 1;
-				// Out variables for AllTextSelInfo.
-				int ihvoRoot;
-				int tagRightClickTextProp;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttpBogus;
-				// Main array of information retrieved from sel that made combo.
-				SelLevInfo.AllTextSelInfo(sel, cvsli,
-					out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-				if (tagRightClickTextProp >= ktagMinIcon && tagRightClickTextProp < ktagLimIcon) // it's an icon
+				// don't bother doing anything for clicks on the icons.
+				return false;
+			}
+			ICmObject realObject;
+			tagRightClickTextProp = GetInfoForJumpToTool(sel, out realObject);
+			if (realObject != null)
+			{
+				if (tagRightClickTextProp == ktagSbWordGloss)
 				{
-					// don't bother doing anything for clicks on the icons.
-					return false;
-				}
-				int hvoReal;
-				tagRightClickTextProp = GetInfoForJumpToTool(sel, out hvoReal);
-				if (hvoReal != 0)
-				{
-					if (tagRightClickTextProp == ktagSbWordGloss)
-					{
-						if (SpellCheckServices.ShowContextMenu(Cache, pt, this))
-						{
-							return true;
-						}
-						// This is an alternative approach, currently not fully implemented, which allows the spell check
-						// menu items to be added to a menu that has further options.
-						//spellingColleague = EditingHelper.MakeSpellCheckColleague(pt, m_rootb, rcSrcRoot, rcDstRoot);
-					}
-					if (HandleRightClickOnObject(hvoReal))
+					if (SpellCheckServices.ShowContextMenu(Cache, pt, this))
 					{
 						return true;
 					}
+					// This is an alternative approach, currently not fully implemented, which allows the spell check
+					// menu items to be added to a menu that has further options.
+					//spellingColleague = EditingHelper.MakeSpellCheckColleague(pt, m_rootb, rcSrcRoot, rcDstRoot);
 				}
-				else
+				if (HandleRightClickOnObject(realObject, pt))
 				{
-					return false;
+					return true;
 				}
 			}
-			catch (Exception)
+			else
 			{
-				throw;
+				return false;
 			}
 			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 		}
@@ -3862,7 +4045,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Given a selection (typically from a click), determine the object that should be the target for jumping to,
 		/// and return the property that was clicked (which in the case of a right-click may generate a spelling menu instead).
 		/// </summary>
-		private int GetInfoForJumpToTool(IVwSelection sel, out int hvoReal)
+		private int GetInfoForJumpToTool(IVwSelection sel, out ICmObject realObject)
 		{
 			int ws;
 			int tagRightClickTextProp;
@@ -3895,7 +4078,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 			}
 
-			hvoReal = Caches.RealHvo(hvoRightClickObject);
+			realObject = Caches.RealObject(hvoRightClickObject);
 			return tagRightClickTextProp;
 		}
 
@@ -3909,21 +4092,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Control-click: take the first jump-to-tool command from the right-click menu for this location.
 			// Create a selection where we right clicked
 			var sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
-			int hvoTarget;
-			GetInfoForJumpToTool(sel, out hvoTarget);
-			if (hvoTarget == 0)
+			ICmObject target;
+			GetInfoForJumpToTool(sel, out target);
+			if (target == null)
 			{
 				return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 			}
 
-			using (var targetUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, hvoTarget))
+			using (var targetUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, target.Hvo))
 			{
 				targetUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				targetUiObj.HandleCtrlClick(this);
 			}
 		}
 
-		internal bool CanJumpToTool(ITool activeTool, string className)
+		private bool CanJumpToTool(string activeToolMachineName, string className)
 		{
 			if (!m_fHandlingRightClickMenu)
 			{
@@ -3934,7 +4117,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// enable it (GetHvoForJumpToToolClass will return zero for class "PartOfSpeech" if there's no
 			// morpheme), when clicking ON the POS for the word, the PartOfSpeechUi object will enable it.
 			// So in this special case we have to claim to have handled the task but should NOT enable it.
-			if (activeTool.MachineName == AreaServices.PosEditMachineName && className == "PartOfSpeech" && m_hvoRightClickMorph == 0)
+			if (activeToolMachineName == AreaServices.PosEditMachineName && className == PartOfSpeechTags.kClassName && m_hvoRightClickMorph == 0)
 			{
 				return false;
 			}
@@ -3949,9 +4132,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return false;
 		}
 
-		// This is common code for OnJumpToTool and OnDisplayJumpToTool, both called while displaying
-		// a context menu and dealing with a menu item. ClassName is taken from the item XML
-		// and indicates what sort of thing we want to jump to. Based on either information about what
+		// This is common code for SandboxJumpToTool_Clicked and CanJumpToTool, both called while displaying
+		// a context menu and dealing with a menu item. ClassName indicates what sort of thing we want to jump to.
+		// Based on either information about what
 		// was clicked, or general information about what the Sandbox is showing, figure out which
 		// object we should jump to (if any) for this type of jump.
 		private int GetHvoForJumpToToolClass(string className)
@@ -3964,9 +4147,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int hvoMsa;
 			switch (className)
 			{
-				case "WfiWordform":
+				case WfiWordformTags.kClassName:
 					return CurrentAnalysisTree.Wordform.Hvo;
-				case "WfiAnalysis":
+				case WfiAnalysisTags.kClassName:
 					switch (clid)
 					{
 						case WfiAnalysisTags.kClassId:
@@ -3975,24 +4158,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							return CurrentGuess.OwnerOfClass(WfiAnalysisTags.kClassId).Hvo;
 					}
 					break;
-				case "WfiGloss":
+				case WfiGlossTags.kClassName:
 					if (clid == WfiGlossTags.kClassId)
 					{
 						return m_hvoAnalysisGuess;
 					}
 					break;
-				case "MoForm":
+				case MoFormTags.kClassName:
 					return GetObjectFromRightClickMorph(ktagSbMorphForm);
-				case "LexEntry":
+				case LexEntryTags.kClassName:
 					var result = GetObjectFromRightClickMorph(ktagSbMorphEntry);
 					if (result != 0)
 					{
 						return result;
 					}
 					return GetMostPromisingEntry();
-				case "LexSense":
+				case LexSenseTags.kClassName:
 					return GetObjectFromRightClickMorph(ktagSbMorphGloss);
-				case "PartOfSpeech":
+				case PartOfSpeechTags.kClassName:
 					hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
 					if (hvoMsa == 0)
 					{
@@ -4322,5 +4505,649 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		#endregion
+
+		private sealed class SandboxVc : FwBaseVc, IDisposable
+		{
+			private int krgbEditable = (int)CmObjectUi.RGB(Color.White);
+			//The color to use as a background indicating there are multiple options for this analysis and/or gloss
+			private int multipleAnalysisColor = (int)CmObjectUi.RGB(Control.DefaultBackColor);
+			private const int kmpIconMargin = 3000; // gap between pull-down icon and morph (also word gloss and boundary)
+			internal const int kfragBundle = 100001;
+			private const int kfragMorph = 100002;
+			private const int kfragFirstMorph = 1000014;
+			private const int kfragMissingMorphs = 100003;
+			private const int kfragMissingEntry = 100005;
+			private const int kfragMissingMorphGloss = 100006;
+			private const int kfragMissingMorphPos = 100007;
+			private const int kfragMissingWordPos = 100008;
+			// 14 is used above
+			// This one needs a free range following it. It displays the name of an SbNamedObject,
+			// using the writing system indicated by m_choices[frag - kfragNamedObjectNameChoices.
+			private const int kfragNamedObjectNameChoices = 1001000;
+			private int m_wsVern;
+			private int m_wsAnalysis;
+			private CachePair m_caches;
+			private ITsString m_tssMissingMorphs;
+			private ITsString m_tssMissingEntry;
+			private ITsString m_tssMissingMorphGloss;
+			private ITsString m_tssMissingMorphPos;
+			private ITsString m_tssMissingWordPos;
+			private ITsString m_tssEmptyAnalysis;
+			private ITsString m_tssEmptyVern;
+			private InterlinLineChoices m_choices;
+			private ComPictureWrapper m_PulldownArrowPic;
+			// width in millipoints of the arrow picture.
+			private int m_dxmpArrowPicWidth;
+			private bool m_fIconsForAnalysisChoices;
+			private bool m_fRtl;
+			private SandboxBase m_sandbox;
+
+			internal SandboxVc(CachePair caches, InterlinLineChoices choices, bool fIconsForAnalysisChoices, SandboxBase sandbox)
+			{
+				m_caches = caches;
+				m_cache = caches.MainCache; //prior to 9-20-2011 this was not set, if we find there was a reason get rid of this.
+				m_choices = choices;
+				m_sandbox = sandbox;
+				m_fIconsForAnalysisChoices = fIconsForAnalysisChoices;
+				m_wsAnalysis = caches.MainCache.DefaultAnalWs;
+				var rawWordformWs = m_sandbox.RawWordformWs;
+				m_tssMissingMorphs = TsStringUtils.MakeString(ITextStrings.ksStars, rawWordformWs);
+				m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
+				m_tssEmptyVern = TsStringUtils.EmptyString(rawWordformWs);
+				m_tssMissingEntry = m_tssMissingMorphs;
+				// It's tempting to re-use m_tssMissingMorphs, but the analysis and vernacular default
+				// fonts may have different sizes, requiring differnt line heights to align things well.
+				m_tssMissingMorphGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingMorphPos = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingWordPos = m_tssMissingMorphPos;
+				m_PulldownArrowPic = OLEConvert.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
+				m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
+				var wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(rawWordformWs);
+				if (wsObj != null)
+				{
+					m_fRtl = wsObj.RightToLeftScript;
+				}
+			}
+
+			/// <summary>
+			/// We want a width in millipoints (72000/inch). Value we have is in 100/mm. There are 25.4 mm/inch.
+			/// </summary>
+			private static int ConvertPictureWidthToMillipoints(IPicture picture)
+			{
+				return picture.Width * 72000 / 2540;
+			}
+
+			#region Disposable stuff
+
+			/// <summary />
+			~SandboxVc()
+			{
+				Dispose(false);
+			}
+
+			/// <summary />
+			private bool IsDisposed { get; set; }
+
+			/// <summary />
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary />
+			private void Dispose(bool fDisposing)
+			{
+				Debug.WriteLineIf(!fDisposing, "******* Missing Dispose() call for " + GetType() + " *******");
+				if (IsDisposed)
+				{
+					// No need to do it more than once.
+					return;
+				}
+				if (fDisposing)
+				{
+					// Dispose managed resources here.
+					m_PulldownArrowPic?.Dispose();
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				m_sandbox = null; // Client gave it to us, so has to deal with it.
+				m_caches = null; // Client gave it to us, so has to deal with it.
+				m_PulldownArrowPic = null;
+				m_tssMissingEntry = null; // Same as m_tssMissingMorphs, so just null it.
+				m_tssMissingWordPos = null; // Same as m_tssMissingMorphPos, so just null it.
+				m_tssMissingMorphs = null;
+				m_tssEmptyAnalysis = null;
+				m_tssEmptyVern = null;
+				m_tssMissingMorphGloss = null;
+				m_tssMissingMorphPos = null;
+				IsDisposed = true;
+			}
+			#endregion
+
+			/// <summary>
+			/// Get or set the editability for the morpheme form row.
+			/// </summary>
+			/// <remarks>
+			/// 'False' means to not show the icon and to not make the form editable.
+			/// 'True' means to show the icon under certain conditions, and to allow the form to be edited.
+			/// </remarks>
+			internal bool IsMorphemeFormEditable { get; set; } = true;
+
+			/// <summary>
+			/// Color to use for guessing.
+			/// </summary>
+			internal int MultipleOptionBGColor
+			{
+				get
+				{
+					return multipleAnalysisColor;
+				}
+				set
+				{
+					if (multipleAnalysisColor == value)
+					{
+						return;
+					}
+					multipleAnalysisColor = value;
+					if (m_sandbox.RootBox != null)
+					{
+						//refresh the m_sandbox so that the background color will change.
+						m_sandbox.Refresh();
+					}
+				}
+			}
+
+			internal int BackColor { get; set; } = (int)CmObjectUi.RGB(235, 235, 220);
+
+			/// <summary>
+			/// Get/set whether the sandbox is RTL
+			/// </summary>
+			internal bool RightToLeft
+			{
+				get
+				{
+					return m_fRtl;
+				}
+			}
+
+			internal bool ShowWordGlossIcon { get; private set; }
+
+			/// <summary>
+			/// Called right before adding a string or opening a flow object, sets its color.
+			/// </summary>
+			private static void SetColor(IVwEnv vwenv, int color)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
+			}
+
+			private void AddPullDownIcon(IVwEnv vwenv, int tag)
+			{
+				if (!m_fIconsForAnalysisChoices)
+				{
+					return;
+				}
+				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, kmpIconMargin);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, -2500);
+				vwenv.AddPicture(m_PulldownArrowPic.Picture, tag, 0, 0);
+			}
+
+			/// <summary>
+			/// Set the indent needed when the icon is missing.
+			/// </summary>
+			private void SetIndentForMissingIcon(IVwEnv vwenv)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, m_dxmpArrowPicWidth + kmpIconMargin);
+			}
+
+			public override void Display(IVwEnv vwenv, int hvo, int frag)
+			{
+				try
+				{
+					switch (frag)
+					{
+						case kfragBundle: // One annotated word bundle, in this case, the whole view.
+							if (hvo == 0)
+							{
+								return;
+							}
+							vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, BackColor);
+							vwenv.OpenDiv();
+							vwenv.OpenParagraph();
+							// Since embedded in a pile with context, we need another layer of pile here,.
+							// It's an overlay sandbox: draw a box around it.
+							vwenv.OpenInnerPile();
+							// Inside that division we need a paragraph which does not have any border
+							// or background. This suppresses the 'infinite width' behavior for the
+							// nested paragraphs that may have grey border.
+							vwenv.OpenParagraph();
+
+							// This makes a little separation between left border and arrows.
+							vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
+							if (m_fRtl)
+							{
+								// This must not be on the outer paragraph or we get infinite width behavior.
+								vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
+							}
+							vwenv.OpenInnerPile();
+							for (var ispec = 0; ispec < m_choices.Count;)
+							{
+								var spec = m_choices[ispec];
+								if (!spec.WordLevel)
+								{
+									break;
+								}
+								if (spec.MorphemeLevel)
+								{
+									DisplayMorphBundles(vwenv, hvo);
+									ispec = m_choices.LastMorphemeIndex + 1;
+									continue;
+								}
+								switch (spec.Flid)
+								{
+									case InterlinLineChoices.kflidWord:
+										DisplayWordform(vwenv, GetActualWs(hvo, spec.StringFlid, spec.WritingSystem), ispec);
+										break;
+									case InterlinLineChoices.kflidWordGloss:
+										DisplayWordGloss(vwenv, spec.WritingSystem, ispec);
+										break;
+									case InterlinLineChoices.kflidWordPos:
+										DisplayWordPOS(vwenv, hvo, spec.WritingSystem, ispec);
+										break;
+								}
+								ispec++;
+							}
+							vwenv.CloseInnerPile();
+							vwenv.CloseParagraph();
+							vwenv.CloseInnerPile();
+							vwenv.CloseParagraph();
+							vwenv.CloseDiv();
+							break;
+						case kfragFirstMorph: // first morpheme in word
+						case kfragMorph: // The bundle of 4 lines representing a morpheme.
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
+							vwenv.OpenInnerPile();
+							for (var ispec = m_choices.FirstMorphemeIndex; ispec <= m_choices.LastMorphemeIndex; ispec++)
+							{
+								var tagLexEntryIcon = 0;
+								if (m_choices.FirstLexEntryIndex == ispec)
+								{
+									tagLexEntryIcon = ktagMorphEntryIcon;
+								}
+								var spec = m_choices[ispec];
+								switch (spec.Flid)
+								{
+									case InterlinLineChoices.kflidMorphemes:
+										DisplayMorphForm(vwenv, frag, ispec);
+										break;
+									case InterlinLineChoices.kflidLexEntries:
+										AddOptionalNamedObj(vwenv, hvo, ktagSbMorphEntry, ktagMissingEntry, kfragMissingEntry, tagLexEntryIcon, ispec);
+										break;
+									case InterlinLineChoices.kflidLexGloss:
+										AddOptionalNamedObj(vwenv, hvo, ktagSbMorphGloss, ktagMissingMorphGloss, kfragMissingMorphGloss, tagLexEntryIcon, ispec);
+										break;
+									case InterlinLineChoices.kflidLexPos:
+										AddOptionalNamedObj(vwenv, hvo, ktagSbMorphPos, ktagMissingMorphPos, kfragMissingMorphPos, tagLexEntryIcon, ispec);
+										break;
+								}
+							}
+							vwenv.CloseInnerPile();
+							break;
+						default:
+							if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.Count)
+							{
+								vwenv.AddStringAltMember(ktagSbNamedObjName, GetActualWs(hvo, ktagSbNamedObjName, m_choices[frag - kfragNamedObjectNameChoices].WritingSystem), this);
+							}
+							else
+							{
+								throw new Exception("Bad fragment ID in SandboxVc.Display");
+							}
+							break;
+					}
+				}
+				catch
+				{
+					Debug.Assert(false, "Exception thrown in the display of the SandboxVc (About to be eaten)");
+				}
+			}
+
+			private int GetActualWs(int hvo, int tag, int ws)
+			{
+				switch (ws)
+				{
+					case WritingSystemServices.kwsVernInParagraph:
+						ws = m_sandbox.RawWordformWs;
+						break;
+					case WritingSystemServices.kwsFirstAnal:
+						ws = GetBestAlt(hvo, tag, m_caches.MainCache.DefaultAnalWs, m_caches.MainCache.DefaultAnalWs,
+						m_caches.MainCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToArray());
+						break;
+					case WritingSystemServices.kwsFirstVern:
+						// for best vernacular in Sandbox, we prefer to use the ws of the wordform
+						// over the standard 'default vernacular'
+						var wsPreferred = m_sandbox.RawWordformWs;
+						ws = GetBestAlt(hvo, tag, wsPreferred, m_caches.MainCache.DefaultVernWs, m_caches.MainCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToArray());
+						break;
+					default:
+						if (ws < 0)
+						{
+							throw new ArgumentException($"magic ws {ws} not yet supported.");
+						}
+						break;
+				}
+				return ws;
+			}
+
+			private int GetBestAlt(int hvo, int tag, int wsPreferred, int wsDefault, int[] wsList)
+			{
+				var wsSet = new HashSet<int>();
+				if (wsPreferred != 0)
+				{
+					wsSet.Add(wsPreferred);
+				}
+				wsSet.UnionWith(wsList);
+				var wsActual = 0;
+				foreach (var ws1 in wsSet.ToArray())
+				{
+					var tssTest = m_caches.DataAccess.get_MultiStringAlt(hvo, tag, ws1);
+					if (tssTest != null && tssTest.Length != 0)
+					{
+						wsActual = ws1;
+						break;
+					}
+				}
+				// Enhance JohnT: to be really picky here we should do like the real InterpretWsLabel
+				// and fall back to default UI language, then English.
+				// But we probably aren't even copying those alternatives to the sandbox cache.
+				if (wsActual == 0)
+				{
+					wsActual = wsDefault;
+				}
+				return wsActual;
+			}
+
+			private void DisplayMorphForm(IVwEnv vwenv, int frag, int choiceIndex)
+			{
+				// Allow editing of the morpheme breakdown line.
+				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				// On this line we want an icon only for the first column (and only if it is the first
+				// occurrence of the flid).
+				var fWantIcon = IsMorphemeFormEditable && frag == kfragFirstMorph && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				if (!fWantIcon)
+				{
+					SetIndentForMissingIcon(vwenv);
+				}
+				vwenv.OpenParagraph();
+				var fFirstMorphLine = m_choices.IndexOf(InterlinLineChoices.kflidMorphemes) == choiceIndex;
+				if (fWantIcon) // Review JohnT: should we do the 'edit box' for all first columns?
+				{
+					AddPullDownIcon(vwenv, ktagMorphFormIcon);
+					// Create an edit box that stays visible when the user deletes
+					// the first morpheme (like the WordGloss box).
+					// This is especially useful if the user wants to
+					// delete the entire MorphForm line (cf. LT-1621).
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, kmpIconMargin);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, krgbEditable);
+				}
+				// Per LT-14891, morpheme form is not editable except for the default vernacular.
+				if (IsMorphemeFormEditable && m_choices.IsFirstOccurrenceOfFlid(choiceIndex))
+				{
+					MakeNextFlowObjectEditable(vwenv);
+				}
+				else
+				{
+					MakeNextFlowObjectReadOnly(vwenv);
+				}
+				vwenv.OpenInnerPile();
+				vwenv.OpenParagraph();
+				if (fFirstMorphLine)
+				{
+					vwenv.AddStringProp(ktagSbMorphPrefix, this);
+				}
+				// This is never missing, but may, or may not, be editable.
+				vwenv.AddObjProp(ktagSbMorphForm, this, kfragNamedObjectNameChoices + choiceIndex);
+				if (fFirstMorphLine)
+				{
+					vwenv.AddStringProp(ktagSbMorphPostfix, this);
+				}
+				// close the special edit box we opened for the first morpheme.
+				vwenv.CloseParagraph();
+				vwenv.CloseInnerPile();
+				vwenv.CloseParagraph();
+			}
+
+			private void DisplayWordPOS(IVwEnv vwenv, int hvo, int ws, int choiceIndex)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+				AddOptionalNamedObj(vwenv, hvo, ktagSbWordPos, ktagMissingWordPos, kfragMissingWordPos, ktagWordPosIcon, choiceIndex);
+			}
+
+			private void DisplayWordGloss(IVwEnv vwenv, int ws, int choiceIndex)
+			{
+				// Count how many glosses there are for the current analysis:
+				var cGlosses = 0;
+				// Find a wfi analysis (existing or guess) to determine whether to provide an icon for selecting
+				// multiple word glosses for IhWordGloss.SetupCombo (cf. LT-1428)
+				var wa = m_sandbox.GetWfiAnalysisInUse();
+				if (wa != null)
+				{
+					cGlosses = wa.MeaningsOC.Count;
+				}
+				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				// Icon only if we want icons at all (currently always true) and there is at least one WfiGloss to choose
+				// and this is the first word gloss line.
+				var fWantIcon = m_fIconsForAnalysisChoices && (cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				// If there isn't going to be an icon, add an indent.
+				if (!fWantIcon)
+				{
+					SetIndentForMissingIcon(vwenv);
+				}
+				vwenv.OpenParagraph();
+				if (fWantIcon)
+				{
+					AddPullDownIcon(vwenv, ktagWordGlossIcon);
+					ShowWordGlossIcon = true;
+				}
+				else if (ShowWordGlossIcon && cGlosses == 0)
+				{
+					// reset
+					ShowWordGlossIcon = false;
+				}
+				//if there is more than one gloss set the background color to give visual indication
+				if (cGlosses > 1)
+				{
+					//set directly to the MultipleApproved color rather than the stored one
+					//the state of the two could be different.
+					SetBGColor(vwenv, InterlinVc.MultipleApprovedGuessColor);
+					var count = TsStringUtils.MakeString("" + cGlosses, Cache.DefaultUserWs);
+					//make the number black.
+					SetColor(vwenv, 0);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, kmpIconMargin);
+					vwenv.AddString(count);
+				}
+
+				//Set the margin and padding values
+				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, kmpIconMargin);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
+				SetBGColor(vwenv, krgbEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmNormalCheck);
+				vwenv.OpenInnerPile();
+
+				// Set the appropriate paragraph direction for the writing system.
+				var fWsRtl = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(ws).RightToLeftScript;
+				if (fWsRtl != RightToLeft)
+				{
+					vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, fWsRtl ? (int)FwTextToggleVal.kttvForceOn : (int)FwTextToggleVal.kttvOff);
+				}
+
+				vwenv.AddStringAltMember(ktagSbWordGloss, ws, this);
+				vwenv.CloseInnerPile();
+				vwenv.CloseParagraph();
+			}
+
+			//Use the given IVwEnv and set the background color for the text property in it to the one that is given.
+			//method added to provide clarification
+			private static void SetBGColor(IVwEnv vwenv, int guessColor)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, guessColor);
+			}
+
+			private void DisplayMorphBundles(IVwEnv vwenv, int hvo)
+			{
+				// Don't allow direct editing of the morph bundle lines.
+				MakeNextFlowObjectReadOnly(vwenv);
+				if (vwenv.DataAccess.get_VecSize(hvo, ktagSbWordMorphs) == 0)
+				{
+					SetColor(vwenv, m_choices.LabelRGBFor(m_choices.IndexOf(InterlinLineChoices.kflidMorphemes)));
+					vwenv.AddProp(ktagMissingMorphs, this, kfragMissingMorphs);
+					// Blank lines to fill up the gap; LexEntry line
+					vwenv.AddString(m_tssEmptyVern);
+					vwenv.AddString(m_tssEmptyAnalysis); // LexGloss line
+					vwenv.AddString(m_tssEmptyAnalysis); // LexPos line
+				}
+				else
+				{
+					vwenv.OpenParagraph();
+					vwenv.AddObjVec(ktagSbWordMorphs, this, kfragMorph);
+					vwenv.CloseParagraph();
+				}
+			}
+
+			private void DisplayWordform(IVwEnv vwenv, int ws, int choiceIndex)
+			{
+				// For the wordform line we only want an icon on the first line (which is always wordform).
+				var fWantIcon = m_sandbox.ShowAnalysisCombo && choiceIndex == 0;
+				// This has to be BEFORE we open the paragraph, so the indent applies to the whole
+				// paragraph, and not some string box inside it.
+				if (!fWantIcon)
+				{
+					SetIndentForMissingIcon(vwenv);
+				}
+				vwenv.OpenParagraph();
+				// The actual icon, if present, has to be INSIDE the paragraph.
+				if (fWantIcon)
+				{
+					AddPullDownIcon(vwenv, ktagAnalysisIcon);
+				}
+				//Set the background of the wordform to the 'WordFormBGColor' which is set when ChangeOrCreateSandbox
+				//is called
+				SetBGColor(vwenv, MultipleOptionBGColor);
+				if (ws != m_sandbox.RawWordformWs)
+				{
+					// Any other Ws we can edit.
+					MakeNextFlowObjectEditable(vwenv);
+					vwenv.OpenInnerPile(); // So white background occupies full width
+					vwenv.AddStringAltMember(ktagSbWordForm, ws, this);
+					vwenv.CloseInnerPile();
+				}
+				else
+				{
+					MakeNextFlowObjectReadOnly(vwenv);
+					vwenv.AddStringAltMember(ktagSbWordForm, ws, this);
+				}
+				vwenv.CloseParagraph();
+			}
+
+			private static void MakeNextFlowObjectReadOnly(IVwEnv vwenv)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+			}
+
+			// Allow the next flow object to be edited (and give it a background color that
+			// makes it look editable)
+			private void MakeNextFlowObjectEditable(IVwEnv vwenv)
+			{
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptIsEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, krgbEditable);
+			}
+
+			public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
+			{
+				switch (frag)
+				{
+					case kfragMorph: // The bundle of 4 lines representing a morpheme.
+						var sda = vwenv.DataAccess;
+						var cmorph = sda.get_VecSize(hvo, tag);
+						for (var i = 0; i < cmorph; ++i)
+						{
+							var hvoMorph = sda.get_VecItem(hvo, tag, i);
+							vwenv.AddObj(hvoMorph, this, i == 0 ? kfragFirstMorph : kfragMorph);
+						}
+						break;
+				}
+			}
+
+			public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
+			{
+				switch (frag)
+				{
+					case kfragMissingMorphs:
+						return m_tssMissingMorphs;
+					case kfragMissingEntry:
+						return m_tssMissingEntry;
+					case kfragMissingMorphGloss:
+						return m_tssMissingMorphGloss;
+					case kfragMissingMorphPos:
+						return m_tssMissingMorphPos;
+					case kfragMissingWordPos:
+						return m_tssMissingWordPos;
+					default:
+						throw new Exception("Bad fragment ID in SandboxVc.DisplayVariant");
+				}
+			}
+
+			/// <summary>
+			/// Add to the vwenv a display of property tag of object hvo, which stores an
+			/// SbNamedObj.  If the property is non-null, display the name of the SbNamedObj.
+			/// If not, display the dummyTag 'property' using the dummyFrag.
+			/// </summary>
+			/// <param name="vwenv"></param>
+			/// <param name="hvo"></param>
+			/// <param name="tag"></param>
+			/// <param name="dummyTag"></param>
+			/// <param name="dummyFrag"></param>
+			/// <param name="tagIcon">If non-zero, display a pull-down icon before the item, marked with this tag.</param>
+			/// <param name="ws">which alternative of the name to display</param>
+			/// <param name="choiceIndex">which item in m_choices this comes from. The icon is displayed
+			/// only if it is the first one for its flid.</param>
+			private void AddOptionalNamedObj(IVwEnv vwenv, int hvo, int tag, int dummyTag, int dummyFrag, int tagIcon, int choiceIndex)
+			{
+				var hvoNo = vwenv.DataAccess.get_ObjectProp(hvo, tag);
+				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				var fWantIcon = tagIcon != 0 && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				if (m_fIconsForAnalysisChoices && !fWantIcon)
+				{
+					// This line does not have one, but add some white space to line things up.
+					vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, m_dxmpArrowPicWidth + kmpIconMargin);
+				}
+				vwenv.OpenParagraph();
+				if (fWantIcon)
+				{
+					AddPullDownIcon(vwenv, tagIcon);
+				}
+				// The NoteDependency is needed whether or not hvoNo is set, in case we update
+				// to a sense which has a null MSA.  See LT-4246.
+				vwenv.NoteDependency(new[] { hvo }, new[] { tag }, 1);
+				if (hvoNo == 0)
+				{
+					vwenv.AddProp(dummyTag, this, dummyFrag);
+				}
+				else
+				{
+					vwenv.AddObjProp(tag, this, kfragNamedObjectNameChoices + choiceIndex);
+				}
+				vwenv.CloseParagraph();
+			}
+
+			internal void UpdateLineChoices(InterlinLineChoices choices)
+			{
+				m_choices = choices;
+			}
+		}
 	}
 }

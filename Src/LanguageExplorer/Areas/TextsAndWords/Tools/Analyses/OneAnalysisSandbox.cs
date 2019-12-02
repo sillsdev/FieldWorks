@@ -22,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Create a new one.
 		/// </summary>
-		public OneAnalysisSandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: base(sharedEventHandlers, cache, ss, choices, hvoAnalysis)
+		public OneAnalysisSandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: base(cache, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;
 			InitializeComponent();

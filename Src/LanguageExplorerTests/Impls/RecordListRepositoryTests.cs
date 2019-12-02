@@ -55,7 +55,7 @@ namespace LanguageExplorerTests.Impls
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 	}

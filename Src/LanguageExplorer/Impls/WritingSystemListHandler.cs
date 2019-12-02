@@ -196,6 +196,11 @@ namespace LanguageExplorer.Impls
 				{
 					continue;
 				}
+				if (ReferenceEquals(_formatToolStripComboBox.SelectedItem, item))
+				{
+					// Skip, since it is the same one.
+					continue;
+				}
 				// We are responding to an update from afar, so we don't want to turn around and send off an update to 'afar'.
 				// So, unwire handler during the change.
 				_formatToolStripComboBox.SelectedIndexChanged -= FormatToolStripComboBoxOnSelectedIndexChanged;

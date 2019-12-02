@@ -99,7 +99,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 
@@ -211,7 +211,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 	}

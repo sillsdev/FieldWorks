@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Event for changing properties of a pasted TsString</summary>
 		public event FwPasteFixTssEventHandler PasteFixTssEvent;
 
-		private bool m_fSuppressNextWritingSystemHvoChanged;
+		private int _lastWritingSystemProcessed = int.MinValue;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
 		private bool m_fSettingKeyboards;
@@ -2163,15 +2162,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				rs.PropertyTable.SetProperty(FwUtils.FwUtils.WritingSystemHvo, ws.ToString(), doBroadcastIfChanged: true);
 			}
-			m_fSuppressNextWritingSystemHvoChanged = true;
 		}
+
 		internal void WritingSystemHvoChanged(int writingSystemHvo)
 		{
-			if (m_fSuppressNextWritingSystemHvoChanged)
+			if (_lastWritingSystemProcessed == writingSystemHvo)
 			{
-				m_fSuppressNextWritingSystemHvoChanged = false;
+				// Only do it once.
 				return;
 			}
+			_lastWritingSystemProcessed = writingSystemHvo;
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
@@ -2183,7 +2183,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// modify the data.
 			if ((simpleRootSite != null && !simpleRootSite.WasFocused()) || simpleRootSite?.RootBox?.Selection == null)
 			{
-				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
+				return; //e.g, the dictionary preview pane isn't focused and shouldn't respond.
 			}
 			simpleRootSite.Focus();
 			// will get zero when the selection contains multiple ws's and the ws is

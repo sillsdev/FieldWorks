@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -27,7 +26,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
@@ -38,7 +36,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 		}
 
 		/// <summary>
@@ -49,7 +47,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			try
 			{
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)
@@ -654,7 +652,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a sandbox and sut
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
-			using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
+			using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 			{
 				sandbox.InitializeFlexComponent(_flexComponentParameters);
 				var mockList = new MockComboHandler();
@@ -708,13 +706,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
-			var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, occurrence.Analysis.Hvo);
+			var sandbox = new SandboxBase(Cache, null, lineChoices, occurrence.Analysis.Hvo, true);
 			sandbox.InitializeFlexComponent(_flexComponentParameters);
 			sandbox.MakeRoot();
 			return sandbox;
 		}
 
-		void VerifySelection(SandboxBase sandbox, bool fPicture, int tagText, int tagObj, int morphIndex)
+		private static void VerifySelection(SandboxBase sandbox, bool fPicture, int tagText, int tagObj, int morphIndex)
 		{
 			Assert.That(sandbox.RootBox.Selection, Is.Not.Null);
 			Assert.That(sandbox.MorphIndex, Is.EqualTo(morphIndex));
@@ -812,26 +810,28 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		private IWfiMorphBundle MakeBundleDefault(IWfiAnalysis wa, string form, string gloss, string pos)
 		{
-			var options = new MakeBundleOptions();
-			options.LexEntryForm = form;
-			options.MakeMorph = mff =>
+			var options = new MakeBundleOptions
 			{
-				var slotType = GetSlotType(mff);
-				IMoMorphSynAnalysis msa;
-				var entry = MakeEntry(mff.Replace("-", string.Empty), pos, slotType, out msa);
-				return entry.LexemeFormOA;
+				LexEntryForm = form,
+				MakeMorph = mff =>
+				{
+					var slotType = GetSlotType(mff);
+					IMoMorphSynAnalysis msa;
+					var entry = MakeEntry(mff.Replace("-", string.Empty), pos, slotType, out msa);
+					return entry.LexemeFormOA;
+				},
+				MakeSense = entry =>
+				{
+					var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
+					var sense = MakeSense(entry, gloss, msa);
+					return sense;
+				},
+				MakeMsa = sense => sense.MorphoSyntaxAnalysisRA
 			};
-			options.MakeSense = entry =>
-			{
-				var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
-				var sense = MakeSense(entry, gloss, msa);
-				return sense;
-			};
-			options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 			return MakeBundle(wa, options);
 		}
 
-		private Guid GetSlotType(string form)
+		private static Guid GetSlotType(string form)
 		{
 			var slotType = MoMorphTypeTags.kguidMorphStem;
 			if (form.StartsWith("-"))

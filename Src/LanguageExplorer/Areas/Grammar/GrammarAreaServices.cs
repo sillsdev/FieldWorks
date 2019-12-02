@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Grammar
 			_cache = cache;
 
 			// <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
-			AreaServices.InsertPair(toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert], toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert],
+			UiWidgetServices.InsertPair(toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert], toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert],
 				Command.CmdInsertPhoneme, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhoneme_Clicked, ()=> UiWidgetServices.CanSeeAndDo));
 		}
 

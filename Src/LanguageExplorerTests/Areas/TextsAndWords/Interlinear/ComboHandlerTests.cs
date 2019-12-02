@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -22,7 +21,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	public class ComboHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of LcmTestBase
 
@@ -33,7 +31,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 		}
 
 		/// <summary>
@@ -44,7 +42,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			try
 			{
-				_flexComponentParameters.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -90,7 +89,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
 			using (var sut = new IhMissingEntry(null))
 			{
-				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 				{
 					sandbox.InitializeFlexComponent(_flexComponentParameters);
 					sut.SetSandboxForTesting(sandbox);
@@ -106,7 +105,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				entry.MorphoSyntaxAnalysesOC.Add(msa);
 				sense.MorphoSyntaxAnalysisRA = msa;
 				mb.MsaRA = msa;
-				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 				{
 					sandbox.InitializeFlexComponent(_flexComponentParameters);
 					sut.SetSandboxForTesting(sandbox);

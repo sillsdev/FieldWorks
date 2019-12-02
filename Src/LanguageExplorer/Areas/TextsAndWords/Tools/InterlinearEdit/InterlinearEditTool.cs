@@ -175,6 +175,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
+			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
 
@@ -200,9 +201,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			// m_tabCtrl
 			//
 DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPane
-			this.m_tabCtrl.Controls.Add(this.m_tpRawText);		Baseline	m_rtPane:			RawTextPane
-			this.m_tabCtrl.Controls.Add(this.m_tpGloss);		Gloss		m_panelGloss:		Panel:			m_idcGloss:			InterlinDocForAnalysis
-			this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);	Analyze		m_panelAnalyzeView:	Panel:			m_idcAnalyze:		InterlinDocForAnalysis
+DONE:		this.m_tabCtrl.Controls.Add(this.m_tpRawText);		Baseline	m_rtPane:			RawTextPane
+DONE:		this.m_tabCtrl.Controls.Add(this.m_tpGloss);		Gloss		m_panelGloss:		Panel:			m_idcGloss:			InterlinDocForAnalysis
+DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);	Analyze		m_panelAnalyzeView:	Panel:			m_idcAnalyze:		InterlinDocForAnalysis
 			this.m_tabCtrl.Controls.Add(this.m_tpTagging);		Tagging		m_panelTagging:		Panel:			m_taggingPane:		InterlinTaggingChild
 			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);	Print View	m_panelPrintView:	Panel:			m_printViewPane:	InterlinPrintChild
 			this.m_tabCtrl.Controls.Add(this.m_tpCChart);		Text Chart	m_constChartPane:	InterlinDocChart
@@ -210,6 +211,7 @@ DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPan
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
+				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 				//var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
 				//editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
@@ -279,11 +281,13 @@ DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPan
 
 				if (disposing)
 				{
+					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				_majorFlexComponentParameters = null;
 				_partiallySharedTextsAndWordsToolsMenuHelper = null;
+				_partiallySharedForToolsWideMenuHelper = null;
 				_recordBrowseView = null;
 				_recordList = null;
 

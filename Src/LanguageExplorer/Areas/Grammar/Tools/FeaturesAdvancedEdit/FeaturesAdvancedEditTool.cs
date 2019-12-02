@@ -194,9 +194,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// There are two always visible menus/buttons, and one menu that shows for two of the three classes that can be in the owning property.
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
+				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
 					Command.CmdInsertClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertClosedFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				AreaServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
+				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
 					Command.CmdInsertComplexFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertComplexFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_ClosedFeature_Value, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ClosedFeature_Value_Clicked, () => CanCmdDataTree_Insert_ClosedFeature_Value));
 

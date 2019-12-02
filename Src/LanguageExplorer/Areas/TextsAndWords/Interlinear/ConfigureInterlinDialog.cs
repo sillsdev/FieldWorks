@@ -215,7 +215,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
 		/// <param name="cssPath">The path of the CSS file</param>
-		private void GenerateOpeningHtml(XmlWriter htmlWriter, string cssPath)
+		private static void GenerateOpeningHtml(XmlWriter htmlWriter, string cssPath)
 		{
 			var javascriptFilePaths = GetFilePaths();
 			htmlWriter.WriteRaw("\n<!doctype html>\n");

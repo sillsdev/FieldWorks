@@ -31,7 +31,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[TearDown]
 		public void TearDown()
 		{
-			_flexComponentParameters?.PropertyTable?.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 			m_cache.Dispose();
 			m_cache = null;

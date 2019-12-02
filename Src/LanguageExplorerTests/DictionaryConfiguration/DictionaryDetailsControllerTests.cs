@@ -31,8 +31,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		protected override void FixtureInit()
 		{
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			GenerateStyles();
 
 			_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -41,7 +40,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		public override void FixtureTeardown()
 		{
-			_flexComponentParameters.PropertyTable.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			if (_staticDDController?.View != null && !_staticDDController.View.IsDisposed)
 			{
 				_staticDDController.View.Dispose();

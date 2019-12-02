@@ -30,8 +30,7 @@ namespace LanguageExplorerTests
 		{
 			base.FixtureSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy, false);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 		}
 
@@ -39,7 +38,7 @@ namespace LanguageExplorerTests
 		{
 			try
 			{
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)

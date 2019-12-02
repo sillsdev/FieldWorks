@@ -334,6 +334,7 @@
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ContextMenuName.cs" />
@@ -2937,7 +2938,6 @@
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\GetRealAnalysisMethod.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreaker.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\SymbolicValue.cs" />

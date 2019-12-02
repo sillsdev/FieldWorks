@@ -103,7 +103,7 @@ namespace LanguageExplorerTests
 
 		public override void FixtureTeardown()
 		{
-			_flexComponentParameters.PropertyTable.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 
 			base.FixtureTeardown();
@@ -111,8 +111,7 @@ namespace LanguageExplorerTests
 
 		protected override void FixtureInit()
 		{
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_exampleFactory = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();

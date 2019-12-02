@@ -867,7 +867,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			set
 			{
-				((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence = value;
+				var viewConstructor = (InterlinDocForAnalysisVc)Vc;
+				if (ReferenceEquals(viewConstructor.FocusBoxOccurrence, value))
+				{
+					// Nobody home or same object, so skip the reset and the publish.
+					return;
+				}
+				viewConstructor.FocusBoxOccurrence = value;
 				Publisher.Publish("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
 			}
 		}

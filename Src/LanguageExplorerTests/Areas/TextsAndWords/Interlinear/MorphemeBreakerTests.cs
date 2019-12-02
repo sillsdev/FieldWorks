@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -19,28 +18,20 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class MorphemeBreakerTest : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable _propertyTable;
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
-		private ISharedEventHandlers _sharedEventHandlers;
+		private FlexComponentParameters _flexComponentParameters;
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
-			_propertyTable = flexComponentParameters.PropertyTable;
-			_publisher = flexComponentParameters.Publisher;
-			_subscriber = flexComponentParameters.Subscriber;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 		}
 		public override void TestTearDown()
 		{
 			try
 			{
-				_propertyTable?.Dispose();
-				_propertyTable = null;
-				_publisher = null;
-				_subscriber = null;
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -136,9 +127,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			entry.LexemeFormOA = morph;
 			morph.Form.set_String(Cache.DefaultVernWs, "here");
 			morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
-			using (var testSandbox = new SandboxForTests(_sharedEventHandlers, Cache, InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs)))
+			using (var testSandbox = new SandboxForTests(Cache, InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs)))
 			{
-				testSandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+				testSandbox.InitializeFlexComponent(_flexComponentParameters);
 				testSandbox.RawWordform = TsStringUtils.MakeString("here", Cache.DefaultVernWs);
 				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "here", morph.MorphTypeRA, false));
 				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "notHere", morph.MorphTypeRA, false));

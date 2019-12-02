@@ -39,11 +39,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			throw new NotSupportedException();
 		}
 
-		internal virtual void OnConfigureInterlinear()
-		{
-			throw new NotSupportedException();
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");

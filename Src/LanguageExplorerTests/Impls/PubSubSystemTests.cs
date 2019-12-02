@@ -34,15 +34,15 @@ namespace LanguageExplorerTests.Impls
 		[TearDown]
 		public void TestTeardown()
 		{
-			_flexComponentParameters?.PropertyTable?.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 		}
 
 		/// <summary>
-		/// This tests the code path of: Single pub call throws on next single pub call.
+		/// This tests the code path of: Single pub call does not throw on next single pub call.
 		/// </summary>
 		[Test]
-		public void Ordinary_Rentry_Throws()
+		public void Ordinary_Rentry_Does_Not_Throw()
 		{
 			// Set up.
 			var subscriber = new ReentrantSubscriber_SingleCall
@@ -57,7 +57,7 @@ namespace LanguageExplorerTests.Impls
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.Throws<ApplicationException>(() => Publisher.PublishMessageOne(_flexComponentParameters.Publisher));
+			Assert.DoesNotThrow(() => Publisher.PublishMessageOne(_flexComponentParameters.Publisher));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			SomeRandomMessageSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
@@ -66,7 +66,7 @@ namespace LanguageExplorerTests.Impls
 		/// This tests the code path of: Single publisher handler then calls a multiple publisher.
 		/// </summary>
 		[Test]
-		public void Single_Publisher_Handler_Calls_Multiple_Publisher_on_Rentry_Which_Throws()
+		public void Single_Publisher_Handler_Calls_Multiple_Publisher_on_Rentry_Does_Not_Throw()
 		{
 			// Set up.
 			var subscriber = new ReentrantSubscriber_Single_CallsMultiple
@@ -83,17 +83,17 @@ namespace LanguageExplorerTests.Impls
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.Throws<ApplicationException>(() => _flexComponentParameters.Publisher.Publish("BadBoy", false));
+			Assert.DoesNotThrow(() => _flexComponentParameters.Publisher.Publish("BadBoy", false));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			SomeRandomMessageSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			niceGuyMultipleSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 
 		/// <summary>
-		/// This tests the code path of: Multi pub call throws on next multi pub call.
+		/// This tests the code path of: Multi pub call does not throw on next multi pub call.
 		/// </summary>
 		[Test]
-		public void Multiple_Rentry_Throws()
+		public void Multiple_Rentry_Does_Not_Throw()
 		{
 			// Set up.
 			var subscriber = new ReentrantSubscriber_MultipleCalls
@@ -109,7 +109,7 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsTrue(subscriber.One);
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(int.MinValue, subscriber.Two);
-			Assert.Throws<ApplicationException>(() => Publisher.PublishBothMessages(_flexComponentParameters.Publisher));
+			Assert.DoesNotThrow(() => Publisher.PublishBothMessages(_flexComponentParameters.Publisher));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 		}
 

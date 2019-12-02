@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Filters;
 using LanguageExplorer.TestUtilities;
@@ -37,7 +38,7 @@ namespace LanguageExplorerTests.Areas
 			}
 			finally
 			{
-				flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 	}

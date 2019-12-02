@@ -3728,15 +3728,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowFailingItems.
-        /// </summary>
-        internal static string ShowFailingItems {
-            get {
-                return ResourceManager.GetString("ShowFailingItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Something went wrong the last time this program was run. Click &apos;Yes&apos; to revert to &apos;factory settings&apos;, &apos;No&apos; to see if you can preserve your settings without crashing again..
         /// </summary>
         internal static string SomethingWentWrongLastTime {

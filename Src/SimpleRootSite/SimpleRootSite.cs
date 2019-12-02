@@ -2502,9 +2502,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (Platform.IsMono)
 				{
 					// REVIEW: do we have to compare the process the old and new window belongs to?
-					if (RootBox != null && EditingHelper != null)
+					if (RootBox != null)
 					{
-						EditingHelper.SetKeyboardForSelection(RootBox.Selection);
+						EditingHelper?.SetKeyboardForSelection(RootBox.Selection);
 					}
 				}
 				else
@@ -5048,6 +5048,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void AboutToFollowLink(object newValue)
 		{
+			if (!Focused)
+			{
+				// Not my problem.
+				return;
+			}
 			IsFollowLinkMsgPending = true;
 		}
 
@@ -5056,6 +5061,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		private void WritingSystemHvo_Changed(object newValue)
 		{
+			if (!Focused)
+			{
+				// Not my problem.
+				return;
+			}
 			ReallyHandleWritingSystemHvo_Changed(newValue);
 		}
 

@@ -86,9 +86,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				{
 					Cache.ActionHandlerAccessor.Undo();
 				}
-				_flexComponentParameters?.PropertyTable?.Dispose();
-				m_interlinDoc.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
+				m_interlinDoc.Dispose();
 			}
 			catch (Exception err)
 			{

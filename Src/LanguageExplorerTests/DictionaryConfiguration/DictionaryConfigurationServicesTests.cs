@@ -22,14 +22,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		protected override void FixtureInit()
 		{
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 		}
 
 		public override void FixtureTeardown()
 		{
-			_flexComponentParameters?.PropertyTable?.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 			_propertyTable = null;
 

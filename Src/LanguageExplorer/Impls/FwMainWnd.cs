@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,6 +17,7 @@ using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.Controls.Styles;
@@ -471,7 +472,7 @@ namespace LanguageExplorer.Impls
 		{
 			var separatorCache1 = new StandAloneSeparatorMenuBundle(toolMenuSeparator1,
 				new List<ToolStripMenuItem> { configureToolStripMenuItem },
-				new List<ToolStripMenuItem> { CmdMergeEntry, CmdLexiconLookup, ITexts_AddWordsToLexicon });
+				new List<ToolStripMenuItem> { CmdMergeEntry, CmdLexiconLookup });
 			var separatorCache2 = new SeparatorMenuBundle(toolMenuSeparator2,
 				separatorCache1,
 				new List<ToolStripMenuItem> { ToolsMenu_SpellingMenu, CmdProjectUtilities });
@@ -502,7 +503,6 @@ namespace LanguageExplorer.Impls
 				{ Command.Separator1, toolMenuSeparator1 },
 				{ Command.CmdMergeEntry, CmdMergeEntry },
 				{ Command.CmdLexiconLookup, CmdLexiconLookup },
-				{ Command.ITexts_AddWordsToLexicon, ITexts_AddWordsToLexicon },
 				{ Command.Separator2, toolMenuSeparator2 },
 				{ Command.Spelling, ToolsMenu_SpellingMenu },
 					{ Command.CmdEditSpellingStatus, CmdEditSpellingStatus },
@@ -1240,6 +1240,7 @@ namespace LanguageExplorer.Impls
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
+			DoImageHack();
 			SetupCustomStatusBarPanels();
 			SetupStylesheet();
 			SetupPropertyTable();
@@ -1253,6 +1254,19 @@ namespace LanguageExplorer.Impls
 			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
+			}
+		}
+
+		private void DoImageHack()
+		{
+#if RANDYTODO
+			// TODO: Some images are locked in InterlinearImageHolder, so dig them out, until someone can reproduce them.
+#endif
+			using (var imageHolder = new InterlinearImageHolder())
+			{
+				// Image index: 13
+				CmdApproveAll.Image = imageHolder.buttonImages.Images[13];
+				Toolbar_CmdApproveAllButton.Image =  imageHolder.buttonImages.Images[13];
 			}
 		}
 
@@ -1341,7 +1355,7 @@ namespace LanguageExplorer.Impls
 
 			var viewMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.View];
 			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
-			InsertPair(standardToolBarDictionary, viewMenuDictionary, Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(View_Refresh, () => CanCmdRefresh));
+			UiWidgetServices.InsertPair(standardToolBarDictionary, viewMenuDictionary, Command.CmdRefresh, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(View_Refresh, () => CanCmdRefresh));
 
 			var insertMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Insert];
 			insertMenuDictionary.Add(Command.CmdInsertLinkToFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LinkToFileToolStripMenuItem_Click, () => CanCmdInsertLinkToFile));
@@ -1386,12 +1400,6 @@ namespace LanguageExplorer.Impls
 			viewToolBarDictionary.Add(Command.CmdChangeFilterClearAll, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(toolStripButtonChangeFilterClearAll_Click, () => CanCmdChangeFilterClearAll));
 
 			uiWidgetHelper.AddGlobalHandlers(globalUiWidgetParameterObject);
-		}
-
-		private static void InsertPair(IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> toolBarDictionary, IDictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> menuDictionary, Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> currentTuple)
-		{
-			toolBarDictionary.Add(key, currentTuple);
-			menuDictionary.Add(key, currentTuple);
 		}
 
 		/// <summary>
@@ -1684,9 +1692,9 @@ namespace LanguageExplorer.Impls
 
 			base.Dispose(disposing);
 
-			if (disposing && _recordListRepositoryForTools != null)
+			if (disposing)
 			{
-				_recordListRepositoryForTools.Dispose();
+				_recordListRepositoryForTools?.Dispose();
 			}
 			_recordListRepositoryForTools = null;
 
@@ -1694,6 +1702,7 @@ namespace LanguageExplorer.Impls
 			if (disposing)
 			{
 				_propertyTable?.Dispose();
+				(_publisher as IDisposable)?.Dispose();
 			}
 			_propertyTable = null;
 		}

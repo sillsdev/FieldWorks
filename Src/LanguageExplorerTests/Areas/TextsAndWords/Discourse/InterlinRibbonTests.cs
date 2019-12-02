@@ -54,7 +54,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			try
 			{
 				_ribbon?.Dispose();
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_ribbon = null;
 				_flexComponentParameters = null;
 			}

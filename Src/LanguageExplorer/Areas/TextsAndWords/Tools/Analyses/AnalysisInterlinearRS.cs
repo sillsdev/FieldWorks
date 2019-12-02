@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return;
 			}
-			m_oneAnalSandbox = new OneAnalysisSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, m_wfiAnalysis.Hvo)
+			m_oneAnalSandbox = new OneAnalysisSandbox(m_cache, StyleSheet, m_vc.LineChoices, m_wfiAnalysis.Hvo)
 			{
 				Visible = false
 			};

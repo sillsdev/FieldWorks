@@ -61,7 +61,7 @@ namespace LanguageExplorer.Impls
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// Force Dispose(false) if not already called (i.e. IsDisposed is true)
 		/// </summary>
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.

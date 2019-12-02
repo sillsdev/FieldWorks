@@ -139,6 +139,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_recordList = null;
 			m_pOSPopupTreeManager = null;
+			_sharedEventHandlers = null;
+
 			base.Dispose(disposing);
 		}
 

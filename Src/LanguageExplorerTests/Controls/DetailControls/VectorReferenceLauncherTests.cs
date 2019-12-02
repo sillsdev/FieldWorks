@@ -39,7 +39,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			try
 			{
 				MockLauncher.Dispose();
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 				MockLauncher = null;
 			}

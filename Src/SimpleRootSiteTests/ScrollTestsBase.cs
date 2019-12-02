@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		internal SimpleRootSite m_site;
 		internal IVwSelection m_selection;
 		/// <summary />
-		protected FlexComponentParameters _flexComponentParameters;
+		private FlexComponentParameters _flexComponentParameters;
 
 		/// <summary />
 		[SetUp]
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void TearDown()
 		{
 			m_site.Dispose();
-			_flexComponentParameters.PropertyTable.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 		}
 

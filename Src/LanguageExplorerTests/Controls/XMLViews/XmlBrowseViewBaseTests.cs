@@ -40,7 +40,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			try
 			{
 				m_view.m_bv.Dispose();
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)

@@ -44,7 +44,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			try
 			{
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)

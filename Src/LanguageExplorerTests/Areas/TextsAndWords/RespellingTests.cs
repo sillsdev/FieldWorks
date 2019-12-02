@@ -75,7 +75,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					_flexComponentParameters.PropertyTable.RemoveProperty("InterestingTexts");
 				}
 				_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.cache);
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)

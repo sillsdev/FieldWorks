@@ -106,6 +106,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private void SetupPubSubAndPropertyTable()
 		{
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 		}
 
@@ -122,7 +123,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 					m_parent.Dispose();
 				}
 				_dummyWindow.Dispose();
-				_flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 
 				_dummyWindow = null;
 				_flexComponentParameters = null;
@@ -267,7 +268,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_entry.SensesOS.Add(sense2);
 			Cache.MainCacheAccessor.SetString(sense2.Hvo, LexSenseTags.kflidScientificName, TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
-			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
@@ -295,7 +295,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOS.Add(etymology);
 
-			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
@@ -318,7 +317,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("source language", Cache.DefaultAnalWs);
 			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
-			_flexComponentParameters.PropertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
 			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);

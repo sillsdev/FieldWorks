@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			insertToolBarButtonsForUserControl.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditFindMenu_Click, () => CanCmdFindAndReplaceText));
 			var toolsMenuForUserControl = userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.Tools];
 			toolsMenuForUserControl.Add(Command.CmdConfigureInterlinear, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureInterlinear_Clicked, ()=> CanConfigureInterlinear));
-			AreaServices.InsertPair(insertToolBarButtonsForUserControl, toolsMenuForUserControl, Command.CmdLexiconLookup,
+			UiWidgetServices.InsertPair(insertToolBarButtonsForUserControl, toolsMenuForUserControl, Command.CmdLexiconLookup,
 				new Tuple<EventHandler, Func<Tuple<bool, bool>>>(LexiconLookup_Clicked, ()=> CanCmdLexiconLookup));
 		}
 
@@ -1199,13 +1199,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void ConfigureInterlinear_Clicked(object sender, EventArgs e)
 		{
-			if (CurrentInterlinearTabControl is InterlinDocRootSiteBase)
+			if (CurrentInterlinearTabControl is IInterlinearConfigurator)
 			{
-				((InterlinDocRootSiteBase)CurrentInterlinearTabControl).OnConfigureInterlinear();
-			}
-			else if (CurrentInterlinearTabControl is InterlinDocChart)
-			{
-				((InterlinDocChart)CurrentInterlinearTabControl).OnConfigureInterlinear();
+				((IInterlinearConfigurator)CurrentInterlinearTabControl).ConfigureInterlinear();
 			}
 		}
 

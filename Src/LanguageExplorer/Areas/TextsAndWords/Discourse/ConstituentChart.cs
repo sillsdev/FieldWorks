@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IFlexComponent, IStyleSheet
+	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IFlexComponent, IStyleSheet, IInterlinearConfigurator
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
@@ -175,7 +175,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results.
 		/// </summary>
-		internal override void OnConfigureInterlinear()
+		void IInterlinearConfigurator.ConfigureInterlinear()
 		{
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;

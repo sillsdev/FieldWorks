@@ -165,7 +165,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
-				AreaServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit],
+				UiWidgetServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit],
 					Command.CmdGoToWfiWordform, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToWfiWordform_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				_jumpMenus = new List<ToolStripMenuItem>(2);

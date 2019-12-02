@@ -56,8 +56,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.FixtureSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
 			_lcmStyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			_owningTable = new StyleInfoTable("AbbySomebody", _writingSystemManager);
@@ -69,7 +68,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				_owningTable.Clear();
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 				_lcmStyleSheet = null;
 				_writingSystemManager = null;

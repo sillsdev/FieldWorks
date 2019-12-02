@@ -31,7 +31,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			}
 			finally
 			{
-				flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			}
 			finally
 			{
-				flexComponentParameters?.PropertyTable?.Dispose();
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 

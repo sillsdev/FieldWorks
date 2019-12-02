@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using LanguageExplorer.Impls;
@@ -22,7 +23,7 @@ namespace LanguageExplorer.TestUtilities
 			return new FlexComponentParameters(new PropertyTable(publisher), publisher, subscriber);
 		}
 
-		internal static FlexComponentParameters SetupEverything(LcmCache cache, out ISharedEventHandlers sharedEventHandlers, bool includeStylesheet = true)
+		internal static FlexComponentParameters SetupEverything(LcmCache cache, bool includeStylesheet = true)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
@@ -48,8 +49,17 @@ namespace LanguageExplorer.TestUtilities
 				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 				flexComponentParameters.PropertyTable.SetProperty(FwUtils.FlexStyleSheet, styleSheet);
 			}
-			sharedEventHandlers = new SharedEventHandlers();
 			return flexComponentParameters;
+		}
+
+		public static void DisposeTrash(FlexComponentParameters flexComponentParameters)
+		{
+			if (flexComponentParameters == null)
+			{
+				return;
+			}
+			flexComponentParameters.PropertyTable.Dispose();
+			((IDisposable)flexComponentParameters.Publisher).Dispose();
 		}
 	}
 }

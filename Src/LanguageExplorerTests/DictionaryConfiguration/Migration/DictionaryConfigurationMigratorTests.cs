@@ -43,8 +43,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			base.TestSetup();
 
-			ISharedEventHandlers dummy;
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtils.ksFlexAppName, Cache.ProjectId.Path);
 		}
@@ -54,7 +53,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			try
 			{
 				RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.ProjectFolder);
-				_flexComponentParameters.PropertyTable.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}
 			catch (Exception err)

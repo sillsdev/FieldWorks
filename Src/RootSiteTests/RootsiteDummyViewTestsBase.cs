@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			m_basicView.Dispose();
 			m_basicView = null;
-			_flexComponentParameters?.PropertyTable?.Dispose();
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 
 			base.TestTearDown();
