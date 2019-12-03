@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -202,9 +202,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private string CreateLocalizedResXFor(string projectFolder, string projectName,
 			string fileNameNoExt, string locale, string localizedText)
 		{
-			// REVIEW (Hasso) 2019.11: "SIL.Subnamespace" should be rootier (expected: SIL.FieldWorks; actual: SIL.Project)
-			return CreateResX(projectFolder.Replace(m_srcFolder, m_l10nFolder),
-				$"SIL.{projectName}.{fileNameNoExt}.{locale}.resx", localizedText);
+			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx", localizedText);
 		}
 
 		private static string CreateResX(string folder, string fileName, string textValue)
@@ -519,6 +517,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void EscapedArgs_OK()
+		{
+			SimpleSetupWithResX(LocaleGe, "first format call replaces {0}; second replaces {{0}}.", "Erst {0}; danach {{0}}");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
+		}
+
+		[Test]
 		public void ErrorsReportedInStringsXml()
 		{
 			SimpleSetupFDO(LocaleGe, localizedStringsXml: "test {o}");
@@ -534,7 +542,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void ErrorsReportedInProjStringsResX()
 		{
 			SimpleSetupFDO(LocaleGe, localizedProjStrings: "test {o}");
-			var badResXFilePath = Path.Combine(m_l10nFolder, "FDO", $"SIL.FDO.FDO-strings.{LocaleGe}.resx");
+			var badResXFilePath = Path.Combine(m_l10nFolder, "Src", "FDO", $"FDO-strings.{LocaleGe}.resx");
 
 			var result = m_sut.Execute();
 

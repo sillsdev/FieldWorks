@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -195,11 +195,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					MistypedSubMarker1InFile0 + "using a letter in place of digit 0 or 1") ||
 				CheckForError(filename, localizedText, new Regex("[{}][0-9]{1-2}{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
 				CheckForError(filename, localizedText, new Regex("}[0-9]{1-2}[{}]"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("{[^}]*{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("}[^{]*}"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("{[^}]+{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
+				CheckForError(filename, localizedText, new Regex("}[^{]+}"), MistypedSubMarker1InFile0 + "with braces messed up") ||
 				CheckForError(filename, localizedText, new Regex("^[^{]*[0-9]}"), MistypedSubMarker1InFile0 + "with a missing opening brace") ||
 				CheckForError(filename, localizedText, new Regex("{[0-9][^}]*$"), MistypedSubMarker1InFile0 + "with a missing closing brace");
-			//// TODO (Hasso) 2019.12: if (!CheckMsgidAndMsgstr(englishText, localizedText)) return true;
+			// TODO (Hasso) 2019.12: if (!CheckMsgidAndMsgstr(englishText, localizedText)) return true;
 		}
 
 		/// <returns><c>true</c> if the given string matches the pattern (has errors)</returns>

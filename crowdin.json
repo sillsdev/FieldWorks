@@ -1,0 +1,15 @@
+{
+  "project_identifier": "fieldworks",
+  "api_key_env": "CROWDIN_API_KEY",
+  "base_path": ".",
+  "files": [
+    {
+      "source": "/DistFiles/Language Explorer/Configuration/strings-en.xml",
+      "translation": "/%locale%/strings-%locale%.xml"
+    },
+    {
+      "source": "Src/**/*.resx",
+      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%"
+    }
+  ]
+}

@@ -98,8 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FwBuildTasksTests\NormalizeLocalesTests.cs" />
     <Compile Include="FwBuildTasksTests\WxsToWxiTests.cs" />
     <Compile Include="LogMetadata.cs" />
+    <Compile Include="NormalizeLocales.cs" />
     <Compile Include="WxsToWxi.cs" />
     <Compile Include="Clouseau.cs" />
     <Compile Include="CodeReader\ILReader.cs" />

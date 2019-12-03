@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			foreach (var resxFile in resourceInfo.ResXFiles)
 			{
 				var localizedResxPath = GetLocalizedResxPath(resourceInfo, resxFile);
-				var localizedResxSourcePath = GetLocalizedResxSourcePath(resourceInfo, resxFile);
+				var localizedResxSourcePath = GetLocalizedResxSourcePath(resxFile);
 				Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
 				if (File.Exists(localizedResxSourcePath))
 				{
@@ -138,19 +138,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return Path.Combine(outputFolder, fileName);
 		}
 
-		private string GetLocalizedResxSourcePath(ResourceInfo resourceInfo, string resxPath)
+		private string GetLocalizedResxSourcePath(string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
-			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.SrcFolder.Length + 1));
+			var rootFolder = Path.GetDirectoryName(Options.SrcFolder); // TODO (Hasso) 2020.01: access RootDir dir-ectly?
+			// ReSharper disable once PossibleNullReferenceException
+			var partialDir = Path.GetDirectoryName(resxPath.Substring(rootFolder.Length + 1));
 			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
-			// This is the relative path from the project folder to the resx file folder.
-			// It needs to go into the file name if not empty, but with a dot instead of folder separator.
-			var projectPartialDir = resourceInfo.ProjectFolder.Substring(Options.SrcFolder.Length + 1);
-			var subFolder = "";
-			if (partialDir.Length > projectPartialDir.Length)
-				subFolder = Path.GetFileName(partialDir) + ".";
-			var fileName = $"{resourceInfo.RootNameSpace}.{subFolder}{resxFileName}.{Options.Locale}.resx";
-			// TODO (Hasso) 2019.11: var fileName = $"{resxFileName}.{Options.Locale}.resx";
+			var fileName = $"{resxFileName}.{Options.Locale}.resx";
 			return Path.Combine(sourceFolder, fileName);
 		}
 
@@ -158,7 +153,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private bool CheckResXForErrors(string resxPath)
 		{
 			var resx = XDocument.Load(resxPath);
-			// ReSharper disable once AssignNullToNotNullAttribute -- There will always be a Root
 			// ReSharper disable PossibleNullReferenceException -- R# doesn't recognize that x.Attribute("name") *is* checked for null
 			// Select from the root the elements with localizable strings
 			// (resx data elements that are translatable strings have no type attribute,

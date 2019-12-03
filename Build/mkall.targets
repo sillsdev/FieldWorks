@@ -247,7 +247,7 @@
 	</ItemGroup>
 
 	<Target Name="CleanDownloads">
-		<ForceDelete Files="$(fwrt)/Downloads/" />
+		<ForceDelete Files="$(DownloadsDir)" />
 	</Target>
 
 	<Target Name="Clean" DependsOnTargets="CleanAll">

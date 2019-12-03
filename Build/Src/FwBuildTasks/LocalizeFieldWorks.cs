@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -76,14 +76,11 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		internal string L10nFileDirectory => Path.Combine(RootDirectory, L10nFileRelative);
 
-		internal const string L10nDirSuffix = "-l10n";
-
 		internal const string DistFilesFolderName = "DistFiles";
 		internal const string LExFolderName = "Language Explorer";
 		internal const string ConfigFolderName = "Configuration";
 		internal const string OutputFolderName = "Output";
 		internal const string SrcFolderName = "Src";
-		internal const string BldFolderName = "Build";
 
 		internal static readonly string AssemblyInfoName = "CommonAssemblyInfo.cs";
 
@@ -94,8 +91,6 @@ namespace SIL.FieldWorks.Build.Tasks
 		internal string OutputFolder => Path.Combine(RootDirectory, OutputFolderName);
 
 		internal string SrcFolder => Path.Combine(RootDirectory, SrcFolderName);
-
-		internal string RealBldFolder => Path.Combine(RealFwRoot, BldFolderName);
 
 		internal bool BuildSource => Build != "BinaryOnly";
 

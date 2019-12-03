@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 
-	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Localize all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;zipLocalizedLists;processLanguages-source"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;zipLocalizedLists;processLanguages-source"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
+
+	<!-- Update localizable files in Crowdin -->
+	<Target Name="uploadUpdatesForTranslation">
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v"/>
+	</Target>
+
+	<!-- Download translations from Crowdin -->
+	<PropertyGroup>
+		<L10nsDirectory>$(fwrt)/Localizations/l10ns</L10nsDirectory>
+	</PropertyGroup>
+	<Target Name="downloadTranslatedFiles">
+		<!-- TODO (Hasso) 2020.01: retry failed downloads? -->
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(DownloadsDir)/Crowdin.zip"/>
+		<ForceDelete Files="$(L10nsDirectory)"/>
+		<Unzip ZipFilename="$(DownloadsDir)/Crowdin.zip" ToDir="$(L10nsDirectory)"/>
+		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
+	</Target>
 
 	<!-- Zip LocalizedList-*.xml files from Localizations to DistFiles/Templates -->
 	<ItemGroup>
@@ -17,11 +35,14 @@
 		<Zip Source="@(LocalizedListFiles)" Destination="$(fwrt)/DistFiles/Templates" />
 	</Target>
 
-	<!-- Main target for processing all .po files -->
+	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
 	<Target Name="processLanguages-source">
 		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)" Build="SourceOnly"/>
 	</Target>
+
+	<!-- Build localized dll's -->
 	<Target Name="processLanguages-binaries">
+		<!-- REVIEW (Hasso) 2020.01: what does this copy? -->
 		<ItemGroup>
 			<LocalizationFiles Include="$(fwrt)/Localizations/Output/**/*.*" Condition="Exists('$(fwrt)/Localizations/Output')"/>
 		</ItemGroup>
