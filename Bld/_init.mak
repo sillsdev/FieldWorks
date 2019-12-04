@@ -230,8 +230,6 @@ LINK_OPTS=$(LINK_OPTS) /debug /pdb:"$*.pdb"
 
 LIBRARY_SUFFIX=d
 
-CL_OPTS=$(CL_OPTS) /Gm
-
 DEFS=$(DEFS) /DDEBUG=1 /D_DEBUG=1
 
 !IF "$(BUILD_PRODUCT)"!="DebugProcs"
