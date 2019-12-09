@@ -135,7 +135,13 @@ namespace SIL.FieldWorks
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
 
+			var pathName = Path.Combine(DirectoryOfThisAssembly, "lib",
+				Environment.Is64BitProcess ? "x64" : "x86");
+			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
+			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
+			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(54);
+
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
@@ -3367,6 +3373,17 @@ namespace SIL.FieldWorks
 			s_threadHelper = null;
 
 			FwRegistrySettings.Release();
+		}
+
+		private static string DirectoryOfThisAssembly
+		{
+			get
+			{
+				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uri = new UriBuilder(codeBase);
+				var path = Uri.UnescapeDataString(uri.Path);
+				return Path.GetDirectoryName(path);
+			}
 		}
 
 #if DEBUG
