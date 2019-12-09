@@ -65,6 +65,7 @@ then
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
+	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
 	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
 	FW_ROOT="${BASE}/DistFiles"
@@ -72,6 +73,7 @@ else
 	FW_ROOTCODE="${BASE}/DistFiles"
 	ICU_DATA="${BASE}/DistFiles/Icu54"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+	MONO_HELP_VIEWER=${BASE}/Lib/linux/launch-xchm
 fi
 
 if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
@@ -103,6 +105,7 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
+	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_RUNTIME MONO_DEBUG MONO_ENV_OPTIONS \

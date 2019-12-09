@@ -1,0 +1,10 @@
+#!/bin/bash
+# Launch xchm after translating from chmsee style arguments:
+#     chmsee help_file.chm::/sub/page.html
+# to xchm compatible arguments:
+#     xchm file:help_file.chm#xchm:/sub/page.html
+
+CHMPATH="$(awk -F:: '{print $1}' <<< ${1})"
+PAGEPATH="$(awk -F:: '{print $2}' <<< ${1})"
+
+xchm "file:${CHMPATH}#xchm:${PAGEPATH}"
