@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -102,7 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Append a Ws label if there are more than one Ws.
 					if (wsids.Count > 1)
 					{
-						tsb.ReplaceTsString(tsb.Length, tsb.Length, WsListManager.WsLabel(m_caches.MainCache, ws));
+						tsb.ReplaceTsString(tsb.Length, tsb.Length, m_caches.MainCache.ServiceLocator.WritingSystemManager.WsLabel(ws, m_caches.MainCache.DefaultUserWs));
 						tsb.Replace(tsb.Length, tsb.Length, " ", null);
 					}
 					var oldLen = tsb.Length;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
@@ -26,12 +28,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
 	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
 	/// object) and one or two post-nuclear ones.
-	///
-	/// Currently the constituent chart is displayed as a tab in the interlinear window. It is created
-	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
-	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IFlexComponent, IStyleSheet, IInterlinearConfigurator
+	public partial class ConstituentChart : UserControl, IInterlinConfigurable, ISetupLineChoices, IHandleBookmark, IFlexComponent, IStyleSheet, IInterlinearConfigurator
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
@@ -66,12 +64,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
+		private UiWidgetController _uiWidgetController;
 		private bool _interlineMasterWantsExportDiscourseChartMenu;
+		private InterlinVc Vc { get; }
 
 		#endregion
 
 		/// <summary />
-		internal ConstituentChart(LcmCache cache, ISharedEventHandlers sharedEventHandlers, ConstituentChartLogic logic = null)
+		internal ConstituentChart(LcmCache cache, ISharedEventHandlers sharedEventHandlers, UiWidgetController uiWidgetController = null, ConstituentChartLogic logic = null)
 		{
 			if (logic == null)
 			{
@@ -79,6 +79,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				logic = new ConstituentChartLogic(cache);
 			}
 			_sharedEventHandlers = sharedEventHandlers;
+			// Tests don't have uiWidgetController, so it will be null
+			_uiWidgetController = uiWidgetController;
 			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveLeft_Clicked, () => CanRepeatLastMoveLeft));
 			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveRight_Clicked, () => CanRepeatLastMoveRight));
 			Cache = cache;
@@ -88,8 +90,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
 		}
-
-		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
 		internal bool InterlineMasterWantsExportDiscourseChartDiscourseChartMenu
 		{
@@ -102,12 +102,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					// Add handler stuff.
 					var userController = new UserControlUiWidgetParameterObject(this);
 					userController.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExportDiscourseChart, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportDiscourseChart_Click, () => CanShowExportDiscourseChartMenu));
-					MyMajorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
+					var dataMenuDictionary = userController.MenuItemsForUserControl[MainMenu.Data];
+					dataMenuDictionary.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveLeft_Clicked, () => CanRepeatLastMoveLeft));
+					dataMenuDictionary.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveRight_Clicked, () => CanRepeatLastMoveRight));
+					_uiWidgetController.AddHandlers(userController);
 				}
 				else
 				{
 					// remove handler stuff.
-					MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(this);
+					_uiWidgetController.RemoveUserControlHandlers(this);
 				}
 			}
 		}
@@ -122,6 +125,214 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				dlg.ShowDialog(this);
 			}
 		}
+
+		#region Implementation of all interfaces
+
+		#region Implementation of IInterlinearTabControl
+		public LcmCache Cache { get; set; }
+		#endregion
+
+		#region Implementation of IInterlinConfigurable (PropertyTable here also implements IPropertyTableProvider)
+		public IPropertyTable PropertyTable { get; set; }
+		public IVwRootBox Rootb { get; set; }
+		#endregion
+
+		#region Implementation of IChangeRootObject
+		/// <summary>
+		/// Set the root object.
+		/// </summary>
+		public void SetRoot(int hvo)
+		{
+			var oldTemplateHvo = 0;
+			if (m_template != null)
+			{
+				oldTemplateHvo = m_template.Hvo;
+			}
+			// does it already have a chart? If not make one.
+			m_chart = null;
+			m_hvoRoot = hvo;
+			if (m_hvoRoot == 0)
+			{
+				RootStText = null;
+			}
+			else
+			{
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			}
+			if (m_hvoRoot > 0)
+			{
+				DetectAndReportTemplateProblem();
+				// Make sure text is parsed!
+				if (RootStText.HasParagraphNeedingParse())
+				{
+					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => RootStText.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false));
+				}
+				// We need to make or set the chart before calling NextUnusedInput.
+				FindAndCleanUpMyChart(m_hvoRoot);
+				// Sets m_chart if it finds one for hvoStText
+				if (m_chart == null)
+				{
+					CreateChartInNonUndoableUOW();
+				}
+				m_logic.Chart = m_chart;
+				m_ribbon.CacheRibbonItems(m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList());
+				// Don't need PropChanged here, CacheRibbonItems handles it.
+				if (m_logic.StTextHvo != 0 && m_hvoRoot != m_logic.StTextHvo)
+				{
+					EnableAllContextButtons();
+					EnableAllMoveHereButtons();
+					m_logic.ResetRibbonLimits();
+					m_logic.CurrHighlightCells = null;
+					// Should reset highlighting (w/PropChanged)
+				}
+				// Tell the ribbon whether it needs to display and select words Right to Left or not
+				m_ribbon.SetRoot(m_hvoRoot);
+				if (m_chart.TemplateRA == null)
+				{
+					// LT-8700: if original template is deleted we might need this
+					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
+				}
+				m_template = m_chart.TemplateRA;
+				m_logic.StTextHvo = m_hvoRoot;
+				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
+			}
+			else
+			{
+				// no text, so no chart
+				m_ribbon.SetRoot(0);
+				m_logic.Chart = null;
+				m_logic.StTextHvo = 0;
+				m_allColumns = new ICmPossibility[0];
+			}
+			if (m_template != null && m_template.Hvo != oldTemplateHvo)
+			{
+				m_fInColWidthChanged = true;
+				try
+				{
+					m_logic.MakeMainHeaderCols(m_headerMainCols);
+					if (m_allColumns == new ICmPossibility[0])
+					{
+						return;
+					}
+					var ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+					m_columnWidths = new int[ccolsWanted];
+					ColumnPositions = new int[ccolsWanted + 1];
+					// one extra for after the last column
+					if (!RestoreColumnWidths())
+					{
+						SetDefaultColumnWidths();
+					}
+				}
+				finally
+				{
+					m_fInColWidthChanged = false;
+				}
+			}
+
+			// If necessary adjust number of buttons
+			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
+			{
+				SetupMoveHereButtonsToMatchTemplate();
+			}
+			SetHeaderColAndButtonWidths();
+			BuildTemplatePanel();
+			if (m_chart != null)
+			{
+				Body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+				GetAndScrollToBookmark();
+			}
+			else
+			{
+				Body.SetRoot(0, null, false);
+			}
+		}
+		#endregion
+
+		#region Implementation of ISetupLineChoices
+		public bool ForEditing { get; set; }
+
+		/// <summary>
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
+		/// </summary>
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
+		{
+			ConfigPropName = lineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
+			{
+				if (ForEditing)
+				{
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
+				}
+			}
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+		#endregion
+
+		#region Implementation of IHandleBookmark
+		/// <summary>
+		/// This public version enables call by reflection from InterlinMaster of the internal CCBody
+		/// method that selects (and scrolls to) the bookmarked location in the constituent chart.
+		/// </summary>
+		public void SelectBookmark(IStTextBookmark bookmark)
+		{
+			Body.SelectAndScrollToBookmark(bookmark as InterAreaBookmark);
+		}
+		#endregion
+
+		#region Implementation of IStyleSheet
+
+		/// <summary>
+		/// Set/get the style sheet.
+		/// </summary>
+		public IVwStylesheet StyleSheet
+		{
+			get { return Body.StyleSheet; }
+			set
+			{
+				Body.StyleSheet = value;
+				var oldStyles = m_ribbon.StyleSheet;
+				m_ribbon.StyleSheet = value;
+				if (oldStyles != value)
+				{
+					m_ribbon.SelectFirstOccurence();
+				}
+				// otherwise, selection disappears.
+			}
+		}
+		#endregion
+
+		#region Implementation of IInterlinearConfigurator
+		/// <summary>
+		///  Launch the Configure interlinear dialog and deal with the results.
+		/// </summary>
+		void IInterlinearConfigurator.ConfigureInterlinear()
+		{
+			LineChoices = GetLineChoices();
+			Vc.LineChoices = LineChoices;
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					UpdateForNewLineChoices(dlg.Choices);
+				}
+			}
+		}
+		#endregion
 
 		#region Implementation of IPublisherProvider
 
@@ -167,32 +378,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
+		#endregion
+
 		/// <summary>
 		/// This is for setting Vc.LineChoices even before we have a valid vc.
 		/// </summary>
-		protected InterlinLineChoices LineChoices { get; set; }
-
-		/// <summary>
-		///  Launch the Configure interlinear dialog and deal with the results.
-		/// </summary>
-		void IInterlinearConfigurator.ConfigureInterlinear()
-		{
-			LineChoices = GetLineChoices();
-			Vc.LineChoices = LineChoices;
-			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
-			{
-				if (dlg.ShowDialog(this) == DialogResult.OK)
-				{
-					UpdateForNewLineChoices(dlg.Choices);
-				}
-			}
-		}
+		private InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// Persist the new line choices and
 		/// Reconstruct the document based on the given newChoices for interlinear lines.
 		/// </summary>
-		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
+		private void UpdateForNewLineChoices(InterlinLineChoices newChoices)
 		{
 			LineChoices = newChoices;
 			m_ribbon.Vc.LineChoices = newChoices;
@@ -201,7 +398,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			PersistAndDisplayChangedLineChoices();
 		}
 
-		internal void PersistAndDisplayChangedLineChoices()
+		private void PersistAndDisplayChangedLineChoices()
 		{
 			PropertyTable.SetProperty(ConfigPropName, m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty(ConfigPropName, Body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
@@ -657,115 +854,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			SetRoot(m_hvoRoot);
 		}
 
-		/// <summary>
-		/// Set the root object.
-		/// </summary>
-		public override void SetRoot(int hvo)
-		{
-			var oldTemplateHvo = 0;
-			if (m_template != null)
-			{
-				oldTemplateHvo = m_template.Hvo;
-			}
-			// does it already have a chart? If not make one.
-			m_chart = null;
-			m_hvoRoot = hvo;
-			if (m_hvoRoot == 0)
-			{
-				RootStText = null;
-			}
-			else
-			{
-				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-			}
-			if (m_hvoRoot > 0)
-			{
-				DetectAndReportTemplateProblem();
-				// Make sure text is parsed!
-				if (RootStText.HasParagraphNeedingParse())
-				{
-					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => RootStText.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(false));
-				}
-				// We need to make or set the chart before calling NextUnusedInput.
-				FindAndCleanUpMyChart(m_hvoRoot);
-				// Sets m_chart if it finds one for hvoStText
-				if (m_chart == null)
-				{
-					CreateChartInNonUndoableUOW();
-				}
-				m_logic.Chart = m_chart;
-				m_ribbon.CacheRibbonItems(m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList());
-				// Don't need PropChanged here, CacheRibbonItems handles it.
-				if (m_logic.StTextHvo != 0 && m_hvoRoot != m_logic.StTextHvo)
-				{
-					EnableAllContextButtons();
-					EnableAllMoveHereButtons();
-					m_logic.ResetRibbonLimits();
-					m_logic.CurrHighlightCells = null;
-					// Should reset highlighting (w/PropChanged)
-				}
-				// Tell the ribbon whether it needs to display and select words Right to Left or not
-				m_ribbon.SetRoot(m_hvoRoot);
-				if (m_chart.TemplateRA == null)
-				{
-					// LT-8700: if original template is deleted we might need this
-					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
-				}
-				m_template = m_chart.TemplateRA;
-				m_logic.StTextHvo = m_hvoRoot;
-				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
-			}
-			else
-			{
-				// no text, so no chart
-				m_ribbon.SetRoot(0);
-				m_logic.Chart = null;
-				m_logic.StTextHvo = 0;
-				m_allColumns = new ICmPossibility[0];
-			}
-			if (m_template != null && m_template.Hvo != oldTemplateHvo)
-			{
-				m_fInColWidthChanged = true;
-				try
-				{
-					m_logic.MakeMainHeaderCols(m_headerMainCols);
-					if (m_allColumns == new ICmPossibility[0])
-					{
-						return;
-					}
-					var ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
-					m_columnWidths = new int[ccolsWanted];
-					ColumnPositions = new int[ccolsWanted + 1];
-					// one extra for after the last column
-					if (!RestoreColumnWidths())
-					{
-						SetDefaultColumnWidths();
-					}
-				}
-				finally
-				{
-					m_fInColWidthChanged = false;
-				}
-			}
-
-			// If necessary adjust number of buttons
-			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
-			{
-				SetupMoveHereButtonsToMatchTemplate();
-			}
-			SetHeaderColAndButtonWidths();
-			BuildTemplatePanel();
-			if (m_chart != null)
-			{
-				Body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-				GetAndScrollToBookmark();
-			}
-			else
-			{
-				Body.SetRoot(0, null, false);
-			}
-		}
-
 		private void BuildTemplatePanel()
 		{
 			if (m_template == null)
@@ -1009,15 +1097,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public void SelectOccurrence(AnalysisOccurrence point)
 		{
 			Body.SelectAndScrollToAnalysisOccurrence(point);
-		}
-
-		/// <summary>
-		/// This public version enables call by reflection from InterlinMaster of the internal CCBody
-		/// method that selects (and scrolls to) the bookmarked location in the constituent chart.
-		/// </summary>
-		public void SelectBookmark(IStTextBookmark bookmark)
-		{
-			Body.SelectAndScrollToBookmark(bookmark as InterAreaBookmark);
 		}
 
 		/// <summary>
@@ -1328,25 +1407,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		public bool NotesColumnOnRight => m_headerMainCols.NotesOnRight;
 
 		/// <summary>
-		/// Set/get the style sheet.
-		/// </summary>
-		public IVwStylesheet StyleSheet
-		{
-			get { return Body.StyleSheet; }
-			set
-			{
-				Body.StyleSheet = value;
-				var oldStyles = m_ribbon.StyleSheet;
-				m_ribbon.StyleSheet = value;
-				if (oldStyles != value)
-				{
-					m_ribbon.SelectFirstOccurence();
-				}
-				// otherwise, selection disappears.
-			}
-		}
-
-		/// <summary>
 		/// For testing.
 		/// </summary>
 		internal ConstChartBody Body { get; private set; }
@@ -1358,37 +1418,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			get;
 			set;
-		}
-
-		/// <summary>
-		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
-		/// </summary>
-		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
-		/// <param name="mode">Should always be Chart for this override</param>
-		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
-		{
-			ConfigPropName = lineConfigPropName;
-			InterlinLineChoices lineChoices;
-			if (!TryRestoreLineChoices(out lineChoices))
-			{
-				if (ForEditing)
-				{
-					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
-					lineChoices.Mode = mode;
-					lineChoices.SetStandardChartState();
-				}
-				else
-				{
-					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
-				}
-			}
-			else if (ForEditing)
-			{
-				// just in case this hasn't been set for restored lines
-				lineChoices.Mode = mode;
-			}
-			LineChoices = lineChoices;
-			return LineChoices;
 		}
 
 		/// <summary>
@@ -1460,6 +1489,125 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			set
 			{
 				PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
+			}
+		}
+
+		/// <summary>
+		/// Discourse export dialog implements a dialog for exporting the discourse chart.
+		/// Considerable refactoring is in order to share more code with InterlinearExportDialog,
+		/// or move common code down to ExportDialog. This has been postponed in the interests
+		/// of being able to release FW 5.2.1 without requiring changes to DLLs other than Discourse.
+		/// </summary>
+		private sealed class DiscourseExportDialog : ExportDialog
+		{
+			private readonly List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
+			private readonly int m_hvoRoot;
+			private readonly IVwViewConstructor m_vc;
+			private readonly int m_wsLineNumber;
+
+			internal DiscourseExportDialog(int hvoRoot, IVwViewConstructor vc, int wsLineNumber)
+			{
+				m_hvoRoot = hvoRoot;
+				m_vc = vc;
+				m_wsLineNumber = wsLineNumber;
+			}
+
+			#region Overrides of ExportDialog
+
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				base.InitializeFlexComponent(flexComponentParameters);
+
+				m_helpTopic = "khtpExportDiscourse";
+				columnHeader1.Text = LanguageExplorerResources.ksFormat;
+				columnHeader2.Text = LanguageExplorerResources.ksExtension;
+				Text = LanguageExplorerResources.ksExportDiscourse;
+			}
+
+			#endregion
+
+			protected override string ConfigurationFilePath => Path.Combine("Language Explorer", "Export Templates", "Discourse");
+
+			// Items in this version are never disabled.
+			protected override bool ItemDisabled(string tag)
+			{
+				return false;
+			}
+
+			/// <summary>
+			/// Override to do nothing since not configuring an FXT export process.
+			/// </summary>
+			protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
+			{
+				m_ddNodes.Add(ddNode);
+				columnHeader1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			}
+
+			// Export the data according to specifications.
+			// Prime candidate for refactoring, almost identical to base class method once we reinstate OO, as we
+			// will want to. Main diffs are using a different class of exporter and a different directory path.
+			protected override void DoExport(string outPath)
+			{
+				var fxtPath = (string)m_exportList.SelectedItems[0].Tag;
+				var ddNode = m_ddNodes[NodeIndex(fxtPath)];
+				var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
+				using (new WaitCursor(this))
+				{
+					try
+					{
+						DiscourseExporter exporter;
+						ExportPhase1(out exporter, outPath);
+						var rootDir = FwDirectoryFinder.CodeDirectory;
+						var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
+						var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Discourse");
+						switch (mode)
+						{
+							case "doNothing":
+								break;
+							case "applySingleTransform":
+								var sTransform = Path.Combine(sTransformPath, transform);
+								exporter.PostProcess(sTransform, outPath, 1);
+								break;
+						}
+					}
+					catch (Exception e)
+					{
+						MessageBox.Show(this, string.Format(LanguageExplorerResources.ksExportErrorMsg, e.Message));
+					}
+				}
+				Close();
+			}
+
+			private int NodeIndex(string tag)
+			{
+				var file = tag.Substring(tag.LastIndexOf('\\') + 1);
+				for (var i = 0; i < m_ddNodes.Count; i++)
+				{
+					var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
+					if (fileN == file)
+					{
+						return i;
+					}
+				}
+				return 0;
+			}
+
+			private void ExportPhase1(out DiscourseExporter exporter, string fileName)
+			{
+				using (var writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8))
+				{
+					writer.WriteStartDocument();
+					writer.WriteStartElement("document");
+					exporter = new DiscourseExporter(m_cache, writer, m_hvoRoot, m_vc, m_wsLineNumber);
+					exporter.ExportDisplay();
+					writer.WriteEndElement();
+					writer.WriteEndDocument();
+					writer.Close();
+				}
 			}
 		}
 	}

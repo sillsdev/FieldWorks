@@ -4,6 +4,7 @@
 
 using System;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -157,7 +158,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 			}
 			var tsb = TsStringUtils.MakeStrBldr();
-			tsb.Replace(0, tsb.Length, label, WsListManager.LanguageCodeTextProps(cache.DefaultUserWs));
+			tsb.Replace(0, tsb.Length, label, FwUtils.LanguageCodeTextProps(cache.DefaultUserWs));
 			m_tssWsLabel = tsb.GetString();
 			return m_tssWsLabel;
 		}

@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// View constructor for InterlinView. Just to get something working, currently
 	/// it is just a literal.
 	/// </summary>
-	public class InterlinVc : FwBaseVc, IDisposable
+	public class InterlinVc : FwBaseVc
 	{
 		#region Constants and other similar ints.
 
@@ -155,7 +155,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tssMissingGlossPrepend = TsStringUtils.MakeString("", m_wsAnalysis);
 			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
 			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
-			ListManager = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MsaVc(m_cache);
@@ -201,57 +200,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected internal IVwStylesheet StyleSheet { get; set; }
 
-		#region Disposable stuff
-		/// <summary />
-		~InterlinVc()
-		{
-			Dispose(false);
-		}
-
-		/// <summary />
-		private bool IsDisposed { get; set; }
-
-		/// <inheritdoc />
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary />
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
-			if (IsDisposed)
-			{
-				// No need to do it more than once.
-				return;
-			}
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				ListManager?.Dispose();
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_msaVc = null;
-			m_cache = null;
-			m_tssMissingVernacular = null;
-			m_tssMissingAnalysis = null;
-			m_tssMissingGlossAppend = null;
-			m_tssMissingGlossPrepend = null;
-			m_tssEmptyAnalysis = null;
-			m_tssEmptyVern = null;
-			m_tssEmptyPara = null;
-			m_tssSpace = null;
-			m_tssCommaSpace = null;
-			ListManager = null;
-
-			IsDisposed = true;
-		}
-		#endregion
-
 		internal InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
@@ -287,8 +235,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		private ITsString CommaSpaceString => m_tssCommaSpace ?? (m_tssCommaSpace = TsStringUtils.MakeString(", ", m_wsAnalysis));
-
-		public WsListManager ListManager { get; internal set; }
 
 		/// <summary>
 		/// Background color indicating a guess that has been approved by a human for use somewhere.
@@ -503,9 +449,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						vwenv.AddObj(wa.Owner.Hvo, this, kfragWordformForm);
 						vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
 						var chvoGlosses = wa.MeaningsOC.Count;
-						for (var i = 0; i < ListManager.AnalysisWsIds.Length; ++i)
+						for (var i = 0; i < Cache.LanguageProject.AnalysisWsIds().Length; ++i)
 						{
-							SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ListManager.AnalysisWsIds[i])));
+							SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, Cache.LanguageProject.AnalysisWsIds()[i])));
 							if (chvoGlosses == 0)
 							{
 								// There are no glosses, display something indicating it is missing.
@@ -586,7 +532,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, PreferredVernWs, this);
 					break;
 				case kfragSenseName: // The name (gloss) of a LexSense.
-					foreach (var wsId in ListManager.AnalysisWsIds)
+					foreach (var wsId in Cache.LanguageProject.AnalysisWsIds())
 					{
 						vwenv.AddStringAltMember(LexSenseTags.kflidGloss, wsId, this);
 					}
@@ -594,16 +540,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kfragCategory:
 					// the category of a WfiAnalysis, a part of speech;
 					// display the Abbreviation property inherited from CmPossibility.
-					foreach (var wsId in ListManager.AnalysisWsIds)
+					foreach (var wsId in Cache.LanguageProject.AnalysisWsIds())
 					{
 						vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsId, this);
 					}
 					break;
 				default:
-					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
+					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + Cache.LanguageProject.AnalysisWsIds().Length)
 					{
 						// Displaying one ws of the  form of a WfiGloss.
-						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, ListManager.AnalysisWsIds[frag - kfragWordGlossWs], this);
+						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, Cache.LanguageProject.AnalysisWsIds()[frag - kfragWordGlossWs], this);
 					}
 					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
 					{
@@ -762,7 +708,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
 				}
 				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
@@ -783,7 +729,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				else
 				{
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
@@ -818,7 +764,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					AddTssDirForWs(vwenv, wsVernPara); // REVIEW (Hasso) 2018.01: two in a row RTL flags seems redundant.
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -829,7 +775,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -1230,21 +1176,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, InterlinLineChoices lineChoices, int vernWsContext, ILexEntryInflType inflType, out ITsString result)
 		{
-			using (var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache))
+			var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache);
+			vcLexGlossFrag.LineChoices = lineChoices;
+			result = null;
+			var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
 			{
-				vcLexGlossFrag.LineChoices = lineChoices;
-				result = null;
-				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
-				{
-					RequestAppendSpaceForFirstWordInNewParagraph = false
-				};
-				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec, inflType))
-				{
-					result = collector.Result;
-					return true;
-				}
-				return false;
+				RequestAppendSpaceForFirstWordInNewParagraph = false
+			};
+			if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec, inflType))
+			{
+				result = collector.Result;
+				return true;
 			}
+			return false;
 		}
 
 		/// <summary>
@@ -1707,7 +1651,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					}
 				default:
-					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
+					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + Cache.LanguageProject.AnalysisWsIds().Length)
 					{
 						// Displaying one ws of all the glosses of an analysis, separated by commas.
 						vwenv.OpenParagraph();
@@ -1802,7 +1746,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
 				}
 				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
@@ -1823,7 +1767,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				else
 				{
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.

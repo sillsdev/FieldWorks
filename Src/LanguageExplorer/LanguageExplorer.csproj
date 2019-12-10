@@ -527,35 +527,17 @@
     <Compile Include="Areas\TextsAndWords\Discourse\ColumnMenuItem.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\ConstChartVc.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\DecoratorMethodTypes.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DepClauseMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\DialogInterlinRibbon.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\FindWhereToAddResult.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\IInterlinRibbon.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\MakeCellsMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\MakeMovedTextMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\MergeCellContentsMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\OccurrenceSorter.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\OneValMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\RibbonVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\RowColMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\RowColPossibilityMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\RowMenuItem.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\RowModifiedEventArgs.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\StoredMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\TwoColumnMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\UpdateRibbonAction.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AddLineMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2849,9 +2831,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterAreaBookmark.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2955,7 +2934,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.Designer.cs">
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
     <Compile Include="Areas\TextsAndWords\NotifyWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3385,10 +3363,6 @@
       <DependentUpon>InfoPane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocChart.resx">
-      <DependentUpon>InterlinDocChart.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.resx">
       <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -3635,15 +3609,11 @@
       <DependentUpon>ConstituentChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartLogic.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExporter.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbon.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbonDecorator.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\MaxStringWidthForChartColumn.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.cs">
       <SubType>Form</SubType>
     </Compile>

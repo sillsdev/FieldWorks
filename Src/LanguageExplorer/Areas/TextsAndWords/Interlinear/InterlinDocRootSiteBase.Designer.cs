@@ -32,7 +32,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// Do this, before calling base.
 				m_sda?.RemoveNotification(this);
-				Vc?.Dispose();
 				if (m_contextButton != null && !Controls.Contains(m_contextButton))
 				{
 					m_contextButton.Dispose();

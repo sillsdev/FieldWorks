@@ -6,7 +6,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
-	internal class RowMenuItem
+	internal sealed class RowMenuItem
 	{
 		internal RowMenuItem(IConstChartRow row)
 		{
@@ -19,6 +19,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return Row.Label.Text;
 		}
 
-		public IConstChartRow Row { get; }
+		internal IConstChartRow Row { get; }
 	}
 }

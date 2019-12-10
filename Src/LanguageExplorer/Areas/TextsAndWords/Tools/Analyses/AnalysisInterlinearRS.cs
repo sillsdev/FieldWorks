@@ -84,7 +84,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			if (disposing)
 			{
 				m_oneAnalSandbox?.Dispose();
-				m_vc?.Dispose();
 			}
 			m_vc = null;
 			m_wfiAnalysis = null;

@@ -40,6 +40,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 		internal static Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
+		/// <summary>
+		/// The main constituent chart pane, SIL.FieldWorks.Discourse.ConstituentChart.
+		/// Parent is m_tpCChart.
+		/// </summary>
+		private ConstituentChart m_constChartPane;
 		// This flag is normally set during a Refresh. When it is set, we suppress switching the focus box
 		// to the current occurrence in a concordance view, which would otherwise happen as a side effect
 		// of the Refresh. Instead, as usual the focus box stays wherever it is now. The flag is cleared
@@ -548,7 +553,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (m_constChartPane != null)
 			{
-				((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
+				m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 			}
 			try
 			{
@@ -556,7 +561,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (m_tabCtrl.SelectedIndex == ktpsCChart && m_constChartPane == null)
 				{
 					// This is the first time on this tab, do lazy creation
-					CreateCChart();
+					m_constChartPane = new ConstituentChart(_majorFlexComponentParameters.LcmCache, _sharedEventHandlers, _majorFlexComponentParameters.UiWidgetController);
+					m_constChartPane.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+					m_constChartPane.BackColor = SystemColors.Window;
+					m_constChartPane.Name = "m_constChartPane";
+					m_constChartPane.Dock = DockStyle.Fill;
+					m_tpCChart.Controls.Add(m_constChartPane);
+					if (m_styleSheet != null)
+					{
+						m_styleSheet = ((IStyleSheet)m_constChartPane).StyleSheet;
+					}
 				}
 				// search through the current tab page controls until we find one implementing IInterlinearTabControl
 				var currentTabControl = FindControls<IInterlinearTabControl>(m_tabCtrl.SelectedTab.Controls).FirstOrDefault();
@@ -647,22 +661,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			finally
 			{
 				m_fInShowTabView = false;
-			}
-		}
-
-		private void CreateCChart()
-		{
-			var constituentChart = new ConstituentChart(_majorFlexComponentParameters.LcmCache, _sharedEventHandlers);
-			m_constChartPane = constituentChart;
-			((IFlexComponent)m_constChartPane).InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			constituentChart.MyMajorFlexComponentParameters = _majorFlexComponentParameters;
-			m_constChartPane.BackColor = SystemColors.Window;
-			m_constChartPane.Name = "m_constChartPane";
-			m_constChartPane.Dock = DockStyle.Fill;
-			m_tpCChart.Controls.Add(m_constChartPane);
-			if (m_styleSheet != null)
-			{
-				m_styleSheet = ((IStyleSheet)m_constChartPane).StyleSheet;
 			}
 		}
 
@@ -1189,7 +1187,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				var shouldDisplay = CurrentInterlinearTabControl != null && (CurrentInterlinearTabControl is InterlinDocRootSiteBase || CurrentInterlinearTabControl is InterlinDocChart);
+				var shouldDisplay = CurrentInterlinearTabControl is InterlinDocRootSiteBase && !(CurrentInterlinearTabControl is ConstituentChart);
 				return new Tuple<bool, bool>(shouldDisplay, shouldDisplay);
 			}
 		}

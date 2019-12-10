@@ -14,7 +14,6 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
-using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -30,9 +29,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// The context menu displayed for a cell.
 		/// </summary>
 		private ContextMenuStrip m_cellContextMenu;
+		private ChartLocation m_pendingChartLoc;
+		private bool m_pendingChartLocIsBookmark;
 
 		/// <summary />
-		public ConstChartBody(ConstituentChartLogic logic, ConstituentChart chart)
+		internal ConstChartBody(ConstituentChartLogic logic, ConstituentChart chart)
 			: base(null)
 		{
 			InitializeComponent();
@@ -48,25 +49,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Right-to-Left Mark; for flipping individual characters.
 		/// </summary>
 		internal char RLM = '\x200F';
-
-		/// <summary>
-		/// measures the width of the strings built by the display of a column and
-		/// returns the maximumn width found.
-		/// NOTE: you may need to add a small (e.g. under 10-pixel) margin to prevent wrapping in most cases.
-		/// </summary>
-		/// <returns>width in pixels</returns>
-		public int GetColumnContentsWidth(int icolChanged)
-		{
-			// Review: This WaitCursor doesn't seem to work. Anyone know why?
-			using (new WaitCursor())
-			using (var g = Graphics.FromHwnd(Handle))
-			{
-				// get a best estimate to determine row needing the greatest column width.
-				var env = new MaxStringWidthForChartColumn(Vc, m_styleSheet, Cache.MainCacheAccessor, m_hvoChart, g, icolChanged);
-				Vc.Display(env, m_hvoChart, ConstChartVc.kfragChart);
-				return env.MaxStringWidth;
-			}
-		}
 
 		/// <summary>
 		/// Gets the logical column index from the display column index.
@@ -178,9 +160,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// The following will select the row of the bookmark
 			ScrollSelectionIntoView(MakeRowSelection(chartLoc.Row, true), fbookmark ? VwScrollSelOpts.kssoTop : VwScrollSelOpts.kssoNearTop);
 		}
-
-		private ChartLocation m_pendingChartLoc;
-		private bool m_pendingChartLocIsBookmark;
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
@@ -377,7 +356,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (disposing)
 			{
 				m_cellContextMenu?.Dispose();
-				Vc?.Dispose();
 				if (m_hoverButton != null)
 				{
 					if (Controls.Contains(m_hoverButton))

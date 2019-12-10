@@ -41,7 +41,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// Just in case it is called more than once.
 			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-			m_constChart = new ConstituentChart(Cache, new SharedEventHandlers(), m_logic);
+			m_constChart = new ConstituentChart(Cache, new SharedEventHandlers(), logic: m_logic);
 			m_constChart.InitializeFlexComponent(_flexComponentParameters);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
@@ -134,8 +134,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				m_helper.MakeRow(m_chart, "4");
 
 				using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-				using (var vc = new ConstChartVc(m_chartBody))
 				{
+					var vc = new ConstChartVc(m_chartBody);
 					vc.LineChoices = m_chartBody.LineChoices;
 					using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 					{

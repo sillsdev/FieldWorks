@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class LcmExtensions
 	{
-		private static bool s_reversalIndicesAreKnownToExist = false;
+		private static bool s_reversalIndicesAreKnownToExist;
 
 		/// <summary>
 		/// Get a message suitable for display in a status bar.
@@ -554,6 +554,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			result = me.GetDefaultTextTagList();
 			me.TextMarkupTagsOA = result;
 			return result;
+		}
+
+		public static int[] AnalysisWsIds(this ILangProject me)
+		{
+			return me.CurrentAnalysisWritingSystems.Select(ws => ws.Handle).ToArray();
+		}
+
+		public static ITsString WsLabel(this WritingSystemManager me, int ws, int defaultWs)
+		{
+			var wsObj = me.Get(ws);
+			var abbr = TsStringUtils.MakeString(wsObj.Abbreviation, defaultWs, "Language Code");
+			var tsb = abbr.GetBldr();
+			tsb.SetProperties(0, tsb.Length, FwUtils.LanguageCodeTextProps(defaultWs));
+			return tsb.GetString();
 		}
 	}
 }

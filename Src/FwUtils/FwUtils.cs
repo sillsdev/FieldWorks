@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -720,6 +721,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Return an ITsTextProps typically used for WS labels in views.
+		/// </summary>
+		public static ITsTextProps LanguageCodeTextProps(int defaultWs)
+		{
+			const int red = 47;
+			const int green = 96;
+			const int blue = 255;
+			var tpb = TsStringUtils.MakePropsBldr();
+			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, defaultWs);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, red + (blue * 256 + green) * 256);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 8000);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+			tpb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
+			return tpb.GetTextProps();
 		}
 	}
 }

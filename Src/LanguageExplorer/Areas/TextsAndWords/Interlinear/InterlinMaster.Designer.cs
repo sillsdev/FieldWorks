@@ -65,6 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_panelPrintView = null;
 			_majorFlexComponentParameters = null;
 			_paneBarButtons = null;
+			_sharedEventHandlers = null;
 
 			base.Dispose(disposing);
 		}
@@ -305,13 +306,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_tpCChart.Name = "m_tpCChart";
 			this.m_tpCChart.UseVisualStyleBackColor = true;
 			//
-			// m_constChartPane is only 'known' as an InterlinDocChart and is still
-			// null at this point!
-			//
-			//resources.ApplyResources(this.m_constChartPane, "m_constChartPane");
-			//this.m_constChartPane.BackColor = System.Drawing.SystemColors.Window;
-			//this.m_constChartPane.Name = "m_constChartPane";
-			//
 			// InterlinMaster
 			//
 			this.Controls.Add(this.m_tabCtrl);
@@ -352,14 +346,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private InterlinTaggingChild m_taggingPane;
 		private Panel m_panelGloss;
 		private InterlinDocForAnalysis m_idcGloss;
-
-		/// <summary>
-		/// This variable is the main constituent chart pane, SIL.FieldWorks.Discourse.ConstituentChart.
-		/// Because of problems with circular references, we define it just as a InterlinDocChart,
-		/// a dummy subclass of UserControl, and create it by reflection).
-		/// This subclass is probably not really needed.
-		/// Parent is m_tpCChart.
-		/// </summary>
-		internal InterlinDocChart m_constChartPane;
 	}
 }

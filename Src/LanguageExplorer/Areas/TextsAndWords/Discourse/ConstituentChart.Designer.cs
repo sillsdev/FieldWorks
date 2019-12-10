@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_toolTip?.Dispose();
 				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveLeft);
 				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveRight);
-				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
+				_uiWidgetController?.RemoveUserControlHandlers(this);
 				// TODO: _dataMenu
 			}
 
@@ -38,6 +38,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			_uiWidgetController = null;
 
 			base.Dispose(disposing);
 		}

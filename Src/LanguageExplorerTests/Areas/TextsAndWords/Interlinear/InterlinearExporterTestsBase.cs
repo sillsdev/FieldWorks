@@ -47,7 +47,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		protected XmlDocument ExportToXml(string mode)
 		{
 			var exportedXml = new XmlDocument();
-			using (var vc = new InterlinVc(Cache))
+			var vc = new InterlinVc(Cache);
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8))
 			{

@@ -6,16 +6,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
 	internal class StoredMethod
 	{
-		public StoredMethod(DecoratorMethodTypes mtype, object[] paramArray)
+		internal StoredMethod(DecoratorMethodTypes mtype, object[] paramArray)
 		{
 			MethodType = mtype;
 			ParamArray = paramArray;
 		}
 
-		public DecoratorMethodTypes MethodType { get; }
+		internal DecoratorMethodTypes MethodType { get; }
 
-		public object[] ParamArray { get; }
+		internal object[] ParamArray { get; }
 
-		public int ParamCount => ParamArray.Length;
+		internal int ParamCount => ParamArray.Length;
 	}
 }

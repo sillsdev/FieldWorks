@@ -79,7 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_tryAWordSandbox.Dispose();
 				}
-				m_vc?.Dispose();
 			}
 			m_tryAWordSandbox = null;
 			m_vc = null;
