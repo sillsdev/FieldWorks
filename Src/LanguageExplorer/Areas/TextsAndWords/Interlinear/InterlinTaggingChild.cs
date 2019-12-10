@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -139,7 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Get the array of SelLevInfo corresponding to one end point of a selection.
 		/// </summary>
-		protected static SelLevInfo[] GetOneEndPointOfSelection(IVwSelection vwselNew, bool fEndPoint)
+		private static SelLevInfo[] GetOneEndPointOfSelection(IVwSelection vwselNew, bool fEndPoint)
 		{
 			// Get the info about the other end of the selection.
 			var cvsli = vwselNew.CLevels(fEndPoint) - 1;
@@ -226,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return result;
 		}
 
-		protected static int GetIAnalysisIndexInSelLevInfoArray(SelLevInfo[] rgvsli)
+		private static int GetIAnalysisIndexInSelLevInfoArray(SelLevInfo[] rgvsli)
 		{
 			// Identify the IAnalysis, and the position in rgvsli of the property holding it.
 			// It is also possible that the IAnalysis is the root object.
@@ -325,19 +326,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		void m_taggingContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		private void m_taggingContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			m_ticksWhenContextMenuClosed = DateTime.Now.Ticks;
 		}
 
-		internal ContextMenuStrip MakeContextMenu()
+		private ContextMenuStrip MakeContextMenu()
 		{
 			var menu = new ContextMenuStrip();
 			// A little indirection for when we make more menu options later.
 			// If we have not selected any Wordforms, don't put tags in the context menu.
 			if (SelectedWordforms != null && SelectedWordforms.Count > 0)
 			{
-				var tagList = GetTaggingLists(Cache.LangProject);
+				var tagList = Cache.LangProject.GetTaggingList();
 				MakeContextMenu_AvailableTags(menu, tagList);
 			}
 			return menu;
@@ -386,23 +387,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return FindAllTagsReferencingOccurrenceList(SelectedWordforms).FirstOrDefault(textTag => textTag.TagRA == poss);
 		}
 
-		internal static ICmPossibilityList GetTaggingLists(ILangProject langProj)
-		{
-			Debug.Assert(langProj != null, "No LangProject available!");
-			var result = langProj.TextMarkupTagsOA;
-			if (result != null)
-			{
-				return result;
-			}
-			// Create the containing object and lists.
-			result = langProj.GetDefaultTextTagList();
-			langProj.TextMarkupTagsOA = result;
-			return result;
-		}
-
 		#endregion // ContextMenuMethods
 
-		void Tag_Item_Click(object sender, EventArgs e)
+		private void Tag_Item_Click(object sender, EventArgs e)
 		{
 			var item = sender as TagPossibilityMenuItem;
 			if (item == null)
@@ -502,9 +489,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return new HashSet<ITextTag>();
 			}
-
 			// We're unlikely to have more than a few hundred words in a sentence.
-			return GetTaggingReferencingTheseWords(occurrences);
+			return InterlinearTextServices.GetTaggingReferencingTheseWords(occurrences);
 		}
 
 		/// <summary>
@@ -539,44 +525,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				CacheNullTagString(tag);
 				RootStText.TagsOC.Remove(tag);
 			}
-		}
-
-		/// <summary>
-		/// Gets a list of TextTags that reference the analysis occurrences in the input paramter.
-		/// Will need enhancement to work with multi-segment tags.
-		/// </summary>
-		internal static ISet<ITextTag> GetTaggingReferencingTheseWords(List<AnalysisOccurrence> occurrences)
-		{
-			var results = new HashSet<ITextTag>();
-			if (occurrences.Count == 0 || !occurrences[0].IsValid)
-			{
-				return results;
-			}
-			var text = occurrences[0].Segment.Paragraph.Owner as IStText;
-			if (text == null)
-			{
-				throw new NullReferenceException("Unexpected error!");
-			}
-			var tags = text.TagsOC;
-			if (tags.Count == 0)
-			{
-				return results;
-			}
-			var occurenceSet = new HashSet<AnalysisOccurrence>(occurrences); ;
-			// Collect all segments referenced by these words
-			var segsUsed = new HashSet<ISegment>(occurenceSet.Select(o => o.Segment));
-			// Collect all tags referencing those segments
-			// Enhance: This won't work for multi-segment tags where a tag can reference 3+ segments.
-			// but see note on foreach below.
-			var tagsRefSegs = new HashSet<ITextTag>(tags.Where(ttag => segsUsed.Contains(ttag.BeginSegmentRA) || segsUsed.Contains(ttag.EndSegmentRA)));
-			foreach (var ttag in tagsRefSegs) // A slower, but more complete form can replace tagsRefSegs with tags here.
-			{
-				if (occurenceSet.Intersect(ttag.GetOccurrences()).Any())
-				{
-					results.Add(ttag);
-				}
-			}
-			return results;
 		}
 
 		/// <summary>

@@ -335,6 +335,7 @@
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ContextMenuName.cs" />

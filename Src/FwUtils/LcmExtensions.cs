@@ -542,5 +542,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			});
 			s_reversalIndicesAreKnownToExist = true;
 		}
+
+		public static ICmPossibilityList GetTaggingList(this ILangProject me)
+		{
+			var result = me.TextMarkupTagsOA;
+			if (result != null)
+			{
+				return result;
+			}
+			// Create the containing object and lists.
+			result = me.GetDefaultTextTagList();
+			me.TextMarkupTagsOA = result;
+			return result;
+		}
 	}
 }

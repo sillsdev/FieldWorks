@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Get all AnalysisOccurrences in this Segment
 			var segWords = curSeg.AnalysesRS.Select((t, i) => new AnalysisOccurrence(curSeg, i)).ToList();
 			// Find all the tags for this Segment's AnalysisOccurrences and cache them
-			var textTagList = InterlinTaggingChild.GetTaggingReferencingTheseWords(segWords);
+			var textTagList = InterlinearTextServices.GetTaggingReferencingTheseWords(segWords);
 			var occurrencesTagged = new HashSet<AnalysisOccurrence>();
 			foreach (var tag in textTagList)
 			{

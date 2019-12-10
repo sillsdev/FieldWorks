@@ -479,7 +479,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (line)
 			{
 				case ConcordanceLines.kTags:
-					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
+					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, m_cache.LangProject.GetTaggingList(),
 							m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, PropertyTable.GetValue<Form>(FwUtils.window))
 					{
 						Sorted = false

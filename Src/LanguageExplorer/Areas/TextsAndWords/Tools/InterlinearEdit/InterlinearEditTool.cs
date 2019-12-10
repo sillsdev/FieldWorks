@@ -204,7 +204,7 @@ DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPan
 DONE:		this.m_tabCtrl.Controls.Add(this.m_tpRawText);		Baseline	m_rtPane:			RawTextPane
 DONE:		this.m_tabCtrl.Controls.Add(this.m_tpGloss);		Gloss		m_panelGloss:		Panel:			m_idcGloss:			InterlinDocForAnalysis
 DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);	Analyze		m_panelAnalyzeView:	Panel:			m_idcAnalyze:		InterlinDocForAnalysis
-			this.m_tabCtrl.Controls.Add(this.m_tpTagging);		Tagging		m_panelTagging:		Panel:			m_taggingPane:		InterlinTaggingChild
+DONE:		this.m_tabCtrl.Controls.Add(this.m_tpTagging);		Tagging		m_panelTagging:		Panel:			m_taggingPane:		InterlinTaggingChild
 			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);	Print View	m_panelPrintView:	Panel:			m_printViewPane:	InterlinPrintChild
 			this.m_tabCtrl.Controls.Add(this.m_tpCChart);		Text Chart	m_constChartPane:	InterlinDocChart
 				*/
