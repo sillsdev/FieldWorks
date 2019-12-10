@@ -374,51 +374,44 @@ namespace LanguageExplorer
 
 				internal void AddGlobalHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					foreach (var commandKvp in commands)
-					{
-						var commandKey = commandKvp.Key;
-						var commandValue = commandKvp.Value;
-						_globalCommands.Add(commandKey, commandValue);
-						_combinedCommands.Add(commandKey, commandValue);
-						var currentMenuItem = _supportedMenuItems[commandKey];
-						// Add supplied click event handler to menu item.
-						currentMenuItem.Click += commandValue.Item1;
-					}
+					AddCombinedCommands(commands, true);
 				}
 
 				internal void AddAreaHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForArea = commands;
-					foreach (var commandKvp in _commandsForArea)
-					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentMenuItem = _supportedMenuItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentMenuItem.Click += commandKvp.Value.Item1;
-					}
+					AddCombinedCommands(_commandsForArea);
 				}
 
 				internal void AddToolHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForTool = commands;
-					foreach (var commandKvp in _commandsForTool)
-					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentMenuItem = _supportedMenuItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentMenuItem.Click += commandKvp.Value.Item1;
-					}
+					AddCombinedCommands(_commandsForTool);
 				}
 
 				internal void AddUserControlHandlers(UserControl userControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForUserControls.Add(new Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>(userControl, commands));
+					AddCombinedCommands(commands);
+				}
+
+				private void AddCombinedCommands(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands, bool addToGlobal = false)
+				{
 					foreach (var commandKvp in commands)
 					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentMenuItem = _supportedMenuItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentMenuItem.Click += commandKvp.Value.Item1;
+						var commandKey = commandKvp.Key;
+						var commandValue = commandKvp.Value;
+						if (addToGlobal)
+						{
+							_globalCommands.Add(commandKey, commandValue);
+						}
+						_combinedCommands.Add(commandKey, commandValue);
+						var currentMenuItem = _supportedMenuItems[commandKey];
+						if (commandValue.Item1 != null)
+						{
+							// Add supplied click event handler to menu item.
+							currentMenuItem.Click += commandValue.Item1;
+						}
 					}
 				}
 
@@ -428,16 +421,7 @@ namespace LanguageExplorer
 					{
 						return;
 					}
-					foreach (var commandKvp in _commandsForArea)
-					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentSubmenuOfMainMenu = _supportedMenuItems[commandKvp.Key];
-						// Remove supplied click event handler from menu item.
-						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
-						currentSubmenuOfMainMenu.Visible = false;
-						currentSubmenuOfMainMenu.Enabled = false;
-						currentSubmenuOfMainMenu.Tag = null;
-					}
+					RemoveCombinedCommands(_commandsForArea);
 				}
 
 				internal void RemoveToolHandlers()
@@ -446,16 +430,7 @@ namespace LanguageExplorer
 					{
 						return;
 					}
-					foreach (var commandKvp in _commandsForTool)
-					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentSubmenuOfMainMenu = _supportedMenuItems[commandKvp.Key];
-						// Remove supplied click event handler from menu item.
-						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
-						currentSubmenuOfMainMenu.Visible = false;
-						currentSubmenuOfMainMenu.Enabled = false;
-						currentSubmenuOfMainMenu.Tag = null;
-					}
+					RemoveCombinedCommands(_commandsForTool);
 				}
 
 				internal void RemoveUserControlHandlers(UserControl userControl)
@@ -466,12 +441,22 @@ namespace LanguageExplorer
 						return;
 					}
 					_commandsForUserControls.Remove(currentUserControlCommands);
-					foreach (var commandKvp in currentUserControlCommands.Item2)
+					RemoveCombinedCommands(currentUserControlCommands.Item2);
+				}
+
+				private void RemoveCombinedCommands(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
+				{
+					foreach (var commandKvp in commands)
 					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentSubmenuOfMainMenu = _supportedMenuItems[commandKvp.Key];
-						// Remove supplied click event handler from menu item.
-						currentSubmenuOfMainMenu.Click -= commandKvp.Value.Item1;
+						var commandKey = commandKvp.Key;
+						var commandValue = commandKvp.Value;
+						_combinedCommands.Remove(commandKey);
+						var currentSubmenuOfMainMenu = _supportedMenuItems[commandKey];
+						if (commandValue.Item1 != null)
+						{
+							// Remove supplied click event handler from menu item.
+							currentSubmenuOfMainMenu.Click -= commandValue.Item1;
+						}
 						currentSubmenuOfMainMenu.Visible = false;
 						currentSubmenuOfMainMenu.Enabled = false;
 						currentSubmenuOfMainMenu.Tag = null;
@@ -532,7 +517,7 @@ namespace LanguageExplorer
 			internal ToolBarsController(MainToolBarsParameterObject mainToolBarsParameterObject)
 			{
 				_supportedToolBarItems = mainToolBarsParameterObject.SupportedToolBarItems;
-				_toolBarControllers = mainToolBarsParameterObject.MainToolBar.ToDictionary(mainToolBarKvp => mainToolBarKvp.Key, mainToolBarKvp => new ToolBarController(mainToolBarKvp.Value, _supportedToolBarItems[mainToolBarKvp.Key].Item1, _supportedToolBarItems[mainToolBarKvp.Key].Item2));
+				_toolBarControllers = mainToolBarsParameterObject.MainToolBar.ToDictionary(mainToolBarKvp => mainToolBarKvp.Key, mainToolBarKvp => new ToolBarController(_supportedToolBarItems[mainToolBarKvp.Key].Item1, _supportedToolBarItems[mainToolBarKvp.Key].Item2));
 			}
 
 			internal IReadOnlyDictionary<Command, ToolStripItem> GetToolBarCommands(ToolBar toolBar)
@@ -598,7 +583,6 @@ namespace LanguageExplorer
 
 			private sealed class ToolBarController
 			{
-				private readonly ToolStrip _toolStrip;
 				private readonly IReadOnlyDictionary<Command, ToolStripItem> _supportedToolBarItems;
 				private readonly List<ISeparatorToolStripBundle> _separatorToolStripBundles;
 				private Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _globalCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
@@ -607,61 +591,52 @@ namespace LanguageExplorer
 				private readonly List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>> _commandsForUserControls = new List<Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>>();
 				private readonly Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> _combinedCommands = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>();
 
-				internal ToolBarController(ToolStrip toolStrip, IReadOnlyDictionary<Command, ToolStripItem> supportedToolBarItems, List<ISeparatorToolStripBundle> separatorToolStripBundles)
+				internal ToolBarController(IReadOnlyDictionary<Command, ToolStripItem> supportedToolBarItems, List<ISeparatorToolStripBundle> separatorToolStripBundles)
 				{
-					_toolStrip = toolStrip;
 					_supportedToolBarItems = supportedToolBarItems;
 					_separatorToolStripBundles = separatorToolStripBundles;
 				}
 
 				internal void AddGlobalHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
-					foreach (var commandKvp in commands)
-					{
-						var commandKey = commandKvp.Key;
-						var commandValue = commandKvp.Value;
-						_globalCommands.Add(commandKey, commandValue);
-						_combinedCommands.Add(commandKey, commandValue);
-						var currentMenuItem = _supportedToolBarItems[commandKey];
-						// Add supplied click event handler to menu item.
-						currentMenuItem.Click += commandValue.Item1;
-					}
+					AddCombinedCommands(commands, true);
 				}
 
 				internal void AddAreaHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForArea = commands;
-					foreach (var commandKvp in _commandsForArea)
-					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentToolBarButton = _supportedToolBarItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentToolBarButton.Click += commandKvp.Value.Item1;
-					}
+					AddCombinedCommands(commands);
 					Application.Idle += Application_Idle;
 				}
 
 				internal void AddToolHandlers(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForTool = commands;
-					foreach (var commandKvp in _commandsForTool)
-					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentToolBarButton = _supportedToolBarItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentToolBarButton.Click += commandKvp.Value.Item1;
-					}
+					AddCombinedCommands(commands);
 				}
 
 				internal void AddUserControlHandlers(UserControl userControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
 				{
 					_commandsForUserControls.Add(new Tuple<UserControl, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>(userControl, commands));
+					AddCombinedCommands(commands);
+				}
+
+				private void AddCombinedCommands(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands, bool addToGlobal = false)
+				{
 					foreach (var commandKvp in commands)
 					{
-						_combinedCommands.Add(commandKvp.Key, commandKvp.Value);
-						var currentToolBarButton = _supportedToolBarItems[commandKvp.Key];
-						// Add supplied click event handler to menu item.
-						currentToolBarButton.Click += commandKvp.Value.Item1;
+						var commandKey = commandKvp.Key;
+						var commandValue = commandKvp.Value;
+						if (addToGlobal)
+						{
+							_globalCommands.Add(commandKey, commandValue);
+						}
+						_combinedCommands.Add(commandKey, commandValue);
+						if (commandValue.Item1 != null)
+						{
+							// Add supplied click event handler to menu item.
+							_supportedToolBarItems[commandKey].Click += commandValue.Item1;
+						}
 					}
 				}
 
@@ -672,16 +647,7 @@ namespace LanguageExplorer
 					{
 						return;
 					}
-					foreach (var commandKvp in _commandsForArea)
-					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentToolStripItem = _supportedToolBarItems[commandKvp.Key];
-						// Remove supplied click event handler to tool bar button item.
-						currentToolStripItem.Click -= commandKvp.Value.Item1;
-						currentToolStripItem.Visible = false;
-						currentToolStripItem.Enabled = false;
-						currentToolStripItem.Tag = null;
-					}
+					RemoveCombinedCommands(_commandsForArea);
 				}
 
 				internal void RemoveToolHandlers()
@@ -690,16 +656,7 @@ namespace LanguageExplorer
 					{
 						return;
 					}
-					foreach (var commandKvp in _commandsForTool)
-					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentToolStripItem = _supportedToolBarItems[commandKvp.Key];
-						// Remove supplied click event handler to tool bar button item.
-						currentToolStripItem.Click -= commandKvp.Value.Item1;
-						currentToolStripItem.Visible = false;
-						currentToolStripItem.Enabled = false;
-						currentToolStripItem.Tag = null;
-					}
+					RemoveCombinedCommands(_commandsForTool);
 				}
 
 				internal void RemoveUserControlHandlers(UserControl userControl)
@@ -710,12 +667,22 @@ namespace LanguageExplorer
 						return;
 					}
 					_commandsForUserControls.Remove(currentUserControlCommands);
-					foreach (var commandKvp in currentUserControlCommands.Item2)
+					RemoveCombinedCommands(currentUserControlCommands.Item2);
+				}
+
+				private void RemoveCombinedCommands(Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>> commands)
+				{
+					foreach (var commandKvp in commands)
 					{
-						_combinedCommands.Remove(commandKvp.Key);
-						var currentToolStripItem = _supportedToolBarItems[commandKvp.Key];
-						// Remove supplied click event handler to tool bar button item.
-						currentToolStripItem.Click -= commandKvp.Value.Item1;
+						var commandKey = commandKvp.Key;
+						var commandValue = commandKvp.Value;
+						_combinedCommands.Remove(commandKey);
+						var currentToolStripItem = _supportedToolBarItems[commandKey];
+						if (commandValue.Item1 != null)
+						{
+							// Remove supplied click event handler to tool bar button item.
+							currentToolStripItem.Click -= commandValue.Item1;
+						}
 						currentToolStripItem.Visible = false;
 						currentToolStripItem.Enabled = false;
 						currentToolStripItem.Tag = null;

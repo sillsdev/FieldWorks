@@ -693,7 +693,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{ Command.CmdMoveFocusBoxRightNc, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxRightNc_Click, ()=> CanMoveFocusBoxRightNc) },
 				{ Command.CmdMoveFocusBoxLeftNc, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveFocusBoxLeftNc_Click, ()=> CanMoveFocusBoxLeftNc) },
 				{ Command.CmdMakePhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnLinkNextWord_Click, ()=> CanJoinWords) },
-				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) }
+				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) },
+				{ Command.ApproveAnalysisMovementMenu, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, ()=> CanApproveAnalysisMovementMenu) },
+				{ Command.BrowseMovementMenu, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(null, ()=> CanBrowseMovementMenu) }
 			};
 			// Wire up handlers for tool bar buttons of interest on the insert tool bar.
 			var insertToolBarHandlers = new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>
@@ -722,8 +724,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				dataMenuDictionary.Add(dataMenuKvp.Key, dataMenuKvp.Value);
 			}
-			_uiWidgetController.DataMenuDictionary[Command.ApproveAnalysisMovementMenu].Visible = true;
-			_uiWidgetController.DataMenuDictionary[Command.BrowseMovementMenu].Visible = true;
 			var insertToolBarDictionary = userController.ToolBarItemsForUserControl[ToolBar.Insert];
 			foreach (var toolBarKvp in insertToolBarHandlers)
 			{
@@ -732,7 +732,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			_uiWidgetController.AddHandlers(userController);
 		}
 
-		public Tuple<bool, bool> CanDoCmdApproveAll => new Tuple<bool, bool>(Visible, Visible);
+		private Tuple<bool, bool> CanApproveAnalysisMovementMenu => new Tuple<bool, bool>(Visible, Visible);
+
+		private Tuple<bool, bool> CanBrowseMovementMenu => new Tuple<bool, bool>(Visible, Visible);
+
+		private Tuple<bool, bool> CanDoCmdApproveAll => new Tuple<bool, bool>(Visible, Visible);
 
 		protected override void OnVisibleChanged(EventArgs e)
 		{

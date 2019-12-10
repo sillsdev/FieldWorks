@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)
 		{
-			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportInterlinear_Click, () => CanShowExportMenu));
+			userControlUiWidgetParameterObject.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExportInterlinear, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ExportInterlinear_Click, () => CanShowExportMenu));
 		}
 
 		protected virtual void TearDownUiWidgets()

@@ -600,7 +600,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineSpec.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewCacheLoader.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IParaDataLoader.cs" />

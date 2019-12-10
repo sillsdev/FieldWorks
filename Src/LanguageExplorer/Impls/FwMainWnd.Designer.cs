@@ -577,11 +577,11 @@ namespace LanguageExplorer.Impls
 			// 
 			// CmdExport
 			// 
-			this.CmdExport.Enabled = false;
 			this.CmdExport.Name = "CmdExport";
 			this.CmdExport.Size = new System.Drawing.Size(211, 22);
 			this.CmdExport.Text = "&Export...";
 			this.CmdExport.ToolTipText = "Export this FieldWorks project to a file.";
+			this.CmdExport.Visible = false;
 			// 
 			// CmdExportInterlinear
 			// 

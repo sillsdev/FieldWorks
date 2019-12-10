@@ -14,7 +14,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
@@ -196,34 +195,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 			private void SetupUiWidgets(ITool tool)
 			{
-				/*
-			//
-			// m_tabCtrl
-			//
-DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInfo);			Info		m_infoPane:			InfoPane
-DONE:		this.m_tabCtrl.Controls.Add(this.m_tpRawText);		Baseline	m_rtPane:			RawTextPane
-DONE:		this.m_tabCtrl.Controls.Add(this.m_tpGloss);		Gloss		m_panelGloss:		Panel:			m_idcGloss:			InterlinDocForAnalysis
-DONE:		this.m_tabCtrl.Controls.Add(this.m_tpInterlinear);	Analyze		m_panelAnalyzeView:	Panel:			m_idcAnalyze:		InterlinDocForAnalysis
-DONE:		this.m_tabCtrl.Controls.Add(this.m_tpTagging);		Tagging		m_panelTagging:		Panel:			m_taggingPane:		InterlinTaggingChild
-			this.m_tabCtrl.Controls.Add(this.m_tpPrintView);	Print View	m_panelPrintView:	Panel:			m_printViewPane:	InterlinPrintChild
-			this.m_tabCtrl.Controls.Add(this.m_tpCChart);		Text Chart	m_constChartPane:	InterlinDocChart
-				*/
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-				//var editMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit];
-				//editMenuDictionary.Add(Command.CmdFindAndReplaceText, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdFindAndReplaceText_Click, () => UiWidgetServices.CanSeeAndDo));
-				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
-				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-			}
-
-			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)
-			{
-				_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(true, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 			}
 
 			private void CreateBrowseViewContextMenu()
