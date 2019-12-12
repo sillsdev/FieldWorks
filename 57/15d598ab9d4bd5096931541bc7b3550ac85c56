@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Thu, 12 Dec 2019 20:38:42 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/7081
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
