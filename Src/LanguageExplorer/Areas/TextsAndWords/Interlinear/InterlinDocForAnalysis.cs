@@ -267,6 +267,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void TearDownUiWidgets()
 		{
+			if (ExistingFocusBox != null && !Controls.Contains(ExistingFocusBox))
+			{
+				MyMajorFlexComponentParameters.UiWidgetController.RemoveUserControlHandlers(ExistingFocusBox);
+			}
 			base.TearDownUiWidgets();
 
 			RightMouseClickedEvent -= InterlinDocForAnalysis_RightMouseClickedEvent;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer
 {
@@ -203,7 +204,7 @@ namespace LanguageExplorer
 		{
 			if (_area == null)
 			{
-				// Already removed.
+				// Already removed, or never added.
 				return;
 			}
 			// Unwire stuff from area (in that order). Include handling the application idle handler and the drop down handler here.
@@ -224,7 +225,7 @@ namespace LanguageExplorer
 		{
 			if (_tool == null)
 			{
-				// Already removed.
+				// Already removed, or never added.
 				return;
 			}
 			foreach (var userControl in _userControls.ToList())
@@ -242,14 +243,17 @@ namespace LanguageExplorer
 		/// </summary>
 		internal void RemoveUserControlHandlers(UserControl userControl)
 		{
-			if (!_userControls.Contains(userControl))
+			// Remove any child controls, as well.
+			foreach (var control in userControl.GetUserControlsInControl())
 			{
-				// Already removed.
-				return;
+				if (!_userControls.Contains(control))
+				{
+					continue;
+				}
+				_userControls.Remove(control);
+				_mainMenusController.RemoveUserControlHandlers(control);
+				_toolBarsController.RemoveUserControlHandlers(control);
 			}
-			_userControls.Remove(userControl);
-			_mainMenusController.RemoveUserControlHandlers(userControl);
-			_toolBarsController.RemoveUserControlHandlers(userControl);
 		}
 
 		private void CheckForExistingUserControls(string message)

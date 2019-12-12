@@ -217,6 +217,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_subservientRecordList = subservientRecordList;
 
 				SetupUiWidgets(tool);
+				// NB: The nested browse view on the right has no popup menu.
+				CreateBrowseViewContextMenu();
 			}
 
 			private void SetupUiWidgets(ITool tool)
@@ -228,8 +230,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
 
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				// NB: The nested browse view on the right has no popup menu.
-				CreateBrowseViewContextMenu();
 			}
 
 			private void CreateBrowseViewContextMenu()

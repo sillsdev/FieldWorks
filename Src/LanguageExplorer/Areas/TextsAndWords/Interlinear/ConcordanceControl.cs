@@ -135,11 +135,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// that affect the NeedToReloadVirtualProperty.
 					m_recordList.ConcordanceControl = null;
 				}
+				_regexContextContextMenu?.Dispose();
 				m_pOSPopupTreeManager?.Dispose();
 			}
 			m_recordList = null;
 			m_pOSPopupTreeManager = null;
 			_sharedEventHandlers = null;
+			_regexContextContextMenu = null;
 
 			base.Dispose(disposing);
 		}

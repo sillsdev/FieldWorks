@@ -112,7 +112,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		#endregion
 
-		public ComplexConcPatternModel PatternModel { get; private set; }
+		private ComplexConcPatternModel PatternModel { get; set; }
 
 		private bool CanAddMorph(object option)
 		{
@@ -258,7 +258,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			return PatternModel.GetNode(level.hvo);
 		}
 
-		public ComplexConcPatternNode[] CurrentNodes
+		private IReadOnlyList<ComplexConcPatternNode> CurrentNodes
 		{
 			get
 			{
@@ -304,7 +304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			if (sel.IsRange)
 			{
 				var nodes = CurrentNodes;
-				if (nodes.Length > 0)
+				if (nodes.Any())
 				{
 					parent = nodes[0].Parent;
 					index = GetNodeIndex(nodes[0]);
@@ -469,13 +469,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			m_insertControl.UpdateOptionsDisplay();
 		}
 
-		private int GetNodeIndex(ComplexConcPatternNode node)
+		private static int GetNodeIndex(ComplexConcPatternNode node)
 		{
 			return node.Parent?.Children.IndexOf(node) ?? 0;
 		}
 
 		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
 		{
+			if (_mnuComplexConcordance != null)
+			{
+				// Get rid of it all.
+				foreach (var tuple in _menuItems)
+				{
+					tuple.Item1.Click -= tuple.Item2;
+					tuple.Item1.Dispose();
+				}
+				_mnuComplexConcordance.Dispose();
+				_mnuComplexConcordance = null;
+				_menuItems = null;
+			}
 			var sh = SelectionHelper.Create(e.Selection, m_view);
 			var node = GetNode(sh, SelLimitType.Anchor);
 			var nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(GetAllNodes));
@@ -491,9 +503,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					Name = "mnuComplexConcordance"
 				};
 				_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
-				_mnuComplexConcordance.Closed += MnuComplexConcordance_Closed;
 				var currentNodes = CurrentNodes;
-				var visible = sh.IsRange && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Length - 1] is ComplexConcOrNode);
+				var visible = sh.IsRange && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Count - 1] is ComplexConcOrNode);
 				if (visible)
 				{
 					/*
@@ -551,7 +562,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(_mnuComplexConcordance);
 				}
 
-				visible = sh.IsRange && currentNodes.Length == 1 && (currentNodes[0] is ComplexConcWordNode || currentNodes[0] is ComplexConcMorphNode || currentNodes[0] is ComplexConcTagNode);
+				visible = sh.IsRange && currentNodes.Count == 1 && (currentNodes[0] is ComplexConcWordNode || currentNodes[0] is ComplexConcMorphNode || currentNodes[0] is ComplexConcTagNode);
 				if (visible)
 				{
 					/*
@@ -561,7 +572,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetCriteria_Clicked, TextAndWordsResources.Set_criteria);
 				}
 
-				visible = currentNodes.Length > 1 && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Length - 1] is ComplexConcOrNode);
+				visible = currentNodes.Count > 1 && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Count - 1] is ComplexConcOrNode);
 				if (visible)
 				{
 					/*
@@ -587,21 +598,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 		}
 
-		private void MnuComplexConcordance_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		{
-			_mnuComplexConcordance.Closed -= MnuComplexConcordance_Closed;
-			// Get rid of it all.
-			foreach (var tuple in _menuItems)
-			{
-				tuple.Item1.Click -= tuple.Item2;
-				tuple.Item1.Dispose();
-			}
-			_mnuComplexConcordance.Dispose();
-			_mnuComplexConcordance = null;
-			_menuItems = null;
-		}
-
-		private IEnumerable<ComplexConcPatternNode> GetAllNodes(ComplexConcPatternNode node)
+		private static IEnumerable<ComplexConcPatternNode> GetAllNodes(ComplexConcPatternNode node)
 		{
 			yield return node;
 			if (node.IsLeaf)
@@ -739,7 +736,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			else
 			{
 				bool paren;
-				if (nodes.Length > 1)
+				if (nodes.Count > 1)
 				{
 					min = 1;
 					max = 1;
@@ -765,13 +762,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-			var node = nodes.Length > 1 ? GroupNodes(nodes) : nodes[0];
+			var node = nodes.Count > 1 ? GroupNodes(nodes) : nodes[0];
 			node.Minimum = min;
 			node.Maximum = max;
 			ReconstructView(node, false);
 		}
 
-		private ComplexConcPatternNode GroupNodes(ComplexConcPatternNode[] nodes)
+		private static ComplexConcPatternNode GroupNodes(IReadOnlyList<ComplexConcPatternNode> nodes)
 		{
 			var parent = nodes[0].Parent;
 			var index = GetNodeIndex(nodes[0]);

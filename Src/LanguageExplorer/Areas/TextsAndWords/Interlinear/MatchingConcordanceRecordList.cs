@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
 		public MatchingConcordanceRecordList(string id, StatusBar statusBar, ConcDecorator decorator)
-			: base(id, statusBar, decorator, false, new VectorPropertyParameterObject(decorator.PropertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject, "ConcOccurrences", decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false)))
+			: base(id, statusBar, decorator, false, new VectorPropertyParameterObject(decorator.PropertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject, TextAndWordsArea.ConcOccurrences, decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, TextAndWordsArea.ConcOccurrences, false)))
 		{
 		}
 

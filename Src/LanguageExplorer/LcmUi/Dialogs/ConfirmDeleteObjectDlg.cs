@@ -102,29 +102,25 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			base.Dispose(disposing);
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable)
+		public void SetDlgInfo(ICmObject obj, LcmCache cache, IPropertyTable propertyTable)
 		{
 			Debug.Assert(obj != null);
-			Debug.Assert(obj.MyCmObject != null);
+			Debug.Assert(obj != null);
 			SetDlgInfo(obj, cache, propertyTable, TsStringUtils.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable, ITsString tssNote)
+		public void SetDlgInfo(ICmObject obj, LcmCache cache, IPropertyTable propertyTable, ITsString tssNote)
 		{
-			if (obj.PropertyTable == null)
-			{
-				obj.PropertyTable = propertyTable;
-			}
 			m_cache = cache;
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			Debug.Assert(obj != null);
-			Debug.Assert(obj.MyCmObject != null);
-			Text = string.Format(LcmUiStrings.ksDeleteX, obj.MyCmObject.DisplayNameOfClass(cache));
+			Debug.Assert(obj != null);
+			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass(cache));
 			// Set the s_helpTopic based on the window title and rearrange the buttons if necessary
 			switch (obj.ClassName)
 			{
-				case "WfiWordform":
+				case WfiWordformTags.kClassName:
 					s_helpTopic = "khtpDeleteWordform";
 					break;
 			}
@@ -148,7 +144,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_descriptionBox3.WritingSystemCode = defUserWs;
 			m_descriptionBox3.StyleSheet = stylesheet;
 			var tisb3 = TsStringUtils.MakeIncStrBldr();
-			tisb3.AppendTsString(obj.MyCmObject.DeletionTextTSS);
+			tisb3.AppendTsString(obj.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
 			var deltaY = GrowTextBox(panel1, m_descriptionBox3);
@@ -160,7 +156,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);
-			m_deleteButton.Enabled = obj.MyCmObject.CanDelete;
+			m_deleteButton.Enabled = obj.CanDelete;
 			label2.Visible = m_deleteButton.Enabled;
 		}
 

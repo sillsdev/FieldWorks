@@ -536,19 +536,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
-			if (ShouldSetupUiWidgets)
+			m_rtPane.IsCurrentTabForInterlineMaster = false;
+			m_taggingPane.IsCurrentTabForInterlineMaster = false;
+			m_idcGloss.IsCurrentTabForInterlineMaster = false;
+			m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
+			m_printViewPane.IsCurrentTabForInterlineMaster = false;
+			if (_paneBarButtons != null)
 			{
-				m_rtPane.IsCurrentTabForInterlineMaster = false;
-				m_taggingPane.IsCurrentTabForInterlineMaster = false;
-				m_idcGloss.IsCurrentTabForInterlineMaster = false;
-				m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
-				m_printViewPane.IsCurrentTabForInterlineMaster = false;
-				if (_paneBarButtons != null)
+				foreach (var panelButton in _paneBarButtons.Values)
 				{
-					foreach (var panelButton in _paneBarButtons.Values)
-					{
-						panelButton.Visible = panelButton.Enabled = false;
-					}
+					panelButton.Visible = panelButton.Enabled = false;
 				}
 			}
 			if (m_constChartPane != null)
@@ -608,7 +605,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsRawText:
-						m_rtPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						m_rtPane.IsCurrentTabForInterlineMaster = true;
 						if (ParentForm == Form.ActiveForm)
 						{
 							m_rtPane.Focus();
@@ -619,7 +616,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsGloss:
-						m_idcGloss.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						m_idcGloss.IsCurrentTabForInterlineMaster = true;
 						if (_paneBarButtons != null)
 						{
 							panelButton = _paneBarButtons[TextAndWordsArea.ITexts_AddWordsToLexicon];
@@ -627,13 +624,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					case ktpsAnalyze:
-						m_idcAnalyze.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						m_idcAnalyze.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsTagging:
-						m_taggingPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						m_taggingPane.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsPrint:
-						m_printViewPane.IsCurrentTabForInterlineMaster = ShouldSetupUiWidgets;
+						m_printViewPane.IsCurrentTabForInterlineMaster = true;
 						break;
 					case ktpsCChart:
 						if (RootStText == null)
@@ -646,7 +643,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// LT-7733 Warning dialog for Text Chart
 							MessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
-							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = ShouldSetupUiWidgets;
+							m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
 						if (ParentForm == Form.ActiveForm)
@@ -705,20 +702,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		protected virtual bool ShouldSetupUiWidgets => true;
-
 		/// <summary>
 		/// About to show, so finish initializing.
 		/// </summary>
 		internal void FinishInitialization()
 		{
-			if (ShouldSetupUiWidgets)
-			{
-				var userController = new UserControlUiWidgetParameterObject(this);
-				// Add handler stuff from this class and possibly from subclasses.
-				SetupUiWidgets(userController);
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
-			}
+			var userController = new UserControlUiWidgetParameterObject(this);
+			// Add handler stuff from this class and possibly from subclasses.
+			SetupUiWidgets(userController);
+			_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
 			if (m_tcPane != null && m_tcPane.Visible)
 			{
 				// Making the tab control currently requires this first...
@@ -1261,6 +1253,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_tabCtrl_Deselecting(object sender, TabControlCancelEventArgs e)
 		{
+			/*
+			var deselectedIndex = e.TabPageIndex;
+			switch (deselectedIndex)
+			{
+				case ktpsInfo:
+					//m_rtPane.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsRawText:
+					m_rtPane.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsGloss:
+					m_idcGloss.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsAnalyze:
+					m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsTagging:
+					m_taggingPane.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsPrint:
+					m_printViewPane.IsCurrentTabForInterlineMaster = false;
+					break;
+				case ktpsCChart:
+					m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
+					break;
+			}
+			*/
 			// Switching tabs, usual precaution against being able to Undo things you can no longer see.
 			// When we do this because we're switching objects because we deleted one, and the new
 			// object is empty, we're inside the ShowRecord where it is suppressed.

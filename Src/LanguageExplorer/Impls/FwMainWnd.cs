@@ -1766,7 +1766,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void Help_Training(object sender, EventArgs e)
+		private static void Help_Training(object sender, EventArgs e)
 		{
 			using (var process = new Process())
 			{

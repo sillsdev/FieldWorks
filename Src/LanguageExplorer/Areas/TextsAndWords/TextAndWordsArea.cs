@@ -30,6 +30,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		[ImportMany(AreaServices.TextAndWordsAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		internal const string ConcordanceWords = "concordanceWords";
+		internal const string ConcOccurrences = "ConcOccurrences";
 		internal const string InterlinearTexts = "interlinearTexts";
 		internal const string Respeller = "Respeller";
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";

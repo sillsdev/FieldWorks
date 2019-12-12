@@ -200,11 +200,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
+				SetupUiWidgets(tool);
+				// NB: No popup menu on the browse view.
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(majorFlexComponentParameters);
+				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-				// NB: No popup menu on the browse view.
 			}
 
 			#region Implementation of IDisposable
@@ -240,6 +245,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				if (disposing)
 				{
 				}
+				_majorFlexComponentParameters = null;
 				_partiallySharedTextsAndWordsToolsMenuHelper = null;
 
 				_isDisposed = true;

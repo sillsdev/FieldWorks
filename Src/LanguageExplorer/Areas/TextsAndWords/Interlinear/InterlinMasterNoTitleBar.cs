@@ -27,8 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Dock = DockStyle.Fill;
 		}
 
-		protected override bool ShouldSetupUiWidgets => false;
-
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>

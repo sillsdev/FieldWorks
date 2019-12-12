@@ -1067,18 +1067,13 @@ namespace LanguageExplorer
 			var thingToDelete = GetObjectToDelete(CurrentObject);
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
-				using (var uiObj = CmObjectUi.MakeLcmModelUiObject(thingToDelete))
+				if (thingToDelete.CanDelete)
 				{
-					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					string cannotDeleteMsg;
-					if (uiObj.CanDelete(out cannotDeleteMsg))
-					{
-						dlg.SetDlgInfo(uiObj, m_cache, PropertyTable);
-					}
-					else
-					{
-						dlg.SetDlgInfo(uiObj, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
-					}
+					dlg.SetDlgInfo(thingToDelete, m_cache, PropertyTable);
+				}
+				else
+				{
+					dlg.SetDlgInfo(thingToDelete, m_cache, PropertyTable, TsStringUtils.MakeString(LcmUiStrings.ksCannotDeleteItem, m_cache.DefaultUserWs));
 				}
 				var window = PropertyTable.GetValue<Form>(FwUtils.window);
 				if (DialogResult.Yes == dlg.ShowDialog(window))

@@ -241,10 +241,8 @@ namespace LanguageExplorer.Areas
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(ri))
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.SetDlgInfo(ui, m_cache, PropertyTable);
+				dlg.SetDlgInfo(ri, m_cache, PropertyTable);
 				dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
 				dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))

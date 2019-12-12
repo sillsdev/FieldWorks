@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -197,12 +197,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				// Tool must be added, even when it adds no tool specific handlers.
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(new ToolUiWidgetParameterObject(tool));
-#if RANDYTODO
-				// TODO: See LexiconEditTool for how to set up all manner of menus and tool bars.
-#endif
+				SetupUiWidgets(tool);
 				// NB: No popup menu on the browse view.
+			}
+
+			private void SetupUiWidgets(ITool tool)
+			{
+				// Tool must be added, even when it adds no tool specific handlers.
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
+
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
 			#region Implementation of IDisposable

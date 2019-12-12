@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
@@ -777,58 +776,52 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
+			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
-				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
-				using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
+				//We need this to determine which kind of relation we are deleting
+				var lrtOwner = (ILexRefType)lr.Owner;
+				var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+				var userWs = Cache.WritingSystemFactory.UserWs;
+				var tisb = TsStringUtils.MakeIncStrBldr();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+				switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
 				{
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-					//We need this to determine which kind of relation we are deleting
-					var lrtOwner = (ILexRefType)lr.Owner;
-					var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					var userWs = Cache.WritingSystemFactory.UserWs;
-					var tisb = TsStringUtils.MakeIncStrBldr();
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-
-					switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
-					{
-						case LexRefTypeTags.MappingTypes.kmtSenseSequence:
-						case LexRefTypeTags.MappingTypes.kmtEntrySequence:
-						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
-						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-						case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-						case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-							if (lr.TargetsRS.Count > 2)
-							{
-								tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-								tisb.Append(string.Format(LanguageExplorerResources.ksDeleteSequenceCollectionA, StringUtils.kChHardLB.ToString()));
-								tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, analWs);
-								tisb.Append(lrtOwner.ShortName);
-								tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-								tisb.Append(LanguageExplorerResources.ksDeleteSequenceCollectionB);
-
-								dlg.SetDlgInfo(ui, Cache, PropertyTable, tisb.GetString());
-							}
-							else
-							{
-								dlg.SetDlgInfo(ui, Cache, PropertyTable);
-							}
-							break;
-						default:
-							dlg.SetDlgInfo(ui, Cache, PropertyTable);
-							break;
-					}
-
-					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-					{
-						UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoDeleteRelation, LexiconResources.ksRedoDeleteRelation, MyCmObject, () =>
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+						if (lr.TargetsRS.Count > 2)
 						{
-							//If the user selected Yes, then we need to delete 'this' sense or entry
-							lr.TargetsRS.Remove(MyCmObject);
-						});
-						//Update the display because we have removed this slice from the Lexical entry.
-						UpdateForDelete(lr);
-					}
+							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+							tisb.Append(string.Format(LanguageExplorerResources.ksDeleteSequenceCollectionA, StringUtils.kChHardLB.ToString()));
+							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, analWs);
+							tisb.Append(lrtOwner.ShortName);
+							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+							tisb.Append(LanguageExplorerResources.ksDeleteSequenceCollectionB);
+
+							dlg.SetDlgInfo(lr, Cache, PropertyTable, tisb.GetString());
+						}
+						else
+						{
+							dlg.SetDlgInfo(lr, Cache, PropertyTable);
+						}
+						break;
+					default:
+						dlg.SetDlgInfo(lr, Cache, PropertyTable);
+						break;
+				}
+
+				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
+				{
+					UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoDeleteRelation, LexiconResources.ksRedoDeleteRelation, MyCmObject, () =>
+					{
+						//If the user selected Yes, then we need to delete 'this' sense or entry
+						lr.TargetsRS.Remove(MyCmObject);
+					});
+					//Update the display because we have removed this slice from the Lexical entry.
+					UpdateForDelete(lr);
 				}
 			}
 		}
@@ -847,10 +840,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
 				//We need this to determine which kind of relation we are deleting
 				var lrtOwner = lr.Owner as ILexRefType;
 				var userWs = Cache.WritingSystemFactory.UserWs;
@@ -867,10 +857,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 						tisb.Append(string.Format(LanguageExplorerResources.ksDeleteLexTree, StringUtils.kChHardLB));
-						dlg.SetDlgInfo(ui, Cache, PropertyTable, tisb.GetString());
+						dlg.SetDlgInfo(lr, Cache, PropertyTable, tisb.GetString());
 						break;
 					default:
-						dlg.SetDlgInfo(ui, Cache, PropertyTable);
+						dlg.SetDlgInfo(lr, Cache, PropertyTable);
 						break;
 				}
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))

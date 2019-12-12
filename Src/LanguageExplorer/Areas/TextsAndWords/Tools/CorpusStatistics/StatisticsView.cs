@@ -270,14 +270,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			statisticsBox.Select(0, 0);
 		}
 
-		private void AddTexts_Clicked(object sender, EventArgs e)
-		{
-			if (((InterlinearTextsRecordList)_recordList).AddTexts())
-			{
-				RebuildStatisticsTable();
-			}
-		}
-
 		// Code to add right click
 		private void Copy_Menu_Item_Click(object sender, EventArgs e)
 		{

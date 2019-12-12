@@ -1532,16 +1532,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private IVwSelection MakeSelectionIcon(SelLevInfo[] rgvsli, int tag, bool fInstall)
 		{
-			IVwSelection sel = null;
-			try
-			{
-				sel = RootBox.MakeSelInObj(0, rgvsli.Length, rgvsli, tag, fInstall);
-			}
-			catch (Exception)
-			{
-				// Ignore any problems
-			}
-			return sel;
+			return RootBox?.MakeSelInObj(0, rgvsli.Length, rgvsli, tag, fInstall);
 		}
 
 		/// <summary>

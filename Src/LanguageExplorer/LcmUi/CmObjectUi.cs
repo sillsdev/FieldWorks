@@ -154,17 +154,6 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// This is the main class factory that makes a corresponding CmObjectUi for any given
-		/// CmObject.
-		/// </summary>
-		public static CmObjectUi MakeLcmModelUiObject(ICmObject obj)
-		{
-			var result = MakeLcmModelUiObject(obj.Cache, obj.Hvo, obj.ClassID);
-			result.m_cmObject = obj;
-			return result;
-		}
-
-		/// <summary>
 		/// In many cases we don't really need the LCM object, which can be relatively expensive
 		/// to create. This version saves the information, and creates it when needed.
 		/// </summary>
@@ -636,11 +625,11 @@ namespace LanguageExplorer.LcmUi
 						string cannotDeleteMsg;
 						if (CanDelete(out cannotDeleteMsg))
 						{
-							dlg.SetDlgInfo(this, m_cache, PropertyTable);
+							dlg.SetDlgInfo(MyCmObject, m_cache, PropertyTable);
 						}
 						else
 						{
-							dlg.SetDlgInfo(this, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+							dlg.SetDlgInfo(MyCmObject, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 						}
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{

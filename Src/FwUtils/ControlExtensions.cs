@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel;
@@ -33,6 +34,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				me = myParent;
 			}
+		}
+
+		public static List<UserControl> GetUserControlsInControl(this Control root)
+		{
+			var list = new List<UserControl>();
+			var queue = new Queue<Control>();
+			queue.Enqueue(root);
+			do
+			{
+				var control = queue.Dequeue();
+				if (control is UserControl)
+				{
+					list.Insert(0, (UserControl)control);
+				}
+				foreach (var child in control.Controls.OfType<Control>())
+				{
+					queue.Enqueue(child);
+				}
+			} while (queue.Count > 0);
+			return list;
 		}
 
 		/// <summary>
