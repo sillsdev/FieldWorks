@@ -567,10 +567,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
 			{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 				// now being handled
 				Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle;
 				// now launch the dialog
@@ -615,10 +611,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 							break;
 					}
 				}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			}
 
 			private bool AddNewMsa()

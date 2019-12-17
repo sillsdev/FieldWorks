@@ -1149,17 +1149,9 @@ namespace LanguageExplorer.Impls
 
 		private void CloseOldWindow(object sender, EventArgs e)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			Application.Idle -= CloseOldWindow;
 			m_windowToCloseOnIdle?.Close();
 			m_windowToCloseOnIdle = null;
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		/// <summary>

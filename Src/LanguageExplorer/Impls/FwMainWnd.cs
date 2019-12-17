@@ -1049,15 +1049,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void RemoveTemporaryProperties()
-		{
-			foreach (var temporaryPropertyName in _temporaryPropertyNames)
-			{
-				PropertyTable.RemoveProperty(temporaryPropertyName);
-			}
-			_temporaryPropertyNames.Clear();
-		}
-
 		private void RegisterSubscriptions()
 		{
 			Subscriber.Subscribe("MigrateOldConfigurations", MigrateOldConfigurations);

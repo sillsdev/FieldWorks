@@ -144,25 +144,13 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void ApplicationOnIdle(object sender, EventArgs eventArgs)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			var activeView = _mainWnd.ActiveView as SimpleRootSite;
 			if (activeView == null)
 			{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End1: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 				return;
 			}
 			if (!activeView.Focused)
 			{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End2: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 				return;
 			}
 			_skipProcessingClickEvent = true;
@@ -182,10 +170,6 @@ Debug.WriteLine($"End2: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 				}
 				if (originalEnabledState == enabled)
 				{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End3: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 					return; // No change.
 				}
 				SortedSet<string> newSet = null;
@@ -237,10 +221,6 @@ Debug.WriteLine($"End3: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}':
 				_formatToolStripComboBox.SelectedItem = enabled ? newText : string.Empty;
 				_skipProcessingClickEvent = false;
 			}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End4: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		private void CollectStyleInformation()
