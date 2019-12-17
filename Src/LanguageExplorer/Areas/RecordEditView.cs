@@ -151,6 +151,7 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue.Remove(ShowRecordOnIdle);
 				components?.Dispose();
 				_uiWidgetController.RemoveUserControlHandlers(this);
 				if (MyDataTree != null)
@@ -179,9 +180,6 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-#if RANDYTODO
-			// TODO: As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
-#endif
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
@@ -271,11 +269,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (!rni.SkipShowRecord)
 			{
-#if RANDYTODO
-				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
-#else
-				ShowRecordOnIdle(rni);
-#endif
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
 			}
 		}
 
@@ -290,17 +284,18 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Shows the record on idle. This is where the record is actually shown.
 		/// </summary>
-		void ShowRecordOnIdle(RecordNavigationInfo rni)
+		private bool ShowRecordOnIdle(object parameter)
 		{
 			if (IsDisposed)
 			{
-				return;
+				return true;
 			}
 			base.ShowRecord();
 #if DEBUG
 			var msStart = Environment.TickCount;
 			Debug.Assert(MyDataTree != null);
 #endif
+			var rni = (RecordNavigationInfo)parameter;
 			var oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
 			MyRecordList.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
@@ -309,7 +304,7 @@ namespace LanguageExplorer.Areas
 			{
 				MyDataTree.Hide();
 				MyDataTree.Reset(); // in case user deleted the object it was based upon.
-				return;
+				return true;
 			}
 			try
 			{
@@ -341,6 +336,7 @@ namespace LanguageExplorer.Areas
 			var traceSwitch = new TraceSwitch("Works_Timing", "Used for diagnostic timing output", "Off");
 			Debug.WriteLineIf(traceSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", traceSwitch.DisplayName);
 #endif
+			return true;
 		}
 
 		/// <summary>

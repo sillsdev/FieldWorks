@@ -15,7 +15,7 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary>
-	/// This class provides the RecordList for the InterlinearTextsRecordClerk. It exists to provide a pre-filtered
+	/// This class provides the RecordList for three Text & Words tools. It exists to provide a pre-filtered
 	/// list of Wordforms and to prevent jarring reloads of the Wordlist when the user is indirectly modifying the
 	/// lists content. (i.e. typing in the baseline pane in the Text & Words\Word Concordance view)
 	///
@@ -78,6 +78,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ReloadList();
 				}
 			}
+		}
+
+		/// <summary>
+		/// This method should cause all paragraphs in interesting texts which do not have the ParseIsCurrent flag set
+		/// to be Parsed.
+		/// </summary>
+		internal void ParseInterestingTextsIfNeeded()
+		{
+			ForceReloadList();
 		}
 
 		/// <summary>

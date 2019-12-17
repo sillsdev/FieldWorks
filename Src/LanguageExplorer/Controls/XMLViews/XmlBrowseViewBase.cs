@@ -215,10 +215,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
-#if RANDYTODO
-					// Clearing out the list changes the selection, so let everyone know.
-					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
-#endif
+					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 					return;
 				}
 				var hvoObjNewSel = GetNewSelectionObject(value);
@@ -299,11 +296,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				Update();
-#if RANDYTODO
-				// actual selection changed event only on idle; this makes the browse view more responsive,
-				// especially to arrow keys on auto-repeat.
-				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
-#endif
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 			}
 		}
 
@@ -953,9 +946,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue.Remove(FireSelectionChanged);
 				Subscriber.Unsubscribe("SaveScrollPosition", SaveScrollPosition);
 				Subscriber.Unsubscribe("RestoreScrollPosition", RestoreScrollPosition);
-
 				if (m_bv != null && !m_bv.IsDisposed)
 				{
 					m_bv.SpecialCache?.RemoveNotification(this);
@@ -1793,13 +1786,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (SelectedObject != m_hvoOldSel)
 				{
-#if RANDYTODO
-					// The selected object has changed even though the index didn't, e.g., because we
-					// changed the sorting of the list while leaving the selected index fixed.
-					// We need to fire the notification saying it changed, anyway.
-					// (But don't update m_hvoOldSelection; FireSelectionChanged must find the old one to register a change.)
-					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
-#endif
+					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 				}
 			}
 			else if (RootBox != null && hvo > 0 && SelectedObject > 0)

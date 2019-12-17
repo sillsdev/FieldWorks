@@ -536,6 +536,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
+			/*
 			m_rtPane.IsCurrentTabForInterlineMaster = false;
 			m_taggingPane.IsCurrentTabForInterlineMaster = false;
 			m_idcGloss.IsCurrentTabForInterlineMaster = false;
@@ -552,6 +553,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 			}
+			*/
 			try
 			{
 				m_tabCtrl.SelectedIndex = (int)InterlinearTab; // set the persisted tab setting.
@@ -583,7 +585,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(_sharedEventHandlers, MyRecordList, _majorFlexComponentParameters.UiWidgetController);
+						m_infoPane.Initialize(_sharedEventHandlers, _majorFlexComponentParameters.StatusBar, MyRecordList, _majorFlexComponentParameters.UiWidgetController);
 						m_infoPane.Dock = DockStyle.Fill;
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
 						if (m_infoPane.Enabled)
@@ -636,7 +638,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (RootStText == null)
 						{
 							m_constChartPane.Enabled = false;
-							((ConstituentChart)m_constChartPane).InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
+							m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 						}
 						else
 						{
@@ -1253,7 +1255,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_tabCtrl_Deselecting(object sender, TabControlCancelEventArgs e)
 		{
-			/*
 			var deselectedIndex = e.TabPageIndex;
 			switch (deselectedIndex)
 			{
@@ -1279,7 +1280,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
 					break;
 			}
-			*/
+			if (_paneBarButtons != null)
+			{
+				foreach (var panelButton in _paneBarButtons.Values)
+				{
+					panelButton.Visible = panelButton.Enabled = false;
+				}
+			}
 			// Switching tabs, usual precaution against being able to Undo things you can no longer see.
 			// When we do this because we're switching objects because we deleted one, and the new
 			// object is empty, we're inside the ShowRecord where it is suppressed.

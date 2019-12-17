@@ -222,10 +222,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		void Application_Idle(object sender, EventArgs e)
 		{
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 			var incompleteTasks = new List<IdleQueueTask>();
 			try
 			{
@@ -269,10 +265,6 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 					}
 				}
 			}
-#if RANDYTODO_TEST_Application_Idle
-// TODO: Remove when finished sorting out idle issues.
-Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-#endif
 		}
 
 		private static bool ShouldAbort()

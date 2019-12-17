@@ -32,6 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string ConcOccurrences = "ConcOccurrences";
 		internal const string InterlinearTexts = "interlinearTexts";
+		internal const string InterlinearTextsRecordList = "InterlinearTextsRecordList";
 		internal const string Respeller = "Respeller";
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
@@ -236,7 +237,29 @@ namespace LanguageExplorer.Areas.TextsAndWords
               <sortMethods />
             </clerk>
 			*/
-			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, new VectorPropertyParameterObject(cache.LanguageProject, "InterestingTexts", InterestingTextsDecorator.kflidInterestingTexts));
+			return CreateInterlinearTextsRecordList(InterlinearTexts, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
+		}
+
+		internal static IRecordList InterlinearTextsForInfoPaneFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == InterlinearTextsRecordList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{InterlinearTextsRecordList}'.");
+			/*
+            <clerk id="InterlinearTextsRecordClerk">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
+              <recordList owner="LangProject" property="InterestingTexts">
+                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
+              </recordList>
+              <filterMethods />
+              <sortMethods />
+            </clerk>
+			*/
+			return CreateInterlinearTextsRecordList(InterlinearTextsRecordList, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
+		}
+
+		private static IRecordList CreateInterlinearTextsRecordList(string listId, StatusBar statusBar, ILcmServiceLocator serviceLocator, IPropertyTable propertyTable, ILangProject langProject)
+		{
+			return new InterlinearTextsRecordList(listId, statusBar, new InterestingTextsDecorator(serviceLocator, propertyTable), false, new VectorPropertyParameterObject(langProject, AreaServices.InterestingTexts, InterestingTextsDecorator.kflidInterestingTexts));
 		}
 
 		private sealed class TextAndWordsAreaMenuHelper : IDisposable

@@ -219,6 +219,7 @@ namespace LanguageExplorer.Areas
 		internal const string Promote = "Promote";
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";
+		internal const string InterestingTexts = "InterestingTexts";
 		#endregion Random strings
 
 		/// <summary>

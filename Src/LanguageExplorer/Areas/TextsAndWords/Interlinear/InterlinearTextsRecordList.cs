@@ -74,16 +74,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		// TODO: Push down to ConcordanceRecordList, since I believe that comment, below. It is called by RespellerDlg.
-		/// <summary>
-		/// This method should cause all paragraphs in interesting texts which do not have the ParseIsCurrent flag set
-		/// to be Parsed. Created for use with ConcordanceRecordList lists.
-		/// </summary>
-		internal void ParseInterestingTextsIfNeeded()
-		{
-			ForceReloadList();
-		}
-
 		internal bool AddTexts()
 		{
 			// get saved scripture choices

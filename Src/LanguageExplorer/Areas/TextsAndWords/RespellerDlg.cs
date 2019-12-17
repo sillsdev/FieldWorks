@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2019 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,8 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		bool m_fOtherOccurrencesExist;
 		string m_lblExplainText; // original text of m_lblExplainDisabled
 		// Typically the record list of the calling Words/Analysis view that manages a list of wordforms.
-		// May be null when called from TE change spelling dialog.
-		IRecordList m_wordformRecordList;
+		ConcordanceRecordList m_concordanceRecordList;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 		ISegmentRepository m_repoSeg;
 		private StatusBar _statusBar;
@@ -194,18 +193,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal bool SetDlgInfo(StatusBar statusBar)
 		{
 			_statusBar = statusBar;
-			m_wordformRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
-			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
+			m_concordanceRecordList = (ConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
+			m_concordanceRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
-			if (m_wordformRecordList is InterlinearTextsRecordList)
-			{
-				//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
-				//(this record list and its list are not visible in this dialog, so there will be no future reload)
-				m_wordformRecordList.ListLoadingSuppressed = false;
-				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterestingTextsIfNeeded(); //Trigger the parsing
-			}
-			m_srcwfiWordform = (IWfiWordform)m_wordformRecordList.CurrentObject;
+			//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
+			//(this record list and its list are not visible in this dialog, so there will be no future reload)
+			m_concordanceRecordList.ListLoadingSuppressed = false;
+			m_concordanceRecordList.ParseInterestingTextsIfNeeded(); //Trigger the parsing
+			m_srcwfiWordform = (IWfiWordform)m_concordanceRecordList.CurrentObject;
 			return SetDlgInfoPrivate();
 		}
 
@@ -567,13 +563,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override void OnClosed(EventArgs e)
 		{
 			// Any way we get closed we want to be sure this gets restored.
-			if (m_wordformRecordList != null)
+			if (m_concordanceRecordList != null)
 			{
-				m_wordformRecordList.SuppressSaveOnChangeRecord = false;
+				m_concordanceRecordList.SuppressSaveOnChangeRecord = false;
 				if (m_hvoNewWordform != 0)
 				{
 					// Move the record list to the new word if possible.
-					m_wordformRecordList.JumpToRecord(m_hvoNewWordform);
+					m_concordanceRecordList.JumpToRecord(m_hvoNewWordform);
 				}
 			}
 			base.OnClosed(e);

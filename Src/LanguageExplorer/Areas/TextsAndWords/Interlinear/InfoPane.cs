@@ -3,10 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -19,8 +23,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Required designer variable.
 		/// </summary>
 		private Container components = null;
-		// Local variables.
-		RecordEditView m_xrev;
+		private RecordEditView _xrev;
+		private IRecordList _recordList;
+		private bool _createdLocally;
 
 		#region Constructors, destructors, and suchlike methods.
 
@@ -78,20 +83,41 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize the pane with a record list. (It already has the cache.)
 		/// </summary>
-		internal void Initialize(ISharedEventHandlers sharedEventHandlers, IRecordList recordList, UiWidgetController uiWidgetController)
+		internal void Initialize(ISharedEventHandlers sharedEventHandlers, StatusBar statusBar, IRecordList recordList, UiWidgetController uiWidgetController)
 		{
-			if (m_xrev != null)
+			if (_xrev != null)
 			{
+#if RANDYTODO
+				// TODO: See if I went this original code, or just the return.
+				//when re-using the infoview we want to remove and dispose of the old recordeditview and
+				//associated datatree. (LT-13216)
+				Controls.Remove(_xrev);
+				_xrev.Dispose();
+				_xrev = null;
+				if (_createdLocally)
+				{
+					PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordList);
+					_recordList.Dispose();
+					_createdLocally = false;
+					_recordList = null;
+				}
+#else
 				// Already done
 				return;
+#endif
 			}
-			var dataTree = new StTextDataTree(sharedEventHandlers, Cache);
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), Cache, recordList, dataTree, uiWidgetController);
-			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			m_xrev.Dock = DockStyle.Fill;
-			Controls.Add(m_xrev);
+			_recordList = recordList;
+			if (_recordList.GetType().Name != TextAndWordsArea.InterlinearTextsRecordList)
+			{
+				_createdLocally = true;
+				_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTextsRecordList, statusBar, TextAndWordsArea.InterlinearTextsForInfoPaneFactoryMethod);
+			}
+			_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), sharedEventHandlers, Cache, _recordList, uiWidgetController);
+			_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			_xrev.Dock = DockStyle.Fill;
+			Controls.Add(_xrev);
 			DisplayCurrentRoot();
-			m_xrev.FinishInitialization();
+			_xrev.FinishInitialization();
 		}
 
 		/// <summary>
@@ -114,13 +140,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				m_xrev?.Dispose();
+				_xrev?.Dispose();
+				if (_createdLocally)
+				{
+					PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordList);
+					_recordList.Dispose();
+					_createdLocally = false;
+				}
 			}
 			Cache = null;
-			m_xrev = null;
+			_xrev = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			_recordList = null;
 
 			base.Dispose(disposing);
 		}
@@ -141,16 +174,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			this.Name = "InfoPane";
 			resources.ApplyResources(this, "$this");
-			this.Load += new EventHandler(this.InfoPane_Load);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
-
-		private void InfoPane_Load(object sender, EventArgs e)
-		{
-
-		}
 
 		#region IInterlinearTabControl Members
 
@@ -165,7 +192,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void SetRoot(int hvo)
 		{
 			CurrentRootHvo = hvo;
-			if (m_xrev != null)
+			if (_xrev != null)
 			{
 				DisplayCurrentRoot();
 			}
@@ -177,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (CurrentRootHvo > 0)
 			{
-				m_xrev.MyDataTree.Visible = true;
+				_xrev.MyDataTree.Visible = true;
 				var repo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 				ICmObject root;
 				// JohnT: I don't know why this is done at all. Therefore I made a minimal change rather than removing it
@@ -185,17 +212,137 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// and it no longer applies, please remove it. I added the test that the record list is not aleady looking
 				// at this object to suppress switching back to the raw text pane when clicking on the Info pane of an empty text.
 				// (FWR-3180)
-				if (repo.TryGetObject(CurrentRootHvo, out root) && root is IStText && m_xrev.MyRecordList.CurrentObjectHvo != CurrentRootHvo)
+				if (repo.TryGetObject(CurrentRootHvo, out root) && root is IStText && _xrev.MyRecordList.CurrentObjectHvo != CurrentRootHvo)
 				{
-					m_xrev.MyRecordList.JumpToRecord(CurrentRootHvo);
+					_xrev.MyRecordList.JumpToRecord(CurrentRootHvo);
 				}
 			}
 			else if (CurrentRootHvo == 0)
 			{
-				m_xrev.MyDataTree.Visible = false;
+				_xrev.MyDataTree.Visible = false;
 			}
 		}
 
 		internal int CurrentRootHvo { get; private set; }
+
+		private sealed class InterlinearTextsRecordEditView : RecordEditView
+		{
+			internal InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, new StTextDataTree(infoPane, sharedEventHandlers, cache), uiWidgetController)
+			{
+			}
+
+			#region Overrides of RecordEditView
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				base.InitializeFlexComponent(flexComponentParameters);
+
+				ReadParameters();
+				SetupDataContext();
+				ShowRecord();
+			}
+			#endregion
+
+
+			private sealed class StTextDataTree : DataTree
+			{
+				private InfoPane InfoPane { get; }
+
+				internal StTextDataTree(InfoPane infoPane, ISharedEventHandlers sharedEventHandlers, LcmCache cache)
+					: base(sharedEventHandlers, false)
+				{
+					InfoPane = infoPane;
+					Cache = cache;
+					InitializeBasic(cache, false);
+					InitializeComponent();
+				}
+
+				public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+				{
+					base.InitializeFlexComponent(flexComponentParameters);
+
+					// Set up Slice menu: "mnuTextInfo_Notebook"
+					DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuTextInfo_Notebook, Create_mnuTextInfo_Notebook);
+				}
+
+				private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuTextInfo_Notebook(Slice slice, ContextMenuName contextMenuId)
+				{
+					Require.That(contextMenuId == ContextMenuName.mnuTextInfo_Notebook, $"Expected argument value of '{ContextMenuName.mnuTextInfo_Notebook.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+					// Start: <menu id="mnuTextInfo_Notebook">
+
+					var contextMenuStrip = new ContextMenuStrip
+					{
+						Name = ContextMenuName.mnuTextInfo_Notebook.ToString()
+					};
+					var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+					// <item command="CmdJumpToNotebook"/>
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToNotebook_Clicked, TextAndWordsResources.Show_Record_in_Notebook);
+
+					// End: <menu id="mnuTextInfo_Notebook">
+
+					return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+				}
+
+				private void JumpToNotebook_Clicked(object sender, EventArgs e)
+				{
+					/*
+					<command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
+						<parameters tool="notebookEdit" className="RnGenericRecord"/>
+					</command>
+					*/
+					var currentObject = CurrentSlice.MyCmObject;
+					if (currentObject is IText)
+					{
+						currentObject = ((IText)currentObject).AssociatedNotebookRecord;
+					}
+					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NotebookEditToolMachineName, currentObject.Guid));
+				}
+
+				protected override void SetDefaultCurrentSlice(bool suppressFocusChange)
+				{
+					base.SetDefaultCurrentSlice(suppressFocusChange);
+					// currently we always want the focus in the first slice by default,
+					// since the user cannot control the governing browse view with a cursor.
+					if (!suppressFocusChange && CurrentSlice == null)
+					{
+						FocusFirstPossibleSlice();
+					}
+				}
+
+				public override void ShowObject(ICmObject root, string layoutName, string layoutChoiceField, ICmObject descendant, bool suppressFocusChange)
+				{
+					if (InfoPane != null && InfoPane.CurrentRootHvo == 0)
+					{
+						return;
+					}
+					var showObj = root;
+					ICmObject stText;
+					if (root.ClassID == CmBaseAnnotationTags.kClassId)  // RecordList is tracking the annotation
+					{
+						// This pane, as well as knowing how to work with a record list of Texts, knows
+						// how to work with one of CmBaseAnnotations, that is, a list of occurrences of
+						// a word.
+						var cba = (ICmBaseAnnotation)root;
+						var cmoPara = cba.BeginObjectRA;
+						stText = cmoPara.Owner;
+						showObj = stText;
+					}
+					else
+					{
+						stText = root;
+					}
+					if (stText.OwningFlid == TextTags.kflidContents)
+					{
+						showObj = stText.Owner;
+					}
+					base.ShowObject(showObj, layoutName, layoutChoiceField, showObj, suppressFocusChange);
+				}
+			}
+		}
 	}
 }

@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas
 					{
 						switch (bstrFieldName)
 						{
-							case "InterestingTexts":
+							case AreaServices.InterestingTexts:
 								return InterestingTextsDecorator.kflidInterestingTexts;
 						}
 					}
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas
 		{
 			switch (flid)
 			{
-				case InterestingTextsDecorator.kflidInterestingTexts: return "InterestingTexts";
+				case InterestingTextsDecorator.kflidInterestingTexts: return AreaServices.InterestingTexts;
 			}
 			return base.GetFieldName(flid);
 		}

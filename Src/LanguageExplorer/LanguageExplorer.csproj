@@ -576,9 +576,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinComboHandlerActionComboItem.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysisVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterForElan.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordEditView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineSpec.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMode.cs" />
@@ -601,9 +598,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxChangedEventArgs.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitor.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitorHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\StTextDataTree.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\TabPageSelection.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextCreationParams.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsVc.cs" />
