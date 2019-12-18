@@ -204,15 +204,10 @@ namespace XCore
 			{
 				ToolStrip toolStrip = new ToolStrip()
 					{
-						Height = 15, // TODO-Linux: this should not be hard coded. Set the height when toolstipitem is added.
 						Tag = choice,
 						Dock = DockStyle.None
-
-
 					};
 				toolStrip.AccessibilityObject.Name = choice.Id;
-
-
 
 				choice.ReferenceWidget = toolStrip;
 				Manager.AddToolStrip(toolStrip);
@@ -223,7 +218,6 @@ namespace XCore
 				Manager.InvalidateLayout();
 			};
 		}
-
 
 		/// <summary>
 		/// do a limited update of the toolbar
@@ -419,6 +413,10 @@ namespace XCore
 						toolStrip.Items.Add(separator);
 					}
 					wantsSeparatorBefore = false;
+					if (toolStrip.Height < toolStripItem.Height)
+					{
+						toolStrip.Height = toolStripItem.Height;
+					}
 					toolStrip.Items.Add(toolStripItem);
 				}
 				else if (item is ChoiceGroup)
@@ -426,6 +424,10 @@ namespace XCore
 
 					ToolStripComboBox toolStripItem = CreateComboBox(item as ChoiceGroup, true);
 
+					if (toolStrip.Height < toolStripItem.Height)
+					{
+						toolStrip.Height = toolStripItem.Height;
+					}
 					toolStrip.Items.Add(toolStripItem);
 				}
 				else
