@@ -19,7 +19,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var expectedOutput = @"<column layout='ExtNoteType' label='Ext. Note - Type' multipara='true' ghostListField='LexDb.AllExtendedNoteTargets' visibility='dialog' list='LexDb.ExtendedNoteTypes' field='LexExtendedNote.ExtendedNoteType' bulkEdit='atomicFlatListItem' displayWs='best vernoranal' displayNameProperty='ShortNameTSS'/>
 				<column layout='ExtNoteDiscussion' label='Ext. Note - Discussion' multipara='true' ws='$ws=analysis' transduce='LexExtendedNote.Discussion' ghostListField='LexDb.AllExtendedNoteTargets' editable='true' visibility='dialog' />
 				".Replace("'", "\"");
-			var output = XmlBrowseViewBaseVc.FixVersion18Columns(input);
+			var output = XmlBrowseViewVc.FixVersion18Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "transduce attributes should be added");
 		}
 
@@ -36,7 +36,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	<column layout='EtymologyForm' label='Etymology - Form'  multipara='true' ws='$ws=vernacular' editable='false' visibility='dialog' transduce='LexEntry.Etymology.Form'/>
 	<column layout='EtymologyComment' label='Etymology - Comment'  multipara='true' ws='$ws=analysis' editable='false' visibility='dialog' transduce='LexEntry.Etymology.Comment'/>
 ".Replace("'", "\"");
-			var output = XmlBrowseViewBaseVc.FixVersion16Columns(input);
+			var output = XmlBrowseViewVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "transduce attributes should be added");
 		}
 
@@ -61,7 +61,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ghostListField='LexDb.AllVariantEntryRefPropertyTargets'
 			bulkEdit='variantEntryTypes' field='LexEntryRef.VariantEntryTypes' list='LexDb.VariantEntryTypes' displayNameProperty='ShortNameTSS' displayWs='analysis'/>
 ".Replace("'", "\"");
-			var output = XmlBrowseViewBaseVc.FixVersion16Columns(input);
+			var output = XmlBrowseViewVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "ws and original Ws attributes should be changed to best analysis");
 		}
 
@@ -104,7 +104,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				bulkEdit='atomicFlatListItem' field='LexExampleSentence.$fieldName' list='$targetList' displayNameProperty='ShortNameTSS'/>
 	</generate>
 ".Replace("'", "\"");
-			var output = XmlBrowseViewBaseVc.FixVersion16Columns(input);
+			var output = XmlBrowseViewVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "displayNameProperty should be added");
 		}
 
@@ -127,7 +127,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	<column layout='ScientificNameForSense' label='Scientific Names' multipara='true' ws='$ws=analysis' transduce='LexSense.ScientificName' visibility='dialog' />
 	<column layout='SourceForSense'  label='Sources' ws='$ws=analysis' multipara='true' transduce='LexSense.Source' visibility='dialog' />
 ".Replace("'", "\"");
-			var output = XmlBrowseViewBaseVc.FixVersion16Columns(input);
+			var output = XmlBrowseViewVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "$ws= should be added to various fields");
 		}
 	}

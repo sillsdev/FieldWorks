@@ -66,6 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(ShowRecordOnIdle);
 				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 
@@ -189,8 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-#if RANDYTODO
-			if (MyRecordList == null || m_mainView == null || m_mediator == null || hvo != MyRecordList.CurrentObjectHvo)
+			if (MyRecordList == null || m_mainView == null || hvo != MyRecordList.CurrentObjectHvo)
 			{
 				return;
 			}
@@ -199,18 +199,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
 			}
-			if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
+			var idleQueue = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue;
+			if (!idleQueue.Contains(ShowRecordOnIdle))
 			{
-				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
+				idleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
 			}
-#endif
 		}
 
 		private bool ShowRecordOnIdle(object arg)
 		{
 			if (IsDisposed)
 			{
-				return true; // no longer necessary to refresh the view
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
 			var ui = Cache.ServiceLocator.GetInstance<ILcmUI>();
 			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))

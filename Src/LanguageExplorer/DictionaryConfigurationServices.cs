@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2019 SIL International
+// Copyright (c) 2014-2029 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using Gecko;
 using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
+using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
@@ -458,5 +459,81 @@ namespace LanguageExplorer
 		{
 			"Bulleted List", "Numbered List", "Homograph-Number"
 		};
+
+		internal static void ShowUploadToWebonaryDialog(MajorFlexComponentParameters majorFlexComponentParameters)
+		{
+			var propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+			var projectConfigDir = GetProjectConfigurationDirectory(majorFlexComponentParameters.LcmCache, DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = GetDefaultConfigurationDirectory(DictionaryConfigurationDirectoryName);
+			var configurations = GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+			// Now collect all the reversal configurations into the reversals variable
+			projectConfigDir = GetProjectConfigurationDirectory(majorFlexComponentParameters.LcmCache, ReversalIndexConfigurationDirectoryName);
+			defaultConfigDir = GetDefaultConfigurationDirectory(ReversalIndexConfigurationDirectoryName);
+			var reversals = GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+			// show dialog
+			var model = new UploadToWebonaryModel(propertyTable)
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications
+			};
+			using (var controller = new UploadToWebonaryController(cache, propertyTable, majorFlexComponentParameters.FlexComponentParameters.Publisher, majorFlexComponentParameters.StatusBar))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
+			{
+				dialog.ShowDialog();
+				majorFlexComponentParameters.MainWindow.RefreshAllViews();
+			}
+		}
+
+		/// <summary>
+		/// Return dictionary configurations from default and project-specific paths, skipping default/shipped configurations that are
+		/// superseded by project-specific configurations. Keys are labels, values are the models.
+		/// </summary>
+		internal static Dictionary<string, DictionaryConfigurationModel> GetDictionaryConfigurationLabels(LcmCache cache, string defaultPath, string projectPath)
+		{
+			var configurationModels = GetDictionaryConfigurationModels(cache, defaultPath, projectPath);
+			var labelToFileDictionary = new Dictionary<string, DictionaryConfigurationModel>();
+			foreach (var model in configurationModels)
+			{
+				labelToFileDictionary[model.Label] = model;
+			}
+			return labelToFileDictionary;
+		}
+
+		internal static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
+		{
+			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
+			var configurationModels = Enumerable.Select<string, DictionaryConfigurationModel>(configurationPaths, path => new DictionaryConfigurationModel(path, cache)).ToList();
+			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label, StringComparison.InvariantCulture));
+			return configurationModels;
+		}
+
+		/// <summary>
+		/// Loads a List of configuration choices from default and project folders.
+		/// Project-specific configurations override default configurations of the same (file)name.
+		/// </summary>
+		/// <returns>List of paths to configurations</returns>
+		internal static List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
+		{
+			var choices = new Dictionary<string, string>();
+			foreach (var file in Directory.EnumerateFiles(defaultPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
+			{
+				choices[Path.GetFileNameWithoutExtension(file)] = file;
+			}
+			if (!Directory.Exists(projectPath))
+			{
+				Directory.CreateDirectory(projectPath);
+			}
+			else
+			{
+				foreach (var choice in Directory.EnumerateFiles(projectPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
+				{
+					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
+				}
+			}
+			return choices.Values.ToList();
+		}
 	}
 }

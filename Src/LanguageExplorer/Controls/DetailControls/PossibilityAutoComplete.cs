@@ -29,6 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly List<ICmPossibility> m_possibilities;
 		private int m_curPossIndex;
 		private bool m_changingSelection;
+		private IPropertyTable _propertyTable;
 
 		public event EventHandler PossibilitySelected;
 
@@ -38,14 +39,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_control = control;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
-			m_listBox = new ComboListBox(propertyTable.GetValue<Form>(FwUtils.window))
+			_propertyTable = propertyTable;
+			m_listBox = new ComboListBox(_propertyTable.GetValue<Form>(FwUtils.window))
 			{
 				DropDownStyle = ComboBoxStyle.DropDownList,
 				ActivateOnShow = false
 			};
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
-			m_listBox.StyleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+			m_listBox.StyleSheet = FwUtils.StyleSheetFromPropertyTable(_propertyTable);
 			m_listBox.WritingSystemFactory = cache.WritingSystemFactory;
 			m_searcher = new StringSearcher<ICmPossibility>(SearchType.Prefix, cache.ServiceLocator.WritingSystemManager);
 			m_possibilities = new List<ICmPossibility>();
@@ -81,6 +83,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			if (IsDisposed)
+			{
+				// No need to do it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(PerformUpdate);
+			}
 			base.Dispose(disposing);
 		}
 
@@ -161,9 +173,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Update(ITsString tss)
 		{
-#if RANDYTODO
-			m_mediator.IdleQueue.Add(IdleQueuePriority.Low, PerformUpdate, tss);
-#endif
+			_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, PerformUpdate, tss);
 		}
 
 		private bool PerformUpdate(object param)

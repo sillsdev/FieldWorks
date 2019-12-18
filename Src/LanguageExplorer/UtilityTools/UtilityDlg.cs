@@ -107,25 +107,32 @@ namespace LanguageExplorer.UtilityTools
 			{
 				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { this }, null, null));
 			}
-#if RANDYTODO
-			// TODO: 1. Add new "MachineName" string property to IUtility that returns the strings below, for each tool.
-			// TODO: 2. Remove known utilities from utilities, after adding them to m_clbUtilities.Items, and
-			// TODO: 3. Add any user created utilities (ones still in utilities) to m_clbUtilities.Items.
-			// TODO: 4. Consider using MEF to get them all.
-#endif
-			Utilities.Items.Add(utilities["HomographResetter"]);
-			Utilities.Items.Add(utilities["ParserAnalysisRemover"]);
-			Utilities.Items.Add(utilities["ErrorFixer"]);
-			Utilities.Items.Add(utilities["WriteAllObjectsUtility"]);
-			Utilities.Items.Add(utilities["DuplicateWordformFixer"]);
-			Utilities.Items.Add(utilities["DuplicateAnalysisFixer"]);
-			Utilities.Items.Add(utilities["ParseIsCurrentFixer"]);
-			Utilities.Items.Add(utilities["DeleteEntriesSensesWithoutInterlinearization"]);
-			Utilities.Items.Add(utilities["LexEntryInflTypeConverter"]);
-			Utilities.Items.Add(utilities["LexEntryTypeConverter"]);
-			Utilities.Items.Add(utilities["GoldEticGuidFixer"]);
-			Utilities.Items.Add(utilities["SortReversalSubEntries"]);
-			Utilities.Items.Add(utilities["CircularRefBreaker"]);
+			var knownUtilities = new List<string>
+			{
+				"HomographResetter",
+				"ParserAnalysisRemover",
+				"ErrorFixer",
+				"WriteAllObjectsUtility",
+				"DuplicateWordformFixer",
+				"DuplicateAnalysisFixer",
+				"ParseIsCurrentFixer",
+				"DeleteEntriesSensesWithoutInterlinearization",
+				"LexEntryInflTypeConverter",
+				"LexEntryTypeConverter",
+				"GoldEticGuidFixer",
+				"SortReversalSubEntries",
+				"CircularRefBreaker"
+
+			};
+			foreach (var utilityTypeName in knownUtilities)
+			{
+				Utilities.Items.Add(utilities[utilityTypeName]);
+				utilities.Remove(utilityTypeName);
+			}
+			foreach (var userCreatedUtility in utilities.Values)
+			{
+				Utilities.Items.Add(userCreatedUtility);
+			}
 			ResumeLayout();
 			if (Utilities.Items.Count > 0)
 			{

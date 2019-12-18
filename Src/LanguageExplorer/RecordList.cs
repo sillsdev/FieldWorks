@@ -106,7 +106,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// This is the database object whose vector we are editing.
 		/// </summary>
-		protected ICmObject m_owningObject;
+		private ICmObject m_owningObject;
 		/// <summary>
 		/// This enables/disables SendPropChangedOnListChange().  The default is enabled (true).
 		/// </summary>
@@ -1104,24 +1104,6 @@ namespace LanguageExplorer
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.
-		}
-
-		public bool OnExport(object argument)
-		{
-			// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
-			// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
-			// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
-			if (m_cache.GetManagedMetaDataCache().AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
-			{
-				return true;
-			}
-			using (var dlg = new ExportDialog(_statusBar))
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
-			}
-			ActivateUI();
-			return true;    // handled
 		}
 
 		/// <summary>

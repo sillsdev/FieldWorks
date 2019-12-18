@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+  <columns>
+    <column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
+  </columns>
+</parameters>

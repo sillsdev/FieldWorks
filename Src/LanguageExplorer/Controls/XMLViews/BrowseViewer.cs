@@ -2549,7 +2549,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
 			FireColumnsChangedEvent(false);
 			// And have the property table remember the list of columns the user wants.
-			// This information is used in the XmlBrowseViewBaseVc constructor to select the
+			// This information is used in the XmlBrowseViewVc constructor to select the
 			// columns to display.
 			// Exception: if any column has 'doNotPersist="true"' skip saving.
 			var colList = new StringBuilder();
@@ -2789,7 +2789,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					var hvoItem = sda.get_VecItem(hvoRoot, tagMain, i);
 					// If there's no value in the cache, we still want to add it
-					// if the default state is CHECKED (cf XmlBrowseViewBaseVc.LoadData).
+					// if the default state is CHECKED (cf XmlBrowseViewVc.LoadData).
 					if (GetCheckState(hvoItem) == 1)
 					{
 						checkedItems.Add(hvoItem);
@@ -3263,7 +3263,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.MakeRoot();
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
-				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				RootBox.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
@@ -3285,7 +3285,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// override with our own simple constructor
 			/// </summary>
-			internal override XmlBrowseViewBaseVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, MainTag, this));
+			internal override XmlBrowseViewVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, MainTag, this));
 
 			/// <summary>
 			/// effectively simulate infinite length so we do not wrap cell contents.
@@ -3329,7 +3329,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					// get a best  estimate to determine row needing the greatest column width.
 					var env = new MaxStringWidthForColumnEnv(StyleSheet, SpecialCache, RootObjectHvo, g, 0);
-					Vc.Display(env, RootObjectHvo, XmlBrowseViewBaseVc.kfragRoot);
+					Vc.Display(env, RootObjectHvo, XmlBrowseViewVc.kfragRoot);
 					maxWidth = env.MaxStringWidth;
 				}
 				return maxWidth;

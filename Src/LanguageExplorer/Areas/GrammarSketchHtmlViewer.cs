@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using LanguageExplorer.Areas.Grammar;
 using LanguageExplorer.Controls;
 using Microsoft.Win32;
 using SIL.Code;
@@ -22,7 +23,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
+namespace LanguageExplorer.Areas
 {
 	/// <summary />
 	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl

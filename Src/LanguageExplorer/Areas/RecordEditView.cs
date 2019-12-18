@@ -288,7 +288,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (IsDisposed)
 			{
-				return true;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
 			base.ShowRecord();
 #if DEBUG

@@ -307,7 +307,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static void CollectBrowseItems(int hvo, XElement colSpec, ArrayList collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
 		{
-			var topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, hvo, sda, layouts);
+			var topNode = XmlBrowseViewVc.GetColumnNode(colSpec, hvo, sda, layouts);
 			// Todo: handle various cases here, mostly drill-down to <seq> or <obj>
 			CollectBrowseItems(hvo, topNode, collector, mdc, sda, layouts, null, null, null);
 		}
@@ -944,7 +944,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal static NodeDisplayCommand GetDisplayCommandForColumn(IManyOnePathSortItem bvi, XElement colSpec, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XElement> collectOuterStructParts)
 		{
-			return GetDisplayCommandForColumn1(bvi, XmlBrowseViewBaseVc.GetColumnNode(colSpec, bvi.PathObject(0), sda, layouts), mdc, sda, layouts, 0, out hvo, collectOuterStructParts);
+			return GetDisplayCommandForColumn1(bvi, XmlBrowseViewVc.GetColumnNode(colSpec, bvi.PathObject(0), sda, layouts), mdc, sda, layouts, 0, out hvo, collectOuterStructParts);
 		}
 
 		/// <summary>

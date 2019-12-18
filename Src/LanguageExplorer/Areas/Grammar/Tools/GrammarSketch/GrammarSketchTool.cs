@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			private void FileExportMenu_Click(object sender, EventArgs e)
 			{
-				using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
+				using (var dlg = new ExportDialog(_majorFlexComponentParameters))
 				{
 					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));

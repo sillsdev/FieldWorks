@@ -788,4 +788,10 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>(Ctrl-Click)</value>
     <comment>String (typcially with leading space) that gets appended to one item in certain right-click menus to indicate the one that will be activated by ctrl-click.</comment>
   </data>
+  <data name="LexiconClassifiedDictionaryParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LexiconClassifiedDictionaryParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="NotebookDocumentParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NotebookDocumentParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

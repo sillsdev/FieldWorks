@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,11 +12,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Xsl;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.LIFT;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
@@ -90,6 +90,8 @@ namespace LanguageExplorer.Areas
 		private string m_areaOrig;
 		private CheckBox m_chkShowInFolder;
 		private StatusBar _mainWindowStatusBar;
+		private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -103,9 +105,11 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary />
-		public ExportDialog(StatusBar statusBar) : this()
+		public ExportDialog(MajorFlexComponentParameters majorFlexComponentParameters)
+			: this()
 		{
-			_mainWindowStatusBar = statusBar;
+			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_mainWindowStatusBar = _majorFlexComponentParameters.StatusBar;
 		}
 
 		private void InitFromMainControl(object objCurrentControl)
@@ -169,7 +173,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// If one exists, find an XmlDocView control no matter how deeply it's embedded.
 		/// </summary>
-		private XmlDocView FindXmlDocView(Control control)
+		private static XmlDocView FindXmlDocView(Control control)
 		{
 			if (control == null)
 			{
@@ -193,7 +197,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// If one exists, find an XmlBrowseView control no matter how deeply it's embedded.
 		/// </summary>
-		private XmlBrowseView FindXmlBrowseView(Control control)
+		private static XmlBrowseView FindXmlBrowseView(Control control)
 		{
 			if (control == null)
 			{
@@ -358,12 +362,12 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private Control EnsureViewInfo()
 		{
-			string area, tool;
 			m_areaOrig = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			if (m_rgFxtTypes.Count == 0)
 			{
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			}
+			Control mainControl;
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == AreaServices.NotebookAreaMachineName)
 			{
@@ -371,35 +375,26 @@ namespace LanguageExplorer.Areas
 				{
 					return null;    // nothing to do.
 				}
-				area = m_areaOrig;
-				tool = AreaServices.NotebookDocumentToolMachineName;
+				mainControl = new XmlDocView(XElement.Parse(AreaResources.NotebookDocumentParameters), m_cache, m_recordList, _majorFlexComponentParameters.UiWidgetController);
 			}
 			else
 			{
-				area = AreaServices.InitialAreaMachineName;
 				switch (ft)
 				{
 					case FxtTypes.kftClassifiedDict:
 						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
 						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
 						// We use this to create that tool and base this export on its objects and saved configuration.
-						tool = AreaServices.LexiconClassifiedDictionaryMachineName;
+						mainControl = new XmlDocView(XElement.Parse(AreaResources.LexiconClassifiedDictionaryParameters), m_cache, m_recordList, _majorFlexComponentParameters.UiWidgetController);
 						break;
 					case FxtTypes.kftGrammarSketch:
-						area = AreaServices.GrammarAreaMachineName;
-						tool = AreaServices.GrammarSketchMachineName;
+						mainControl = new GrammarSketchHtmlViewer();
 						break;
 					default:
 						return null; // nothing to do.
 				}
 			}
-			var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
-			Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
-			var dynLoaderNode = controlElement.Element("dynamicloaderinfo");
-			var contentAssemblyPath = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "assemblyPath");
-			var contentClass = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "class");
-			var mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-			((IFlexComponent)mainControl).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			((IFlexComponent)mainControl).InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			InitFromMainControl(mainControl);
 			return mainControl;
 		}
@@ -433,7 +428,7 @@ namespace LanguageExplorer.Areas
 					using (var dlg = new FolderBrowserDialogAdapter())
 					{
 						dlg.Tag = AreaResources.ksChooseLIFTFolderTitle; // can't set title !!??
-						dlg.Description = String.Format(AreaResources.ksChooseLIFTExportFolder, m_exportItems[0].SubItems[1].Text);
+						dlg.Description = string.Format(AreaResources.ksChooseLIFTExportFolder, m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
 						dlg.SelectedPath = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
@@ -515,7 +510,6 @@ namespace LanguageExplorer.Areas
 								{
 									return;
 								}
-
 								m_translationWritingSystems = new List<int>
 								{
 									dlg.SelectedWs
@@ -877,7 +871,7 @@ namespace LanguageExplorer.Areas
 				Debug.WriteLine(s);
 #endif
 				m_ce = new ConfiguredExport(null, m_xvc.DataAccess, m_hvoRootObj);
-				var sBodyClass = (m_areaOrig == AreaServices.NotebookAreaMachineName) ? "notebookBody" : "dicBody";
+				var sBodyClass = m_areaOrig == AreaServices.NotebookAreaMachineName ? "notebookBody" : "dicBody";
 				m_ce.Initialize(m_cache, PropertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
 				m_ce.UpdateProgress += ce_UpdateProgress;
 				m_xvc.Display(m_ce, m_hvoRootObj, m_seqView.RootFrag);
@@ -1451,9 +1445,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void ProcessWebonaryExport()
 		{
-#if RANDYTODO
-			FwXWindow.ShowUploadToWebonaryDialog(m_mediator, m_propertyTable);
-#endif
+			DictionaryConfigurationServices.ShowUploadToWebonaryDialog(_majorFlexComponentParameters);
 		}
 
 		private bool SelectOption(string exportFormat)

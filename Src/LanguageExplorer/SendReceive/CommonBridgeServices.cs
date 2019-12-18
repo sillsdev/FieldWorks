@@ -116,11 +116,9 @@ namespace LanguageExplorer.SendReceive
 			{
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			}
-#if RANDYTODO
-				// Clear out any sort cache files (or whatever else might mess us up) and then refresh
-				newAppWindow.ClearInvalidatedStoredData();
-				newAppWindow.RefreshDisplay();
-#endif
+			// Clear out any sort cache files (or whatever else might mess us up) and then refresh
+			newAppWindow.ClearInvalidatedStoredData();
+			newAppWindow.RefreshAllViews();
 			if (conflictOccurred)
 			{
 				// Send a message for the reopened instance to display the message viewer (used to be conflict report).

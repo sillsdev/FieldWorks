@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -25,7 +26,7 @@ namespace LanguageExplorer.LcmUi
 		internal WfiGlossUi()
 		{ }
 
-		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
+		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeWordGloss;
 			wp.m_label = LcmUiStrings.ksGlosses;
@@ -43,21 +44,7 @@ namespace LanguageExplorer.LcmUi
 				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				mergeCandidates.Add(new DummyCmObject(gloss.Hvo, tss.Text, ws));
 			}
-#if RANDYTODO
-// TODO: Use this xml, instead of 'guiControl'.
-/*
-			<guicontrol id="MergeWordGlossList">
-				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false"
-					treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
-					editable="false" selectColumn="false">
-					<columns>
-						<column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
-					</columns>
-				</parameters>
-			</guicontrol>
-*/
-#endif
-			guiControl = "MergeWordGlossList";
+			guiControlParameters = XElement.Parse(LcmUiStrings.MergeWordGlossListParameters);
 			helpTopic = "khtpMergeWordGloss";
 			var me = (IWfiGloss)MyCmObject;
 			tss = me.ShortNameTSS;

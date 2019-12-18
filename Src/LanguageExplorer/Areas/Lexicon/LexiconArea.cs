@@ -30,8 +30,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		[ImportMany(AreaServices.LexiconAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
-		internal const string Entries = "entries";
-		internal const string AllReversalEntries = "AllReversalEntries";
 		internal const string SemanticDomainList_LexiconArea = "SemanticDomainList_LexiconArea";
 		private bool _hasBeenActivated;
 		[Import]
@@ -191,7 +189,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		internal static IRecordList EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Entries}'.");
+			Require.That(recordListId == LanguageExplorerConstants.Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.Entries}'.");
 			/*
 			<clerk id="entries">
 				<recordList owner="LexDb" property="Entries" />

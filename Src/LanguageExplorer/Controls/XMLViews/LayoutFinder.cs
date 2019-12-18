@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal LayoutCache m_layouts;
 		internal XElement m_colSpec;
 		/// <summary />
-		protected XmlBrowseViewBaseVc m_vc;
+		protected XmlBrowseViewVc m_vc;
 		/// <summary />
 		protected bool m_fDisposeVc;
 		private IApp m_app;
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a finder appropriate to the given column specification
 		/// </summary>
-		internal static IStringFinder CreateFinder(LcmCache cache, XElement colSpec, XmlBrowseViewBaseVc vc, IApp app)
+		internal static IStringFinder CreateFinder(LcmCache cache, XElement colSpec, XmlBrowseViewVc vc, IApp app)
 		{
 			var layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
 			var sSortMethod = XmlUtils.GetOptionalAttributeValue(colSpec, "sortmethod");
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		internal XmlBrowseViewBaseVc Vc
+		internal XmlBrowseViewVc Vc
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// every time the tool is changed
 			if (m_vc == null)
 			{
-				m_vc = new XmlBrowseViewBaseVc(m_cache)
+				m_vc = new XmlBrowseViewVc(m_cache)
 				{
 					// we won't dispose of it, so it mustn't make pictures (which we don't need)
 					SuppressPictures = true,
@@ -682,7 +682,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Note: we don't need a top-level spec because we're only going to process one
 				// column's worth.
 				// we won't dispose of it, so it mustn't make pictures (which we don't need)
-				m_vc = new XmlBrowseViewBaseVc
+				m_vc = new XmlBrowseViewVc
 				{
 					SuppressPictures = true
 				};

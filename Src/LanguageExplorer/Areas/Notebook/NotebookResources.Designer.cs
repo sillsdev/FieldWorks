@@ -204,22 +204,6 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; standalone=&quot;yes&quot;?&gt;
-        ///&lt;parameters area=&quot;notebook&quot; altTitleId=&quot;RnGenericRec-Plural&quot; persistContext=&quot;notebook&quot; backColor=&quot;White&quot; layout=&quot;publishRecord&quot; layoutProperty=&quot;NotebookPublicationLayout&quot; editable=&quot;false&quot; configureObjectName=&quot;Document&quot; findHelpId=&quot;khtpFindNotebook&quot; &gt;
-        ///	&lt;configureLayouts&gt;
-        ///		&lt;layoutType label=&quot;Notebook Records&quot; layout=&quot;publishRecord&quot;&gt;
-        ///			&lt;configure class=&quot;RnGenericRec&quot; label=&quot;Record&quot; layout=&quot;publishRecord&quot; /&gt;
-        ///		&lt;/layoutType&gt;
-        ///	&lt;/configureLayouts&gt;
-        ///&lt;/ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string NotebookDocumentParameters {
-            get {
-                return ResourceManager.GetString("NotebookDocumentParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;recordList&quot; clerk=&quot;records&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; /&gt;.
         /// </summary>

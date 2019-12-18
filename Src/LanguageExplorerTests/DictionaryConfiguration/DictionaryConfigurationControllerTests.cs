@@ -403,7 +403,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				// SUT
-				Assert.DoesNotThrow(() => DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
+				Assert.DoesNotThrow(() => DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
 				Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
 			}
 			finally
@@ -425,7 +425,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 				var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 				// SUT
-				var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 				Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
 			}
 			finally
@@ -450,7 +450,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					writer.Write("usertest");
 				}
 				// SUT
-				var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 				Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
 			}
 			finally
@@ -476,7 +476,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					writer.Write("usertest");
 				}
 				// SUT
-				var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 				Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
 				Assert.IsTrue(choices[0].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
 			}
@@ -502,7 +502,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				_model.Save();
 
 				// SUT
-				var labels = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
+				var labels = DictionaryConfigurationServices.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
 				Assert.Contains("configurationALabel", labels.Keys, "missing a label");
 				Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 				Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");

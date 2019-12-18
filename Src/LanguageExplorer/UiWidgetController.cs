@@ -735,17 +735,6 @@ namespace LanguageExplorer
 			}
 		}
 
-
-#if RANDYTODO
-		// TODO: Do I really want to go down this path and create them all at once, and just set handlers, visibility and enabled state, as is done for main menus and tool bar buttons?
-#endif
-		private sealed class ContextMenusController
-		{
-			private sealed class ContextMenuController
-			{
-			}
-		}
-
 		#endregion Private controller classes that do the real work
 	}
 }

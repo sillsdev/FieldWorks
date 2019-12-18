@@ -31,8 +31,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
-			m_cclogic = new TestCCLogic(Cache, m_chart, m_stText);
-			m_cclogic.Ribbon = m_mockRibbon = new MockRibbon(Cache, m_stText.Hvo);
+			m_cclogic = new TestCCLogic(Cache, m_chart, m_stText)
+			{
+				Ribbon = m_mockRibbon = new MockRibbon(Cache, m_stText.Hvo)
+			};
 			m_helper.Logic = m_cclogic;
 			m_template = m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.

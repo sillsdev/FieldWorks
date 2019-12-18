@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_toolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this, _recordList, root.Attribute("configureObjectName").Value);

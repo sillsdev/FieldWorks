@@ -1050,20 +1050,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters altTitleId=&quot;LexSense-Classified&quot; persistContext=&quot;ClassDict&quot; backColor=&quot;White&quot; layout=&quot;classifiedDict&quot; layoutProperty=&quot;ClassifiedDictionaryPublicationLayout&quot; editable=&quot;false&quot; allowInsertDeleteRecord=&quot;false&quot; msgBoxTrigger=&quot;ClassifiedDictionary-Intro&quot; configureObjectName=&quot;Classified Dictionary&quot;&gt;
-        ///	&lt;elementDisplayCondition field=&quot;ReferringSenses&quot; lengthatleast=&quot;1&quot;/&gt;
-        ///	&lt;configureLayouts&gt;
-        ///		&lt;layoutType label=&quot;Classified Dictionary&quot; layout=&quot;classifiedDict&quot;&gt;
-        ///		 [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string LexiconClassifiedDictionaryParameters {
-            get {
-                return ResourceManager.GetString("LexiconClassifiedDictionaryParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;!-- The following configureLayouts node is only required to help migrate old configurations to the new format --&gt;
         ///&lt;configureLayouts&gt;
         ///	&lt;layoutType label=&quot;Lexeme-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;

@@ -356,6 +356,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion ISelectOccurrence Members
 
+		internal bool MakeDefaultSelection(object parameter)
+		{
+			if (IsDisposed)
+			{
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
+			}
+			InterlinWordControl.MakeDefaultSelection();
+			return true;
+		}
+
 		private void m_sandbox_SandboxChangedEvent(object sender, SandboxChangedEventArgs e)
 		{
 			UpdateButtonState_Undo();

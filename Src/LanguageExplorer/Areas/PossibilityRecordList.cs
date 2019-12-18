@@ -289,7 +289,7 @@ namespace LanguageExplorer.Areas
 
 		#endregion
 
-		private ICmPossibilityList OwningList => (ICmPossibilityList)m_owningObject;
+		private ICmPossibilityList OwningList => (ICmPossibilityList)OwningObject;
 
 		/// <summary>
 		/// Return the root object at the specified index as a CmPossibility. (Will be null

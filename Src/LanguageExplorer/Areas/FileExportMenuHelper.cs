@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas
 	internal sealed class FileExportMenuHelper : IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private IPropertyTable _propertyTable;
 
 		internal FileExportMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
@@ -58,10 +57,10 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters))
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				dlg.ShowDialog(_propertyTable.GetValue<Form>(FwUtils.window));
+				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 			}
 		}
 

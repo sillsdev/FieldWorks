@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -343,6 +344,7 @@ namespace LanguageExplorer.LcmUi
 
 			if (disposing)
 			{
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
 				if (_rightClickTuple != null)
 				{
 					var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
@@ -696,23 +698,25 @@ namespace LanguageExplorer.LcmUi
 				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
 			var fileToDelete = file.AbsoluteInternalPath;
-			propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, obj =>
-			{
-				try
-				{
-					// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-					// with an exception indicating that something is using the file, despite the code above that
-					// tries to make our picture cache let go of it.
-					// However, waiting until idle seems to solve the problem.
-					File.Delete(fileToDelete);
-				}
-				catch (IOException)
-				{
-					// If we can't actually delete the file for some reason, don't bother the user complaining.
-				}
-				return true; // task is complete, don't try again.
-			});
+			propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, TryToDeleteFile, fileToDelete);
 			return false;
+		}
+
+		private static bool TryToDeleteFile(object param)
+		{
+			try
+			{
+				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+				// with an exception indicating that something is using the file, despite the code above that
+				// tries to make our picture cache let go of it.
+				// However, waiting until idle seems to solve the problem.
+				File.Delete((string)param);
+			}
+			catch (IOException)
+			{
+				// If we can't actually delete the file for some reason, don't bother the user complaining.
+			}
+			return true; // task is complete, don't try again.
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()
@@ -742,10 +746,11 @@ namespace LanguageExplorer.LcmUi
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams();
 				var mergeCandidates = new List<DummyCmObject>();
-				string guiControl, helpTopic;
-				var dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
+				string helpTopic;
+				XElement guiControlParameters;
+				var dObj = GetMergeinfo(wp, mergeCandidates, out guiControlParameters, out helpTopic);
 				mergeCandidates.Sort();
-				dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControl, helpTopic);
+				dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControlParameters, helpTopic);
 				if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 				{
 					ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
@@ -769,10 +774,10 @@ namespace LanguageExplorer.LcmUi
 			m_cmObject = null;
 		}
 
-		protected virtual DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
+		protected virtual DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			Debug.Assert(false, "Subclasses must override this method.");
-			guiControl = null;
+			guiControlParameters = null;
 			helpTopic = null;
 			return null;
 		}

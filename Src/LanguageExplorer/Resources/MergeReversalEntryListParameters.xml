@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="mergeReversalEntryList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" 	hscroll="true" editable="false" selectColumn="false">
+	<columns>
+		<column label="Entry" width="100%" layout="ReversalForm" ws="$ws=reversal"/>
+	</columns>
+</parameters>

@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		protected override IEnumerable<int> GetObjectSet()
 		{
-			return ((ICmPossibilityList)m_owningObject).PossibilitiesOS.ToHvoArray();
+			return ((ICmPossibilityList)OwningObject).PossibilitiesOS.ToHvoArray();
 		}
 
 		/// <summary />
@@ -38,13 +38,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				return null;
 			}
 			// A possibility list only allows one type of possibility to be owned in the list.
-			return m_cache.DomainDataByFlid.MetaDataCache.GetClassName(((ICmPossibilityList)m_owningObject).ItemClsid) != className ? null : m_insertableClasses.FirstOrDefault(cpi => cpi.signatureClassName == className);
+			return m_cache.DomainDataByFlid.MetaDataCache.GetClassName(((ICmPossibilityList)OwningObject).ItemClsid) != className ? null : m_insertableClasses.FirstOrDefault(cpi => cpi.signatureClassName == className);
 		}
 
 		/// <summary />
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (m_owningObject != null && m_owningObject.Hvo != hvo)
+			if (OwningObject != null && OwningObject.Hvo != hvo)
 			{
 				return;     // This PropChanged doesn't really apply to us.
 			}

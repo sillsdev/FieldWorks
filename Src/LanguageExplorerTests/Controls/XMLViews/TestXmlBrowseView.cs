@@ -62,7 +62,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
-				var output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
+				var output = XmlBrowseViewVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.XPathSelectElement("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
@@ -120,7 +120,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					"<column layout=\"Unknown Test\"/>" +
 					"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 					"</root>";
-				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
+				output = XmlBrowseViewVc.MigrateSavedColumnsIfNeeded(input, flexComponentParameters.PropertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);

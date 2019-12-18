@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas
 			// Only other current option is to specify an ordinary property (or a virtual one).
 			m_flid = flid;
 			// Review JohnH(JohnT): This is only useful for dependent record lists, but I don't know how to check this is one.
-			m_owningObject = null;
+			OwningObject = null;
 			_recordListProvidingRootObject = recordListProvidingRootObject;
 		}
 

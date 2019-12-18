@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.LCModel;
 
@@ -50,7 +51,7 @@ namespace LanguageExplorer.LcmUi
 		}
 #endif
 
-		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
+		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeAllomorph;
 			wp.m_label = LcmUiStrings.ksAlternateForms;
@@ -68,20 +69,7 @@ namespace LanguageExplorer.LcmUi
 				// Add the lexeme form.
 				mergeCandidates.Add(new DummyCmObject(le.LexemeFormOA.Hvo, le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 			}
-#if RANDYTODO
-			// TODO: Use this xml, instead of 'guiControl'.
-/*
-			<guicontrol id="MergeAllomorphList">
-				<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
-					<columns>
-						<column label="Form" width="80%" layout="Allomorph" ws="$ws=vernacular"/>
-						<column label="Type" width="20%" layout="MorphTypeName"/>
-					</columns>
-				</parameters>
-			</guicontrol>
-*/
-#endif
-			guiControl = "MergeAllomorphList";
+			guiControlParameters = XElement.Parse(LcmUiStrings.MergeAllomorphListParameters);
 			helpTopic = "khtpMergeAllomorph";
 			return new DummyCmObject(m_hvo, ((IMoForm)MyCmObject).Form.VernacularDefaultWritingSystem.Text, defVernWs);
 		}

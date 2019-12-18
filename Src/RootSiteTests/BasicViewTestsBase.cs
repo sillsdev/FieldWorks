@@ -46,7 +46,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			var styleSheet = new LcmStyleSheet();
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
-			Debug.Assert(m_basicView == null, "m_basicView is not null.");
+			if (m_basicView !=  null)
+			{
+				// For some reason, TestTearDown() didn't do this.
+				m_basicView.Dispose();
+				m_basicView = null;
+			}
+			if (_flexComponentParameters !=  null)
+			{
+				// For some reason, TestTearDown() didn't do this.
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
+				_flexComponentParameters = null;
+			}
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 
 			m_basicView = CreateDummyBasicView();

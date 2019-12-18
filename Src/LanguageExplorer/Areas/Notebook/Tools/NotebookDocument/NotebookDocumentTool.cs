@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			// NB: This has to be done ahead of XmlDocView, since it registers handlers as a UserControl, which will throw if the tool has been set up yet.
 			_toolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			// NB: XmlDocView adds user control handler.
-			var docView = new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			var docView = new XmlDocView(XDocument.Parse(AreaResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, docView);
 		}
 

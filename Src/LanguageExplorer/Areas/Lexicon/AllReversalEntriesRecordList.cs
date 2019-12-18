@@ -72,7 +72,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				return base.CreateAndInsert(className);
 			}
 			_newItem = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
-			var reversalIndex = (IReversalIndex)m_owningObject;
+			var reversalIndex = (IReversalIndex)OwningObject;
 			reversalIndex.EntriesOC.Add(_newItem);
 			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
 			extensions?.DoAtEndOfPropChanged(SelectNewItem);
@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		protected override IEnumerable<int> GetObjectSet()
 		{
-			var reversalIndex = m_owningObject as IReversalIndex;
+			var reversalIndex = OwningObject as IReversalIndex;
 			Debug.Assert(reversalIndex != null && reversalIndex.IsValidObject, "The owning IReversalIndex object is invalid!?");
 			return new List<int>(reversalIndex.AllEntries.Select(rie => rie.Hvo));
 		}

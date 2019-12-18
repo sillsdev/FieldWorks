@@ -45,7 +45,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region Data members
 
 		/// <summary />
-		protected XmlBrowseViewBaseVc m_xbvvc;
+		protected XmlBrowseViewVc m_xbvvc;
 		/// <summary />
 		protected int m_hvoRoot;
 #if RANDYTODO
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		internal virtual XmlBrowseViewBaseVc Vc => m_xbvvc;
+		internal virtual XmlBrowseViewVc Vc => m_xbvvc;
 
 		/// <summary />
 		public override bool RefreshDisplay()
@@ -302,7 +302,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private bool FireSelectionChanged(object parameter)
 		{
-			if (IsDisposed || RootBox == null)
+			if (IsDisposed)
+			{
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
+			}
+			if (RootBox == null)
 			{
 				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
 			}
@@ -796,7 +800,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return; // No sense getting all worked up, if it is the same as before.
 				}
 				m_hvoRoot = value;
-				RootBox.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				m_rootObjectHasBeenSet = true;
 				// This seems to be necessary to get the data entry row to resize even if the new
 				// list is the same length as the old. Must NOT remember new positions, because
@@ -946,7 +950,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue.Remove(FireSelectionChanged);
+				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue;
+				if (idleQueue != null)
+				{
+					idleQueue.Remove(RemoveRootBoxSelectionOnIdle);
+					idleQueue.Remove(FireSelectionChanged);
+					idleQueue.Remove(UpdateSelectedRow);
+				}
 				Subscriber.Unsubscribe("SaveScrollPosition", SaveScrollPosition);
 				Subscriber.Unsubscribe("RestoreScrollPosition", RestoreScrollPosition);
 				if (m_bv != null && !m_bv.IsDisposed)
@@ -1658,9 +1668,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
 			base.HandleSelectionChange(prootb, vwselNew);
-#if RANDYTODO
-			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
-#endif
+			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
 		}
 
 		private bool RemoveRootBoxSelectionOnIdle(object parameter)
@@ -1668,16 +1676,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (IsDisposed)
 			{
 				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
-				//return true;
 			}
-			if (RootBox == null)
-			{
-				return true;
-			}
+
 			// This is a good time to check that we don't have a useless IP selection.
 			// Right after we make it is too soon, because the current row's editing properties
 			// aren't set until we paint it.
-			var sel = RootBox.Selection;
+			var sel = RootBox?.Selection;
 			if (sel != null && !sel.IsRange)
 			{
 				// an insertion point where you can't edit is just confusing.
@@ -1815,12 +1819,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (obj == objSel || obj.OwnerOfClass(objSel.ClassID) == objSel)
 				{
-#if RANDYTODO
 					// Reconstruct the current row (by pretending to replace the object),
 					// preserving the selection if any (otherwise, the selection disappears
 					// after each letter typed in a browse view...FWR-690).
-					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, UpdateSelectedRow);
-#endif
+					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, UpdateSelectedRow);
 				}
 			}
 		}
@@ -1830,7 +1832,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (IsDisposed)
 			{
 				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
-				//return true;
 			}
 			if (RootBox == null)
 			{

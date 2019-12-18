@@ -69,10 +69,7 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Get the IdleQueue instance, which is a singleton per IFwMainWnd instance.
 		/// </summary>
-		IdleQueue IIdleQueueProvider.IdleQueue
-		{
-			get { throw new NotImplementedException(); }
-		}
+		IdleQueue IIdleQueueProvider.IdleQueue => null;
 		#endregion
 
 		#region Implementation of IFwMainWnd
@@ -98,6 +95,11 @@ namespace LanguageExplorerTests.Impls
 		LcmCache IFwMainWnd.Cache
 		{
 			get { throw new NotImplementedException(); }
+		}
+
+		public void ClearInvalidatedStoredData()
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

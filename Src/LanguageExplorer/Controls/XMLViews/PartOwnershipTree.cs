@@ -226,7 +226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// get the part spec that gives us the path from obsolete current (parent) list item object
 			// to the new one.
-			var vc = new XmlBrowseViewBaseVc(Cache, null);
+			var vc = new XmlBrowseViewVc(Cache, null);
 			var parentItem = new ManyOnePathSortItem(hvoCommonAncestor, null, null);
 			var collector = new ItemsCollectorEnv(null, Cache.MainCacheAccessor, hvoCommonAncestor);
 			var doc = XDocument.Load(pathSpec.ToString());

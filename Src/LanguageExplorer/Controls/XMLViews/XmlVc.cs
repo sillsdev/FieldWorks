@@ -434,7 +434,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		// Part of a mechanism by which browse view columns
-		// can force a particular WS to be used for all strings. Overridden by XmlBrowseViewBaseVc.
+		// can force a particular WS to be used for all strings. Overridden by XmlBrowseViewVc.
 		internal virtual int WsForce
 		{
 			get { return 0; }

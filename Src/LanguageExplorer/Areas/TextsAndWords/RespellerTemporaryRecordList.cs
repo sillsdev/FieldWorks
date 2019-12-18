@@ -55,16 +55,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override IEnumerable<int> GetObjectSet()
 		{
 			// get the list from our decorated SDA.
-			var objs = VirtualListPublisher.VecProp(m_owningObject.Hvo, m_flid);
+			var objs = VirtualListPublisher.VecProp(OwningObject.Hvo, m_flid);
 			// copy the list to where it's expected to be found. (should this be necessary?)
-			var chvo = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, VirtualFlid);
-			VirtualListPublisher.Replace(m_owningObject.Hvo, VirtualFlid, 0, chvo, objs, objs.Length);
+			var chvo = VirtualListPublisher.get_VecSize(OwningObject.Hvo, VirtualFlid);
+			VirtualListPublisher.Replace(OwningObject.Hvo, VirtualFlid, 0, chvo, objs, objs.Length);
 			return objs;
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (m_owningObject != null && hvo == m_owningObject.Hvo && tag == m_flid)
+			if (OwningObject != null && hvo == OwningObject.Hvo && tag == m_flid)
 			{
 				ReloadList();
 			}

@@ -380,10 +380,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					FocusBox.FocusSandbox();
 				}
 			}
-#if RANDYTODO
+
 			if (fMakeDefaultSelection)
-				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
-#endif
+			{
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
+			}
 		}
 
 		// Set the VC size to match the FocusBox. Return true if it changed.

@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (browser != null)
 			{
 				var recordListId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "clerk");
-				if (recordListId == LexiconArea.Entries || recordListId == LexiconArea.AllReversalEntries)
+				if (recordListId == LanguageExplorerConstants.Entries || recordListId == LanguageExplorerConstants.AllReversalEntries)
 				{
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;

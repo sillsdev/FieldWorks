@@ -123,10 +123,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				// No need to run it more than once.
 				return;
 			}
+
 			if (RootBox != null)
 			{
 				CloseRootBox();
 				RootBox = null;
+			}
+			if (disposing)
+			{
+				PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtils.window)?.IdleQueue?.Remove(SpellCheckOnIdle);
 			}
 
 			base.Dispose(disposing);
@@ -644,7 +649,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				RootBox.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
 				if (!RootBox.IsSpellCheckComplete())
 				{
-					PropertyTable?.GetValue<IIdleQueueProvider>("window").IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
+					PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
 				}
 			}
 		}
@@ -698,7 +703,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private bool SpellCheckOnIdle(object parameter)
 		{
-			return IsDisposed || RootBox == null || RootBox.DoSpellCheckStep();
+			if (IsDisposed)
+			{
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
+			}
+			return RootBox == null || RootBox.DoSpellCheckStep();
 		}
 
 		/// <summary>

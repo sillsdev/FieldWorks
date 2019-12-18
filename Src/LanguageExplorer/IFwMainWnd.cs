@@ -36,6 +36,11 @@ namespace LanguageExplorer
 		LcmCache Cache { get; }
 
 		/// <summary>
+		/// Clears out some sort sequences.
+		/// </summary>
+		void ClearInvalidatedStoredData();
+
+		/// <summary>
 		/// Initialize the window, before being shown.
 		/// </summary>
 		/// <param name="windowIsCopy">Window is being copied.</param>

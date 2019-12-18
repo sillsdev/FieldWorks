@@ -232,7 +232,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			protected override void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				PropertyTable.Dispose();
 				base.Dispose(disposing);
 			}
 		}

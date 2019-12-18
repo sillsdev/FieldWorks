@@ -330,4 +330,17 @@ Without these, we cannot find related entries.</value>
     <value>Problem opening file</value>
     <comment>Caption for error dialog</comment>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="MergeAllomorphListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeAllomorphListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeReversalEntryListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeReversalEntryListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeSenseListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeSenseListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeWordGlossListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeWordGlossListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -66,14 +65,14 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, string guiControl, string helpTopic)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, XElement guiControlParameters, string helpTopic)
 		{
 			Debug.Assert(cache != null);
 			m_cache = cache;
 			m_mainObj = mainObj;
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = m_cache.WritingSystemFactory.UserWs;
-			InitBrowseView(guiControl, mergeCandidates);
+			InitBrowseView(guiControlParameters, mergeCandidates);
 			Text = wp.m_title;
 			label2.Text = wp.m_label;
 			m_helpTopic = helpTopic;
@@ -106,13 +105,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			StartPosition = FormStartPosition.Manual;
 		}
 
-		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
+		private void InitBrowseView(XElement guiControlParameters, List<DummyCmObject> mergeCandidates)
 		{
-#if RANDYTODO
-			// TODO: Nobody will be home.
-#endif
-			var configurationParameters = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 			const int kMadeUpFieldIdentifier = 8999958;
 			var sda = new ObjectListPublisher(m_cache.GetManagedSilDataAccess(), kMadeUpFieldIdentifier);
 			var hvos = (mergeCandidates.Select(obj => obj.Hvo)).ToArray();
@@ -125,7 +119,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 #if RANDYTODO
 			// TODO: Call FinishInitialization on m_bvMergeOptions and feed it ObjectListPublisher.OwningFlid for the 'madeUpFieldIdentifier' parameter.
 #endif
-			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, m_cache, null, sda)
+			m_bvMergeOptions = new BrowseViewer(guiControlParameters, m_cache.LangProject.Hvo, m_cache, null, sda)
 			{
 				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
 			};

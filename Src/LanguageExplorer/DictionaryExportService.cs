@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2019 SIL International
+// Copyright (c) 2016-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -116,7 +112,7 @@ namespace LanguageExplorer
 			{
 				progress.Maximum = entriesToSave.Length;
 			}
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, Cache, MyRecordList, xhtmlPath, progress);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, Int32.MaxValue, configuration, m_propertyTable, Cache, MyRecordList, xhtmlPath, progress);
 		}
 
 		private sealed class RecordListActivator : IDisposable
@@ -181,40 +177,26 @@ namespace LanguageExplorer
 				}
 			}
 
-			public static RecordListActivator ActivateRecordListMatchingExportType(string exportType, StatusBar statusBar, IPropertyTable propertyTable)
+			internal static RecordListActivator ActivateRecordListMatchingExportType(string exportType, StatusBar statusBar, IPropertyTable propertyTable)
 			{
 				var isDictionary = exportType == DictionaryType;
-				const string area = AreaServices.InitialAreaMachineName;
-				var tool = isDictionary ? AreaServices.LexiconDictionaryMachineName : AreaServices.ReversalEditCompleteMachineName;
-				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
-				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
-				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
+				var recordListId = isDictionary ? LanguageExplorerConstants.Entries : LanguageExplorerConstants.AllReversalEntries;
 				var activeRecordListRepository = propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 				var activeRecordList = activeRecordListRepository.ActiveRecordList;
-				if (DoesRecordListMatchParams(activeRecordList, parameters))
+				if (activeRecordList != null && activeRecordList.Id == recordListId)
 				{
 					return null; // No need to juggle record lists if the one we want is already active
 				}
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
 				{
-					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LexiconArea.AllReversalEntries, statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
+					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LanguageExplorerConstants.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LanguageExplorerConstants.AllReversalEntries, statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 					CacheRecordList(exportType, tempRecordList);
 				}
 				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
 				tempRecordList.ActivateUI(false);
 				tempRecordList.UpdateList(true, true);
 				return retval; // ensure the current active record list is reactivated after we use another record list temporarily.
-			}
-
-			private static bool DoesRecordListMatchParams(IRecordList recordList, XElement parameters)
-			{
-				if (recordList == null || parameters == null)
-				{
-					return false;
-				}
-				var clerkAttr = parameters.Attribute("clerk");
-				return clerkAttr != null && clerkAttr.Value == recordList.Id;
 			}
 		}
 
@@ -263,7 +245,7 @@ namespace LanguageExplorer
 			}
 			#endregion disposal
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, IRecordList activeRecordList)
+			internal static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, IRecordList activeRecordList)
 			{
 				if (reversalWs == null)
 				{
@@ -273,7 +255,7 @@ namespace LanguageExplorer
 				return ActivateReversalIndex(reversalGuid, propertyTable, activeRecordList);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordList activeRecordList)
+			internal static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordList activeRecordList)
 			{
 				string originalReversalIndexGuid;
 				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordList, out originalReversalIndexGuid)

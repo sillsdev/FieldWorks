@@ -307,7 +307,7 @@ namespace LanguageExplorer.Areas.Grammar {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;POSList&quot; field=&quot;PartsOfSpeech&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; filterBar=&quot;true&quot; editable=&quot;false&quot;&gt;
         ///&lt;!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
-        /// so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
+        /// so that XmlBrowseViewVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Name&quot; width=&quot;16%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot; /&gt;
         ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;16%&quot; la [rest of string was truncated]&quot;;.

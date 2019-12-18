@@ -16,7 +16,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
-	internal class XmlRDEBrowseViewVc : XmlBrowseViewBaseVc
+	internal class XmlRDEBrowseViewVc : XmlBrowseViewVc
 	{
 		/// <summary />
 		public const int khvoNewItem = -1234567890;

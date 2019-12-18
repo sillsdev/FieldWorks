@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		internal override XmlBrowseViewBaseVc Vc
+		internal override XmlBrowseViewVc Vc
 		{
 			get
 			{
@@ -63,6 +63,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(FocusMeAgain);
 				Subscriber.Unsubscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
 			}
 
@@ -275,9 +276,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// possible slice. We need to do it one more time for it to stick.
 			// Try five times to really get the focus!
 			m_idleFocusCount = 5;
-#if RANDYTODO
-			m_mediator.IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
-#endif
+			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
 		}
 
 		private int m_idleFocusCount;
@@ -287,7 +286,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (IsDisposed)
 			{
 				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
-				//return true; // all done trying to focus this!
 			}
 			Focus();
 			if (m_idleFocusCount == 0)

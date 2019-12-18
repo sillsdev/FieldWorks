@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		internal override XmlBrowseViewBaseVc Vc
+		internal override XmlBrowseViewVc Vc
 		{
 			get
 			{

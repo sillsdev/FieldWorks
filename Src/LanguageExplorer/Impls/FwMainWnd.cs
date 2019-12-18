@@ -35,6 +35,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
@@ -1198,6 +1199,14 @@ namespace LanguageExplorer.Impls
 		public LcmCache Cache => _flexApp.Cache;
 
 		/// <summary>
+		/// Clears out some temporary sort sequences.
+		/// </summary>
+		public void ClearInvalidatedStoredData()
+		{
+			RobustIO.DeleteDirectoryAndContents(Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir));
+		}
+
+		/// <summary>
 		/// Get the specified main menu
 		/// </summary>
 		/// <returns>Return the specified main menu, or null if not found.</returns>
@@ -1462,6 +1471,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void RefreshAllViews()
 		{
+			RefreshDisplay();
 			// Susanna asked that refresh affect only the currently active project, which is
 			// what the string and List variables below attempt to handle.  See LT-6444.
 			var activeWnd = ActiveForm as IFwMainWnd;
@@ -1733,6 +1743,110 @@ namespace LanguageExplorer.Impls
 			}
 		}
 		#endregion
+
+
+		/// <summary>
+		/// Collect refreshable caches from every child which has one and refresh them (once each).
+		/// Call RefreshDisplay for every child control (recursively) which implements it.
+		///
+		/// returns true if all the children have been processed by this class.
+		/// </summary>
+		private void RefreshDisplay()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
+			var cacheCollector = new HashSet<DomainDataByFlidDecoratorBase>();
+			var recordListCollector = new HashSet<IRecordList>();
+			CollectCachesToRefresh(this, cacheCollector, recordListCollector);
+			foreach (var cache in cacheCollector)
+			{
+				cache.Refresh();
+			}
+			foreach (var recordList in recordListCollector)
+			{
+				recordList.ReloadIfNeeded();
+			}
+			try
+			{
+				// In many cases ReconstructViews, which calls RefreshViews, will also try to Refresh the same caches.
+				// Not only is this a waste, but it may wipe out data that ReloadIfNeeded has carefully re-created.
+				// So suspend refresh for the caches we have already refreshed.
+				foreach (var cache in cacheCollector)
+				{
+					cache.SuspendRefresh();
+				}
+				// Don't be lured into simplifying this to ReconstructViews(this). That has the loop,
+				// but also calls this method again, making a stack overflow.
+				foreach (Control c in Controls)
+				{
+					ReconstructViews(c);
+				}
+			}
+			finally
+			{
+				foreach (var cache in cacheCollector)
+				{
+					cache.ResumeRefresh();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Collect refreshable caches from the specified control and its subcontrols.
+		/// We currently handle controls that are rootsites, and check their own SDAs as well
+		/// as any base SDAs that those SDAs wrap.
+		/// </summary>
+		private static void CollectCachesToRefresh(Control c, HashSet<DomainDataByFlidDecoratorBase> cacheCollector, HashSet<IRecordList> recordListCollector)
+		{
+			var rootSite = c as IVwRootSite;
+			if (rootSite?.RootBox != null)
+			{
+				var sda = rootSite.RootBox.DataAccess;
+				while (sda != null)
+				{
+					var cache = sda as DomainDataByFlidDecoratorBase;
+					if (cache != null)
+					{
+						cacheCollector.Add(cache);
+						sda = cache.BaseSda;
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+			var recordListView = c as ViewBase;
+			if (recordListView?.MyRecordList != null)
+			{
+				recordListCollector.Add(recordListView.MyRecordList);
+			}
+			foreach (Control child in c.Controls)
+			{
+				CollectCachesToRefresh(child, cacheCollector, recordListCollector);
+			}
+		}
+
+		/// <summary>
+		/// Call RefreshDisplay on the passed in control if it has a public (no argument) method of that name.
+		/// Recursively call ReconstructViews on each control that the given control contains.
+		/// </summary>
+		/// <param name="control"></param>
+		private static void ReconstructViews(Control control)
+		{
+			var childrenRefreshed = false;
+			var refreshable = control as IRefreshableRoot;
+			if (refreshable != null)
+			{
+				childrenRefreshed = refreshable.RefreshDisplay();
+			}
+			if (!childrenRefreshed)
+			{
+				foreach (Control c in control.Controls)
+				{
+					ReconstructViews(c);
+				}
+			}
+		}
 
 		private void File_CloseWindow(object sender, EventArgs e)
 		{
@@ -2163,27 +2277,7 @@ namespace LanguageExplorer.Impls
 
 		private void UploadToWebonary_Click(object sender, EventArgs e)
 		{
-			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
-			var projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
-			var defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
-			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
-			// Now collect all the reversal configurations into the reversals variable
-			projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
-			defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
-			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
-			// show dialog
-			var model = new UploadToWebonaryModel(PropertyTable)
-			{
-				Reversals = reversals,
-				Configurations = configurations,
-				Publications = publications
-			};
-			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher, _statusbar))
-			using (var dialog = new UploadToWebonaryDlg(controller, model, PropertyTable))
-			{
-				dialog.ShowDialog();
-				RefreshAllViews();
-			}
+			DictionaryConfigurationServices.ShowUploadToWebonaryDialog(_majorFlexComponentParameters);
 		}
 
 		private void File_Translated_List_Content(object sender, EventArgs e)

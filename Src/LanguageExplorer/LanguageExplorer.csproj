@@ -1548,7 +1548,6 @@
     <Compile Include="Controls\XMLViews\XmlBrowseViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseVc.cs" />
     <Compile Include="Controls\XMLViews\XmlBrowseViewVc.cs" />
     <Compile Include="Controls\XMLViews\XmlRDEBrowseViewVc.cs" />
     <Compile Include="Controls\XMLViews\XmlSeqView.cs">
@@ -1720,7 +1719,6 @@
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dumpster\DictionaryConfigurationListener.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerController.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerDlg.cs">
       <SubType>Form</SubType>
@@ -1955,6 +1953,10 @@
     </Compile>
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
+    <None Include="Resources\MergeReversalEntryListParameters.xml" />
+    <Content Include="Resources\MergeAllomorphListParameters.xml" />
+    <Content Include="Resources\MergeSenseListParameters.xml" />
+    <Content Include="Resources\MergeWordGlossListParameters.xml" />
     <Content Include="Resources\SrcSentencesList.xml" />
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
     <None Include="Resources\SimpleWordListParameter.xml" />
@@ -3001,7 +3003,6 @@
     <Compile Include="Controls\PaneBar\Spacer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Dumpster\AreaListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordList.cs" />
@@ -3149,7 +3150,7 @@
     <Compile Include="Areas\Grammar\Tools\CompoundRuleAdvancedEdit\CompoundRuleAdvancedEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\EnvironmentEdit\EnvironmentEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\FeaturesAdvancedEdit\FeaturesAdvancedEditTool.cs" />
-    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.cs">
+    <Compile Include="Areas\GrammarSketchHtmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\StatisticsView.cs">
@@ -3634,7 +3635,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.resx">
+    <EmbeddedResource Include="Areas\GrammarSketchHtmlViewer.resx">
       <DependentUpon>GrammarSketchHtmlViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3857,7 +3858,9 @@
     <None Include="Resources\GrammarCategoryBrowserParameters.xml" />
     <None Include="Resources\ListToolsSliceFilters.xml" />
     <None Include="Resources\NotebookBrowseParameters.xml" />
-    <None Include="Resources\NotebookDocumentParameters.xml" />
+    <None Include="Resources\NotebookDocumentParameters.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
   </ItemGroup>
   <ItemGroup />

@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
-using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -48,7 +47,7 @@ namespace LanguageExplorer.Areas
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected override bool TryRestoreSorter()
 		{
-			var fakevc = new XmlBrowseViewBaseVc
+			var fakevc = new XmlBrowseViewVc
 			{
 				SuppressPictures = true, // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
 				DataAccess = VirtualListPublisher,
@@ -91,13 +90,7 @@ namespace LanguageExplorer.Areas
 		public override void OnPropertyChanged(string name)
 		{
 			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
-			if (window != null)
-			{
-#if RANDYTODO
-				// TODO: add to interface?
-				window.ClearInvalidatedStoredData();
-#endif
-			}
+			window?.ClearInvalidatedStoredData();
 			switch (name)
 			{
 				default:

@@ -75,6 +75,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
+			if (disposing)
+			{
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(SwitchToRealOnIdle);
+			}
+
 			base.Dispose(disposing);
 
 			if (disposing)
@@ -148,8 +153,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.HandleSelectionChange(prootb, vwselNew);
 			if (tssTyped.Length != 0)
 			{
-				var window = (IFwMainWnd)FindForm();
-				window.IdleQueue.Add(IdleQueuePriority.High, SwitchToRealOnIdle);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, SwitchToRealOnIdle);
 			}
 		}
 

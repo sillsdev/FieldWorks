@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_owningObject = m_cache.LangProject;
+			OwningObject = m_cache.LangProject;
 		}
 
 		/// <summary>

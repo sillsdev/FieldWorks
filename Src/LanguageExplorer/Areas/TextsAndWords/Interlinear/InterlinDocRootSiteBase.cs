@@ -1024,9 +1024,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
-#if RANDYTODO
-						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
-#endif
+						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
@@ -1034,9 +1032,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
-#if RANDYTODO
-						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
-#endif
+						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 					}
 					break;
 			}
@@ -1046,7 +1042,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (IsDisposed)
 			{
-				return true;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
 			Vc.GuessServices.ClearGuessData();
 			UpdateWordforms(m_wordformsToUpdate);

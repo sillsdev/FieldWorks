@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (_xrev != null)
 			{
 #if RANDYTODO
-				// TODO: See if I went this original code, or just the return.
+				// TODO: See if I want this original code, or just the return.
 				//when re-using the infoview we want to remove and dispose of the old recordeditview and
 				//associated datatree. (LT-13216)
 				Controls.Remove(_xrev);

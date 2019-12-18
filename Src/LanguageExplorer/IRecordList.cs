@@ -51,7 +51,6 @@ namespace LanguageExplorer
 		void OnChangeFilter(FilterChangeEventArgs args);
 		void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force);
 		bool DeleteRecord(string uowBaseText, StatusBarProgressPanel panel);
-		bool OnExport(object argument);
 		bool OnFirst { get; }
 		bool OnInsertItemInVector(object argument);
 		void OnItemDataModified(object argument);

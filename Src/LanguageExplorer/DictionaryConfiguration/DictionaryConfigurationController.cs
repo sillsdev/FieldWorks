@@ -83,57 +83,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private void LoadDictionaryConfigurations()
 		{
-			_dictionaryConfigurations = GetDictionaryConfigurationModels(Cache, _defaultConfigDir, _projectConfigDir);
+			_dictionaryConfigurations = DictionaryConfigurationServices.GetDictionaryConfigurationModels(Cache, _defaultConfigDir, _projectConfigDir);
 			View.SetChoices(_dictionaryConfigurations);
-		}
-
-		/// <summary>
-		/// Loads a List of configuration choices from default and project folders.
-		/// Project-specific configurations override default configurations of the same (file)name.
-		/// </summary>
-		/// <returns>List of paths to configurations</returns>
-		internal static List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
-		{
-			var choices = new Dictionary<string, string>();
-			foreach (var file in Directory.EnumerateFiles(defaultPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
-			{
-				choices[Path.GetFileNameWithoutExtension(file)] = file;
-			}
-			if (!Directory.Exists(projectPath))
-			{
-				Directory.CreateDirectory(projectPath);
-			}
-			else
-			{
-				foreach (var choice in Directory.EnumerateFiles(projectPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
-				{
-					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
-				}
-			}
-			return choices.Values.ToList();
-		}
-
-		/// <summary>
-		/// Return dictionary configurations from default and project-specific paths, skipping default/shipped configurations that are
-		/// superseded by project-specific configurations. Keys are labels, values are the models.
-		/// </summary>
-		public static Dictionary<string, DictionaryConfigurationModel> GetDictionaryConfigurationLabels(LcmCache cache, string defaultPath, string projectPath)
-		{
-			var configurationModels = GetDictionaryConfigurationModels(cache, defaultPath, projectPath);
-			var labelToFileDictionary = new Dictionary<string, DictionaryConfigurationModel>();
-			foreach (var model in configurationModels)
-			{
-				labelToFileDictionary[model.Label] = model;
-			}
-			return labelToFileDictionary;
-		}
-
-		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
-		{
-			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
-			var configurationModels = configurationPaths.Select(path => new DictionaryConfigurationModel(path, cache)).ToList();
-			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label, StringComparison.InvariantCulture));
-			return configurationModels;
 		}
 
 		/// <summary>

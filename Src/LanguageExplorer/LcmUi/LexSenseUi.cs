@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.LCModel;
@@ -61,7 +62,7 @@ namespace LanguageExplorer.LcmUi
 		}
 #endif
 
-		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
+		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;
 			wp.m_label = LcmUiStrings.ksSenses;
@@ -84,22 +85,7 @@ namespace LanguageExplorer.LcmUi
 				var tssName = senseInner.ShortNameTSS;
 				mergeCandidates.Add(new DummyCmObject(senseInner.Hvo, tssName.Text, TsStringUtils.GetWsAtOffset(tssName, 0)));
 			}
-#if RANDYTODO
-// TODO: Use this xml, instead of 'guiControl'.
-/*
-			<guicontrol id="MergeSenseList">
-				<parameters id="mergeSenseList" listItemsClass="LexSense" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
-							hscroll="true" editable="false" selectColumn="false">
-					<columns>
-						<column label="Gloss" width="50%" layout="Gloss" ws="$ws=best analysis"/>
-						<column label="Grammatical Info." width="50%" multipara="true" layout="GrammaticalInfoAbbrForSense"/>
-						<column label="Definition" width="100%" layout="Definition" ws="$ws=analysis" visibility="menu"/>
-					</columns>
-				</parameters>
-			</guicontrol>
-*/
-#endif
-			guiControl = "MergeSenseList";
+			guiControlParameters = XElement.Parse(LcmUiStrings.MergeSenseListParameters);
 			helpTopic = "khtpMergeSense";
 			var tss = MyCmObject.ShortNameTSS;
 			return new DummyCmObject(m_hvo, tss.Text, TsStringUtils.GetWsAtOffset(tss, 0));

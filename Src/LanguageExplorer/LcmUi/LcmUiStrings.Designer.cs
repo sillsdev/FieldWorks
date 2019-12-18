@@ -627,5 +627,65 @@ namespace LanguageExplorer.LcmUi {
                 return ResourceManager.GetString("ksWordsRelatedBySemanticDomain", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeAllomorphList&quot; listItemsClass=&quot;MoForm&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Form&quot; width=&quot;80%&quot; layout=&quot;Allomorph&quot; ws=&quot;$ws=vernacular&quot;/&gt;
+        ///		&lt;column label=&quot;Type&quot; width=&quot;20%&quot; layout=&quot;MorphTypeName&quot;/&gt;
+        ///	&lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeAllomorphListParameters {
+            get {
+                return ResourceManager.GetString("MergeAllomorphListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeReversalEntryList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; 	hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Entry&quot; width=&quot;100%&quot; layout=&quot;ReversalForm&quot; ws=&quot;$ws=reversal&quot;/&gt;
+        ///	&lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeReversalEntryListParameters {
+            get {
+                return ResourceManager.GetString("MergeReversalEntryListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeSenseList&quot; listItemsClass=&quot;LexSense&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Gloss&quot; width=&quot;50%&quot; layout=&quot;Gloss&quot; ws=&quot;$ws=best analysis&quot;/&gt;
+        ///		&lt;column label=&quot;Grammatical Info.&quot; width=&quot;50%&quot; multipara=&quot;true&quot; layout=&quot;GrammaticalInfoAbbrForSense&quot;/&gt;
+        ///		&lt;column label=&quot;Definition&quot; width=&quot;100%&quot; layout=&quot;Definition&quot; ws=&quot;$ws=analysis&quot; visibility= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MergeSenseListParameters {
+            get {
+                return ResourceManager.GetString("MergeSenseListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeWordGlossList&quot; listItemsClass=&quot;WfiGloss&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Gloss&quot; width=&quot;100%&quot; layout=&quot;Form&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Form&quot;/&gt;
+        ///  &lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeWordGlossListParameters {
+            get {
+                return ResourceManager.GetString("MergeWordGlossListParameters", resourceCulture);
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -28,6 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(PostponedUpdateWordforms);
 				components?.Dispose();
 				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// Do this, before calling base.

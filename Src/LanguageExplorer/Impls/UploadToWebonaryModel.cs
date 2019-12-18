@@ -119,7 +119,7 @@ namespace LanguageExplorer.Impls
 		/// We don't have code to persist collections of strings in the project settings, so we'll combine our list into
 		/// a single string and split it when we pull it out.
 		/// </summary>
-		private string CombineReversalSettingStrings(IEnumerable<string> selectedReversals)
+		private static string CombineReversalSettingStrings(IEnumerable<string> selectedReversals)
 		{
 			return string.Join<string>(ReversalSeperator, selectedReversals);
 		}

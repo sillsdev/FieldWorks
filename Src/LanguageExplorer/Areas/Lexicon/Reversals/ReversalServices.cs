@@ -3,17 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Reversals
 {
@@ -24,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 	{
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == LexiconArea.AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LexiconArea.AllReversalEntries}'.");
+			Require.That(recordListId == LanguageExplorerConstants.AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.AllReversalEntries}'.");
 			/*
 			<clerk id="AllReversalEntries">
 				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk" />

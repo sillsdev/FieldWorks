@@ -20,7 +20,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class ColumnSpecFilter : ListChoiceFilter
 	{
 		XElement m_colSpec;
-		XmlBrowseViewBaseVc m_vc;
+		XmlBrowseViewVc m_vc;
 
 		/// <summary>
 		/// for persistence.
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 
-		private XmlBrowseViewBaseVc Vc => m_vc ?? (m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda) { SuppressPictures = true });
+		private XmlBrowseViewVc Vc => m_vc ?? (m_vc = new XmlBrowseViewVc(m_cache, m_sda) { SuppressPictures = true });
 
 		/// <summary>
 		/// eg. persist the column specification

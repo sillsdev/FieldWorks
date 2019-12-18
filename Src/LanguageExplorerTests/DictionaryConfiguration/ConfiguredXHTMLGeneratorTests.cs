@@ -77,7 +77,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private IRecordList CreateRecordList()
 		{
-			var recordList = new RecordList(LexiconArea.Entries, _statusBar, Cache.GetManagedSilDataAccess(), false,
+			var recordList = new RecordList(LanguageExplorerConstants.Entries, _statusBar, Cache.GetManagedSilDataAccess(), false,
 				new VectorPropertyParameterObject(Cache.LanguageProject.LexDbOA, "Entries", Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 				{

@@ -813,20 +813,17 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 
 					Descendant = descendant;
-					AutoScrollPosition = new Point(0, 0); // start new object at top (unless first focusable slice changes it).
-#if RANDYTODO
-				// We can't focus yet because the data tree slices haven't finished displaying.
-				// (Remember, Windows won't let us focus something that isn't visible.)
-				// (See LT-3915.)  So postpone focusing by scheduling it to execute on idle...
-				// Mediator may be null during testing or maybe some other strange state
-				if (m_mediator != null)
-				{
-					m_fCurrentContentControlObjectTriggered = true; // allow OnReadyToSetCurrentSlice to focus first possible control.
-					m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object) suppressFocusChange);
+					// start new object at top (unless first focusable slice changes it).
+					AutoScrollPosition = new Point(0, 0);
+					// We can't focus yet because the data tree slices haven't finished displaying.
+					// (Remember, Windows won't let us focus something that isn't visible.)
+					// (See LT-3915.)  So postpone focusing by scheduling it to execute on idle...
+					// allow OnReadyToSetCurrentSlice to focus first possible control.
+					m_fCurrentContentControlObjectTriggered = true;
+					// Tests have no IdleQueue.
+					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue?.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, suppressFocusChange);
 					// prevent setting focus in slice until we're all setup (cf.
 					m_fSuspendSettingCurrentSlice = true;
-				}
-#endif
 				}
 				finally
 				{
@@ -991,7 +988,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				PropertyTable.RemoveProperty("DataTree");
+				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue;
+				if (idleQueue != null)
+				{
+					idleQueue.Remove(DoPostponedFocusSlice);
+					idleQueue.Remove(OnReadyToSetCurrentSlice);
+				}
+				PropertyTable?.RemoveProperty("DataTree");
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 
 				// Do this first, before setting m_fDisposing to true.
@@ -1222,11 +1225,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_fSetCurrentSliceNew = false;
 					if (m_currentSliceNew != null)
 					{
-#if RANDYTODO
-						m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
+						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
 						// prevent setting focus in slice until we're all setup (cf.
 						m_fSuspendSettingCurrentSlice = true;
-#endif
 					}
 				}
 			}
@@ -3400,9 +3401,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void OnFocusFirstPossibleSlice(object arg)
 		{
-#if RANDYTODO
-			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, DoPostponedFocusSlice);
-#endif
+			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, DoPostponedFocusSlice);
 		}
 
 		private bool DoPostponedFocusSlice(object parameter)
@@ -3412,7 +3411,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Therefore we don't want to crash, we just want to do nothing.  See LT-8698.
 			if (IsDisposed)
 			{
-				return true;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
 			if (CurrentSlice == null)
 			{
@@ -3501,7 +3500,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_fSuspendSettingCurrentSlice = false;
 			try
 			{
-				SetDefaultCurrentSlice((bool)parameter);
+				SetDefaultCurrentSlice((bool?)parameter ?? false);
 			}
 			finally
 			{
