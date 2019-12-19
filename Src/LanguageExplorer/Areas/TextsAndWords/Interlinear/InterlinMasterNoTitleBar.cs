@@ -2,9 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.PaneBar;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -20,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
-			: base(configurationParametersElement, majorFlexComponentParameters, recordList, showTitlePane: false)
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, Dictionary<string, PanelButton> paneBarButtons)
+			: base(configurationParametersElement, majorFlexComponentParameters, recordList, paneBarButtons, false)
 		{
 			InitializeComponent();
 			Dock = DockStyle.Fill;
@@ -65,13 +67,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.AddPaneBar();
 			var removedControls = false;
 			SuspendLayout();
-			if (m_informationBar != null)
-			{
-				Controls.Remove(m_informationBar);
-				m_informationBar.Dispose();
-				m_informationBar = null;
-				removedControls = true;
-			}
 			if (TitleContentsPane != null)
 			{
 				Controls.Remove(TitleContentsPane);

@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						isTextPresent = false;
 					}
 				}
-				return new Tuple<bool, bool>(true, isTextPresent);
+				return new Tuple<bool, bool>(Visible, isTextPresent);
 			}
 		}
 
@@ -328,7 +328,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						isTextPresent = false;
 					}
 				}
-				return new Tuple<bool, bool>(true, isTextPresent);
+				return new Tuple<bool, bool>(Visible, isTextPresent);
 			}
 		}
 
@@ -802,7 +802,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						isTextPresent = false;
 					}
 				}
-				return new Tuple<bool, bool>(true, isTextPresent);
+				return new Tuple<bool, bool>(Visible, isTextPresent);
 			}
 		}
 

@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, Dictionary<string, PanelButton> paneBarButtons = null, bool showTitlePane = true)
+		internal InterlinMaster(XElement configurationParametersElement, MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, Dictionary<string, PanelButton> paneBarButtons, bool showTitlePane = true)
 			: base(configurationParametersElement, majorFlexComponentParameters.LcmCache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -600,7 +600,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							m_infoPane.BackColor = Color.White;
 						}
-						if (_paneBarButtons != null)
+						if (_paneBarButtons != null && _paneBarButtons.ContainsKey(TextAndWordsArea.ShowHiddenFields_interlinearEdit))
 						{
 							panelButton = _paneBarButtons[TextAndWordsArea.ShowHiddenFields_interlinearEdit];
 							panelButton.Visible = panelButton.Enabled = true;
@@ -619,7 +619,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					case ktpsGloss:
 						m_idcGloss.IsCurrentTabForInterlineMaster = true;
-						if (_paneBarButtons != null)
+						if (_paneBarButtons != null && _paneBarButtons.ContainsKey(TextAndWordsArea.ITexts_AddWordsToLexicon))
 						{
 							panelButton = _paneBarButtons[TextAndWordsArea.ITexts_AddWordsToLexicon];
 							panelButton.Visible = panelButton.Enabled = true;
