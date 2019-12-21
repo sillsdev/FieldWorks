@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,6 +67,7 @@ namespace LanguageExplorer
 		protected bool m_deletingObject;
 		protected int m_oldLength;
 		protected bool m_usingAnalysisWs;
+		protected internal IRecordList _subservientRecordList;
 		/// <summary>
 		/// The actual database flid from which we get our list of objects, and apply a filter to.
 		/// </summary>
@@ -378,26 +379,13 @@ namespace LanguageExplorer
 			{
 				OnAdjustFilterSelection();
 			}
-#if RANDYTODO
-			//we handled the tree bar only if we are the root record list
-			if (m_recordListProvidingRootObject == null)
-			{
-				m_recordBarHandler = RecordBarHandler.Create(PropertyTable, m_clerkConfiguration);//,m_flid);
-			}
-			else
-			{
-				IRecordList recordListProvidingRootObject;
-				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject), "We expected to find recordListProvidingOwner '" + m_recordListProvidingRootObject + "'. Possibly misspelled.");
-			}
-#endif
-#if RANDYTODO
-			// TODO: In original, optimized, version, we don't load the data until the record list is used in a newly activated window.
 			SetupDataContext(false);
-#else
-			SetupDataContext(true);
-#endif
 		}
 
+		private void CurrentFilterPropertyTableId_Handler(object obj)
+		{
+			OnChangeFilterToCheckedListPropertyChoice();
+		}
 		#endregion Implementation of IFlexComponent
 
 		#region Implementation of IPropertyTableProvider
@@ -457,7 +445,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public IManyOnePathSortItem SortItemAt(int index)
 		{
-			return SortedObjects.Count == 0 ? null : SortedObjects[index] as IManyOnePathSortItem;
+			return SortedObjects.Count == 0 || index >= SortedObjects.Count ? null : SortedObjects[index] as IManyOnePathSortItem;
 		}
 
 		/// <summary>
@@ -563,13 +551,22 @@ namespace LanguageExplorer
 
 		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
-			if (PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != this)
+			if (_subservientRecordList != null)
 			{
-				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, this);
+				if (PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != this)
+				{
+					RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, this);
+				}
 			}
 			if (IsActiveInGui)
 			{
 				return; // Only do it once.
+			}
+			if (ListLoadingSuppressed)
+			{
+				ReloadList();
+				ListLoadingSuppressed = false;
+				RequestedLoadWhileSuppressed = false;
 			}
 			IsActiveInGui = true;
 			SetupFilterMenu();
@@ -583,9 +580,7 @@ namespace LanguageExplorer
 			}
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
-			// Enable in next commit:
-			// 1. RecordList needs MajorFlexComponentParameters to feed to next method, or perhaps some new param object with the three required bits.
-			//RecordListServices.SetRecordList();
+			_subservientRecordList?.ActivateUI(updateStatusBar);
 		}
 
 		public virtual void BecomeInactive()
@@ -785,6 +780,8 @@ namespace LanguageExplorer
 
 		public bool IsSortingByHeadword => !string.IsNullOrWhiteSpace(SortName) && (SortName.StartsWith("Headword") || SortName.StartsWith("Lexeme Form")
 							|| SortName.StartsWith("Citation Form") || SortName.StartsWith("Form") || SortName.StartsWith("Reversal Form"));
+
+		public virtual bool IsSubservientRecordList => false;
 
 		public void JumpToIndex(int index, bool suppressFocusChange = false)
 		{
@@ -1271,17 +1268,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// true if the list is non empty and we are on the last record.
 		/// </summary>
-		public bool OnLast => (SortedObjects.Count > 0) && (m_currentIndex == (SortedObjects.Count - 1));
-
-		public virtual void OnPropertyChanged(string name)
-		{
-			// This happens when the user chooses a MenuItem or sidebar item that selects a filter
-			if (name != CurrentFilterPropertyTableId)
-			{
-				return;
-			}
-			OnChangeFilterToCheckedListPropertyChoice();
-		}
+		public bool OnLast => SortedObjects.Count > 0 && m_currentIndex == SortedObjects.Count - 1;
 
 		public virtual bool OnRefresh(object argument)
 		{
@@ -1318,7 +1305,7 @@ namespace LanguageExplorer
 			{
 				if (ReferenceEquals(m_owningObject, value))
 				{
-					// Old & new are the same, so skip the bother of reloading.
+					// Old & new are the same (or both are null), so skip the bother of reloading.
 					return;
 				}
 				var hasChangedOwner = m_owningObject != null && value != null;
@@ -1490,8 +1477,7 @@ namespace LanguageExplorer
 #endif
 			// This is used by DependentRecordLists
 			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord, SkipShowRecord, suppressFocusChange);
-			// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
-			PropertyTable.SetProperty(PersistedIndexProperty, CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(RecordListSelectedObjectPropertyId(Id), rni, false, settingsGroup: SettingsGroup.LocalSettings);
 			UpdateSelectionForRecordBar();
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
 			// or performing an Undo/Redo.
@@ -1573,9 +1559,9 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool UpdatingList { get; set; }
 
-		public void UpdateOwningObjectIfNeeded()
+		public virtual void UpdateOwningObject(bool updateOwningObjectOnlyIfChanged = false)
 		{
-			UpdateOwningObject(true);
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
 		}
 
 		public virtual void UpdateRecordTreeBar()
@@ -1625,16 +1611,10 @@ namespace LanguageExplorer
 			if (e.Index >= 0 && SortedObjects.Count > 0)
 			{
 				var ourHvo = SortItemAt(e.Index).RootObjectHvo;
-				// if for some reason the index doesn't match the hvo, we'll jump to the Hvo.
-				// But we don't think that should happen, so Assert to help catch the problems.
-				// JohnT Nov 2010: Someone had marked this as not ported to 7.0 with the comment "assert fires".
-				// But I can't find any circumstances in which e.Index >= 0, much less a case where it fires.
-				// If you feel a need to take this Assert out again, which would presumably mean you know a
-				// very repeatable scenario for making it fire, please let me know what it is.
-				// Original do nothing version from the day it was added: Debug.Assert(e.Hvo == e.Hvo, "the index (" + e.Index + ") for selected object (" + e.Hvo + ") does not match the object (" + e.Hvo + " in our list at that index.)");
-				Debug.Assert(ourHvo == e.Hvo, "the index (" + e.Index + ") for selected object (" + ourHvo + ") does not match the object (" + e.Hvo + " in our list at that index.)");
 				if (ourHvo != e.Hvo)
 				{
+					// It does no harm to try and jump to record that is not in the list, as in when starting the Wordlist Concordance tool.
+					// the call to JumpToRecord just bails when "e.Hvo" is not in the list.
 					JumpToRecord(e.Hvo);
 				}
 				else
@@ -2018,10 +1998,12 @@ namespace LanguageExplorer
 				Subscriber.Subscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
 				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
 			}
+			Subscriber.Subscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
 		}
 
 		private void UnregisterMessageHandlers()
 		{
+			Subscriber.Unsubscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
 			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			// Some tests don't have a window or RecordBarControl.
 			var recordBarControl = window?.RecordBarControl;
@@ -2246,10 +2228,9 @@ namespace LanguageExplorer
 			OnChangeFilter(new FilterChangeEventArgs(addf, remf));
 		}
 
-		private void SetupDataContext(bool floadList)
+		private void SetupDataContext(bool loadList)
 		{
-			InitLoad(floadList);
-
+			InitLoad(loadList);
 			UpdateOwningObject();
 		}
 
@@ -2482,11 +2463,6 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <returns>true iff this record list should respond to record navigation</returns>
 		protected virtual bool IsPrimaryRecordList => true;
-
-		protected virtual void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged = false)
-		{
-			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
-		}
 
 		protected virtual string GetStatusBarMsgForCurrentObject()
 		{

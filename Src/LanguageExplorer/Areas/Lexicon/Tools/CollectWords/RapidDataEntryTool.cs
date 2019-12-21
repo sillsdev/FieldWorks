@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -126,6 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				_nestedRecordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(RDEwords, majorFlexComponentParameters.StatusBar, RDEwordsFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -146,7 +147,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			recordBar.BringToFront();
 
 			// Too early before now.
-			_toolMenuHelper = new RapidDataEntryToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 		}
@@ -208,7 +208,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 		#endregion
 
-		private static IRecordList RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		private IRecordList RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == RDEwords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{RDEwords}'.");
 			/*
@@ -218,8 +218,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
             </clerk>
 			*/
 			return new SubservientRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)),
-				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
+				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)), _recordList);
 		}
 
 		/// <summary>

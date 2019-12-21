@@ -1,13 +1,14 @@
-// Copyright (c) 2017-2019 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
@@ -21,6 +22,7 @@ namespace LanguageExplorer.Areas
 		/// be displaying the analyses of.
 		/// </summary>
 		private IRecordList _recordListProvidingRootObject;
+		private ConcDecorator _decorator;
 
 		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, IRecordList recordListProvidingRootObject, RecordFilterParameterObject recordFilterParameterObject = null)
 			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject)
@@ -28,45 +30,79 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
 
 			_recordListProvidingRootObject = recordListProvidingRootObject;
+			((RecordList)_recordListProvidingRootObject)._subservientRecordList = this;
 		}
 
 		/// <summary />
-		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
-			: base(decorator)
+		internal SubservientRecordList(string id, StatusBar statusBar, ConcDecorator decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
+			: this(id, statusBar, decorator, usingAnalysisWs, new VectorPropertyParameterObject(null, string.Empty, flid, false), recordListProvidingRootObject)
 		{
-			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
-			Guard.AgainstNullOrEmptyString(id, nameof(id));
-			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(decorator, nameof(decorator));
 
-			Id = id;
-			_statusBar = statusBar;
-			m_usingAnalysisWs = usingAnalysisWs;
-			PropertyName = string.Empty;
-			m_fontName = MiscUtils.StandardSansSerif;
-			// Only other current option is to specify an ordinary property (or a virtual one).
-			m_flid = flid;
-			// Review JohnH(JohnT): This is only useful for dependent record lists, but I don't know how to check this is one.
-			OwningObject = null;
-			_recordListProvidingRootObject = recordListProvidingRootObject;
+			_decorator = decorator;
+		}
+
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+
+			Subscriber.Subscribe(_recordListProvidingRootObject.PersistedIndexProperty, SelectedItemChangedHandler);
+			Subscriber.Subscribe(DependentPropertyName, DependentPropertyName_Handler);
+		}
+
+		private void DependentPropertyName_Handler(object obj)
+		{
+			UpdateOwningObject(true);
+		}
+
+		private void SelectedItemChangedHandler(object obj)
+		{
+			ReallyResetOwner((IAnalysis)_recordListProvidingRootObject.CurrentObject);
+		}
+
+		private void ReallyResetOwner(IAnalysis selectedAnalysis)
+		{
+			_decorator?.UpdateAnalysisOccurrences(selectedAnalysis, true);
+			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(selectedAnalysis.Hvo, _decorator.VecProp(selectedAnalysis.Hvo, ConcDecorator.kflidWfOccurrences));
+			OwningObject = selectedAnalysis;
 		}
 
 		private string DependentPropertyName => RecordListSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
 
 		#region Overrides of RecordList
+
+		public override bool IsSubservientRecordList => true;
+
 		protected override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
 		{
 			recordListProvidingRootObject = _recordListProvidingRootObject;
 			return true;
 		}
 
-		protected override void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged = false)
+		protected override void OnRecordChanged(RecordNavigationEventArgs e)
 		{
-			var old = OwningObject;
-			ICmObject newObj = null;
+			ReallyResetOwner((IAnalysis)_recordListProvidingRootObject.CurrentObject);
+			base.OnRecordChanged(e);
+		}
+
+		public override void UpdateOwningObject(bool updateOwningObjectOnlyIfChanged = false)
+		{
+			var oldOwningObject = OwningObject;
+			IAnalysis newOwningObject = null;
 			var rni = PropertyTable.GetValue<RecordNavigationInfo>(DependentPropertyName);
 			if (rni != null)
 			{
-				newObj = rni.MyRecordList.CurrentObject;
+				Debug.Assert(ReferenceEquals(rni.MyRecordList, _recordListProvidingRootObject), "How can the two record lists not be the same?");
+				newOwningObject = (IAnalysis)rni.MyRecordList.CurrentObject;
+
+			}
+			if (newOwningObject == null)
+			{
+				if (OwningObject != null)
+				{
+					OwningObject = null;
+				}
+				return;
 			}
 			using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 			{
@@ -74,31 +110,15 @@ namespace LanguageExplorer.Areas
 				// radical as changing the OwningObject occurs, since many subsequent
 				// events and messages depend upon this information.
 				luh.TriggerPendingReloadOnDispose = true;
-				if (rni != null)
+				luh.SkipShowRecord = rni.SkipShowRecord;
+				if (!updateOwningObjectOnlyIfChanged || !ReferenceEquals(oldOwningObject, newOwningObject))
 				{
-					luh.SkipShowRecord = rni.SkipShowRecord;
-				}
-				if (!fUpdateOwningObjectOnlyIfChanged || !ReferenceEquals(old, newObj))
-				{
-					OwningObject = newObj;
+					ReallyResetOwner(newOwningObject);
 				}
 			}
-			if (!ReferenceEquals(old, newObj))
+			if (!ReferenceEquals(oldOwningObject, newOwningObject) && OwningObject != null)
 			{
 				Publisher.Publish("RecordListOwningObjChanged", this);
-			}
-		}
-
-		public override void OnPropertyChanged(string name)
-		{
-			if (name == CurrentFilterPropertyTableId)
-			{
-				base.OnPropertyChanged(name);
-				return;
-			}
-			if (name == DependentPropertyName)
-			{
-				UpdateOwningObjectIfNeeded();
 			}
 		}
 
@@ -113,7 +133,9 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(_recordListProvidingRootObject.PersistedIndexProperty, SelectedItemChangedHandler);
 			}
+			_decorator = null;
 			_recordListProvidingRootObject = null;
 
 			base.Dispose(disposing);

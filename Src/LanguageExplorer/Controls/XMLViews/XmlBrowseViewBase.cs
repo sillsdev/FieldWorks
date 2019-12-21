@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -170,8 +170,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			set
 			{
-				Debug.Assert(value >= -1, "The selected index cannot be set to less than -1.");
-				// Just in case it isn't caught in a Debug build...
+				if (m_hvoRoot == 0)
+				{
+					// "m_hvoRoot" can be 0 on startup.
+					m_selectedIndex = -1;
+					return;
+				}
 				if (value < -1)
 				{
 					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to less than -1.");
@@ -186,41 +190,28 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					return;
 				}
-				var oldIndex = m_selectedIndex;
-				var cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
-				Debug.Assert((cobj == 0 && value == -1) || (cobj > 0 && value >= 0), "The new index must be -1, if there are no items in the list, or the new value must be zero, or greater.");
-				Debug.Assert(value < cobj, "You cannot set the index to a value greater then number of objects.");
-				// Just in case it isn't caught in a Debug build...technically, this is an error,
-				// as indicated in the Asserts above, even if cobj == 0; we shouldn't be setting an index of 0
-				// when there are no objects. But it's happening, as of Sep 20 2006, and we can't pin down
-				// repeatable circumstances. So if someone tries to select the first object of an empty
-				// list, for now we'll just treat it as selecting nothing.
-				if (value >= cobj && cobj > 0)
-				{
-					throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Index cannot be set to more than are in the collection.");
-				}
-				// One may be tempted to move this above the assert and exception,
-				// but no one who knows anything about the contents should be trying
-				// to set the index of an empty collection.
-				if (cobj == 0)
+				var oldSelectedIndex = m_selectedIndex;
+				var objectCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				// There have been some long standing and hard to reproduce bugs in this area where there is a mis-match between
+				// the count of items in the current list, and the new index.
+				// As of 1 Jan 2020, I (RandyR) think the issue is resolved. it was reproducible in the word list Concordance tool on startup.
+				// I think I got it fixed by resetting the vector in the decorator, but time will tell....
+				if (objectCount == 0)
 				{
 					// Nobody home, so quit.
-					Debug.Assert(value == -1, "Cannot set the index to anything except -1, when there are no items in the list.");
-					// Just in case it isn't caught in a Debug build...
-					// Allow zero on release builds since that's the common case, and this bug
-					// is not reliably repeatable, it just happens often enough to be worrisome.
-					if (value > 0)
-					{
-						throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Cannot set the index to anything except -1, when there are no items in the list.");
-					}
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
 					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 					return;
 				}
+				// objectCount > 0.
+				if (value < 0 || value >= objectCount)
+				{
+					throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"The new value must be zero, or greater, but less than the count of objects.");
+				}
 				var hvoObjNewSel = GetNewSelectionObject(value);
 				// Set the member variable before firing the events,
-				// in case the event handlers access the Selectedindex property.
+				// in case the event handlers access the SelectedIndex property.
 				// Wouldn't want them to get the wrong answer, and be confused.
 				m_selectedIndex = value;
 				if (hvoObjNewSel != m_hvoOldSel)
@@ -233,7 +224,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						SelectionChangedEvent(this, new FwObjectSelectionEventArgs(hvoObjNewSel, value));
 						// Recalculate the vector size since somebody somewhere may have deleted something.
 						// See LT-6884 for an example.
-						cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+						objectCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
 					}
 				}
 				// Some of the changes below may destroy the new selection, especially setting the new index, but
@@ -253,15 +244,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				// they would get the old value, which is wrong.
 				//m_selectedIndex = value;
 				SelectedIndexChanged?.Invoke(this, new EventArgs());
-				if (oldIndex >= 0 && oldIndex < cobj)
+				if (oldSelectedIndex >= 0 && oldSelectedIndex < objectCount)
 				{
 					// Turn off the highlighting of the old item.
-					var hvoObjOldSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, oldIndex);
+					var hvoObjOldSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, oldSelectedIndex);
 					try
 					{
 						RootBox.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
 					}
-					catch (Exception)
+					catch
 					{
 						m_bv.RaiseSelectionDrawingFailure();
 					}
@@ -271,7 +262,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					RootBox?.PropChanged(hvoObjNewSel, m_tagMe, 0, 0, 0);
 				}
-				catch (Exception)
+				catch
 				{
 					m_bv.RaiseSelectionDrawingFailure();
 				}
@@ -366,15 +357,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				return 0;
 			}
 			return SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
-		}
-
-		/// <summary>
-		/// read configuration for the browse view to determine whether to try to convert dummy objects to real objects
-		/// when as they become painted on the screen. (Default is false)
-		/// </summary>
-		internal bool ShouldConvertDummiesInView()
-		{
-			return m_nodeSpec != null && XmlUtils.GetOptionalBooleanAttributeValue(m_nodeSpec, "convertDummiesInView", false);
 		}
 
 		/// <summary />

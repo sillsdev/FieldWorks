@@ -1,10 +1,11 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -171,9 +172,9 @@ namespace LanguageExplorer.Areas
 		protected override void SetupDataContext()
 		{
 			TriggerMessageBoxIfAppropriate();
-			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness)
+			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness && !MyRecordList.IsSubservientRecordList && PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
 			{
-				MyRecordList.ActivateUI(); // NB: optional would be a bug here
+				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
 			}
 			m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
 		}
@@ -200,7 +201,7 @@ namespace LanguageExplorer.Areas
 			// in SetupDataContext()
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload = true }))
 			{
-				MyRecordList.UpdateOwningObjectIfNeeded();
+				MyRecordList.UpdateOwningObject(true);
 				SetTreebarAvailability();
 				AddPaneBar();
 				// Historical comments here indicated that MyRecordList should be processed by the mediator before the

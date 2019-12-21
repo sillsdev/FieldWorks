@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,6 +39,7 @@ namespace LanguageExplorer
 		bool IsControllingTheRecordTreeBar { get; set; }
 		bool IsDefaultSort { get; set; }
 		bool IsSortingByHeadword { get; }
+		bool IsSubservientRecordList { get; }
 		void JumpToIndex(int index, bool suppressFocusChange = false);
 		void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false);
 		bool ListLoadingSuppressed { get; set; }
@@ -56,7 +57,6 @@ namespace LanguageExplorer
 		void OnItemDataModified(object argument);
 		bool OnJumpToRecord(object argument);
 		bool OnLast { get; }
-		void OnPropertyChanged(string name);
 		bool OnRefresh(object argument);
 		void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort);
 		ICmObject OwningObject { get; set; }
@@ -83,7 +83,7 @@ namespace LanguageExplorer
 		int TypeSize { get; }
 		bool UpdateFiltersAndSortersIfNeeded();
 		bool UpdatingList { get; set; }
-		void UpdateOwningObjectIfNeeded();
+		void UpdateOwningObject(bool updateOwningObjectOnlyIfChanged = false);
 		void UpdateRecordTreeBar();
 		void UpdateRecordTreeBarIfNeeded();
 		void UpdateStatusBarRecordNumber(string noRecordsText);

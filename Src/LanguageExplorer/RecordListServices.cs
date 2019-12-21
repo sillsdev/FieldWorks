@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,6 +42,11 @@ namespace LanguageExplorer
 		internal static void SetRecordList(IntPtr handle, IRecordList recordList)
 		{
 			var dataForWindow = Mapping[handle];
+			if (ReferenceEquals(dataForWindow.Item3.ActiveRecordList, recordList))
+			{
+				// already set
+				return;
+			}
 			dataForWindow.Item1.RecordList = recordList;
 			dataForWindow.Item2.MyRecordList = recordList;
 			dataForWindow.Item3.ActiveRecordList = recordList;

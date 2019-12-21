@@ -3383,17 +3383,6 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 
 		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public void OnPropertyChanged(string name)
-		{
-			if (name == "currentContentControlObject")
-			{
-				m_fCurrentContentControlObjectTriggered = true;
-			}
-		}
-
-		/// <summary>
 		/// Called by reflection when a new object is inserted into the list. A change of current
 		/// object should not ALWAYS make the data tree take focus, since that can be annoying when
 		/// editing in the browse view (cf LT-8211). But we do want it for a new top-level list object

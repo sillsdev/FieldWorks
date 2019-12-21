@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2019 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,7 +118,6 @@ namespace LanguageExplorer.Areas
 
 			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_services);
 		}
-
 		#endregion
 
 		public override void RemoveNotification(IVwNotifyChange nchng)
@@ -257,7 +256,7 @@ namespace LanguageExplorer.Areas
 				return; // never loaded it, don't unless we get asked for it.
 			}
 			m_values.Remove(hvo); // get rid of dubious value.
-			int[] newvalues = GetAnalysisOccurrences(hvo, includeChildren);
+			var newValues = GetAnalysisOccurrences(hvo, includeChildren);
 			int flidExact, flidAll;
 			switch (obj.ClassID)
 			{
@@ -276,7 +275,7 @@ namespace LanguageExplorer.Areas
 				default:
 					return;
 			}
-			SendPropChanged(hvo, includeChildren ? flidAll : flidExact, 0, newvalues.Length, values.Length);
+			SendPropChanged(hvo, includeChildren ? flidAll : flidExact, 0, newValues.Length, values.Length);
 			SendPropChanged(hvo, kflidOccurrenceCount, 0, 0, 0);
 		}
 
@@ -527,7 +526,7 @@ namespace LanguageExplorer.Areas
 			return base.get_MultiStringAlt(hvo, tag, ws);
 		}
 
-		IStText GetStText(int hvoOccurrence)
+		private IStText GetStText(int hvoOccurrence)
 		{
 			return m_occurrences[hvoOccurrence].Paragraph.Owner as IStText;
 		}

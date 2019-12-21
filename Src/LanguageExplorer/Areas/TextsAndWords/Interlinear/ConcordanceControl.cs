@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2019 SIL International
+// Copyright (c) 2007-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -689,7 +689,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
 						{
-							if (mb.MorphRA == target)
+							if (ReferenceEquals(mb.MorphRA, target))
 							{
 								analyses.Add(mb.Owner as IWfiAnalysis);
 							}

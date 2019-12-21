@@ -38,11 +38,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		public override void OnPropertyChanged(string name)
-		{
-			// Objects of this class do not respond to property changes.
-		}
-
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>

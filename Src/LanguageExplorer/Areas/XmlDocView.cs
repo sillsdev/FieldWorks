@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -142,46 +142,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public void OnPropertyChanged(string name)
-		{
-			switch (name)
-			{
-				case LanguageExplorerConstants.SelectedPublication:
-					var pubDecorator = GetPubDecorator();
-					if (pubDecorator != null)
-					{
-						var pubName = GetSelectedPublication();
-						if (LanguageExplorerResources.AllEntriesPublication == pubName)
-						{   // A null publication means show everything
-							pubDecorator.Publication = null;
-							m_mainView.RefreshDisplay();
-						}
-						else
-						{   // look up the publication object
-							var pub = (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item => item.Name.UserDefaultWritingSystem.Text == pubName)).FirstOrDefault();
-							if (pub != null && pub != pubDecorator.Publication)
-							{   // change the publication if it is different from the current one
-								pubDecorator.Publication = pub;
-								m_mainView.RefreshDisplay();
-							}
-						}
-					}
-					break;
-				case "DictionaryPublicationLayout":
-					var layout = GetSelectedConfigView();
-					m_mainView.Vc.ResetTables(layout);
-					m_mainView.RefreshDisplay();
-					break;
-				default:
-					// Not sure what other properties might change, but I'm not doing anything.
-					break;
-			}
-		}
-
 
 		public DictionaryPublicationDecorator GetPubDecorator()
 		{
@@ -989,7 +949,13 @@ namespace LanguageExplorer.Areas
 			TriggerMessageBoxIfAppropriate();
 			using (new WaitCursor(this))
 			{
-				MyRecordList.ActivateUI();
+				if (!MyRecordList.IsSubservientRecordList)
+				{
+					if (PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
+					{
+						RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+					}
+				}
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (MyRecordList.RequestedLoadWhileSuppressed)
 				{

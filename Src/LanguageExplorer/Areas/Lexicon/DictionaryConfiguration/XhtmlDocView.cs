@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2019 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// Use update helper to help with optimizations and special cases for list loading
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
 			{
-				MyRecordList.UpdateOwningObjectIfNeeded();
+				MyRecordList.UpdateOwningObject(true);
 			}
 			Controls.Add(m_mainView);
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
@@ -620,7 +620,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		public void PostLayoutInit()
 		{
 			// Tell the record list it is active so it will update the list of entries. Pass false as we have no toolbar to update.
-			MyRecordList.ActivateUI();
+			if (!MyRecordList.IsSubservientRecordList && PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
+			{
+				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+			}
 			// Update the entry list if necessary
 			if (!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
 			{
@@ -847,43 +850,45 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
-		public void OnPropertyChanged(string name)
+		internal string SelectedPublication
 		{
-			switch (name)
+			set
 			{
-				case LanguageExplorerConstants.SelectedPublication:
-					var pubDecorator = PublicationDecorator;
-					var validConfiguration = SetCurrentDictionaryPublicationLayout();
-					UpdateContent(pubDecorator, validConfiguration);
-					break;
-				case "DictionaryPublicationLayout":
-				case "ReversalIndexPublicationLayout":
-					var currentConfig = GetCurrentConfiguration(false);
-					if (name == "ReversalIndexPublicationLayout")
-					{
-						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(PropertyTable, Cache);
-					}
-					var currentPublication = GetCurrentPublication();
-					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
-					if (validPublication != currentPublication)
-					{
-						PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, validPublication, true, true);
-					}
-					UpdateContent(PublicationDecorator, currentConfig);
-					break;
-				case "ActiveListSelectedObject":
-					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-					if (browser != null)
-					{
-						RemoveStyleFromPreviousSelectedEntryOnView(browser);
-						LoadPageIfNecessary(browser);
-						MyRecordList.SelectedRecordChanged(true);
-						SetActiveSelectedEntryOnView(browser);
-					}
-					break;
-				default:
-					// Not sure what other properties might change, but I'm not doing anything.
-					break;
+				switch (value)
+				{
+					case LanguageExplorerConstants.SelectedPublication:
+						var pubDecorator = PublicationDecorator;
+						var validConfiguration = SetCurrentDictionaryPublicationLayout();
+						UpdateContent(pubDecorator, validConfiguration);
+						break;
+					case "DictionaryPublicationLayout":
+					case "ReversalIndexPublicationLayout":
+						var currentConfig = GetCurrentConfiguration(false);
+						if (value == "ReversalIndexPublicationLayout")
+						{
+							DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(PropertyTable, Cache);
+						}
+						var currentPublication = GetCurrentPublication();
+						var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
+						if (validPublication != currentPublication)
+						{
+							PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, validPublication, true, true);
+						}
+						UpdateContent(PublicationDecorator, currentConfig);
+						break;
+					case "ActiveListSelectedObject":
+						var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+						if (browser != null)
+						{
+							RemoveStyleFromPreviousSelectedEntryOnView(browser);
+							LoadPageIfNecessary(browser);
+							MyRecordList.SelectedRecordChanged(true);
+							SetActiveSelectedEntryOnView(browser);
+						}
+						break;
+					default:
+						throw new NotSupportedException($"{value}, not recognized. Need to add another one to the switch.");
+				}
 			}
 		}
 

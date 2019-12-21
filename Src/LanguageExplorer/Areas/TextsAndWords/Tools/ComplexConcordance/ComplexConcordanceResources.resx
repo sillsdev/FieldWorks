@@ -153,4 +153,7 @@
   <data name="ksInvalidTagMsg" xml:space="preserve">
     <value>A valid tag must be selected.</value>
   </data>
+  <data name="OR" xml:space="preserve">
+    <value>OR</value>
+  </data>
 </root>

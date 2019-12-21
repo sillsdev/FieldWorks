@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private LexiconDictionaryToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
-		private XhtmlDocView _xhtmlDocView;
+		private XhtmlDocView DocView { get; set; }
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 
-			_xhtmlDocView = null;
+			DocView = null;
 			_toolMenuHelper = null;
 		}
 
@@ -71,8 +71,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_toolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this, _recordList, root.Attribute("configureObjectName").Value);
-			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_toolMenuHelper.DocView = _xhtmlDocView;
+			DocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			_toolMenuHelper.DocView = DocView;
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -100,11 +100,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			};
 			docViewPaneBar.AddControls(new List<Control> { leftPanelMenu, leftSpacer, rightPanelMenu, rightSpacer });
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				_xhtmlDocView, docViewPaneBar);
+				DocView, docViewPaneBar);
 
 			_paneBarContainer.ResumeLayout(true);
-			_xhtmlDocView.FinishInitialization();
-			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
+			DocView.FinishInitialization();
+			DocView.SelectedPublication = "DictionaryPublicationLayout";
 			_paneBarContainer.PostLayoutInit();
 		}
 
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_xhtmlDocView.PublicationDecorator.Refresh();
+			DocView.PublicationDecorator.Refresh();
 			_recordList.ReloadIfNeeded();
 			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
@@ -299,7 +299,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				}
 				var newValue = (string)clickedToolStripMenuItem.Tag;
 				_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
-				DocView.OnPropertyChanged("DictionaryPublicationLayout");
+				DocView.SelectedPublication = "DictionaryPublicationLayout";
 			}
 
 			private void ConfigureDictionary_Clicked(object sender, EventArgs e)
@@ -329,13 +329,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				}
 				var newValue = (string)clickedToolStripMenuItem.Tag;
 				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, newValue, true, settingsGroup: SettingsGroup.LocalSettings);
-				DocView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
+				DocView.SelectedPublication = LanguageExplorerConstants.SelectedPublication;
 			}
 
 			private void ShowAllPublications_Clicked(object sender, EventArgs e)
 			{
 				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true);
-				DocView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
+				DocView.SelectedPublication = LanguageExplorerConstants.SelectedPublication;
 			}
 
 			private void CmdFindAndReplaceText_Click(object sender, EventArgs e)

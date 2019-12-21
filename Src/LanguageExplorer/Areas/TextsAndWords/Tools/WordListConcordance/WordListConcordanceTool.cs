@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			};
 			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
+			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner, majorFlexComponentParameters.UiWidgetController);
 			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
 			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _subservientRecordList);
@@ -108,7 +109,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList, paneBarButtons);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar, interlinMasterPaneBar);
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
-			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _mainRecordBrowseView, _recordListProvidingOwner, _subservientRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -239,8 +239,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_fileExportMenuHelper.SetupFileExportMenu(toolUiWidgetParameterObject);
-
+				UiWidgetServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Edit],
+					Command.CmdGoToWfiWordform, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(GoToWfiWordform_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+			}
+
+			private void GoToWfiWordform_Clicked(object sender, EventArgs e)
+			{
+				/*
+				<command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
+					<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
+				</command>
+				*/
+				using (var dlg = new WordformGoDlg())
+				{
+					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+					dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, null);
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+					}
+				}
 			}
 
 			private void CreateBrowseViewContextMenu()

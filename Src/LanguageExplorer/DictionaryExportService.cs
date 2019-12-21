@@ -194,7 +194,14 @@ namespace LanguageExplorer
 					CacheRecordList(exportType, tempRecordList);
 				}
 				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
-				tempRecordList.ActivateUI(false);
+				if (!tempRecordList.IsSubservientRecordList)
+				{
+					if (propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != tempRecordList)
+					{
+						RecordListServices.SetRecordList(propertyTable.GetValue<Form>(FwUtils.window).Handle, tempRecordList);
+					}
+					tempRecordList.ActivateUI(false);
+				}
 				tempRecordList.UpdateList(true, true);
 				return retval; // ensure the current active record list is reactivated after we use another record list temporarily.
 			}
@@ -270,16 +277,8 @@ namespace LanguageExplorer
 				{
 					return false;
 				}
-				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
-				// and manually call OnPropertyChanged to cause LexEdDll ReversalListBase.ChangeOwningObject(guid) to be called. This causes the
-				// right reversal content to be exported, fixing LT-17011.
-				// RBR comment: Needing to do both is an indication of a pathological state. Setting the property calls OnPropertyChanged to all Mediator clients (now Pub/Sub subscibers).
-				// If 'recordList is not getting that, as a result, that shows it is not a current player. The questions then become:
-				//		1. why is it not getting that broadcast? and
-				//		2. What needs to change, so 'recordList' is able to get the message?
-				// In short, this code is programming to some other bug.
+				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish.
 				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true, true, SettingsGroup.LocalSettings);
-				recordList?.OnPropertyChanged("ReversalIndexGuid");
 				return true;
 			}
 		}

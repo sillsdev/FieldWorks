@@ -40,6 +40,19 @@ namespace LanguageExplorer.Areas
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			ChangeOwningObjectIfPossible();
+			Subscriber.Subscribe("ReversalIndexGuid", ReversalIndexGuid_Handler);
+			Subscriber.Subscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, JumpToIndex_Handler);
+		}
+
+		private void JumpToIndex_Handler(object obj)
+		{
+			var rootIndex = GetRootIndex(CurrentIndex);
+			JumpToIndex(rootIndex);
+		}
+
+		private void ReversalIndexGuid_Handler(object obj)
+		{
+			ChangeOwningObject((Guid)obj);
 		}
 
 		/// <summary />
@@ -82,29 +95,6 @@ namespace LanguageExplorer.Areas
 			var writingSystem = (CoreWritingSystemDefinition)m_cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 			Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, BrowseViewFormCol, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), new WritingSystemComparer(writingSystem)));
 			return true;
-		}
-
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public override void OnPropertyChanged(string name)
-		{
-			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
-			window?.ClearInvalidatedStoredData();
-			switch (name)
-			{
-				default:
-					base.OnPropertyChanged(name);
-					break;
-				case "ReversalIndexGuid":
-					ChangeOwningObjectIfPossible();
-					break;
-				case AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName:
-					var rootIndex = GetRootIndex(CurrentIndex);
-					JumpToIndex(rootIndex);
-					base.OnPropertyChanged(name);
-					break;
-			}
 		}
 
 		#endregion
@@ -301,14 +291,7 @@ namespace LanguageExplorer.Areas
 
 		internal void ChangeOwningObjectIfPossible()
 		{
-			try
-			{
-				ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
-			}
-			catch
-			{
-				// Can't change an owner if we have a bad guid.
-			}
+			ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
 		}
 
 		private void ChangeOwningObject(Guid newGuid)
@@ -343,5 +326,23 @@ namespace LanguageExplorer.Areas
 
 		/// <summary />
 		protected abstract ICmObject NewOwningObject(IReversalIndex ri);
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				Subscriber.Unsubscribe("ReversalIndexGuid", ReversalIndexGuid_Handler);
+				Subscriber.Unsubscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, ReversalIndexGuid_Handler);
+			}
+
+			base.Dispose(disposing);
+		}
 	}
 }

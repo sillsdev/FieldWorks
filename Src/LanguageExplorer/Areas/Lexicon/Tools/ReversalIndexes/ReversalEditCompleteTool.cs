@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private ReversalEditCompleteToolMenuHelper _toolMenuHelper;
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
-		private XhtmlDocView _xhtmlDocView;
+		private XhtmlDocView DocView { get; set; }
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 
-			_xhtmlDocView = null;
+			DocView = null;
 			_toolMenuHelper = null;
 		}
 
@@ -70,10 +70,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
-			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			DocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
-			_toolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordList, _xhtmlDocView);
+			_toolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordList, DocView);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -116,13 +116,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _xhtmlDocView, "Doc Reversals", docViewPaneBar, recordEditView, "Browse Entries", recordEditViewPaneBar);
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, DocView, "Doc Reversals", docViewPaneBar, recordEditView, "Browse Entries", recordEditViewPaneBar);
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			_xhtmlDocView.FinishInitialization();
+			DocView.FinishInitialization();
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
-			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
+			DocView.SelectedPublication = "ReversalIndexPublicationLayout";
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_xhtmlDocView.PublicationDecorator.Refresh();
+			DocView.PublicationDecorator.Refresh();
 			_recordList.ReloadIfNeeded();
 			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
@@ -190,20 +190,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			private IRecordList _recordList;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private CommonReversalIndexMenuHelper _commonReversalIndexMenuHelper;
-			private XhtmlDocView _docView;
+			private XhtmlDocView DocView { get; set; }
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 
-			internal ReversalEditCompleteToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, XhtmlDocView docView)
+			internal ReversalEditCompleteToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, XhtmlDocView xhtmlDocView)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 				Guard.AgainstNull(recordList, nameof(recordList));
-				Guard.AgainstNull(docView, nameof(docView));
+				Guard.AgainstNull(xhtmlDocView, nameof(xhtmlDocView));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordList = recordList;
-				_docView = docView;
+				DocView = xhtmlDocView;
 
 				_cache = majorFlexComponentParameters.LcmCache;
 				_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			private void EditFindMenu_Click(object sender, EventArgs e)
 			{
-				_docView.FindText();
+				DocView.FindText();
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftMainPanelContextMenuStrip(string panelMenuId)
@@ -344,13 +344,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
 				currentToolStripMenuItem.Tag = "All Entries";
 				currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
-				var pubName = _docView.GetCurrentPublication();
+				var pubName = DocView.GetCurrentPublication();
 				currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
 
 				// <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
 				List<string> inConfig;
 				List<string> notInConfig;
-				_docView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, _docView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
+				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
 				foreach (var pub in inConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
@@ -378,7 +378,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			private void ShowAllPublications_Clicked(object sender, EventArgs e)
 			{
 				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true);
-				_docView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
+				DocView.SelectedPublication = LanguageExplorerConstants.SelectedPublication;
 			}
 
 			private void Publication_Clicked(object sender, EventArgs e)
@@ -390,7 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				}
 				var newValue = (string)clickedToolStripMenuItem.Tag;
 				_propertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, newValue, true, settingsGroup: SettingsGroup.LocalSettings);
-				_docView.OnPropertyChanged(LanguageExplorerConstants.SelectedPublication);
+				DocView.SelectedPublication = LanguageExplorerConstants.SelectedPublication;
 			}
 
 			private void EditPublications_Clicked(object sender, EventArgs e)
@@ -441,7 +441,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				MainPanelMenuContextMenuFactory = null;
 				_majorFlexComponentParameters = null;
 				_commonReversalIndexMenuHelper = null;
-				_docView = null;
+				DocView = null;
 
 				_isDisposed = true;
 			}

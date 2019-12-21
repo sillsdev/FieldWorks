@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2019 SIL International
+// Copyright (c) 2002-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -126,6 +126,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			set
 			{
+				if (ReferenceEquals(_recordList, value))
+				{
+					// Same one, so skip.
+					return;
+				}
 				if (_recordList != null)
 				{
 					// Unwire from older record list

@@ -168,5 +168,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance {
                 return ResourceManager.GetString("ksInvalidTagMsg", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OR.
+        /// </summary>
+        internal static string OR {
+            get {
+                return ResourceManager.GetString("OR", resourceCulture);
+            }
+        }
     }
 }
