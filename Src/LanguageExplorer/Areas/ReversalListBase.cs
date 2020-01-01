@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas
 				if (stringFinderComparer != null)
 				{
 					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XElement ?? BrowseViewFormCol;
-					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), stringFinderComparer.SubComparer);
+					Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), stringFinderComparer.SubComparer));
 				}
 				return true;
 			}

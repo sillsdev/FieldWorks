@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2019 SIL International
+// Copyright (c) 2011-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -245,7 +246,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			throw new NotImplementedException();
 		}
 
-		public LanguageExplorer.Filters.IManyOnePathSortItem SortItemAt(int index)
+		public IManyOnePathSortItem SortItemAt(int index)
 		{
 			throw new NotImplementedException();
 		}

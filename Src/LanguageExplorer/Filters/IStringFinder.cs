@@ -1,8 +1,8 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
+using System.Collections.Generic;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		void CollectItems(int hvo, ArrayList collector);
+		void CollectItems(int hvo, List<IManyOnePathSortItem> collector);
 
 		/// <summary>
 		/// Called in advance of 'finding' strings for many instances, typically all or most

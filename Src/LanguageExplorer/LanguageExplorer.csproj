@@ -390,6 +390,7 @@
       <DependentUpon>HelpTopicPaths.resx</DependentUpon>
     </Compile>
     <Compile Include="IListTool.cs" />
+    <Compile Include="IManyOnePathSortItem.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
@@ -891,7 +892,6 @@
     <Compile Include="Filters\FindResultSorter.cs" />
     <Compile Include="Filters\GenRecordSorter.cs" />
     <Compile Include="Filters\IcuComparer.cs" />
-    <Compile Include="Filters\IManyOnePathSortItem.cs" />
     <Compile Include="Filters\IMatcher.cs" />
     <Compile Include="Filters\INoteComparision.cs" />
     <Compile Include="Filters\IntFinder.cs" />
@@ -901,7 +901,6 @@
     <Compile Include="Filters\InvertMatcher.cs" />
     <Compile Include="Filters\IReportsSortProgress.cs" />
     <Compile Include="Filters\IStringFinder.cs" />
-    <Compile Include="Filters\LazyManyOnePathSortItem.cs" />
     <Compile Include="Filters\LcmCompare.cs" />
     <Compile Include="Filters\ManyOnePathSortItem.cs" />
     <Compile Include="Filters\MatchRangePair.cs" />

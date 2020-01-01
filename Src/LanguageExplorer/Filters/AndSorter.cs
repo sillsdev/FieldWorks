@@ -1,9 +1,10 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -16,11 +17,11 @@ namespace LanguageExplorer.Filters
 	{
 		public AndSorter() { }
 
-		public AndSorter(ArrayList sorters) : this()
+		public AndSorter(List<RecordSorter> sorters) : this()
 		{
-			foreach (RecordSorter rs in sorters)
+			foreach (var recordSorter in sorters)
 			{
-				Add(rs);
+				Add(recordSorter);
 			}
 		}
 
@@ -50,18 +51,18 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the list of sorters.
 		/// </summary>
-		public ArrayList Sorters { get; private set; } = new ArrayList();
+		public List<RecordSorter> Sorters { get; private set; } = new List<RecordSorter>();
 
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		public override void CollectItems(int hvo, ArrayList collector)
+		public override void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
 			if (Sorters.Count > 0)
 			{
-				((RecordSorter)Sorters[0]).CollectItems(hvo, collector);
+				Sorters[0].CollectItems(hvo, collector);
 			}
 			else
 			{
@@ -75,27 +76,23 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			foreach (RecordSorter rs in Sorters)
+			foreach (var rs in Sorters)
 			{
 				DynamicLoader.PersistObject(rs, element, "sorter");
 			}
 		}
 
 		// This will probably never be used, but for the sake of completeness, here it is
-		protected internal override IComparer getComparer()
-		{
-			IComparer comp = new AndSorterComparer(Sorters);
-			return comp;
-		}
+		protected internal override IComparer Comparer => new AndSorterComparer(Sorters);
 
-		public override void Sort(/*ref*/ ArrayList records)
+		public override void Sort(List<IManyOnePathSortItem> records)
 		{
 #if DEBUG
 			var dt1 = DateTime.Now;
 			var tc1 = Environment.TickCount;
 #endif
 			var comp = new AndSorterComparer(Sorters);
-			MergeSort.Sort(ref records, comp);
+			records.Sort(comp);
 
 #if DEBUG
 			// only do this if the timing switch is info or verbose
@@ -109,7 +106,7 @@ namespace LanguageExplorer.Filters
 #endif
 		}
 
-		public override void MergeInto(ArrayList records, ArrayList newRecords)
+		public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
 			var comp = new AndSorterComparer(Sorters);
 			MergeInto(records, newRecords, comp);
@@ -117,9 +114,9 @@ namespace LanguageExplorer.Filters
 
 		public override bool CompatibleSorter(RecordSorter other)
 		{
-			foreach (RecordSorter rs in Sorters)
+			foreach (var recordSorter in Sorters)
 			{
-				if (rs.CompatibleSorter(other))
+				if (recordSorter.CompatibleSorter(other))
 				{
 					return true;
 				}
@@ -132,7 +129,7 @@ namespace LanguageExplorer.Filters
 		{
 			for (var i = 0; i < Sorters.Count; i++)
 			{
-				if (((RecordSorter)Sorters[i]).CompatibleSorter(other))
+				if (Sorters[i].CompatibleSorter(other))
 				{
 					return i;
 				}
@@ -147,11 +144,10 @@ namespace LanguageExplorer.Filters
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-			Sorters = new ArrayList(element.Elements().Count());
+			Sorters = new List<RecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				var obj = DynamicLoader.RestoreFromChild(child, ".");
-				Sorters.Add(obj);
+				Sorters.Add((RecordSorter)DynamicLoader.RestoreFromChild(child, "."));
 			}
 		}
 
@@ -159,28 +155,28 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				foreach (RecordSorter rs in Sorters)
+				foreach (var recordSorter in Sorters)
 				{
-					rs.Cache = value;
+					recordSorter.Cache = value;
 				}
 			}
 		}
 
 		private sealed class AndSorterComparer : IComparer, ICloneable
 		{
-			private ArrayList m_sorters;
-			private ArrayList m_comps;
+			private List<RecordSorter> m_sorters;
+			private List<IComparer> m_comps;
 
 			/// <summary>
 			/// Creates a new AndSortComparer
 			/// </summary>
-			public AndSorterComparer(ArrayList sorters)
+			public AndSorterComparer(List<RecordSorter> sorters)
 			{
 				m_sorters = sorters;
-				m_comps = new ArrayList();
-				foreach (RecordSorter rs in m_sorters)
+				m_comps = new List<IComparer>();
+				foreach (var recordSorter in m_sorters)
 				{
-					var comp = rs.getComparer();
+					var comp = recordSorter.Comparer;
 					(comp as StringFinderCompare)?.Init();
 					m_comps.Add(comp);
 				}
@@ -193,7 +189,7 @@ namespace LanguageExplorer.Filters
 				var ret = 0;
 				for (var i = 0; i < m_sorters.Count; i++)
 				{
-					ret = ((IComparer)m_comps[i]).Compare(x, y);
+					ret = m_comps[i].Compare(x, y);
 					if (ret != 0)
 					{
 						break;

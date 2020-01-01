@@ -96,14 +96,9 @@ namespace LanguageExplorer
 		/// </summary>
 		protected int m_hvoCurrent;
 		/// <summary>
-		/// This is now a collection of ManyOnePathSortItems (JohnT, 3 June 05).
+		/// A list of ManyOnePathSortItems.
 		/// </summary>
-		/// <remarks>
-		/// It is tempting to use List&lt;ManyOnePathSortItems&gt;, but it won't work,
-		/// since the sorter classes are stuck on the idea of getting an Arraylist,
-		/// and they deal with various kinds of things.
-		/// </remarks>
-		protected ArrayList m_sortedObjects;
+		protected List<IManyOnePathSortItem> m_sortedObjects;
 		/// <summary>
 		/// This is the database object whose vector we are editing.
 		/// </summary>
@@ -1106,7 +1101,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// true if the list is non empty on we are on the first record
 		/// </summary>
-		public bool OnFirst => (SortedObjects.Count > 0) && m_currentIndex == 0;
+		public bool OnFirst => SortedObjects.Count > 0 && m_currentIndex == 0;
 
 		/// <summary />
 		public bool OnInsertItemInVector(object argument)
@@ -1313,7 +1308,7 @@ namespace LanguageExplorer
 				m_oldLength = 0;
 				if (hasChangedOwner)
 				{
-					SortedObjects = new ArrayList(0);
+					SortedObjects = new List<IManyOnePathSortItem>(0);
 					foreach (var hvo in GetObjectSet())
 					{
 						MakeItemsFor(SortedObjects, hvo);
@@ -1347,15 +1342,12 @@ namespace LanguageExplorer
 				return;
 			}
 			var repo = m_cache.ServiceLocator.ObjectRepository;
-			foreach (var obj in m_sortedObjects)
+			foreach (var item in m_sortedObjects)
 			{
-				var item = obj as ManyOnePathSortItem;
-				if (item == null)
-				{
-					return;
-				}
 				// The object might have been deleted.  See LT-11169.
-				if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 || !repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
+				var keyObjectHvo = item.KeyObject;
+				var rootObjectHvo = item.RootObjectHvo;
+				if (keyObjectHvo <= 0 || rootObjectHvo <= 0 || !repo.IsValidObjectId(keyObjectHvo) || !repo.IsValidObjectId(rootObjectHvo))
 				{
 					return;
 				}
@@ -1501,13 +1493,13 @@ namespace LanguageExplorer
 		public bool SkipShowRecord { get; set; }
 
 		/// <summary>
-		/// This is now a list of ManyOnePathSortItems! (JohnT, 3 June 05)
+		/// A list of ManyOnePathSortItems.
 		/// </summary>
-		public ArrayList SortedObjects
+		public List<IManyOnePathSortItem> SortedObjects
 		{
 			get
 			{
-				return m_sortedObjects ?? (m_sortedObjects = new ArrayList());
+				return m_sortedObjects ?? (m_sortedObjects = new List<IManyOnePathSortItem>());
 			}
 			set
 			{
@@ -1848,20 +1840,14 @@ namespace LanguageExplorer
 
 		private void ClearOutInvalidItems()
 		{
-			for (var i = 0; i < SortedObjects.Count;) // not foreach: we may modify the list
+			var invalidItems = SortedObjects.Where(currentItem => IsInvalidItem(currentItem)).ToList();
+			foreach (var invalidItem in invalidItems)
 			{
-				if (IsInvalidItem((ManyOnePathSortItem)SortedObjects[i]))
-				{
-					SortedObjects.RemoveAt(i);
-				}
-				else
-				{
-					i++;
-				}
+				SortedObjects.Remove(invalidItem);
 			}
 		}
 
-		private bool IsInvalidItem(ManyOnePathSortItem item)
+		private bool IsInvalidItem(IManyOnePathSortItem item)
 		{
 			if (!m_cache.ServiceLocator.IsValidObjectId(item.KeyObject))
 			{
@@ -1882,18 +1868,17 @@ namespace LanguageExplorer
 		{
 		}
 
-		private ArrayList HandleInvalidFilterSortField()
+		private List<IManyOnePathSortItem> HandleInvalidFilterSortField()
 		{
 			m_filter = null;
 			m_sorter = null;
 			MessageBox.Show(Form.ActiveForm, LanguageExplorerResources.ksInvalidFieldInFilterOrSorter, LanguageExplorerResources.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			var newSortedObjects = GetFilteredSortedList();
-			return newSortedObjects;
+			return GetFilteredSortedList();
 		}
 
-		private ArrayList GetFilteredSortedList()
+		private List<IManyOnePathSortItem> GetFilteredSortedList()
 		{
-			var newSortedObjects = new ArrayList();
+			var newSortedObjects = new List<IManyOnePathSortItem>();
 			if (m_filter != null)
 			{
 				m_filter.Preload(OwningObject);
@@ -2828,13 +2813,13 @@ namespace LanguageExplorer
 		/// <param name="hvoToReplace"></param>
 		/// <param name="fAssumeSame">if true, we'll try to replace sort objects for hvoToReplace with newObj at the same indices.
 		/// if false, we'll rely upon sorter to merge the new item into the right index, or else add to the end.
-		/// Enhance: Is there some way we can compare the sort/filter results for newObj and hvoToReplace that is hvo indepedendent?</param>
+		/// Enhance: Is there some way we can compare the sort/filter results for newObj and hvoToReplace that is hvo independent?</param>
 		/// <returns>resulting list of newSortItems added to SortedObjects</returns>
-		protected ArrayList ReplaceListItem(ICmObject newObj, int hvoToReplace, bool fAssumeSame)
+		protected List<IManyOnePathSortItem> ReplaceListItem(ICmObject newObj, int hvoToReplace, bool fAssumeSame)
 		{
-			var newSortItems = new ArrayList();
+			var newSortItems = new List<IManyOnePathSortItem>();
 			var indicesOfSortItemsToRemove = new List<int>(IndicesOfSortItems(new List<int>(new int[] { hvoToReplace })));
-			var remainingInsertItems = new ArrayList();
+			var remainingInsertItems = new List<IManyOnePathSortItem>();
 			var hvoNewObject = 0;
 			if (newObj != null)
 			{
@@ -2845,7 +2830,7 @@ namespace LanguageExplorer
 				{
 					MakeItemsFor(newSortItems, newObj.Hvo);
 				}
-				remainingInsertItems = (ArrayList)newSortItems.Clone();
+				remainingInsertItems = newSortItems.Clone();
 				if (fAssumeSame)
 				{
 					//assume we're converting a dummy item to a real one.
@@ -2896,7 +2881,7 @@ namespace LanguageExplorer
 				// so go through SortedObjects and insert the new sortedItem at the same place as in items.
 				if (remainingInsertItems.Count == 1 && remainingInsertItems[0] is IManyOnePathSortItem && m_filter == null && SortedObjects.Count == (items.Count - 1))
 				{
-					var newSortedObject = remainingInsertItems[0] as IManyOnePathSortItem;
+					var newSortedObject = remainingInsertItems[0];
 					for (var i = 0; i < SortedObjects.Count; i++)
 					{
 						if (items[i] == SortItemAt(i).RootObjectHvo)
@@ -2953,9 +2938,9 @@ namespace LanguageExplorer
 			}
 		}
 
-		protected ArrayList MakeSortItemsFor(int[] hvos)
+		protected List<IManyOnePathSortItem> MakeSortItemsFor(int[] hvos)
 		{
-			var newSortedObjects = new ArrayList(hvos.Length);
+			var newSortedObjects = new List<IManyOnePathSortItem>(hvos.Length);
 			foreach (var hvo in hvos)
 			{
 				MakeItemsFor(newSortedObjects, hvo);
@@ -2973,12 +2958,12 @@ namespace LanguageExplorer
 			m_fReloadLexEntries = false;
 		}
 
-		protected virtual int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrent)
+		protected virtual int GetNewCurrentIndex(List<IManyOnePathSortItem> newSortedObjects, int hvoCurrent)
 		{
 			return IndexOf(newSortedObjects, hvoCurrent);
 		}
 
-		protected void SortList(ArrayList newSortedObjects, ProgressState progress)
+		protected void SortList(List<IManyOnePathSortItem> newSortedObjects, ProgressState progress)
 		{
 			if (m_sorter == null || ListAlreadySorted)
 			{
@@ -2998,7 +2983,7 @@ namespace LanguageExplorer
 			m_sorter.SetPercentDone = DoNothing; // progress about to be disposed.
 		}
 
-		protected int MakeItemsFor(ArrayList sortedObjects, int hvo)
+		protected int MakeItemsFor(List<IManyOnePathSortItem> sortedObjects, int hvo)
 		{
 			var start = sortedObjects.Count;
 			if (m_sorter == null)
@@ -3015,7 +3000,7 @@ namespace LanguageExplorer
 				m_filter.DataAccess = VirtualListPublisher;
 				for (var i = start; i < sortedObjects.Count;)
 				{
-					if (m_filter.Accept(sortedObjects[i] as IManyOnePathSortItem))
+					if (m_filter.Accept(sortedObjects[i]))
 					{
 						i++; // advance loop if we don't delete!
 					}
@@ -3028,12 +3013,12 @@ namespace LanguageExplorer
 			return sortedObjects.Count - start;
 		}
 
-		protected void SendPropChangedOnListChange(int newCurrentIndex, ArrayList newSortedObjects, ListChangedActions actions)
+		protected void SendPropChangedOnListChange(int newCurrentIndex, List<IManyOnePathSortItem> newSortedObjects, ListChangedActions actions)
 		{
 			//Populate the virtual cache property which will hold this set of hvos, in this order.
 			var hvos = new int[newSortedObjects.Count];
 			var i = 0;
-			foreach (IManyOnePathSortItem item in newSortedObjects)
+			foreach (var item in newSortedObjects)
 			{
 				hvos[i++] = item.RootObjectHvo;
 			}
@@ -3097,12 +3082,12 @@ namespace LanguageExplorer
 
 		// get the index of the given hvo, where it occurs as a root object in
 		// one of the IManyOnePathSortItems in the given list.
-		protected int IndexOf(ArrayList objects, int hvo)
+		protected int IndexOf(List<IManyOnePathSortItem> objects, int hvo)
 		{
 			var i = 0;
 			if (objects != null && hvo != 0)
 			{
-				foreach (IManyOnePathSortItem item in objects)
+				foreach (var item in objects)
 				{
 					if (item.RootObjectHvo == hvo)
 					{
@@ -3168,7 +3153,7 @@ namespace LanguageExplorer
 					// try to restore this index during reload.
 					m_indexToRestoreDuringReload = CurrentIndex;
 					// clear everything for now, including the current index, but don't issue a RecordNavigation.
-					SendPropChangedOnListChange(-1, new ArrayList(), ListChangedActions.SkipRecordNavigation);
+					SendPropChangedOnListChange(-1, new List<IManyOnePathSortItem>(), ListChangedActions.SkipRecordNavigation);
 				}
 				m_requestedLoadWhileSuppressed = true;
 				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
@@ -3203,10 +3188,7 @@ namespace LanguageExplorer
 					return; // Cannot complete the reload until PropChangeds complete.
 				}
 				var newCurrentIndex = CurrentIndex;
-#if RANDYTODO
-				// TODO: Replace use of ArrayList with List<IManyOnePathSortItem>.
-#endif
-				ArrayList newSortedObjects;
+				List<IManyOnePathSortItem> newSortedObjects;
 				ListChangedActions actions;
 
 				// Get the HVO of the current object (but only if it hasn't been deleted).
@@ -3229,7 +3211,7 @@ namespace LanguageExplorer
 				//if (m_owningObject == null || !CurrentObjectIsValid)
 				if (m_owningObject == null || m_owningObject.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
 				{
-					SortedObjects = new ArrayList(0);
+					SortedObjects = new List<IManyOnePathSortItem>(0);
 					// We should not do SendPropChangedOnListChange, because that caches a property
 					// on m_owningObject, and issues various notifications based on its existence.
 					// Nothing should be displaying the list if there is no root object.

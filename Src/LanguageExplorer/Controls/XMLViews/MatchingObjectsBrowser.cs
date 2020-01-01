@@ -1,9 +1,8 @@
-// Copyright (c) 2009-2019 SIL International
+// Copyright (c) 2009-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -311,13 +310,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Convert each ICmObject in results to a IManyOnePathSortItem, and sort
 				// using the sorter.
-				var records = new ArrayList();
+				var records = new List<IManyOnePathSortItem>();
 				foreach (var hvo in results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo))
 				{
 					records.Add(new ManyOnePathSortItem(hvo, null, null));
 				}
 				sorter.Sort(records);
-				hvos = records.Cast<IManyOnePathSortItem>().Select(i => i.KeyObject).ToArray();
+				hvos = records.Select(i => i.KeyObject).ToArray();
 			}
 			else
 			{

@@ -275,7 +275,6 @@
     <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="MessageSequencer.cs" />
-    <Compile Include="MergeSort.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

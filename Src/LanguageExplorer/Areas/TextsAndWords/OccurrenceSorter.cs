@@ -1,11 +1,11 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using LanguageExplorer.Filters;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -25,27 +25,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public ISilDataAccessManaged SpecialDataAccess { get; set; }
 
-		protected internal override IComparer getComparer()
-		{
-			return new OccurrenceComparer(m_cache, SpecialDataAccess);
-		}
+		protected internal override IComparer Comparer => new OccurrenceComparer(m_cache, SpecialDataAccess);
 
 		/// <summary>
 		/// Do the actual sort.
 		/// </summary>
-		public override void Sort(ArrayList records)
+		public override void Sort(List<IManyOnePathSortItem> records)
 		{
-			var comp = new OccurrenceComparer(m_cache, SpecialDataAccess);
-			MergeSort.Sort(ref records, comp);
+			records.Sort(new OccurrenceComparer(m_cache, SpecialDataAccess));
 		}
 
 		/// <summary>
 		/// We only ever sort this list to start with, don't think we should need this,
 		/// but it's an abstract method so we have to have it.
 		/// </summary>
-		public override void MergeInto(ArrayList records, ArrayList newRecords)
+		public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotSupportedException("The method or operation is not supported.");
 		}
 	}
 }

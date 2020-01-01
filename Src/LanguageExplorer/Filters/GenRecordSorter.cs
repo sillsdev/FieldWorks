@@ -1,9 +1,10 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -19,10 +20,12 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
+		protected IComparer _comparer;
+
 		/// <summary />
 		public GenRecordSorter(IComparer comp) : this()
 		{
-			Comparer = comp;
+			_comparer = comp;
 		}
 
 		/// <summary>
@@ -30,11 +33,6 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public GenRecordSorter()
 		{
-		}
-
-		protected internal override IComparer getComparer()
-		{
-			return Comparer;
 		}
 
 		/// <summary>
@@ -98,7 +96,7 @@ namespace LanguageExplorer.Filters
 			return CompatibleComparers(subCompThis, subCompOther);
 		}
 
-		private IComparer UnpackReverseCompare(StringFinderCompare sfc)
+		private static IComparer UnpackReverseCompare(StringFinderCompare sfc)
 		{
 			var subComp = sfc.SubComparer;
 			if (subComp is ReverseComparer)
@@ -146,9 +144,9 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Gets or sets the comparer.
+		/// Gets the comparer.
 		/// </summary>
-		public IComparer Comparer { get; set; }
+		protected internal override IComparer Comparer => _comparer;
 
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
@@ -183,8 +181,8 @@ namespace LanguageExplorer.Filters
 			{
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");
 			}
-			Comparer = DynamicLoader.RestoreObject(compNode) as IComparer;
-			if (Comparer == null)
+			_comparer = DynamicLoader.RestoreObject(compNode) as IComparer;
+			if (_comparer == null)
 			{
 				throw new Exception("restoring sorter failed...comparer does not implement IComparer");
 			}
@@ -209,7 +207,7 @@ namespace LanguageExplorer.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		public override void CollectItems(int hvo, ArrayList collector)
+		public override void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
 			if (Comparer is StringFinderCompare)
 			{
@@ -224,7 +222,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		public override void Sort(/*ref*/ ArrayList records)
+		public override void Sort(List<IManyOnePathSortItem> records)
 		{
 #if DEBUG
 			var dt1 = DateTime.Now;
@@ -239,7 +237,7 @@ namespace LanguageExplorer.Filters
 				// Make sure at least 1 so we don't divide by zero.
 				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
 			}
-			MergeSort.Sort(ref records, Comparer);
+			records.Sort(Comparer);
 			if (Comparer is StringFinderCompare)
 			{
 				((StringFinderCompare)Comparer).Cleanup();
@@ -258,7 +256,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Required implementation.
 		/// </summary>
-		public override void MergeInto(ArrayList records, ArrayList newRecords)
+		public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
 			if (Comparer is StringFinderCompare)
 			{

@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
@@ -116,9 +116,7 @@ namespace LanguageExplorerTests.Filters
 		{
 			IcuComparer icomp1 = new IcuComparer("fr"), icomp2 = new IcuComparer("en");
 			GenRecordSorter grs1 = new GenRecordSorter(icomp1), grs2 = new GenRecordSorter(icomp2);
-			var sorters = new ArrayList();
-			sorters.Add(grs1);
-			sorters.Add(grs2);
+			var sorters = new List<RecordSorter> { grs1, grs2 };
 			var asorter = new AndSorter(sorters);
 			var xml = DynamicLoader.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);

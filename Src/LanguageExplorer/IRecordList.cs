@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.Controls;
@@ -75,7 +74,7 @@ namespace LanguageExplorer
 		bool ShouldNotModifyList { get; }
 		bool ShouldNotHandleDeletionMessage { get; }
 		bool SkipShowRecord { get; set; }
-		ArrayList SortedObjects { get; set; }
+		List<IManyOnePathSortItem> SortedObjects { get; set; }
 		RecordSorter Sorter { get; }
 		string SortName { get; set; }
 		bool SuppressSaveOnChangeRecord { get; set; }

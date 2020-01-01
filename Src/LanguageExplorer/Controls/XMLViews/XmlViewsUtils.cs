@@ -1,9 +1,8 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -305,7 +304,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Given one of the original list items, and the spec of the column we want to sort by,
 		/// add to collector whatever ManyOnePathSortItems are appropriate.
 		/// </summary>
-		public static void CollectBrowseItems(int hvo, XElement colSpec, ArrayList collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
+		public static void CollectBrowseItems(int hvo, XElement colSpec, List<IManyOnePathSortItem> collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
 		{
 			var topNode = XmlBrowseViewVc.GetColumnNode(colSpec, hvo, sda, layouts);
 			// Todo: handle various cases here, mostly drill-down to <seq> or <obj>
@@ -316,7 +315,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Main (recursive) part of CollectBrowseItems. Given that hvo is to be displayed using node,
 		/// figure what objects to put in the list.
 		/// </summary>
-		private static void CollectBrowseItems(int hvo, XElement node, ArrayList collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XElement caller, int[] hvos, int[] flids)
+		private static void CollectBrowseItems(int hvo, XElement node, List<IManyOnePathSortItem> collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XElement caller, int[] hvos, int[] flids)
 		{
 			switch (node.Name.LocalName)
 			{

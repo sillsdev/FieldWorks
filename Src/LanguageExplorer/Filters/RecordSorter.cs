@@ -1,9 +1,10 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -19,6 +20,8 @@ namespace LanguageExplorer.Filters
 		internal int m_comparisonsDone;
 		internal int m_comparisonsEstimated;
 		internal int m_percentDone;
+
+		#region IPersistAsXml implementation
 
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
@@ -41,8 +44,10 @@ namespace LanguageExplorer.Filters
 		public virtual void InitXml(XElement element)
 		{
 		}
+		#endregion IPersistAsXml
 
-		#region IStoresLcmCache
+		#region IStoresLcmCache implementation
+
 		/// <summary>
 		/// Set an LcmCache for anything that needs to know.
 		/// </summary>
@@ -53,6 +58,34 @@ namespace LanguageExplorer.Filters
 				// do nothing by default.
 			}
 		}
+		#endregion IStoresLcmCache
+
+		#region IReportsSortProgress implementation
+
+		public Action<int> SetPercentDone
+		{
+			get; set;
+		}
+		#endregion
+
+		#region INoteComparision implementation.
+
+		public void ComparisonOccurred()
+		{
+			if (SetPercentDone == null)
+			{
+				return;
+			}
+			m_comparisonsDone++;
+			var newPercentDone = m_comparisonsDone * 100 / m_comparisonsEstimated;
+			if (newPercentDone == m_percentDone)
+			{
+				return;
+			}
+			m_percentDone = newPercentDone;
+			SetPercentDone(Math.Min(m_percentDone, 100)); // just in case we do more than the estimated number.
+		}
+		#endregion
 
 		/// <summary>
 		/// Set the data access to use in interpreting properties of objects.
@@ -62,27 +95,26 @@ namespace LanguageExplorer.Filters
 		{
 			set { }// do nothing by default.
 		}
-		#endregion IStoresLcmCache
 
 		/// <summary>
 		/// Method to retrieve the IComparer used by this sorter
 		/// </summary>
-		protected internal abstract IComparer getComparer();
+		protected internal abstract IComparer Comparer { get; }
 
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		public abstract void Sort(ArrayList records);
+		public abstract void Sort(List<IManyOnePathSortItem> records);
 
 		/// <summary>
 		/// Merges the into.
 		/// </summary>
-		public abstract void MergeInto(ArrayList records, ArrayList newRecords);
+		public abstract void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords);
 
 		/// <summary>
 		/// Merge the new records into the original list using the specified comparer
 		/// </summary>
-		protected void MergeInto(ArrayList records, ArrayList newRecords, IComparer comparer)
+		protected void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords, IComparer comparer)
 		{
 			for (int i = 0, j = 0; j < newRecords.Count; i++)
 			{
@@ -103,7 +135,7 @@ namespace LanguageExplorer.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		public virtual void CollectItems(int hvo, ArrayList collector)
+		public virtual void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
 			collector.Add(new ManyOnePathSortItem(hvo, null, null));
 		}
@@ -124,27 +156,6 @@ namespace LanguageExplorer.Filters
 		public virtual bool CompatibleSorter(RecordSorter other)
 		{
 			return false;
-		}
-
-		public Action<int> SetPercentDone
-		{
-			get; set;
-		}
-
-		public void ComparisonOccurred()
-		{
-			if (SetPercentDone == null)
-			{
-				return;
-			}
-			m_comparisonsDone++;
-			var newPercentDone = m_comparisonsDone * 100 / m_comparisonsEstimated;
-			if (newPercentDone == m_percentDone)
-			{
-				return;
-			}
-			m_percentDone = newPercentDone;
-			SetPercentDone(Math.Min(m_percentDone, 100)); // just in case we do more than the estimated number.
 		}
 	}
 }

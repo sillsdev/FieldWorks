@@ -1,10 +1,11 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using LanguageExplorer;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -18,7 +19,7 @@ namespace LanguageExplorerTests.Filters
 	[TestFixture]
 	public class ManyOnePathSortItemsPersistenceTests : MemoryOnlyBackendProviderTestBase
 	{
-		private ArrayList m_list;
+		private List<IManyOnePathSortItem> m_list;
 		private ILexEntry m_le1;
 		private ILexEntry m_le2;
 
@@ -27,8 +28,7 @@ namespace LanguageExplorerTests.Filters
 			base.TestSetup();
 
 			IManyOnePathSortItem mopsi = new ManyOnePathSortItem(Cache.LangProject);
-			m_list = new ArrayList();
-			m_list.Add(mopsi);
+			m_list = new List<IManyOnePathSortItem> { mopsi };
 			var leFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			UndoableUnitOfWorkHelper.Do("undoit", "redoit", Cache.ActionHandlerAccessor, () =>
 			{

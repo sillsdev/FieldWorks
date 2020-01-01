@@ -1,12 +1,12 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -17,8 +17,8 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class PropertyRecordSorter : RecordSorter
 	{
-		private IComparer m_comp;
-		private LcmCache m_cache;
+		private IComparer _comparer;
+		private LcmCache _cache;
 
 		/// <summary />
 		public PropertyRecordSorter(string propertyName)
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				m_cache = value;
+				_cache = value;
 				base.Cache = value;
 			}
 		}
@@ -83,30 +83,26 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Get the object that does the comparisons.
 		/// </summary>
-		protected internal override IComparer getComparer()
-		{
-			return new LcmCompare(PropertyName, m_cache);
-		}
+		protected internal override IComparer Comparer => _comparer ?? (_comparer = new LcmCompare(PropertyName, _cache));
 
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		public override void Sort(ArrayList records)
+		public override void Sort(List<IManyOnePathSortItem> records)
 		{
 #if DEBUG
 			var dt1 = DateTime.Now;
 			var tc1 = Environment.TickCount;
 #endif
-			m_comp = getComparer();
-			if (m_comp is LcmCompare)
+			if (Comparer is LcmCompare)
 			{
-				(m_comp as LcmCompare).ComparisonNoter = this;
+				((LcmCompare)Comparer).ComparisonNoter = this;
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
 				// Make sure at least 1 so we don't divide by zero.
 				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
 			}
-			records.Sort(m_comp);
+			records.Sort(_comparer);
 #if DEBUG
 			// only do this if the timing switch is info or verbose
 			if (RuntimeSwitches.RecordTimingSwitch.TraceInfo)
@@ -120,21 +116,11 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Merges the into.
 		/// </summary>
-		public override void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords)
+		public override void MergeInto(/*ref*/ List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
-			var fc = new LcmCompare(PropertyName, m_cache);
+			var fc = new LcmCompare(PropertyName, _cache);
 			MergeInto(records, newRecords, (IComparer)fc);
 			fc.CloseCollatingEngine(); // Release the ICU data file.
-		}
-
-		/// <summary>
-		/// a factory method for property sorders
-		/// </summary>
-		public static PropertyRecordSorter Create(LcmCache cache, XElement configuration)
-		{
-			var sorter = (PropertyRecordSorter)DynamicLoader.CreateObject(configuration);
-			sorter.Init(configuration);
-			return sorter;
 		}
 	}
 }

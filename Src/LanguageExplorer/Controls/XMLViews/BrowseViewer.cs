@@ -430,7 +430,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var sorters = ((AndSorter)Sorter).Sorters;
 					foreach (var sorterObj in sorters)
 					{
-						var icol = ColumnInfoIndexOfCompatibleSorter(sorterObj as RecordSorter);
+						var icol = ColumnInfoIndexOfCompatibleSorter(sorterObj);
 						if (icol >= 0)
 						{
 							cols.Add(icol);
@@ -483,14 +483,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			ArrayList sorters;
+			List<RecordSorter> sorters;
 			if (sorter is AndSorter)
 			{
 				sorters = ((AndSorter)sorter).Sorters;
 			}
 			else
 			{
-				sorters = new ArrayList
+				sorters = new List<RecordSorter>
 				{
 					sorter
 				};
@@ -498,7 +498,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = 0; i < sorters.Count; i++)
 			{
 				// set our current column to the one we are sorting.
-				var ifsi = ColumnInfoIndexOfCompatibleSorter((RecordSorter)sorters[i]);
+				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i]);
 				// set our header column arrow
 				var order = SortOrder.Ascending;
 				var grs = sorters[i] as GenRecordSorter;
@@ -950,7 +950,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			ArrayList sorters;
+			List<RecordSorter> sorters;
 			var andSorter = sorter as AndSorter;
 			if (andSorter != null)
 			{
@@ -958,16 +958,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				sorters = new ArrayList();
+				sorters = new List<RecordSorter>();
 				if (sorter != null)
 				{
 					sorters.Add(sorter);
 				}
 			}
-			var newSorters = new ArrayList();
+			var newSorters = new List<RecordSorter>();
 			for (var i = 0; i < sorters.Count; i++)
 			{
-				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i] as RecordSorter);
+				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i]);
 				if (sorters[i] as GenRecordSorter == null && ifsi < 0)
 				{
 					// we don't want to use this sorter because it's not the kind that our filters
@@ -1017,7 +1017,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else if (newSorters.Count == 1)
 			{
-				Sorter = newSorters[0] as RecordSorter;
+				Sorter = newSorters[0];
 			}
 			else
 			{
@@ -1834,7 +1834,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Same one, just reversing the direction
 						var i = asorter.CompatibleSorterIndex(newSorter);
-						asorter.Sorters[i] = ReverseNewSorter(newSorter, (RecordSorter)asorter.Sorters[i]);
+						asorter.Sorters[i] = ReverseNewSorter(newSorter, asorter.Sorters[i]);
 					}
 					else
 					{
@@ -1890,7 +1890,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false; // If there isn't a sorter, no columns can be actively sorted
 			}
-			var sorters = Sorter is AndSorter ? ((AndSorter)Sorter).Sorters : new ArrayList { Sorter };
+			var sorters = Sorter is AndSorter ? ((AndSorter)Sorter).Sorters : new List<RecordSorter> { Sorter };
 			// This loop attempts to locate the sorter in the list of active sorters that responsible for the column in question
 			foreach (RecordSorter rs in sorters)
 			{
@@ -1916,8 +1916,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			Debug.Assert(grs.Comparer as StringFinderCompare != null, "Current Column does not have one of our sorters.");
-			return grs.Comparer as StringFinderCompare != null && (grs.Comparer as StringFinderCompare).SortedFromEnd;
+			Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
+			return grs.Comparer is StringFinderCompare && ((StringFinderCompare)grs.Comparer).SortedFromEnd;
 		}
 
 		/// <summary>
@@ -1939,10 +1939,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-				Debug.Assert(grs.Comparer as StringFinderCompare != null, "Current Column does not have one of our sorters.");
-				if (grs.Comparer as StringFinderCompare != null)
+				Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
+				if (grs.Comparer is StringFinderCompare)
 				{
-					(grs.Comparer as StringFinderCompare).SortedFromEnd = value;
+					((StringFinderCompare)grs.Comparer).SortedFromEnd = value;
 				}
 			}
 		}

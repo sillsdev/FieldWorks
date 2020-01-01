@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,143 +19,49 @@ namespace LanguageExplorer.Filters
 	/// properties of the original objects, but may be more complex when sorting by columns
 	/// containing related objects, especially ones in many:1 relation with the original.
 	/// </summary>
-	public class ManyOnePathSortItem : IManyOnePathSortItem
+	internal sealed class ManyOnePathSortItem : IManyOnePathSortItem
 	{
 		/// <summary>
-		/// Array of objects in the path. m_pathObjects[0] is one of the original list items.
-		/// m_pathObjects[n+1] is an object in property m_pathFlids[n] of m_pathObjects[n].
-		/// m_hvoItem is an object in property m_pathFlids[last] of m_pathObjects[last].
+		/// Array of objects in the path. _pathObjects[0] is one of the original list items.
+		/// m_pathObjects[n+1] is an object in property _pathFlids[n] of _pathObjects[n].
+		/// m_hvoItem is an object in property _pathFlids[last] of _pathObjects[last].
 		/// </summary>
-		private int[] m_pathObjects;
-		private int[] m_pathFlids;
+		private readonly int[] _pathObjects;
+		private readonly int[] _pathFlids;
+		private readonly int _hvoItem;
+		private IManyOnePathSortItem AsInterface => this;
 
 		/// <summary />
-		public ManyOnePathSortItem(int hvoItem, int[] pathObjects, int[] pathFlids)
+		internal ManyOnePathSortItem(int hvoItem, int[] pathObjects = null, int[] pathFlids = null)
 		{
-			Init(hvoItem, pathObjects, pathFlids);
-		}
-
-		/// <summary>
-		/// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-		/// </returns>
-		public override string ToString()
-		{
-			var result = "ManyOnePathSortItem on " + KeyObject;
-			if (RootObjectHvo == 0)
-			{
-				result += " root object null ";
-			}
-			result += "path ";
-			if (m_pathObjects != null)
-			{
-				result = m_pathObjects.Aggregate(result, (current, hvo) => current + (hvo + " "));
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// This is used for some kinds of desperate verification. We shouldn't have databases with
-		/// more than 4 million objects for a while.
-		/// </summary>
-		public static int MaxObjectId => 4000000;
-
-		/// <summary>
-		/// Assert that id is valid. (May not catch all problems.)
-		/// </summary>
-		public static void AssertValidId(int id)
-		{
-			if (id > 0 || id <= MaxObjectId)
-			{
-				return;
-			}
-			throw new Exception("invalid object id detected: " + id);
-		}
-
-		/// <summary>
-		/// Assert that this object is OK.
-		/// </summary>
-		public void AssertValid()
-		{
-			AssertValidId(KeyObject);
-			if (RootObjectHvo != 0)
-			{
-				AssertValidId(RootObjectHvo);
-			}
-			if (m_pathObjects != null)
-			{
-				foreach (var hvo in m_pathObjects)
-				{
-					AssertValidId(hvo);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Assert all the MOPSIs in the list are valid.
-		/// </summary>
-		public static void AssertValidList(ArrayList list)
-		{
-			foreach (ManyOnePathSortItem item in list)
-			{
-				item.AssertValid();
-			}
-		}
-
-		/// <summary>
-		/// Assert all the hvos in the array are valid
-		/// </summary>
-		public static void AssertValidHvoArray(int[] hvos)
-		{
-			foreach (var hvo in hvos)
-			{
-				AssertValidId(hvo);
-			}
-		}
-
-		private void Init(int hvoItem, int[] pathObjects, int[] pathFlids)
-		{
-			KeyObject = hvoItem;
+			_hvoItem = hvoItem;
 			// Unless they are both null, they must be arrays of the same length.
 			// (Another, nastier, exception will be thrown if just one is null.)
-			if ((pathObjects != null || pathFlids != null) && pathObjects.Length != pathFlids.Length)
+			if ((pathObjects?.Length ?? 0) != (pathFlids?.Length ?? 0))
 			{
 				throw new Exception("ManyOnePathSortItem arrays must be same length");
 			}
-			m_pathObjects = pathObjects;
-			m_pathFlids = pathFlids;
+			_pathObjects = pathObjects;
+			_pathFlids = pathFlids;
 		}
 
 		/// <summary>
 		/// Create one, caching the base CmObject.
 		/// </summary>
-		public ManyOnePathSortItem(ICmObject item)
+		internal ManyOnePathSortItem(ICmObject item)
+			: this(item.Hvo)
 		{
-			Init(item.Hvo, null, null);
 		}
 
-		/// <summary>
-		/// The HVO of the object that is the actual list item.
-		/// </summary>
-		public int KeyObject { get; private set; }
-
-		/// <summary>
-		/// Gets the actual KeyCmObject, using the caller-supplied cache.
-		/// </summary>
-		public ICmObject KeyObjectUsing(LcmCache cache)
-		{
-			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(KeyObject);
-		}
+		#region IManyOnePathSortItem implementation
 
 		/// <summary>
 		/// Note that this may be null if it has not been initialized or the object has been deleted. This class cannot generate
 		/// it from PathObjects(0) because it lacks an LcmCache.
 		/// </summary>
-		public ICmObject RootObjectUsing(LcmCache cache)
+		ICmObject IManyOnePathSortItem.RootObjectUsing(LcmCache cache)
 		{
-			var hvo = RootObjectHvo;
+			var hvo = AsInterface.RootObjectHvo;
 			if (hvo == 0)
 			{
 				return null;
@@ -168,35 +74,67 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// A shortcut for PathObjects(0), that is, one of the original items from which we generated our path.
 		/// </summary>
-		public int RootObjectHvo => PathObject(0);
+		int IManyOnePathSortItem.RootObjectHvo => AsInterface.PathObject(0);
+
+		/// <summary>
+		/// The HVO of the object that is the actual list item.
+		/// </summary>
+		int IManyOnePathSortItem.KeyObject => _hvoItem;
+
+		/// <summary>
+		/// Gets the actual KeyCmObject, using the caller-supplied cache.
+		/// </summary>
+		ICmObject IManyOnePathSortItem.KeyObjectUsing(LcmCache cache)
+		{
+			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(_hvoItem);
+		}
+
+		/// <summary>
+		/// The number of steps in the path.
+		/// </summary>
+		int IManyOnePathSortItem.PathLength => _pathObjects?.Length ?? 0;
 
 		/// <summary>
 		/// One of the objects on the path that leads from an item in the original list
-		/// to the KeyObject. As a special case, an index one larger produces the key object
+		/// to the HvoItem. As a special case, an index one larger (e.g.: length of _pathObjects) produces the key object
 		/// itself.
 		/// </summary>
-		public int PathObject(int index)
+		int IManyOnePathSortItem.PathObject(int index)
 		{
-			if (m_pathObjects == null && index == 0)
-			{
-				return KeyObject;
-			}
-			return index == m_pathObjects.Length ? KeyObject : m_pathObjects[index];
+			return _pathObjects == null && index == 0 ? _hvoItem : index == _pathObjects.Length ? _hvoItem : _pathObjects[index];
 		}
 
 		/// <summary>
 		/// One of the field identifiers on the path that leads from an item in the
 		/// original list to the KeyObject.
 		/// </summary>
-		public int PathFlid(int index)
+		int IManyOnePathSortItem.PathFlid(int index)
 		{
-			return m_pathFlids[index];
+			return _pathFlids[index];
 		}
 
 		/// <summary>
-		/// The number of steps in the path.
+		/// A representation that can be used to create an equivalent LazyManyOnePathSortItem.
+		/// Keep consistent with the LazyManyOnePathSortItem constructor and PersistData.
 		/// </summary>
-		public int PathLength => m_pathObjects?.Length ?? 0;
+		string IManyOnePathSortItem.PersistData(ICmObjectRepository repo)
+		{
+			var builder = new StringBuilder();
+			builder.Append(PersistGuid(repo.GetObject(_hvoItem).Guid));
+			if (AsInterface.PathLength > 0)
+			{
+				for (var i = 0; i < _pathObjects.Length; i++)
+				{
+					builder.Append(";");
+					builder.Append(_pathFlids[i]);
+					builder.Append(";");
+					builder.Append(PersistGuid(repo.GetObject(_pathObjects[i]).Guid));
+				}
+			}
+			return builder.ToString();
+		}
+
+		#endregion
 
 		private static string PersistGuid(Guid guid)
 		{
@@ -204,32 +142,11 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// A representation that can be used to create an equivalent LazyManyOnePathSortItem.
-		/// Keep consistent with the LazyManyOnePathSortItem constructor and PersisData.
-		/// </summary>
-		public string PersistData(ICmObjectRepository repo)
-		{
-			var builder = new StringBuilder();
-			builder.Append(PersistGuid(repo.GetObject(KeyObject).Guid));
-			if (PathLength > 0)
-			{
-				for (var i = 0; i < m_pathObjects.Length; i++)
-				{
-					builder.Append(";");
-					builder.Append(m_pathFlids[i]);
-					builder.Append(";");
-					builder.Append(PersistGuid(repo.GetObject(m_pathObjects[i]).Guid));
-				}
-			}
-			return builder.ToString();
-		}
-
-		/// <summary>
 		/// Write a collection of IManyOneSortItems in a form that can be reconstituted by ReadItems.
 		/// </summary>
-		public static void WriteItems(ArrayList items, StreamWriter output, ICmObjectRepository repo)
+		internal static void WriteItems(List<IManyOnePathSortItem> items, StreamWriter output, ICmObjectRepository repo)
 		{
-			foreach (IManyOnePathSortItem item in items)
+			foreach (var item in items)
 			{
 				output.WriteLine(item.PersistData(repo));
 			}
@@ -239,11 +156,11 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Build a collection of IManyOneSortItems from data written by WriteItems.
 		/// </summary>
-		public static ArrayList ReadItems(StreamReader input, ICmObjectRepository repo)
+		internal static IReadOnlyList<IManyOnePathSortItem> ReadItems(StreamReader input, ICmObjectRepository repo)
 		{
 			try
 			{
-				var result = new ArrayList();
+				var result = new List<IManyOnePathSortItem>();
 				while (!input.EndOfStream)
 				{
 					result.Add(new LazyManyOnePathSortItem(input.ReadLine(), repo));
@@ -283,6 +200,159 @@ namespace LanguageExplorer.Filters
 			catch (ArgumentException)
 			{
 				return null;
+			}
+		}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
+		/// </summary>
+		public override string ToString()
+		{
+			var result = "ManyOnePathSortItem on " + _hvoItem;
+			if (AsInterface.RootObjectHvo == 0)
+			{
+				result += " root object null ";
+			}
+			result += "path ";
+			if (_pathObjects != null)
+			{
+				result = _pathObjects.Aggregate(result, (current, hvo) => current + (hvo + " "));
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// This alternative implementation is used when restoring a saved list of mopsis.
+		/// The main point of it is to be able to restore a list of Imopsis, but NOT actually create the
+		/// objects until they are needed for something. Accordingly, it mainly stores ICmObjectIds
+		/// rather than CmObjects or HVOs, though the variables are ICmObjectOrIds so we can
+		/// retrieve the objects efficiently once they are real.
+		/// </summary>
+		private sealed class LazyManyOnePathSortItem : IManyOnePathSortItem
+		{
+			/// <summary>
+			/// The actual item that we are sorting, filtering, etc. by.
+			/// </summary>
+			private ICmObjectOrId _item;
+			/// <summary>
+			/// The repository that can interpret ICmObjectOrIds and give ICmObjects.
+			/// </summary>
+			private readonly ICmObjectRepository _repo;
+			/// <summary>
+			/// Array of objects in the path. _pathObjects[0] is one of the original list items.
+			/// _pathObjects[n+1] is an object in property _pathFlids[n] of _pathObjects[n].
+			/// _item is an object in property _pathFlids[last] of _pathObjects[last].
+			/// </summary>
+			private readonly ICmObjectOrId[] _pathObjects;
+			private readonly int[] _pathFlids;
+			private IManyOnePathSortItem AsInterface => this;
+
+			internal LazyManyOnePathSortItem(string persistInfo, ICmObjectRepository repo)
+			{
+				_repo = repo;
+				var chunks = persistInfo.Split(';');
+				_item = ParseGuidRep(repo, chunks[0]);
+				if (chunks.Length > 1)
+				{
+					var pathLen = chunks.Length / 2;
+					_pathObjects = new ICmObjectOrId[pathLen];
+					_pathFlids = new int[pathLen];
+					for (var i = 0; i < pathLen; i++)
+					{
+						_pathFlids[i] = int.Parse(chunks[i * 2 + 1]);
+						_pathObjects[i] = ParseGuidRep(repo, chunks[i * 2 + 2]);
+					}
+				}
+			}
+
+			#region IManyOnePathSortItem implementation
+
+			ICmObject IManyOnePathSortItem.RootObjectUsing(LcmCache cache)
+			{
+				if (_pathObjects == null)
+				{
+					return RealKeyObject();
+				}
+				var result = _pathObjects[0].GetObject(_repo);
+				// makes future updates more efficient, if it was an ID.
+				// I believe locking is not necessary, since even if two threads update this,
+				// both will update it to the same thing.
+				_pathObjects[0] = result;
+				return result;
+			}
+
+			int IManyOnePathSortItem.RootObjectHvo
+			{
+				get
+				{
+					var objOrId = _pathObjects == null ? _item : _pathObjects[0];
+					return _repo.GetHvoFromObjectOrId(objOrId);
+				}
+			}
+
+			int IManyOnePathSortItem.KeyObject => _repo.GetHvoFromObjectOrId(_item);
+
+			ICmObject IManyOnePathSortItem.KeyObjectUsing(LcmCache cache)
+			{
+				return RealKeyObject();
+			}
+
+			int IManyOnePathSortItem.PathLength => _pathObjects?.Length ?? 0;
+
+			int IManyOnePathSortItem.PathObject(int index)
+			{
+				return _pathObjects == null && index == 0 ? AsInterface.KeyObject : index == _pathObjects.Length ? AsInterface.KeyObject : _repo.GetHvoFromObjectOrId(_pathObjects[index]);
+			}
+
+			int IManyOnePathSortItem.PathFlid(int index)
+			{
+				return _pathFlids[index];
+			}
+
+			// Add above.
+			/// <summary>
+			/// A representation that can be used to create an equivalent LazyManyOnePathSortItem later.
+			/// Keep consistent with the ManyOnePathSortItem PersistData (and our constructor).
+			/// </summary>
+			string IManyOnePathSortItem.PersistData(ICmObjectRepository repo)
+			{
+				var builder = new StringBuilder();
+				builder.Append(PersistGuid(_item));
+				if (AsInterface.PathLength > 0)
+				{
+					for (var i = 0; i < _pathObjects.Length; i++)
+					{
+						builder.Append(";");
+						builder.Append(_pathFlids[i]);
+						builder.Append(";");
+						builder.Append(PersistGuid(_pathObjects[i]));
+					}
+				}
+				return builder.ToString();
+			}
+
+			#endregion
+
+			private static string PersistGuid(ICmObjectOrId item)
+			{
+				return Convert.ToBase64String(item.Id.Guid.ToByteArray());
+			}
+
+			private static ICmObjectOrId ParseGuidRep(ICmObjectRepository repo, string chunk)
+			{
+				var result = repo.GetObjectOrIdWithHvoFromGuid(new Guid(Convert.FromBase64String(chunk)));
+				if (result == null)
+				{
+					throw new InvalidObjectGuidException();
+				}
+				return result;
+			}
+
+			private ICmObject RealKeyObject()
+			{
+				var temp = _item.GetObject(_repo);
+				_item = temp; // locking not needed, all threads will update to same thing
+				return temp;
 			}
 		}
 	}

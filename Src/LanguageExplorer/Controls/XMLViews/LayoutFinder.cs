@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// if there is only one in a given structure, and makes an item for each thing
 		/// found.
 		/// </summary>
-		public void CollectItems(int hvo, ArrayList collector)
+		public void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
 			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_mdc, m_sda, m_layouts);
 		}
@@ -753,7 +753,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return sVal.Length == maxDigits ? new[] { prefix + sVal } : new[] { prefix + new string(chFiller, maxDigits - sVal.Length) + sVal };
 			}
 
-			private string NinesComplement(string sNumber)
+			private static string NinesComplement(string sNumber)
 			{
 				var bldr = new StringBuilder();
 				while (sNumber.Length > 0)

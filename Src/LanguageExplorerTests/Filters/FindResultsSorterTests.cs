@@ -1,9 +1,9 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
 using System.Collections.Generic;
+using LanguageExplorer;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -146,11 +146,11 @@ namespace LanguageExplorerTests.Filters
 			VerifySortOrder(new[] { "WithoutDef", "WithDef" }, records);
 		}
 
-		private void VerifySortOrder(string[] strings, ArrayList sortedRecords)
+		private void VerifySortOrder(string[] strings, List<IManyOnePathSortItem> sortedRecords)
 		{
 			for (var i = 0; i < strings.Length; ++i)
 			{
-				var record = sortedRecords[i] as IManyOnePathSortItem;
+				var record = sortedRecords[i];
 				var entry = Cache.ServiceLocator.GetObject(record.KeyObject) as ILexEntry;
 				Assert.AreEqual(strings[i], entry.CitationForm.get_String(Cache.DefaultAnalWs).Text);
 			}
@@ -159,9 +159,9 @@ namespace LanguageExplorerTests.Filters
 		/// <summary>
 		/// Creates one entry with a sense that has a definition and one entry without and returns the search records for them
 		/// </summary>
-		private ArrayList CreateRecords(string withDef, string withoutDef)
+		private List<IManyOnePathSortItem> CreateRecords(string withDef, string withoutDef)
 		{
-			var results = new ArrayList();
+			var results = new List<IManyOnePathSortItem>();
 			var entryfactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var headWord = TsStringUtils.MakeString(withDef, Cache.DefaultAnalWs);
 			var lexEntry = entryfactory.Create();
@@ -179,9 +179,9 @@ namespace LanguageExplorerTests.Filters
 			return results;
 		}
 
-		private ArrayList CreateRecords(IEnumerable<string> strings)
+		private List<IManyOnePathSortItem> CreateRecords(IEnumerable<string> strings)
 		{
-			var results = new ArrayList();
+			var results = new List<IManyOnePathSortItem>();
 			var entryfactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			foreach (var s in strings)
 			{

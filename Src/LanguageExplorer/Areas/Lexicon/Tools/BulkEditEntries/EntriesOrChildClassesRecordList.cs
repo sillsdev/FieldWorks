@@ -1,8 +1,7 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -222,7 +221,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			base.ReloadList();
 		}
 
-		protected override int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrentBeforeGetObjectSet)
+		protected override int GetNewCurrentIndex(List<IManyOnePathSortItem> newSortedObjects, int hvoCurrentBeforeGetObjectSet)
 		{
 			if (hvoCurrentBeforeGetObjectSet == 0)
 			{

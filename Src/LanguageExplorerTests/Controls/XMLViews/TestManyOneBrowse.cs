@@ -1,18 +1,9 @@
-// Copyright (c) 2010-2019 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Xml;
-using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Filters;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,6 +13,13 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Xml;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -147,7 +145,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void GeneratePathlessItems()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for lexeme obj 1");
@@ -171,7 +169,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void GenerateAtomicItems()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[1]; // Etymology
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for etymology obj 1");
@@ -199,7 +197,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void GenerateSeqItems()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[3]; // Glosses
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one items for glosses obj 1");
@@ -231,7 +229,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void GenerateDoubleSeqItems()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			IManyOnePathSortItem bv;
 			var column = m_columnList[5]; // Semantic domains
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
@@ -263,7 +261,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void DisplayPathlessObject()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			var bvi = list[0] as IManyOnePathSortItem;
@@ -308,7 +306,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void DisplayAtomicPathObject()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[1];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			var bvi = list[0] as IManyOnePathSortItem;
@@ -356,7 +354,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void DisplayDoubleSeqPathObject()
 		{
-			var list = new ArrayList();
+			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[5];
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
 			var bvi = list[0] as IManyOnePathSortItem;

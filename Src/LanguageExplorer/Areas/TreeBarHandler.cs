@@ -1,15 +1,13 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Filters;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -797,9 +795,9 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		protected virtual void AddTreeNodes(ArrayList sortedObjects, TreeView tree)
+		protected virtual void AddTreeNodes(List<IManyOnePathSortItem> sortedObjects, TreeView tree)
 		{
-			foreach (IManyOnePathSortItem item in sortedObjects)
+			foreach (var item in sortedObjects)
 			{
 				var hvo = item.RootObjectHvo;
 				if (hvo < 0) //was deleted
