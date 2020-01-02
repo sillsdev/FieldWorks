@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		private RecordBrowseView _nestedRecordBrowseView;
 		private IRecordList _recordListProvidingOwner;
 		private IRecordList _subservientRecordList;
-		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
+		private InterlinMaster _interlinMaster;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 
@@ -58,7 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
-			_interlinMasterNoTitleBar = null;
+			_interlinMaster = null;
 			_toolMenuHelper = null;
 		}
 
@@ -106,8 +106,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
 			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList, paneBarButtons);
-			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar, interlinMasterPaneBar);
+			_interlinMaster = new InterlinMaster(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList, paneBarButtons, false);
+			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
 			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _mainRecordBrowseView, _recordListProvidingOwner, _subservientRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _mainRecordBrowseView, "Concordance", new PaneBar(), _nestedMultiPane, "Tabs", new PaneBar());
 
 			// The next method call will add UserControl event handlers.
-			_interlinMasterNoTitleBar.FinishInitialization();
+			_interlinMaster.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;
 		}
@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		{
 			_mainRecordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 			_nestedRecordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
-			_interlinMasterNoTitleBar.PrepareToRefresh();
+			_interlinMaster.PrepareToRefresh();
 		}
 
 		/// <summary>

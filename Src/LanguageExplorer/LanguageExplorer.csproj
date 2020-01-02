@@ -2864,9 +2864,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterNoTitleBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -3375,10 +3372,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinMaster.resx">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinMasterNoTitleBar.resx">
-      <DependentUpon>InterlinMasterNoTitleBar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.resx">

@@ -79,7 +79,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			Dock = DockStyle.Top;
-			m_tcPane.Visible = showTitlePane;
+			if (!showTitlePane)
+			{
+				Controls.Remove(m_tcPane);
+				m_tcPane.Dispose();
+				m_tcPane = null;
+			}
 			m_rtPane.MyRecordList = recordList;
 			m_rtPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_rtPane.ConfigurationParameters = configurationParametersElement;
@@ -147,12 +152,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal bool ParsedDuringSave { get; set; }
-
-		internal TitleContentsPane TitleContentsPane
-		{
-			get { return m_tcPane; }
-			set { m_tcPane = value; }
-		}
 
 		protected int GetWidth(string text, Font fnt)
 		{

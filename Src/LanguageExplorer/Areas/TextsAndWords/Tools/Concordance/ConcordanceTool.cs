@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private ConcordanceControl _concordanceControl;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
+		private InterlinMaster _interlinMaster;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 			_concordanceControl = null;
 			_recordBrowseView = null;
-			_interlinMasterNoTitleBar = null;
+			_interlinMaster = null;
 			_toolMenuHelper = null;
 		}
 
@@ -98,8 +98,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var root = XDocument.Parse(TextAndWordsResources.ConcordanceToolParameters).Root;
 			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons);
-			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar, interlinMasterPaneBar);
+			_interlinMaster = new InterlinMaster(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons, false);
+			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
-			_interlinMasterNoTitleBar.FinishInitialization();
+			_interlinMaster.FinishInitialization();
 		}
 
 		/// <summary>
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_interlinMasterNoTitleBar.PrepareToRefresh();
+			_interlinMaster.PrepareToRefresh();
 			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
