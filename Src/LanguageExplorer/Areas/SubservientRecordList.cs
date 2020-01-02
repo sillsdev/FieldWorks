@@ -62,6 +62,10 @@ namespace LanguageExplorer.Areas
 
 		private void ReallyResetOwner(IAnalysis selectedAnalysis)
 		{
+			if (ReferenceEquals(OwningObject, selectedAnalysis))
+			{
+				return;
+			}
 			_decorator?.UpdateAnalysisOccurrences(selectedAnalysis, true);
 			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(selectedAnalysis.Hvo, _decorator.VecProp(selectedAnalysis.Hvo, ConcDecorator.kflidWfOccurrences));
 			OwningObject = selectedAnalysis;

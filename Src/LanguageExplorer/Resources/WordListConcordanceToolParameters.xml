@@ -11,6 +11,6 @@
 		</parameters>
 	</wordOccurrenceListUpper>
 	<wordOccurrenceListLower>
-		<parameters id="wordOccurrenceList" editable="true" hideTitleContents="true" treeBarAvailability="NotMyBusiness" suppressAutoCreate="true" />
+		<parameters id="wordOccurrenceList" editable="true" treeBarAvailability="NotMyBusiness" suppressAutoCreate="true" altTitleId="Text" />
 	</wordOccurrenceListLower>
 </root>

@@ -148,6 +148,7 @@
 	<string id="ReversalIndexEntry-DocList" txt="Reversal Index"/>
 <!-- Text Area -->
 	<string id="Text-Plural" txt="Texts"/>
+	<string id="Text" txt="Text"/>
 <!-- Words Area -->
 	<string id="WfiWordform-Full" txt="Wordform Analyses"/>
 	<string id="WfiWordform-Plural" txt="Wordforms"/>

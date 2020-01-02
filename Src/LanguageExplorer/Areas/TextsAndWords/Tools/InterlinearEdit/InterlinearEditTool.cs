@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_toolMenuHelper = new InterlinearEditToolMenuHelper(this, majorFlexComponentParameters, _recordBrowseView, _recordList);
 			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, TextAndWordsResources.Texts, new PaneBar(), _interlinMaster, "Text", interlinMasterPaneBar);
+				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, TextAndWordsResources.Texts, new PaneBar(), _interlinMaster, StringTable.Table.GetString("Text", StringTable.ClassNames), interlinMasterPaneBar);
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.

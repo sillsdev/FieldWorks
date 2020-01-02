@@ -738,12 +738,13 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1)
+				var currentIndex = CurrentIndex;
+				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || currentIndex == -1)
 				{
 					CurrentIndex = -1;
 					return 0;
 				}
-				return SortItemAt(m_currentIndex).RootObjectHvo;
+				return SortItemAt(currentIndex).RootObjectHvo;
 			}
 		}
 
