@@ -149,7 +149,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for lexeme obj 1");
-			var bv = list[0] as IManyOnePathSortItem;
+			var bv = list[0];
 			Assert.AreEqual(1, bv.KeyObject);
 			Assert.AreEqual(0, bv.PathLength);
 			list.Clear();
@@ -158,7 +158,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			list.Clear();
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for lexeme obj 6");
-			bv = list[0] as IManyOnePathSortItem;
+			bv = list[0];
 			Assert.AreEqual(6, bv.KeyObject);
 			Assert.AreEqual(0, bv.PathLength);
 		}
@@ -173,7 +173,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var column = m_columnList[1]; // Etymology
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for etymology obj 1");
-			var bv = list[0] as IManyOnePathSortItem;
+			var bv = list[0];
 			Assert.AreEqual(60, bv.KeyObject);
 			Assert.AreEqual(1, bv.PathLength);
 			Assert.AreEqual(1, bv.PathObject(0));
@@ -184,7 +184,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			list.Clear();
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for etymology obj 6");
-			bv = list[0] as IManyOnePathSortItem;
+			bv = list[0];
 			Assert.AreEqual(61, bv.KeyObject);
 			Assert.AreEqual(1, bv.PathLength);
 			Assert.AreEqual(6, bv.PathObject(0));
@@ -204,7 +204,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			list.Clear();
 			XmlViewsUtils.CollectBrowseItems(4, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for glosses obj 4");
-			var bv = list[0] as IManyOnePathSortItem;
+			var bv = list[0];
 			Assert.AreEqual(5, bv.KeyObject);
 			Assert.AreEqual(1, bv.PathLength);
 			Assert.AreEqual(4, bv.PathObject(0));
@@ -215,7 +215,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			int[] keys = { 7, 8, 9 };
 			for (var i = 0; i < keys.Length; i++)
 			{
-				bv = list[i] as IManyOnePathSortItem;
+				bv = list[i];
 				Assert.AreEqual(keys[i], bv.KeyObject);
 				Assert.AreEqual(1, bv.PathLength);
 				Assert.AreEqual(6, bv.PathObject(0));
@@ -245,7 +245,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			int[] keys2 = { 7, 8, 9, 9, 9 };
 			for (var i = 0; i < keys.Length; i++)
 			{
-				bv = list[i] as IManyOnePathSortItem;
+				bv = list[i];
 				Assert.AreEqual(keys[i], bv.KeyObject);
 				Assert.AreEqual(2, bv.PathLength);
 				Assert.AreEqual(6, bv.PathObject(0));
@@ -264,7 +264,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
-			var bvi = list[0] as IManyOnePathSortItem;
+			var bvi = list[0];
 
 			// Try on original column. We get original object since there's no path,
 			// but we still dig inside the span
@@ -309,7 +309,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[1];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
-			var bvi = list[0] as IManyOnePathSortItem;
+			var bvi = list[0];
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
@@ -357,7 +357,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var list = new List<IManyOnePathSortItem>();
 			var column = m_columnList[5];
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
-			var bvi = list[0] as IManyOnePathSortItem;
+			var bvi = list[0];
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
@@ -407,7 +407,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			// Make sure that for later Bvis, we get later senses
 			collectStructNodes.Clear();
-			bvi = list[3] as IManyOnePathSortItem;
+			bvi = list[3];
 			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[3], m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.AreEqual(9, useHvo); // the third sense, in which context we display the 4th SD
 		}

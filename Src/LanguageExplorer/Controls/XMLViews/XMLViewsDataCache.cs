@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2019 SIL International
+// Copyright (c) 2008-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// if a non-empty alternate value is stored.
 		/// </summary>
 		public const int ktagItemEnabled = 90000001;
-		// if ktagActiveColumn has a value for m_hvoRoot, then if the check box is on
+		// if ktagActiveColumn has a value for _hvoRoot, then if the check box is on
 		// for a given row, the indicated cell is highlighted with a pale blue
 		// background, and the ktagAlternateValue property is displayed for those cells.
 		// So that no action is required for default behavior, ktagActiveColumn uses

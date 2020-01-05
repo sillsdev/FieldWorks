@@ -440,7 +440,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public IManyOnePathSortItem SortItemAt(int index)
 		{
-			return SortedObjects.Count == 0 || index >= SortedObjects.Count ? null : SortedObjects[index] as IManyOnePathSortItem;
+			return SortedObjects.Count == 0 || index >= SortedObjects.Count ? null : SortedObjects[index];
 		}
 
 		/// <summary>
@@ -457,7 +457,7 @@ namespace LanguageExplorer
 				var newItems = new int[result];
 				for (var i = 0; i < result; i++)
 				{
-					newItems[i] = (SortedObjects[i + start] as IManyOnePathSortItem).RootObjectHvo;
+					newItems[i] = SortedObjects[i + start].RootObjectHvo;
 				}
 				((ObjectListPublisher)VirtualListPublisher).Replace(m_owningObject.Hvo, start, newItems, 0);
 			}
@@ -1760,19 +1760,14 @@ namespace LanguageExplorer
 			// Therefore it will be too slow to check every item in our list. Checking out the current one
 			// thoroughly prevents many problems (e.g., LT-4880)
 			var item = SortedObjects[CurrentIndex];
-			if (!(item is IManyOnePathSortItem))
-			{
-				return;
-			}
-			var asManyOnePathSortItem = (IManyOnePathSortItem)item;
-			if (!m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.KeyObject))
+			if (!m_cache.ServiceLocator.IsValidObjectId(item.KeyObject))
 			{
 				ReloadList();
 				return;
 			}
-			for (var i = 0; i < asManyOnePathSortItem.PathLength; i++)
+			for (var i = 0; i < item.PathLength; i++)
 			{
-				if (m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.PathObject(i)))
+				if (m_cache.ServiceLocator.IsValidObjectId(item.PathObject(i)))
 				{
 					continue;
 				}
@@ -2339,7 +2334,7 @@ namespace LanguageExplorer
 				return -1;
 			}
 			var i = 0;
-			foreach (IManyOnePathSortItem item in SortedObjects)
+			foreach (var item in SortedObjects)
 			{
 				var rootObject = item.RootObjectUsing(m_cache);
 				if (rootObject == null)
@@ -2880,7 +2875,7 @@ namespace LanguageExplorer
 				// if we're inserting only one item, try to guess the best position.
 				// we can try to assume that SortedObjects is in the same order as items if there is no filter.
 				// so go through SortedObjects and insert the new sortedItem at the same place as in items.
-				if (remainingInsertItems.Count == 1 && remainingInsertItems[0] is IManyOnePathSortItem && m_filter == null && SortedObjects.Count == (items.Count - 1))
+				if (remainingInsertItems.Count == 1 && m_filter == null && SortedObjects.Count == (items.Count - 1))
 				{
 					var newSortedObject = remainingInsertItems[0];
 					for (var i = 0; i < SortedObjects.Count; i++)

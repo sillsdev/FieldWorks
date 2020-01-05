@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -3264,7 +3263,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.MakeRoot();
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
-				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(RootObjectHvo, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				RootBox.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
@@ -3286,7 +3285,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// override with our own simple constructor
 			/// </summary>
-			internal override XmlBrowseViewVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, MainTag, this));
+			internal override XmlBrowseViewVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(_configurationSpec, MainTag, this));
 
 			/// <summary>
 			/// effectively simulate infinite length so we do not wrap cell contents.

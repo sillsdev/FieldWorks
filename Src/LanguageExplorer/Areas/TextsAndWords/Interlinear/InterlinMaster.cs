@@ -95,6 +95,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_idcGloss.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_idcAnalyze.MyMajorFlexComponentParameters = majorFlexComponentParameters;
 			m_printViewPane.MyMajorFlexComponentParameters = majorFlexComponentParameters;
+			if (recordList.IsSubservientRecordList)
+			{
+				recordList.OwningObjectChanged += RecordList_OwningObjectChanged;
+			}
+		}
+
+		private void RecordList_OwningObjectChanged(object sender, RecordNavigationEventArgs e)
+		{
+			// Needed to show the new record in WordListConcordanceTool, when switching a wordform in the left browse view.
+			ShowRecord();
 		}
 
 		protected virtual void SetupUiWidgets(UserControlUiWidgetParameterObject userControlUiWidgetParameterObject)

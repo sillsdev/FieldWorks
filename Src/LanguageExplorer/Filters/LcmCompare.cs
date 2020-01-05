@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -143,7 +143,7 @@ namespace LanguageExplorer.Filters
 
 		private string GetObjFromCacheOrItem(object item)
 		{
-			var item1 = (ManyOnePathSortItem)item;
+			var item1 = (IManyOnePathSortItem)item;
 			string cachedKey;
 			if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
 			{

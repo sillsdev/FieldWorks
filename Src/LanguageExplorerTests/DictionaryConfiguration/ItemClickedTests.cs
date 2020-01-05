@@ -138,12 +138,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	class TestRootSite : SimpleRootSite
 	{
 		private LcmCache m_cache;
-		private int m_hvoRoot;
+		private int _hvoRoot;
 
 		public TestRootSite(LcmCache cache, int root)
 		{
 			m_cache = cache;
-			m_hvoRoot = root;
+			_hvoRoot = root;
 		}
 
 		public TestVc Vc { get; set; }
@@ -158,7 +158,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
-			m_rootb.SetRootObject(m_hvoRoot, Vc, 1, null);
+			m_rootb.SetRootObject(_hvoRoot, Vc, 1, null);
 		}
 	}
 

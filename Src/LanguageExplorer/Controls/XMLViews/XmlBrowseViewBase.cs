@@ -46,8 +46,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary />
 		protected XmlBrowseViewVc m_xbvvc;
-		/// <summary />
-		protected int m_hvoRoot;
 #if RANDYTODO
 		/*
 		// TODO: Sort out that flid business to see if they are real model properties, virtual properties of real classes, or simply made-for-views-code flids.
@@ -59,7 +57,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		*/
 #endif
 		/// <summary />
-		protected XElement m_nodeSpec;
+		protected XElement _configurationSpec;
 		/// <summary />
 		protected internal BrowseViewer m_bv;
 		/// <summary> record list supplying browse view content </summary>
@@ -77,7 +75,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected SelectionHighlighting m_fSelectedRowHighlighting = SelectionHighlighting.border;
 		/// <summary />
-		protected bool m_rootObjectHasBeenSet;
+		private int _hvoRoot;
+		/// <summary />
+		private bool _rootObjectHasBeenSet;
+		private bool _rootObjectHasBeenReset;
 		/// <summary>
 		/// see OnSaveScrollPosition
 		/// </summary>
@@ -120,19 +121,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bv.InstallNewColumns(m_xbvvc.ColumnSpecs);
 			}
 			base.RefreshDisplay();
-			if (!Cache.ServiceLocator.IsValidObjectId(m_hvoRoot))
+			if (!Cache.ServiceLocator.IsValidObjectId(_hvoRoot))
 			{
-				m_hvoRoot = 0;
+				_hvoRoot = 0;
 				m_selectedIndex = -1;
 			}
-			var chvo = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+			var chvo = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 			if (m_selectedIndex >= chvo)
 			{
 				m_selectedIndex = chvo - 1;
 			}
 			if (m_selectedIndex >= 0)
 			{
-				var hvoNewObj = SpecialCache.get_VecItem(m_hvoRoot, MainTag, m_selectedIndex);
+				var hvoNewObj = SpecialCache.get_VecItem(_hvoRoot, MainTag, m_selectedIndex);
 				DoSelectAndScroll(hvoNewObj, m_selectedIndex);
 			}
 			//Enhance: if all the RefreshDisplay work has been done for all the descendants then return true here.
@@ -142,14 +143,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the HVO of the selected object.
 		/// </summary>
-		public int SelectedObject => SelectedIndex < 0 ? 0 : SpecialCache.get_VecSize(m_hvoRoot, MainTag) <= SelectedIndex
+		public int SelectedObject => SelectedIndex < 0 ? 0 : SpecialCache.get_VecSize(_hvoRoot, MainTag) <= SelectedIndex
 				? 0 /* The only time this happens is during refresh. */
-				: SpecialCache.get_VecItem(m_hvoRoot, MainTag, SelectedIndex);
+				: SpecialCache.get_VecItem(_hvoRoot, MainTag, SelectedIndex);
 
 		/// <summary>
 		/// Return the number of rows in the view.
 		/// </summary>
-		internal virtual int RowCount => SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+		internal virtual int RowCount => SpecialCache.get_VecSize(_hvoRoot, MainTag);
 
 		/// <summary>
 		/// Return the index of the 'selected' row in the view.
@@ -170,9 +171,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			set
 			{
-				if (m_hvoRoot == 0)
+				if (_hvoRoot == 0)
 				{
-					// "m_hvoRoot" can be 0 on startup.
+					// "_hvoRoot" can be 0 on startup.
 					m_selectedIndex = -1;
 					return;
 				}
@@ -180,7 +181,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to less than -1.");
 				}
-				if (m_selectedIndex == value)
+				if (m_selectedIndex == value && !_rootObjectHasBeenReset)
 				{
 					// It's useful to check this anyway, since the width of the window or something else
 					// that affects visibility may have changed...but don't CHANGE the selection, the user may be editing...(LT-12092)
@@ -190,8 +191,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					return;
 				}
+				_rootObjectHasBeenReset = false;
 				var oldSelectedIndex = m_selectedIndex;
-				var objectCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				var objectCount = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 				// There have been some long standing and hard to reproduce bugs in this area where there is a mis-match between
 				// the count of items in the current list, and the new index.
 				// As of 1 Jan 2020, I (RandyR) think the issue is resolved. it was reproducible in the word list Concordance tool on startup.
@@ -224,7 +226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						SelectionChangedEvent(this, new FwObjectSelectionEventArgs(hvoObjNewSel, value));
 						// Recalculate the vector size since somebody somewhere may have deleted something.
 						// See LT-6884 for an example.
-						objectCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+						objectCount = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 					}
 				}
 				// Some of the changes below may destroy the new selection, especially setting the new index, but
@@ -247,7 +249,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (oldSelectedIndex >= 0 && oldSelectedIndex < objectCount)
 				{
 					// Turn off the highlighting of the old item.
-					var hvoObjOldSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, oldSelectedIndex);
+					var hvoObjOldSel = SpecialCache.get_VecItem(_hvoRoot, MainTag, oldSelectedIndex);
 					try
 					{
 						RootBox.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
@@ -310,7 +312,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				else if (m_selectedIndex > 0)
 				{
-					var cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+					var cobj = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 					Debug.Assert(m_selectedIndex >= cobj);
 					m_selectedIndex = cobj - 1;
 					hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
@@ -351,12 +353,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return 0;
 			}
-			var cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+			var cobj = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 			if (cobj == 0 || index >= cobj)
 			{
 				return 0;
 			}
-			return SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
+			return SpecialCache.get_VecItem(_hvoRoot, MainTag, index);
 		}
 
 		/// <summary />
@@ -734,7 +736,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Turn on or off the highlighting of the current row.
 				if (m_selectedIndex >= 0 && RootBox != null)
 				{
-					var hvoObjSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, m_selectedIndex);
+					var hvoObjSel = SpecialCache.get_VecItem(_hvoRoot, MainTag, m_selectedIndex);
 					RootBox.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 				}
 			}
@@ -753,9 +755,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					return false;
 				}
 				// if we have an editable attribute defined use its value
-				if (m_nodeSpec?.Attribute("editable") != null)
+				if (_configurationSpec?.Attribute("editable") != null)
 				{
-					var fEditable = XmlUtils.GetBooleanAttributeValue(m_nodeSpec, "editable");
+					var fEditable = XmlUtils.GetBooleanAttributeValue(_configurationSpec, "editable");
 					return !fEditable;
 				}
 				return false; // "_readOnlyBrowse" properties are deprecated.
@@ -773,31 +775,46 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				return m_hvoRoot;
+				return _hvoRoot;
 			}
 			set
 			{
-				if (m_rootObjectHasBeenSet && m_hvoRoot == value)
+				if (value == 0)
+				{
+					if (_hvoRoot != 0)
+					{
+						// Hmm, setting to zero after it had been something else. Sounds bad.
+						throw new InvalidOperationException($"Chaging to zer new root HVO, where the old root was '{_hvoRoot}'.");
+					}
+					// No root yet.
+					return;
+				}
+				if (_rootObjectHasBeenSet && _hvoRoot == value)
 				{
 					return; // No sense getting all worked up, if it is the same as before.
 				}
-				m_hvoRoot = value;
-				RootBox.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
-				m_rootObjectHasBeenSet = true;
+				// The Init method sets _hvoRoot directly, but we want to skip that set and look for later resets.
+				if (_hvoRoot != 0 && _hvoRoot != value)
+				{
+					_rootObjectHasBeenReset = true;
+				}
+				_hvoRoot = value;
+				_rootObjectHasBeenSet = true;
+				RootBox.SetRootObject(_hvoRoot, m_xbvvc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				// This seems to be necessary to get the data entry row to resize even if the new
 				// list is the same length as the old. Must NOT remember new positions, because
 				// this can be called before Layout retrieves them!
 				m_bv.AdjustColumnWidths(false);
 				// The old index and selected object must be wrong by now, so reset them.
 				m_hvoOldSel = 0;
-				var chvo = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				var chvo = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 				if (chvo == 0)
 				{
 					m_selectedIndex = -1;
 				}
 				else
 				{
-					var hvo = SpecialCache.get_VecItem(m_hvoRoot, MainTag, 0);
+					var hvo = SpecialCache.get_VecItem(_hvoRoot, MainTag, 0);
 					if (hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
@@ -811,7 +828,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								recordListUpdater.UpdateList(true);
 							}
 						}
-						chvo = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+						chvo = SpecialCache.get_VecSize(_hvoRoot, MainTag);
 						if (chvo == 0)
 						{
 							m_selectedIndex = -1;
@@ -849,19 +866,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Inits the specified node spec.
 		/// </summary>
-		public virtual void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
+		public virtual void Init(XElement configurationSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
 			Debug.Assert((m_selectedIndex == -1), "Cannot set the index to less than zero before initializing.");
-			Debug.Assert(m_nodeSpec == null || m_nodeSpec == nodeSpec, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
+			Debug.Assert(_configurationSpec == null || _configurationSpec == configurationSpec, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
 
-			m_hvoRoot = hvoRoot;
+			_hvoRoot = hvoRoot;
 			MainTag = madeUpFieldIdentifier;
-			if (m_nodeSpec == null)
+			if (_configurationSpec == null)
 			{
-				m_nodeSpec = nodeSpec;
+				_configurationSpec = configurationSpec;
 			}
 			// Do this early...we need the ID to restore the columns when the VC is created.
-			m_id = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "id", "NeedsId");
+			m_id = XmlUtils.GetOptionalAttributeValue(_configurationSpec, "id", "NeedsId");
 			m_bv = bv;
 			m_cache = cache;
 			SpecialCache = m_bv.SpecialCache;
@@ -873,7 +890,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_sortItemProvider = bv.SortItemProvider;
 			}
 			m_xbvvc = Vc;
-			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(nodeSpec, "defaultCursor", null);
+			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(configurationSpec, "defaultCursor", null);
 			// Set a default cursor for a ReadOnly view, if none is given.
 			if (sDefaultCursor == null && ReadOnlySelect)
 			{
@@ -958,7 +975,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			m_xbvvc = null;
-			m_nodeSpec = null;
+			_configurationSpec = null;
 			m_bv = null;
 		}
 
@@ -1255,7 +1272,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void RestoreScrollPosition(int indexOfHighlightedRow)
 		{
-			if (indexOfHighlightedRow < 0 || indexOfHighlightedRow > SpecialCache.get_VecSize(m_hvoRoot, MainTag))
+			if (indexOfHighlightedRow < 0 || indexOfHighlightedRow > SpecialCache.get_VecSize(_hvoRoot, MainTag))
 			{
 				// we weren't able to save a scroll position for some reason, or the position we saved is
 				// out of range following whatever changed, so we can't restore.
@@ -1312,7 +1329,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual void SetSelectedRowHighlighting()
 		{
-			switch (XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "selectionStyle", string.Empty))
+			switch (XmlUtils.GetOptionalAttributeValue(_configurationSpec, "selectionStyle", string.Empty))
 			{
 				case "all":
 					SelectedRowHighlighting = SelectionHighlighting.all;
@@ -1334,7 +1351,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int HvoAt(int index)
 		{
-			return SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
+			return SpecialCache.get_VecItem(_hvoRoot, MainTag, index);
 		}
 
 		internal Rectangle LocationOfSelectedRow()
@@ -1451,7 +1468,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].tag = MainTag;
 			IVwSelection vwselNew = null;
-			var isEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_nodeSpec, "editable", true);
+			var isEditable = XmlUtils.GetOptionalBooleanAttributeValue(_configurationSpec, "editable", true);
 			var fInstalledNewSelection = false;
 			if (isEditable) //hack to get around bug XW-38
 			{
@@ -1601,7 +1618,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			SpecialCache = m_bv.SpecialCache;
 			RootBox.DataAccess = SpecialCache;
 
-			RootObjectHvo = m_hvoRoot;
+			RootObjectHvo = _hvoRoot;
 			m_bv.SpecialCache.AddNotification(this);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 											 // Filter bar uses info from our VC and can't fininish init until we make it.
@@ -1828,7 +1845,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				helper = SelectionHelper.Create(this);
 			}
-			RootBox.PropChanged(m_hvoRoot, MainTag, SelectedIndex, 1, 1);
+			RootBox.PropChanged(_hvoRoot, MainTag, SelectedIndex, 1, 1);
 			helper?.MakeBest(false);
 			return true; // we did it.
 		}

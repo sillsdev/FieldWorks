@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, MainTag, this);
+					m_xbvvc = new XmlBrowseViewVc(_configurationSpec, MainTag, this);
 				}
 				return base.Vc;
 			}
@@ -132,7 +132,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.OnKeyDown(e);
 			if (ReadOnlySelect && !e.Handled && m_selectedIndex != -1)
 			{
-				var cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				var cobj = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 				switch (e.KeyCode)
 				{
 					case Keys.Down:
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								vwSelWord.GetSelectionString(out tssWord, " ");
 								tssWord = StripTrailingNewLine(tssWord);
-								hvoNewSelRow = SpecialCache.get_VecItem(m_hvoRoot, MainTag, newSelectedIndex);
+								hvoNewSelRow = SpecialCache.get_VecItem(RootObjectHvo, MainTag, newSelectedIndex);
 								int hvoObj, tag, ws;
 								bool fAssocPrev;
 								vwSelWord.TextSelInfo(false, out tssSource, out ichStart, out fAssocPrev, out hvoObj, out tag, out ws);
@@ -408,11 +408,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			var oldIndex = m_selectedIndex;
-			var oldHvoRoot = m_hvoRoot;
+			var oldHvoRoot = RootObjectHvo;
 			base.OnHandleCreated(e);
-			if (oldIndex >= 0 && oldIndex != m_selectedIndex && m_hvoRoot > 0 && oldHvoRoot == m_hvoRoot)
+			if (oldIndex >= 0 && oldIndex != m_selectedIndex && RootObjectHvo > 0 && oldHvoRoot == RootObjectHvo)
 			{
-				var newCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				var newCount = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 				if (oldIndex < newCount)
 				{
 					SelectedIndex = oldIndex;

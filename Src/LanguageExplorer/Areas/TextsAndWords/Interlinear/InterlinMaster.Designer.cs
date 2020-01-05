@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2019 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,6 +29,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				if (MyRecordList.IsSubservientRecordList)
+				{
+					MyRecordList.OwningObjectChanged -= RecordList_OwningObjectChanged;
+				}
 				_paneBarButtons?.Clear();
 				m_rtPane.IsCurrentTabForInterlineMaster = false;
 				m_taggingPane.IsCurrentTabForInterlineMaster = false;

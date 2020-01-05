@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected int m_mainFlid;
 		/// <summary>
-		/// The data access that can interpret m_mainFlid of m_hvoRoot, typically a RecordListPublisher.
+		/// The data access that can interpret m_mainFlid of _hvoRoot, typically a RecordListPublisher.
 		/// The SDA mainly used in the view is a further decoration of this.
 		/// </summary>
 		protected ISilDataAccessManaged m_sdaSource;

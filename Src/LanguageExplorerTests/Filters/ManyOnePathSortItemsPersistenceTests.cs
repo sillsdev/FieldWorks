@@ -45,7 +45,7 @@ namespace LanguageExplorerTests.Filters
 		[Test]
 		public void PersistMopsiList()
 		{
-			var mopsi = (IManyOnePathSortItem)m_list[m_list.Count - 1];
+			var mopsi = m_list[m_list.Count - 1];
 			using (var stream = new MemoryStream())
 			{
 				var objRepo = Cache.ServiceLocator.ObjectRepository;
@@ -58,7 +58,7 @@ namespace LanguageExplorerTests.Filters
 					{
 						var items = ManyOnePathSortItem.ReadItems(reader, objRepo);
 						Assert.That(items.Count, Is.EqualTo(m_list.Count));
-						mopsi = (IManyOnePathSortItem)items[0];
+						mopsi = items[0];
 						Assert.That(mopsi.KeyObject, Is.EqualTo(Cache.LangProject.Hvo));
 						Assert.That(mopsi.PathLength, Is.EqualTo(0));
 						// Root object is key object, if no path.
@@ -66,7 +66,7 @@ namespace LanguageExplorerTests.Filters
 						Assert.That(mopsi.RootObjectUsing(Cache), Is.EqualTo(Cache.LangProject));
 						// PathObject(0) is also the key, if no path.
 						Assert.That(mopsi.PathObject(0), Is.EqualTo(Cache.LangProject.Hvo));
-						mopsi = (IManyOnePathSortItem)items[1];
+						mopsi = items[1];
 						Assert.That(mopsi.KeyObject, Is.EqualTo(Cache.LangProject.LexDbOA.Hvo));
 						Assert.That(mopsi.PathLength, Is.EqualTo(2));
 						Assert.That(mopsi.PathFlid(0), Is.EqualTo(2));

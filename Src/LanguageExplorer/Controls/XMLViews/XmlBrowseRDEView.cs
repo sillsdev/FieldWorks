@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2019 SIL International
+// Copyright (c) 2005-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, MainTag, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(_configurationSpec, MainTag, this);
 				}
 				return base.Vc;
 			}
@@ -621,7 +621,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var factory = Cache.ServiceLocator.GetService(factoryType);
 			var mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
 			var parameters = new object[3];
-			parameters[0] = m_hvoRoot;
+			parameters[0] = RootObjectHvo;
 			parameters[1] = columns;
 			parameters[2] = rgtss;
 			var newObjHvo = (int)mi.Invoke(factory, parameters);
@@ -660,7 +660,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
 					var mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
 					var parameters = new object[2];
-					parameters[0] = m_hvoRoot;
+					parameters[0] = RootObjectHvo;
 					parameters[1] = idsClone; // This is a Set<int>.
 					// Make a copy. I (JohnT) don't see how this collection can get modified
 					// during the loop, but we've had exceptions (e.g., LT-1355) claiming that
@@ -674,12 +674,12 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								// The sense was deleted as a duplicate; get rid of it from our madeUpFieldIdentifier, too.
 								ISilDataAccessManaged sda = m_bv.SpecialCache;
-								var oldList = sda.VecProp(m_hvoRoot, MainTag);
+								var oldList = sda.VecProp(RootObjectHvo, MainTag);
 								for (var i = 0; i < oldList.Length; i++)
 								{
 									if (oldList[i] == hvoSense)
 									{
-										m_bv.SpecialCache.Replace(m_hvoRoot, MainTag, i, i + 1, new int[0], 0);
+										m_bv.SpecialCache.Replace(RootObjectHvo, MainTag, i, i + 1, new int[0], 0);
 									}
 								}
 							}
@@ -700,8 +700,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					throw new RuntimeConfigurationException($"XmlBrowseRDEView.DoMerges() could not invoke the static {RDEVc.EditRowMergeMethod} method of the class {RDEVc.EditRowClass}", error);
 				}
 				RDEVc.EditableObjectsClear();
-				var cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, MainTag);
-				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, MainTag, 0, cobj, cobj);
+				var cobj = m_bv.SpecialCache.get_VecSize(RootObjectHvo, MainTag);
+				m_bv.BrowseView.RootBox.PropChanged(RootObjectHvo, MainTag, 0, cobj, cobj);
 			}
 			finally
 			{
@@ -730,7 +730,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 			}
-			var hvo = SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
+			var hvo = SpecialCache.get_VecItem(RootObjectHvo, MainTag, index);
 			// It would sometimes work to jump to one of the editable objects.
 			// But sometimes one of them will get destroyed when we switch away from this view
 			// (e.g., because there is already a similar sense to which we can just add this semantic domain).
@@ -873,7 +873,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var sRedo = XMLViewsStrings.ksRedoDeleteRecord;
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>
 				{
-					ls.SemanticDomainsRC.Remove(Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>().GetObject(m_hvoRoot));
+					ls.SemanticDomainsRC.Remove(Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>().GetObject(RootObjectHvo));
 					if (ls.SemanticDomainsRC.Count == 0 &&
 					ls.AnthroCodesRC.Count == 0 &&
 					ls.AppendixesRC.Count == 0 &&

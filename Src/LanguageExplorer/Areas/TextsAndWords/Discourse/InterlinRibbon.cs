@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2019 SIL International
+// Copyright (c) 2008-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -247,7 +247,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public override void SetRoot(int hvoStText)
 		{
-			// Note: do not avoid  calling ChangeOrMakeRoot when hvoText == m_hvoRoot. The reconstruct
+			// Note: do not avoid  calling ChangeOrMakeRoot when hvoText == _hvoRoot. The reconstruct
 			// may be needed when the ribbon contents have changed, e.g., because objects were deleted
 			// when the base text changed.
 			HvoRoot = hvoStText;

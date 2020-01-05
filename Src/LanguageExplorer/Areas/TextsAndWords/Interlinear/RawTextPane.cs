@@ -433,7 +433,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Returns WS of first character of first paragraph of m_hvoRoot text.
+		/// Returns WS of first character of first paragraph of _hvoRoot text.
 		/// It defaults to DefaultVernacularWs in case of a problem.
 		/// </summary>
 		private int GetWsOfFirstWordOfFirstTextPara()
