@@ -15,7 +15,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
@@ -26,7 +25,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
-		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private ConcordanceToolMenuHelper _toolMenuHelper;
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
@@ -69,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MatchingConcordanceRecordList.OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, MatchingConcordanceRecordList.FactoryMethod);
 			}
 			_toolMenuHelper = new ConcordanceToolMenuHelper(majorFlexComponentParameters, this);
 			var mainConcordanceContainerParameters = new MultiPaneParameters
@@ -181,24 +179,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 
 		#endregion
-
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == OccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{OccurrencesOfSelectedUnit}'.");
-			/*
-            <clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
-              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
-              <recordList class="LangProject" field="ConcOccurrences">
-                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceRecordList" />
-                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-              </recordList>
-              <sortMethods />
-            </clerk>
-			*/
-			var concDecorator = new ConcDecorator(cache.ServiceLocator);
-			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new MatchingConcordanceRecordList(recordListId, statusBar, concDecorator);
-		}
 
 		private sealed class ConcordanceToolMenuHelper : IDisposable
 		{

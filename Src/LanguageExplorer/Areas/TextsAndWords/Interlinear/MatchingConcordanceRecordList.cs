@@ -1,10 +1,13 @@
-// Copyright (c) 2007-2019 SIL International
+// Copyright (c) 2007-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -17,6 +20,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class MatchingConcordanceRecordList : InterlinearTextsRecordList
 	{
+		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
+		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
+
 		ConcordanceControlBase _concordanceControl;
 
 		/// <summary>
@@ -118,6 +124,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				_concordanceControl = value;
 				OwningControl = value;
 			}
+		}
+
+		internal static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			var acceptedRecordListIds = new HashSet<string>
+			{
+				OccurrencesOfSelectedUnit,
+				ComplexConcOccurrencesOfSelectedUnit
+			};
+			Require.That(acceptedRecordListIds.Contains(recordListId), $"I don't know how to create a record list with an ID of '{recordListId}'.");
+			/*
+            <clerk id="OccurrencesOfSelectedUnit (or ComplexConcOccurrencesOfSelectedUnit)" allowDeletions="false">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
+              <recordList class="LangProject" field="ConcOccurrences">
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceRecordList" />
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+              </recordList>
+              <sortMethods />
+            </clerk>
+			*/
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new MatchingConcordanceRecordList(recordListId, statusBar, concDecorator);
 		}
 	}
 }

@@ -171,6 +171,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void SetupDataContext()
 		{
+			SetTreebarAvailability();
 			TriggerMessageBoxIfAppropriate();
 			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness && !MyRecordList.IsSubservientRecordList && PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
 			{
@@ -202,7 +203,6 @@ namespace LanguageExplorer.Areas
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload = true }))
 			{
 				MyRecordList.UpdateOwningObject(true);
-				SetTreebarAvailability();
 				AddPaneBar();
 				// Historical comments here indicated that MyRecordList should be processed by the mediator before the
 				// view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.

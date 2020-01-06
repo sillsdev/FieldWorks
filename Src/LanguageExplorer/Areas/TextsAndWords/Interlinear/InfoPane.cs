@@ -87,32 +87,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (_xrev != null)
 			{
-#if RANDYTODO
-				// TODO: See if I want this original code, or just the return.
-				//when re-using the infoview we want to remove and dispose of the old recordeditview and
-				//associated datatree. (LT-13216)
-				Controls.Remove(_xrev);
-				_xrev.Dispose();
-				_xrev = null;
-				if (_createdLocally)
-				{
-					PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordList);
-					_recordList.Dispose();
-					_createdLocally = false;
-					_recordList = null;
-				}
-#else
 				// Already done
 				return;
-#endif
 			}
 			_recordList = recordList;
 			if (_recordList.GetType().Name != TextAndWordsArea.InterlinearTextsRecordList)
 			{
 				_createdLocally = true;
 				_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTextsRecordList, statusBar, TextAndWordsArea.InterlinearTextsForInfoPaneFactoryMethod);
+				_recordList.ActivateUI(false);
 			}
-			_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), sharedEventHandlers, Cache, _recordList, uiWidgetController);
+			_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation"), new XAttribute("treeBarAvailability", "NotMyBusiness")), sharedEventHandlers, Cache, _recordList, uiWidgetController);
 			_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			_xrev.Dock = DockStyle.Fill;
 			Controls.Add(_xrev);

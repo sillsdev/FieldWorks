@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
@@ -27,7 +26,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	internal sealed class ComplexConcordanceTool : ITool
 	{
 		private ComplexConcordanceToolMenuHelper _toolMenuHelper;
-		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ComplexConcControl _complexConcControl;
 		private RecordBrowseView _recordBrowseView;
@@ -69,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MatchingConcordanceRecordList.ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, MatchingConcordanceRecordList.FactoryMethod);
 			}
 			_toolMenuHelper = new ComplexConcordanceToolMenuHelper(majorFlexComponentParameters, this);
 			var mainConcordanceContainerParameters = new MultiPaneParameters
@@ -183,24 +181,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
-
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
-			/*
-            <clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
-              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
-              <recordList class="LangProject" field="ConcOccurrences">
-                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceRecordList" />
-                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-              </recordList>
-              <sortMethods />
-            </clerk>
-			*/
-			var concDecorator = new ConcDecorator(cache.ServiceLocator);
-			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new MatchingConcordanceRecordList(recordListId, statusBar, concDecorator);
-		}
 
 		private sealed class ComplexConcordanceToolMenuHelper : IDisposable
 		{

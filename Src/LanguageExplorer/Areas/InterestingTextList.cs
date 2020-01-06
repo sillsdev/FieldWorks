@@ -7,8 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords;
-using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
-using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -44,7 +43,7 @@ namespace LanguageExplorer.Areas
 		// TODO: Pay attention to the comment and behavior of 'RelatedRecordListsIds'.
 #endif
 		/// <summary>
-		/// These two record lists both need to respond to InterestingTextList changes EVEN when not loaded.
+		/// These record lists need to respond to InterestingTextList changes EVEN when not loaded.
 		/// (LT-13217)
 		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
 		/// </summary>
@@ -52,8 +51,8 @@ namespace LanguageExplorer.Areas
 		{
 			TextAndWordsArea.InterlinearTexts,
 			TextAndWordsArea.ConcordanceWords,
-			ConcordanceTool.OccurrencesOfSelectedUnit,
-			ComplexConcordanceTool.ComplexConcOccurrencesOfSelectedUnit
+			MatchingConcordanceRecordList.OccurrencesOfSelectedUnit,
+			MatchingConcordanceRecordList.ComplexConcOccurrencesOfSelectedUnit
 		};
 
 		/// <summary>
