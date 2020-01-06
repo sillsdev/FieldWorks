@@ -52,7 +52,7 @@ namespace LanguageExplorer.Areas
 
 		private void ReversalIndexGuid_Handler(object obj)
 		{
-			ChangeOwningObject((Guid)obj);
+			ChangeOwningObject(Guid.Parse((string)obj));
 		}
 
 		/// <summary />

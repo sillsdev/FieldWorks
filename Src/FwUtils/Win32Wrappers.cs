@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,9 +15,6 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-#if RANDYTODO
-	// TODO: Far too many classes, structs, and enums, and deadwood, so I'll just sew the patient back up with only a minimal code cleaning operation.
-#endif
 	#region Static class Win32
 	/// <summary>
 	/// Wrappers for Win32 methods

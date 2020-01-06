@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
