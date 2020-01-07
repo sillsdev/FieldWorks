@@ -1,8 +1,7 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;

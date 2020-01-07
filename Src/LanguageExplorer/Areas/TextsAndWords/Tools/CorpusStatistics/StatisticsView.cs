@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2019 SIL International
+// Copyright (c) 2008-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

@@ -1,11 +1,10 @@
-// Copyright (c) 2012-2019 SIL International
+// Copyright (c) 2012-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.XPath;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
