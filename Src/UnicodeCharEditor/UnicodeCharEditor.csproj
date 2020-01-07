@@ -118,6 +118,11 @@
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="icu.net">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

@@ -141,11 +141,11 @@
     </Reference>
     <Reference Include="SIL.Windows.Forms.Keyboarding, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="ViewsInterfaces">
@@ -195,7 +195,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
+    <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>

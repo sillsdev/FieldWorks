@@ -279,22 +279,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (MiscUtils.IsUnix)
 					{
 						// Tell Mono user he/she needs to logout and log back in
-						MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+						MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
 					}
 					else
 					{
-						MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
+						MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 							FwUtils.ksSuiteName);
 					}
 				}
 				else if (e is ApplicationException)
 				{
-					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
+					MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);
 				}
 				else if (e is LcmInitializationException)
 				{
-					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
+					MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);
 				}
 				else

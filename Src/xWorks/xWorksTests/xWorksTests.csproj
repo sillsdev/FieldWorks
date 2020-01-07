@@ -156,7 +156,7 @@
     </Reference>
     <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\ExCSS.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
@@ -208,6 +208,11 @@
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
       <SpecificVersion>False</SpecificVersion>
