@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2020 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 namespace SIL.FieldWorks.UnicodeCharEditor

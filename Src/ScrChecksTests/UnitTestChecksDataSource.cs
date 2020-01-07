@@ -1,13 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
