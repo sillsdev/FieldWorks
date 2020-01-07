@@ -545,24 +545,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
-			/*
-			m_rtPane.IsCurrentTabForInterlineMaster = false;
-			m_taggingPane.IsCurrentTabForInterlineMaster = false;
-			m_idcGloss.IsCurrentTabForInterlineMaster = false;
-			m_idcAnalyze.IsCurrentTabForInterlineMaster = false;
-			m_printViewPane.IsCurrentTabForInterlineMaster = false;
-			if (_paneBarButtons != null)
-			{
-				foreach (var panelButton in _paneBarButtons.Values)
-				{
-					panelButton.Visible = panelButton.Enabled = false;
-				}
-			}
-			if (m_constChartPane != null)
-			{
-				m_constChartPane.InterlineMasterWantsExportDiscourseChartDiscourseChartMenu = false;
-			}
-			*/
 			try
 			{
 				m_tabCtrl.SelectedIndex = (int)InterlinearTab; // set the persisted tab setting.
@@ -1268,7 +1250,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (deselectedIndex)
 			{
 				case ktpsInfo:
-					//m_rtPane.IsCurrentTabForInterlineMaster = false;
 					break;
 				case ktpsRawText:
 					m_rtPane.IsCurrentTabForInterlineMaster = false;

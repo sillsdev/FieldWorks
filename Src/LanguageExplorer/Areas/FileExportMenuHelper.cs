@@ -53,10 +53,6 @@ namespace LanguageExplorer.Areas
 			// B. textsWords area: Analyses, bulkEditWordforms, wordListConcordance
 			// C. grammar area: all tools, except grammarSketch, which goes its own way
 			// D. lists area: all 27 tools
-			if (_majorFlexComponentParameters.LcmCache.GetManagedMetaDataCache().AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
-			{
-				return;
-			}
 			using (var dlg = new ExportDialog(_majorFlexComponentParameters))
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);

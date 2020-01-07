@@ -25,9 +25,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private Container components = null;
 		private RecordEditView _xrev;
 		private IRecordList _recordList;
+		/// <summary>
+		/// A key component to getting the InfoPane to work right, when it is selected first in the Conc tools.
+		/// The provided RecordList would be deactivated, so nothing was shown in the main browse tool,
+		/// and then nothing was displayed in any of the tabs, including this InfoPane control.
+		/// </summary>
 		private bool _createdLocally;
 
-		#region Constructors, destructors, and suchlike methods.
+		#region Constructors, destructors, and such like methods.
 
 		// This constructor is used by the Windows.Forms Form Designer.
 		public InfoPane()
@@ -93,8 +98,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			_recordList = recordList;
 			if (_recordList.GetType().Name != TextAndWordsArea.InterlinearTextsRecordList)
 			{
+				// Don't use the one handed to us by the main interlinear edit tool,
+				// but create a new one for the InfoPane to use.
+				// Otherwise, the main one would be deactivated, and the tabs in InterlinMaster wouldn't show the selected wordform,
+				// since the main browse view wouldn't be populated.
 				_createdLocally = true;
 				_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTextsRecordList, statusBar, TextAndWordsArea.InterlinearTextsForInfoPaneFactoryMethod);
+				// Activate it manually, but do not hand it to the record list repository to claim as active.
+				// Otherwise, that deactivates the 'recordList' that is handed in, which is a bad thing!
 				_recordList.ActivateUI(false);
 			}
 			_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation"), new XAttribute("treeBarAvailability", "NotMyBusiness")), sharedEventHandlers, Cache, _recordList, uiWidgetController);

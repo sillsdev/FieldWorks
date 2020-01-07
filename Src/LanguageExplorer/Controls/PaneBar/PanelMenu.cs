@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -18,7 +17,6 @@ namespace LanguageExplorer.Controls.PaneBar
 	{
 		internal PanelMenuContextMenuFactory DataTreeMainPanelContextMenuFactory { private get; set; }
 		private string _panelMenuId;
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _panelMenuContextMenuAndItems;
 
 		public PanelMenu(string panelMenuId)
 		{
@@ -41,17 +39,13 @@ namespace LanguageExplorer.Controls.PaneBar
 
 		private void PanelMenu_Click(object sender, EventArgs e)
 		{
-			if (_panelMenuContextMenuAndItems != null)
+			ContextMenuStrip?.Dispose();
+			ContextMenuStrip = null;
+			var panelMenuContextMenuAndItems = DataTreeMainPanelContextMenuFactory.GetPanelMenu(_panelMenuId);
+			if (panelMenuContextMenuAndItems != null)
 			{
-				_panelMenuContextMenuAndItems = null;
-				ContextMenuStrip?.Dispose();
-				ContextMenuStrip = null;
-			}
-			_panelMenuContextMenuAndItems = DataTreeMainPanelContextMenuFactory.GetPanelMenu(_panelMenuId);
-			if (_panelMenuContextMenuAndItems != null)
-			{
-				ContextMenuStrip = _panelMenuContextMenuAndItems.Item1;
-				ContextMenuStrip.Show(this, new Point(Location.X, Location.Y + Height));
+				ContextMenuStrip = panelMenuContextMenuAndItems.Item1;
+				ContextMenuStrip.Show(Parent.Parent, new Point(Location.X, Location.Y + Height));
 			}
 		}
 
@@ -68,13 +62,9 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				Click -= PanelMenu_Click;
 				ContextMenuStrip?.Dispose();
-				if (_panelMenuContextMenuAndItems != null)
-				{
-					DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
-				}
+				DataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 			}
 			DataTreeMainPanelContextMenuFactory = null;
-			_panelMenuContextMenuAndItems = null;
 			_panelMenuId = null;
 			ContextMenuStrip = null;
 

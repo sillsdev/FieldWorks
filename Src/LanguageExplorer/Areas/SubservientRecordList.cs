@@ -12,6 +12,12 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas
 {
+#if RANDYTODO
+	// Jason: ""The class name is generic, but the new functionality makes it very specific. I think we should change the name.
+	// The ConcDecorator and needing an IAnalysis owner makes this more of a ConcordanceRecordList right?"
+	// TODO: Look at the current ConcordanceRecordList's behavior to see how it compares to this class.
+	// TODO: Restructure classes to make better sense.
+#endif
 	internal sealed class SubservientRecordList : RecordList
 	{
 		/// <summary>

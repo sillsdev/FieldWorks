@@ -848,8 +848,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
+		/// Set the current selected publication.
 		/// </summary>
+		/// <remarks>There can be various side effects, depending on the new value.</remarks>
 		internal string SelectedPublication
 		{
 			set

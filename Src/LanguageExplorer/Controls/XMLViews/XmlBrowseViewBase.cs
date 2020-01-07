@@ -784,7 +784,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (_hvoRoot != 0)
 					{
 						// Hmm, setting to zero after it had been something else. Sounds bad.
-						throw new InvalidOperationException($"Chaging to zer new root HVO, where the old root was '{_hvoRoot}'.");
+						throw new InvalidOperationException($"Changing to zero new root HVO, where the old root was '{_hvoRoot}'.");
 					}
 					// No root yet.
 					return;
@@ -864,7 +864,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Inits the specified node spec.
+		/// Initializes using <paramref name="configurationSpec"/>.
 		/// </summary>
 		public virtual void Init(XElement configurationSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
