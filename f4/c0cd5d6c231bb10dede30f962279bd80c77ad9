@@ -1,0 +1,9 @@
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Code-Review+2: Mark S <marksvc@gmail.com>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Wed, 08 Jan 2020 16:32:35 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/7134
+Project: FieldWorks
+Branch: refs/heads/develop
