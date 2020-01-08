@@ -173,7 +173,7 @@
       <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ExCSS, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
