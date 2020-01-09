@@ -123,7 +123,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="SIL.Lexicon">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Lexicon.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Lexicon.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -233,7 +233,7 @@
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
     <Reference Include="icu.net">
-      <HintPath>..\..\Downloads\icu.net.dll</HintPath>
+      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

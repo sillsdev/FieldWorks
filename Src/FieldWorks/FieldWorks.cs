@@ -125,6 +125,12 @@ namespace SIL.FieldWorks
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
 
+			var pathName = Path.Combine(DirectoryOfThisAssembly, "lib",
+				Environment.Is64BitProcess ? "x64" : "x86");
+			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
+			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
+			Environment.SetEnvironmentVariable("PATH", newPath);
+
 			Icu.Wrapper.ConfineIcuVersions(54);
 			Icu.Wrapper.Init();
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
@@ -3263,6 +3269,22 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Other Private/Internal Methods
+		/// <summary>
+		/// Get the directory this assembly is located in
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static string DirectoryOfThisAssembly
+		{
+			get
+			{
+				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uri = new UriBuilder(codeBase);
+				var path = Uri.UnescapeDataString(uri.Path);
+				return Path.GetDirectoryName(path);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged and managed resources
 		/// </summary>

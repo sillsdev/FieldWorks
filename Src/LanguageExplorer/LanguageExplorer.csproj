@@ -95,7 +95,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Aga.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ExCSS, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
@@ -153,7 +153,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Security" />
     <Reference Include="ViewsInterfaces">
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Chorus">
       <SpecificVersion>False</SpecificVersion>
@@ -275,7 +275,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
+    <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>

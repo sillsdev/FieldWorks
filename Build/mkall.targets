@@ -305,14 +305,14 @@
 		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
 		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
-		<HermitCrabBuildTag>fw-9.0.8.tcbuildtag</HermitCrabBuildTag>
+		<HermitCrabBuildTag>fw-9.0.9.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">lcm_win32_develop_continuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">lcm_win64_develop_continuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Unix'">lcm_linux64_develop_continuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
 		<LcmBuildTag>.lastSuccessful</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
@@ -403,6 +403,7 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />

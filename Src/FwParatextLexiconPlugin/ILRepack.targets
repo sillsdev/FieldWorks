@@ -10,7 +10,6 @@ This software is licensed under the LGPL, version 2.1 or later
 		<ILRepackBin Condition="('$(OS)' == 'Windows_NT')">&quot;$(FwrtPath)\packages\ILRepack.2.0.16\tools\ILRepack.exe&quot;</ILRepackBin>
 		<ILRepackBin Condition="('$(OS)' != 'Windows_NT')">mono &quot;$(FwrtPath)\packages\ILRepack.2.0.16\tools\ILRepack.exe&quot;</ILRepackBin>
 		<PrimaryAssembly>$(OutputPath)/FwParatextLexiconPlugin.dll</PrimaryAssembly>
-		<DownloadsPath>$(FwrtPath)/Downloads</DownloadsPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<RepackAssemblies Include="$(OutputPath)/SIL.Core.dll"/>

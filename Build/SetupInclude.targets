@@ -82,8 +82,19 @@
 	  <Output TaskParameter="Value" PropertyName="fwrt"/>
 	</ParentDirectory>
 
+	<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
+	<PropertyGroup Condition="'$(OS)'!='Windows_NT'">
+		<ToolsVersion>14.0</ToolsVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(VSVersion)'=='2019'">
+		<ToolsVersion>Current</ToolsVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)'=='Windows_NT' AND '$(VSVersion)'!='2019'">
+		<ToolsVersion>15.0</ToolsVersion>
+	</PropertyGroup>
+
 	<!-- refresh the FieldWorks.targets file that gets loaded -->
-	<GenerateFwTargets/>
+	<GenerateFwTargets ToolsVersion="$(ToolsVersion)" />
 
 	<CpuArchitecture>
 	  <Output TaskParameter="Value" PropertyName="arch"/>
