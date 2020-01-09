@@ -24,7 +24,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>..\..\Output\Debug\FwParatextLexiconPluginTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +33,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,7 +45,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>..\..\Output\Debug\FwParatextLexiconPluginTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
@@ -57,7 +54,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FieldWorks.TestUtilities">

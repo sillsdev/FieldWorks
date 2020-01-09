@@ -40,7 +40,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <DocumentationFile>..\..\Output\Debug\FieldWorks.TestUtilities.xml</DocumentationFile>
-    <LangVersion>6</LangVersion>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -52,7 +51,6 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <LangVersion>6</LangVersion>
     <FileAlignment>4096</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -66,7 +64,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <DocumentationFile>..\..\Output\Debug\FieldWorks.TestUtilities.xml</DocumentationFile>
-    <LangVersion>6</LangVersion>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -78,7 +75,6 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <LangVersion>6</LangVersion>
     <FileAlignment>4096</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
