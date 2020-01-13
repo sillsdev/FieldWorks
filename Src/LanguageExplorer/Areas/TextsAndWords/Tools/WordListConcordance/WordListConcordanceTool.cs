@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_interlinMaster = new InterlinMaster(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList, paneBarButtons, false);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
-			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _mainRecordBrowseView, _recordListProvidingOwner, _subservientRecordList);
+			_toolMenuHelper = new WordListConcordanceToolMenuHelper(majorFlexComponentParameters, this, _mainRecordBrowseView, _recordListProvidingOwner);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -124,8 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			// The next method call will add UserControl event handlers.
 			_interlinMaster.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;
+			_subservientRecordList.ActivateUI(false);
 		}
 
 		/// <summary>
@@ -202,7 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			*/
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
-			return new SubservientRecordList(recordListId, statusBar, concDecorator, false, ConcDecorator.kflidWfOccurrences, _recordListProvidingOwner);
+			return new SubservientConcordanceRecordList(recordListId, statusBar, concDecorator, false, ConcDecorator.kflidWfOccurrences, _recordListProvidingOwner);
 		}
 
 		private sealed class WordListConcordanceToolMenuHelper : IDisposable
@@ -210,22 +209,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private PartiallySharedTextsAndWordsToolsMenuHelper _partiallySharedTextsAndWordsToolsMenuHelper;
 			private IRecordList _recordListProvidingOwner;
-			private IRecordList _subservientRecordList;
 			private FileExportMenuHelper _fileExportMenuHelper;
 			private RecordBrowseView _mainRecordBrowseView;
 
-			internal WordListConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView mainRecordBrowseView, IRecordList recordListProvidingOwner, IRecordList subservientRecordList)
+			internal WordListConcordanceToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView mainRecordBrowseView, IRecordList recordListProvidingOwner)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(mainRecordBrowseView, nameof(mainRecordBrowseView));
 				Guard.AgainstNull(recordListProvidingOwner, nameof(recordListProvidingOwner));
-				Guard.AgainstNull(subservientRecordList, nameof(subservientRecordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_mainRecordBrowseView = mainRecordBrowseView;
 				_recordListProvidingOwner = recordListProvidingOwner;
-				_subservientRecordList = subservientRecordList;
 
 				SetupUiWidgets(tool);
 				// NB: The nested browse view on the right has no popup menu.
@@ -334,7 +330,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_partiallySharedTextsAndWordsToolsMenuHelper = null;
 				_fileExportMenuHelper = null;
 				_recordListProvidingOwner = null;
-				_subservientRecordList = null;
 				_mainRecordBrowseView = null;
 
 				_isDisposed = true;

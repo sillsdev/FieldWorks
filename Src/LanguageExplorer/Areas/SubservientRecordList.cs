@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -12,13 +11,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas
 {
-#if RANDYTODO
-	// Jason: ""The class name is generic, but the new functionality makes it very specific. I think we should change the name.
-	// The ConcDecorator and needing an IAnalysis owner makes this more of a ConcordanceRecordList right?"
-	// TODO: Look at the current ConcordanceRecordList's behavior to see how it compares to this class.
-	// TODO: Restructure classes to make better sense.
-#endif
-	internal sealed class SubservientRecordList : RecordList
+	internal class SubservientRecordList : RecordList
 	{
 		/// <summary>
 		/// When this is not null, that means there is another record list managing a list,
@@ -28,7 +21,6 @@ namespace LanguageExplorer.Areas
 		/// be displaying the analyses of.
 		/// </summary>
 		private IRecordList _recordListProvidingRootObject;
-		private ConcDecorator _decorator;
 
 		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, IRecordList recordListProvidingRootObject, RecordFilterParameterObject recordFilterParameterObject = null)
 			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject)
@@ -39,15 +31,6 @@ namespace LanguageExplorer.Areas
 			((RecordList)_recordListProvidingRootObject)._subservientRecordList = this;
 		}
 
-		/// <summary />
-		internal SubservientRecordList(string id, StatusBar statusBar, ConcDecorator decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
-			: this(id, statusBar, decorator, usingAnalysisWs, new VectorPropertyParameterObject(null, string.Empty, flid, false), recordListProvidingRootObject)
-		{
-			Guard.AgainstNull(decorator, nameof(decorator));
-
-			_decorator = decorator;
-		}
-
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
@@ -56,32 +39,36 @@ namespace LanguageExplorer.Areas
 			Subscriber.Subscribe(DependentPropertyName, DependentPropertyName_Handler);
 		}
 
+		private void SelectedItemChangedHandler(object obj)
+		{
+			ReallyResetOwner(_recordListProvidingRootObject.CurrentObject);
+		}
+
+		protected virtual void ReallyResetOwner(ICmObject selectedObject)
+		{
+			if (ReferenceEquals(OwningObject, selectedObject))
+			{
+				return;
+			}
+			OwningObject = selectedObject;
+		}
+
+		private string DependentPropertyName => RecordListSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
+
 		private void DependentPropertyName_Handler(object obj)
 		{
 			UpdateOwningObject(true);
 		}
 
-		private void SelectedItemChangedHandler(object obj)
-		{
-			ReallyResetOwner((IAnalysis)_recordListProvidingRootObject.CurrentObject);
-		}
-
-		private void ReallyResetOwner(IAnalysis selectedAnalysis)
-		{
-			if (ReferenceEquals(OwningObject, selectedAnalysis))
-			{
-				return;
-			}
-			_decorator?.UpdateAnalysisOccurrences(selectedAnalysis, true);
-			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(selectedAnalysis.Hvo, _decorator.VecProp(selectedAnalysis.Hvo, ConcDecorator.kflidWfOccurrences));
-			OwningObject = selectedAnalysis;
-		}
-
-		private string DependentPropertyName => RecordListSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
-
 		#region Overrides of RecordList
 
 		public override bool IsSubservientRecordList => true;
+
+		protected override void OnRecordChanged(RecordNavigationEventArgs e)
+		{
+			ReallyResetOwner(_recordListProvidingRootObject.CurrentObject);
+			base.OnRecordChanged(e);
+		}
 
 		protected override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
 		{
@@ -89,21 +76,15 @@ namespace LanguageExplorer.Areas
 			return true;
 		}
 
-		protected override void OnRecordChanged(RecordNavigationEventArgs e)
-		{
-			ReallyResetOwner((IAnalysis)_recordListProvidingRootObject.CurrentObject);
-			base.OnRecordChanged(e);
-		}
-
 		public override void UpdateOwningObject(bool updateOwningObjectOnlyIfChanged = false)
 		{
 			var oldOwningObject = OwningObject;
-			IAnalysis newOwningObject = null;
+			ICmObject newOwningObject = null;
 			var rni = PropertyTable.GetValue<RecordNavigationInfo>(DependentPropertyName);
 			if (rni != null)
 			{
 				Debug.Assert(ReferenceEquals(rni.MyRecordList, _recordListProvidingRootObject), "How can the two record lists not be the same?");
-				newOwningObject = (IAnalysis)rni.MyRecordList.CurrentObject;
+				newOwningObject = rni.MyRecordList.CurrentObject;
 
 			}
 			if (newOwningObject == null)
@@ -132,6 +113,8 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
+		protected override bool IsPrimaryRecordList => false;
+
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -144,14 +127,12 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(_recordListProvidingRootObject.PersistedIndexProperty, SelectedItemChangedHandler);
+				Subscriber.Unsubscribe(DependentPropertyName, DependentPropertyName_Handler);
 			}
-			_decorator = null;
 			_recordListProvidingRootObject = null;
 
 			base.Dispose(disposing);
 		}
-
-		protected override bool IsPrimaryRecordList => false;
 
 		#endregion
 	}

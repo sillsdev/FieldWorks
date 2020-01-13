@@ -333,6 +333,7 @@
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\SubservientConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
@@ -1975,7 +1976,7 @@
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.resx" >
+    <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.resx">
       <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.resx">
