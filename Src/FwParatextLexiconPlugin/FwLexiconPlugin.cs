@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 #if DEBUG
 					string icuDataPath = codeIcuDataPath;
 #else
-					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + Icu.Version);
+					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + CustomIcu.Version);
 					if (!Directory.Exists(icuDataPath))
 						icuDataPath = codeIcuDataPath;
 #endif
