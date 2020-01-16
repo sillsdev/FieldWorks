@@ -5,7 +5,9 @@
   "files": [
     {
       "source": "/DistFiles/Language Explorer/Configuration/strings-en.xml",
-      "translation": "/%locale%/strings-%locale%.xml"
+      "translation": "/%locale%/strings-%locale%.xml",
+      "content_segmentation": 0,
+      "translatable_elements": "//[@txt]"
     },
     {
       "source": "Src/**/*.resx",
