@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 #if RANDYTODO
 			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
 			/*
-			Q: Jason: "This won't result in us loosing track of current entries when switching between tools will it?
+			Q: Jason: "This won't result in us losing track of current entries when switching between tools will it?
 					I can't remember what this property is used for at the moment."
 			A: Randy: "One of the changes (not integration stuff like all of these ones) I plan is to get all record
 					record list instances to come out of a repository like class, which creates them all and returns them, when requested.
@@ -70,6 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_subservientRecordList.Id));
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_recordListProvidingOwner.Id));
 			_propertyTable.RemoveProperty("ActiveListSelectedObject");
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordListProvidingOwner);
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
@@ -79,6 +80,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_recordBrowseView = null;
 			_subservientRecordList = null;
 			_toolMenuHelper = null;
+			_recordListProvidingOwner = null;
 		}
 
 		/// <summary>
@@ -149,7 +151,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordListProvidingOwner.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
-			_subservientRecordList.ActivateUI(false);
 		}
 
 		/// <summary>

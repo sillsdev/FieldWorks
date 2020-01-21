@@ -68,7 +68,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary />
 		public void Dispose()
@@ -88,9 +88,11 @@ namespace LanguageExplorer.Controls
 			}
 			if (disposing)
 			{
-				// dispose managed and unmanaged objects
+				// Dispose managed objects here.
+				m_timer.Tick -= TimerEventProcessor;
 				m_timer.Dispose();
 			}
+			// Dispose unmanaged objects here.
 			IsDisposed = true;
 		}
 		#endregion

@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas
 			internal const string LexiconDictionaryMachineName = "lexiconDictionary";
 				internal const string LexiconDictionaryUiName = "BUGGY: Dictionary";
 			internal const string RapidDataEntryMachineName = "rapidDataEntry";
-				internal const string RapidDataEntryUiName = "CRASHES: Collect Words";
+				internal const string RapidDataEntryUiName = "Collect Words";
 			internal const string LexiconClassifiedDictionaryMachineName = "lexiconClassifiedDictionary";
 				internal const string LexiconClassifiedDictionaryUiName = "Classified Dictionary";
 			internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";

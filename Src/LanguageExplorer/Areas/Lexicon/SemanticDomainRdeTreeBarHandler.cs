@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -18,8 +19,7 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
-	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
-	/// SemanticDomainList record list in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
+	/// This class is used in the RDE tool to display the Semantic Domain List.
 	/// </summary>
 	internal sealed class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler, ISemanticDomainTreeBarHandler
 	{
@@ -75,19 +75,12 @@ namespace LanguageExplorer.Areas.Lexicon
 			_recordBar.ListView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
 
-		#region Overrides of TreeBarHandler
-
-		public override void PopulateRecordBar(IRecordList recordList)
-		{
-			PopulateRecordBar(recordList, Editable);
-		}
-
-		#endregion
-
 		#endregion ISemanticDomainTreeBarHandler implementation
 
-		// Semantic Domains should be editable only in the Lists area.
-		private bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
+		/// <summary>
+		/// Semantic Domains should be editable only in the Lists area.
+		/// </summary>
+		protected override bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
 
 		private FwTextBox CreateSearchBox()
 		{
@@ -114,31 +107,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void HandleChangeInSearchText()
 		{
-			SearchSemanticDomains(TrimSearchTextHandleEnterSpecialCase);
-		}
-
-		private string TrimSearchTextHandleEnterSpecialCase
-		{
-			get
-			{
-				var searchString = m_textSearch.Tss.Text ?? string.Empty;
-				// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
-				if (string.IsNullOrWhiteSpace(searchString))
-				{
-					// We must be careful about setting the textbox string, because each time you set it
-					// triggers a new search timer iteration. We want to avoid a "continual" reset.
-					// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
-					// rest of the string invisible on the screen. So this special case is handled by resetting
-					// the search string to empty if it only contains whitespace.
-					m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
-					return string.Empty;
-				}
-				return searchString.Trim();
-			}
-		}
-
-		private void SearchSemanticDomains(string searchString)
-		{
+			var searchString = TrimSearchTextHandleEnterSpecialCase;
 			// The FindDomainsThatMatch method returns IEnumerable<ICmSemanticDomain>
 			// based on the search string we give it.
 			m_textSearch.Update();
@@ -163,6 +132,26 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				_recordBar.IsFlatList = false;
 				m_btnCancelSearch.SearchIsActive = false;
+			}
+		}
+
+		private string TrimSearchTextHandleEnterSpecialCase
+		{
+			get
+			{
+				var searchString = m_textSearch.Tss?.Text ?? string.Empty;
+				// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
+				if (string.IsNullOrWhiteSpace(searchString))
+				{
+					// We must be careful about setting the textbox string, because each time you set it
+					// triggers a new search timer iteration. We want to avoid a "continual" reset.
+					// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
+					// rest of the string invisible on the screen. So this special case is handled by resetting
+					// the search string to empty if it only contains whitespace.
+					m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+					return string.Empty;
+				}
+				return searchString.Trim();
 			}
 		}
 
@@ -223,6 +212,29 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			var senseCount = SemanticDomainSelectionServices.SenseReferenceCount(sd);
 			return senseCount == 0 ? baseName : $"{baseName} ({senseCount})";
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				m_btnCancelSearch.Click -= m_btnCancelSearch_Click;
+				m_textSearch.TextChanged -= m_searchTimer.OnSearchTextChanged;
+				m_textSearch.GotFocus -= m_textSearch_GotFocus;
+				_recordBar.ListView.ItemChecked -= OnDomainListChecked;
+				m_searchTimer?.Dispose();
+			}
+			m_searchTimer = null;
+			m_textSearch = null;
+
+			base.Dispose(disposing);
 		}
 	}
 }

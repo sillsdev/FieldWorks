@@ -190,12 +190,9 @@ namespace LanguageExplorer.Areas
 		protected void InitBase()
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
+			Debug.Assert(MyRecordList != null);
 
 			ReadParameters();
-			if (MyRecordList == null)
-			{
-				Debug.Assert(MyRecordList != null);
-			}
 			// Someone might have suppressed loading the list.
 			// If so, then pass the buck on to ListUpdateHelper and suspend any loading of the record list's list items until after a
 			// subclass (possibly) initializes sorters/filters

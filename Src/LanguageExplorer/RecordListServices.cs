@@ -42,6 +42,11 @@ namespace LanguageExplorer
 
 		internal static void SetRecordList(IntPtr handle, IRecordList recordList)
 		{
+			if (recordList != null && recordList.IsActiveInGui)
+			{
+				// Already active.
+				return;
+			}
 			var dataForWindow = Mapping[handle];
 			if (ReferenceEquals(dataForWindow.Item3.ActiveRecordList, recordList))
 			{

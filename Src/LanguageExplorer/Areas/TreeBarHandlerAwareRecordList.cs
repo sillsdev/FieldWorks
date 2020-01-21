@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas
 
 		public override void UpdateRecordTreeBarIfNeeded()
 		{
-			_treeBarHandler.PopulateRecordBarIfNeeded(this);
+			_treeBarHandler.PopulateRecordBar(this);
 		}
 
 		protected override void ActivateRecordBar()
@@ -91,37 +91,38 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void OnListChanged(int hvo = 0, ListChangedActions actions = ListChangedActions.Normal)
 		{
-			if (actions == ListChangedActions.UpdateListItemName)
+			switch (actions)
 			{
-				// In the case where there are no other items and the Current object isn't valid,
-				// then just don't do anything.  LT-5849.
-				// A more robust solution would be to have in our design a way to produce
-				// a 'defered' prop changed so that the current actions can finish before
-				// others are notified of the change (which is often incomplete at that time).
-				// The stack for this issue showed the RecordList being
-				// re-entered while they were deleting an object in a previous stack frame.
-				// This is not the only case where this has been noted, but a solution has
-				// not yet been thought of.
-				// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
-				// for the other cases where this can happen.
-				if (_treeBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
-				{
-					// all we need to do is replace the currently selected item in the tree.
-					ICmObject obj = null;
-					if (hvo != 0)
+				case ListChangedActions.UpdateListItemName:
+					// In the case where there are no other items and the Current object isn't valid,
+					// then just don't do anything.  LT-5849.
+					// A more robust solution would be to have in our design a way to produce
+					// a 'deferred' prop changed so that the current actions can finish before
+					// others are notified of the change (which is often incomplete at that time).
+					// The stack for this issue showed the RecordList being
+					// re-entered while they were deleting an object in a previous stack frame.
+					// This is not the only case where this has been noted, but a solution has
+					// not yet been thought of.
+					// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
+					// for the other cases where this can happen.
+					if (_treeBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
 					{
-						m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out obj);
+						// all we need to do is replace the currently selected item in the tree.
+						ICmObject obj = null;
+						if (hvo != 0)
+						{
+							m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out obj);
+						}
+						if (obj == null)
+						{
+							obj = CurrentObject;
+						}
+						_treeBarHandler.ReloadItem(obj);
 					}
-					if (obj == null)
-					{
-						obj = CurrentObject;
-					}
-					_treeBarHandler.ReloadItem(obj);
-				}
-			}
-			else
-			{
-				_treeBarHandler.PopulateRecordBar(this);
+					break;
+				default:
+					_treeBarHandler.PopulateRecordBar(this);
+					break;
 			}
 
 			base.OnListChanged(hvo, actions);

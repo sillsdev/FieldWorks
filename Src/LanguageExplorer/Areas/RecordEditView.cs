@@ -391,7 +391,6 @@ namespace LanguageExplorer.Areas
 #endif
 			var sDatabase = Cache.ProjectId.Name;
 			MyDataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase), Inventory.GetInventory("parts", sDatabase));
-			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (MyDataTree.AccessibilityObject != null)
 			{
 				MyDataTree.AccessibilityObject.Name = "RecordEditView.DataTree";

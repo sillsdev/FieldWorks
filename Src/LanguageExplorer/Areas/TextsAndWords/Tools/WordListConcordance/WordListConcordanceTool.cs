@@ -124,7 +124,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			// The next method call will add UserControl event handlers.
 			_interlinMaster.FinishInitialization();
-			_subservientRecordList.ActivateUI(false);
 		}
 
 		/// <summary>

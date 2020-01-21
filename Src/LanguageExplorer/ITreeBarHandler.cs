@@ -10,7 +10,6 @@ namespace LanguageExplorer
 	internal interface ITreeBarHandler : IDisposable
 	{
 		bool IsItemInTree(int hvo);
-		void PopulateRecordBarIfNeeded(IRecordList list);
 		void PopulateRecordBar(IRecordList list);
 		void UpdateSelection(ICmObject currentObject);
 		void ReloadItem(ICmObject currentObject);

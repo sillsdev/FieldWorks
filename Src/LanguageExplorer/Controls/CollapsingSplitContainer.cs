@@ -249,7 +249,10 @@ namespace LanguageExplorer.Controls
 				{
 					value = new Panel();
 				}
-
+				if (ReferenceEquals(m_secondMainControl, value))
+				{
+					return;
+				}
 				value.Dock = DockStyle.Fill;
 				if (SecondPanel.Controls.Contains(m_secondMainControl))
 				{

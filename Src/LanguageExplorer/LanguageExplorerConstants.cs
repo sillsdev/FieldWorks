@@ -77,6 +77,8 @@ namespace LanguageExplorer
 		internal const string ShowFailingItems = "ShowFailingItems";
 		internal const string Entries = "entries";
 		internal const string AllReversalEntries = "AllReversalEntries";
+		internal const string SelectedListBarNode = "SelectedListBarNode";
+		internal const string SelectedTreeBarNode = "SelectedTreeBarNode";
 		#endregion Misc
 	}
 }

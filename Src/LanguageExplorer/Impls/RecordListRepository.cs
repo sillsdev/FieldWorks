@@ -82,7 +82,7 @@ namespace LanguageExplorer.Impls
 				// Hmm. An imposter in our midst.
 				throw new InvalidOperationException($"The two record lists have the same Id '{recordList.Id}', but they are not the same identical record list.");
 			}
-			if (AsRecordListRepository.ActiveRecordList == recordList)
+			if (ReferenceEquals(AsRecordListRepository.ActiveRecordList, recordList))
 			{
 				// This will call its BecomeInactive() method.
 				AsRecordListRepository.ActiveRecordList = null;

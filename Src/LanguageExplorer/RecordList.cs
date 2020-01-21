@@ -569,17 +569,18 @@ namespace LanguageExplorer
 			RegisterMessageHandlers();
 			AddNotification();
 			ActivateRecordBar();
+			_subservientRecordList?.ActivateUI(updateStatusBar);
 			if (!updateStatusBar)
 			{
 				return;
 			}
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
-			_subservientRecordList?.ActivateUI(updateStatusBar);
 		}
 
 		public virtual void BecomeInactive()
 		{
+			_subservientRecordList?.BecomeInactive();
 			TearDownFilterMenu();
 			UnregisterMessageHandlers(); // No sense handling messages, when dormant.
 			IsActiveInGui = false;
@@ -1976,8 +1977,8 @@ namespace LanguageExplorer
 			if (recordBarControl != null)
 			{
 				UnregisterMessageHandlers(); // Unwire them, in case (more likely 'since') this is re-entrant.
-				Subscriber.Subscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
-				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+				Subscriber.Subscribe(LanguageExplorerConstants.SelectedTreeBarNode, SelectedTreeBarNode_Message_Handler);
+				Subscriber.Subscribe(LanguageExplorerConstants.SelectedListBarNode, SelectedListBarNode_Message_Handler);
 			}
 			Subscriber.Subscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
 		}
@@ -1990,8 +1991,8 @@ namespace LanguageExplorer
 			var recordBarControl = window?.RecordBarControl;
 			if (recordBarControl != null)
 			{
-				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
-				Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.SelectedTreeBarNode, SelectedTreeBarNode_Message_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.SelectedListBarNode, SelectedListBarNode_Message_Handler);
 			}
 		}
 
@@ -2001,7 +2002,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var item = PropertyTable.GetValue<ListViewItem>("SelectedListBarNode");
+			var item = PropertyTable.GetValue<ListViewItem>(LanguageExplorerConstants.SelectedListBarNode);
 			if (item == null)
 			{
 				return;
@@ -2023,7 +2024,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var node = PropertyTable.GetValue<TreeNode>("SelectedTreeBarNode");
+			var node = PropertyTable.GetValue<TreeNode>(LanguageExplorerConstants.SelectedTreeBarNode);
 			if (node == null)
 			{
 				return;

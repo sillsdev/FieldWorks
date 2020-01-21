@@ -12,8 +12,6 @@ namespace LanguageExplorer.Areas
 	/// <summary />
 	internal sealed class RecordBar : UserControl, IRecordBar
 	{
-		private TreeView m_treeView;
-		private ListView m_listView;
 		private ColumnHeader m_columnHeader;
 		private Control m_optionalHeaderControl;
 		private IPropertyTable m_propertyTable;
@@ -24,23 +22,32 @@ namespace LanguageExplorer.Areas
 		{
 			InitializeComponent();
 			m_propertyTable = propertyTable;
-			m_treeView.HideSelection = false;
-			m_listView.HideSelection = false;
-			m_treeView.Dock = DockStyle.Fill;
-			m_listView.Dock = DockStyle.Fill;
+			TreeView.HideSelection = false;
+			ListView.HideSelection = false;
+			TreeView.Dock = DockStyle.Fill;
+			ListView.Dock = DockStyle.Fill;
 			IsFlatList = true;
 			Clear();
+			ListView.SizeChanged += ListView_SizeChanged;
+		}
+
+		private void ListView_SizeChanged(object sender, EventArgs e)
+		{
+			if (m_columnHeader.Width != ListView.Width)
+			{
+				m_columnHeader.Width = ListView.Width;
+			}
 		}
 
 		/// <summary>
 		/// Get the TreeView control.
 		/// </summary>
-		public TreeView TreeView => m_treeView;
+		public TreeView TreeView { get; private set; }
 
 		/// <summary>
 		/// Get the ListView control.
 		/// </summary>
-		public ListView ListView => m_listView;
+		public ListView ListView { get; private set; }
 
 		/// <summary>
 		/// Use 'true' to show as a ListView, otherwise 'false' for a TreeView.
@@ -51,13 +58,13 @@ namespace LanguageExplorer.Areas
 			{
 				if (value)
 				{
-					m_treeView.Visible = false;
-					m_listView.Visible = true;
+					TreeView.Visible = false;
+					ListView.Visible = true;
 				}
 				else
 				{
-					m_treeView.Visible = true;
-					m_listView.Visible = false;
+					TreeView.Visible = true;
+					ListView.Visible = false;
 				}
 			}
 		}
@@ -89,7 +96,7 @@ namespace LanguageExplorer.Areas
 		{
 			set
 			{
-				m_treeView.SelectedNode = value;
+				TreeView.SelectedNode = value;
 			}
 		}
 
@@ -98,22 +105,22 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void Clear()
 		{
-			m_treeView.AfterSelect -= OnTreeBarAfterSelect;
-			m_treeView.Nodes.Clear();
-			m_treeView.AfterSelect += OnTreeBarAfterSelect;
-			m_listView.SelectedIndexChanged -= OnListBarSelect;
-			m_listView.Items.Clear();
-			m_listView.SelectedIndexChanged += OnListBarSelect;
+			TreeView.AfterSelect -= OnTreeBarAfterSelect;
+			TreeView.Nodes.Clear();
+			TreeView.AfterSelect += OnTreeBarAfterSelect;
+			ListView.SelectedIndexChanged -= OnListBarSelect;
+			ListView.Items.Clear();
+			ListView.SelectedIndexChanged += OnListBarSelect;
 		}
 
 		private void OnListBarSelect(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("SelectedListBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], doBroadcastIfChanged: true);
+			m_propertyTable.SetProperty(LanguageExplorerConstants.SelectedListBarNode, ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], doBroadcastIfChanged: true);
 		}
 
 		private void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)
 		{
-			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, doBroadcastIfChanged: true);
+			m_propertyTable.SetProperty(LanguageExplorerConstants.SelectedTreeBarNode, e.Node, doBroadcastIfChanged: true);
 		}
 
 		/// <inheritdoc />
@@ -128,10 +135,12 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				m_propertyTable.RemoveProperty(LanguageExplorerConstants.SelectedListBarNode);
+				m_propertyTable.RemoveProperty(LanguageExplorerConstants.SelectedTreeBarNode);
 				components?.Dispose();
-				m_treeView?.Dispose();
+				TreeView?.Dispose();
 			}
-			m_treeView = null;
+			TreeView = null;
 
 			base.Dispose(disposing);
 		}
@@ -144,31 +153,31 @@ namespace LanguageExplorer.Areas
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordBar));
-			m_treeView = new TreeView();
-			m_listView = new ListView();
+			TreeView = new TreeView();
+			ListView = new ListView();
 			m_columnHeader = new ColumnHeader();
 			SuspendLayout();
 			//
-			// m_treeView tree view
+			// TreeView tree view
 			//
-			resources.ApplyResources(this.m_treeView, "m_treeView");
-			m_treeView.Name = "m_treeView";
-			m_treeView.Nodes.AddRange(new TreeNode[] {
+			resources.ApplyResources(this.TreeView, "m_treeView");
+			TreeView.Name = "TreeView";
+			TreeView.Nodes.AddRange(new TreeNode[] {
 			((TreeNode)(resources.GetObject("m_treeView.Nodes"))),
 			((TreeNode)(resources.GetObject("m_treeView.Nodes1"))),
 			((TreeNode)(resources.GetObject("m_treeView.Nodes2")))});
 			//
-			// m_listView
+			// ListView
 			//
-			m_listView.AutoArrange = false;
-			m_listView.Columns.AddRange(new ColumnHeader[] {
+			ListView.AutoArrange = false;
+			ListView.Columns.AddRange(new ColumnHeader[] {
 			m_columnHeader});
-			resources.ApplyResources(m_listView, "m_listView");
-			m_listView.HideSelection = false;
-			m_listView.MultiSelect = false;
-			m_listView.Name = "m_listView";
-			m_listView.UseCompatibleStateImageBehavior = false;
-			m_listView.View = View.Details;
+			resources.ApplyResources(ListView, "m_listView");
+			ListView.HideSelection = false;
+			ListView.MultiSelect = false;
+			ListView.Name = "ListView";
+			ListView.UseCompatibleStateImageBehavior = false;
+			ListView.View = View.Details;
 			//
 			// columnHeader1
 			//
@@ -176,8 +185,8 @@ namespace LanguageExplorer.Areas
 			//
 			// RecordBar
 			//
-			Controls.Add(m_listView);
-			Controls.Add(m_treeView);
+			Controls.Add(ListView);
+			Controls.Add(TreeView);
 			Name = "RecordBar";
 			resources.ApplyResources(this, "$this");
 			ResumeLayout(false);
@@ -186,7 +195,7 @@ namespace LanguageExplorer.Areas
 		#endregion
 
 		/// <summary>
-		/// 'true' to show the optional header control, otherwsie 'false' to hide it.
+		/// 'true' to show the optional header control, otherwise 'false' to hide it.
 		/// </summary>
 		/// <remarks>Has no affect, if there is no header control.</remarks>
 		public bool ShowHeaderControl

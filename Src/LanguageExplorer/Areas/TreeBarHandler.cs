@@ -25,8 +25,7 @@ namespace LanguageExplorer.Areas
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
-		// This gets set when we skipped populating the tree bar because it wasn't visible.
-		protected bool m_fOutOfDate;
+		protected bool _hasProcessedList;
 		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
 		private TreeNode m_dragHiliteNode; // node that currently has background set to show drag destination
 		private TreeNode m_clickNode; // node the user mouse-downed on
@@ -78,23 +77,19 @@ namespace LanguageExplorer.Areas
 			return m_hvoToTreeNodeTable.ContainsKey(hvo);
 		}
 
-		public void PopulateRecordBarIfNeeded(IRecordList list)
-		{
-			if (m_fOutOfDate)
-			{
-				PopulateRecordBar(list);
-			}
-		}
+		protected virtual bool Editable => true;
 
 		public virtual void PopulateRecordBar(IRecordList list)
 		{
-			PopulateRecordBar(list, true);
+			if (!_hasProcessedList)
+			{
+				PopulateRecordBar(list, Editable);
+			}
 		}
 
-		public virtual void UpdateSelection(ICmObject currentObject)
+		public void UpdateSelection(ICmObject currentObject)
 		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
-			var tree = window.TreeStyleRecordList;
+			var tree = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).TreeStyleRecordList;
 			if (currentObject == null)
 			{
 				if (tree != null)
@@ -111,20 +106,19 @@ namespace LanguageExplorer.Areas
 			}
 			// node.EnsureVisible() throws an exception if tree != node.TreeView, and this can
 			// happen somehow.  (see LT-986)
-			if (node != null && tree != null && node.TreeView == tree && (tree.SelectedNode != node))
+			if (node != null && tree != null && node.TreeView == tree && tree.SelectedNode != node)
 			{
 				tree.SelectedNode = node;
 				EnsureSelectedNodeVisible(tree);
 			}
 		}
 
-		public virtual void ReloadItem(ICmObject currentObject)
+		public void ReloadItem(ICmObject currentObject)
 		{
 			if (currentObject == null || m_hvoToTreeNodeTable.Count == 0)
 			{
 				return;
 			}
-			m_fOutOfDate = false;
 			var node = m_hvoToTreeNodeTable[currentObject.Hvo];
 			if (node == null)
 			{
@@ -142,7 +136,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		public virtual void ReleaseRecordBar()
+		public void ReleaseRecordBar()
 		{
 			if (m_tree == null)
 			{
@@ -250,13 +244,16 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected IRecordList MyRecordList { get; set; }
 
-		protected virtual void PopulateRecordBar(IRecordList recordList, bool editable)
+		protected void PopulateRecordBar(IRecordList recordList, bool editable)
 		{
-			if (MyRecordList == recordList)
+			if (_hasProcessedList)
+			{
+				return;
+			}
+			if (MyRecordList != null && ReferenceEquals(MyRecordList, recordList))
 			{
 				return; // Been here. Done that.
 			}
-			m_fOutOfDate = false;
 			MyRecordList = recordList;
 			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			var recordBarControl = window.RecordBarControl;
@@ -267,7 +264,7 @@ namespace LanguageExplorer.Areas
 			using (new WaitCursor((Form)window))
 			{
 				ReleaseRecordBar(); // Called on old m_tree
-				m_tree = window.TreeStyleRecordList;
+				m_tree = recordBarControl.TreeView;
 				ReleaseRecordBar(); // Called on new m_tree
 				var expandedItems = new HashSet<int>();
 				if (m_tree != null && !m_expand)
@@ -313,6 +310,7 @@ namespace LanguageExplorer.Areas
 				UpdateSelection(recordList.CurrentObject);
 				m_tree.EndUpdate();
 			}
+			_hasProcessedList = true;
 		}
 
 		private void ContextMenuStrip_Opened(object sender, EventArgs e)
@@ -795,7 +793,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		protected virtual void AddTreeNodes(List<IManyOnePathSortItem> sortedObjects, TreeView tree)
+		protected void AddTreeNodes(List<IManyOnePathSortItem> sortedObjects, TreeView tree)
 		{
 			foreach (var item in sortedObjects)
 			{
@@ -818,7 +816,7 @@ namespace LanguageExplorer.Areas
 			return true;
 		}
 
-		protected void AddToTreeNodeTable(int keyHvo, TreeNode node)
+		private void AddToTreeNodeTable(int keyHvo, TreeNode node)
 		{
 			// Don't add it to the Dictionary again.
 			// Checking if it is there first fixes LT-2693.
@@ -852,7 +850,7 @@ namespace LanguageExplorer.Areas
 			return TsStringUtils.NormalizeToNFC(label.DisplayName);
 		}
 
-		protected virtual TreeNode AddTreeNode(ICmObject obj, TreeNodeCollection parentsCollection)
+		protected TreeNode AddTreeNode(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
 			Font font;
 			var node = new TreeNode(GetTreeNodeLabel(obj, out font)) { Tag = obj.Hvo, NodeFont = font };
