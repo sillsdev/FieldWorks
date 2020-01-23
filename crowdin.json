@@ -7,7 +7,9 @@
       "source": "/DistFiles/Language Explorer/Configuration/strings-en.xml",
       "translation": "/%locale%/strings-%locale%.xml",
       "content_segmentation": 0,
-      "translatable_elements": "//[@txt]"
+      "translatable_elements": [
+        "//group/string[@txt]"
+      ]
     },
     {
       "source": "Src/**/*.resx",
