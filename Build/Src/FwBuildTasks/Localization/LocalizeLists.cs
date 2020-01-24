@@ -26,14 +26,23 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private const string LexicalTypes = "LexicalTypes.xlf";
 		private const string SemanticDomains = "SemanticDomains.xlf";
 		private const string AnthropologyCategories = "AnthropologyCategories.xlf";
-		private const string EmptyGroup = "<group id='{0}'></group>";
 		private const string XliffBody = @"<?xml version='1.0'?>
-			<xliff version='1.2'>
+			<xliff version='1.2' xmlns:sil='software.sil.org'>
 				<file source-language='EN' datatype='plaintext' original='{0}'>
 					<body>
 					</body>
 				</file>
 			</xliff>";
+		private const string EmptyGroup = "<group id='{0}'></group>";
+		private const string EmptyTransUnit = "<trans-unit id='{0}'><source>{1}</source></trans-unit>";
+		private static readonly XmlNamespaceManager NameSpaceManager = MakeNamespaceManager();
+
+		private static XmlNamespaceManager MakeNamespaceManager()
+		{
+			var nsm = new XmlNamespaceManager(new NameTable());
+			nsm.AddNamespace("sil", "software.sil.org");
+			return nsm;
+		}
 
 		private static readonly List<ListInfo> ListToXliffMap = new List<ListInfo>
 		{
@@ -162,7 +171,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		internal static XDocument ConvertListToXliff(string listFileName, XDocument listsDoc)
 		{
 			var xliffDoc = XDocument.Parse(string.Format(XliffBody, listFileName));
-			var bodyElem = xliffDoc.XPathSelectElement("/xliff/file/body");
+			var bodyElem = xliffDoc.XPathSelectElement("/xliff/file/body", NameSpaceManager);
 			foreach (var list in listsDoc.XPathSelectElements("/Lists/List"))
 			{
 				var listId = GetListId(list);
@@ -192,7 +201,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var nameElements = list.Element("Name")?.Elements("AUni");
 			var sourceNode = nameElements?.First();
 			var transUnit = XElement.Parse(string.Format(
-				"<trans-unit id='{0}'><source>{1}</source></trans-unit>",
+				EmptyTransUnit,
 				 baseId + "_Name", sourceNode?.Value));
 			group.Add(transUnit);
 		}
@@ -202,7 +211,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var abbrevElements = list.Element("Abbreviation")?.Elements("AUni");
 			var sourceNode = abbrevElements?.First();
 			var transUnit = XElement.Parse(string.Format(
-				"<trans-unit id='{0}'><source>{1}</source></trans-unit>",
+				EmptyTransUnit,
 				baseId + "_Abbr", sourceNode?.Value));
 			group.Add(transUnit);
 		}
@@ -218,16 +227,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var descId = baseId + "_Desc";
 			var descGroup = XElement.Parse(string.Format(EmptyGroup, descId));
-			int runIndex = 0;
-			foreach (var run in sourceNameNode.Elements("Run"))
-			{
-				var transUnit = XElement.Parse(string.Format(
-					"<trans-unit id='{0}'><source></source></trans-unit>",
-					descId + "_" + runIndex));
-				transUnit.Element("source").Value = SecurityElement.Escape(run.Value);
-				descGroup.Add(transUnit);
-				++runIndex;
-			}
+			ConvertRunsToTransUnits(sourceNameNode, descId, descGroup);
 			group.Add(descGroup);
 		}
 
@@ -243,6 +243,94 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
 			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup);
 			group.Add(possibilitiesGroup);
+		}
+
+		/// <summary>
+		/// These are only found in Semantic Domains, but it doesn't hurt to handle them generically
+		/// </summary>
+		private static void ConvertQuestions(XElement owner, XElement group, string baseId)
+		{
+			var questionsElement = owner.Element("Questions");
+			if (questionsElement == null) // No Possibilities found, no work to do
+			{
+				return;
+			}
+
+			var questionsId = baseId + "_Qs";
+			var questionsGroup = XElement.Parse(string.Format(EmptyGroup, questionsId));
+			AddQuestionsToGroup(questionsElement, questionsId, questionsGroup);
+			group.Add(questionsGroup);
+		}
+
+		private static void AddQuestionsToGroup(XElement questionsElement, string questionsId, XElement questionsGroup)
+		{
+			var questionElement = questionsElement.Elements("CmDomainQ");
+			int questionIndex = 0;
+			foreach (var question in questionElement)
+			{
+				var possId = questionsId + "_" + questionIndex;
+				var questionGroup = XElement.Parse(string.Format(EmptyGroup, possId));
+				ConvertQuestion(question, questionGroup, possId);
+				ConvertExampleWords(question, questionGroup, possId);
+				ConvertExampleSentences(question, questionGroup, possId);
+				questionsGroup.Add(questionGroup);
+				++questionIndex;
+			}
+		}
+
+		private static void ConvertExampleSentences(XElement question, XElement questionGroup, string possId)
+		{
+			var exampleStrings = question.Element("ExampleSentences")?.Elements("AStr");
+			var sourceNameNode = exampleStrings?.First();
+			if (sourceNameNode == null) // No description found, no work to do
+			{
+				return;
+			}
+
+			var examplesId = possId + "_ES";
+			var examplesGroup = XElement.Parse(string.Format(EmptyGroup, examplesId));
+			ConvertRunsToTransUnits(sourceNameNode, examplesId, examplesGroup);
+			questionGroup.Add(examplesGroup);
+		}
+
+		private static void ConvertRunsToTransUnits(XElement sourceNameNode, string parentId,
+			XElement group)
+		{
+			int runIndex = 0;
+			foreach (var run in sourceNameNode.Elements("Run"))
+			{
+				var transUnit = XElement.Parse(string.Format(
+					"<trans-unit id='{0}'><source></source></trans-unit>",
+					parentId + "_" + runIndex));
+				transUnit.Element("source").Value = SecurityElement.Escape(run.Value);
+				group.Add(transUnit);
+				++runIndex;
+			}
+		}
+
+		private static void ConvertQuestion(XElement question, XElement questionGroup, string possId)
+		{
+			var nameElements = question.Element("Question")?.Elements("AUni");
+			var sourceNode = nameElements?.First();
+			var transUnit = XElement.Parse(string.Format(
+				EmptyTransUnit,
+				possId + "_Q", sourceNode?.Value));
+			questionGroup.Add(transUnit);
+		}
+
+		private static void ConvertExampleWords(XElement question, XElement questionGroup, string possId)
+		{
+			var nameElements = question.Element("ExampleWords")?.Elements("AUni");
+			var sourceNode = nameElements?.First();
+			if (sourceNode?.Value == null)
+				return;
+			var transUnit = XElement.Parse(string.Format(
+				"<trans-unit id='{0}'><source></source></trans-unit>",
+				possId + "_EW"));
+			// ReSharper disable once AssignNullToNotNullAttribute -- Resharper isn't clever enough
+			// ReSharper disable once PossibleNullReferenceException -- not possible because of string used to get this xml
+			transUnit.Element("source").Value = SecurityElement.Escape(sourceNode.Value);
+			questionGroup.Add(transUnit);
 		}
 
 		private static void ConvertSubPossibilities(XElement owner, XElement group, string possibilityType, string baseId)
@@ -268,10 +356,19 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				var possId = possibilitiesId + "_" + possIndex;
 				var possibilityGroup = XElement.Parse(string.Format(EmptyGroup, possId));
+				if (possibility.Attribute("guid") != null)
+				{
+					var guidElemString = "<sil:Guid>" + possibility.Attribute("guid")?.Value + "</sil:Guid>";
+					var guidElement = XElement.Load(new XmlTextReader(guidElemString,
+						XmlNodeType.Element,
+						new XmlParserContext(null, NameSpaceManager, null, XmlSpace.None)));
+					possibilityGroup.Add(guidElement);
+				}
 				ConvertName(possibility, possibilityGroup, possId);
 				ConvertAbbrev(possibility, possibilityGroup, possId);
 				ConvertDescription(possibility, possibilityGroup, possId);
 				ConvertSubPossibilities(possibility, possibilityGroup, possibilityType, possId);
+				ConvertQuestions(possibility, possibilityGroup, possibilitiesId);
 				possibilitiesGroup.Add(possibilityGroup);
 				++possIndex;
 			}

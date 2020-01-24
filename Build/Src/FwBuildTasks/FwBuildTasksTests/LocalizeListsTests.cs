@@ -177,12 +177,66 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToSubPosGroup + "/group/trans-unit/source[text()='Cult anthro']", 1, true);
 		}
 
+		[Test]
+		public void ConvertListToXliff_SemanticDomainConvertedWithQuestions()
+		{
+			var listXml = @"<Lists><List owner='LangProject' field='SemanticDomainList' itemClass='CmSemanticDomain'>
+				<Possibilities>
+					<CmSemanticDomain guid='63403699-07c1-43f3-a47c-069d6e4316e5'>
+						<Name>
+							<AUni ws='en'>Universe, creation</AUni>
+						</Name>
+						<Abbreviation>
+							<AUni ws='en'>1</AUni>
+						</Abbreviation>
+						<Description>
+							<AStr ws='en'>
+								<Run ws='en'>Use this domain for general words referring to the physical universe. Some languages may not have a single word for the universe and may have to use a phrase such as 'rain, soil, and things of the sky' or 'sky, land, and water' or a descriptive phrase such as 'everything you can see' or 'everything that exists'.</Run>
+							</AStr>
+						</Description>
+						<Questions>
+							<CmDomainQ>
+								<Question>
+									<AUni ws='en'>(1) What words refer to everything we can see?</AUni>
+								</Question>
+								<ExampleWords>
+									<AUni ws='en'>universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>
+								</ExampleWords>
+								<ExampleSentences>
+									<AStr ws='en'>
+										<Run ws='en'>In the beginning God created &lt;the heavens and the earth&gt;.</Run>
+									</AStr>
+								</ExampleSentences>
+							</CmDomainQ>
+						</Questions>
+					</CmSemanticDomain>
+				</Possibilities>
+			</List></Lists>";
+
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			// Verify that the GUID for SemanticDomain makes it to the file (ignore sil namespace via ugly hack)
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath("//group/*[local-name()='Guid'][text()='63403699-07c1-43f3-a47c-069d6e4316e5']", 1);
+			// This xpath matches the first semantic domain
+			var xpathToPossGroup = "//group/group/group[@id='LangProject_SemanticDomainList_Poss_0']";
+			// Verify questions group present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group[contains(@id, '_Qs')]", 1, true);
+			// Verify first question present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/group[contains(@id, '_Qs_0')]", 1, true);
+			// Verify question trans-unit present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_Qs_0_Q')]", 1, true);
+			// Verify ExampleWords trans-unit present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_Qs_0_EW')]", 1, true);
+			// Verify ExampleSentence group present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/group/group[contains(@id, '_Qs_0_ES')]", 1, true);
+		}
+
 		[Ignore]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()
 		{
-			LocalizeLists.SplitSourceLists("C:\\WorkingFiles\\TestInput.xml", "C:\\WorkingFiles\\XliffTestOutput");
+			// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language first)
+			LocalizeLists.SplitSourceLists("C:\\WorkingFiles\\TestOutput.xml", "C:\\WorkingFiles\\XliffTestOutput");
 		}
 	}
 }
