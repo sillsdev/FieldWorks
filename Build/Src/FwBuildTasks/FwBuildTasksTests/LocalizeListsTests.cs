@@ -1,3 +1,7 @@
+// Copyright (c) 2020 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.IO;
 using System.Xml;
@@ -126,7 +130,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			</List></Lists>";
 
 			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
-			// This xpath matches the first possiblity in the possiblities group
+			// This xpath matches the first possibility in the possibilities group
 			var xpathToPossGroup = "//group[@id='LangProject_AnthroList']/group[@id='LangProject_AnthroList_Poss']/group[@id='LangProject_AnthroList_Poss_0']";
 			// Test for abbreviation trans-unit source
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup, 1, true);
@@ -163,14 +167,14 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			</List></Lists>";
 
 			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
-			// This xpath matches the first sub possibility of the first possiblity in the possiblities group
-			var xpathToPossGroup = "//group[@id='LangProject_AnthroList']/group[@id='LangProject_AnthroList_Poss']/group/group[@id='LangProject_AnthroList_Poss_0_SubPos']";
+			// This xpath matches the first sub possibility of the first possibility in the possibilities group
+			var xpathToSubPosGroup = "//group[@id='LangProject_AnthroList']/group[@id='LangProject_AnthroList_Poss']/group/group[@id='LangProject_AnthroList_Poss_0_SubPos']";
 			// Test for abbreviation trans-unit source
-			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup, 1, true);
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToSubPosGroup, 1, true);
 			// Verify name
-			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/trans-unit/source[text()='cultural anthropology']", 1, true);
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToSubPosGroup + "/group/trans-unit/source[text()='cultural anthropology']", 1, true);
 			// Verify abbreviation
-			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToPossGroup + "/group/trans-unit/source[text()='Cult anthro']", 1, true);
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToSubPosGroup + "/group/trans-unit/source[text()='Cult anthro']", 1, true);
 		}
 
 		[Ignore]
@@ -178,7 +182,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void IntegrationTest()
 		{
-			LocalizeLists.SplitSourceLists("C:\\WorkingFiles\\TestOutput.xml", "C:\\WorkingFiles\\XliffTestOutput");
+			LocalizeLists.SplitSourceLists("C:\\WorkingFiles\\TestInput.xml", "C:\\WorkingFiles\\XliffTestOutput");
 		}
 	}
 }

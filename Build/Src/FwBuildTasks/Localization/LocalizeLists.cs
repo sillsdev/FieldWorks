@@ -1,3 +1,7 @@
+// Copyright (c) 2020 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,36 +40,36 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			new ListInfo("LexDb", "DomainTypes", "CmPossibility", AcademicDomains),
 			new ListInfo("LangProject", "AnthroList", "CmAnthroItem", AnthropologyCategories),
 			new ListInfo("LexDb", "ComplexEntryTypes", "LexEntryType", LexicalTypes),
-			new ListInfo("LangProject", "ConfidenceLevels", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "DialectLabels", "CmPossibility", MiscLists),
-			new ListInfo("LangProject", "Education", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "ExtendedNoteTypes", "CmPossibility", MiscLists),
-			new ListInfo("LangProject", "GenreList", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "Languages", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "References", "LexRefType", MiscLists),
-			new ListInfo("LangProject", "Locations", "CmLocation", MiscLists),
 			new ListInfo("LexDb", "MorphTypes", "MoMorphType", LexicalTypes),
-			new ListInfo("RnResearchNbk", "RecTypes", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "SenseTypes", "CmPossibility", LexicalTypes),
+			new ListInfo("LexDb", "VariantEntryTypes", "LexEntryType", LexicalTypes),
+			new ListInfo("DsDiscourseData", "ChartMarkers", "CmPossibility", MiscLists),
+			new ListInfo("DsDiscourseData", "ConstChartTempl", "CmPossibility", MiscLists),
+			new ListInfo("LangProject", "ConfidenceLevels", "CmPossibility", MiscLists),
+			new ListInfo("LangProject", "Education", "CmPossibility", MiscLists),
+			new ListInfo("LangProject", "GenreList", "CmPossibility", MiscLists),
+			new ListInfo("LangProject", "Locations", "CmLocation", MiscLists),
 			new ListInfo("LangProject", "PartsOfSpeech", "PartOfSpeech", MiscLists),
 			new ListInfo("LangProject", "People", "CmPerson", MiscLists),
 			new ListInfo("LangProject", "Positions", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "PublicationTypes", "CmPossibility", MiscLists),
 			new ListInfo("LangProject", "Restrictions", "CmPossibility", MiscLists),
 			new ListInfo("LangProject", "Roles", "CmPossibility", MiscLists),
-			new ListInfo("LangProject", "SemanticDomainList", "CmSemanticDomain",
-				SemanticDomains),
-			new ListInfo("LexDb", "SenseTypes", "CmPossibility", LexicalTypes),
 			new ListInfo("LangProject", "Status", "CmPossibility", MiscLists),
-			new ListInfo("DsDiscourseData", "ChartMarkers", "CmPossibility", MiscLists),
-			new ListInfo("DsDiscourseData", "ConstChartTempl", "CmPossibility", MiscLists),
 			new ListInfo("LangProject", "TextMarkupTags", "CmPossibility", MiscLists),
 			new ListInfo("LangProject", "TimeOfDay", "CmPossibility", MiscLists),
 			new ListInfo("LangProject", "TranslationTags", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "DialectLabels", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "ExtendedNoteTypes", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "Languages", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "PublicationTypes", "CmPossibility", MiscLists),
+			new ListInfo("LexDb", "References", "LexRefType", MiscLists),
 			new ListInfo("LexDb", "UsageTypes", "CmPossibility", MiscLists),
-			new ListInfo("LexDb", "VariantEntryTypes", "LexEntryType", LexicalTypes)
+			new ListInfo("RnResearchNbk", "RecTypes", "CmPossibility", MiscLists),
+			new ListInfo("LangProject", "SemanticDomainList", "CmSemanticDomain", SemanticDomains)
 		};
 
-
+		/// <param name="sourceFile">path to the XML file containing lists to localize</param>
+		/// <param name="localizationsRoot">path to save lists that are ready to upload to Crowdin</param>
 		public static void SplitSourceLists(string sourceFile, string localizationsRoot)
 		{
 			if (!File.Exists(sourceFile))
