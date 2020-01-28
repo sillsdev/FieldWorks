@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
                 <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.EntriesOrChildClassesRecordList" />
                 <PartOwnershipTree>
                   <!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
-								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from on property to the next. -->
+								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. -->
                   <ClassOwnershipTree>
                     <LexEntry sourceField="Entries">
                       <LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets" />

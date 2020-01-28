@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace LanguageExplorer
 {
@@ -19,11 +18,6 @@ namespace LanguageExplorer
 		/// associated with a different ListSourceToken)
 		/// </summary>
 		object ListSourceToken { get; }
-
-		/// <summary>
-		/// The specification that can be used to create a PartOwnershipTree helper.
-		/// </summary>
-		XElement PartOwnershipTreeSpec { get; }
 
 		/// <summary>
 		///

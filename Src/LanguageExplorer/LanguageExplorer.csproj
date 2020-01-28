@@ -857,7 +857,6 @@
     <Compile Include="Controls\XMLViews\NodeDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\NonEmptyTargetOptions.cs" />
     <Compile Include="Controls\NullObjectLabel.cs" />
-    <Compile Include="Controls\XMLViews\PartOwnershipTree.cs" />
     <Compile Include="Controls\XMLViews\PropWs.cs" />
     <Compile Include="Controls\XMLViews\SearchField.cs" />
     <Compile Include="Controls\XMLViews\SelectionHighlighting.cs" />

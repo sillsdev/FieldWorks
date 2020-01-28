@@ -1119,7 +1119,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var sourceTag = (SortItemProvider as IMultiListSortItemProvider).ListSourceToken;
+			var sourceTag = ((IMultiListSortItemProvider)SortItemProvider).ListSourceToken;
 			foreach (var hvoItem in itemsToSaveSelectionState)
 			{
 				if (IsItemChecked(hvoItem))
