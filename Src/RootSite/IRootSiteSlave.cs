@@ -40,11 +40,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		event ScrollPositionChanged VerticalScrollPositionChanged;
 
 		/// <summary>
-		/// The group that organizes several roots scrolling together.
-		/// </summary>
-		IRootSiteGroup Group { get; set; }
-
-		/// <summary>
 		/// Gets or sets the zoom multiplier that magnifies (or shrinks) the view.
 		/// </summary>
 		float Zoom { get; set; }

@@ -5,15 +5,14 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
-using SIL.LCModel;
 
 namespace ParatextImport.ImportTests
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests importing non-interleaved back translations
@@ -811,5 +810,4 @@ namespace ParatextImport.ImportTests
 			AssertEx.RunIsCorrect(tss1, 2, "BT text for verse one", null, m_wsAnal);
 		}
 	}
-#endif
 }

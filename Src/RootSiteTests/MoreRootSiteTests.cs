@@ -801,8 +801,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-#if RANDYTODO
-		// TODO: Whenever running unit tests in VS comes back, check into this newly failing test.
 		/// <summary>
 		/// Test the IsParagraphProps method when the selection crosses paragraph boundary
 		/// and selection levels differ.
@@ -825,7 +823,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			Assert.IsTrue(m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoAnchor, out ihvoEnd));
 		}
-#endif
 
 		/// <summary>
 		/// Test the RootSite.GetParagraphProps method

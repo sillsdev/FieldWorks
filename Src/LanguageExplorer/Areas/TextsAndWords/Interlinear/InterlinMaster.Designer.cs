@@ -115,7 +115,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			resources.ApplyResources(this.m_tcPane, "m_tcPane");
 			this.m_tcPane.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.m_tcPane.DoSpellCheck = false;
-			this.m_tcPane.Group = null;
 			this.m_tcPane.IsTextBox = false;
 			this.m_tcPane.MinimumSize = new System.Drawing.Size(0, 0); // LT-12233
 			this.m_tcPane.Name = "m_tcPane";
@@ -168,7 +167,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			resources.ApplyResources(this.m_rtPane, "m_rtPane");
 			this.m_rtPane.BackColor = System.Drawing.SystemColors.Window;
 			this.m_rtPane.DoSpellCheck = true;
-			this.m_rtPane.Group = null;
 			this.m_rtPane.IsTextBox = false;
 			this.m_rtPane.Name = "m_rtPane";
 			this.m_rtPane.ReadOnlyView = false;
@@ -199,7 +197,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_idcGloss.BackColor = System.Drawing.SystemColors.Window;
 			this.m_idcGloss.DoSpellCheck = true;
 			this.m_idcGloss.ForEditing = true;
-			this.m_idcGloss.Group = null;
 			this.m_idcGloss.IsTextBox = false;
 			this.m_idcGloss.Name = "m_idcGloss";
 			this.m_idcGloss.ReadOnlyView = false;
@@ -230,7 +227,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_idcAnalyze.BackColor = System.Drawing.SystemColors.Window;
 			this.m_idcAnalyze.DoSpellCheck = true;
 			this.m_idcAnalyze.ForEditing = true;
-			this.m_idcAnalyze.Group = null;
 			this.m_idcAnalyze.IsTextBox = false;
 			this.m_idcAnalyze.Name = "m_idcAnalyze";
 			this.m_idcAnalyze.ReadOnlyView = false;
@@ -261,7 +257,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_taggingPane.BackColor = System.Drawing.SystemColors.Window;
 			this.m_taggingPane.DoSpellCheck = false;
 			this.m_taggingPane.ForEditing = false;
-			this.m_taggingPane.Group = null;
 			this.m_taggingPane.IsTextBox = false;
 			this.m_taggingPane.Name = "m_taggingPane";
 			this.m_taggingPane.ReadOnlyView = true;
@@ -292,7 +287,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_printViewPane.BackColor = System.Drawing.SystemColors.Window;
 			this.m_printViewPane.DoSpellCheck = false;
 			this.m_printViewPane.ForEditing = false;
-			this.m_printViewPane.Group = null;
 			this.m_printViewPane.IsTextBox = false;
 			this.m_printViewPane.Name = "m_printViewPane";
 			this.m_printViewPane.ReadOnlyView = true;

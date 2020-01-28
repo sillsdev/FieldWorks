@@ -77,148 +77,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Spelling stuff
 
 		/// <summary>
-		/// Gets a value indicating what the status of the spell checking system is for the
-		/// sake of the the context menu that's being shown in the ShowContextMenu method.
-		/// This property is only valid when the context menu popped-up in that method is
-		/// in the process of being shown. This property is used for the SimpleRootSites who
-		/// need to handle the update messages for those spelling options.
-		/// </summary>
-		public SpellCheckStatus SpellCheckingStatus { get; } = SpellCheckStatus.Disabled;
-
-#if RANDYTODO
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Displays the specified context menu for the specified rootsite at the specified
-		/// mouse position. This will also determine whether or not to include the spelling
-		/// correction options.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ShowContextMenu(Point mousePos, ITMAdapter tmAdapter,
-			RootSite rootsite, string contextMenuName, string addToDictMenuName,
-			string insertBeforeMenuName, string changeMultipleMenuName, bool fShowSpellingOptions)
-		{
-			m_spellCheckStatus = SpellCheckStatus.Disabled;
-			List<string> menuItemNames = null;
-
-			if (fShowSpellingOptions)
-			{
-				Debug.Assert(rootsite.RootBox == Callbacks.EditedRootBox);
-				menuItemNames = MakeSpellCheckMenuOptions(mousePos, rootsite, tmAdapter,
-					contextMenuName, addToDictMenuName, insertBeforeMenuName,
-					changeMultipleMenuName);
-
-				m_spellCheckStatus = (menuItemNames == null ?
-					SpellCheckStatus.WordInDictionary : SpellCheckStatus.Enabled);
-			}
-
-			Point pt = rootsite.PointToScreen(mousePos);
-			tmAdapter.PopupMenu(contextMenuName, pt.X, pt.Y, menuItemNames);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make spell checking menu options using the DotNetBar adapter.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
-			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
-			string changeMultipleMenuName, string insertBeforeMenuName)
-		{
-			int hvoObj, tag, wsAlt, wsText;
-			string word;
-			ISpellEngine dict;
-			bool nonSpellingError;
-			ICollection<SpellCorrectMenuItem> suggestions = SpellCheckServices.GetSuggestions(mousePos, rootsite,
-				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
-
-			IVwRootBox rootb = rootsite.RootBox;
-			// These two menu items are disabled for non-spelling errors. In addition, for addToDict, we need
-			// to set the tag to an AddToDictMenuItem which can actually do the work.
-			UpdateItemProps(tmAdapter, addToDictMenuName, nonSpellingError, new AddToDictMenuItem(dict, word, rootb,
-				hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, Cache));
-			// any non-null value of tag will indicate the item should be enabled, tested in TeMainWnd.UpdateSpellingMenus.
-			UpdateItemProps(tmAdapter, changeMultipleMenuName, nonSpellingError, "ok to change");
-
-			if (suggestions == null)
-				return null;
-
-			// Make the menu options.
-			List<string> menuItemNames = new List<string>();
-			TMItemProperties itemProps;
-			if (suggestions.Count == 0)
-			{
-				itemProps = new TMItemProperties();
-				itemProps.Name = "noSpellingSuggestion";
-				itemProps.Text = RootSiteStrings.ksNoSuggestions;
-				itemProps.Enabled = false;
-				menuItemNames.Add(itemProps.Name);
-				tmAdapter.AddContextMenuItem(itemProps, menuName, insertBeforeMenuName);
-			}
-
-			int cSuggestions = 0;
-			string additionalSuggestionsMenuName = "additionalSpellSuggestion";
-
-			foreach (SpellCorrectMenuItem scmi in suggestions)
-			{
-				itemProps = new TMItemProperties();
-				itemProps.Name = "spellSuggestion" + scmi.Text;
-				itemProps.Text = scmi.Text;
-				itemProps.Message = "SpellingSuggestionChosen";
-				itemProps.CommandId = "CmdSpellingSuggestionChosen";
-				itemProps.Tag = scmi;
-				itemProps.Font = (wsText == 0) ? null : GetFontForNormalStyle(wsText,
-					rootb.Stylesheet, rootb.DataAccess.WritingSystemFactory);
-
-				if (cSuggestions++ == kMaxSpellingSuggestionsInRootMenu)
-				{
-					TMItemProperties tmpItemProps = new TMItemProperties();
-					tmpItemProps.Name = additionalSuggestionsMenuName;
-					tmpItemProps.Text = RootSiteStrings.ksAdditionalSuggestions;
-					menuItemNames.Add(tmpItemProps.Name);
-					tmAdapter.AddContextMenuItem(tmpItemProps, menuName, insertBeforeMenuName);
-					insertBeforeMenuName = null;
-				}
-
-				if (insertBeforeMenuName != null)
-				{
-					menuItemNames.Add(itemProps.Name);
-					tmAdapter.AddContextMenuItem(itemProps, menuName, insertBeforeMenuName);
-				}
-				else
-				{
-					tmAdapter.AddContextMenuItem(itemProps, menuName,
-						additionalSuggestionsMenuName, null);
-				}
-			}
-
-			return menuItemNames;
-		}
-
-		void UpdateItemProps(ITMAdapter tmAdapter, string menuName, bool nonSpellingError, object tag)
-		{
-			TMItemProperties itemProps = tmAdapter.GetItemProperties(menuName);
-			if (itemProps != null)
-			{
-				if (nonSpellingError)
-				{
-					itemProps.Tag = null; // disable
-				}
-				else
-				{
-					itemProps.Tag = tag;
-				}
-				itemProps.Update = true;
-				tmAdapter.SetItemProperties(menuName, itemProps);
-			}
-		}
-#endif
-
-		void itemAdd_Click(object sender, EventArgs e)
-		{
-			(sender as AddToDictMenuItem).AddWordToDictionary();
-		}
-
-		/// <summary>
 		/// Return the dictionary which should be used for the specified writing system.
 		/// </summary>
 		public ISpellEngine GetDictionary(int ws)
@@ -235,20 +93,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal bool DoSpellCheckContextMenu(Point pt, RootSite rootsite)
 		{
 			return SpellCheckServices.ShowContextMenu(Cache, pt, rootsite);
-		}
-		#endregion
-
-		#region Navigation
-		/// <summary>
-		/// Gets the flid of the next property to be displayed for the current object
-		/// </summary>
-		/// <param name="flid">The flid of the current (i.e., selected) property</param>
-		/// <returns>the flid of the next property to be displayed</returns>
-		/// <remarks>ENHANCE: This approach will not work if the same flids are ever displayed
-		/// at multiple levels (or in different frags) with different following flids</remarks>
-		protected virtual int GetNextFlid(int flid)
-		{
-			return -1;
 		}
 		#endregion
 
@@ -464,17 +308,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Determines if the current selection is for a footnote anchor icon.
-		/// </summary>
-		/// <returns>
-		/// True if current selection points to a footnote anchor icon, false otherwise
-		/// </returns>
-		public bool IsFootnoteAnchorIconSelected()
-		{
-			return CurrentSelection != null && IsFootnoteAnchorIconSelected(CurrentSelection.Selection);
-		}
-
-		/// <summary>
 		/// Determines if the given selection is for a footnote anchor icon.
 		/// </summary>
 		/// <returns>
@@ -485,24 +318,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			var found = false;
 			HandleFootnoteAnchorIconSelected(sel, (hvo, flid, ws, ich) => { found = true; });
 			return found;
-		}
-
-		/// <summary>
-		/// Determines if the given selection is for a footnote anchor icon and returns the
-		/// GUID of the footnote.
-		/// </summary>
-		/// <returns>
-		/// GUID of footnote if selection points to a footnote anchor icon, Guid.Empty otherwise
-		/// </returns>
-		protected Guid GetGuidForSelectedFootnoteAnchorIcon(IVwSelection sel)
-		{
-			var footnote = Guid.Empty;
-			HandleFootnoteAnchorIconSelected(sel, (hvo, flid, ws, ich) =>
-			{
-				var footnoteLocation = (ws <= 0) ? Cache.DomainDataByFlid.get_StringProp(hvo, flid) : Cache.DomainDataByFlid.get_MultiStringAlt(hvo, flid, ws);
-				footnote = TsStringUtils.GetGuidFromRun(footnoteLocation, footnoteLocation.get_RunAt(ich));
-			});
-			return footnote;
 		}
 
 		/// <summary>

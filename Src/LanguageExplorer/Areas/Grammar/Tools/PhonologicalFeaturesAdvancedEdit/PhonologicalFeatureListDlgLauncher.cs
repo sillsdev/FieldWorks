@@ -133,7 +133,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			this.m_PhonologicalFeatureListDlgLauncherView.BackColor = System.Drawing.SystemColors.Window;
 			this.m_PhonologicalFeatureListDlgLauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_PhonologicalFeatureListDlgLauncherView.DoSpellCheck = false;
-			this.m_PhonologicalFeatureListDlgLauncherView.Group = null;
 			this.m_PhonologicalFeatureListDlgLauncherView.IsTextBox = false;
 			this.m_PhonologicalFeatureListDlgLauncherView.Location = new System.Drawing.Point(0, 0);
 			this.m_PhonologicalFeatureListDlgLauncherView.Name = "m_PhonologicalFeatureListDlgLauncherView";

@@ -369,7 +369,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				Finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_bv.BrowseView.Vc, m_app)
 			};
 			SetupFsi(result);
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(colSpec), null, 0) ?? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec.ConvertElement(), null, 0) ?? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
 			return result;
 		}
@@ -383,7 +383,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var className = GetStringAtt(saSpec, "class");
 			var attrName = GetStringAtt(saSpec, "field");
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(saSpec), null, 0);
+			var ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec.ConvertElement(), null, 0);
 			if (className == null || attrName == null || ws == null)
 			{
 				return null; // Can't interpret an incomplete stringalt.
@@ -406,7 +406,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var className = GetStringAtt(saSpec, "class");
 			var attrName = GetStringAtt(saSpec, "field");
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(saSpec), null, 0);
+			var ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec.ConvertElement(), null, 0);
 			if (className == null || attrName == null || ws == null)
 			{
 				return null; // Can't interpret an incomplete stringalt.

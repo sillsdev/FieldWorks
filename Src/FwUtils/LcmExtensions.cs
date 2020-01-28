@@ -8,6 +8,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -17,9 +19,13 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
+#if RANDYTODO
+	// TODO: Move these to LCM?
+#endif
 	/// <summary>
 	/// Restore some LCM behavior that went away, when LCM went away.
 	/// </summary>
@@ -56,7 +62,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return $"{created} {modified}";
 		}
 
-		public static string DisplayNameOfClass(this ICmObject me, LcmCache cache)
+		public static string DisplayNameOfClass(this ICmObject me)
 		{
 			var className = me.ClassName;
 			var displayNameOfClass = StringTable.Table.GetString(className, StringTable.ClassNames);
@@ -568,6 +574,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, FwUtils.LanguageCodeTextProps(defaultWs));
 			return tsb.GetString();
+		}
+
+		/// <summary>
+		/// WritingSystemServices.GetWritingSystem and WritingSystemServices.GetAllWritingSystems got divested without knowing about XElement,
+		/// so support such a conversion here, until those methods have overloads that do take XElement instances.
+		/// </summary>
+		public static XmlNode ConvertElement(this XElement me)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(me.GetOuterXml());
+			return doc.FirstChild;
 		}
 	}
 }

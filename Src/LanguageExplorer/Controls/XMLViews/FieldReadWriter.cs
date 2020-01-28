@@ -89,7 +89,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return null;
 			}
 			var flid = mdc.GetFieldId2(clid, fieldName, true);
-			var ws = WritingSystemServices.GetWritingSystem(cache, FwUtils.ConvertElement(node), null, hvoRootObj, flid, 0).Handle;
+			var ws = WritingSystemServices.GetWritingSystem(cache, node.ConvertElement(), null, hvoRootObj, flid, 0).Handle;
 			if (parts.Length == 2)
 			{
 				// parts are divided into class.propname

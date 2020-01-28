@@ -66,11 +66,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>The LCM cache</summary>
 		protected LcmCache m_cache;
-		/// <summary>
-		/// the group root site that controls this one.
-		/// May also be null, in which case it behaves like an ordinary root site.
-		/// </summary>
-		protected IRootSiteGroup m_group;
 		/// <summary>Set to true while we are in the SelectionChanged method. We don't want
 		/// to process any other selection changes in any other view while we're not done
 		/// with the first one.</summary>
@@ -141,7 +136,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				components?.Dispose();
 			}
 			m_cache = null;
-			m_group = null;
 		}
 
 		/// <summary>
@@ -152,7 +146,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected void Synchronize(IVwRootBox rootb)
 		{
-			m_group?.Synchronize(rootb);
 		}
 
 		/// <summary>
@@ -410,28 +403,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Gets the status of all the slaves in the group whether they are ready to layout.
-		/// </summary>
-		protected override bool OkayToLayOut
-		{
-			get
-			{
-				if (m_group != null && m_group.Slaves.Count > 0)
-				{
-					foreach (RootSite slave in m_group.Slaves)
-					{
-						if (!slave.OkayToLayOutAtCurrentWidth)
-						{
-							return false;
-						}
-					}
-					return true;
-				}
-				return base.OkayToLayOut;
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets the LCM cache
 		/// </summary>
 		[Browsable(false)]
@@ -455,43 +426,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// <summary>
-		/// The group that organizes several roots scrolling together.
-		/// </summary>
-		public IRootSiteGroup Group
-		{
-			get
-			{
-				return m_group;
-			}
-			set
-			{
-				m_group = value;
-				base.AutoScroll = m_group != null && m_group.ScrollingController == this;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of the AutoScroll property. When we're part of a root site
-		/// group and we're not the scrolling controller, then setting this property is
-		/// ignored.
-		/// </summary>
-		public override bool AutoScroll
-		{
-			get
-			{
-				return base.AutoScroll;
-			}
-			set
-			{
-				// should only be set if we are the scrolling controller
-				if (m_group == null || m_group.ScrollingController == this)
-				{
-					base.AutoScroll = value;
-				}
-			}
-		}
-
 		/// <summary />
 		public override float Zoom
 		{
@@ -501,51 +435,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			set
 			{
-				if (m_group == null || m_group.Slaves.Count == 0)
-				{
-					base.Zoom = value;
-				}
-				else
-				{
-					foreach (var slave in m_group.Slaves)
-					{
-						// we can't call slave.Zoom because that will call us again -
-						// eventually we'll get a stack overflow...
-						if (slave is RootSite)
-						{
-							((RootSite)slave).m_Zoom = value;
-						}
-					}
-					// RefreshDisplay now happens through all sync'd views in the Views code.
-					m_group.ScrollingController.RefreshDisplay();
-				}
-
+				base.Zoom = value;
 				CalculateAvgParaHeightInPoints();
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the scrolling position for the control. When we're not the scrolling
-		/// controller then we're part of a group then gets or sets the scrolling
-		/// controller's value.
-		/// </summary>
-		public override Point ScrollPosition
-		{
-			get
-			{
-				return (m_group == null || this == m_group.ScrollingController ? base.ScrollPosition : m_group.ScrollingController.ScrollPosition);
-			}
-			set
-			{
-				if (m_group == null || this == m_group.ScrollingController)
-				{
-					base.ScrollPosition = value;
-				}
-				else
-				{
-					m_group.ScrollingController.ScrollPosition = value;
-					Invalidate();
-				}
 			}
 		}
 
@@ -563,55 +454,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Gets or sets the scrolling range for the control. When we're not the scrolling
-		/// controller then we're part of a group then gets or sets the scrolling
-		/// controller's value.
-		/// </summary>
-		public override Size ScrollMinSize
-		{
-			get
-			{
-				return (m_group == null || this == m_group.ScrollingController ? base.ScrollMinSize : m_group.ScrollingController.ScrollMinSize);
-			}
-			set
-			{
-				if (m_group == null || this == m_group.ScrollingController)
-				{
-					base.ScrollMinSize = value;
-				}
-				else
-				{
-					m_group.ScrollingController.ScrollMinSize = value;
-				}
-			}
-		}
-
-		/// <summary>
 		/// It sometimes helps to use the max of the sizes of all sites. I (JT) think that
 		/// while adjusting the scroll range of one pane because of expanded lazy boxes,
 		/// the size of the slaves is set to the appropriate root box. This can lead to
 		/// an adjust scroll range for the other pane at a time when its range is much
 		/// less, perhaps because it hasn't been synchronized yet.
 		/// </summary>
-		protected override Size AdjustedScrollRange
-		{
-			get
-			{
-				if (m_group == null)
-				{
-					return ScrollRange;
-				}
-				var result = ScrollRange;
-				foreach (RootSite slave in m_group.Slaves)
-				{
-					if (slave != this && slave.RootBox != null)
-					{
-						result.Height = Math.Max(result.Height, slave.ScrollRange.Height);
-					}
-				}
-				return result;
-			}
-		}
+		protected override Size AdjustedScrollRange => ScrollRange;
 		#endregion
 
 		#region Overridden Methods
@@ -746,30 +595,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (m_group == null)
-			{
-				CallBaseLayout(levent);
-			}
-			else if (this == m_group.ScrollingController)
-			{
-				// If we changed width and we are the scrolling controller, then make sure
-				// all of the other slaves re-layout. This causes lazy boxes to recalculate
-				// their sizes. (fixes TE-4146)
-				foreach (RootSite slave in m_group.Slaves)
-				{
-					if (slave == this || slave.IsDisposed)
-					{
-						continue;
-					}
-					if (slave.m_dxdLayoutWidth != slave.GetAvailWidth(RootBox))
-					{
-						slave.m_dxdLayoutWidth = kForceLayout;
-					}
-					slave.CallBaseLayout(levent);
-				}
-
-				base.OnLayout(levent);
-			}
+			CallBaseLayout(levent);
 		}
 
 		/// <summary>
@@ -833,21 +659,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// When we get a mouse wheel event for windows other than the scrolling controller
-		/// then pass on the message to the scrolling controller.
-		/// </summary>
-		protected override void OnMouseWheel(MouseEventArgs e)
-		{
-			if (m_group != null && this != m_group.ScrollingController && m_group.ScrollingController is RootSite)
-			{
-				((RootSite)m_group.ScrollingController).OnMouseWheel(e);
-				return;
-			}
-
-			base.OnMouseWheel(e);
-		}
-
-		/// <summary>
 		/// When the client size changed we have to recalculate the average paragraph height
 		/// </summary>
 		protected override void OnSizeChanged(EventArgs e)
@@ -856,57 +667,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Visible)
 			{
 				CalculateAvgParaHeightInPoints();
-			}
-		}
-
-		/// <summary>
-		/// This gets sent in a pathological case where expanding a lazy box forces a
-		/// change in scroll position because of a reduction in the overall scroll
-		/// bar range (usually while trying to expand the boxes needed to display the
-		/// final screen full). If the pane is in a group, we need to invalidate
-		/// everything in the group since all of their scroll positions have been
-		/// changed.
-		/// </summary>
-		public override void InvalidateForLazyFix()
-		{
-			if (m_group != null)
-			{
-				m_group.InvalidateForLazyFix();
-			}
-			else
-			{
-				base.InvalidateForLazyFix();
-			}
-		}
-
-		/// <summary>
-		/// Scroll to the top
-		/// </summary>
-		public override void ScrollToTop()
-		{
-			if (m_group != null && this != m_group.ScrollingController)
-			{
-				m_group.ScrollingController.ScrollToTop();
-			}
-			else
-			{
-				base.ScrollToTop();
-			}
-		}
-
-		/// <summary>
-		/// Scroll to the bottom.
-		/// </summary>
-		public override void ScrollToEnd()
-		{
-			if (m_group != null && this != m_group.ScrollingController)
-			{
-				m_group.ScrollingController.ScrollToEnd();
-				MakeSelectionVisible(null);
-			}
-			else
-			{
-				base.ScrollToEnd();
 			}
 		}
 

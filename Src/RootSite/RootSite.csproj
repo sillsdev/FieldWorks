@@ -216,7 +216,6 @@
     <Compile Include="IHeightEstimator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IRootSiteGroup.cs" />
     <Compile Include="IRootSiteSlave.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -230,9 +229,6 @@
     </Compile>
     <Compile Include="RootSiteEditingHelper.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="RootSiteGroup.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="RootSiteStrings.Designer.cs">
       <AutoGen>True</AutoGen>

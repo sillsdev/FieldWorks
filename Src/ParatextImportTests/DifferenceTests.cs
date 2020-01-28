@@ -9,7 +9,6 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// <summary />
 	[TestFixture]
 	public class DifferenceTests : ScrInMemoryLcmTestBase
@@ -99,5 +98,4 @@ namespace ParatextImport
 			Assert.IsNull(clonedDiff.SubDiffsForParas[0].SubDiffsForParas[0].SubDiffsForParas);
 		}
 	}
-#endif
 }

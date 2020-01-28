@@ -4,14 +4,13 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// <summary/>
 	[TestFixture]
 	public class VerseIteratorTests: BookMergerTestsBase
@@ -375,5 +374,4 @@ namespace ParatextImport
 		}
 	#endregion
 	}
-#endif
 }

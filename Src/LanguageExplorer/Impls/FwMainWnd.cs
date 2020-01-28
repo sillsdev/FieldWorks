@@ -2907,7 +2907,7 @@ very simple minor adjustments. ;)"
 				}
 				else
 				{
-					var userFriendlyClassName = activeRecordList.CurrentObject.DisplayNameOfClass(Cache);
+					var userFriendlyClassName = activeRecordList.CurrentObject.DisplayNameOfClass();
 					tooltipText = string.Format(FwUtils.RemoveUnderline(LanguageExplorerResources.DeleteMenu), userFriendlyClassName);
 					deleteText = string.Format(deleteTextBase, userFriendlyClassName);
 					// See if a view can do it.

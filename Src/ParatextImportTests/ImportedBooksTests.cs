@@ -9,7 +9,6 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the ImportedBooks class
@@ -175,5 +174,4 @@ namespace ParatextImport
 		}
 	#endregion
 	}
-#endif
 }

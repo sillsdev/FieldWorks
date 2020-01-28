@@ -11,7 +11,6 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -19,7 +18,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
-using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -314,21 +312,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string RemoveUnderline(string guiString)
 		{
 			return guiString.Replace("_", string.Empty);
-		}
-
-#if RANDYTODO
-		// TODO: Add an overload in WritingSystemServices.GetWritingSystem (LCM) that takes an XElement.
-		// TODO: Then dump this hack.
-#endif
-		/// <summary>
-		/// WritingSystemServices.GetWritingSystem got divested without knowing about XElement,
-		/// so support such a conversion here, until it does.
-		/// </summary>
-		public static XmlNode ConvertElement(XElement element)
-		{
-			var doc = new XmlDocument();
-			doc.LoadXml(element.GetOuterXml());
-			return doc.FirstChild;
 		}
 
 		/// <summary>

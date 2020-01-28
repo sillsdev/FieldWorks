@@ -401,7 +401,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			vwenv.OpenTableCell(1, 1);
 			var flid = XMLViewsDataCache.ktagEditColumnBase + i;
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(node), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+			var ws = WritingSystemServices.GetWritingSystem(m_cache, node.ConvertElement(), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			// Paragraph directionality must be set before the paragraph is opened.
 			var fRTL = IsWsRTL(ws);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, fRTL ? -1 : 0);

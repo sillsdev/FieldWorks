@@ -11,7 +11,6 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	#region class DummyBookMerger
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
@@ -292,5 +291,4 @@ namespace ParatextImport
 	#endregion
 
 	}
-#endif
 }

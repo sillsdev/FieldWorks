@@ -274,7 +274,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, columns[i - 1].ConvertElement(), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				// Get the string for each column.
 				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol);
 			}
@@ -292,7 +292,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, columns[i - 1].ConvertElement(), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
@@ -426,7 +426,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var columns = m_xbvvc.ColumnSpecs;
 			const int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
-			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[0]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, columns[0].ConvertElement(), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
 			{
 				var rgvsli = new SelLevInfo[1];

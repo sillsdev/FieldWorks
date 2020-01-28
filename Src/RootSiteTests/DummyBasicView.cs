@@ -232,18 +232,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				return (m_group == null || this == m_group.ScrollingController ? m_scrollPosition : m_group.ScrollingController.ScrollPosition);
+				return m_scrollPosition;
 			}
 			set
 			{
-				if (m_group == null || this == m_group.ScrollingController)
-				{
-					m_scrollPosition = new Point(-value.X, -value.Y);
-				}
-				else
-				{
-					m_group.ScrollingController.ScrollPosition = value;
-				}
+				m_scrollPosition = new Point(-value.X, -value.Y);
 			}
 		}
 

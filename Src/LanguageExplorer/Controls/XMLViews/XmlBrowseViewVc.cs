@@ -1370,7 +1370,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				wsBest = WritingSystemServices.GetWritingSystem(m_cache, m_sda, FwUtils.ConvertElement(xn), null, hvoBest, flidBest,
+				wsBest = WritingSystemServices.GetWritingSystem(m_cache, m_sda, xn.ConvertElement(), null, hvoBest, flidBest,
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			}
 			return wsBest;

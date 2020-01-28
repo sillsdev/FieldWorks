@@ -3,25 +3,23 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
+using ECInterfaces;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.LCModel.Core.Scripture;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
-using ECInterfaces;
-using SilEncConverters40;
+using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SilEncConverters40;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	#region DummyEncConverter class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -2196,5 +2194,4 @@ namespace ParatextImport
 	#endregion
 	}
 	#endregion
-#endif
 }

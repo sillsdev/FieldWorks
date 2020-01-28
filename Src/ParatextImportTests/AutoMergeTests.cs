@@ -5,14 +5,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel;
 using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dummy class to ensure that MakeBackupIfNeeded gets called when needed.
@@ -1137,5 +1136,4 @@ namespace ParatextImport
 		}
 	#endregion
 	}
-#endif
 }

@@ -7,17 +7,16 @@ using System.Diagnostics;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for several import test classes
@@ -671,5 +670,4 @@ namespace ParatextImport.ImportTests
 		}
 	#endregion
 	}
-#endif
 }

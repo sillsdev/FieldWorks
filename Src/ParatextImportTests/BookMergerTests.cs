@@ -6,15 +6,14 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the <see cref="BookMerger"/> class.
@@ -22620,5 +22619,4 @@ namespace ParatextImport
 
 	#endregion
 	}
-#endif
 }

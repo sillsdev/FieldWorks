@@ -249,9 +249,6 @@
     </Compile>
     <Compile Include="RootsiteDummyViewTestsBase.cs" />
     <Compile Include="RootSiteEditingHelperTests.cs" />
-    <Compile Include="RootSiteGroupTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TestLanguages.cs" />
     <Compile Include="UndoTaskHelperTests.cs">
       <SubType>Code</SubType>

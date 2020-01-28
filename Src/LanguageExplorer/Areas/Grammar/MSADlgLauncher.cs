@@ -103,7 +103,6 @@ namespace LanguageExplorer.Areas.Grammar
 			//
 			this.m_msaDlglauncherView.BackColor = System.Drawing.SystemColors.Window;
 			this.m_msaDlglauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_msaDlglauncherView.Group = null;
 			this.m_msaDlglauncherView.Location = new System.Drawing.Point(0, 0);
 			this.m_msaDlglauncherView.Name = "m_msaDlglauncherView";
 			this.m_msaDlglauncherView.ReadOnlyView = false;

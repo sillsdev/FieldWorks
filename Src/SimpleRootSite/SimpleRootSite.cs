@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Accessibility;
@@ -4861,23 +4860,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#region Sequential message processing enforcement
 
-		private Form ContainingWindow()
-		{
-			for (var parent = Parent; parent != null; parent = parent.Parent)
-			{
-#if RANDYTODO
-			// TODO: parent is really IFwMainWnd, but as of this writing, that interface
-			// TODO: isn't available in this assembly, so use Form until
-			// TODO: a better solution for IFwMainWnd is found and caller can use the interface directly.
-#endif
-				if (parent is Form)
-				{
-					return parent as Form;
-				}
-			}
-			return null;
-		}
-
 		/// <summary>
 		/// Begin a block of code which, even though it is not itself a message handler,
 		/// should not be interrupted by other messages that need to be sequential.
@@ -4887,26 +4869,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void BeginSequentialBlock()
 		{
-#if RANDYTODO
-			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
-			// TODO: isn't available in this assembly, so use Reflection until
-			// TODO: a better solution for IFwMainWnd is found.
-#endif
-			var mainWindow = ContainingWindow();
-			if (mainWindow != null)
-			{
-#if RANDYTODO
-				// TODO: Use this when the IFwMainWnd can be used here.
-				mainWindow.SuspendIdleProcessing();
-#else
-				// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
-				// TODO: isn't available in this assembly, so use Reflection until
-				// TODO: a better solution for IFwMainWnd is found.
-				var wndType = mainWindow.GetType();
-				var mi = wndType.GetMethod("SuspendIdleProcessing");
-				mi.Invoke(mainWindow, BindingFlags.InvokeMethod, null, null, null);
-#endif
-			}
+			(Form.ActiveForm as IApplicationIdleEventHandler)?.SuspendIdleProcessing();
 			Sequencer.BeginSequentialBlock();
 		}
 
@@ -4916,26 +4879,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void EndSequentialBlock()
 		{
 			Sequencer.EndSequentialBlock();
-#if RANDYTODO
-			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
-			// TODO: isn't available in this assembly, so use Reflection until
-			// TODO: a better solution for IFwMainWnd is found.
-#endif
-			var mainWindow = ContainingWindow();
-			if (mainWindow != null)
-			{
-#if RANDYTODO
-				// TODO: Use this when the IFwMainWnd can be used here.
-				mainWindow.ResumeIdleProcessing();
-#else
-				// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
-				// TODO: isn't available in this assembly, so use Reflection until
-				// TODO: a better solution for IFwMainWnd is found.
-				var wndType = mainWindow.GetType();
-				var mi = wndType.GetMethod("ResumeIdleProcessing");
-				mi.Invoke(mainWindow, BindingFlags.InvokeMethod, null, null, null);
-#endif
-			}
+			(Form.ActiveForm as IApplicationIdleEventHandler)?.ResumeIdleProcessing();
 		}
 		#endregion
 

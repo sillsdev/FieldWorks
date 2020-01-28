@@ -5,14 +5,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {

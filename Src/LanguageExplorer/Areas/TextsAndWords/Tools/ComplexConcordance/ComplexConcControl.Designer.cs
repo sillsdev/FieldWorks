@@ -56,7 +56,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			resources.ApplyResources(this.m_view, "m_view");
 			this.m_view.BackColor = System.Drawing.SystemColors.Window;
 			this.m_view.DoSpellCheck = false;
-			this.m_view.Group = null;
 			this.m_view.InSelectionChanged = false;
 			this.m_view.IsTextBox = false;
 			this.m_view.Name = "m_view";

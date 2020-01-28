@@ -3,15 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.LCModel.Core.Scripture;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace ParatextImport.ImportTests
 {
-#if RANDYTODO
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
 	/// ImportStyleProxyTests class to test ImportStyleProxy
@@ -258,5 +257,4 @@ namespace ParatextImport.ImportTests
 		}
 		#endregion
 	}
-#endif
 }

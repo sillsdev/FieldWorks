@@ -6,15 +6,14 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {
-#if RANDYTODO
 	#region Paratext 6 Import Tests (in-memory cache)
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
@@ -3335,5 +3334,4 @@ namespace ParatextImport.ImportTests
 	#endregion
 	}
 	#endregion
-#endif
 }

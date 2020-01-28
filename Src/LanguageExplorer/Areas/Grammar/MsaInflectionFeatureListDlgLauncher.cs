@@ -167,7 +167,6 @@ namespace LanguageExplorer.Areas.Grammar
 			//
 			this.m_msaInflectionFeatureListDlgLauncherView.BackColor = System.Drawing.SystemColors.Window;
 			this.m_msaInflectionFeatureListDlgLauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_msaInflectionFeatureListDlgLauncherView.Group = null;
 			this.m_msaInflectionFeatureListDlgLauncherView.Location = new System.Drawing.Point(0, 0);
 			this.m_msaInflectionFeatureListDlgLauncherView.Name = "m_msaInflectionFeatureListDlgLauncherView";
 			this.m_msaInflectionFeatureListDlgLauncherView.ReadOnlyView = false;

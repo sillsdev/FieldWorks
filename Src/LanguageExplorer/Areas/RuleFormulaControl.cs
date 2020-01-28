@@ -1011,7 +1011,6 @@ namespace LanguageExplorer.Areas
 			this._view.BackColor = System.Drawing.SystemColors.Window;
 			this._view.Dock = System.Windows.Forms.DockStyle.Left;
 			this._view.DoSpellCheck = false;
-			this._view.Group = null;
 			this._view.IsTextBox = false;
 			this._view.Location = new System.Drawing.Point(0, 0);
 			this._view.Name = "_view";

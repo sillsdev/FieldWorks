@@ -616,7 +616,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					if (wsid == 0)
 					{
-						wsid = WritingSystemServices.GetWritingSystem(cache, FwUtils.ConvertElement(frag), null, WritingSystemServices.kwsAnal).Handle;
+						wsid = WritingSystemServices.GetWritingSystem(cache, frag.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
 					}
 					return new[] { sep, sda.get_MultiStringAlt(hvoTarget, flid, wsid).Text };
 			}
@@ -677,7 +677,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 						}
 						bool fFoundType;
-						var strValue = lcmCache.GetText(hvo, flid, FwUtils.ConvertElement(layout), out fFoundType);
+						var strValue = lcmCache.GetText(hvo, flid, layout.ConvertElement(), out fFoundType);
 						if (fFoundType)
 						{
 							return new[] { strValue };
@@ -688,7 +688,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						var flid = GetFlid(sda, layout, hvo);
 						// The Ws info specified in the part ref node
-						var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, FwUtils.ConvertElement(caller), null, hvo, flid);
+						var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, caller.ConvertElement(), null, hvo, flid);
 						if (wsIds.Count == 1)
 						{
 							var strValue = sda.get_MultiStringAlt(hvo, flid, wsIds.First()).Text;
@@ -881,7 +881,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string[] result = null;
 			try
 			{
-				var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
+				var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, frag.ConvertElement(), s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 				{

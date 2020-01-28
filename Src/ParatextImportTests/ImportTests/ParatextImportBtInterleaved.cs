@@ -6,16 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {
-#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests importing interleaved back translations
@@ -3353,5 +3352,4 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 		}
 	}
-#endif
 }

@@ -713,7 +713,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.Assert(s_cwsMulti == 0);
 			try
 			{
-				var wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
+				var wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, frag.ConvertElement(), s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 				{
@@ -1093,7 +1093,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							// The Ws info specified in the part ref node
 							var sWs = XmlUtils.GetOptionalAttributeValue(caller, "ws");
-							var wsIds = sWs == "reversal" ? new HashSet<int> { ReversalWs } : WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.ConvertElement(caller), null, hvoTarget, flid);
+							var wsIds = sWs == "reversal" ? new HashSet<int> { ReversalWs } : WritingSystemServices.GetAllWritingSystems(m_cache, caller.ConvertElement(), null, hvoTarget, flid);
 							if (wsIds.Count == 1)
 							{
 								if (hvoTarget != hvo)
@@ -1849,7 +1849,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 								if (wsid == 0 && sWs != null)
 								{
-									foreach (var ws in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.ConvertElement(frag)))
+									foreach (var ws in WritingSystemServices.GetWritingSystems(m_cache, frag.ConvertElement()))
 									{
 										infoTarget.AddAtomicField(flid, ws);
 									}
@@ -1925,7 +1925,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 								else
 								{
-									foreach (var wsid in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.ConvertElement(frag)))
+									foreach (var wsid in WritingSystemServices.GetWritingSystems(m_cache, frag.ConvertElement()))
 									{
 										info.AddAtomicField(flid, wsid);
 									}
@@ -1974,7 +1974,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								foreach (var wsid in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.ConvertElement(caller)))
+								foreach (var wsid in WritingSystemServices.GetWritingSystems(m_cache, caller.ConvertElement()))
 								{
 									info.AddAtomicField(flid, wsid);
 								}
@@ -2182,7 +2182,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (WsForce == 0)
 			{
-				return WritingSystemServices.GetWritingSystem(m_cache, m_sda, FwUtils.ConvertElement(frag), s_qwsCurrent, hvo, flid, wsDefault).Handle;
+				return WritingSystemServices.GetWritingSystem(m_cache, m_sda, frag.ConvertElement(), s_qwsCurrent, hvo, flid, wsDefault).Handle;
 			}
 			if (WsForce >= 0)
 			{
@@ -2754,7 +2754,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (wsid == 0)
 				{
-					wsid = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(frag), null, WritingSystemServices.kwsAnal).Handle;
+					wsid = WritingSystemServices.GetWritingSystem(m_cache, frag.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
 				}
 				DisplayOtherObjStringAlt(flid, wsid, vwenv, hvoTarget, caller);
 			}

@@ -640,14 +640,14 @@ namespace LanguageExplorer.Controls.XMLViews
 						besc = new ComplexListChooserBEditControl(m_cache, PropertyTable, colSpec);
 						break;
 					}
-					ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(colSpec), null, WritingSystemServices.kwsAnal).Handle;
+					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
 					besc = new FlatListChooserBEditControl(flid, hvoList, ws, false);
 					break;
 				case "morphTypeListItem":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					flidSub = GetFlidFromClassDotName(colSpec, "subfield");
 					hvoList = GetNamedListHvo(colSpec, "list");
-					ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(colSpec), null, WritingSystemServices.kwsAnal).Handle;
+					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
@@ -2849,7 +2849,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						m_fClickEditIfNot = true;
 						m_sClickEditIf = m_sClickEditIf.Substring(1);
 					}
-					var sWs = StringServices.GetWsSpecWithoutPrefix(FwUtils.ConvertElement(spec));
+					var sWs = StringServices.GetWsSpecWithoutPrefix(spec.ConvertElement());
 					if (sWs != null)
 					{
 						m_wsClickEditIf = XmlViewsUtils.GetWsFromString(sWs, m_cache);

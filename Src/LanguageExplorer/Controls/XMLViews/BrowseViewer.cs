@@ -2649,7 +2649,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			CoreWritingSystemDefinition colWs = null;
 			foreach (var curSpec in BrowseView.Vc.ColumnSpecs)
 			{
-				var curWs = WritingSystemServices.GetWritingSystem(Cache, FwUtils.ConvertElement(curSpec), null, 0);
+				var curWs = WritingSystemServices.GetWritingSystem(Cache, curSpec.ConvertElement(), null, 0);
 				if (curWs.Handle == ws)
 				{
 					colSpec = curSpec;

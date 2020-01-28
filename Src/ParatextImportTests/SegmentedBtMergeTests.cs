@@ -7,17 +7,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
-#if RANDYTODO
 	/// <summary>
 	/// Additional tests of BookMerger to confirm appropriate merging of segmented back translation.
 	/// These tests do not confirm the necessary calls to LoadSegmentFreeTranslations, since this
@@ -2410,5 +2409,4 @@ namespace ParatextImport
 		}
 	#endregion
 	}
-#endif
 }

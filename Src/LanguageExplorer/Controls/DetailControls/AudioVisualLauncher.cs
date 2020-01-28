@@ -55,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			//
 			this.m_view.BackColor = System.Drawing.SystemColors.Window;
 			this.m_view.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_view.Group = null;
 			this.m_view.Location = new System.Drawing.Point(0, 0);
 			this.m_view.Name = "m_view";
 			this.m_view.ReadOnlyView = false;
