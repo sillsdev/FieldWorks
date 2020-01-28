@@ -77,6 +77,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			new ListInfo("LangProject", "SemanticDomainList", "CmSemanticDomain", SemanticDomains)
 		};
 
+		#region Xml LocalizedLists To Xliff
 		/// <param name="sourceFile">path to the XML file containing lists to localize</param>
 		/// <param name="localizationsRoot">path to save lists that are ready to upload to Crowdin</param>
 		public static void SplitSourceLists(string sourceFile, string localizationsRoot)
@@ -175,7 +176,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			foreach (var list in listsDoc.XPathSelectElements("/Lists/List"))
 			{
 				var listId = GetListId(list);
-				var group = XElement.Parse(string.Format(@"<group id='{0}'/>", listId));
+				var group = XElement.Parse($"<group id='{listId}'/>");
 				ConvertName(list, group, listId);
 				ConvertAbbrev(list, group, listId);
 				ConvertDescription(list, group, listId);
@@ -299,9 +300,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			int runIndex = 0;
 			foreach (var run in sourceNameNode.Elements("Run"))
 			{
-				var transUnit = XElement.Parse(string.Format(
-					"<trans-unit id='{0}'><source></source></trans-unit>",
-					parentId + "_" + runIndex));
+				var transUnit = XElement.Parse($"<trans-unit id='{parentId + "_" + runIndex}'><source></source></trans-unit>");
 				transUnit.Element("source").Value = SecurityElement.Escape(run.Value);
 				group.Add(transUnit);
 				++runIndex;
@@ -324,9 +323,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var sourceNode = nameElements?.First();
 			if (sourceNode?.Value == null)
 				return;
-			var transUnit = XElement.Parse(string.Format(
-				"<trans-unit id='{0}'><source></source></trans-unit>",
-				possId + "_EW"));
+			var transUnit = XElement.Parse($"<trans-unit id='{possId + "_EW"}'><source></source></trans-unit>");
 			// ReSharper disable once AssignNullToNotNullAttribute -- Resharper isn't clever enough
 			// ReSharper disable once PossibleNullReferenceException -- not possible because of string used to get this xml
 			transUnit.Element("source").Value = SecurityElement.Escape(sourceNode.Value);
@@ -381,6 +378,126 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			return list.Attribute("owner")?.Value + "_" + list.Attribute("field")?.Value;
 		}
+		#endregion
+
+		#region Xliff to LocalizedLists format
+		private static void CombineXliffFiles(List<string> xliffFiles, string outputList)
+		{
+			var localizedLists = new XDocument($"<?xml version='1.0' encoding='UTF-8'?><Lists date='{DateTime.Now:MM/dd/yyy H:mm:ss zzz}'/>");
+
+			var xliffDocs = new List<XDocument>();
+			foreach (var file in xliffFiles)
+			{
+				xliffDocs.Add(XDocument.Load(file));
+			}
+
+			CombineXliffDocuments(xliffDocs, localizedLists);
+			localizedLists.Save(outputList);
+		}
+
+		private static void CombineXliffDocuments(List<XDocument> xliffDocs, XDocument localizedLists)
+		{
+			var listsElement = localizedLists.Root;
+			foreach (var xliffList in xliffDocs)
+			{
+				ConvertXliffToLists(xliffList, listsElement);
+			}
+		}
+
+		internal static void ConvertXliffToLists(XDocument xliffList, XElement listsElement)
+		{
+			var groupElements = xliffList.XPathSelectElements("/xliff/file/body/group");
+			foreach (var group in groupElements)
+			{
+				ConvertGroupToList(group, listsElement);
+			}
+		}
+
+		private static void ConvertGroupToList(XElement group, XElement listsElement)
+		{
+			var listIdAttribute = group.Attribute("id");
+			if(listIdAttribute == null)
+				throw new ArgumentException("Invalid list group", nameof(group));
+			var listIdParts = listIdAttribute.Value.Split('_');
+			if(listIdParts.Length != 2)
+				throw new ArgumentException("Invalid list group", nameof(group));
+			var listInfo = ListToXliffMap.First(li => li.Owner == listIdParts[0] && li.Field == listIdParts[1]);
+			var listElement = XElement.Parse(
+					$"<List owner=\"{listInfo.Owner}\" field=\"{listInfo.Field}\" itemClass=\"{listInfo.Type}\"/>");
+			ConvertNameFromXliff(group, listElement, listIdAttribute.Value);
+			ConvertAbbrevFromXliff(group, listElement, listIdAttribute.Value);
+			ConvertDescFromXliff(group, listElement, listIdAttribute.Value);
+			listsElement.Add(listElement);
+		}
+
+		private static void ConvertDescFromXliff(XElement group, XElement listElement, string baseId)
+		{
+			var descId = baseId + "_Desc";
+			var descGroup = group.Elements("group").FirstOrDefault(g => g.Attribute("id") != null && g.Attribute("id").Value == descId);
+			if (descGroup == null)
+				return;
+			var descElements = descGroup.Elements("trans-unit").Where(tu => tu.Attribute("id") != null
+																	&& tu.Attribute("id").Value.StartsWith(descId));
+			if (descElements.Any())
+			{
+				var description = XElement.Parse("<Description/>");
+				var sourceDesc = XElement.Parse("<AStr ws='en'/>");
+				var targetDesc = XElement.Parse($"<AStr ws='{"es"}'/>");
+				description.Add(sourceDesc);
+				description.Add(targetDesc);
+				foreach (var descTransUnit in descElements)
+				{
+					ConvertSourceAndTargetToRun(descTransUnit, sourceDesc, targetDesc);
+				}
+				listElement.Add(description);
+			}
+		}
+
+		private static void ConvertSourceAndTargetToRun(XElement descTransUnit, XElement source, XElement target)
+		{
+			var xliffSource = descTransUnit.Element("source")?.Value;
+			var xliffTarget = descTransUnit.Element("target")?.Value;
+			source.Add(XElement.Parse($"<Run ws='en'>{xliffSource}</Run>"));
+			target.Add(XElement.Parse($"<Run ws='{"es"}'>{(xliffTarget != xliffSource ? xliffTarget : string.Empty)}</Run>"));
+		}
+
+		private static void ConvertAbbrevFromXliff(XElement group, XElement listElement, string baseId)
+		{
+			var abbrId = baseId + "_Abbr";
+			var abbrElement = group.Elements("trans-unit").FirstOrDefault(tu => tu.Attribute("id")?.Value == abbrId);
+			if (abbrElement != null)
+			{
+				var abbreviation = XElement.Parse("<Abbreviation/>");
+				ConvertSourceAndTargetToString(abbrElement, abbreviation);
+				listElement.Add(abbreviation);
+			}
+		}
+
+		private static void ConvertNameFromXliff(XElement group, XElement listElement, string baseId)
+		{
+			var nameId = baseId + "_Name";
+			var nameElement = group.Elements("trans-unit").FirstOrDefault(tu => tu.Attribute("id")?.Value == nameId);
+			if (nameElement != null)
+			{
+				var name = XElement.Parse("<Name/>");
+				ConvertSourceAndTargetToString(nameElement, name);
+				listElement.Add(name);
+			}
+		}
+
+		private static void ConvertSourceAndTargetToString(XElement abbrElement, XElement abbreviation)
+		{
+			var source = XElement.Parse("<AUni ws='en'/>");
+			var target = XElement.Parse($"<AUni ws='{"es"}'/>");
+			var xliffSource = abbrElement.Element("source")?.Value;
+			var xliffTarget = abbrElement.Element("target")?.Value;
+			target.Add(xliffTarget != xliffSource ? xliffTarget : string.Empty);
+			source.Add(xliffSource);
+			abbreviation.Add(source);
+			abbreviation.Add(target);
+		}
+
+		#endregion
 	}
 
 	internal sealed class ListInfo : Tuple<string, string, string, string>

@@ -23,8 +23,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				XDocument.Parse(
 					"<Lists><List owner=\"LexDb\" field=\"DomainTypes\" itemClass=\"CmPossibility\"/></Lists>"));
 			AssertThatXmlIn.String(xliffDoc.ToString())
-				.HasSpecifiedNumberOfMatchesForXpath(
-					string.Format("/xliff/file[@original='{0}']", testName), 1);
+				.HasSpecifiedNumberOfMatchesForXpath($"/xliff/file[@original='{testName}']", 1);
 		}
 
 		[Test]
@@ -42,9 +41,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Lists>", owner, field)));
 			var group = owner + "_" + field;
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				string.Format(
-					"/xliff/file/body/group[@id='{0}']/trans-unit[@id='{0}_Name']/source[text()='Academic Domains']",
-					group), 1, true);
+				$"/xliff/file/body/group[@id='{group}']/trans-unit[@id='{group}_Name']/source[text()='Academic Domains']", 1, true);
 		}
 
 		[Test]
@@ -237,6 +234,58 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language first)
 			LocalizeLists.SplitSourceLists("C:\\WorkingFiles\\TestOutput.xml", "C:\\WorkingFiles\\XliffTestOutput");
+		}
+
+		[Test]
+		public void ConvertXliffToLists_ListElementCreated()
+		{
+			var listsElement = XElement.Parse("<Lists/>");
+			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf'>
+					<body>
+						<group id='LangProject_ConfidenceLevels'/>
+					</body></file></xliff>";
+			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List[@owner='LangProject' and @field='ConfidenceLevels']", 1);
+		}
+
+		[Test]
+		public void ConvertXliffToLists_ListNameAbbrevAndDescCreated()
+		{
+			var listsElement = XElement.Parse("<Lists/>");
+			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf' target-language='es-ES'>
+					  <body>
+						<group id='LangProject_GenreList'>
+							<trans-unit id='LangProject_GenreList_Name'>
+							<source>Genres</source>
+							<target state='final'>Géneros</target>
+							</trans-unit>
+							<trans-unit id='LangProject_GenreList_Abbr'>
+							<source>gnrs</source>
+							<target state='needs-translatin'>gnrs</target>
+							</trans-unit>
+							<group id='LangProject_GenreList_Desc'>
+							<trans-unit id='LangProject_GenreList_Desc_0'>
+							<source>DescriptionSource</source>
+							<target state='final'>TLDR</target>
+							</trans-unit>
+							</group>
+						</group>
+					</body></file></xliff>";
+			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
+			// Verify Name Elements and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Name/AUni[@ws='en' and text()='Genres']", 1);
+			// Verify Name Elements and content for Spanish target language
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Name/AUni[@ws='es' and text()='Géneros']", 1);
+			// Verify Abbreviation Elements and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Abbreviation/AUni[@ws='en' and text()='gnrs']", 1);
+			// Verify Abbreviation Elements has no content for Spanish (because Spanish matches English)
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Abbreviation/AUni[@ws='es' and not(text())]", 1);
+			// Verify Description Elements and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Description/AStr[@ws='en']/Run[text()='DescriptionSource']", 1);
+			// Verify Abbreviation Elements has no content for Spanish (because Spanish matches English)
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Description/AStr[@ws='es']/Run[text()='TLDR']", 1);
 		}
 	}
 }
