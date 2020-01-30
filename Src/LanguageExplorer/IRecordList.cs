@@ -54,7 +54,6 @@ namespace LanguageExplorer
 		bool OnFirst { get; }
 		bool OnInsertItemInVector(object argument);
 		void OnItemDataModified(object argument);
-		bool OnJumpToRecord(object argument);
 		bool OnLast { get; }
 		bool OnRefresh(object argument);
 		void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort);

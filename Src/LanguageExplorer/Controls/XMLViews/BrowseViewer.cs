@@ -1253,7 +1253,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Tests don't have _uiWidgetController set.
 				_uiWidgetController?.RemoveUserControlHandlers(this);
-				Subscriber.Unsubscribe("LinkFollowed", LinkFollowed_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.LinkFollowed, LinkFollowed_Handler);
 				if (m_configParamsElement != null && SpecialCache != null && BrowseView != null && RootObjectHvo != 0)
 				{
 					s_selectedCache[new Tuple<XElement, int>(m_configParamsElement, RootObjectHvo)] = new Tuple<Dictionary<int, int>, bool>(SpecialCache.SelectedCache, SpecialCache.DefaultSelected);
@@ -3226,7 +3226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			BrowseView.InitializeFlexComponent(flexComponentParameters);
 			BrowseView.AccessibleName = "BrowseViewer";
 
-			Subscriber.Subscribe("LinkFollowed", LinkFollowed_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.LinkFollowed, LinkFollowed_Handler);
 		}
 
 		#endregion

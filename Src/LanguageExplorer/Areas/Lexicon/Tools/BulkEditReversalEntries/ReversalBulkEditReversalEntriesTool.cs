@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			_cache = majorFlexComponentParameters.LcmCache;
 			_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			_reversalIndexRepository.EnsureReversalIndicesExist(_cache, _propertyTable);
-			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
@@ -267,7 +267,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				var contextMenuItem = (ToolStripMenuItem)sender;
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
-				_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			}
 

@@ -1346,7 +1346,7 @@ namespace LanguageExplorer.Areas
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					IReversalIndex ri;

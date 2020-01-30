@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			if (m_recordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				return; // we're bound to process OnJumpToRecord, so skip any further initialization.
+				return;
 			}
 			// Load any saved settings.
 			LoadSettings();

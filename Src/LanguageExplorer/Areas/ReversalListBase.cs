@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			ChangeOwningObjectIfPossible();
-			Subscriber.Subscribe("ReversalIndexGuid", ReversalIndexGuid_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.ReversalIndexGuid, ReversalIndexGuid_Handler);
 			Subscriber.Subscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, JumpToIndex_Handler);
 		}
 
@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			// Try to create a sorter based on the current Reversal Index's WritingSystem
-			var newGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var newGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (newGuid.Equals(Guid.Empty))
 			{
 				return false;
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			ChangeOwningObject(newGuid);
-			var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
 			{
 				SetReversalIndexGuid(newGuid);
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (m_cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
 			{
-				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, reversalIndexGuid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 		}
 
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public virtual void OnDeleteReversalIndex(object argument)
 		{
-			var oldGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var oldGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (oldGuid.Equals(Guid.Empty))
 			{
 				return;
@@ -291,7 +291,7 @@ namespace LanguageExplorer.Areas
 
 		internal void ChangeOwningObjectIfPossible()
 		{
-			ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
+			ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid));
 		}
 
 		private void ChangeOwningObject(Guid newGuid)
@@ -300,7 +300,7 @@ namespace LanguageExplorer.Areas
 			{
 				// We need to find another reversal index. Any will do.
 				newGuid = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
-				PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true, SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, newGuid.ToString(), true, true, SettingsGroup.LocalSettings);
 			}
 			var ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if (ri == null)
@@ -338,7 +338,7 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe("ReversalIndexGuid", ReversalIndexGuid_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ReversalIndexGuid, ReversalIndexGuid_Handler);
 				Subscriber.Unsubscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, ReversalIndexGuid_Handler);
 			}
 

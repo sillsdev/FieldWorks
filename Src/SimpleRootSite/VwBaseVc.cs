@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var args = new LocalLinkArgs() { Link = url };
 			if (Publisher != null)
 			{
-				Publisher.Publish("HandleLocalHotlink", args);
+				Publisher.Publish(FwUtils.FwUtils.HandleLocalHotlink, args);
 				if (args.LinkHandledLocally)
 				{
 					return;

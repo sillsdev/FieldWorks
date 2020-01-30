@@ -57,10 +57,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// This will also remove any event handlers set up by the active tool,
 			// and any of the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveAreaHandlers();
+			_textAndWordsAreaMenuHelper.Dispose();
 			var activeTool = ActiveTool;
 			ActiveTool = null;
 			activeTool?.Deactivate(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.Dispose();
 
 			_textAndWordsAreaMenuHelper = null;
 		}
@@ -316,7 +316,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.AnalysesMachineName, ActiveWordform(_wordformRepos, _propertyTable));
 				var additionalProps = link.LinkProperties;
-				additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+				additionalProps.Add(new LinkProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, link.ToolName));
 				additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
 				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, link);
 			}
@@ -328,7 +328,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				// will get a puzzling "Target not found" message popping up.  See LT-8717.
 				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.BulkEditWordformsMachineName, Guid.Empty);
 				var additionalProps = link.LinkProperties;
-				additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+				additionalProps.Add(new LinkProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, link.ToolName));
 				additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
 				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, link);
 			}

@@ -307,14 +307,14 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null1()
 		{
-			_sidePane.SelectItem(null, null);
+			_sidePane.SelectItem((Tab)null, null);
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null2()
 		{
-			_sidePane.SelectItem(null, "itemname");
+			_sidePane.SelectItem((Tab)null, "itemname");
 		}
 
 		[Test]

@@ -926,7 +926,7 @@ namespace LanguageExplorer
 				// if our record list is in the state of suspending loading the list, reset it now.
 				if (SuspendLoadListUntilOnChangeFilter)
 				{
-					PropertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", string.Empty, settingsGroup: SettingsGroup.LocalSettings);
+					PropertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, string.Empty, settingsGroup: SettingsGroup.LocalSettings);
 				}
 				if (m_filter == null)
 				{
@@ -1190,7 +1190,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public bool OnJumpToRecord(object argument)
+		private void JumpToRecord(object argument)
 		{
 			try
 			{
@@ -1233,7 +1233,7 @@ namespace LanguageExplorer
 						else
 						{
 							// user wants to give up
-							return true;
+							return;
 						}
 					}
 				}
@@ -1247,11 +1247,10 @@ namespace LanguageExplorer
 						// It may be the wrong record list, so just bail out.
 						//MessageBox.Show("The list target is no longer available. It may have been deleted.",
 						//	"Target not found", MessageBoxButtons.OK);
-						return false;
+						return;
 					}
 				}
 				JumpToIndex(index);
-				return true;    //we handled this.
 			}
 			finally
 			{
@@ -1535,7 +1534,28 @@ namespace LanguageExplorer
 
 		public bool SuppressSaveOnChangeRecord { get; set; }
 
-		public bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
+		public bool SuspendLoadingRecordUntilOnJumpToRecord
+		{
+			get
+			{
+				var jumpToInfo = PropertyTable.GetValue(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty, SettingsGroup.LocalSettings);
+				if (string.IsNullOrEmpty(jumpToInfo))
+				{
+					return false;
+				}
+				var jumpToParams = jumpToInfo.Split(',');
+				return jumpToParams.Length > 0 && IsActiveInGui && InDesiredTool(jumpToParams[0]);
+			}
+			set
+			{
+				Require.That(!value, "This property should only be reset by setting this property to false.");
+				if (SuspendLoadingRecordUntilOnJumpToRecord)
+				{
+					// Reset this property.
+					PropertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty, settingsGroup: SettingsGroup.LocalSettings);
+				}
+			}
+		}
 
 		public int TypeSize => m_typeSize;
 
@@ -1673,6 +1693,12 @@ namespace LanguageExplorer
 		#endregion Internal stuff
 
 		#region Private stuff
+
+		private bool InDesiredTool(string desiredTool)
+		{
+			var toolChoice = PropertyTable.GetValue(AreaServices.ToolChoice, string.Empty);
+			return !string.IsNullOrWhiteSpace(toolChoice) && toolChoice == desiredTool;
+		}
 
 		/// <summary>
 		/// This version of ReloadList assumes that there is a correct current list except that
@@ -1981,11 +2007,13 @@ namespace LanguageExplorer
 				Subscriber.Subscribe(LanguageExplorerConstants.SelectedListBarNode, SelectedListBarNode_Message_Handler);
 			}
 			Subscriber.Subscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
 		}
 
 		private void UnregisterMessageHandlers()
 		{
 			Subscriber.Unsubscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
+			Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
 			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			// Some tests don't have a window or RecordBarControl.
 			var recordBarControl = window?.RecordBarControl;
@@ -2218,25 +2246,17 @@ namespace LanguageExplorer
 
 		private void AboutToReload()
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
-			// To avoid hitting the " For now, we'll not try to be concerned about restoring scroll position
-			// in a context where we're reloading after suppressing a reload.
 			if (!_reloadingDueToMissingObject)
 			{
-				Publisher.Publish("SaveScrollPosition", this);
+				Publisher.Publish("SaveScrollPosition", null);
 			}
 		}
 
 		private void DoneReload()
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
 			if (!_reloadingDueToMissingObject)
 			{
-				Publisher.Publish("RestoreScrollPosition", this);
+				Publisher.Publish("RestoreScrollPosition", null);
 			}
 		}
 
@@ -2417,8 +2437,8 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings);
-				return !string.IsNullOrEmpty(toolNameThatExpectsTheSuspend) && toolNameThatExpectsTheSuspend == PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, string.Empty, SettingsGroup.LocalSettings);
+				return !string.IsNullOrEmpty(toolNameThatExpectsTheSuspend) && InDesiredTool(toolNameThatExpectsTheSuspend);
 			}
 		}
 

@@ -57,62 +57,6 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-#if RANDYTODO
-		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-
-			int specifiedClsid = 0;
-			// There are some special commands with dummy class names (WordPartOfSpeech is one).
-			// I (JohnT) don't know why we did that, but apparently everything else works for those
-			// commands if we just leave specifiedClsid zero (code takes the second branch of the if below,
-			// since CmObject does not inherit from CmPossibility, and depending on the override
-			// usually it isn't displayed, but there may be some override that does.
-			if (m_cache.GetManagedMetaDataCache().ClassExists(className))
-				specifiedClsid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
-
-			var cp = (ICmPossibility) Object;
-			var owningList = cp.OwningList;
-			if (m_cache.ClassIsOrInheritsFrom(specifiedClsid, CmPossibilityTags.kClassId) ||
-				specifiedClsid == LexEntryTypeTags.kClassId)	// these appear in 2 separate lists.
-			{
-				IFwMetaDataCache mdc = m_cache.DomainDataByFlid.MetaDataCache;
-				// make sure our object matches the CmPossibilityList flid name.
-				int owningFlid = owningList.OwningFlid;
-				string owningFieldName = owningFlid == 0 ? "" : mdc.GetFieldName(owningFlid);
-				string owningClassName = owningFlid == 0 ? "" : mdc.GetOwnClsName(owningFlid);
-				string commandListOwnerName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerClass");
-				string commandListFieldName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerField");
-				display.Visible = display.Enabled = (commandListFieldName == owningFieldName && commandListOwnerName == owningClassName);
-			}
-			else
-			{
-				// we should have a specific class name to match on.
-				display.Visible = display.Enabled = ShouldDisplayMenuForClass(specifiedClsid, display);
-			}
-
-			// try to insert the name of list into our display.Text for commands with label="{0}"
-			FormatDisplayTextWithListName(m_cache, owningList, ref display);
-			if (display.Enabled)
-				command.TargetId = GuidForJumping(commandObject);
-			return true;
-		}
-
-		public static string FormatDisplayTextWithListName(LcmCache cache,
-			ICmPossibilityList pssl, ref UIItemDisplayProperties display)
-		{
-			string listName = pssl.Owner != null ? cache.DomainDataByFlid.MetaDataCache.GetFieldName(pssl.OwningFlid) : pssl.Name.BestAnalysisVernacularAlternative.Text;
-			string itemTypeName = GetPossibilityDisplayName(pssl);
-			if (itemTypeName != "*" + listName + "*")
-			{
-				string formattedText = string.Format(display.Text, itemTypeName);
-				display.Text = formattedText;
-			}
-			return display.Text;
-		}
-#endif
-
 		/// <summary>
 		/// Check whether it is OK to add a possibility to the specified item. If not, report the
 		/// problem to the user and return true.

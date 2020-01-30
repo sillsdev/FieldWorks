@@ -44,36 +44,11 @@ namespace LanguageExplorer.LcmUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						posUi = new PartOfSpeechUi(dlg.SelectedPOS);
-						publisher.Publish("JumpToRecord", dlg.SelectedPOS.Hvo);
+						publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedPOS.Hvo);
 						break;
 				}
 			}
 			return posUi;
 		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Override to handle case of improper menu in the reversal cat list tool.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-		{
-			Command command = (Command)commandObject;
-			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-			string toolChoice = PropTable.GetValue<string>(AreaServices.ToolChoice);
-
-			if (tool == AreaServices.PosEditMachineName && toolChoice == AreaServices.ReversalToolReversalIndexPOSMachineName)
-			{
-				display.Visible = display.Enabled = false; // we're already there!
-				return true;
-			}
-			else
-			{
-				return base.OnDisplayJumpToTool(commandObject, ref display);
-			}
-		}
-#endif
 	}
 }

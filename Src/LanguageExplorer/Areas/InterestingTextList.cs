@@ -39,9 +39,6 @@ namespace LanguageExplorer.Areas
 		private HashSet<IStText> m_interestingTests;
 		private List<IStText> m_coreTexts;
 		private List<IStText> m_scriptureTexts;
-#if RANDYTODO
-		// TODO: Pay attention to the comment and behavior of 'RelatedRecordListsIds'.
-#endif
 		/// <summary>
 		/// These record lists need to respond to InterestingTextList changes EVEN when not loaded.
 		/// (LT-13217)

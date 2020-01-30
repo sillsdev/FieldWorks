@@ -89,7 +89,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
 			var revGuid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
-			propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true, true, SettingsGroup.LocalSettings);
+			propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, revGuid.ToString(), true, true, SettingsGroup.LocalSettings);
 		}
 
 #if RANDYTODO

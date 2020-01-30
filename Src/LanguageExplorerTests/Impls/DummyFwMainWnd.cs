@@ -33,7 +33,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		IPropertyTable IPropertyTableProvider.PropertyTable
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 		#endregion
 
@@ -43,7 +43,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		IPublisher IPublisherProvider.Publisher
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 		#endregion
 
@@ -53,7 +53,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		ISubscriber ISubscriberProvider.Subscriber
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 		#endregion
 
@@ -61,7 +61,7 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>Find the IRecordListUpdater object with the given name.</summary>
 		IRecordListUpdater IRecordListOwner.FindRecordListUpdater(string name)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 		#endregion
 
@@ -73,12 +73,13 @@ namespace LanguageExplorerTests.Impls
 		#endregion
 
 		#region Implementation of IFwMainWnd
+
 		/// <summary>
 		/// Gets the active view of the window
 		/// </summary>
 		IRootSite IFwMainWnd.ActiveView
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		/// <summary>
@@ -86,7 +87,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		Control IFwMainWnd.FocusedControl
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		/// <summary>
@@ -94,12 +95,12 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		LcmCache IFwMainWnd.Cache
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		public void ClearInvalidatedStoredData()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -107,7 +108,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		void IFwMainWnd.Initialize(bool windowIsCopy, FwLinkArgs linkArgs)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -116,7 +117,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		Rectangle IFwMainWnd.NormalStateDesktopBounds
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		/// <summary>
@@ -126,7 +127,7 @@ namespace LanguageExplorerTests.Impls
 		/// <param name="sync">synchronization message</param>
 		void IFwMainWnd.PreSynchronize(SyncMsg sync)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -137,7 +138,7 @@ namespace LanguageExplorerTests.Impls
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
 		bool IFwMainWnd.Synchronize(SyncMsg sync)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -148,7 +149,7 @@ namespace LanguageExplorerTests.Impls
 		/// </returns>
 		bool IFwMainWnd.OnFinishedInit()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -156,7 +157,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		void IFwMainWnd.PrepareToRefresh()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -167,7 +168,7 @@ namespace LanguageExplorerTests.Impls
 		/// after everything else is done.</remarks>
 		void IFwMainWnd.FinishRefresh()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -175,7 +176,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		void IFwMainWnd.RefreshAllViews()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -183,7 +184,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		void IFwMainWnd.Close()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -191,7 +192,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		void IFwMainWnd.SaveSettings()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -228,7 +229,7 @@ namespace LanguageExplorerTests.Impls
 
 		public ProgressState CreateSimpleProgressState()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 		#endregion
 

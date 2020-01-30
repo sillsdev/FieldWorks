@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
-			_subscriber.Unsubscribe("ReversalIndexGuid", HandleReversalIndexGuid_Changed);
+			_subscriber.Unsubscribe(LanguageExplorerConstants.ReversalIndexGuid, HandleReversalIndexGuid_Changed);
 
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
-			_subscriber.Subscribe("ReversalIndexGuid", HandleReversalIndexGuid_Changed);
+			_subscriber.Subscribe(LanguageExplorerConstants.ReversalIndexGuid, HandleReversalIndexGuid_Changed);
 			HandleReversalIndexGuid_Changed(null);
 			if (_recordList == null)
 			{
@@ -188,7 +188,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private void HandleReversalIndexGuid_Changed(object obj)
 		{
 			// 'obj' is a string of the guid.
-			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)_cache.ServiceLocator.GetObject(currentGuid);
@@ -330,7 +330,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			{
 				var contextMenuItem = (ToolStripMenuItem)sender;
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
-				_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			}
 

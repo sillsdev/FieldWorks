@@ -512,6 +512,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 			return _itemAreas[tab].Items.Find(item => item.Name == itemName) != null;
 		}
 
+		internal void SelectItem(string areaMachineName, string toolMachineName)
+		{
+			SelectItem(GetTabByName(areaMachineName), toolMachineName);
+		}
+
 		/// <summary>
 		/// Whether this sidepane contains tab.
 		/// </summary>

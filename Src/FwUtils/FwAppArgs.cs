@@ -132,7 +132,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// The only argument was a link so let FwLink parse it for us
 				if (!InitializeFromUrl(rgArgs[0]))
+				{
 					ShowHelp = true; // Badly formed link
+				}
 				return;
 			}
 
@@ -142,7 +144,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				commandLineArgs = ParseCommandLine(rgArgs);
 				if (commandLineArgs.ContainsKey(kHelp))
+				{
 					ProcessArg(kHelp, string.Empty);
+				}
 			}
 			catch (ArgumentException argEx)
 			{

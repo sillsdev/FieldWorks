@@ -66,26 +66,6 @@ namespace LanguageExplorer.LcmUi
 		#endregion
 
 #if RANDYTODO
-		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_targetUi != null)
-				return m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
-			return base.OnDisplayJumpToTool(commandObject, ref display);
-		}
-
-		/// <summary>
-		/// JohnT: Transferred this from FW 6 but don't really understand what it's all about.
-		/// The overridden method is about various "Show X in Y" commands.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public override bool OnJumpToTool(object commandObject)
-		{
-			if (m_targetUi != null)
-				return m_targetUi.OnJumpToTool(commandObject);
-				return base.OnJumpToTool(commandObject);
-		}
-
 		/// <summary>
 		/// Overridden by ReferenceSequenceUi.
 		/// We put these OnDisplayMove... routines in the base class, so that we can make them explicitly not show up

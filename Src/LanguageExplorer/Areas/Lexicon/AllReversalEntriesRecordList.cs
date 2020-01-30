@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void SelectNewItem()
 		{
-			OnJumpToRecord(_newItem.Hvo);
+			JumpToRecord(_newItem.Hvo);
 		}
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var riGuid = Guid.Empty;
 			try
 			{
-				riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+				riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			}
 			catch
 			{

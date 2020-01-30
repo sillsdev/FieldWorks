@@ -210,6 +210,7 @@ namespace LanguageExplorer.Areas
 			{
 				_uiWidgetController.RemoveUserControlHandlers(this);
 				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, CheckJump);
 				m_contextMenu?.Dispose();
 				DisposeTooltip();
 				components?.Dispose();
@@ -766,14 +767,14 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
 		/// </summary>
-		public bool OnCheckJump(object argument)
+		private void CheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget <= 0 || toolChoice != AreaServices.LexiconDictionaryMachineName)
 			{
-				return true;
+				return;
 			}
 			ExclusionReasonCode xrc;
 			// Make sure we explain to the user in case hvoTarget is not visible due to
@@ -782,7 +783,6 @@ namespace LanguageExplorer.Areas
 			{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
-			return true;
 		}
 
 		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
@@ -1105,6 +1105,7 @@ namespace LanguageExplorer.Areas
 
 			InitBase();
 			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.JumpToRecord, CheckJump);
 		}
 
 		#endregion

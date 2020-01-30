@@ -77,7 +77,7 @@ namespace LanguageExplorer.SendReceive
 		{
 			if (!String.IsNullOrEmpty(e.JumpUrl))
 			{
-				publisher.Publish("HandleLocalHotlink", new LocalLinkArgs { Link = e.JumpUrl });
+				publisher.Publish(FwUtils.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl });
 			}
 		}
 

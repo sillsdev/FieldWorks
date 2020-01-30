@@ -2537,29 +2537,37 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				m_printMenu.Enabled = true;
 			}
-
 			g_focusRootSite.Target = this;
 			base.OnGotFocus(e);
 			if (DesignMode || !m_fRootboxMade || RootBox == null)
 			{
 				return;
 			}
-
 			// Enable selection display
 			if (WantInitialSelection)
 			{
 				EnsureDefaultSelection();
 			}
 			Activate(VwSelectionState.vssEnabled);
-
 			EditingHelper.GotFocus();
+			if (Subscriber != null)
+			{
+				// Tests have no subscriber.
+				Subscriber.Subscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
+				Subscriber.Subscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+			}
 		}
 
 		/// <summary />
 		protected override void OnLostFocus(EventArgs e)
 		{
+			if (Subscriber != null)
+			{
+				// Tests have no subscriber.
+				Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
+				Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+			}
 			base.OnLostFocus(e);
-
 			if (m_printMenu != null)
 			{
 				m_printMenu.Enabled = false;
@@ -4959,9 +4967,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Subscriber.Subscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
-			Subscriber.Subscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
-
 			if (!SuppressPrintHandling)
 			{
 				// Get the "Print" menu from the window's "File" menu, and wire up the Print_Click handler and enable the menu.
@@ -4987,6 +4992,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!Focused)
 			{
 				// Not my problem.
+				Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
 				return;
 			}
 			IsFollowLinkMsgPending = true;
@@ -5000,6 +5006,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!Focused)
 			{
 				// Not my problem.
+				Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
 				return;
 			}
 			ReallyHandleWritingSystemHvo_Changed(newValue);

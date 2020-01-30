@@ -574,7 +574,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (recordOwner.Owner is IRnResearchNbk)
 				{
 					// If possible, jump to the newly promoted record.
-					_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("JumpToRecord", record.Hvo);
+					_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, record.Hvo);
 				}
 			}
 

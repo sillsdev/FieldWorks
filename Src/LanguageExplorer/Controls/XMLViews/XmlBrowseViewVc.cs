@@ -1517,6 +1517,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				catch
 				{
 					// REVIEW: Why are we catching all errors?
+					// JohnT: one reason might be that the above will fail if the link is to another project.
+					// Review: would we be better to use the default? That is now smart about
+					// local links, albeit by a rather more awkward route because of dependency problems.
 				}
 			}
 			base.DoHotLinkAction(strData, sda);

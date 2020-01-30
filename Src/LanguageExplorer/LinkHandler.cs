@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -16,34 +17,44 @@ using SIL.LCModel;
 namespace LanguageExplorer
 {
 	/// <summary>
-	/// LinkHandler handles Hyper linking and history
+	/// LinkHandler handles Hyper linking and history.
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
-	internal sealed class LinkHandler : IFlexComponent, IDisposable
+	internal sealed class LinkHandler : IDisposable
 	{
 		// Limit the stacks to 50 elements (LT-729).
 		private const string FollowLink = "FollowLink";
 		const int kmaxDepth = 50;
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
-		private IFwMainWnd _mainWindow;
 		private LcmCache _cache;
 		private LinkedList<FwLinkArgs> _backStack;
 		private LinkedList<FwLinkArgs> _forwardStack;
 		private bool _followingLink;
 		private int _backStackOrig;
-		private FwLinkArgs _linkActive;
+		private FwLinkArgs _activeFwLinkArgs;
 		private bool _usingHistory;
+		private IPropertyTable _propertyTable;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 
 		/// <summary />
-		internal LinkHandler(IFwMainWnd mainWindow, LcmCache cache, GlobalUiWidgetParameterObject globalUiWidgetParameterObject)
+		internal LinkHandler(FlexComponentParameters flexComponentParameters, LcmCache cache, GlobalUiWidgetParameterObject globalUiWidgetParameterObject)
 		{
-			Guard.AgainstNull(mainWindow, nameof(mainWindow));
+			Guard.AgainstNull(flexComponentParameters, nameof(flexComponentParameters));
 			Guard.AgainstNull(cache, nameof(cache));
 			Guard.AgainstNull(globalUiWidgetParameterObject, nameof(globalUiWidgetParameterObject));
 
-			_mainWindow = mainWindow;
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
+
 			_cache = cache;
+			_propertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
+			_subscriber.Subscribe(FollowLink, FollowLink_Handler);
+			_subscriber.Subscribe(FwUtils.HandleLocalHotlink, HandleLocalHotlink_Handler);
 			// CmdHistoryBack and CmdHistoryForward are on the standard tool strip
 			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
 			standardToolBarDictionary.Add(Command.CmdHistoryBack, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryBack_Clicked, ()=> CanCmdHistoryBack));
@@ -77,40 +88,37 @@ namespace LanguageExplorer
 		public FwLinkArgs CurrentContext { get; private set; }
 
 		/// <summary>
-		/// Handle the specified link if it is local.
+		/// Handle the specified link.
 		/// </summary>
-		public bool OnHandleLocalHotlink(object source)
+		private void HandleLocalHotlink_Handler(object source)
 		{
-			var args = source as LocalLinkArgs;
-			if (args == null)
-			{
-				return true; // we can't handle it, but probably no one else can either. Maybe should crash?
-			}
-			var url = args.Link;
+			var localLinkArgs = (LocalLinkArgs)source;
+			var url = localLinkArgs.Link;
 			if (!url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 			{
-				return true; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
+				return; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
 			}
 			try
 			{
-				var fwargs = new FwAppArgs(url);
-				if (SameDatabase(fwargs, _cache))
+				var fwAppArgs = new FwAppArgs(url);
+				if (SameDatabase(fwAppArgs, _cache.ProjectId))
 				{
-					FollowLink_Handler(fwargs);
-					args.LinkHandledLocally = true;
+					FollowLink_Handler(fwAppArgs);
+					localLinkArgs.LinkHandledLocally = true;
 				}
 			}
 			catch (Exception)
 			{
 				// Something went wrong, probably its not a kind of link we understand.
 			}
-			return true;
 		}
 
-		private static bool SameDatabase(FwAppArgs fwargs, LcmCache cache)
+		private static bool SameDatabase(FwAppArgs fwAppArgs, IProjectIdentifier projectIdentifier)
 		{
-			return fwargs.Database == "this$" || string.Equals(fwargs.Database, cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase)
-				|| string.Equals(fwargs.Database, cache.ProjectId.Path, StringComparison.InvariantCultureIgnoreCase) || string.Equals(Path.GetFileName(fwargs.Database), cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase);
+			return fwAppArgs.Database == "this$"
+				   || string.Equals(fwAppArgs.Database, projectIdentifier.Name, StringComparison.InvariantCultureIgnoreCase)
+				   || string.Equals(fwAppArgs.Database, projectIdentifier.Path, StringComparison.InvariantCultureIgnoreCase)
+				   || string.Equals(Path.GetFileName(fwAppArgs.Database), projectIdentifier.Name, StringComparison.InvariantCultureIgnoreCase);
 		}
 
 		/// <summary>
@@ -130,7 +138,7 @@ namespace LanguageExplorer
 			// tools.  This doesn't work in OnFollowLink() because the behavior of following
 			// the link is not synchronous even when SendMessage is used at the first two
 			// levels of handling.
-			if (_followingLink && newHistoryLink.EssentiallyEquals(_linkActive))
+			if (_followingLink && newHistoryLink.EssentiallyEquals(_activeFwLinkArgs))
 			{
 				var howManyAdded = _backStack.Count - _backStackOrig;
 				for (; howManyAdded > 1; --howManyAdded)
@@ -139,17 +147,17 @@ namespace LanguageExplorer
 				}
 				_followingLink = false;
 				_backStackOrig = 0;
-				_linkActive = null;
+				_activeFwLinkArgs = null;
 			}
 			// The forward stack should be cleared by jump operations that are NOT spawned by
 			// a Back or Forward (ie, history) operation.  This is the standard behavior in
 			// browsers, for example (as far as I know).
 			if (_usingHistory)
 			{
-				if (newHistoryLink.EssentiallyEquals(_linkActive))
+				if (newHistoryLink.EssentiallyEquals(_activeFwLinkArgs))
 				{
 					_usingHistory = false;
-					_linkActive = null;
+					_activeFwLinkArgs = null;
 				}
 			}
 			else
@@ -168,8 +176,8 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var args = new FwAppArgs(_cache.ProjectId.Handle, CurrentContext.ToolName, CurrentContext.TargetGuid);
-			ClipboardUtils.SetDataObject(args.ToString(), true);
+			var fwAppArgs = new FwAppArgs(_cache.ProjectId.Handle, CurrentContext.ToolName, CurrentContext.TargetGuid);
+			ClipboardUtils.SetDataObject(fwAppArgs.ToString(), true);
 		}
 
 		private Tuple<bool, bool> CanCmdHistoryBack => new Tuple<bool, bool>(true, _backStack.Any());
@@ -186,7 +194,7 @@ namespace LanguageExplorer
 				Push(_forwardStack, CurrentContext);
 			}
 			_usingHistory = true;
-			_linkActive = Pop(_backStack);
+			_activeFwLinkArgs = Pop(_backStack);
 			FollowActiveLink();
 		}
 
@@ -200,7 +208,7 @@ namespace LanguageExplorer
 				return;
 			}
 			_usingHistory = true;
-			_linkActive = Pop(_forwardStack);
+			_activeFwLinkArgs = Pop(_forwardStack);
 			FollowActiveLink();
 		}
 
@@ -212,148 +220,49 @@ namespace LanguageExplorer
 		{
 			_followingLink = true;
 			_backStackOrig = _backStack.Count;
-			_linkActive = (FwLinkArgs)lnk;
-
+			_activeFwLinkArgs = (FwLinkArgs)lnk;
 			FollowActiveLink();
 		}
 
 		private void FollowActiveLink()
 		{
-#if RANDYTODO
 			try
 			{
-				if (_linkActive.ToolName == "default")
+				if (_activeFwLinkArgs.TargetGuid != Guid.Empty)
 				{
-					// Need some smarts here. The link creator was not sure what tool to use.
-					// The object may also be a child we don't know how to jump to directly.
-					ICmObject target;
-					if (!_cache.ServiceLocator.ObjectRepository.TryGetObject(_linkActive.TargetGuid, out target))
-					{
-						return; // or message?
-					}
-					string cantJumpMessage = null;
-					var realTarget = GetObjectToShowInTool(target);
-					var realTool = string.Empty;
-					var majorObject = realTarget.Owner ?? realTarget;
-					switch (majorObject.ClassID)
-					{
-						case ReversalIndexTags.kClassId:
-							realTool = AreaServices.ReversalEditCompleteMachineName;
-							break;
-						case TextTags.kClassId:
-							realTool = AreaServices.InterlinearEditMachineName;
-							break;
-						case LexEntryTags.kClassId:
-							realTool = AreaServices.LexiconEditMachineName;
-							break;
-						case CmPossibilityListTags.kClassId:
-							// The area listener knows about the possible list tools.
-							// Unfortunately AreaListener is in an assembly we can't reference.
-							// But there may be custom ones, so just listing them all here does not seem to be an option,
-							// and anyway it would be hard to maintain.
-							// Thus we've created this method (on AreaListener) which we call awkwardly through the mediator.
-							var parameters = new object[2];
-							parameters[0] = majorObject;
-							Publisher.Publish("GetToolForList", parameters);
-							realTool = (string)parameters[1];
-							break;
-						case RnResearchNbkTags.kClassId:
-							realTool = AreaServices.NotebookEditToolMachineName;
-							break;
-						case DsConstChartTags.kClassId:
-							realTarget = ((IDsConstChart) majorObject).BasedOnRA;
-							realTool = AreaServices.InterlinearEditMachineName;
-							// Enhance JohnT: do something to make it switch to Discourse tab
-							break;
-						case ScriptureTags.kClassId:
-							cantJumpMessage = LanguageExplorerResources.ksCantJumpToScripture;
-							break;
-						case LexDbTags.kClassId: // other things owned by this??
-						case LangProjectTags.kClassId:
-							cantJumpMessage = LanguageExplorerResources.ksCantJumpToLangProj;
-							break;
-						default:
-							cantJumpMessage = string.Format(LanguageExplorerResources.ksCantJumpToObject, _cache.MetaDataCacheAccessor.GetClassName(majorObject.ClassID));
-							break; // can't jump to it.
-					}
-					if (!string.IsNullOrWhiteSpace(cantJumpMessage))
-					{
-						ShowCantJumpMessage(cantJumpMessage);
-						return;
-					}
-					_linkActive = new FwLinkArgs(realTool, realTarget.Guid);
-					// Todo JohnT: need to do something special here if we c
-				}
-				// It's important to do this AFTER we set the real tool name if it is "default". Otherwise, the code that
-				// handles the jump never realizes we have reached the desired tool (as indicated by the value of
-				// SuspendLoadingRecordUntilOnJumpToRecord) and we stop recording context history and various similar problems.
-				if (_linkActive.TargetGuid != Guid.Empty)
-				{
-					// allow tools to skip loading a record if we're planning to jump to one.
-					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
-					PropertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
+					_propertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_activeFwLinkArgs.ToolName},{_activeFwLinkArgs.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
 				var messages = new List<string>();
 				var newValues = new List<object>();
-				// 1. IF _linkActive.ToolName is in a different area, then the old area and its current tool both need to deactivated.
-				// 2. THEN the new area needs to be activated along with _linkActive.ToolName, in that area.
-				// 3. ELSE the current tool needs to be deactivated and _linkActive.ToolName needs to be activated
-				// 4. Don't do this "SetToolFromName" business at all.
-				// 5. This class really needs to have the IAreaRepository instance to be able to do all of that (de)-activation
-				//		on the area and tool instances.
-				//		I suspect IArea and ITool need a new 'IsActive' bool property to get this done and IArea needs to be able to fetch its active tool.
-				messages.Add("SetToolFromName"); // Only old handler: AreaListener->OnSetToolFromName
-				newValues.Add(_linkActive.ToolName);
+				messages.Add(LanguageExplorerConstants.SetToolFromName);
+				newValues.Add(_activeFwLinkArgs.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
-				if (_linkActive.TargetGuid != Guid.Empty)
+				if (_activeFwLinkArgs.TargetGuid != Guid.Empty)
 				{
-					var cmObject = _cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(_linkActive.TargetGuid);
-					if (cmObject is IReversalIndexEntry && _linkActive.ToolName == AreaServices.ReversalEditCompleteMachineName)
+					var cmObject = _cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(_activeFwLinkArgs.TargetGuid);
+					if (cmObject is IReversalIndexEntry && _activeFwLinkArgs.ToolName == AreaServices.ReversalEditCompleteMachineName)
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
 						// 'guid' can be 'Guid.Empty'.
-						var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+						var guid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
-							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+							_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 						}
 					}
-					messages.Add("JumpToRecord");
+					messages.Add(LanguageExplorerConstants.JumpToRecord);
 					newValues.Add(cmObject.Hvo);
 				}
-				messages.Add("LinkFollowed");
-				newValues.Add(_linkActive);
-				Publisher.Publish(messages, newValues);
+				messages.Add(LanguageExplorerConstants.LinkFollowed);
+				newValues.Add(_activeFwLinkArgs);
+				_publisher.Publish(messages, newValues);
 			}
 			catch(Exception err)
 			{
 				var message = !string.IsNullOrEmpty(err.InnerException?.Message) ? string.Format(LanguageExplorerResources.UnableToFollowLink0, err.InnerException.Message) : LanguageExplorerResources.UnableToFollowLink;
 				MessageBox.Show(message, LanguageExplorerResources.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
-#else
-			MessageBox.Show($"Not yet able to jump to:{Environment.NewLine}{Environment.NewLine}{_linkActive}", "Jump To Tool some day :-(", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#endif
-		}
-
-		private void ShowCantJumpMessage(string msg)
-		{
-			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window) ?? Form.ActiveForm, msg, LanguageExplorerResources.ksCantJumpCaption);
-		}
-
-		/// <summary>
-		/// Get the object we want to point our tool at. This is typically the one that is one level down from
-		/// a CmMajorObject.
-		/// </summary>
-		private static ICmObject GetObjectToShowInTool(ICmObject start)
-		{
-			for (var current = start; ; current = current.Owner)
-			{
-				if (current.Owner == null || current.Owner is ICmMajorObject)
-				{
-					return current;
-				}
 			}
 		}
 
@@ -371,53 +280,6 @@ namespace LanguageExplorer
 			};
 			publisher.Publish(commands, parms);
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			PropertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
-			Subscriber.Subscribe(FollowLink, FollowLink_Handler);
-		}
-
-		#endregion
 
 		#region IDisposable & Co. implementation
 
@@ -486,20 +348,22 @@ namespace LanguageExplorer
 
 			if (disposing)
 			{
-				PropertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
-				Subscriber.Unsubscribe(FollowLink, FollowLink_Handler);
+				_propertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
+				_subscriber.Unsubscribe(FollowLink, FollowLink_Handler);
+				_subscriber.Unsubscribe(FwUtils.HandleLocalHotlink, HandleLocalHotlink_Handler);
 				_backStack?.Clear();
 				_forwardStack?.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			_cache = null;
 			_backStack = null;
 			_forwardStack = null;
 			CurrentContext = null;
-			_linkActive = null;
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
+			_activeFwLinkArgs = null;
+			_propertyTable = null;
+			_publisher = null;
+			_subscriber = null;
 
 			IsDisposed = true;
 		}

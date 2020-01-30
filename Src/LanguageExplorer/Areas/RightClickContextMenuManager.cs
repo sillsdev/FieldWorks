@@ -554,7 +554,7 @@ namespace LanguageExplorer.Areas
 
 			FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, (string)((ToolStripMenuItem)sender).Tag, Guid.Empty);
 			var additionalProps = link.LinkProperties;
-			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new LinkProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "FilterAnthroItems"));
 			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 			LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, link);

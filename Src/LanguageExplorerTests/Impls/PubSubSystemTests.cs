@@ -90,30 +90,6 @@ namespace LanguageExplorerTests.Impls
 		}
 
 		/// <summary>
-		/// This tests the code path of: Multi pub call does not throw on next multi pub call.
-		/// </summary>
-		[Test]
-		public void Multiple_Rentry_Does_Not_Throw()
-		{
-			// Set up.
-			var subscriber = new ReentrantSubscriber_MultipleCalls
-			{
-				One = true,
-				Two = int.MinValue,
-				Publisher = _flexComponentParameters.Publisher
-			};
-			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
-			subscriber.ShouldDoReentrantPublish = true;
-
-			// Run test.
-			Assert.IsTrue(subscriber.One);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
-			Assert.DoesNotThrow(() => Publisher.PublishBothMessages(_flexComponentParameters.Publisher));
-			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
-		}
-
-		/// <summary>
 		/// Ordinary multiple publish method call, but not re-entrant.
 		/// </summary>
 		[Test]

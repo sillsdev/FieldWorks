@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							var firstNewText = import.FirstNewText;
 							if (firstNewText != null)
 							{
-								m_publisher?.Publish("JumpToRecord", firstNewText.Hvo);
+								m_publisher?.Publish(LanguageExplorerConstants.JumpToRecord, firstNewText.Hvo);
 							}
 						}
 						else

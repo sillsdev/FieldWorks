@@ -121,6 +121,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_toolName = toolName;
 			TargetGuid = targetGuid;
 			Tag = tag ?? string.Empty;
+			Validate(this);
 		}
 
 		/// <summary />
@@ -156,9 +157,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 						break;
 				}
 			}
-			if (string.IsNullOrEmpty(m_toolName) || TargetGuid == Guid.Empty || Tag == null)
+			Validate(this);
+		}
+
+		private static void Validate(FwLinkArgs args)
+		{
+			if (string.IsNullOrEmpty(args.m_toolName) || args.m_toolName == "default" || args.TargetGuid == Guid.Empty || args.Tag == null)
 			{
-				throw new ArgumentException($"invalid FwLinkArgs URL string: {url}");
+				throw new ArgumentException($"Invalid FwLinkArgs.");
 			}
 		}
 

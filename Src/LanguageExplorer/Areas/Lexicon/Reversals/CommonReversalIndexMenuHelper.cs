@@ -272,7 +272,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 					recordList?.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 					// Have to jump to a main entry, as RecordList doesn't know anything about subentries.
-					Publisher.Publish("JumpToRecord", newOwner.MainEntry.Hvo);
+					Publisher.Publish(LanguageExplorerConstants.JumpToRecord, newOwner.MainEntry.Hvo);
 				}
 			}
 			return true;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -17,22 +18,17 @@ namespace LanguageExplorer.Impls
 	[Export(typeof(IPublisher))]
 	internal sealed class Publisher : IPublisher, IDisposable
 	{
-		private IdleQueue _idleQueue;
 		[Import]
 		private ISubscriber _subscriber;
 
 		internal Publisher()
 		{
-			_idleQueue = new IdleQueue
-			{
-				IsPaused = true
-			};
 		}
 
 		/// <summary>
 		/// Constructor for tests only!
 		/// </summary>
-		internal Publisher(ISubscriber subscriber) : this()
+		internal Publisher(ISubscriber subscriber)
 		{
 			_subscriber = subscriber;
 		}
@@ -77,38 +73,19 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNullOrEmptyString(message, nameof(message));
 
-			using (var detector = Detect.Reentry(this, "Publish"))
+			HashSet<Action<object>> subscribers;
+			if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
 			{
-				if (detector.DidReenter)
-				{
-					_idleQueue.Add(new IdleQueueTask(IdleQueuePriority.High, DeferredPublish, new DeferredMessage(message, newValue)));
-					_idleQueue.IsPaused = false;
-				}
-				else
-				{
-					_idleQueue.IsPaused = true;
-					HashSet<Action<object>> subscribers;
-					if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
-					{
-						return;
-					}
-					foreach (var subscriberAction in subscribers)
-					{
-						// NB: It is possible that the action's object is disposed,
-						// but we'll not fret about making sure it isn't disposed,
-						// but we will expect the subscribers to be well-behaved and unsubscribe,
-						// when they get disposed.
-						subscriberAction(newValue);
-					}
-				}
+				return;
 			}
-		}
-
-		private bool DeferredPublish(object arg)
-		{
-			var deferredMessage = (DeferredMessage)arg;
-			Publish(deferredMessage.Message, deferredMessage.NewValue);
-			return true;
+			foreach (var subscriberAction in subscribers.ToList())
+			{
+				// NB: It is possible that the action's object is disposed,
+				// but we'll not fret about making sure it isn't disposed,
+				// but we will expect the subscribers to be well-behaved and unsubscribe,
+				// when they get disposed.
+				subscriberAction(newValue);
+			}
 		}
 		#endregion
 
@@ -151,27 +128,12 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				// Dispose managed resources here.
-				_idleQueue?.Dispose();
 			}
-			_idleQueue = null;
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 
 			_isDisposed = true;
 		}
 		#endregion
-
-		private sealed class DeferredMessage
-		{
-			internal string Message { get; }
-			internal object NewValue { get; }
-
-			internal DeferredMessage(string message, object newValue)
-			{
-				Message = message;
-				NewValue = newValue;
-			}
-		}
 	}
 }

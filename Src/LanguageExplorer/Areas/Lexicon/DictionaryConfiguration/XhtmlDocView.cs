@@ -79,6 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
 				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 			_uiWidgetController = null;
@@ -119,6 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					browser.DomMouseScroll += OnMouseWheel;
 				}
 			}
+			Subscriber.Subscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
 		}
 
 		/// <summary>
@@ -222,26 +224,14 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 		}
 
-		/// <summary>
-		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
-		/// </summary>
-		/// <param name="argument">the hvo of the record</param>
-		/// <returns></returns>
-		public bool OnJumpToRecord(object argument)
+		/// <summary />
+		private void JumpToRecord(object argument)
 		{
-#if RANDYTODO
-			// TODO: There is no OnDisplayJumpToRecord method, which would make the menu item not be visible at all, so no need for the area check.
-#endif
 			var hvoTarget = (int)argument;
 			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(AreaServices.ToolChoice) != AreaServices.LexiconDictionaryMachineName)
 			{
-				return false;
+				return;
 			}
-#if RANDYTODO
-			// TODO: Sounds like there may be no place to jump to at all.
-			// TODO: If a jump cannot be performed, why return 'false', since in the Mediator driven world,
-			// TODO: that will keep looking for a colleague who may be try to do the jump.
-#endif
 			ExclusionReasonCode xrc;
 			// Make sure we explain to the user in case hvoTarget is not visible due to
 			// the current Publication layout or Configuration view.
@@ -249,7 +239,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
-			return false;
 		}
 
 		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
@@ -633,7 +622,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, null)))
+			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
 			}
@@ -755,7 +744,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <summary>
 		/// Handle the 'Edit Publications' menu item click (defined in the Lexicon areaConfiguration.xml)
 		/// </summary>
-		public virtual bool OnJumpToTool(object commandObject)
+		public bool OnJumpToTool(object commandObject)
 		{
 #if RANDYTODO
 			var coreCommand = commandObject as Command;

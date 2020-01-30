@@ -75,6 +75,8 @@ namespace LanguageExplorer.Impls
 		private IFlexApp _flexApp;
 		[Import]
 		private MacroMenuHandler _macroMenuHandler;
+		[Import]
+		private IdleQueue _idleQueue;
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		private bool _windowIsCopy;
 		private FwLinkArgs _startupLink;
@@ -882,6 +884,7 @@ namespace LanguageExplorer.Impls
 					_currentArea.ActiveTool = null;
 					_currentTool?.Deactivate(_majorFlexComponentParameters);
 				}
+
 				_currentTool = clickedTool;
 				_currentArea.ActiveTool = clickedTool;
 				var areaName = _currentArea.MachineName;
@@ -897,11 +900,13 @@ namespace LanguageExplorer.Impls
 					_toolsReportedToday.Clear();
 					_lastToolChange = DateTime.Now;
 				}
+
 				if (!_toolsReportedToday.Contains(toolName))
 				{
 					_toolsReportedToday.Add(toolName);
 					UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
 				}
+
 				_currentTool.Activate(_majorFlexComponentParameters);
 			}
 		}
@@ -968,6 +973,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault(LanguageExplorerConstants.RecordListWidthGlobal, 200, true, settingsGroup: SettingsGroup.GlobalSettings);
 			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
 			PropertyTable.SetDefault(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty);
+			PropertyTable.SetDefault(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, string.Empty);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
 			PropertyTable.SetDefault(LanguageExplorerConstants.SliceSplitterBaseDistance, -1);
 			// Common to several tools in various areas, so set them here.
@@ -1053,10 +1059,34 @@ namespace LanguageExplorer.Impls
 		private void RegisterSubscriptions()
 		{
 			Subscriber.Subscribe("MigrateOldConfigurations", MigrateOldConfigurations);
+			Subscriber.Subscribe(LanguageExplorerConstants.SetToolFromName, SetToolFromName);
+		}
+
+		private void SetToolFromName(object newValue)
+		{
+			var toolName = (string)newValue;
+			if (_currentTool.MachineName == toolName)
+			{
+				// 0. IF _currentTool is the same tool, do nothing.
+				return;
+			}
+			IArea targetArea = null;
+			foreach (var area in _areaRepository.AllAreasInOrder.Values)
+			{
+				var targetTool = area.AllToolsInOrder.Values.FirstOrDefault(tool => tool.MachineName == toolName);
+				if (targetTool == null)
+				{
+					continue;
+				}
+				targetArea = area;
+				break;
+			}
+			_sidePane.SelectItem(targetArea.MachineName, toolName);
 		}
 
 		private void MigrateOldConfigurations(object newValue)
 		{
+			Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, PropertyTable);
 		}
 
@@ -1299,15 +1329,13 @@ namespace LanguageExplorer.Impls
 			};
 			var uiWidgetHelper = new UiWidgetController(new MainMenusParameterObject(mainMenus, CacheMenuItems()), new MainToolBarsParameterObject(mainToolBars, CacheToolbarItems()));
 			var globalUiWidgetParameterObject = new GlobalUiWidgetParameterObject();
-			_linkHandler = new LinkHandler(this, Cache, globalUiWidgetParameterObject);
-			_linkHandler.InitializeFlexComponent(flexComponentParameters);
+			_linkHandler = new LinkHandler(flexComponentParameters, Cache, globalUiWidgetParameterObject);
 			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], _parserToolStripMenuItem, uiWidgetHelper.ParserMenuDictionary, globalUiWidgetParameterObject);
 			_dataNavigationManager = new DataNavigationManager(globalUiWidgetParameterObject);
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, uiWidgetHelper, _statusbar, _parserMenuManager, _dataNavigationManager, flexComponentParameters, Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			SetTemporaryProperties();
 			RecordListServices.Setup(_majorFlexComponentParameters);
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			IdleQueue = new IdleQueue();
 			if (_sendReceiveToolStripMenuItem.Enabled)
 			{
 				// No need for it, if FB isn't even installed.
@@ -1609,7 +1637,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the singleton (per window) instance of IdleQueue.
 		/// </summary>
-		public IdleQueue IdleQueue { get; private set; }
+		public IdleQueue IdleQueue => _idleQueue;
 
 		#endregion
 
@@ -1682,7 +1710,7 @@ namespace LanguageExplorer.Impls
 			_publisher = null;
 			_subscriber = null;
 			_areaRepository = null;
-			IdleQueue = null;
+			_idleQueue = null;
 			_majorFlexComponentParameters = null;
 			_writingSystemListHandler = null;
 			_combinedStylesListHandler = null;

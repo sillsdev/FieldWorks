@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 				<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
 			</clerk>
 			*/
-			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			IReversalIndex revIdx = null;
 			if (currentGuid != Guid.Empty)
 			{

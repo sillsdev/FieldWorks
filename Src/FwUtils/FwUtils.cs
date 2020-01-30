@@ -56,6 +56,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string cache = "cache";
 
 		/// <summary />
+		public const string HandleLocalHotlink = "HandleLocalHotlink";
+
+		/// <summary />
 		public const char kStyleNamesDelimiter = '\uFFFD';
 
 		/// <summary>

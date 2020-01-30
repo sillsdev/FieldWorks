@@ -293,17 +293,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private XElement ItemDisplayCondition => m_specElement.Element("elementDisplayCondition");
 
 		/// <summary>
-		/// Receives the broadcast message "JumpToRecord" before RecordList
-		/// (because this is the active Control?), so we can see if we
-		/// need to display a failure message.
-		/// </summary>
-		public bool OnJumpToRecord(object argument)
-		{
-			Publisher.Publish("CheckJump", argument);
-			return false; // I don't want to be seen as handling this!
-		}
-
-		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>

@@ -79,6 +79,11 @@ namespace LanguageExplorer
 		internal const string AllReversalEntries = "AllReversalEntries";
 		internal const string SelectedListBarNode = "SelectedListBarNode";
 		internal const string SelectedTreeBarNode = "SelectedTreeBarNode";
+		internal const string SetToolFromName = "SetToolFromName";
+		internal const string JumpToRecord = "JumpToRecord";
+		internal const string LinkFollowed = "LinkFollowed";
+		internal const string ReversalIndexGuid = "ReversalIndexGuid";
+		internal const string SuspendLoadListUntilOnChangeFilter = "SuspendLoadListUntilOnChangeFilter";
 		#endregion Misc
 	}
 }

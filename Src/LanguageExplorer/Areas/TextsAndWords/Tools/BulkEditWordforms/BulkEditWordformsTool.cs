@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 					dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, null);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
-						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedObject.Hvo);
 					}
 				}
 			}

@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// the application is idle. This queue must be created and disposed on the UI thread. It is thread-safe
 	/// within individual methods and properties, but not across method and property calls.
 	/// </summary>
+	[Export(typeof(IdleQueue))]
 	public class IdleQueue : ICollection<IdleQueueTask>, IApplicationIdleEventHandler, IDisposable
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.

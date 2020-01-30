@@ -272,13 +272,13 @@ namespace LanguageExplorer
 			/// <returns>true iff activation was needed (the requested Reversal Index was not already active)</returns>
 			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, IPropertyTable propertyTable, IRecordList recordList, out string oldReversalGuid)
 			{
-				oldReversalGuid = propertyTable.GetValue<string>("ReversalIndexGuid", null);
+				oldReversalGuid = propertyTable.GetValue<string>(LanguageExplorerConstants.ReversalIndexGuid, null);
 				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)
 				{
 					return false;
 				}
 				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish.
-				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true, true, SettingsGroup.LocalSettings);
+				propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, newReversalGuid, true, true, SettingsGroup.LocalSettings);
 				return true;
 			}
 		}

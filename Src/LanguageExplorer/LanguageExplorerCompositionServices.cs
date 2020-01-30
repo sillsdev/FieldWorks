@@ -72,6 +72,7 @@ using LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics;
 using LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit;
 using LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance;
 using LanguageExplorer.Impls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer
 {
@@ -103,6 +104,7 @@ namespace LanguageExplorer
 				typeof(Publisher),
 				typeof(Subscriber),
 				typeof(PropertyTable),
+				typeof(IdleQueue),
 				typeof(MacroMenuHandler),
 				// Areas & their respective tools.
 				typeof(AreaRepository),
