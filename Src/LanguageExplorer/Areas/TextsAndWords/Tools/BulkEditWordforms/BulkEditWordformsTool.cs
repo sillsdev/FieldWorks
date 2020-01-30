@@ -201,12 +201,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				// <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Word_Analyses);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Word_Analyses);
 				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.AnalysesMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				// <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Wordform_in_Concordance);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Wordform_in_Concordance);
 				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
@@ -263,7 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				if (disposing)
 				{
 					_fileExportMenuHelper.Dispose();
-					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					foreach (var menu in _jumpMenus)
 					{
 						menu.Click -= jumpEventHandler;

@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			      <parameters field="SubPossibilities" className="CmPossibility" />
 			    </command>
 			*/
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_subitem_and_its_subitems, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_subitem_and_its_subitems, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 			// End: <menu id="mnuDataTree_DeletePossibility">
 

@@ -3009,12 +3009,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ICollapsingSplitContainer.cs" />
-    <Compile Include="images\Morphology\ImageHolder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="images\Morphology\MEImages.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="IMajorFlexComponent.cs" />
     <Compile Include="IMajorFlexUiComponent.cs" />
     <Compile Include="ITool.cs">
@@ -3439,14 +3433,6 @@
     <EmbeddedResource Include="HelpTopicPaths.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>HelpTopicPaths.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="images\Morphology\ImageHolder.resx">
-      <DependentUpon>ImageHolder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="images\Morphology\MEImages.resx">
-      <DependentUpon>MEImages.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.resx">
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>

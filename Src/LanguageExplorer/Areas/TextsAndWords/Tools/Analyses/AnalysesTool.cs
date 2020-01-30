@@ -323,7 +323,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdDataTree_Delete_ParserProducedAnalysis" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Candidate, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Candidate, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				contextMenuStrip.Opening += ContextMenuStripOnOpening;
 
@@ -366,7 +366,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdDataTree_Delete_HumanDisapprovedAnalysis" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Disapproved_Analysis, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Disapproved_Analysis, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				contextMenuStrip.Opening += ContextMenuStripOnOpening;
 
@@ -390,7 +390,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item command="CmdShowHumanApprovedAnalysisConc" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowHumanApprovedAnalysisConc_Click, TextAndWordsResources.Assign_Analysis);
 				// <item command="CmdAnalysisJumpToConcordance" />
-				_analysisJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Analysis_in_Concordance);
+				_analysisJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Analysis_in_Concordance);
 				_analysisJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _dataTree };
 				Create_User_Opinion_Menu(contextMenuStrip);
 				// <item command="CmdDataTree_Insert_WordGloss" />
@@ -398,7 +398,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdDataTree_Delete_HumanApprovedAnalysis" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Analysis, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Analysis, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				contextMenuStrip.Opening += ContextMenuStripOnOpening;
 
@@ -488,9 +488,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// <item command="CmdShowWordformConc" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowWordformConc_Click, TextAndWordsResources.Assign_Analysis);
 				// <item command="CmdRespeller" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(TextAndWordsArea.Respeller), TextAndWordsResources.Change_Spelling);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdRespeller), TextAndWordsResources.Change_Spelling);
 				// <item command="CmdDataTree_Delete_MainWordform" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Wordform, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Wordform, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_MainWordform">
 
@@ -530,7 +530,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdRespeller" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(TextAndWordsArea.Respeller), TextAndWordsResources.Change_Spelling);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdRespeller), TextAndWordsResources.Change_Spelling);
 
 				// End: <menu id="mnuDataTree_WordformSpelling">
 
@@ -736,7 +736,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
 				// <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
-				_wordformJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Wordform_in_Concordance);
+				_wordformJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Wordform_in_Concordance);
 				_wordformJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
@@ -789,14 +789,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 				if (disposing)
 				{
+					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					if (_analysisJumpToConcordanceMenu != null)
 					{
-						_analysisJumpToConcordanceMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+						_analysisJumpToConcordanceMenu.Click -= jumpEventHandler;
 						_analysisJumpToConcordanceMenu.Dispose();
 					}
 					if (_wordformJumpToConcordanceMenu != null)
 					{
-						_wordformJumpToConcordanceMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+						_wordformJumpToConcordanceMenu.Click -= jumpEventHandler;
 						_wordformJumpToConcordanceMenu.Dispose();
 					}
 					if (_recordBrowseView?.ContextMenuStrip != null)

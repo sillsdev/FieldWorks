@@ -263,7 +263,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				// <item command="CmdEntryJumpToDefault" />
-				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.ksShowEntryInLexicon);
+				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
 				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.LexiconEditMachineName, _recordList };
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				}
 				if (disposing)
 				{
-					_jumpMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					_jumpMenu.Dispose();
 					_recordBrowseView.ContextMenuStrip.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;

@@ -370,11 +370,11 @@ namespace LanguageExplorer
 
 		#endregion Toolbars
 
-#if RANDYTODO
-		// TODO: Do I really want to go down this path and create them all at once, and just set handlers, visibility and enabled state, as is done for main menus and tool bar buttons?
-#endif
 		#region context menus
 
+		CmdJumpToTool,
+		CmdDataTreeDelete,
+		CmdDeleteSelectedBrowseViewObject,
 		// <menu id="mnuObjectChoices">
 		CmdEntryJumpToDefault,
 		CmdWordformJumpToAnalyses,

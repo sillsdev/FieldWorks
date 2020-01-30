@@ -33,7 +33,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ConcOccurrences = "ConcOccurrences";
 		internal const string InterlinearTexts = "interlinearTexts";
 		internal const string InterlinearTextsRecordList = "InterlinearTextsRecordList";
-		internal const string Respeller = "Respeller";
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
@@ -285,7 +284,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_wordformRepos = _cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 				_area = area;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-				_sharedEventHandlers.Add(Respeller, Respeller_Click);
+				_sharedEventHandlers.Add(Command.CmdRespeller, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Respeller_Click, ()=> UiWidgetServices.CanSeeAndDo));
 
 				SetupUiWidgets();
 			}
@@ -530,7 +529,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				if (disposing)
 				{
-					_sharedEventHandlers.Remove(Respeller);
+					_sharedEventHandlers.Remove(Command.CmdRespeller);
 					_customFieldsMenuHelper.Dispose();
 				}
 				_majorFlexComponentParameters = null;

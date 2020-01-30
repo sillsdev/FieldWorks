@@ -35,25 +35,6 @@ namespace LanguageExplorer.Impls
 		#region Implementation of ISharedEventHandlers
 
 		/// <inheritdoc />
-		public void Add(string key, EventHandler sharedEventHandler)
-		{
-			Guard.AgainstNullOrEmptyString(key, nameof(key));
-			Guard.AgainstNull(sharedEventHandler, nameof(sharedEventHandler));
-
-			Command command;
-			if (TryConvertToCommand(key, out command))
-			{
-				Require.That(!_sharedEventHandlerTuples.ContainsKey(command), $"'{key}' already present.");
-				_sharedEventHandlerTuples.Add(command, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(sharedEventHandler, null));
-			}
-			else
-			{
-				Require.That(!_sharedEventHandlers.ContainsKey(key), $"'{key}' already present.");
-				_sharedEventHandlers.Add(key, sharedEventHandler);
-			}
-		}
-
-		/// <inheritdoc />
 		public void Add(Command key, Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction)
 		{
 			Require.That(!_sharedEventHandlerTuples.ContainsKey(key), $"'{key}' handler and status checker are already present.");
@@ -69,44 +50,11 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <inheritdoc />
-		public void Remove(string key)
-		{
-			Guard.AgainstNullOrEmptyString(key, nameof(key));
-
-			Command command;
-			if (TryConvertToCommand(key, out command))
-			{
-				Require.That(_sharedEventHandlerTuples.ContainsKey(command), $"'{key}' not present.");
-				_sharedEventHandlerTuples.Remove(command);
-			}
-			else
-			{
-				Require.That(_sharedEventHandlers.ContainsKey(key), $"'{key}' not present.");
-				_sharedEventHandlers.Remove(key);
-			}
-		}
-
-		/// <inheritdoc />
 		public void Remove(Command key)
 		{
 			Require.That(_sharedEventHandlerTuples.ContainsKey(key), $"'{key}' handler and status checker are not present.");
 
 			_sharedEventHandlerTuples.Remove(key);
-		}
-
-		/// <inheritdoc />
-		public EventHandler Get(string key)
-		{
-			Guard.AgainstNullOrEmptyString(key, nameof(key));
-
-			Command command;
-			if (TryConvertToCommand(key, out command))
-			{
-				Require.That(_sharedEventHandlerTuples.ContainsKey(command), $"'{key}' not present.");
-				return _sharedEventHandlerTuples[command].Item1;
-			}
-			Require.That(_sharedEventHandlers.ContainsKey(key), $"'{key}' not present.");
-			return _sharedEventHandlers[key];
 		}
 
 		/// <inheritdoc />

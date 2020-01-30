@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Value, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Value, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_ClosedFeature_Value">
 

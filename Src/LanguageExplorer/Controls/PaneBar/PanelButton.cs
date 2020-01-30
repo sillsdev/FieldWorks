@@ -113,9 +113,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			Width += checkBox.Width;
 			if (_image != null)
 			{
-#if RANDYTODO
-				// TODO: Are there any users of this? If so what do they do?
-#endif
 				var p = new PanelExtension
 				{
 					Name = "PanelExtension",

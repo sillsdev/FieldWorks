@@ -508,7 +508,7 @@ namespace LanguageExplorer.Areas
 						wantSeparator = false;
 					}
 					// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdMoveTargetToPreviousInSequence), AreaResources.Move_Left);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToPreviousInSequence), AreaResources.Move_Left);
 					menu.Enabled = enabled;
 				}
 
@@ -524,7 +524,7 @@ namespace LanguageExplorer.Areas
 						ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					}
 					// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdMoveTargetToNextInSequence), AreaResources.Move_Right);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToNextInSequence), AreaResources.Move_Right);
 					menu.Enabled = enabled;
 				}
 			}
@@ -697,7 +697,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			AreaServices.ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, _cache, _flexComponentParameters.Publisher,
-				_recordList.CurrentObject, selectedObject, _sharedEventHandlers.Get(AreaServices.JumpToTool),
+				_recordList.CurrentObject, selectedObject, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool),
 				_currentTool.MachineName, targetToolName, ref wantSeparator, className, menuLabel, separatorInsertLocation);
 		}
 
@@ -741,7 +741,7 @@ namespace LanguageExplorer.Areas
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 				wantSeparator = false;
 			}
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), menuLabel);
 			menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject };
 		}
 
@@ -767,7 +767,7 @@ namespace LanguageExplorer.Areas
 						  <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
 						</command>
 				*/
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Environments_list);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Environments_list);
 				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, _dataTree };
 			}
 

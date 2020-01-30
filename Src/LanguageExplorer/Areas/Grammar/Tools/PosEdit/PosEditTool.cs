@@ -231,7 +231,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdDataTree_Delete_POS_StemName" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Stem_Name, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Stem_Name, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_POS_StemName">
 
@@ -251,7 +251,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdDataTree_Delete_MoStemName_Region" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Set, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Set, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_MoStemName_Region">
 
@@ -346,7 +346,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdDataTree_Delete_POS_InflectionClass" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Inflection_Class, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Inflection_Class, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_POS_InflectionClass">
 
@@ -391,7 +391,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdDataTree_Delete_POS_AffixSlot" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Slot, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Slot, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_POS_AffixSlot">
 
@@ -461,7 +461,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <item command="CmdDataTree_Delete_POS_AffixTemplate" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Template, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Affix_Template, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 				// <item command="CmdDataTree_Copy_POS_AffixTemplate" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Copy_POS_AffixTemplate_Clicked, GrammarResources.Duplicate_Affix_Template);
 

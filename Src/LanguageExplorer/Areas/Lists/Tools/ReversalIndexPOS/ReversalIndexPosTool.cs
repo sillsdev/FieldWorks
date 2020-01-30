@@ -376,7 +376,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 					  <parameters field="SubPossibilities" className="PartOfSpeech" />
 					</command> Delete_this_Category_and_any_Subcategories
 				*/
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_MoveMainReversalPOS">
 
@@ -419,7 +419,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				menu.Enabled = enabled;
 
 				// <item command="CmdDataTree_Delete_ReversalSubPOS" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_this_Category_and_any_Subcategories, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_MoveReversalPOS">
 

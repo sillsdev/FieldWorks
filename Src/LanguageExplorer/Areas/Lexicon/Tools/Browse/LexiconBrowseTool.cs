@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				// <item command="CmdEntryJumpToDefault" />
-				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.ksShowEntryInLexicon);
+				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
 				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.LexiconBrowseMachineName, _recordList };
 
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdEntryJumpToConcordance_Click, AreaResources.Show_Entry_In_Concordance);
@@ -235,7 +235,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				if (disposing)
 				{
 					_sharedLexiconToolsUiWidgetHelper.Dispose();
-					_jumpMenu.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					_jumpMenu.Dispose();
 					_recordBrowseView.ContextMenuStrip.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;

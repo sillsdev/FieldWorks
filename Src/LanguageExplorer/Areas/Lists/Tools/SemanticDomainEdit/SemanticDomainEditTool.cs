@@ -292,7 +292,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 						<parameters field="Questions" className="CmDomainQ" />
 					</command>
 				*/
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_Question, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_Question, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree-Delete-Question">
 

@@ -18,9 +18,6 @@ namespace LanguageExplorer
 		mnuStTextChoices,
 		mnuDataTree_Object,
 		mnuDataTree_MultiStringSlice,
-#if RANDYTODO
-		// TODO: Rename the ones that start with UC letter to LC, after all xml has been dealt with.
-#endif
 		PaneBar_ShowHiddenFields_posEdit,
 		PaneBar_ShowHiddenFields_compoundRuleAdvancedEdit,
 		PaneBar_ShowHiddenFields_phonemeEdit,

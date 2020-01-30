@@ -33,17 +33,10 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal sealed class PartiallySharedForToolsWideMenuHelper : IDisposable
 	{
-		private const string InsertSlash = "InsertSlash";
-		private const string InsertEnvironmentBar = "InsertEnvironmentBar";
-		private const string InsertNaturalClass = "InsertNaturalClass";
-		private const string InsertOptionalItem = "InsertOptionalItem";
-		private const string InsertHashMark = "InsertHashMark";
-		private const string ShowEnvironmentError = "ShowEnvironmentError";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
 		private ISharedEventHandlers _sharedEventHandlers;
-		private readonly HashSet<string> _sharedEventKeyNames = new HashSet<string>();
-		private readonly HashSet<string> _notSharedEventKeyNames = new HashSet<string>();
+		private readonly HashSet<Command> _sharedEventKeyNames = new HashSet<Command>();
 		private readonly HashSet<Command> _eventuallySharedCommands = new HashSet<Command>();
 		private static PartiallySharedForToolsWideMenuHelper s_partiallySharedForToolsWideMenuHelper;
 
@@ -61,33 +54,24 @@ namespace LanguageExplorer.Areas
 			Publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			Subscriber = _majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 
-			_notSharedEventKeyNames.AddRange(new[]
+			_sharedEventKeyNames.AddRange( new[]
 			{
-				InsertSlash,
-				InsertEnvironmentBar,
-				InsertNaturalClass,
-				InsertOptionalItem,
-				InsertHashMark,
-				ShowEnvironmentError
-			});
-			_sharedEventKeyNames.AddRange(new[]
-			{
-				AreaServices.JumpToTool,
-				AreaServices.DataTreeDelete,
-				AreaServices.DeleteSelectedBrowseViewObject
+				Command.CmdJumpToTool,
+				Command.CmdDataTreeDelete,
+				Command.CmdDeleteSelectedBrowseViewObject
 			});
 			foreach (var key in _sharedEventKeyNames)
 			{
 				switch (key)
 				{
-					case AreaServices.JumpToTool:
-						_sharedEventHandlers.Add(key, JumpToTool_Clicked);
+					case Command.CmdJumpToTool:
+						_sharedEventHandlers.Add(key, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(JumpToTool_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						break;
-					case AreaServices.DataTreeDelete:
-						_sharedEventHandlers.Add(key, DataTreeDelete_Clicked);
+					case Command.CmdDataTreeDelete:
+						_sharedEventHandlers.Add(key, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DataTreeDelete_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						break;
-					case AreaServices.DeleteSelectedBrowseViewObject:
-						_sharedEventHandlers.Add(key, DeleteSelectedBrowseViewObject_Clicked);
+					case Command.CmdDeleteSelectedBrowseViewObject:
+						_sharedEventHandlers.Add(key, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(DeleteSelectedBrowseViewObject_Clicked, () => UiWidgetServices.CanSeeAndDo));
 						break;
 				}
 			}
@@ -152,7 +136,6 @@ namespace LanguageExplorer.Areas
 					_sharedEventHandlers.Remove(command);
 				}
 				_eventuallySharedCommands.Clear();
-				_notSharedEventKeyNames.Clear();
 			}
 			_majorFlexComponentParameters = null;
 			_recordList = null;

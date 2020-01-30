@@ -178,10 +178,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				// <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
-				_jumpMenu1 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Category_Edit);
+				_jumpMenu1 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Category_Edit);
 				_jumpMenu1.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.PosEditMachineName, _recordList };
 				// <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
-				_jumpMenu2 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Category_in_Concordance);
+				_jumpMenu2 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Category_in_Concordance);
 				_jumpMenu2.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
@@ -228,8 +228,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 				if (disposing)
 				{
-					_jumpMenu1.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
-					_jumpMenu2.Click -= _sharedEventHandlers.Get(AreaServices.JumpToTool);
+					_jumpMenu1.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
+					_jumpMenu2.Click -= _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					_jumpMenu1.Dispose();
 					_jumpMenu2.Dispose();
 					_recordBrowseView.ContextMenuStrip.Dispose();

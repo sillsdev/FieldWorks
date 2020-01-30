@@ -1681,43 +1681,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-#if RANDYTODO //Old Mediator stuff
-		public bool OnRestoreDefaultLayouts(object commandObject)
-		{
-			Form formActive = ActiveForm;
-			IFwMainWnd wndActive = formActive as IFwMainWnd;
-			if (wndActive != null)
-			{
-				bool fRestore;
-				using (RestoreDefaultsDlg dlg = new RestoreDefaultsDlg(this))
-				{
-					fRestore = (dlg.ShowDialog(formActive) == DialogResult.Yes);
-				}
-				if (fRestore)
-				{
-					InitializePartInventories(null, false);
-					ReplaceMainWindow(wndActive);
-				}
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Display a file given a path relative to the FieldWorks/Helps directory.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnHelpHelpsFile(object commandObject)
-		{
-			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
-			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName, Path.DirectorySeparatorChar);
-			OpenDocument(path, (e) => { MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotShowX, path), LexTextStrings.ksError); });
-			return true;
-		}
-#endif
-
 		/// <summary>
 		/// Helper class that contains queued SyncMsgs and a reference count for
 		/// Suppress/ResumeSynchronize.

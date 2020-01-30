@@ -917,26 +917,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// If the text for pasting is too long, truncate it and warn the user.
-		/// </summary>
-		private static void OnPasteFixTssEvent(EditingHelper sender, FwPasteFixTssEventArgs e)
-		{
-			if (!sender.Editable)
-			{
-				return;
-			}
-			var tsi = e.TextSelInfo;
-			if (tsi == null)
-			{
-				return;
-			}
-			var flid = tsi.TagAnchor;
-#if RANDYTODO
-	// TODO: I don't see anything in the method that does the truncating or warning.
-#endif
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -1620,19 +1600,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			RootObjectHvo = _hvoRoot;
 			m_bv.SpecialCache.AddNotification(this);
-			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-											 // Filter bar uses info from our VC and can't fininish init until we make it.
+			// Don't try to draw until we get OnSize and do layout.
+			m_dxdLayoutWidth = kForceLayout;
+			// Filter bar uses info from our VC and can't finish init until we make it.
 			m_bv.FilterBar?.MakeItems();
-			// Simulate a column drag to get the columns resized.
-			// No good, we can't do this until we've had one layout call.
-			//m_bv.ColumnDragged();
-			//TODO:
-			//ptmw->RegisterRootBox(qrootb);
-			if (RootSiteEditingHelper != null)
-			{
-				RootSiteEditingHelper.PasteFixTssEvent -= OnPasteFixTssEvent;
-				RootSiteEditingHelper.PasteFixTssEvent += OnPasteFixTssEvent;
-			}
 		}
 
 		/// <summary>

@@ -2478,7 +2478,7 @@ namespace LanguageExplorer.Impls
 
 		private void Edit_Select_All(object sender, EventArgs e)
 		{
-#if RANDYTODO
+#if JASONTODO
 /*
 	Jason Naylor's expanded comment on potential issues.
 	Things to keep in mind:

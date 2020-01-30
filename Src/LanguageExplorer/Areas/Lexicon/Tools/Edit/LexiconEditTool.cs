@@ -305,8 +305,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
 
 				// Both used by RightClickContextMenuManager
-				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
-				_sharedEventHandlers.Add(AreaServices.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
+				_sharedEventHandlers.Add(Command.CmdMoveTargetToPreviousInSequence, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveReferencedTargetDownInSequence_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				_sharedEventHandlers.Add(Command.CmdMoveTargetToNextInSequence, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveReferencedTargetUpInSequence_Clicked, () => UiWidgetServices.CanSeeAndDo));
 
 				// Was: LexiconEditToolViewMenuManager
 				// Various tool level shared handlers for within the Lexicon area.
@@ -1013,7 +1013,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-				contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+				contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Entry_In_Concordance);
 				contextMenuItem.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				return retVal;
@@ -1360,7 +1360,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
 				// <command id="CmdDataTree_Delete_ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Extended_Note, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Extended_Note, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -1409,7 +1409,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExampleInNote_Clicked, LexiconResources.Insert_Example_in_Note);
 
 				// <command id="CmdDataTree_Delete_ExampleInNote" label="Delete Example from Note" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example_from_Note, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example_from_Note, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -1465,7 +1465,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdDataTree_Delete_Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Picture, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Picture, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_Picture">
 
@@ -1541,7 +1541,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Translation_Clicked, LexiconResources.Insert_Translation);
 
 				// <command id="CmdDataTree_Delete_Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Example, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -1602,7 +1602,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Sense_in_Concordance);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Sense_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				// <item label="-" translate="do not translate"/>
@@ -1640,7 +1640,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu.Enabled = slice.CanSplitNow;
 
 				// <command id="CmdDataTree_Delete_Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.DeleteSenseAndSubsenses, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.DeleteSenseAndSubsenses, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_Sense">
 
@@ -1752,7 +1752,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/> // NB: Overrides command's label here.
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				if (hasAllomorphs)
@@ -1917,10 +1917,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				// <item command="CmdEntryJumpToConcordance"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Entry_In_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 				// <item command="CmdLexemeFormJumpToConcordance"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Lexeme_Form_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 				// <item command="CmdDataTree_Swap_LexemeForm"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
@@ -2048,7 +2048,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdDataTree_Delete_Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// <command id="CmdDataTree_Swap_Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
@@ -2064,7 +2064,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" />
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				// End: <menu id="mnuDataTree_AffixProcess">
@@ -2108,11 +2108,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.ksShowEntryInLexicon);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
 				menu.Tag = new List<object> { _publisher, AreaServices.LexiconEditMachineName, _recordList };
 
 				// <item command="CmdEntryJumpToConcordance"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Entry_In_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _recordList };
 
 				if (!slice.IsGhostSlice)
@@ -2124,7 +2124,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 
 				// <command id="CmdDataTree_Delete_Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_VariantForm">
 
@@ -2182,7 +2182,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu.Enabled = slice.CanMergeNow;
 
 				// <command id="CmdDataTree_Delete_AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// End: <menu id="mnuDataTree_AlternateForm">
 
@@ -2221,7 +2221,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu.Enabled = slice.CanMergeNow;
 
 				// <command id="CmdDataTree_Delete_Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(AreaServices.DataTreeDelete));
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 				// <command id="CmdDataTree_Swap_Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
@@ -2237,7 +2237,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" />
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), LexiconResources.Show_Allomorph_in_Concordance);
 				menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, _dataTree };
 
 				// End: <menu id="mnuDataTree_Allomorph">
@@ -2391,8 +2391,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					_sharedLexiconToolsUiWidgetHelper.Dispose();
 					_partiallySharedForToolsWideMenuHelper.Dispose();
 					_rightClickContextMenuManager.Dispose();
-					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToPreviousInSequence);
-					_sharedEventHandlers.Remove(AreaServices.CmdMoveTargetToNextInSequence);
+					_sharedEventHandlers.Remove(Command.CmdMoveTargetToPreviousInSequence);
+					_sharedEventHandlers.Remove(Command.CmdMoveTargetToNextInSequence);
 					_show_DictionaryPubPreviewContextMenu?.Dispose();
 					_recordBrowseView.ContextMenuStrip?.Dispose();
 					_recordBrowseView.ContextMenuStrip = null;

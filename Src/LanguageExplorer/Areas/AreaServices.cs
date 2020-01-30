@@ -188,12 +188,6 @@ namespace LanguageExplorer.Areas
 				internal const string ReversalToolReversalIndexPOSUiName = "Reversal Index Categories";
 		#endregion Lists area
 
-		#region commands
-		internal const string JumpToTool = "JumpToTool";
-		internal const string DataTreeDelete = "DataTreeDelete";
-		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
-		#endregion commands
-
 		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
 		internal const int MoveUpIndex = 12;
 		internal const int MoveRightIndex = 13;
@@ -212,8 +206,6 @@ namespace LanguageExplorer.Areas
 		internal const string BaseUowMessage = "baseUowMessage";
 		internal const string LeftPanelMenuId = "left";
 		internal const string RightPanelMenuId = "right";
-		internal const string CmdMoveTargetToPreviousInSequence = "MoveTargetDownInSequence_Clicked";
-		internal const string CmdMoveTargetToNextInSequence = "MoveTargetUpInSequence_Clicked";
 		internal const string MoveUp = "MoveUp";
 		internal const string MoveDown = "MoveDown";
 		internal const string Promote = "Promote";

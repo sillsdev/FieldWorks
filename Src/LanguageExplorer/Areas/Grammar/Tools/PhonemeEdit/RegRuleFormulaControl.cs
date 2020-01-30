@@ -149,14 +149,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			if (IsNCContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Natural_Classes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Natural_Classes_list);
 				menu.Tag = new List<object> { Publisher, AreaServices.NaturalClassEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 
 			if (IsPhonemeContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Phonemes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Phonemes_list);
 				menu.Tag = new List<object> { Publisher, AreaServices.PhonemeEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 

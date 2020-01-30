@@ -321,7 +321,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				var publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
-				var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+				var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 				// Show Entry in Lexicon: AreaResources.ksShowEntryInLexicon
 				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.ksShowEntryInLexicon);
@@ -375,7 +375,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				if (disposing)
 				{
 					_sharedLexiconToolsUiWidgetHelper.Dispose();
-					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.JumpToTool);
+					var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 					foreach (var menu in _jumpMenus)
 					{
 						menu.Click -= jumpEventHandler;
