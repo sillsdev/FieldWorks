@@ -43,15 +43,15 @@ namespace LanguageExplorer.Areas
 			internal const string LexiconBrowseMachineName = "lexiconBrowse";
 				internal const string LexiconBrowseUiName = "Browse";
 			internal const string LexiconDictionaryMachineName = "lexiconDictionary";
-				internal const string LexiconDictionaryUiName = "BUGGY: Dictionary";
+				internal const string LexiconDictionaryUiName = "HANGS (XhtmlDocView): Dictionary";
 			internal const string RapidDataEntryMachineName = "rapidDataEntry";
 				internal const string RapidDataEntryUiName = "Collect Words";
 			internal const string LexiconClassifiedDictionaryMachineName = "lexiconClassifiedDictionary";
 				internal const string LexiconClassifiedDictionaryUiName = "Classified Dictionary";
 			internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
-				internal const string BulkEditEntriesOrSensesUiName = "CRASHES: Bulk Edit Entries";
+				internal const string BulkEditEntriesOrSensesUiName = "CRASHES (5002 vs 5035): Bulk Edit Entries";
 			internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
-				internal const string ReversalEditCompleteUiName = "Reversal Indexes";
+				internal const string ReversalEditCompleteUiName = "HANGS (XhtmlDocView): Reversal Indexes";
 			internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";
 				internal const string ReversalBulkEditReversalEntriesUiName = "Bulk Edit Reversal Entries";
 		#endregion Lexicon area
@@ -620,6 +620,45 @@ namespace LanguageExplorer.Areas
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, eventHandler, menuLabel);
 				menu.Tag = new List<object> { publisher, targetToolName, selectedObject };
 			}
+		}
+
+		internal static void MoveUpObjectInOwningSequence(LcmCache cache, Slice slice)
+		{
+			var owningObject = slice.MyCmObject.Owner;
+			var owningFlid = slice.MyCmObject.OwningFlid;
+			var indexInOwningProperty = cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, slice.MyCmObject.Hvo);
+			if (indexInOwningProperty > 0)
+			{
+				// The slice might be invalidated by the MoveOwningSequence, so we get its
+				// values first.  See LT-6670.
+				// We found it in the sequence, and it isn't already the first.
+				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, cache.ActionHandlerAccessor,
+					() => cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, (int)owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty - 1));
+			}
+		}
+
+		internal static void MoveDownObjectInOwningSequence(LcmCache cache, Slice slice)
+		{
+			var owningObject = slice.MyCmObject.Owner;
+			var owningFlid = slice.MyCmObject.OwningFlid;
+			var count = cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
+			var indexInOwningProperty = cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, slice.MyCmObject.Hvo);
+			if (indexInOwningProperty >= 0 && indexInOwningProperty + 1 < count)
+			{
+				// The slice might be invalidated by the MoveOwningSequence, so we get its
+				// values first.  See LT-6670.
+				// We found it in the sequence, and it isn't already the last.
+				// Quoting from VwOleDbDa.cpp, "Insert the selected records before the
+				// DstStart object".  This means we need + 2 instead of + 1 for the
+				// new location.
+				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, cache.ActionHandlerAccessor,
+					() => cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty + 2));
+			}
+		}
+
+		internal static string GetMergeMenuText(bool enabled, string baseText)
+		{
+			return enabled ? baseText : $"{baseText} {StringTable.Table.GetString("(cannot merge this)")}";
 		}
 	}
 }

@@ -366,7 +366,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				  <item command="CmdDataTree_Merge_MergeReversalPOS" /> // Shared locally
 					<command id="CmdDataTree_Merge_MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS" />
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, AreaServices.GetMergeMenuText(enabled, ListResources.Merge_Category_into));
 				menu.Enabled = enabled;
 				menu.Tag = currentPartOfSpeech;
 
@@ -415,7 +415,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <item command="CmdDataTree_Merge_MergeReversalPOS" />
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, AreaServices.GetMergeMenuText(enabled, ListResources.Merge_Category_into));
 				menu.Enabled = enabled;
 
 				// <item command="CmdDataTree_Delete_ReversalSubPOS" />

@@ -371,14 +371,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void DataTreeMerge_Clicked(object sender, EventArgs e)
 			{
-				var currentSlice = _dataTree.CurrentSlice;
-				currentSlice.HandleMergeCommand(true);
+				_dataTree.CurrentSlice.HandleMergeCommand(true);
 			}
 
 			private void DataTreeSplit_Clicked(object sender, EventArgs e)
 			{
-				var currentSlice = _dataTree.CurrentSlice;
-				currentSlice.HandleSplitCommand();
+				_dataTree.CurrentSlice.HandleSplitCommand();
 			}
 
 			private void Insert_Sense_Clicked(object sender, EventArgs e)
@@ -1071,38 +1069,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void MoveUpObjectInOwningSequence_Clicked(object sender, EventArgs e)
 			{
-				var slice = _dataTree.CurrentSlice;
-				var owningObject = slice.MyCmObject.Owner;
-				var owningFlid = slice.MyCmObject.OwningFlid;
-				var indexInOwningProperty = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, slice.MyCmObject.Hvo);
-				if (indexInOwningProperty > 0)
-				{
-					// The slice might be invalidated by the MoveOwningSequence, so we get its
-					// values first.  See LT-6670.
-					// We found it in the sequence, and it isn't already the first.
-					UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, _cache.ActionHandlerAccessor,
-						() => _cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, (int)owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty - 1));
-				}
+				AreaServices.MoveUpObjectInOwningSequence(_cache, _dataTree.CurrentSlice);
 			}
 
 			private void MoveDownObjectInOwningSequence_Clicked(object sender, EventArgs e)
 			{
-				var slice = _dataTree.CurrentSlice;
-				var owningObject = slice.MyCmObject.Owner;
-				var owningFlid = slice.MyCmObject.OwningFlid;
-				var count = _cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
-				var indexInOwningProperty = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, slice.MyCmObject.Hvo);
-				if (indexInOwningProperty >= 0 && indexInOwningProperty + 1 < count)
-				{
-					// The slice might be invalidated by the MoveOwningSequence, so we get its
-					// values first.  See LT-6670.
-					// We found it in the sequence, and it isn't already the last.
-					// Quoting from VwOleDbDa.cpp, "Insert the selected records before the
-					// DstStart object".  This means we need + 2 instead of + 1 for the
-					// new location.
-					UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, _cache.ActionHandlerAccessor,
-						() => _cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty + 2));
-				}
+				AreaServices.MoveDownObjectInOwningSequence(_cache, _dataTree.CurrentSlice);
 			}
 
 			#region hotlinks
@@ -1235,7 +1207,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					Name = ContextMenuName.mnuDataTree_CmMedia.ToString()
 				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Translation, DeleteMediaFile_Clicked);
@@ -1632,8 +1604,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdDataTree_Merge_Sense" label="Merge Sense into..." message="DataTreeMerge">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Sense_into);
-				menu.Enabled = slice.CanMergeNow;
+				var enabled = slice.CanMergeNow;
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, AreaServices.GetMergeMenuText(enabled, LexiconResources.Merge_Sense_into));
+				menu.Enabled = enabled;
 
 				// <command id="CmdDataTree_Split_Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeSplit_Clicked, LexiconResources.Move_Sense_to_a_New_Entry);
@@ -2178,8 +2151,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdDataTree_Merge_AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_AlternateForm_into);
-				menu.Enabled = slice.CanMergeNow;
+				var enabled = slice.CanMergeNow;
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, AreaServices.GetMergeMenuText(enabled, LexiconResources.Merge_AlternateForm_into));
+				menu.Enabled = enabled;
 
 				// <command id="CmdDataTree_Delete_AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
@@ -2217,8 +2191,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 				// <command id="CmdDataTree_Merge_Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Allomorph_into);
-				menu.Enabled = slice.CanMergeNow;
+				var enabled = slice.CanMergeNow;
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, AreaServices.GetMergeMenuText(enabled, LexiconResources.Merge_Allomorph_into));
+				menu.Enabled = enabled;
 
 				// <command id="CmdDataTree_Delete_Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));

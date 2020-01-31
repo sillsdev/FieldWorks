@@ -1955,6 +1955,7 @@
     <Content Include="Resources\MergeAllomorphListParameters.xml" />
     <Content Include="Resources\MergeSenseListParameters.xml" />
     <Content Include="Resources\MergeWordGlossListParameters.xml" />
+    <Content Include="Resources\ReversalEntryMatchListParameters.xml" />
     <Content Include="Resources\SrcSentencesList.xml" />
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
     <None Include="Resources\SimpleWordListParameter.xml" />

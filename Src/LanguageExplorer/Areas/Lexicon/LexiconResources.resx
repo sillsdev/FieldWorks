@@ -617,4 +617,25 @@
   <data name="Classified_Dictionary" xml:space="preserve">
     <value>Classified Dictionary...</value>
   </data>
+  <data name="ReversalEntryMatchListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ReversalEntryMatchListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Delete_this_Entry_and_any_Subentries" xml:space="preserve">
+    <value>Delete this Entry and any Subentries</value>
+  </data>
+  <data name="Insert_Reversal_Subentry" xml:space="preserve">
+    <value>Insert Reversal Subentry</value>
+  </data>
+  <data name="Merge_Entry_into" xml:space="preserve">
+    <value>Merge Entry into...</value>
+  </data>
+  <data name="Move_Reversal_Entry" xml:space="preserve">
+    <value>Move Entry...</value>
+  </data>
+  <data name="Move_Subentry_Down" xml:space="preserve">
+    <value>Move Subentry Down</value>
+  </data>
+  <data name="Move_Subentry_Up" xml:space="preserve">
+    <value>Move Subentry Up</value>
+  </data>
 </root>

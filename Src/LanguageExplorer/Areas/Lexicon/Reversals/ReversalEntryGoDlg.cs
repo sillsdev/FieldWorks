@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,52 +43,10 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		/// <summary />
 		protected override void InitializeMatchingObjects()
 		{
-#if RANDYTODO
-			// TODO: Make a resource from this xml (discarding junk from it) and feed it where needed.
-/*
-			<guicontrol id="matchingReversalEntries">
-				<parameters id="reventryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
-					<columns>
-						<column label="Form" sortmethod="FullSortKey" ws="$ws=reversal" editable="false" width="96000">
-							<span>
-								<properties>
-									<editable value="false"/>
-								</properties>
-								<string field="ReversalForm" ws="reversal"/>
-							</span>
-						</column>
-						<column label="Category" width="96000">
-							<span>
-								<properties>
-									<editable value="false"/>
-								</properties>
-								<obj field="PartOfSpeech" layout="empty">
-									<span>
-										<properties>
-											<editable value="false"/>
-										</properties>
-										<string field="Name" ws="best analysis"/>
-									</span>
-								</obj>
-							</span>
-						</column>
-					</columns>
-				</parameters>
-			</guicontrol>
-*/
-#endif
-#if RANDYTODO
-			// TODO: Nobody will be home.
-#endif
-			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
-
-			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, "ReversalEntrySearchEngine-" + ReversalIndex.Hvo,
-				() => new ReversalEntrySearchEngine(m_cache, ReversalIndex));
+			var paramsElement = XDocument.Parse(LexiconResources.ReversalEntryMatchListParameters).Root;
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, $"ReversalEntrySearchEngine-{ReversalIndex.Hvo}", () => new ReversalEntrySearchEngine(m_cache, ReversalIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
-
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
-
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), paramsElement, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)

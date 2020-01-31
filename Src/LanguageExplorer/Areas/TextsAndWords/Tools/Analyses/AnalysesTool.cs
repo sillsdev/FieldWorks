@@ -557,7 +557,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdDataTree_Merge_WordGloss" />
 				var enabled = slice.CanMergeNow;
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_WordGloss_Click, enabled ? TextAndWordsResources.Merge_Gloss : $"{TextAndWordsResources.Merge_Gloss} {StringTable.Table.GetString("(cannot merge this)")}");
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_WordGloss_Click, AreaServices.GetMergeMenuText(enabled, TextAndWordsResources.Merge_Gloss));
 				menu.Enabled = enabled;
 				// <item command="CmdDataTree_Delete_WordGloss" />
 				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, TextAndWordsResources.Delete_Gloss, Delete_WordGloss_Clicked);

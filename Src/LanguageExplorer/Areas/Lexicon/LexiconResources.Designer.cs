@@ -288,6 +288,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete this Entry and any Subentries.
+        /// </summary>
+        internal static string Delete_this_Entry_and_any_Subentries {
+            get {
+                return ResourceManager.GetString("Delete_this_Entry_and_any_Subentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Etymology.
         /// </summary>
         internal static string Delete_this_Etymology {
@@ -630,6 +639,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Pronunciation_Tooltip {
             get {
                 return ResourceManager.GetString("Insert_Pronunciation_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Reversal Subentry.
+        /// </summary>
+        internal static string Insert_Reversal_Subentry {
+            get {
+                return ResourceManager.GetString("Insert_Reversal_Subentry", resourceCulture);
             }
         }
         
@@ -1131,6 +1149,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Entry into....
+        /// </summary>
+        internal static string Merge_Entry_into {
+            get {
+                return ResourceManager.GetString("Merge_Entry_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge Sense into....
         /// </summary>
         internal static string Merge_Sense_into {
@@ -1275,6 +1302,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Entry....
+        /// </summary>
+        internal static string Move_Reversal_Entry {
+            get {
+                return ResourceManager.GetString("Move_Reversal_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Sense Down.
         /// </summary>
         internal static string Move_Sense_Down {
@@ -1298,6 +1334,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Sense_Up {
             get {
                 return ResourceManager.GetString("Move_Sense_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Subentry Down.
+        /// </summary>
+        internal static string Move_Subentry_Down {
+            get {
+                return ResourceManager.GetString("Move_Subentry_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Subentry Up.
+        /// </summary>
+        internal static string Move_Subentry_Up {
+            get {
+                return ResourceManager.GetString("Move_Subentry_Up", resourceCulture);
             }
         }
         
@@ -1431,6 +1485,23 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ReversalEntry {
             get {
                 return ResourceManager.GetString("ReversalEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;ReversalEntryMatchList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; editable=&quot;false&quot; disableConfigButton=&quot;true&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Form&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=reversal&quot; editable=&quot;false&quot; width=&quot;96000&quot;&gt;
+        ///      &lt;span&gt;
+        ///        &lt;properties&gt;
+        ///          &lt;editable value=&quot;false&quot;/&gt;
+        ///        &lt;/properties&gt;
+        ///        &lt;str [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReversalEntryMatchListParameters {
+            get {
+                return ResourceManager.GetString("ReversalEntryMatchListParameters", resourceCulture);
             }
         }
         
