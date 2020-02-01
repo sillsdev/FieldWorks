@@ -458,7 +458,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = "ReversalIndexPaneMenu"
+					Name = "ReversalIndexPaneMenu_left"
 				};
 
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
@@ -511,16 +511,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				Require.That(panelMenuId == AreaServices.RightPanelMenuId, $"I don't know how to create a context menu with an ID of '{panelMenuId}', as I can only create one with an id of '{AreaServices.RightPanelMenuId}'.");
 
 				var currentPublication = _propertyTable.GetValue<string>(LanguageExplorerConstants.SelectedPublication);
-				var contextMenuStrip = new ContextMenuStrip();
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = "ReversalIndexPaneMenu_right"
+				};
 
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 				// <item command="CmdShowAllPublications" />
 				var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
 				currentToolStripMenuItem.Tag = "All Entries";
-				currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
-				var pubName = DocView.GetCurrentPublication();
-				currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
+				currentToolStripMenuItem.Checked = LanguageExplorerResources.AllEntriesPublication == DocView.GetCurrentPublication();
 
 				// <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
 				List<string> inConfig;
@@ -530,7 +531,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
 					currentToolStripMenuItem.Tag = pub;
-					currentToolStripMenuItem.Checked = (currentPublication == pub);
+					currentToolStripMenuItem.Checked = currentPublication == pub;
 				}
 				if (notInConfig.Any())
 				{
@@ -539,7 +540,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					{
 						currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
 						currentToolStripMenuItem.Tag = pub;
-						currentToolStripMenuItem.Checked = (currentPublication == pub);
+						currentToolStripMenuItem.Checked = currentPublication == pub;
 					}
 				}
 

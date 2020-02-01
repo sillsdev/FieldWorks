@@ -54,12 +54,7 @@ namespace LanguageExplorer.TestUtilities
 
 		public static void DisposeTrash(FlexComponentParameters flexComponentParameters)
 		{
-			if (flexComponentParameters == null)
-			{
-				return;
-			}
-			flexComponentParameters.PropertyTable.Dispose();
-			((IDisposable)flexComponentParameters.Publisher).Dispose();
+			flexComponentParameters?.PropertyTable.Dispose();
 		}
 	}
 }

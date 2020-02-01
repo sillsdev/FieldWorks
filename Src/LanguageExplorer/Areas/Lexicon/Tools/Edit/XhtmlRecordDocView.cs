@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
-			XhtmlDocView.CloseContextMenuIfOpen();
+			DictionaryConfigurationUtils.CloseContextMenuIfOpen();
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 			var element = browser?.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
@@ -133,10 +133,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (e.Button)
 			{
 				case GeckoMouseButton.Left:
-					XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
+					DictionaryConfigurationUtils.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 					break;
 				case GeckoMouseButton.Right:
-					XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
+					DictionaryConfigurationUtils.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
 					break;
 			}
 		}

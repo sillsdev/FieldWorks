@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
-using LanguageExplorer.Controls;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -146,7 +145,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					}
 				}
 			}
-
 			ShowRecord();
 			m_fullyInitialized = true;
 		}
@@ -293,7 +291,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
-			CloseContextMenuIfOpen();
+			DictionaryConfigurationUtils.CloseContextMenuIfOpen();
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 			var element = browser?.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
@@ -308,10 +306,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 						return;
 					}
 					// Handle button clicks or select the entry represented by the current element.
-					HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
+					DictionaryConfigurationUtils.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 					break;
 				case GeckoMouseButton.Right:
-					HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
+					DictionaryConfigurationUtils.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
 					break;
 			}
 		}
@@ -326,46 +324,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			CloseContextMenuIfOpen();
+			DictionaryConfigurationUtils.CloseContextMenuIfOpen();
 			SetActiveSelectedEntryOnView(browser);
 			// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
 			MyRecordList.SelectedRecordChanged(true, true);
-		}
-
-		/// <summary>
-		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
-		/// </summary>
-		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(IRecordList recordList, ICmObjectRepository objectRepository, DomMouseEventArgs e, GeckoElement element)
-		{
-			var topLevelGuid = DictionaryConfigurationServices.GetHrefFromGeckoDomElement(element);
-			if (topLevelGuid == Guid.Empty)
-			{
-				GeckoElement dummy;
-				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
-			}
-			if (topLevelGuid != Guid.Empty)
-			{
-				var currentObj = recordList.CurrentObject;
-				if (currentObj != null && currentObj.Guid == topLevelGuid)
-				{
-					// don't need to jump, we're already here...
-					// unless this is a video link
-					if (element is GeckoAnchorElement)
-					{
-						return; // don't handle the click; gecko will jump to the link
-					}
-				}
-				else
-				{
-					ICmObject obj;
-					if (objectRepository.TryGetObject(topLevelGuid, out obj))
-					{
-						recordList.JumpToRecord(obj.Hvo);
-					}
-				}
-			}
-			e.Handled = true;
 		}
 
 		private void AddMoreEntriesToPage(bool goingUp, GeckoWebBrowser browser)
@@ -445,7 +407,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			m_mainView.Refresh();
 		}
 
-		private void ChangeHtmlForCurrentAndAdjacentButtons(Tuple<int, int> newCurrentPageRange, Tuple<int, int> newAdjacentPageRange, GeckoElement pageButtonElement, bool goingUp)
+		private static void ChangeHtmlForCurrentAndAdjacentButtons(Tuple<int, int> newCurrentPageRange, Tuple<int, int> newAdjacentPageRange, GeckoElement pageButtonElement, bool goingUp)
 		{
 			var currentPageTop = GetTopCurrentPageButton(pageButtonElement);
 			var adjPageTop = goingUp ? (GeckoHtmlElement)currentPageTop.PreviousSibling : (GeckoHtmlElement)currentPageTop.NextSibling;
@@ -497,110 +459,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			return true;
 		}
 
-		/// <summary>
-		/// Pop up a menu to allow the user to start the document configuration dialog, and
-		/// start the dialog at the configuration node indicated by the current element.
-		/// </summary>
-		/// <remarks>
-		/// This is static so that the method can be shared with XhtmlRecordDocView.
-		/// </remarks>
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName, LcmCache cache, IRecordList activeRecordList)
-		{
-			Guid topLevelGuid;
-			GeckoElement entryElement;
-			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var localizedName = DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
-			var label = string.Format(AreaResources.ksConfigure, localizedName);
-			s_contextMenu?.Dispose();
-			s_contextMenu = new ContextMenuStrip();
-			var item = new DisposableToolStripMenuItem(label);
-			s_contextMenu.Items.Add(item);
-			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber, cache, activeRecordList };
-			if (e.CtrlKey) // show hidden menu item for tech support
-			{
-				item = new DisposableToolStripMenuItem(AreaResources.ksInspect);
-				s_contextMenu.Items.Add(item);
-				item.Click += RunDiagnosticsDialogAt;
-				item.Tag = new object[] { flexComponentParameters.PropertyTable, entryElement, topLevelGuid };
-			}
-			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
-			s_contextMenu.Closed += m_contextMenu_Closed;
-			e.Handled = true;
-		}
-
-		/// <summary>
-		/// Close and delete the context menu if it exists.  This appears to be needed (at least on Linux)
-		/// if the user clicks somewhere in the browser other than the menu.
-		/// </summary>
-		internal static void CloseContextMenuIfOpen()
-		{
-			if (s_contextMenu == null)
-			{
-				return;
-			}
-			s_contextMenu.Close();
-			DisposeContextMenu(null, null);
-		}
-
-		private static void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		{
-			Application.Idle += DisposeContextMenu;
-		}
-
-		private static void DisposeContextMenu(object sender, EventArgs e)
-		{
-			Application.Idle -= DisposeContextMenu;
-			if (s_contextMenu != null)
-			{
-				s_contextMenu.Dispose();
-				s_contextMenu = null;
-			}
-		}
-
-		// Context menu exists just for one invocation (until idle).
-		private static ContextMenuStrip s_contextMenu;
-
-		private static void RunConfigureDialogAt(object sender, EventArgs e)
-		{
-			var item = (ToolStripMenuItem)sender;
-			var tagObjects = (object[])item.Tag;
-			var propertyTable = (IPropertyTable)tagObjects[0];
-			var publisher = (IPublisher)tagObjects[1];
-			var classList = tagObjects[2] as List<string>;
-			var guid = (Guid)tagObjects[3];
-			// 4 is used further down
-			var cache = (LcmCache)tagObjects[5];
-			var activeRecordList = (RecordList)tagObjects[6];
-			var mainWindow = propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
-			ICmObject current = null;
-			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
-			{
-				current = cache.ServiceLocator.GetObject(guid);
-			}
-			else if (activeRecordList != null)
-			{
-				current = activeRecordList.CurrentObject;
-			}
-			if (DictionaryConfigurationDlg.ShowDialog(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]), (Form)mainWindow, current, DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable), DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable), classList))
-			{
-				mainWindow.RefreshAllViews();
-			}
-		}
-
-		private static void RunDiagnosticsDialogAt(object sender, EventArgs e)
-		{
-			var item = (ToolStripMenuItem)sender;
-			var tagObjects = (object[])item.Tag;
-			var propTable = (IPropertyTable)tagObjects[0];
-			var element = (GeckoElement)tagObjects[1];
-			var guid = (Guid)tagObjects[2];
-			using (var dlg = new XmlDiagnosticsDlg(element, guid))
-			{
-				dlg.ShowDialog(propTable.GetValue<IWin32Window>(FwUtils.window));
-			}
-		}
-
 		#endregion
 
 		/// <summary>
@@ -640,70 +498,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			return validConfiguration;
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Populate the list of publications for the first dictionary titlebar menu.
-		/// </summary>
-		public bool OnDisplayPublications(object parameter, ref UIListDisplayProperties display)
-		{
-			List<string> inConfig;
-			List<string> notInConfig;
-			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, GetCurrentConfiguration(false), out inConfig, out notInConfig);
-			foreach(var pub in inConfig)
-			{
-				display.List.Add(pub, pub, null, null);
-			}
-			if(notInConfig.Any())
-			{
-				display.List.Add(new SeparatorItem());
-				foreach(var pub in notInConfig)
-				{
-					display.List.Add(pub, pub, null, null);
-				}
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Populate a list of reversal index configurations for display in the reversal index configuration
-		/// chooser drop-down list in the Reversal Indexes area.
-		/// Omit the "All Reversal Indexes" item (LT-17170).
-		/// </summary>
-		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
-		{
-			var handled = OnDisplayConfigurations(parameter, ref display);
-			DictionaryConfigurationUtils.RemoveAllReversalChoiceFromList(ref display);
-			return handled;
-		}
-
-		/// <summary>
-		/// Populate the list of dictionary configuration views for the second dictionary titlebar menu.
-		/// </summary>
-		/// <remarks>The areaconfiguration.xml defines the "Configurations" menu and the XWorksViews event handling calls this</remarks>
-		public bool OnDisplayConfigurations(object parameter, ref UIListDisplayProperties display)
-		{
-			IDictionary<string, string> hasPub;
-			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
-			SplitConfigurationsByPublication(allConfigurations, GetCurrentPublication(), out hasPub, out doesNotHavePub);
-			// Add menu items that display the configuration name and send PropChanges with
-			// the configuration path.
-			foreach(var config in hasPub)
-			{
-				display.List.Add(config.Key, config.Value, null, null);
-			}
-			if(doesNotHavePub.Count > 0)
-			{
-				display.List.Add(new SeparatorItem());
-				foreach(var config in doesNotHavePub)
-				{
-					display.List.Add(config.Key, config.Value, null, null);
-				}
-			}
-			return true;
-		}
-#endif
-
 		/// <summary>
 		/// Read in the parameters to determine which sequence/collection we are editing.
 		/// </summary>
@@ -724,14 +518,13 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			CloseContextMenuIfOpen(); // not sure if this is necessary or not
+			DictionaryConfigurationUtils.CloseContextMenuIfOpen(); // not sure if this is necessary or not
 			PrintPage(m_mainView);
 		}
 
 		internal static void PrintPage(XWebBrowser browser)
 		{
-			var geckoBrowser = browser.NativeBrowser as GeckoWebBrowser;
-			geckoBrowser?.Window.Print();
+			(browser.NativeBrowser as GeckoWebBrowser)?.Window.Print();
 		}
 
 		/// <summary>
@@ -739,27 +532,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		protected override void SetupDataContext()
 		{
-		}
-
-		/// <summary>
-		/// Handle the 'Edit Publications' menu item click (defined in the Lexicon areaConfiguration.xml)
-		/// </summary>
-		public bool OnJumpToTool(object commandObject)
-		{
-#if RANDYTODO
-			var coreCommand = commandObject as Command;
-			if(coreCommand != null)
-			{
-				var tool = XmlUtils.GetMandatoryAttributeValue(coreCommand.Parameters[0], "tool");
-				if(tool != AreaServices.PublicationsEditMachineName)
-				{
-					return false;
-				}
-				LinkHandler.PublishFollowLinkMessage(Publisher, tool, null);
-				return true;
-			}
-#endif
-			return false;
 		}
 
 		/// <summary>
@@ -930,12 +702,12 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 			if (MyRecordList.Id == "AllReversalEntries")
 			{
-				var reversalentry = MyRecordList.CurrentObject as IReversalIndexEntry;
-				if (reversalentry == null)
+				var reversalEntry = MyRecordList.CurrentObject as IReversalIndexEntry;
+				if (reversalEntry == null)
 				{
 					return;
 				}
-				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
+				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalEntry.ReversalIndex.WritingSystem);
 				if (writingSystem == null)
 				{
 					return;
@@ -1016,16 +788,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			UpdateContent(PublicationDecorator, currentConfig);
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var pubName = GetCurrentPublication();
-			display.Enabled = true;
-			display.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
-			return true;
-		}
-#endif
-
 		/// <summary>
 		/// Implements the command that just does Find, without Replace.
 		/// </summary>
@@ -1033,12 +795,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			var geckoBrowser = m_mainView?.NativeBrowser as GeckoWebBrowser;
 			geckoBrowser?.Window.Find(string.Empty, false, false, true, false, true, true);
-		}
-
-		public bool OnShowAllEntries(object args)
-		{
-			PropertyTable.SetProperty(LanguageExplorerConstants.SelectedPublication, LanguageExplorerResources.AllEntriesPublication, true, true);
-			return true;
 		}
 
 		private void UpdateContent(DictionaryPublicationDecorator publicationDecorator, string configurationFile)
