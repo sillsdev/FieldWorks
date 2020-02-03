@@ -30,38 +30,6 @@ namespace LanguageExplorer.LcmUi
 
 		internal LexSenseUi() { }
 
-		/// <summary>
-		/// gives the hvo of the object to use in the URL we construct when doing a jump
-		/// </summary>
-		public override Guid GuidForJumping(object commandObject)
-		{
-#if RANDYTODO
-			var command = (Command) commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className == "LexSense")
-				return Object.Guid;
-#endif
-			var cmo = GetSelfOrParentOfClass(MyCmObject, LexEntryTags.kClassId);
-			return cmo?.Guid ?? Guid.Empty;
-		}
-
-#if RANDYTODO
-/// <summary>
-/// disable/hide delete selected item for LexSenses (eg. since we don't want them to delete all senses
-/// from its owning entry.)
-/// </summary>
-/// <param name="commandObject"></param>
-/// <param name="display"></param>
-/// <returns></returns>
-		public override bool OnDisplayDeleteSelectedItem(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Visible = false;
-			display.Enabled = false;
-			display.Text = string.Format(display.Text, DisplayNameOfClass);
-			return true;
-		}
-#endif
-
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;

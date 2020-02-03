@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -13,13 +12,6 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class WfiAnalysisUi : CmObjectUi
 	{
-		/// <summary />
-		public WfiAnalysisUi(ICmObject obj)
-			: base(obj)
-		{
-			Debug.Assert(obj is IWfiAnalysis);
-		}
-
 		internal WfiAnalysisUi()
 		{ }
 

@@ -202,17 +202,11 @@ namespace LanguageExplorer.LcmUi
 					case LexEntryTags.kClassId:
 						result = new LexEntryUi();
 						break;
-					case MoMorphSynAnalysisTags.kClassId:
-						result = new MoMorphSynAnalysisUi();
-						break;
-					case MoStemMsaTags.kClassId:
-						result = new MoStemMsaUi();
-						break;
-					case MoDerivAffMsaTags.kClassId:
-						result = new MoDerivAffMsaUi();
-						break;
 					case MoInflAffMsaTags.kClassId:
-						result = new MoInflAffMsaUi();
+					case MoDerivAffMsaTags.kClassId:
+					case MoMorphSynAnalysisTags.kClassId:
+					case MoStemMsaTags.kClassId:
+						result = new MoMorphSynAnalysisUi();
 						break;
 					case MoAffixAllomorphTags.kClassId:
 					case MoStemAllomorphTags.kClassId:
@@ -399,14 +393,6 @@ namespace LanguageExplorer.LcmUi
 			return null;
 		}
 
-		/// <summary>
-		/// gives the guid of the object to use in the URL we construct when doing a jump
-		/// </summary>
-		public virtual Guid GuidForJumping(object commandObject)
-		{
-			return MyCmObject.Guid;
-		}
-
 		private ICmObject GetCurrentCmObject()
 		{
 			ICmObject obj = null;
@@ -571,29 +557,6 @@ namespace LanguageExplorer.LcmUi
 		#endregion
 
 		#region Other methods
-
-
-#if RANDYTODO
-		/// <summary>
-		/// Hack to "remove" the delete menu from the popup menu.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayDeleteSelectedItem(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_hostControl.GetType().Name == "Sandbox"
-				// Disable deleting from inside "Try a Word" dialog.  See FWR-3212.
-				|| m_hostControl.GetType().Name == "TryAWordSandbox"
-				// Disable deleting interior items from a WfiMorphBundle.  See LT-6217.
-				|| (m_hostControl.GetType().Name == "OneAnalysisSandbox" && !(m_obj is IWfiMorphBundle)))
-			{
-				display.Visible = display.Enabled = false;
-			}
-			display.Text = string.Format(display.Text, DisplayNameOfClass);
-			return true;
-		}
-#endif
 
 		public virtual bool CanDelete(out string cannotDeleteMsg)
 		{

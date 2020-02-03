@@ -849,9 +849,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var itemClass = Cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
 			// We need to dynamically figure out a tool for this list.
 			string sTool = null;
-#if RANDYTODO
-			// TODO: Nobody will be home.
-#endif
+			Debug.Assert(false, "No 'WindowConfiguration' element here in ReallySimpleListChooser->GenerateChooserInfoForCustomNode.");
 			var windowConfig = m_propertyTable.GetValue<XElement>("WindowConfiguration");
 			if (windowConfig != null)
 			{
@@ -883,24 +881,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return null;
 			}
-			sTool = XmlUtils.MakeSafeXmlAttribute(sTool);
-			var bldr = new StringBuilder();
-			bldr.AppendLine("<chooserInfo>");
 			var label = list.Name.UserDefaultWritingSystem.Text;
 			if (string.IsNullOrEmpty(label) || label == list.Name.NotFoundTss.Text)
 			{
 				label = list.Name.BestAnalysisVernacularAlternative.Text;
 			}
-			label = XmlUtils.MakeSafeXmlAttribute(label);
-			bldr.AppendFormat("<chooserLink type=\"goto\" label=\"Edit the {0} list\" tool=\"{1}\"/>", label, sTool);
-			bldr.AppendLine();
-			bldr.AppendLine("</chooserInfo>");
-			var doc = XDocument.Parse(bldr.ToString());
-			var chooserNode = doc.Root;
-			return chooserNode;
+			return new XElement("chooserInfo",
+				new XElement("chooserLink",
+					new XAttribute("type", "goto"),
+					new XAttribute("label", $"Edit the {XmlUtils.MakeSafeXmlAttribute(label)} list"),
+					new XAttribute("tool", XmlUtils.MakeSafeXmlAttribute(sTool))));
 		}
 
-		private string ScanToolsAndLists(XElement windowConfig, string listOwnerClass, string listField)
+		private static string ScanToolsAndLists(XElement windowConfig, string listOwnerClass, string listField)
 		{
 			foreach (var xnItem in windowConfig.Elements("/window/lists/list/item"))
 			{

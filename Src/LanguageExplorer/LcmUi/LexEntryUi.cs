@@ -170,7 +170,6 @@ namespace LanguageExplorer.LcmUi
 					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
-				EnsureWindowConfiguration(flexComponentParameters.PropertyTable);
 				var styleSheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
 				if (leui == null)
 				{
@@ -266,22 +265,6 @@ namespace LanguageExplorer.LcmUi
 		static void s_activeModalForm_Activated(object sender, EventArgs e)
 		{
 			((Form)sender).TopMost = false;
-		}
-
-		private static void EnsureWindowConfiguration(IPropertyTable propertyTable)
-		{
-#if RANDYTODO
-			XmlNode xnWindow = propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			if (xnWindow == null)
-			{
-				string configFile = FwDirectoryFinder.GetCodeFile("Language Explorer/Configuration/Main.xml");
-				// This can be called from TE...in that case, we don't complain about missing include
-				// files (true argument) but just trust that we put enough in the installer to make it work.
-				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
-				XmlNode windowConfigurationNode = configuration.SelectSingleNode(LanguageExplorerConstants.window);
-				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, false, true);
-			}
-#endif
 		}
 
 		/// <summary>
@@ -392,7 +375,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public void ShowSummaryDialog(IWin32Window owner, ITsString tssWf, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
+		private void ShowSummaryDialog(IWin32Window owner, ITsString tssWf, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
 			bool otherButtonClicked;
 			using (var form = new SummaryDialogForm(this, helpProvider, helpFileKey, styleSheet))
@@ -421,12 +404,5 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 		}
-
-#if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
-		{
-			return LexEntryTags.kClassId == specifiedClsid || base.ShouldDisplayMenuForClass(specifiedClsid, display);
-		}
-#endif
 	}
 }

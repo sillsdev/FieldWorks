@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.LcmUi
@@ -46,80 +45,6 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 			return -1;
-		}
-
-#if RANDYTODO
-		public override bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
-			{
-				display.Visible = display.Enabled = false;
-				return true;
-			}
-
-			if ((m_iCurrent + 1) == _lcmRefSeq.Count)
-			{
-				display.Visible = true;
-				display.Enabled = false;
-			}
-			else
-			{
-				display.Visible = display.Enabled = true;
-			}
-			return true;
-		}
-
-		public override bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
-			{
-				display.Visible = display.Enabled = false;
-				return true;
-			}
-
-			if (m_iCurrent == 0)
-			{
-				display.Visible = true;
-				display.Enabled = false;
-			}
-			else
-			{
-				display.Visible = display.Enabled = true;
-			}
-			return true;
-		}
-#endif
-
-		public void OnMoveTargetUpInSequence(object commandObject)
-		{
-			if (m_cmObject == null || m_iCurrent < 0)
-			{
-				return;
-			}
-			// Move currently selected object to the next location
-			var iNew = m_iCurrent + 1;
-			Debug.Assert(iNew < _lcmRefSeq.Count);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move down/right/later in sequence", "Redo move down/right/later in sequence", m_cache.ActionHandlerAccessor, () =>
-			{
-				_lcmRefSeq.RemoveAt(m_iCurrent);
-				_lcmRefSeq.Insert(iNew, m_hvoTarget);
-			});
-		}
-
-		public void OnMoveTargetDownInSequence(object commandObject)
-		{
-			if (m_cmObject == null || m_iCurrent < 0)
-			{
-				return;
-			}
-			// Move currently selected object to the previous location
-			var iNew = m_iCurrent - 1;
-			Debug.Assert(iNew >= 0);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move up/left/earlier in sequence", "Redo move up/left/earlier in sequence", m_cache.ActionHandlerAccessor, () =>
-			{
-				_lcmRefSeq.RemoveAt(m_iCurrent);
-				_lcmRefSeq.Insert(iNew, m_hvoTarget);
-			});
 		}
 
 		/// <summary>

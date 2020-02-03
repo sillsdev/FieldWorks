@@ -52,8 +52,6 @@ namespace LanguageExplorer
 		void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force);
 		bool DeleteRecord(string uowBaseText, StatusBarProgressPanel panel);
 		bool OnFirst { get; }
-		bool OnInsertItemInVector(object argument);
-		void OnItemDataModified(object argument);
 		bool OnLast { get; }
 		bool OnRefresh(object argument);
 		void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort);

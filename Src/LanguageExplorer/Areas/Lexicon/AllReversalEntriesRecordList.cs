@@ -2,12 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -32,24 +30,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		private void SelectNewItem()
 		{
 			JumpToRecord(_newItem.Hvo);
-		}
-
-		/// <summary>
-		/// Get the current reversal index guid.  If there is none, create a new reversal index
-		/// since there must not be any.  This fixes LT-6653.
-		/// </summary>
-		internal static Guid GetReversalIndexGuid(IPropertyTable propertyTable, IPublisher publisher)
-		{
-			var riGuid = Guid.Empty;
-			try
-			{
-				riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
-			}
-			catch
-			{
-				riGuid = Guid.Empty;
-			}
-			return riGuid;
 		}
 
 		#region Overrides of RecordList

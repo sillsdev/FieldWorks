@@ -64,33 +64,5 @@ namespace LanguageExplorer.LcmUi
 		protected override ContextMenuName ContextMenuId => ContextMenuName.mnuReferenceChoices;
 
 		#endregion
-
-#if RANDYTODO
-		/// <summary>
-		/// Overridden by ReferenceSequenceUi.
-		/// We put these OnDisplayMove... routines in the base class, so that we can make them explicitly not show up
-		/// for non ReferenceSequence classes. Otherwise, they might appear as disabled for commands under mnuReferenceChoices.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Visible = display.Enabled = false;
-			return true;
-		}
-
-		/// <summary>
-		/// Overriden by ReferenceSequenceUi.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Visible = display.Enabled = false;
-			return true;
-		}
-#endif
 	}
 }

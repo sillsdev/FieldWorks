@@ -1033,12 +1033,6 @@ namespace LanguageExplorer
 		{
 			// Don't handle this message if you're not the primary record list.  This allows, for
 			// example, XmlBrowseRDEView.cs to handle the message instead.
-#if RANDYTODO
-			// Note from RandyR: One of these days we should probably subclass the record list more.
-			// The "reversalEntries" record list wants to handle the message, even though it isn't the primary record list.
-			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" record list's primary record list
-			// would not handle the message, and delete an entire reversal index.
-#endif
 			if (ShouldNotHandleDeletionMessage)
 			{
 				return false;
@@ -1104,91 +1098,6 @@ namespace LanguageExplorer
 		/// true if the list is non empty on we are on the first record
 		/// </summary>
 		public bool OnFirst => SortedObjects.Count > 0 && m_currentIndex == 0;
-
-		/// <summary />
-		public bool OnInsertItemInVector(object argument)
-		{
-			if (!Editable)
-			{
-				return false;
-			}
-			// We will certainly switch records, but we're going to suppress the usual Save after we
-			// switch, so the user can at least Undo one level, the actual insertion. But Undoing
-			// that may not get us back to the current record, so we'd better not allow anything
-			// that's already on the stack to be undone.
-			// Enhance JohnT: if a dialog is brought up, the user could cancel, in which case,
-			// we don't really need to throw away the Undo stack.
-			SaveOnChangeRecord();
-#if RANDYTODO
-			//if there is a listener who wants to do bring up a dialog box rather than just creating a new item,
-			//give them a chance.
-			m_suppressSaveOnChangeRecord = true;
-			try
-			{
-				if (m_mediator.SendMessage("DialogInsertItemInVector", argument))
-					return true;
-			}
-			finally
-			{
-				m_suppressSaveOnChangeRecord = false;
-			}
-			var command = (Command) argument;
-			string className;
-			try
-			{
-				className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			}
-			catch (ApplicationException e)
-			{
-				throw new FwConfigurationException("Could not get the necessary parameter information from this command",
-					command.ConfigurationNode, e);
-			}
-			if (!m_list.CanInsertClass(className))
-			{
-				return false;
-			}
-#endif
-			var result = false;
-#if RANDYTODO
-			m_suppressSaveOnChangeRecord = true;
-			try
-			{
-				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoInsert0, command.UndoRedoTextInsert),
-					string.Format(LanguageExplorerResources.ksRedoInsert0, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
-				{
-					result = m_list.CreateAndInsert(className);
-				});
-			}
-			catch (ApplicationException ae)
-			{
-				throw new ApplicationException("Could not insert the item requested by the command " + command.ConfigurationNode, ae);
-			}
-			finally
-			{
-				m_suppressSaveOnChangeRecord = false;
-			}
-#endif
-			Publisher.Publish("FocusFirstPossibleSlice", null);
-			return result;
-		}
-
-		public void OnItemDataModified(object argument)
-		{
-			var da = VirtualListPublisher;
-			while (da != null)
-			{
-				if (da.GetType().GetMethod("OnItemDataModified") != null)
-				{
-					ReflectionHelper.CallMethod(da, "OnItemDataModified", argument);
-				}
-				var decorator = da as DomainDataByFlidDecoratorBase;
-				if (decorator == null)
-				{
-					break;
-				}
-				da = decorator.BaseSda;
-			}
-		}
 
 		private void JumpToRecord(object argument)
 		{
@@ -1432,9 +1341,6 @@ namespace LanguageExplorer
 
 		public void SaveOnChangeRecord()
 		{
-#if RANDYTODO
-			// TODO: Work up non static test that can use IFwMainWnd
-#endif
 			if (_suppressSaveOnChangeRecord || m_cache == null)
 			{
 				return;
@@ -1464,10 +1370,6 @@ namespace LanguageExplorer
 				return;
 			}
 			UpdateStatusBarForRecordBar();
-
-#if RANDYTODO
-			// TODO: Work up non-static test that can use IFwMainWnd
-#endif
 			// This is used by DependentRecordLists
 			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord, SkipShowRecord, suppressFocusChange);
 			PropertyTable.SetProperty(RecordListSelectedObjectPropertyId(Id), rni, false, settingsGroup: SettingsGroup.LocalSettings);
@@ -1489,7 +1391,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool ShouldNotModifyList => m_reloadingList || m_deletingObject;
 
-		public bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
+		public bool ShouldNotHandleDeletionMessage => Id != "AllReversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
 		public bool SkipShowRecord { get; set; }
 

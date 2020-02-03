@@ -2,9 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.LCModel;
@@ -16,40 +14,7 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class MoFormUi : CmObjectUi
 	{
-		/// <summary />
-		public MoFormUi(ICmObject obj)
-			: base(obj)
-		{
-			Debug.Assert(obj is IMoForm);
-		}
-
 		internal MoFormUi() { }
-
-		/// <summary>
-		/// gives the hvo of the object to use in the URL we construct when doing a jump
-		/// </summary>
-		public override Guid GuidForJumping(object commandObject)
-		{
-#if RANDYTODO
-			var cmd = (Command) commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
-			if (className == "LexEntry")
-			{
-				ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
-				return (cmo == null) ? Guid.Empty : cmo.Guid;
-			}
-#endif
-			return MyCmObject.Guid;
-		}
-
-#if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
-		{
-			if (LexEntryTags.kClassId == specifiedClsid)
-				return true;
-			return DomainObjectServices.IsSameOrSubclassOf(m_cache.DomainDataByFlid.MetaDataCache, Object.ClassID, specifiedClsid);
-		}
-#endif
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -56,20 +57,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				string owningClass;
 				string property;
 				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
-#if RANDYTODO
-// TODO: "recordList" is a child of now obsolete "clerk" elements.
-// TODO: "treeBarHandler" is an optional sibling of "recordList".
+				Debug.Assert(false, "No 'WindowConfiguration' element here in ListChoiceComboItem constructor.");
+				// TODO: "recordList" is a child of now obsolete "clerk" elements.
+				// TODO: "treeBarHandler" is an optional sibling of "recordList".
+				// TODO: Notebook browse views have no "treeBarHandlerNode", so go with the defaults for that tool.
+				// TODO: Worry about other tools later on, probably with an overloaded constructor with the two values.
 				var windowConfiguration = propertyTable.GetValue<XElement>("WindowConfiguration");
 				var recordListNode = windowConfiguration.XPathSelectElement(string.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
 				var treeBarHandlerNode = recordListNode.Parent.XPathSelectElement("treeBarHandler");
 				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(treeBarHandlerNode, "includeAbbr");
 				m_bestWS = XmlUtils.GetOptionalAttributeValue(treeBarHandlerNode, "ws", null);
-#else
-				// TODO: Notebook browse views have no "treeBarHandlerNode", so go with the defaults for that tool.
-				// TODO: Worry about other tools later on, probably with an overloaded constructor with the two values.
-				m_includeAbbr = false;
-				m_bestWS = null;
-#endif
 			}
 			else
 			{

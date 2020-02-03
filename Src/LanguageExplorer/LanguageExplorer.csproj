@@ -1218,11 +1218,8 @@
     <Compile Include="LcmUi\EntryPosFilter.cs" />
     <Compile Include="LcmUi\LexEntryVc.cs" />
     <Compile Include="LcmUi\LexSenseUi.cs" />
-    <Compile Include="LcmUi\MoDerivAffMsaUi.cs" />
     <Compile Include="LcmUi\MoFormUi.cs" />
-    <Compile Include="LcmUi\MoInflAffMsaUi.cs" />
     <Compile Include="LcmUi\MoMorphSynAnalysisUi.cs" />
-    <Compile Include="LcmUi\MoStemMsaUi.cs" />
     <Compile Include="LcmUi\MsaVc.cs" />
     <Compile Include="LcmUi\PosFilter.cs" />
     <Compile Include="LcmUi\ReferenceBaseUi.cs" />

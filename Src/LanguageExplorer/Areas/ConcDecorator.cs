@@ -42,6 +42,7 @@ namespace LanguageExplorer.Areas
 		private int m_notifieeCount; // How many things are we notifying?
 		private InterestingTextList m_interestingTexts;
 		private bool m_fRefreshSuspended;
+		private bool _haveSubscribed;
 
 		public ConcDecorator(ILcmServiceLocator services)
 			: base(services.GetInstance<ISilDataAccessManaged>())
@@ -122,6 +123,11 @@ namespace LanguageExplorer.Areas
 
 		public override void RemoveNotification(IVwNotifyChange nchng)
 		{
+			if (_haveSubscribed)
+			{
+				Subscriber.Unsubscribe("ItemDataModified", ItemDataModified_Handler);
+				_haveSubscribed = false;
+			}
 			base.RemoveNotification(nchng);
 			m_notifieeCount--;
 			if (m_notifieeCount > 0 || m_interestingTexts == null)
@@ -144,6 +150,12 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void AddNotification(IVwNotifyChange nchng)
 		{
+			if (!_haveSubscribed)
+			{
+				// Only do it one time.
+				Subscriber.Subscribe("ItemDataModified", ItemDataModified_Handler);
+				_haveSubscribed = true;
+			}
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 			base.AddNotification(nchng);
 			m_notifieeCount++;
@@ -217,7 +229,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// This is invoked by reflection when the Respeller dialog changes the frequency of a wordform.
 		/// </summary>
-		public void OnItemDataModified(object argument)
+		private void ItemDataModified_Handler(object argument)
 		{
 			if (!(argument is IAnalysis))
 			{
