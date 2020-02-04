@@ -27,15 +27,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				TestUtilities.TestUtilities.DeleteFolderThatMayBeInUse(_testDir);
 			}
 			Directory.CreateDirectory(_testDir);
-			foreach (var locale in new[] {"de-DE", "en-US", "zh-CN"})
-			{
-				var localeDir = Path.Combine(_testDir, locale);
-				Directory.CreateDirectory(localeDir);
-				File.WriteAllText(Path.Combine(localeDir, $"strings-{locale}.xml"), "some strings");
-				var projectDir = Path.Combine(localeDir, "someProject");
-				Directory.CreateDirectory(projectDir);
-				File.WriteAllText(Path.Combine(projectDir, $"SomeFile.{locale}.resx"), "contents");
-			}
 		}
 
 		[TearDown]
@@ -45,8 +36,23 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void DoesntCrashWhenNoNameChange()
+		{
+			FileSystemSetup(new[] {"de", "en-US"});
+
+			_task.Execute();
+
+			// Verify that the already-normalized locale is still normalized
+			VerifyLocale("de", "never-existed");
+			// Verify that the locale that needed to be normalized has been
+			VerifyLocale("en", "en-US");
+		}
+
+		[Test]
 		public void Works()
 		{
+			FileSystemSetup(new[] {"de-DE", "en-US", "zh-CN"});
+
 			_task.Execute();
 
 			// Verify that normal languages have no country codes
@@ -55,6 +61,19 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			// Verify that Chinese has the country code and that there is no regionless Chinese.
 			VerifyLocale("zh-CN", "zh");
+		}
+
+		private void FileSystemSetup(string[] locales)
+		{
+			foreach (var locale in locales)
+			{
+				var localeDir = Path.Combine(_testDir, locale);
+				Directory.CreateDirectory(localeDir);
+				File.WriteAllText(Path.Combine(localeDir, $"strings-{locale}.xml"), "some strings");
+				var projectDir = Path.Combine(localeDir, "someProject");
+				Directory.CreateDirectory(projectDir);
+				File.WriteAllText(Path.Combine(projectDir, $"SomeFile.{locale}.resx"), "contents");
+			}
 		}
 
 		private void VerifyLocale(string expected, string not)

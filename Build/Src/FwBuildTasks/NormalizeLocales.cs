@@ -31,6 +31,12 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		private void RenameLocale(string source, string dest)
 		{
+			if (source == dest)
+			{
+				Log.LogMessage($"Unable to normalize '{source}'.");
+				return;
+			}
+
 			var sourceDir = Path.Combine(L10nsDirectory, source);
 			var destDir = Path.Combine(L10nsDirectory, dest);
 			Directory.Move(sourceDir, destDir);
