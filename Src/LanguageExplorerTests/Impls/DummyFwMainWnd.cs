@@ -103,6 +103,8 @@ namespace LanguageExplorerTests.Impls
 			throw new NotSupportedException();
 		}
 
+		public Control DesiredControl { get; set; }
+
 		/// <summary>
 		/// Create the client windows and add corresponding stuff to the sidebar, View menu,  etc.
 		/// </summary>

@@ -114,8 +114,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
 			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => UiWidgetServices.CanSeeAndDo));
 
-			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
-			Subscriber.Subscribe("StopParser", StopParser_Handler);
+			Subscriber.Subscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
 
 			UpdateStatusPanelProgress();
 		}
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void TextSelectedWord_Handler(object newValue)
 		{
 			// newValue will be an IWfiWordform or null;
-			_currentWordform = newValue as IWfiWordform;
+			_currentWordform = (IWfiWordform)newValue;
 		}
 
 		private void StopParser_Handler(object newValue)
@@ -430,8 +430,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
 				}
-				Subscriber.Unsubscribe("TextSelectedWord", TextSelectedWord_Handler);
-				Subscriber.Unsubscribe("StopParser", StopParser_Handler);
+				Subscriber.Unsubscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
 
 				if (m_timer != null)
 				{

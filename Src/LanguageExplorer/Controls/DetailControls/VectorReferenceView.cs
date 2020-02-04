@@ -77,14 +77,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_displayNameProperty = null;
 		}
 
-		public void OnMoveTargetDownInSequence(object commandObject)
-		{
-		}
-
-		public void OnMoveTargetUpInSequence(object commandObject)
-		{
-		}
-
 		/// <summary>
 		/// Reload the vector in the root box, presumably after it's been modified by a chooser.
 		/// </summary>

@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			m_dlg.ProgressBar.Maximum = analyses.Length;
 			m_dlg.ProgressBar.Step = 1;
 			// stop parser if it's running.
-			m_dlg.Publisher.Publish("StopParser", null);
+			m_dlg.Publisher.Publish(LanguageExplorerConstants.StopParser, null);
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var analysis in analyses)

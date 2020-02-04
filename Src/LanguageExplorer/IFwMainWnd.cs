@@ -41,6 +41,11 @@ namespace LanguageExplorer
 		void ClearInvalidatedStoredData();
 
 		/// <summary>
+		/// Gets or sets the control that needs keyboard input.  (See FWNX-785.)
+		/// </summary>
+		Control DesiredControl { get; set; }
+
+		/// <summary>
 		/// Initialize the window, before being shown.
 		/// </summary>
 		/// <param name="windowIsCopy">Window is being copied.</param>

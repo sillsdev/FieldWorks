@@ -116,9 +116,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			}
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
-#if RANDYTODO
-			// TODO: Call FinishInitialization on m_bvMergeOptions and feed it ObjectListPublisher.OwningFlid for the 'madeUpFieldIdentifier' parameter.
-#endif
 			m_bvMergeOptions = new BrowseViewer(guiControlParameters, m_cache.LangProject.Hvo, m_cache, null, sda)
 			{
 				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
@@ -127,6 +124,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);
+			m_bvMergeOptions.FinishInitialization(m_cache.LangProject.Hvo, sda.MadeUpFieldIdentifier);
 		}
 
 		/// <summary>

@@ -104,11 +104,36 @@ namespace LanguageExplorer.Impls
 		private readonly Stack<List<IdleProcessingHelper>> _idleProcessingHelpers = new Stack<List<IdleProcessingHelper>>();
 		private ISharedEventHandlers _sharedEventHandlers = new SharedEventHandlers();
 		private HashSet<string> _temporaryPropertyNames = new HashSet<string>();
+		private static uint s_wm_kmselectlang = Win32.RegisterWindowMessage("WM_KMSELECTLANG");
 
 		/// <summary />
 		public FwMainWnd()
 		{
 			InitializeComponent();
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == s_wm_kmselectlang)
+			{
+				var focusWnd = Win32.GetFocus();
+				if (focusWnd != IntPtr.Zero)
+				{
+					Win32.SendMessage(focusWnd, m.Msg, m.WParam, m.LParam);
+					focusWnd = IntPtr.Zero;
+					return; // No need to pass it on to the superclass, since we dealt with it.
+				}
+			}
+			base.WndProc(ref m);
+			// In Mono, closing a dialog invokes WM_ACTIVATE on the active form, which then selects
+			// its active control.  This swallows keyboard input.  To prevent this, we select the
+			// desired control if one has been established so that keyboard input can still be seen
+			// by that control.  (See FWNX-785.)
+			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == Handle &&
+				DesiredControl != null && DesiredControl.Visible && DesiredControl.Enabled)
+			{
+				DesiredControl.Select();
+			}
 		}
 
 		private static bool SetupCrashDetectorFile()
@@ -1235,6 +1260,11 @@ namespace LanguageExplorer.Impls
 		{
 			RobustIO.DeleteDirectoryAndContents(Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir));
 		}
+
+		/// <summary>
+		/// Gets or sets the control that needs keyboard input.  (See FWNX-785.)
+		/// </summary>
+		public Control DesiredControl { get; set; }
 
 		/// <summary>
 		/// Get the specified main menu

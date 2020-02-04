@@ -9,10 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -25,13 +22,6 @@ using SIL.Reporting;
 
 namespace LanguageExplorer.LcmUi
 {
-#if RANDYTODO
-	// TODO: This class was an IxCoreColleague implementor. It was added to the Mediator only when its HandleRightClick was called.
-	// TODO: The HandleRightClick method called window.ShowContextMenu, which eventually got around to this class being temporarily added to the Mediator
-	// TODO: in a now obsolete MenuAdapter class that handled menus of various sorts, including those right-click popup context menus.
-	// TODO: If I can pull it off, I'd like to get rid of all of those old mediator related methods in this class,
-	// TODO: as well as this class' HandleRightClick method.
-#endif
 	public class CmObjectUi : IFlexComponent, IDisposable
 	{
 		#region Data members
@@ -45,9 +35,7 @@ namespace LanguageExplorer.LcmUi
 		// Review JohnH (JohnT): would it be more efficient to store a Class object in the map,
 		// and use reflection to make an instance?
 		static readonly Dictionary<int, int> m_subclasses = new Dictionary<int, int>();
-		protected Control m_hostControl;
 		protected IVwViewConstructor m_vc;
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _rightClickTuple;
 
 		#endregion Data members
 
@@ -338,11 +326,9 @@ namespace LanguageExplorer.LcmUi
 
 			if (disposing)
 			{
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
-				if (_rightClickTuple != null)
+				if (PropertyTable != null)
 				{
-					var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
-					dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
 				}
 				// Dispose managed resources here.
 				var disposableVC = m_vc as IDisposable;
@@ -353,13 +339,9 @@ namespace LanguageExplorer.LcmUi
 			m_cmObject = null;
 			m_cache = null;
 			m_vc = null;
-			// Leave this static alone.
-			// m_subclasses = null;
-			m_hostControl = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
-			_rightClickTuple = null;
 
 			IsDisposed = true;
 
@@ -395,165 +377,9 @@ namespace LanguageExplorer.LcmUi
 
 		private ICmObject GetCurrentCmObject()
 		{
-			ICmObject obj = null;
-			if (m_hostControl is XmlBrowseViewBase && !m_hostControl.IsDisposed)
-			{
-				// since we're getting the context menu by clicking on the browse view
-				// just use the current object of the browse view.
-				// NOTE: This helps to bypass a race condition that occurs when the user
-				// right-clicks on a record that isn't (yet) the current record.
-				// In that case RecordBrowseView establishes the new index before
-				// calling HandleRightClick to create the context menu, but
-				// presently, "ActiveListSelectedObject" only gets established on Idle()
-				// AFTER the context menu is created. (A side effect of LT-9192, LT-8874,
-				// XmlBrowseViewBase.FireSelectionChanged)
-				// To get around this, we must use the CurrentObject
-				// directly from the Browse view.
-				var hvoCurrentObject = (m_hostControl as XmlBrowseViewBase).SelectedObject;
-				if (hvoCurrentObject != 0)
-				{
-					obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCurrentObject);
-				}
-			}
-			else
-			{
-				obj = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject", null);
-			}
-			return obj;
+			return PropertyTable.GetValue<ICmObject>(LanguageExplorerConstants.ActiveListSelectedObject, null);
 		}
 
-		/// <summary>
-		/// Get the id of the context menu that should be shown for our object
-		/// </summary>
-		protected virtual ContextMenuName ContextMenuId
-		{
-			get
-			{
-				throw new NotSupportedException("Subclasses that have a menu, need to override this.");
-			}
-		}
-
-		/// <summary>
-		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
-		/// This method is typically used as the menuAdjuster argument in calling HandleRightClick.
-		/// It's important that it marks the same menu item as selected by HandleCtrlClick.
-		/// </summary>
-		public static void MarkCtrlClickItem(ContextMenuStrip menu)
-		{
-#if RANDYTODO
-			foreach (var item in menu.Items)
-			{
-				var item1 = item as ToolStripItem;
-				if (item1 == null || !(item1.Tag is CommandChoice) || !item1.Enabled)
-					continue;
-				var command = (CommandChoice) item1.Tag;
-				if (command.Message != "JumpToTool")
-					continue;
-
-				item1.Text += LcmUiStrings.ksCtrlClick;
-				return;
-			}
-#endif
-		}
-
-		/// <summary>
-		/// Handle a control-click by invoking the first active JumpToTool menu item.
-		/// Note that the item selected here should be the same one that is selected by Mark
-		/// </summary>
-		public bool HandleCtrlClick(Control hostControl)
-		{
-#if RANDYTODO
-			var window = PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window);
-			m_hostControl = hostControl;
-			var group = window.GetChoiceGroupForMenu(ContextMenuId);
-			group.PopulateNow();
-			try
-			{
-				foreach (var item in group)
-				{
-					if (!IsCtrlClickItem(item))
-						continue;
-					((CommandChoice)item).OnClick(this, new EventArgs());
-					return true;
-				}
-			}
-			finally
-			{
-				Dispose();
-			}
-#endif
-			return false;
-		}
-
-#if RANDYTODO
-		private static bool IsCtrlClickItem(object item)
-		{
-			var command = item as CommandChoice;
-			if (command == null || command.Message != "JumpToTool")
-				return false;
-			var displayProps = command.GetDisplayProperties();
-			return (displayProps.Visible && displayProps.Enabled);
-		}
-#endif
-
-		/// <summary>
-		/// Handle the right click by popping up an explicit context menu id.
-		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, ContextMenuName menuId = ContextMenuName.nullValue, Action<ContextMenuStrip> adjustMenu = null)
-		{
-			if (menuId == ContextMenuName.nullValue)
-			{
-				// Callers outside of the FooUi classes (e.g.: RuleFormulaControl) supply the menu id,
-				// or they are happy with the FooUi ContextMenuId virtual property value (e.g.: SandboxBase).
-				// In any case, only "hostControl" is of interest to this class, where all other parameters are passed
-				// on to something that handles the context menu.
-				menuId = ContextMenuId;
-			}
-			m_hostControl = hostControl;
-			var sHostType = m_hostControl.GetType().Name;
-			var sType = MyCmObject.GetType().Name;
-			if (sHostType == "XmlBrowseView" && sType == "CmBaseAnnotation")
-			{
-				// Generally we don't want popups trying to manipulate the annotations as objects in browse views.
-				// See e.g. LT-5156, 6534, 7160.
-				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
-				// to do it for any kind of annotation that couldn't be one!
-				var activeRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
-				if (activeRecordList is MatchingConcordanceRecordList)
-				{
-					// We don't want this either.  See LT-6101.
-					return true;
-				}
-			}
-			var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
-			if (dataTree != null)
-			{
-				if (_rightClickTuple != null)
-				{
-					dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
-					_rightClickTuple = null;
-				}
-				_rightClickTuple = dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, menuId);
-				if (_rightClickTuple == null)
-				{
-					// Nobody home (the menu).
-					MessageBox.Show($"Popup menu: '{menuId.ToString()}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
-					return true;
-				}
-				if (_rightClickTuple.Item1.Items.Count > 0)
-				{
-					adjustMenu?.Invoke(_rightClickTuple.Item1);
-					_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
-				}
-			}
-			else
-			{
-				// Nobody home (DataTree).
-				MessageBox.Show($"Add DataTree to the PropertyTable.", "Implement missing popup menu", MessageBoxButtons.OK);
-				return true;
-			}
-			return true;
-		}
 		#endregion
 
 		#region Other methods

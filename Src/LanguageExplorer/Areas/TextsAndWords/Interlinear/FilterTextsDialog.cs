@@ -4,22 +4,42 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-#if RANDYTODO
-	// TODO: there is no need now for the FilterAllTextsDialog superclass, so merge it into this class.
-#endif
 	/// <summary>
 	/// FilterTextsDialog bundles both ordinary and Scripture texts, when appropriate.
 	/// </summary>
-	public class FilterTextsDialog : FilterAllTextsDialog
+	public class FilterTextsDialog : Form
 	{
+		#region Data Members
+		/// <summary>List of Scripture objects</summary>
+		private readonly IStText[] _objList;
+		/// <summary>LCM cache</summary>
+		private readonly LcmCache _cache;
+		/// <summary>Help Provider</summary>
+		private HelpProvider _helpProvider;
+		private readonly IHelpTopicProvider _helpTopicProvider;
+		/// <summary>Help Topic Id</summary>
+		private readonly string _helpTopicId;
+		/// <summary>The text tree with scripture, genres and unassigned texts</summary>
+		private TextsTriStateTreeView _treeTexts;
+		/// <summary>Label for the tree view.</summary>
+		private Label _treeViewLabel;
+		/// <remarks>protected because of testing</remarks>
+		private Button _btnOK;
+		private Button _btnCancel;
+		private Button _btnHelp;
+		private IContainer components;
 		/// <summary>
 		/// If the dialog is being used for exporting multiple texts at a time,
 		/// then the tree must be pruned to show only those texts (and scripture books)
@@ -28,67 +48,113 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// The m_selectedText variable indicates which text should be initially checked,
 		/// as per LT-12177.
 		/// </summary>
-		private IEnumerable<IStText> m_textsToShow;
-		private IStText m_selectedText;
+		private IEnumerable<IStText> _textsToShow;
+		private IStText _selectedText;
+		#endregion
 
 		#region Constructor/Destructor
 
 		/// <summary />
-		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : base(app, cache, objList, helpTopicProvider)
+		protected FilterTextsDialog()
 		{
-			m_helpTopicId = "khtpChooseTexts";
 			InitializeComponent();
+		}
+
+		/// <summary />
+		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider)
+			: this()
+		{
+			Guard.AgainstNull(app, nameof(app));
+			Guard.AgainstNull(cache, nameof(cache));
+			Guard.AgainstNull(objList, nameof(objList));
+			Guard.AgainstNull(helpTopicProvider, nameof(helpTopicProvider));
+
+			_treeTexts.App = app;
+			_treeTexts.Cache = cache;
+			_cache = cache;
+			_objList = objList;
+			_helpTopicProvider = helpTopicProvider;
+			_treeTexts.AfterCheck += OnCheckedChanged;
+			AccessibleName = "FilterTextsDialog";
+			_helpTopicId = "khtpChooseTexts";
 		}
 		#endregion
 
 		#region Overrides
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Load settings for the dialog
+		/// </summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+
+			// Add all of the Scripture book names to the book list
+			_treeTexts.BeginUpdate();
+			LoadTexts();
+			_treeTexts.ExpandToBooks();
+			_treeTexts.EndUpdate();
+			if (_btnOK == null || _objList == null)
+			{
+				return;
+			}
+			var prevSeqCount = _cache.ActionHandlerAccessor.UndoableSequenceCount;
+			foreach (var obj in _objList)
+			{
+				_treeTexts.CheckNodeByTag(obj, TriStateTreeViewCheckState.Checked);
+			}
+			if (prevSeqCount != _cache.ActionHandlerAccessor.UndoableSequenceCount)
+			{
+				// Selecting node(s) changed something, so save it so that the UI doesn't become
+				// unresponsive
+				using (var progressDlg = new ProgressDialogWithTask(this))
+				{
+					progressDlg.IsIndeterminate = true;
+					progressDlg.Title = Text;
+					progressDlg.Message = ResourceHelper.GetResourceString("kstidSavingChanges");
+					progressDlg.RunTask((progDlg, parms) =>
+					{
+						_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+						return null;
+					});
+				}
+			}
+			UpdateButtonState();
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Load all texts.
 		/// </summary>
-		protected override void LoadTexts()
+		private void LoadTexts()
 		{
-			m_treeTexts.LoadAllTexts();
+			_treeTexts.LoadAllTexts();
 		}
 
 		/// <summary>
 		/// controls the logic for enabling/disabling buttons on this dialog.
 		/// </summary>
-		protected override void UpdateButtonState()
+		private void UpdateButtonState()
 		{
-			m_btnOK.Enabled = true;
-		}
-
-		/// <summary>
-		/// OK event handler. Checks the text list and warns about situations
-		/// where no texts are selected.
-		/// </summary>
-		protected void OnOk(object obj, EventArgs e)
-		{
-			DialogResult = DialogResult.OK;
-			var showWarning = false;
-			var message = ITextStrings.kOkbtnEmptySelection;
-#if RANDYTODO
-			var checkedList = m_treeTexts.GetCheckedNodeList();
-			var own = Owner as IFwMainWnd;
-			if (own != null && OnlyGenresChecked(checkedList))
-			{
-				message = ITextStrings.kOkbtnGenreSelection;
-				own.PropTable.SetProperty("RecordList-DelayedGenreAssignment", checkedList, true, true);
-				showWarning = true;
-			}
-#endif
-			if (m_treeTexts.GetNodesWithState(TriStateTreeViewCheckState.Checked).Length == 0)
-			{
-				showWarning = true;
-			}
-			if (!showWarning)
-			{
-				return;
-			}
-			if (MessageBox.Show(message, ITextStrings.kOkbtnNoTextSelection, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-			{
-				DialogResult = DialogResult.None;
-			}
+			_btnOK.Enabled = true;
 		}
 
 		/// <summary>
@@ -99,27 +165,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static bool OnlyGenresChecked(List<TreeNode> checkedList)
 		{
 			return checkedList.Count != 0 && checkedList.All(node => node.Name == "Genre");
-		}
-
-		#endregion
-
-		#region Public Methods
-		/// <summary>
-		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
-		/// Initially select the one specified (m_selectedText).
-		/// </summary>
-		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
-		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
-		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
-		{
-			m_textsToShow = interestingTexts;
-			m_selectedText = selectedText;
-			// ToList() is absolutely necessary to keep from changing node collection while looping!
-			var unusedNodes = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
-			foreach (var treeNode in unusedNodes)
-			{
-				m_treeTexts.Nodes.Remove(treeNode);
-			}
 		}
 
 		/// <summary>
@@ -141,18 +186,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (node.Tag is IStText)
 				{
-					if (!m_textsToShow.Contains(node.Tag as IStText))
+					if (!_textsToShow.Contains(node.Tag as IStText))
 					{
 						return true;
 					}
-					if (node.Tag == m_selectedText)
+					if (node.Tag == _selectedText)
 					{
-						m_treeTexts.SelectedNode = node;
-						m_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Checked);
+						_treeTexts.SelectedNode = node;
+						_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Checked);
 					}
 					else
 					{
-						m_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Unchecked);
+						_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Unchecked);
 					}
 				}
 				else
@@ -174,47 +219,158 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return false; // Keep this node!
 		}
 
+		#region Public Methods
+		/// <summary>
+		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
+		/// Initially select the one specified (m_selectedText).
+		/// </summary>
+		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
+		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
+		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
+		{
+			_textsToShow = interestingTexts;
+			_selectedText = selectedText;
+			// ToList() is absolutely necessary to keep from changing node collection while looping!
+			var unusedNodes = _treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
+			foreach (var treeNode in unusedNodes)
+			{
+				_treeTexts.Nodes.Remove(treeNode);
+			}
+		}
+
 		/// <summary>
 		/// Get/set the label shown above the tree view.
 		/// </summary>
 		public string TreeViewLabel
 		{
-			get { return m_treeViewLabel.Text; }
-			set { m_treeViewLabel.Text = value; }
+			get { return _treeViewLabel.Text; }
+			set { _treeViewLabel.Text = value; }
 		}
+
+		/// <summary>
+		/// Return an array of all of the included objects of the filter type.
+		/// </summary>
+		public IStText[] GetListOfIncludedTexts()
+		{
+			return _treeTexts.GetCheckedTagData().OfType<IStText>().ToArray();
+		}
+		#endregion
+
+		#region Event Handlers
+
+		/// <summary>
+		/// Open the help window when the help button is pressed.
+		/// </summary>
+		private void _btnHelp_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, _helpTopicId);
+		}
+
+		/// <summary>
+		/// Called after the box is checked or unchecked
+		/// </summary>
+		private void OnCheckedChanged(object sender, TreeViewEventArgs e)
+		{
+			UpdateButtonState();
+		}
+
+		/// <summary>
+		/// OK event handler. Checks the text list and warns about situations
+		/// where no texts are selected.
+		/// </summary>
+		private void OnOk(object obj, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			var showWarning = false;
+			var message = ITextStrings.kOkbtnEmptySelection;
+			var checkedList = _treeTexts.GetCheckedNodeList();
+			var own = Owner as IFwMainWnd;
+			if (own != null && OnlyGenresChecked(checkedList))
+			{
+				message = ITextStrings.kOkbtnGenreSelection;
+				own.PropertyTable.SetProperty("RecordList-DelayedGenreAssignment", checkedList, true);
+				showWarning = true;
+			}
+			if (_treeTexts.GetNodesWithState(TriStateTreeViewCheckState.Checked).Length == 0)
+			{
+				showWarning = true;
+			}
+			if (!showWarning)
+			{
+				return;
+			}
+			if (MessageBox.Show(message, ITextStrings.kOkbtnNoTextSelection, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+			{
+				DialogResult = DialogResult.None;
+			}
+		}
+
 		#endregion
 
 		private void InitializeComponent()
 		{
-			var resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterAllTextsDialog));
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterTextsDialog));
+			this._treeViewLabel = new System.Windows.Forms.Label();
+			this._btnOK = new System.Windows.Forms.Button();
+			this._treeTexts = new LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsTriStateTreeView();
+			this._helpProvider = new System.Windows.Forms.HelpProvider();
+			this._btnCancel = new System.Windows.Forms.Button();
+			this._btnHelp = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			//
-			// m_treeTexts
+			// _treeViewLabel
 			//
-			resources.ApplyResources(this.m_treeTexts, "m_treeTexts");
-			this.m_treeTexts.LineColor = System.Drawing.Color.Black;
-			this.m_treeTexts.MinimumSize = new System.Drawing.Size(312, 264);
+			resources.ApplyResources(this._treeViewLabel, "_treeViewLabel");
+			this._treeViewLabel.Name = "_treeViewLabel";
+			this._helpProvider.SetShowHelp(this._treeViewLabel, ((bool)(resources.GetObject("_treeViewLabel.ShowHelp"))));
 			//
-			// m_treeViewLabel
+			// _btnOK
 			//
-			resources.ApplyResources(this.m_treeViewLabel, "m_treeViewLabel");
+			this._btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+			resources.ApplyResources(this._btnOK, "_btnOK");
+			this._btnOK.Name = "_btnOK";
+			this._helpProvider.SetShowHelp(this._btnOK, ((bool)(resources.GetObject("_btnOK.ShowHelp"))));
+			this._btnHelp.Click += new System.EventHandler(this.OnOk);
 			//
-			// m_btnOK
+			// _treeTexts
 			//
-			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			resources.ApplyResources(this._treeTexts, "_treeTexts");
+			this._treeTexts.ItemHeight = 16;
+			this._treeTexts.Name = "_treeTexts";
+			this._helpProvider.SetShowHelp(this._treeTexts, ((bool)(resources.GetObject("_treeTexts.ShowHelp"))));
+			//
+			// _btnCancel
+			//
+			this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			resources.ApplyResources(this._btnCancel, "_btnCancel");
+			this._btnCancel.Name = "_btnCancel";
+			this._helpProvider.SetShowHelp(this._btnCancel, ((bool)(resources.GetObject("_btnCancel.ShowHelp"))));
+			//
+			// _btnHelp
+			//
+			resources.ApplyResources(this._btnHelp, "_btnHelp");
+			this._btnHelp.Name = "_btnHelp";
+			this._helpProvider.SetShowHelp(this._btnHelp, ((bool)(resources.GetObject("_btnHelp.ShowHelp"))));
+			this._btnHelp.Click += new System.EventHandler(this._btnHelp_Click);
 			//
 			// FilterTextsDialog
 			//
+			this.AcceptButton = this._btnOK;
+			this.CancelButton = this._btnCancel;
 			resources.ApplyResources(this, "$this");
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+			this.Controls.Add(this._treeTexts);
+			this.Controls.Add(this._treeViewLabel);
+			this.Controls.Add(this._btnOK);
+			this.Controls.Add(this._btnHelp);
+			this.Controls.Add(this._btnCancel);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "FilterTextsDialog";
-			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
-			this.Controls.SetChildIndex(this.m_btnOK, 0);
-			this.m_btnOK.Click += this.OnOk;
-			this.Controls.SetChildIndex(this.m_treeViewLabel, 0);
-			this.Controls.SetChildIndex(this.m_treeTexts, 0);
+			this._helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ResumeLayout(false);
-			this.PerformLayout();
+
 		}
 	}
 }

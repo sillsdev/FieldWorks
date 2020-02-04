@@ -156,10 +156,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				ContextMenuStrip = null;
 			}
 			// Start: <menu id="mnuStTextChoices">
-			const string mnuStTextChoices = "mnuStTextChoices";
 			ContextMenuStrip = new ContextMenuStrip
 			{
-				Name = mnuStTextChoices
+				Name = ContextMenuName.mnuStTextChoices.ToString()
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 			/*

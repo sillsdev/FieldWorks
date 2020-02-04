@@ -149,7 +149,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
-		protected TraceSwitch m_traceSwitch = new TraceSwitch("DataTree", string.Empty);
+		protected TraceSwitch m_traceSwitch = new TraceSwitch(LanguageExplorerConstants.DataTree, string.Empty);
 
 		protected void TraceVerbose(string s)
 		{
@@ -835,10 +835,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void EnsureDefaultCursorForSlices()
 		{
-#if RANDYTODO
-			// NB: This seems to be a hack, but it does get select slices to not have the wait cursor, when the mouse enters,
-			// such as the slices that contain Button launchers, or the left column in the slice's splitter.
-#endif
 			foreach (var slice in Slices)
 			{
 				if (slice.Cursor == Cursors.WaitCursor)
@@ -994,7 +990,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					idleQueue.Remove(DoPostponedFocusSlice);
 					idleQueue.Remove(OnReadyToSetCurrentSlice);
 				}
-				PropertyTable?.RemoveProperty("DataTree");
+				PropertyTable?.RemoveProperty(LanguageExplorerConstants.DataTree);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 
 				// Do this first, before setting m_fDisposing to true.
@@ -3666,7 +3662,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetProperty("DataTree", this, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(LanguageExplorerConstants.DataTree, this, settingsGroup: SettingsGroup.LocalSettings);
 			Subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 			if (PersistenceProvder != null)
 			{

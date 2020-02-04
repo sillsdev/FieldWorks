@@ -436,9 +436,6 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			// persist record list's CurrentIndex in a db specific way
-#if RANDYTODO
-			TODO: // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
-#endif
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
 			MyRecordList.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;

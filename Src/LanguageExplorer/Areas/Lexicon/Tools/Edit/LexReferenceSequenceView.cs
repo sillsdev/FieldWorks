@@ -3,8 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -44,24 +42,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					(m_VectorReferenceVc as LexReferenceSequenceVc).DisplayParent = value;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Currently only LexReferenceSequenceView displays a full sequence for lexical relations sequence.
-		/// (e.g. Calendar), so we can use ReferenceSequenceUi for handling the moving of items through context menu.
-		/// </summary>
-		protected override bool HandleRightClickOnObject(int hvo)
-		{
-			if (hvo == 0)
-			{
-				return false;
-			}
-			// We do NOT want a Using here. The temporary colleague created inside HandleRightClick should dispose
-			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
-			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
-			ReferenceBaseUi ui = new ReferenceSequenceUi(Cache, m_rootObj, m_rootFlid, hvo);
-			ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			return ui.HandleRightClick(this, true);
 		}
 
 		/// <summary>

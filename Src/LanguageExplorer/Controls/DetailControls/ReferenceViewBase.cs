@@ -2,11 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 
@@ -22,12 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected string m_rootFieldName;
 		protected string m_displayNameProperty;
 		private string m_textStyle;
-
-		#region Construction
-
-		public ReferenceViewBase()
-		{
-		}
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _rightClickTuple;
 
 		/// <summary>
 		/// Get or set the text style name
@@ -74,8 +69,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		#endregion // Construction
-
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			// if we don't install the selection here, a previous selection may give us
@@ -86,51 +79,39 @@ namespace LanguageExplorer.Controls.DetailControls
 			return HandleRightClickOnObject(tsi.Hvo(false));
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e)
-		{
-			base.OnMouseUp(e);
-			if (e.Button != MouseButtons.Left || (ModifierKeys & Keys.Control) != Keys.Control)
-			{
-				return;
-			}
-			// Control-click: take the first jump-to-tool command from the right-click menu for this location.
-			// Create a selection where we right clicked
-			var sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
-			var tsi = new TextSelInfo(sel);
-			var hvoTarget = tsi.Hvo(false);
-			// May be (for example) dummy ID used for type-ahead object in reference vector list.
-			if (hvoTarget == 0 || !Cache.ServiceLocator.IsValidObjectId(hvoTarget))
-			{
-				return;
-			}
-			using (var ui = GetCmObjectUiForRightClickMenu(hvoTarget))
-			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				ui.HandleCtrlClick(this);
-			}
-		}
-
-		private ReferenceBaseUi GetCmObjectUiForRightClickMenu(int hvoTarget)
-		{
-			return ReferenceBaseUi.MakeLcmModelUiObject(Cache, m_rootObj, m_rootFlid, hvoTarget);
-		}
-
 		protected virtual bool HandleRightClickOnObject(int hvo)
 		{
 			if (hvo == 0)
 			{
 				return false;
 			}
-			// We do NOT want a Using here. The temporary colleague created inside HandleRightClick should dispose
-			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
-			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
-			var ui = GetCmObjectUiForRightClickMenu(hvo);
-			if (ui != null)
+			var dataTree = PropertyTable.GetValue<DataTree>(LanguageExplorerConstants.DataTree);
+			if (dataTree != null)
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				return ui.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
+				if (_rightClickTuple != null)
+				{
+					dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+					_rightClickTuple = null;
+				}
+				_rightClickTuple = dataTree.DataTreeSliceContextMenuParameterObject.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, ContextMenuName.mnuReferenceChoices);
+				if (_rightClickTuple == null)
+				{
+					// Nobody home (the menu).
+					MessageBox.Show($"Popup menu: '{ContextMenuName.mnuReferenceChoices.ToString()}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
+					return true;
+				}
+				if (_rightClickTuple.Item1.Items.Count > 0)
+				{
+					_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+				}
 			}
-			return false;
+			else
+			{
+				// Nobody home (DataTree).
+				MessageBox.Show($"Add DataTree to the PropertyTable.", "Implement missing popup menu", MessageBoxButtons.OK);
+				return true;
+			}
+			return true;
 		}
 	}
 }

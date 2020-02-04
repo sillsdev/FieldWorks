@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas
 				m_xvc = m_seqView.Vc;
 				m_sda = m_seqView.RootBox.DataAccess;
 			}
-			var cmo = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject", null);
+			var cmo = PropertyTable.GetValue<ICmObject>(LanguageExplorerConstants.ActiveListSelectedObject, null);
 			if (cmo != null)
 			{
 				int clidRoot;

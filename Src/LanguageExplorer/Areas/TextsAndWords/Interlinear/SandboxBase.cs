@@ -286,7 +286,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sda = Caches.DataAccess;
 				// See if any alternate writing systems of word line are filled in.
 				var wordformWss = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
-				foreach (int wsId in wordformWss)
+				foreach (var wsId in wordformWss)
 				{
 					if (sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsId).Length > 0)
 					{
@@ -757,11 +757,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as IFwMainWnd) != null)
+			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			if (MiscUtils.IsMono && activeForm != null)
 			{
-#if RANDYTODO
-				(Form.ActiveForm as IFwMainWnd).DesiredControl = this;
-#endif
+				activeForm.DesiredControl = this;
 			}
 		}
 
@@ -772,11 +771,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as IFwMainWnd) != null)
+			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			if (MiscUtils.IsMono && activeForm != null)
 			{
-#if RANDYTODO
-				(Form.ActiveForm as IFwMainWnd).DesiredControl = null;
-#endif
+				activeForm.DesiredControl = null;
 			}
 		}
 
@@ -841,6 +839,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				if (MiscUtils.IsMono && activeForm != null)
+				{
+					activeForm.DesiredControl = null;
+				}
 				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 			}
 
@@ -4071,30 +4074,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			realObject = Caches.RealObject(hvoRightClickObject);
 			return tagRightClickTextProp;
-		}
-
-		protected override void OnMouseUp(MouseEventArgs e)
-		{
-			base.OnMouseUp(e);
-			if (e.Button != MouseButtons.Left || (ModifierKeys & Keys.Control) != Keys.Control)
-			{
-				return;
-			}
-			// Control-click: take the first jump-to-tool command from the right-click menu for this location.
-			// Create a selection where we right clicked
-			var sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
-			ICmObject target;
-			GetInfoForJumpToTool(sel, out target);
-			if (target == null)
-			{
-				return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
-			}
-
-			using (var targetUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, target.Hvo))
-			{
-				targetUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				targetUiObj.HandleCtrlClick(this);
-			}
 		}
 
 		private bool CanJumpToTool(string activeToolMachineName, string className)

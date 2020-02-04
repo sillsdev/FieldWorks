@@ -308,11 +308,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			private void PromoteReversalIndexEntry_Clicked(object sender, EventArgs e)
 			{
-				var slice = _dataTree.CurrentSlice;
-				var entry = slice.MyCmObject as IReversalIndexEntry;
-				var newOwner = entry.Owner.Owner;
 				UowHelpers.UndoExtension(AreaResources.Promote, _cache.ActionHandlerAccessor, () =>
 				{
+					var entry = (IReversalIndexEntry)_dataTree.CurrentSlice.MyCmObject;
+					var newOwner = entry.Owner.Owner;
 					switch (newOwner.ClassID)
 					{
 						default:
@@ -379,7 +378,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				{
 					var reversalIndexEntry = _dataTree.CurrentSlice?.MyCmObject as IReversalIndexEntry;
 					return reversalIndexEntry != null && (reversalIndexEntry.ReversalIndex.EntriesOC.Count > 1)
-						   || reversalIndexEntry.ReversalIndex.EntriesOC.Count != 0 && reversalIndexEntry.ReversalIndex.EntriesOC.ToArray()[0].SubentriesOS.Any();
+						   || reversalIndexEntry.ReversalIndex.EntriesOC.Count != 0 && reversalIndexEntry.ReversalIndex.EntriesOC.First().SubentriesOS.Any();
 				}
 			}
 

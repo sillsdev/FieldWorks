@@ -81,6 +81,7 @@ namespace LanguageExplorer.Areas
 
 		protected override void UpdateSelectionForRecordBar()
 		{
+			base.UpdateSelectionForRecordBar();
 			_treeBarHandler.UpdateSelection(CurrentObject);
 			OnSelectedObjectChanged(new SelectObjectEventArgs(CurrentObject));
 		}

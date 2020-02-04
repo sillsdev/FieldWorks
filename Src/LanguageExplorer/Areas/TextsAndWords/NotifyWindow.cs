@@ -16,9 +16,6 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-#if RANDYTODO
-	// TODO: See if NotifyWindow is really needed.
-#endif
 	/// <summary>
 	/// Display An MSN-Messenger-Style NotifyWindow.
 	/// </summary>

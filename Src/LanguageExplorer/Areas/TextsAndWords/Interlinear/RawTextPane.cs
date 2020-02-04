@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -33,6 +34,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool _isCurrentTabForInterlineMaster;
 		private bool _showInvisibleSpaces;
 		private bool _clickInvisibleSpace;
+		private IStText _rootObj;
+		private Cursor _invisibleSpaceCursor;
 
 		internal MajorFlexComponentParameters MyMajorFlexComponentParameters { get; set; }
 
@@ -103,9 +106,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				if (ContextMenuStrip != null)
+				{
+					var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
+					var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
+					var currentIndex = 0;
+					var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCut);
+					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCopy);
+					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdPaste);
+					currentIndex++;
+					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= CmdLexiconLookup_Click;
+					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= jumpHandler;
+					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+					currentMenuItem.Click -= jumpHandler;
+					ContextMenuStrip.Dispose();
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			MyMajorFlexComponentParameters = null;
+			ContextMenuStrip = null;
 			MyRecordList = null;
 			Vc = null;
 			_configurationParameters = null;
@@ -147,7 +172,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// We can't set the style for Scripture...that has to follow some very specific rules implemented in TE.
 		/// </summary>
-		public override bool CanApplyStyle => base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj);
+		public override bool CanApplyStyle => base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(_rootObj);
 
 		#endregion
 
@@ -156,17 +181,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal IRecordList MyRecordList { get; set; }
 
-		IStText m_rootObj;
 		public IStText RootObject
 		{
 			get
 			{
-				if (m_rootObj != null && m_rootObj.Hvo == RootHvo)
+				if (_rootObj != null && _rootObj.Hvo == RootHvo)
 				{
-					return m_rootObj;
+					return _rootObj;
 				}
-				m_rootObj = RootHvo != 0 ? Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo) : null;
-				return m_rootObj;
+				_rootObj = RootHvo != 0 ? Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo) : null;
+				return _rootObj;
 			}
 		}
 
@@ -238,8 +262,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Cursor.Current = Cursors.IBeam;
 		}
 
-		Cursor m_invisibleSpaceCursor;
-
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
@@ -247,11 +269,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			if (m_invisibleSpaceCursor == null)
+			if (_invisibleSpaceCursor == null)
 			{
-				m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
+				_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
 			}
-			Cursor = m_invisibleSpaceCursor;
+			Cursor = _invisibleSpaceCursor;
 		}
 
 		protected override void OnLostFocus(EventArgs e)
@@ -482,11 +504,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			IWfiWordform wordform;
-			if (!GetSelectedWordform(vwselNew, out wordform))
-			{
-				wordform = null;
-			}
-			Publisher.Publish("TextSelectedWord", wordform);
+			// 'wordform' may be null.
+			GetSelectedWordform(vwselNew, out wordform);
+			Publisher.Publish(TextAndWordsArea.TextSelectedWord, wordform);
 			var helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
 			{
@@ -574,50 +594,64 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true;
 			}
-#if RANDYTODO
-			// TODO: See if it ever gets past the above code. If not, then delete all of the following.
-#endif
 			if (sel == null)
 			{
 				return false;
 			}
-			CmObjectUi ui = null;
-			try
+			IWfiWordform wordform;
+			if (!GetSelectedWordform(RootBox.Selection, out wordform))
 			{
-				IWfiWordform wordform;
-				if (GetSelectedWordform(RootBox.Selection, out wordform))
-				{
-					ui = CmObjectUi.MakeLcmModelUiObject(Cache, wordform.Hvo);
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				}
-#if RANDYTODO
-// The original code sent it to the window, who then passed it on as in:
-// ((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
-// The optional TemporaryColleagueParameter could then be added as temporary colleagues who could actually handle the message (along with any others the Mediator knew about, if any.)
-// In this case "ui" was the temp colleague:
-// tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
-				mainWind.ShowContextMenu("mnuIText_RawText", new Point(Cursor.Position.X, Cursor.Position.Y), tempColleague, null);
-#endif
-				/*
-				    <menu id="mnuIText_RawText">
-				      <item command="CmdCut" />
-				      <item command="CmdCopy" />
-				      <item command="CmdPaste" />
-				      <item label="-" translate="do not translate" />
-				      <item command="CmdLexiconLookup" />
-				      <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
-				      <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
-				    </menu>
-				*/
-				return true;
+				return false;
 			}
-			finally
+			var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
+			var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
+			// Start: <menu id="mnuIText_RawText">
+			if (ContextMenuStrip != null)
 			{
-				ui?.Dispose();
+				var currentIndex = 0;
+				var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCut);
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCopy);
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdPaste);
+				currentIndex++;
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= CmdLexiconLookup_Click;
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= jumpHandler;
+				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+				currentMenuItem.Click -= jumpHandler;
+				ContextMenuStrip.Dispose();
+				ContextMenuStrip = null;
 			}
-		}
+			ContextMenuStrip = new ContextMenuStrip
+			{
+				Name = ContextMenuName.mnuIText_RawText.ToString()
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+			// <item command="CmdCut" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, sharedEventHandlers.GetEventHandler(Command.CmdCut), LanguageExplorerResources.Cut);
+			// <item command="CmdCopy" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, sharedEventHandlers.GetEventHandler(Command.CmdCopy), LanguageExplorerResources.Copy);
+			// <item command="CmdPaste" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, sharedEventHandlers.GetEventHandler(Command.CmdPaste), LanguageExplorerResources.Paste);
+			// <item label="-" translate="do not translate" />
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip);
+			// <item command="CmdLexiconLookup" />
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, CmdLexiconLookup_Click, LanguageExplorerResources.Find_in_Dictionary);
+			menu.Enabled = CanCmdLexiconLookup;
+			// <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
+			var activeRecordList = MyMajorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, jumpHandler, AreaResources.Show_in_Word_Analyses);
+			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.AnalysesMachineName, activeRecordList };
+			// <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, jumpHandler, AreaResources.Show_Wordform_in_Concordance);
+			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, activeRecordList };
 
-		internal IRecordList ActiveRecordList => PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+			// End: <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
+			return true;
+		}
 
 		#endregion Overrides of RootSite
 
@@ -660,7 +694,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		private Tuple<bool, bool> CanCmdLexiconLookup
+		private bool CanCmdLexiconLookup
 		{
 			get
 			{
@@ -672,7 +706,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					int hvoDummy, tagDummy, wsDummy, ichMinDummy, ichLimDummy;
 					enabled = GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
 				}
-				return new Tuple<bool, bool>(true, enabled);
+				return enabled;
 			}
 		}
 

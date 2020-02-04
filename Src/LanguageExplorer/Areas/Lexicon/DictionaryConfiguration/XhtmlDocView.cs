@@ -638,7 +638,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 						}
 						UpdateContent(PublicationDecorator, currentConfig);
 						break;
-					case "ActiveListSelectedObject":
+					case LanguageExplorerConstants.ActiveListSelectedObject:
 						var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 						if (browser != null)
 						{

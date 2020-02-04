@@ -112,8 +112,6 @@ namespace LanguageExplorer.Areas
 			/*
 		    <!-- The following commands are invoked/displayed on a right click on a slice on a Possibility list item.
 
-			 In the C# code see the following  classes (ReferenceBaseUi and ReferenceCollectionUi) where ContextMenuId returns  "mnuReferenceChoices".
-
 			 Search in the xml files for the particular command (for example CmdJumpToAnthroList and CmdJumpToAnthroList2)
 			 See how the command has the following parameters
 				 className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"

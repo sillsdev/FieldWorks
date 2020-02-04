@@ -443,42 +443,5 @@ namespace LanguageExplorer.Areas
 		}
 
 		#endregion Event handlers
-
-#if RANDYTODO
-		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = (m_treebarAvailability == TreebarAvailability.Optional);
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		public bool OnDisplayExport(object commandObject, ref UIItemDisplayProperties display)
-		{
-			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
-			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName
-#if RANDYTODO
-			// TODO: The "notebook" area uses its own dlg. See: RecordList's method: OnExport
-#endif
-				|| areaChoice == AreaServices.NotebookAreaMachineName
-#if RANDYTODO
-			// TODO: These "textsWords" tools use the "concordanceWords" record list, so can handle the File_Export menu:
-			// TODO: Analyses, bulkEditWordforms, and wordListConcordance.
-			// TODO: These tools in the "textsWords" do not support the File_Export menu, so it is not visible for them:
-			// TODO: complexConcordance, concordance, corpusStatistics, interlinearEdit
-#endif
-				|| (areaChoice == AreaServices.TextAndWordsAreaMachineName && MyRecordList.Id == "concordanceWords")
-#if RANDYTODO
-			// TODO: The "grammarSketch" tool in the "grammar" area uses its own dlg. See: GrammarSketchHtmlViewer's method: OnExport
-			// TODO: All other "grammar" area tools use the basic dlg and worry about some custom lexicon properties.
-#endif
-				|| areaChoice == AreaServices.GrammarAreaMachineName
-				|| areaChoice == AreaServices.ListsAreaMachineName);
-			if (inFriendlyTerritory)
-				display.Enabled = display.Visible = true;
-			else
-				display.Enabled = display.Visible = false;
-
-			return true;
-		}
-#endif
 	}
 }

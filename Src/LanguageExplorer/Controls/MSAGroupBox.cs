@@ -676,7 +676,7 @@ namespace LanguageExplorer.Controls
 			if (m_morphType == null)
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
-				var lex = _flexComponentParameters.PropertyTable.GetValue<ILexEntry>("ActiveListSelectedObject");
+				var lex = _flexComponentParameters.PropertyTable.GetValue<ILexEntry>(LanguageExplorerConstants.ActiveListSelectedObject);
 				if (lex != null)
 				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);

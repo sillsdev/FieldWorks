@@ -64,7 +64,7 @@ namespace LanguageExplorer.SendReceive
 
 		internal static void StopParser(IPublisher publisher)
 		{
-			publisher.Publish("StopParser", null);
+			publisher.Publish(LanguageExplorerConstants.StopParser, null);
 		}
 
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>

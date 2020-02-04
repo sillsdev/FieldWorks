@@ -33,6 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ConcOccurrences = "ConcOccurrences";
 		internal const string InterlinearTexts = "interlinearTexts";
 		internal const string InterlinearTextsRecordList = "InterlinearTextsRecordList";
+		internal const string TextSelectedWord = "TextSelectedWord";
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";

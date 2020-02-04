@@ -1222,12 +1222,8 @@
     <Compile Include="LcmUi\MoMorphSynAnalysisUi.cs" />
     <Compile Include="LcmUi\MsaVc.cs" />
     <Compile Include="LcmUi\PosFilter.cs" />
-    <Compile Include="LcmUi\ReferenceBaseUi.cs" />
-    <Compile Include="LcmUi\ReferenceCollectionUi.cs" />
-    <Compile Include="LcmUi\ReferenceSequenceUi.cs" />
     <Compile Include="LcmUi\TargetFeatureEventArgs.cs" />
     <Compile Include="LcmUi\VcFrags.cs" />
-    <Compile Include="LcmUi\VectorReferenceUi.cs" />
     <Compile Include="LcmUi\WfiAnalysisUi.cs" />
     <Compile Include="LcmUi\WfiGlossUi.cs" />
     <Compile Include="MGA\MGAImageKind.cs" />
@@ -2805,9 +2801,6 @@
     </Compile>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3308,9 +3301,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.resx">
       <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.resx">
-      <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.resx">
       <DependentUpon>FilterTextsDialog.cs</DependentUpon>

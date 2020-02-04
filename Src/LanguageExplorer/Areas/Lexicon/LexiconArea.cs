@@ -137,8 +137,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		/// <remarks>Note to self: Use 'true', if i want to force it to pick the lex edit tool, because the current persisted one crashes.</remarks>
-		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == (false ? "lexiconEdit" : _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName)));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.

@@ -879,7 +879,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return;
 				}
 				viewConstructor.FocusBoxOccurrence = value;
-				Publisher.Publish("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
+				Publisher.Publish(TextAndWordsArea.TextSelectedWord, value != null && value.HasWordform ? value.Analysis.Wordform : null);
 			}
 		}
 

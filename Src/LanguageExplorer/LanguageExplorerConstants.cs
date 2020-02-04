@@ -84,6 +84,9 @@ namespace LanguageExplorer
 		internal const string LinkFollowed = "LinkFollowed";
 		internal const string ReversalIndexGuid = "ReversalIndexGuid";
 		internal const string SuspendLoadListUntilOnChangeFilter = "SuspendLoadListUntilOnChangeFilter";
+		internal const string DataTree = "DataTree";
+		internal const string ActiveListSelectedObject = "ActiveListSelectedObject";
+		internal const string StopParser = "StopParser";
 		#endregion Misc
 	}
 }

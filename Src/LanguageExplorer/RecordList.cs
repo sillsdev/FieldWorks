@@ -284,7 +284,7 @@ namespace LanguageExplorer
 				_bulkEditListUpdateHelper?.Dispose();
 				if (IsControllingTheRecordTreeBar)
 				{
-					PropertyTable.RemoveProperty("ActiveListSelectedObject");
+					PropertyTable.RemoveProperty(LanguageExplorerConstants.ActiveListSelectedObject);
 				}
 				PropertyTable.RemoveProperty(RecordListSelectedObjectPropertyId(Id));
 			}
@@ -1989,7 +1989,7 @@ namespace LanguageExplorer
 					{
 						CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
-					Publisher.Publish("StopParser", null);  // stop parser if it's running.
+					Publisher.Publish(LanguageExplorerConstants.StopParser, null);  // stop parser if it's running.
 				}
 				finally
 				{
@@ -3049,7 +3049,10 @@ namespace LanguageExplorer
 
 		protected virtual void UpdateSelectionForRecordBar()
 		{
-			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+			if (IsControllingTheRecordTreeBar)
+			{
+				PropertyTable.SetProperty(LanguageExplorerConstants.ActiveListSelectedObject, CurrentObject);
+			}
 		}
 
 		/// <summary>

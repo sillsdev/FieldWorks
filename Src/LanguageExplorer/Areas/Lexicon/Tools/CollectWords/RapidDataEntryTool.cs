@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 #endif
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_subservientRecordList.Id));
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_recordListProvidingOwner.Id));
-			_propertyTable.RemoveProperty("ActiveListSelectedObject");
+			_propertyTable.RemoveProperty(LanguageExplorerConstants.ActiveListSelectedObject);
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordListProvidingOwner);
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
