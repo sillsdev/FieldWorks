@@ -179,19 +179,26 @@
 			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
 			<InstallerResources Include="$(fwrt)\resources\Installer.ico"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+			<L10nFiles Include="$(OutputDirForConfig)\ar\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\de\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\fr\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\hi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\hu\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\id\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\km\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
-			<L10nFiles Include="$(OutputDirForConfig)\ro\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\rw\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\sw\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ta\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\te\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\th\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
@@ -282,7 +289,7 @@
 		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')"/>
 		<ItemGroup>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-			<TargetLocales Include="az;es;fa;fr;hi;hu;id;ko;ms;pt;ro;ru;te;tr;vi;zh-CN"/>
+			<TargetLocales Include="ar;az;de;es;fa;fr;hi;hu;id;km;ko;ms;ne;pt;ru;rw;sw;ta;te;th;tr;vi;zh-CN"/>
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
 	</Target>

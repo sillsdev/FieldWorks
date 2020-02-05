@@ -29,6 +29,10 @@
 			<Condition Level="1">UserLanguageID = 1086</Condition>
 			<ComponentGroupRef Id="msLocalization" />
 		</Feature>
+		<Feature Id="Arabic" Title="Arabic" Description="Allows the software to have an Arabic user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1025</Condition>
+			<ComponentGroupRef Id="arLocalization" />
+		</Feature>
 		<Feature Id="Azerbaijani" Title="Azerbaijani" Description="Allows the software to have an Azerbaijani user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<ComponentGroupRef Id="azLocalization" />
 		</Feature>
@@ -40,6 +44,10 @@
 			<Condition Level="1">UserLanguageID = 1036</Condition>
 			<ComponentGroupRef Id="frLocalization" />
 		</Feature>
+		<Feature Id="German" Title="German" Description="Allows the software to have a German user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1031</Condition>
+			<ComponentGroupRef Id="deLocalization" />
+		</Feature>
 		<Feature Id="Hindi" Title="Hindi" Description="Allows the software to have a Hindi user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1081</Condition>
 			<ComponentGroupRef Id="hiLocalization" />
@@ -48,13 +56,30 @@
 			<Condition Level="1">UserLanguageID = 1038</Condition>
 			<ComponentGroupRef Id="huLocalization" />
 		</Feature>
+		<Feature Id="Khmer" Title="Khmer" Description="Allows the software to have a Khmer user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<!--Condition Level="1">Khmer was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="kmLocalization" />
+		</Feature>
 		<Feature Id="Kinyarwanda" Title="Kinyarwanda" Description="Allows the software to have a Kinyarwanda user interface." Display="expand" Level="3" AllowAdvertise="no">
-			<Condition Level="1">UserLanguageID = 1048</Condition>
-			<ComponentGroupRef Id="roLocalization" />
+			<!--Condition Level="1">Kinyarwanda was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="rwLocalization" />
 		</Feature>
 		<Feature Id="Korean" Title="Korean" Description="Allows the software to have a Korean user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1042</Condition>
 			<ComponentGroupRef Id="koLocalization" />
+		</Feature>
+		<Feature Id="Nepali" Title="Nepali" Description="Allows the software to have a Nepali user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<!--Condition Level="1">Nepali was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="neLocalization" />
 		</Feature>
 		<Feature Id="Persian" Title="Persian" Description="Allows the software to have a Persian user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1065</Condition>
@@ -72,12 +97,37 @@
 			<Condition Level="1">UserLanguageID = 1034 OR UserLanguageID = 11274 OR UserLanguageID = 16394 OR UserLanguageID = 13322 OR UserLanguageID = 9226 OR UserLanguageID = 5130 OR UserLanguageID = 7178 OR UserLanguageID = 12298 OR UserLanguageID = 17418 OR UserLanguageID = 4106 OR UserLanguageID = 18442 OR UserLanguageID = 19466 OR UserLanguageID = 6154 OR UserLanguageID = 15370 OR UserLanguageID = 10250 OR UserLanguageID = 20490 OR UserLanguageID = 3082 OR UserLanguageID = 14346 OR UserLanguageID = 8202</Condition>
 			<ComponentGroupRef Id="esLocalization" />
 		</Feature>
+		<Feature Id="Swahili" Title="Swahili" Description="Allows the software to have a Swahili user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<!--Condition Level="1">Swahili was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="swLocalization" />
+		</Feature>
+		<Feature Id="Tamil" Title="Tamil" Description="Allows the software to have a Tamil user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<!--Condition Level="1">Tamil was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="taLocalization" />
+		</Feature>
 		<Feature Id="Telugu" Title="Telugu" Description="Allows the software to have a Telugu user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<ComponentGroupRef Id="teLocalization" />
+		</Feature>
+		<Feature Id="Thai" Title="Thai" Description="Allows the software to have a Thai user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1054</Condition>
+			<ComponentGroupRef Id="thLocalization" />
 		</Feature>
 		<Feature Id="Turkish" Title="Turkish" Description="Allows the software to have a Turkish user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1055</Condition>
 			<ComponentGroupRef Id="trLocalization" />
+		</Feature>
+		<Feature Id="Urdu" Title="Urdu" Description="Allows the software to have an Urdu user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<!--Condition Level="1">Urdu was not a valid UserLanguageID as of June 2015. See:
+			https://helpnet.flexerasoftware.com/installshield22helplib/helplibrary/IHelpGlobLangIdentifiers.htm
+			As of Windows 10 Pro 1909, it is included, but it's not worth my effort to look up at this time.
+			</Condition-->
+			<ComponentGroupRef Id="urLocalization" />
 		</Feature>
 		<Feature Id="Vietnamese" Title="Vietnamese" Description="Allows the software to have a Vietnamese user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1066</Condition>
