@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using FwBuildTasks;
+using SIL.FieldWorks.Build.Tasks.Localization;
 
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {

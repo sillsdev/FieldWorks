@@ -8,6 +8,8 @@ using System.Linq;
 using System.Security;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
+using FwBuildTasks;
 using NUnit.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
 using SIL.TestUtilities;
@@ -178,6 +180,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToSubPosGroup + "/group/trans-unit/source[text()='Cult anthro']", 1, true);
 		}
 
+		/// <summary>
+		/// Tests that ReverseName and ReverseAbbr of LexEntryTypes are converted to XLIFF
+		/// </summary>
 		[Test]
 		public void ConvertListToXliff_ReverseNameAndAbbrTransUnitsCreated()
 		{
@@ -202,14 +207,48 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml)).ToString();
 			const string xpathToPossGroup = "//group[@id='LexDb_VariantEntryTypes']/group[@id='LexDb_VariantEntryTypes_Poss']/group";
 			// Test for reverse name
-			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_Poss_0_RevName']/source[text()='" + revName + "']", 1, true);
-			// Test for reverse abbreviation
-			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			// Test for reverse abbr
+			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_Poss_0_RevAbbr']/source[text()='" + revAbbr + "']", 1, true);
+		}
+
+		/// <summary>
+		/// Tests that ReverseName and ReverseAbbreviation of LexRefTypes are converted to XLIFF
+		/// </summary>
+		[Test]
+		public void ConvertListToXliff_ReverseNameAndAbbrevTransUnitsCreated()
+		{
+			const string revName = "Whole";
+			const string revAbbrev = "wh";
+			const string listXml = @"<Lists><List owner='LexDb' field='References' itemClass='LexRefType'>
+				<Possibilities>
+					<LexRefType>
+						<Name>
+							<AUni ws='en'>Part</AUni>
+						</Name>
+						<ReverseName>
+							<AUni ws='en'>" + revName + @"</AUni>
+						</ReverseName>
+						<ReverseAbbreviation>
+							<AUni ws='en'>" + revAbbrev + @"</AUni>
+						</ReverseAbbreviation>
+					</LexRefType>
+				</Possibilities>
+			</List></Lists>";
+
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml)).ToString();
+			const string xpathToPossGroup = "//group[@id='LexDb_References']/group[@id='LexDb_References_Poss']/group";
+			// Test for reverse name
+			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPossGroup + "/trans-unit[@id='LexDb_References_Poss_0_RevName']/source[text()='" + revName+ "']", 1, true);
+			// Test for reverse abbreviation
+			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPossGroup + "/trans-unit[@id='LexDb_References_Poss_0_RevAbbrev']/source[text()='" + revAbbrev + "']", 1, true);
 		}
 
 		[Test]
@@ -272,11 +311,43 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void ConvertListToXliff_RunStylesCreated()
+		{
+			const string style = "Emphasized Text";
+			const string styledText = "something";
+			const string unstyledText = "else";
+			const string listXml = @"<Lists>
+				<List owner='LangProject' field='AnthroList' itemClass='CmAnthroItem'>
+					<Description>
+						<AStr ws='en'>
+							<Run ws='en' namedStyle='" + style + @"'>" + styledText + @"</Run>
+							<Run ws='en'>" + unstyledText + @"</Run>
+						</AStr>
+					</Description>
+				</List></Lists>";
+			var xmlDoc = XDocument.Parse(listXml);
+
+			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc).ToString();
+			// Test for description trans-unit source
+			const string xpathToGroup = "//group/group[@id='LangProject_AnthroList_Desc']";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToGroup + "/trans-unit", 2, true);
+			// Test for content and styling
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_0']/*[local-name()='style'][text()='" + style + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_0']/source[text()='" + styledText + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasNoMatchForXpath(
+				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/*[local-name()='style'][text()='" + style + "']");
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/source[text()='" + unstyledText + "']", 1, true);
+		}
+
+		[Test]
 		public void ConvertXliffToLists_ListElementCreated()
 		{
 			var listsElement = XElement.Parse("<Lists/>");
-			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf'>
+			const string xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf' target-language='de'>
 					<body>
 						<group id='LangProject_ConfidenceLevels'/>
 					</body></file></xliff>";
@@ -284,43 +355,101 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List[@owner='LangProject' and @field='ConfidenceLevels']", 1);
 		}
 
-		[Test]
-		public void ConvertXliffToLists_ListNameAbbrevAndDescCreated()
+		[TestCase("de", "de")]
+		[TestCase("es-ES", "es")]
+		[TestCase("zh-CN", "zh-CN")]
+		public void ConvertXliffToLists_ListNameAbbrevAndDescCreated_WithNormalizedTargetLanguage(string targLangOrig, string targLangNormalized)
 		{
+			const string englishName = "Genres";
+			const string targetName = "G√©neros";
+			const string englishDescription = "DescriptionSource";
+			const string translatedDescription = "TLDR";
 			var listsElement = XElement.Parse("<Lists/>");
-			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf' target-language='es-ES'>
-					  <body>
+			var xliffXml = $@"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf' target-language='{targLangOrig}'>
+					<body>
 						<group id='LangProject_GenreList'>
 							<trans-unit id='LangProject_GenreList_Name'>
-							<source>Genres</source>
-							<target state='final'>GÈneros</target>
+								<source>{englishName}</source>
+								<target state='final'>{targetName}</target>
 							</trans-unit>
 							<trans-unit id='LangProject_GenreList_Abbr'>
-							<source>gnrs</source>
-							<target state='needs-translatin'>gnrs</target>
+								<source>gnrs</source>
+								<target state='needs-translation'>gnrs</target>
 							</trans-unit>
 							<group id='LangProject_GenreList_Desc'>
-							<trans-unit id='LangProject_GenreList_Desc_0'>
-							<source>DescriptionSource</source>
-							<target state='final'>TLDR</target>
-							</trans-unit>
+								<trans-unit id='LangProject_GenreList_Desc_0'>
+									<source>{englishDescription}</source>
+									<target state='translated'>{translatedDescription}</target>
+								</trans-unit>
 							</group>
 						</group>
 					</body></file></xliff>";
 			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
-			// Verify Name Elements and content for English source
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Name/AUni[@ws='en' and text()='Genres']", 1);
-			// Verify Name Elements and content for Spanish target language
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Name/AUni[@ws='es' and text()='GÈneros']", 1);
-			// Verify Abbreviation Elements and content for English source
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Abbreviation/AUni[@ws='en' and text()='gnrs']", 1);
-			// Verify Abbreviation Elements has no content for Spanish (because Spanish matches English)
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Abbreviation/AUni[@ws='es' and not(text())]", 1);
-			// Verify Description Elements and content for English source
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Description/AStr[@ws='en']/Run[text()='DescriptionSource']", 1);
-			// Verify Abbreviation Elements has no content for Spanish (because Spanish matches English)
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List/Description/AStr[@ws='es']/Run[text()='TLDR']", 1);
+			// Verify Name WS and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Name/AUni[@ws='en' and text()='{englishName}']", 1);
+			// Verify Name WS and content for target language
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Name/AUni[@ws='{targLangNormalized}' and text()='{targetName}']", 1);
+			// Verify Abbreviation WS and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				"/Lists/List/Abbreviation/AUni[@ws='en' and text()='gnrs']", 1);
+			// Verify Abbreviation WS has no translated content (it still needs translation)
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Abbreviation/AUni[@ws='{targLangNormalized}' and not(text())]", 1);
+			// Verify Description WS and content for English source
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				"/Lists/List/Description/AStr[@ws='en']/Run[text()='" + englishDescription + "']", 1);
+			// Verify Description WS and content for target language
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Description/AStr[@ws='{targLangNormalized}']/Run[text()='{translatedDescription}']", 1);
+		}
+
+		[TestCase("needs-translation", 0)]
+		[TestCase("translated", 1)]
+		[TestCase("final", 1)]
+		public void ConvertXliffToLists_TranslationStateChecked(string transState, int isTranslated)
+		{
+			const string targetLang = "de";
+			const string cognateName = "Name";
+			const string englishDescription = "Description";
+			const string translatedDescription = "Beschreibung";
+			var listsElement = XElement.Parse("<Lists/>");
+			var xliffXml = $@"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='MiscLists.xlf' target-language='{targetLang}'>
+					<body>
+						<group id='LangProject_GenreList'>
+							<trans-unit id='LangProject_GenreList_Name'>
+								<source>{cognateName}</source>
+								<target state='{transState}'>{cognateName}</target>
+							</trans-unit>
+							<trans-unit id='LangProject_GenreList_Abbr'>
+								<source>abbr</source>
+								<target state='{transState}'>Abk√º</target>
+							</trans-unit>
+							<group id='LangProject_GenreList_Desc'>
+								<trans-unit id='LangProject_GenreList_Desc_0'>
+									<source>{englishDescription}</source>
+									<target state='{transState}'>{translatedDescription}</target>
+								</trans-unit>
+							</group>
+						</group>
+					</body></file></xliff>";
+			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
+			var result = listsElement.ToString();
+			// Verify Name WS and content for English source
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Name/AUni[@ws='en' and text()='{cognateName}']", 1);
+			// Verify Name WS and content for German target language
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Name/AUni[@ws='{targetLang}' and text()='{cognateName}']", isTranslated);
+			// Verify Description WS and content for English source
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Description/AStr[@ws='en']/Run[text()='{englishDescription}']", 1);
+			// Verify Abbreviation WS has no content for German (because German matches English)
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				$"/Lists/List/Description/AStr[@ws='{targetLang}']/Run[@ws='{targetLang}' and text()='{translatedDescription}']", isTranslated);
 		}
 
 		[Test]
@@ -403,6 +532,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				$"//Possibilities/CmPossibility[@guid='{guid}']", 1);
 		}
 
+		/// <summary>
+		/// Tests that ReverseName and ReverseAbbr of LexEntryTypes are converted from XLIFF
+		/// </summary>
 		[Test]
 		public void ConvertXliffToLists_ReverseNameAndAbbrConverted()
 		{
@@ -411,7 +543,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string revAbbr = "dial. var. of";
 			var listsElement = XElement.Parse("<Lists/>");
 			const string xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='test.xml'>
+				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='de'>
 					<body>
 						<group id='LexDb_VariantEntryTypes'>
 							<group id='LexDb_VariantEntryTypes_Poss'>
@@ -434,17 +566,61 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 						</group>
 					</body></file></xliff>";
 			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
+			var result = listsElement.ToString();
 			// Verify the Possibilities element was created with the correct owner
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/Lists/List[@owner='LexDb']/Possibilities/LexEntryType", 1);
-			// Verify the Reverse Name and Rev. Abbrev. in the Possibility
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			// Verify the Reverse Name and Rev. Abbr. in the Possibility
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//Possibilities/LexEntryType/ReverseName/AUni[text()='" + revName + "']", 1);
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//Possibilities/LexEntryType/ReverseAbbr/AUni[text()='" + revAbbr + "']", 1);
 			// Verify that the guid was added as an attribute
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				$"//Possibilities/LexEntryType[@guid='{guid}']", 1);
+		}
+
+		/// <summary>
+		/// Tests that ReverseName and ReverseAbbreviation of LexRefTypes are converted from XLIFF
+		/// </summary>
+		[Test]
+		public void ConvertXliffToLists_ReverseNameAndAbbreviationConverted()
+		{
+			const string revName = "Whole";
+			const string revAbbrev = "wh";
+			var listsElement = XElement.Parse("<Lists/>");
+			const string xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='de'>
+					<body>
+						<group id='LexDb_References'>
+							<group id='LexDb_References_Poss'>
+								<group id='LexDb_References_Poss_0'>
+									<trans-unit id='LexDb_References_Poss_0_Name'>
+										<source>Part</source>
+									</trans-unit>
+									<trans-unit id='LexDb_References_Poss_0_Abbr'>
+										<source>pt</source>
+									</trans-unit>
+									<trans-unit id='LexDb_References_Poss_0_RevName'>
+										<source>" + revName + @"</source>
+									</trans-unit>
+									<trans-unit id='LexDb_References_Poss_0_RevAbbrev'>
+										<source>" + revAbbrev + @"</source>
+									</trans-unit>
+								</group>
+							</group>
+						</group>
+					</body></file></xliff>";
+			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
+			var result = listsElement.ToString();
+			// Verify the Possibilities element was created with the correct owner
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"/Lists/List[@owner='LexDb']/Possibilities/LexRefType", 1);
+			// Verify the Reverse Name and Rev. Abbreviation in the Possibility
+			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				"//Possibilities/LexRefType/ReverseName/AUni[text()='" + revName + "']", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"//Possibilities/LexRefType/ReverseAbbreviation/AUni[text()='" + revAbbrev + "']", 1);
 		}
 
 		[Test]
@@ -455,7 +631,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string exampleSentence = "In the beginning God created <the heavens and the earth>.";
 			var listsElement = XElement.Parse("<Lists/>");
 			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='test.xml'>
+				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='de'>
 					<body>
 						<group id='LangProject_SemanticDomainList'>
 							<group id='LangProject_SemanticDomainList_Poss'>
@@ -507,15 +683,134 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				"//Questions/CmDomainQ/ExampleSentences/AStr/Run[text()='" + exampleSentence + "']", 1);
 		}
 
+		[Test]
+		public void ConvertXliffToLists_RunStylesCreated()
+		{
+			const string style = "Emphasized Text";
+			const string styledText = "something";
+			const string unstyledText = "else";
+			const string styledTrans = "Etwas";
+			const string unstyledTrans = "anderes";
+			const string targetWs = "de";
+			const string xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='" + targetWs + @"'>
+					<body>
+						<group id='LangProject_AnthroList'>
+							<group id='LangProject_AnthroList_Desc'>
+								<trans-unit id='LangProject_AnthroList_Desc_0'>
+									<sil:style>" + style + @"</sil:style>
+									<source>" + styledText + @"</source>
+									<target state='final'>" + styledTrans + @"</target>
+								</trans-unit>
+								<trans-unit id='LangProject_AnthroList_Desc_1'>
+									<source>" + unstyledText + @"</source>
+									<target state='final'>" + unstyledTrans + @"</target>
+								</trans-unit>
+							</group>
+						</group>
+					</body></file></xliff>";
+			var xliffDoc = XDocument.Parse(xliffXml);
+
+			var listsElement = XElement.Parse("<Lists/>");
+			LocalizeLists.ConvertXliffToLists(xliffDoc, listsElement);
+			var result = listsElement.ToString();
+			// Test for description element
+			const string xpathToDescAStr = "/Lists/List[@owner='LangProject']/Description/AStr";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToDescAStr + "/Run[@ws='en']", 2, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToDescAStr + "/Run[@ws='" + targetWs + "']", 2, true);
+			// Test for styling
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToDescAStr + "/Run[text()='" + styledText + "' and @namedStyle='" + style + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToDescAStr + "/Run[text()='" + unstyledText + "' and not (@namedStyle)]", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToDescAStr + "/Run[text()='" + styledTrans + "' and @namedStyle='" + style + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToDescAStr + "/Run[text()='" + unstyledTrans + "' and not (@namedStyle)]", 1, true);
+		}
+
+		[Test]
+		public void RoundTrip_XmlEscapablesSurvive()
+		{
+			const string unescaped = "This & that <shouldn't> \"cause\" probl'ms.";
+			const string escaped = "This &amp; that &lt;shouldn&apos;t&gt; &quot;cause\" probl'ms.";
+			const string listXml = @"<Lists><List owner='LangProject' field='AnthroList' itemClass='CmAnthroItem'>
+				<Possibilities>
+					<CmAnthroItem>
+						<Name>
+							<AUni ws='en'>" + escaped + @"</AUni>
+						</Name>
+						<Description>
+							<AStr ws='en'>
+								<Run ws='en'>" + escaped + @"</Run>
+							</AStr>
+						</Description>
+					</CmAnthroItem>
+				</Possibilities>
+			</List></Lists>";
+
+			// Test and verify the first direction
+			// ReSharper disable PossibleNullReferenceException - XPath Asserts ensure existence of XElements
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			const string xpathToPoss0 = "//group[@id='LangProject_AnthroList']/group/group[@id='LangProject_AnthroList_Poss_0']";
+			const string xpathToNameSource = xpathToPoss0 + "/trans-unit[@id='LangProject_AnthroList_Poss_0_Name']/source";
+			const string xpathToDescSource = xpathToPoss0 + "/group/trans-unit[@id='LangProject_AnthroList_Poss_0_Desc_0']/source";
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToNameSource, 1, true);
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescSource, 1, true);
+			var nameSourceElt = xliffDoc.XPathSelectElement(xpathToNameSource);
+			var descSourceElt = xliffDoc.XPathSelectElement(xpathToDescSource);
+			Assert.AreEqual(unescaped, nameSourceElt.Value);
+			Assert.AreEqual(unescaped, descSourceElt.Value);
+
+			AddTargetLanguage(xliffDoc);
+
+			// Test and verify the round trip
+			var roundTripped = XElement.Parse("<Lists/>");
+			LocalizeLists.ConvertXliffToLists(xliffDoc, roundTripped);
+			const string xpathToItem = "//List/Possibilities/CmAnthroItem";
+			const string xpathToNameAUni = xpathToItem + "/Name/AUni[@ws='en']";
+			const string xpathToDescRun = xpathToItem + "/Description/AStr[@ws='en']/Run[@ws='en']";
+			AssertThatXmlIn.String(roundTripped.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToNameAUni, 1);
+			AssertThatXmlIn.String(roundTripped.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescRun, 1);
+			var nameAUni = roundTripped.XPathSelectElement(xpathToNameAUni);
+			var descRun = roundTripped.XPathSelectElement(xpathToDescRun);
+			Assert.AreEqual(unescaped, nameAUni.Value);
+			Assert.AreEqual(unescaped, descRun.Value);
+			// ReSharper enable PossibleNullReferenceException
+		}
+
+		/// <summary>
+		/// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language to enable this option)
+		/// </summary>
 		[Ignore]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()
 		{
-			// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language first)
-			LocalizeLists.SplitSourceLists(@"C:\WorkingFiles\TranslatedListOutput.xml", @"C:\WorkingFiles\XliffTestOutput");
-			var files = Directory.GetFiles(@"C:\WorkingFiles\XLiffTestOutput", "*.xlf");
-			LocalizeLists.CombineXliffFiles(files.ToList(), @"C:\WorkingFiles\RoundTripped.xml");
+			// clean and create the output directory
+			const string outputDir = @"C:\WorkingFiles\XliffTestOutput";
+			TaskTestUtils.RecreateDirectory(outputDir);
+
+			// convert from XML to XLIFF
+			LocalizeLists.SplitSourceLists(@"C:\WorkingFiles\TranslatedListOutput.xml", outputDir);
+
+			// add a target language (required)
+			var files = Directory.GetFiles(@"C:\WorkingFiles\XLiffTestOutput", "*.xlf").ToList();
+			foreach (var file in files)
+			{
+				var xDoc = XDocument.Load(file);
+				AddTargetLanguage(xDoc);
+				xDoc.Save(file);
+			}
+
+			// convert from XLIFF to XML
+			LocalizeLists.CombineXliffFiles(files, @"C:\WorkingFiles\RoundTripped.xml");
+		}
+
+		private static void AddTargetLanguage(XDocument xliffDoc)
+		{
+				var fileElement = xliffDoc.XPathSelectElement("/xliff/file");
+				fileElement?.Add(new XAttribute("target-language", "."));
 		}
 	}
 }

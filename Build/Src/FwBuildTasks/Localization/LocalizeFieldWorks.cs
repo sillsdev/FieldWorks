@@ -8,10 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
-using SIL.FieldWorks.Build.Tasks.Localization;
 using Task = Microsoft.Build.Utilities.Task;
 
-namespace SIL.FieldWorks.Build.Tasks
+namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	/// <summary>
 	/// This class implements a complex process required to generate various resource DLLs for

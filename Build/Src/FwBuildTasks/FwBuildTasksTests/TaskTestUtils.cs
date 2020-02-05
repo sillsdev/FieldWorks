@@ -1,16 +1,27 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace FwBuildTasks
 {
 	internal static class TaskTestUtils
 	{
+		public static void RecreateDirectory(string path)
+		{
+			if (Directory.Exists(path))
+			{
+				SIL.TestUtilities.TestUtilities.DeleteFolderThatMayBeInUse(path);
+			}
+			Thread.Sleep(1000); // wait for the directory to finish being deleted
+			Directory.CreateDirectory(path);
+		}
 	}
 
 	internal class TestBuildEngine : IBuildEngine

@@ -7,7 +7,7 @@ using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace SIL.FieldWorks.Build.Tasks
+namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	/// <summary>
 	/// Crowdin includes country codes either always or never. Country codes are required for Chinese, but mostly get in the way for other languages.
@@ -22,18 +22,27 @@ namespace SIL.FieldWorks.Build.Tasks
 		public override bool Execute()
 		{
 			var locales = Directory.GetDirectories(L10nsDirectory).Select(Path.GetFileName);
-			foreach (var locale in locales.Where(l => !l.Equals("zh-CN"))) // Chinese is special
+			foreach (var locale in locales)
 			{
-				RenameLocale(locale, locale.Split('-')[0]);
+				RenameLocale(locale, Normalize(locale));
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Normalizes a locale in the form %language_code%-%region_code%, assuming the language is in the default region.
+		/// That is, strip the region codes from all languages except Chinese (which must always have a region code).
+		/// </summary>
+		public static string Normalize(string locale)
+		{
+			return locale.Equals("zh-CN") ? locale : locale.Split('-')[0];
 		}
 
 		private void RenameLocale(string source, string dest)
 		{
 			if (source == dest)
 			{
-				Log.LogMessage($"Unable to normalize '{source}'.");
+				Log.LogMessage($"Not normalizing '{source}'.");
 				return;
 			}
 

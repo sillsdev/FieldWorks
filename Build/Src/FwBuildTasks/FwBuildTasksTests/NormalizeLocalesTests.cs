@@ -5,6 +5,7 @@
 using System.IO;
 using FwBuildTasks;
 using NUnit.Framework;
+using SIL.FieldWorks.Build.Tasks.Localization;
 
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
@@ -22,11 +23,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			_testDir = Path.Combine(Path.GetTempPath(), GetType().Name);
 			_task = new NormalizeLocales { BuildEngine = _tbi, L10nsDirectory = _testDir };
 
-			if(Directory.Exists(_testDir))
-			{
-				TestUtilities.TestUtilities.DeleteFolderThatMayBeInUse(_testDir);
-			}
-			Directory.CreateDirectory(_testDir);
+			TaskTestUtils.RecreateDirectory(_testDir);
 		}
 
 		[TearDown]

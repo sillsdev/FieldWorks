@@ -103,7 +103,7 @@
     <Compile Include="FwBuildTasksTests\WxsToWxiTests.cs" />
     <Compile Include="Localization\LocalizeLists.cs" />
     <Compile Include="LogMetadata.cs" />
-    <Compile Include="NormalizeLocales.cs" />
+    <Compile Include="Localization\NormalizeLocales.cs" />
     <Compile Include="WxsToWxi.cs" />
     <Compile Include="Clouseau.cs" />
     <Compile Include="CodeReader\ILReader.cs" />
@@ -121,7 +121,7 @@
     <Compile Include="Localization\LocalizerOptions.cs" />
     <Compile Include="Localization\ProjectLocalizer.cs" />
     <Compile Include="Localization\ProjectLocalizerOptions.cs" />
-    <Compile Include="LocalizeFieldWorks.cs" />
+    <Compile Include="Localization\LocalizeFieldWorks.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeFieldWorksTests.cs" />
     <Compile Include="Make.cs" />
     <Compile Include="ParseVersionNumbers.cs" />
