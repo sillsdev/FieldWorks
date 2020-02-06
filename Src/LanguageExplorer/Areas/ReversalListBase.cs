@@ -11,13 +11,11 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
-using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
@@ -98,170 +96,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		#endregion
-
-#if RANDYTODO
-		/// <summary>
-		/// This is enabled whenever the ReversalList is active.
-		/// </summary>
-		public virtual bool OnDisplayInsertReversalIndex(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (Cache == null)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int cRevIdx = Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
-				int cWs = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Count();
-				display.Enabled = cRevIdx < cWs;
-			}
-			display.Visible = true;
-			return true;
-		}
-#endif
-
-		/// <summary />
-		public virtual void OnInsertReversalIndex(object argument)
-		{
-			var newGuid = CreateNewReversalIndex();
-			if (newGuid == Guid.Empty)
-			{
-				return;
-			}
-			ChangeOwningObject(newGuid);
-			var guid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
-			if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
-			{
-				SetReversalIndexGuid(newGuid);
-			}
-		}
-
-		private Guid CreateNewReversalIndex()
-		{
-			if (m_cache?.LanguageProject?.LexDbOA == null)
-			{
-				return Guid.Empty;
-			}
-			IReversalIndex newReversalIndex = null;
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-			{
-				newReversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-				m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newReversalIndex);
-			});
-			return newReversalIndex?.Guid ?? Guid.Empty;
-		}
-
-		/// <summary />
-		internal static IReversalIndex ReversalIndexAfterDeletion(LcmCache cache, out int cobjNew)
-		{
-			IReversalIndex newIdx;
-			cobjNew = cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
-			if (cobjNew == 0)
-			{
-				// Big trouble ensues if we don't have any reversal indexes at all, so ...
-				// Create a reversal index for the current default analysis writing system.
-				var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-				newIdx = riRepo.FindOrCreateIndexForWs(cache.DefaultAnalWs);
-
-				cobjNew = 1;
-			}
-			else
-			{
-				// Regardless, we need to change the reversal index hvo since the old one just
-				// disappeared.
-				newIdx = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
-			}
-			return newIdx;
-		}
-
-		private void SetReversalIndexGuid(Guid reversalIndexGuid)
-		{
-			if (m_cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
-			{
-				PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, reversalIndexGuid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-			}
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// This is enabled whenever the ReversalList is active.
-		/// </summary>
-		public virtual bool OnDisplayDeleteReversalIndex(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (Cache == null)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int cRevIdx = Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
-				display.Enabled = cRevIdx > 0;
-			}
-			display.Visible = true;
-			return true;
-		}
-#endif
-
-		/// <summary />
-		public virtual void OnDeleteReversalIndex(object argument)
-		{
-			var oldGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
-			if (oldGuid.Equals(Guid.Empty))
-			{
-				return;
-			}
-
-			if (m_cache == null)
-			{
-				return;
-			}
-			DeleteReversalIndex((IReversalIndex)m_cache.ServiceLocator.GetObject(oldGuid));
-		}
-
-		/// <summary />
-		public void DeleteReversalIndex(IReversalIndex ri)
-		{
-			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
-			using (new WaitCursor(mainWindow))
-			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
-			{
-				dlg.SetDlgInfo(ri, m_cache, PropertyTable);
-				dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
-				dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;
-				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-				{
-					ReallyDeleteReversalIndex(ri);
-				}
-			}
-		}
-
-		/// <summary />
-		protected virtual void ReallyDeleteReversalIndex(IReversalIndex ri)
-		{
-			try
-			{
-				Debug.Assert(ri.Hvo == OwningObject.Hvo);
-				// can't reload deleted list! (LT-5353)
-				ListModificationInProgress = true;
-				// We're about to do a MasterRefresh which clobbers the Undo stack,
-				// so we might as well make this UOW not undoable
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				{
-					m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
-					int cobjNew;
-					var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
-					SetReversalIndexGuid(idxNew.Guid);
-				});
-				ChangeOwningObjectIfPossible();
-			}
-			finally
-			{
-				ListModificationInProgress = false;
-			}
-			// Without this, stale data can still display in the BulkEditSenses tool if you
-			// recreate the deleted reversal index.
-			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
-		}
 
 		/// <summary>
 		/// Returns the index of the root object whose descendent is the object at lastValidIndex.

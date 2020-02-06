@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		#region Consruction and disposal
+		#region Construction and disposal
 		/// <summary />
 		public XmlDocView()
 		{
@@ -76,21 +76,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		#region TitleBar Layout Menu
-
-#if RANDYTODO
-		/// <summary>
-		/// Populate the list of layout views for the second dictionary titlebar menu.
-		/// </summary>
-		public bool OnDisplayLayouts(object parameter, ref UIListDisplayProperties display)
-		{
-			var layoutList = GatherBuiltInAndUserLayouts();
-			foreach (var view in layoutList)
-			{
-				display.List.Add(view.Item1, view.Item2, null, null, true);
-			}
-			return true;
-		}
-#endif
 
 		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
 		{
@@ -209,7 +194,7 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				_uiWidgetController.RemoveUserControlHandlers(this);
-				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, CheckJump);
 				m_contextMenu?.Dispose();
 				DisposeTooltip();
@@ -221,7 +206,7 @@ namespace LanguageExplorer.Areas
 			base.Dispose(disposing);
 		}
 
-		#endregion // Consruction and disposal
+		#endregion // Construction and disposal
 
 		#region Other methods
 
@@ -1101,7 +1086,7 @@ namespace LanguageExplorer.Areas
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			InitBase();
-			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
 			Subscriber.Subscribe(LanguageExplorerConstants.JumpToRecord, CheckJump);
 		}
 

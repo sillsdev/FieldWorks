@@ -74,6 +74,7 @@ namespace LanguageExplorer
 		List<IManyOnePathSortItem> SortedObjects { get; set; }
 		RecordSorter Sorter { get; }
 		string SortName { get; set; }
+		IRecordList SubservientRecordList { get; }
 		bool SuppressSaveOnChangeRecord { get; set; }
 		bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
 		int TypeSize { get; }

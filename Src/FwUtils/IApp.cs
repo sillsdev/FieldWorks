@@ -4,6 +4,7 @@
 
 using System;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 
@@ -12,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Interface for application.
 	/// </summary>
-	public interface IApp : IDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter
+	public interface IApp : IDisposable, IHelpTopicProvider, IFeedbackInfoProvider, IMessageFilter
 	{
 		/// <summary>
 		/// Return a string from a resource ID.
@@ -58,6 +59,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Restart the spell-checking process (e.g. when dictionary changed)
 		/// </summary>
 		void RestartSpellChecking();
+
+		/// <summary>
+		/// Returns a key in the registry where "Persistence" should store settings.
+		/// </summary>
+		RegistryKey SettingsKey { get; }
 
 		/// <summary>
 		/// Cycle through the applications main windows and synchronize them with database

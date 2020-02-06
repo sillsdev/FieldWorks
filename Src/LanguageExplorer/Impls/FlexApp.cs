@@ -208,35 +208,6 @@ namespace LanguageExplorer.Impls
 		}
 		#endregion IMessageFilter interface implementation
 
-		#region ISettings interface implementation
-
-		/// <summary>
-		/// The RegistryKey for this application.
-		/// </summary>
-		public RegistryKey SettingsKey
-		{
-			get
-			{
-				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
-				{
-					return regKey.CreateSubKey(SettingsKeyName);
-				}
-			}
-		}
-
-		/// <summary>
-		/// For now, app has no settings to save. This method is required
-		/// as part of ISettings implementation. Note that the SaveSettings() method is the
-		/// appropriate one to modify if you really want to save settings. This
-		/// one is NEVER called!
-		/// </summary>
-		/// <exception cref="NotSupportedException">Client is to use "SaveSettings" method, not this one.</exception>
-		public void SaveSettingsNow()
-		{
-			throw new NotSupportedException("'SaveSettingsNow' is not supported. Use 'SaveSettings' method instead.");
-		}
-		#endregion ISettings interface implementation
-
 		#region IFeedbackInfoProvider interface implementation
 		/// <summary>
 		/// E-mail address for bug reports, etc.
@@ -480,6 +451,20 @@ namespace LanguageExplorer.Impls
 			foreach (Control wnd in MainWindows)
 			{
 				RestartSpellChecking(wnd);
+			}
+		}
+
+		/// <summary>
+		/// The RegistryKey for this application.
+		/// </summary>
+		public RegistryKey SettingsKey
+		{
+			get
+			{
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey(SettingsKeyName);
+				}
 			}
 		}
 
@@ -1241,8 +1226,7 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Recursively look at all the controls belonging to the specified control and save
-		/// the settings for each root box for controls of type ISettings. Then close
+		/// Recursively look at all the controls belonging to the specified control and close
 		/// the root box for controls of type IRootSite. Ideally IRootSite controls should
 		/// close their root boxes in the OnHandleDestroyed event, but since sometimes IRootSite
 		/// controls are created but never shown (which means their handle is never created),
@@ -1255,7 +1239,6 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			(ctrl as ISettings)?.SaveSettingsNow();
 			(ctrl as IRootSite)?.CloseRootBox();
 
 			foreach (Control childControl in ctrl.Controls)

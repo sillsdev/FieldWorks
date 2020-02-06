@@ -11,10 +11,6 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-#if RANDYTODO
-	// TODO: how similar is this class to LexReferenceTreeBranchesLauncher and
-	// TODO: LexReferenceCollectionLauncher? Could they all inherit from the same class?
-#endif
 	/// <summary />
 	internal sealed class LexReferenceSequenceLauncher : VectorReferenceLauncher
 	{

@@ -16,16 +16,6 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
 {
-#if RANDYTODO
-	// TODO: It would be better if this class were split into behaviors that are shared:
-	// TODO: 1. between different areas, (new class). (That is, no area should be using this class in the end.)
-	// TODO: 2. between individual tools from same/different areas (this class).
-	// TODO: 3. between UserControls from different areas (new class). (That is, no area or user control should be using this class in the end.)
-	// DONE: the other two classes exist (PartiallySharedForAreasWideMenuHelper & PartiallySharedForUserControlWideMenuHelper).
-	// TODO: Now to see what can be added to them (from this class or elsewhere).
-	// DONE: Spun off CustomFieldsMenuHelper class (area wide for areas that allow custom fields).
-	// DONE: Spun off FileExportMenuHelper class (area wide for areas that allow custom fields).
-#endif
 	/// <summary>
 	/// Provides menu adjustments for areas/tools that cross those boundaries, and that areas/tools can be more selective in what to use.
 	/// One might think of these as more 'global', but not quite to the level of 'universal' across all areas/tools,

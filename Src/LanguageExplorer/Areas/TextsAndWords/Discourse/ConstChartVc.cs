@@ -6,11 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -65,25 +63,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void LoadFormatProps()
 		{
-#if RANDYTODO
-			// TODO: Move ConstituentChartStyleInfo.xml into the Resources folder, and make it a resource.
-			// TODO: Then, change this code to: 1) use the resource, and 2) use XDocument.
-#endif
-			var path = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "ConstituentChartStyleInfo.xml");
-			if (!File.Exists(path))
-			{
-				return;
-			}
-			var doc = new XmlDocument();
-			doc.Load(path);
 			m_formatProps = new Dictionary<string, ITsTextProps>();
 			m_brackets = new Dictionary<string, string>();
-			foreach (XmlNode item in doc.DocumentElement.ChildNodes)
+			foreach (var item in XDocument.Parse(TextAndWordsResources.ConstituentChartStyleInfo).Root.Elements())
 			{
-				if (item is XmlComment)
-				{
-					continue;
-				}
 				var bldr = TsStringUtils.MakePropsBldr();
 				var color = XmlUtils.GetOptionalAttributeValue(item, "color", null);
 				if (color != null)
@@ -128,9 +111,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var brackets = XmlUtils.GetOptionalAttributeValue(item, "brackets", null);
 				if (brackets != null && brackets.Trim().Length == 2)
 				{
-					m_brackets[item.Name] = brackets.Trim();
+					m_brackets[item.Name.LocalName] = brackets.Trim();
 				}
-				m_formatProps[item.Name] = bldr.GetTextProps();
+				m_formatProps[item.Name.LocalName] = bldr.GetTextProps();
 			}
 			m_fIsAnalysisWsGraphiteEnabled = m_cache.LanguageProject.DefaultAnalysisWritingSystem.IsGraphiteEnabled;
 			if (m_chart.IsRightToLeft)

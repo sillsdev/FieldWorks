@@ -50,23 +50,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			// This will also remove any event handlers set up by the tool's UserControl instances that may have registered event handlers.
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_propertyTable.SetProperty(LanguageExplorerConstants.RecordListWidthGlobal, _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
-
-#if RANDYTODO
-			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
-			/*
-			Q: Jason: "This won't result in us losing track of current entries when switching between tools will it?
-					I can't remember what this property is used for at the moment."
-			A: Randy: "One of the changes (not integration stuff like all of these ones) I plan is to get all record
-					record list instances to come out of a repository like class, which creates them all and returns them, when requested.
-					A tool will then activate them, when the tool is activated, and the tool will deactivate them, when the tool changes.
-					That is something like what is done in 'develop' with the PropertyTable (sans creation).
-					But, I'd like to see use of PropertyTable reduced to actual properties that are persisted,
-					and not as yet another 'God-object' in the code that knows how to get anything (eg. LCMCache, service locator, etc).
-					I'm not there yet, but that is where I'd like to go.
-
-					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
-			*/
-#endif
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_subservientRecordList.Id));
 			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_recordListProvidingOwner.Id));
 			_propertyTable.RemoveProperty(LanguageExplorerConstants.ActiveListSelectedObject);

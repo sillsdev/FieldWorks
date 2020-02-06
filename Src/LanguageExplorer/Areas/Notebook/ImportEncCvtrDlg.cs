@@ -83,9 +83,6 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			// Added to make the list of encoding converters match the list that is given when
 			// the add new converter option is selected. (LT-2955)
-#if RANDYTODO
-			// TODO: 'encConv' never has any data, but is used in loop, below.
-#endif
 			var encConv = new EncConverters();
 			var de = encConv.GetEnumerator();
 			m_cbEC.BeginUpdate();

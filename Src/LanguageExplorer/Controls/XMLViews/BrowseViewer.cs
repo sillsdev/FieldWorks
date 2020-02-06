@@ -49,9 +49,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Container components;
 		/// <summary />
 		protected internal RecordFilter m_currentFilter;
-#if RANDYTODO
-		// TODO: Think about the refactor idea. No sense in having "bad design" hang around, if it can be fixed up.
-#endif
 		private int m_lastLayoutWidth;
 		/// <summary />
 		protected int m_icolCurrent;
@@ -286,7 +283,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Get the special 'Decorator' ISilDataAccess cache.
 		/// </summary>
-		public XMLViewsDataCache SpecialCache { get; private set; }
+		public XMLViewsDataCache SpecialCache { get; }
 
 		protected internal FilterBar FilterBar { get; set; }
 
@@ -675,6 +672,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			menu.Checked = CurrentColumnSortedFromEnd;
 
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Sorted_By_Length_Clicked, XMLViewsStrings.Sorted_By_Length);
+			menu.Visible = menu.Enabled = CanSortedByLength;
 			menu.Checked = CurrentColumnSortedByLength;
 
 			// End: <menu id="mnuBrowseHeader" >
@@ -1653,6 +1651,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				using (var xbv = new OneColumnXmlBrowseView(this, icolLvHeaderToAdjust))
 				{
+					xbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					maxStringWidth = xbv.GetMaxCellContentsWidth();
 				}
 			}
@@ -2670,48 +2669,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			SelectedIndexChanged?.Invoke(this, new EventArgs());
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Enable the "Sort from end" menu command.
-		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplaySortedFromEnd(object commandObject, ref UIItemDisplayProperties display)
+		private bool CanSortedByLength
 		{
-			display.Visible = true;
-			display.Enabled = true;
-			display.Checked = CurrentColumnSortedFromEnd;
-			return true;
-		}
-
-		/// <summary>
-		/// Enable the "Sort from end" menu command.
-		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplaySortedByLength(object commandObject, ref UIItemDisplayProperties display)
-		{
-			int icol = -1;	// can't sort without a filter bar!
-			if (m_filterBar != null)
-				icol = m_icolCurrent - m_filterBar.ColumnOffset;
-			if (icol < 0)
+			get
 			{
-				display.Visible = false;	// should never reach here
-				display.Enabled = false;
+				// Can't sort without a filter bar!
+				var icol = -1;
+				if (FilterBar != null)
+				{
+					icol = m_icolCurrent - FilterBar.ColumnOffset;
+				}
+				return icol >= 0 && XmlUtils.GetOptionalBooleanAttributeValue(ColumnSpecs[icol], "cansortbylength", false);
 			}
-			else
-			{
-				bool fCanSortByLength = XmlUtils.GetOptionalBooleanAttributeValue(
-					ColumnSpecs[icol] as XmlElement, "cansortbylength", false);
-				display.Visible = fCanSortByLength;
-				display.Enabled = fCanSortByLength;
-				display.Checked = CurrentColumnSortedByLength;
-			}
-			return true;
 		}
-#endif
 
 		private RecordSorter GetCurrentColumnSorter()
 		{
@@ -3246,10 +3216,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
 			{
-#if RANDYTODO
-				base.Init(mediator, propertyTable, nodeSpec);
-				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
-#endif
+				Init(nodeSpec, hvoRoot, mainTag, cache, bv);
 				m_styleSheet = styleSheet;
 				// add only the specified column to this browseview.
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);

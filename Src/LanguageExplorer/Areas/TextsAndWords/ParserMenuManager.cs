@@ -134,14 +134,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				if (_recordList != null)
 				{
 					// Unwire from older record list
-					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
+					_recordList.RecordChanged -= RecordListRecordChanged;
+				}
+				if (value == null)
+				{
+					_recordList = null;
+					return;
 				}
 				_recordList = value;
-				if (_recordList != null)
+				if (InInterlinearText && value.SubservientRecordList != null)
 				{
-					// Wire up to new record list.
-					_recordList.SelectedObjectChanged += RecordListSelectedObjectChanged;
+					_recordList = value.SubservientRecordList;
 				}
+				// Wire up to new record list.
+				_recordList.RecordChanged += RecordListRecordChanged;
 			}
 		}
 
@@ -156,23 +162,24 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			DisconnectFromParser();
 		}
 
-		private void RecordListSelectedObjectChanged(object sender, SelectObjectEventArgs recordNavigationEventArgs)
+		private void RecordListRecordChanged(object sender, RecordNavigationEventArgs e)
 		{
-			var currentObject = recordNavigationEventArgs.CurrentObject;
-			if (currentObject is IStText)
+			var currentObject = e.RecordNavigationInfo.MyRecordList.CurrentObject;
+			var asIStText = currentObject as IStText;
+			if (asIStText != null)
 			{
-#if RANDYTODO
-				// TODO: This is not used. Fix bug from text land, so it is called, which will then make "parseWordsInText" menu visible and enabled.
-#endif
-				_currentStText = (IStText)currentObject;
+				if (!ReferenceEquals(_currentStText, asIStText))
+				{
+					_currentStText = asIStText;
+				}
 				return;
 			}
-			if (!(currentObject is IWfiWordform))
+			var asIWfiWordform = currentObject as IWfiWordform;
+			if (asIWfiWordform != null)
 			{
-				return;
+				_currentWordform = asIWfiWordform;
+				Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
 			}
-			_currentWordform = (IWfiWordform)currentObject;
-			Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
 		}
 
 		private Tuple<bool, bool> CanCmdParseAllWords => new Tuple<bool, bool>(true, Connection == null);
@@ -189,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var enable = CurrentText != null;
+				var enable = InInterlinearText && _currentStText != null;
 				return new Tuple<bool, bool>(enable, enable);
 			}
 		}
@@ -428,7 +435,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				if (_recordList != null)
 				{
-					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
+					_recordList.RecordChanged -= RecordListRecordChanged;
 				}
 				Subscriber.Unsubscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
@@ -467,8 +474,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		#endregion IDisposable & Co. implementation
-
-		private IStText CurrentText => InInterlinearText ? _currentStText : null;
 
 		private IWfiWordform CurrentWordform
 		{
@@ -540,7 +545,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-			Connection.UpdateWordforms(CurrentText.UniqueWordforms(), ParserPriority.Medium);
+			Connection.UpdateWordforms(_currentStText.UniqueWordforms(), ParserPriority.Medium);
 		}
 
 		private void ParseAllWords_Click(object sender, EventArgs e)
@@ -551,14 +556,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private bool InTextsWordsArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
-
 		private bool InWordAnalyses
 		{
 			get
 			{
-				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-				return InTextsWordsArea && (toolChoice == AreaServices.AnalysesMachineName || toolChoice == AreaServices.WordListConcordanceMachineName || toolChoice == AreaServices.BulkEditWordformsMachineName);
+				var acceptableToolNames = new HashSet<string> { AreaServices.AnalysesMachineName, AreaServices.WordListConcordanceMachineName, AreaServices.BulkEditWordformsMachineName };
+				return acceptableToolNames.Contains(PropertyTable.GetValue<string>(AreaServices.ToolChoice, string.Empty));
 			}
 		}
 
@@ -566,8 +569,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
-				return InTextsWordsArea && PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.InterlinearEditMachineName && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
+				var acceptableTabNames = new HashSet<string> { "RawText", "Interlinearizer", "Gloss" };
+				return PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.InterlinearEditMachineName
+					   && acceptableTabNames.Contains(PropertyTable.GetValue(TextAndWordsArea.InterlinearTab, string.Empty));
 			}
 		}
 

@@ -69,6 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
+			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_tbSearchText.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(PropertyTable));
 			m_tbSearchText.Text = string.Empty;
@@ -127,6 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				components?.Dispose();
 				_sharedEventHandlers.Remove(Command.JumpToConcordance);
 				if (m_recordList != null)
@@ -256,18 +258,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override string AccName => "LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceControl";
 		#endregion
 
-		#region IMainContentControl Members
-
-		/// <summary>
-		/// This is called when the main window is closing.
-		/// </summary>
-		public bool OnConsideringClosing(object sender, CancelEventArgs arg)
+		private void ConsideringClosing_Handler(object newValue)
 		{
-			arg.Cancel = !PrepareToGoAway();
-			return arg.Cancel;
+			var args = (CancelEventArgs)newValue;
+			if (args.Cancel)
+			{
+				// Someone else wants to cancel.
+				return;
+			}
+			args.Cancel = !PrepareToGoAway();
 		}
-
-		#endregion
 
 		#region Overrides
 

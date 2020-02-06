@@ -306,7 +306,6 @@
     </Compile>
     <Compile Include="Areas\Lists\Tools\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
-    <Compile Include="Areas\PartiallySharedForAreasWideMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
@@ -332,7 +331,6 @@
     </Compile>
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
-    <Compile Include="Areas\PartiallySharedForUserControlWideMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\SubservientConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />
@@ -1020,9 +1018,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MakeInflAffixEntryChooserCommand.cs" />
-    <Compile Include="Controls\DetailControls\CommandSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\DetailControls\ConfigureWritingSystemsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1866,9 +1861,6 @@
     <Compile Include="Areas\Grammar\RecordBrowseActiveView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\RecordDocXmlView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="DictionaryConfiguration\SaveFile.cs" />
     <Compile Include="DictionaryConfiguration\StyleTypes.cs" />
     <Compile Include="Areas\TranslatedListsExporter.cs" />
@@ -1943,6 +1935,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
+    <None Include="Resources\ConstituentChartStyleInfo.xml" />
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
     <None Include="Resources\MergeReversalEntryListParameters.xml" />
     <Content Include="Resources\MergeAllomorphListParameters.xml" />

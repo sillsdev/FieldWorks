@@ -14,12 +14,6 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas
 {
-#if RANDYTODO
-	// TODO: Why do we need "CollapsingSplitContainer" & "MultiPane"? Can they be collapsed into one?
-	// TODO: "CollapsingSplitContainer" is used by the main window as its top level splitter,
-	// TODO: and it is the right pane of main CollapsingSplitContainer instance for tools with a RecordBar.
-	// TODO: "MultiPane" is then used by numerous tools in the right half of that main or second "CollapsingSplitContainer".
-#endif
 	/// <summary>
 	/// A MultiPane (actually currently more a DualPane) displays two child controls,
 	/// either side by side or one above the other, with a splitter between them.

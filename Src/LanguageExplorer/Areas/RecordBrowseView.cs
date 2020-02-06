@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -123,7 +124,8 @@ namespace LanguageExplorer.Areas
 				//	"Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
 				BrowseViewer.BrowseView.RootBox.DestroySelection();
 			}
-			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
+			Subscriber.Subscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
 			ShowRecord();
 		}
 
@@ -143,7 +145,8 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				// Next 3 calls assume MyRecordList is not null. I (RBR) wonder if the assumption is good?
 				PersistSortSequence();
 				MyRecordList.FilterChangedByList -= RecordList_FilterChangedByList;
@@ -655,10 +658,15 @@ namespace LanguageExplorer.Areas
 			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, recordListExpectedListItemsClass);
 		}
 
-		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
+		private void ConsideringClosing_Handler(object newValue)
 		{
+			var args = (CancelEventArgs)newValue;
+			if (args.Cancel)
+			{
+				// Someone else wants to cancel.
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		#region IMainContentControl implementation

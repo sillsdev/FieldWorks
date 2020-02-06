@@ -212,6 +212,7 @@ namespace LanguageExplorer.Areas
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";
 		internal const string InterestingTexts = "InterestingTexts";
+		internal const string RecordListOwningObjChanged = "RecordListOwningObjChanged";
 		#endregion Random strings
 
 		/// <summary>

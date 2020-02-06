@@ -126,15 +126,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Classified Dictionary....
-        /// </summary>
-        internal static string Classified_Dictionary {
-            get {
-                return ResourceManager.GetString("Classified_Dictionary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Configure Dictionary....
         /// </summary>
         internal static string ConfigureDictionary {

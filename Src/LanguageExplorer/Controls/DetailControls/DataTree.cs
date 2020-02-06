@@ -178,12 +178,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private ToolTip ToolTip => m_tooltip ?? (m_tooltip = new ToolTip { ShowAlways = true });
 
-		private void InsertSliceAndRegisterWithContextHelp(int index, Slice slice)
-		{
-			slice.RegisterWithContextHelper();
-			InsertSlice(index, slice);
-		}
-
 		private void InsertSlice(int index, Slice slice)
 		{
 			InstallSlice(slice, index);
@@ -984,6 +978,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.DelayedRefreshList, DelayedRefreshList_Handler);
 				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue;
 				if (idleQueue != null)
 				{
@@ -991,7 +987,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					idleQueue.Remove(OnReadyToSetCurrentSlice);
 				}
 				PropertyTable?.RemoveProperty(LanguageExplorerConstants.DataTree);
-				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 
 				// Do this first, before setting m_fDisposing to true.
 				m_sda?.RemoveNotification(this);
@@ -2076,7 +2071,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.CallerNode = caller;
 				SetNodeWeight(node, slice);
 				slice.FinishInit();
-				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
+				InsertSlice(insertPosition, slice);
 			}
 			else
 			{
@@ -2305,24 +2300,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					switch (editor)
 					{
-						case "custom":
-#if RANDYTODO
-							// TODO: This branch was for the 'custom' editors, which no longer is in xml. So, figure out how to make it work again.
-#endif
-							Type typeFound;
-							var mi = XmlViewsUtils.GetStaticMethod(node, "assemblyPath", "class", "ShowSliceForVisibleIfData", out typeFound);
-							if (mi != null)
-							{
-								var parameters = new object[2];
-								parameters[0] = node;
-								parameters[1] = obj;
-								var result = mi.Invoke(typeFound, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, parameters, null);
-								if (!(bool)result)
-								{
-									return NodeTestResult.kntrNothing;
-								}
-							}
-							break;
 						case "autocustom":
 							if (flid == 0)
 							{
@@ -2521,7 +2498,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 				SetNodeWeight(node, slice);
 				slice.FinishInit();
-				InsertSliceAndRegisterWithContextHelp(insPos, slice);
+				InsertSlice(insPos, slice);
 			}
 			else
 			{
@@ -3207,177 +3184,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion automated tree navigation
 
-		#region IxCoreColleague message handlers
-#if RANDYTODO
-		// TODO: DataTree only handles jump stuff for menus that start with "mnuDataTree", so does nothing for menus such as: mnuEnvReferenceChoices, mnuReferenceChoices, or mnuObjectChoices.
-		/// <summary>
-		/// Enable menu items for jumping to the concordance (or lexiconEdit) tool.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-		{
-			string tool;
-			if (display.Group != null && display.Group.IsContextMenu &&
-				!string.IsNullOrEmpty(display.Group.Id) &&
-				!display.Group.Id.StartsWith("mnuDataTree"))
-			{
-				return false;
-			}
-			Guid guid = GetGuidForJumpToTool((Command)commandObject, true, out tool);
-			if (guid != Guid.Empty)
-			{
-				display.Enabled = display.Visible = true;
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Handle enabled menu items for jumping to another tool, or another location in the
-		/// current tool.
-		/// </summary>
-		public bool OnJumpToTool(object commandObject)
-		{
-			string tool;
-			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
-			if (guid != Guid.Empty)
-			{
-				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(tool, guid));
-				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Converts a List of integers into a comma-delimited string of numbers.
-		/// </summary>
-		private string ConvertHvoListToString(List<int> hvoList)
-		{
-			return XmlUtils.MakeIntegerListValue(hvoList.ToArray());
-		}
-
-		/// <summary>
-		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
-		/// forEnableOnly is true when called from OnDisplayJumpToTool.
-		/// </summary>
-		internal Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
-		{
-			tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
-			ICmObject targetObject;
-			if (CurrentSlice == null)
-				targetObject = Root;
-			else
-				targetObject = CurrentSlice.Object;
-			if (targetObject != null)
-			{
-				var owner = targetObject.Owner;
-				if (tool == AreaServices.ConcordanceMachineName)
-				{
-					int flidSlice = 0;
-					if (CurrentSlice != null && !CurrentSlice.IsHeaderNode)
-					{
-						flidSlice = CurrentSlice.Flid;
-						if (flidSlice == 0 || m_mdc.get_IsVirtual(flidSlice))
-							return cmd.TargetId;
-					}
-					switch (className)
-					{
-						case "LexEntry":
-							if (m_root != null && m_root.ClassID == LexEntryTags.kClassId)
-							{
-								if (cmd.Id == "CmdRootEntryJumpToConcordance")
-								{
-									return m_root.Guid;
-								}
-
-								if (targetObject.ClassID == LexEntryRefTags.kClassId)
-									return cmd.TargetId;
-
-								if (targetObject.ClassID == LexEntryTags.kClassId)
-									return targetObject.Guid;
-
-								var lexEntry = targetObject.OwnerOfClass<ILexEntry>();
-								return lexEntry == null ? cmd.TargetId : lexEntry.Guid;
-							}
-							break;
-						case "LexSense":
-							if (targetObject.ClassID == LexSenseTags.kClassId)
-							{
-								if (((ILexSense)targetObject).Entry == m_root)
-									return targetObject.Guid;
-							}
-							break;
-						case "MoForm":
-							if (m_cache.ClassIsOrInheritsFrom(targetObject.ClassID, MoFormTags.kClassId))
-							{
-								if (flidSlice == MoFormTags.kflidForm)
-									return targetObject.Guid;
-							}
-							break;
-					}
-				}
-				else if (tool == AreaServices.LexiconEditMachineName)
-				{
-					if (owner != null && owner != m_root && owner.ClassID == LexEntryTags.kClassId)
-					{
-						return owner.Guid;
-					}
-				}
-				else if (tool == AreaServices.NotebookEditToolMachineName)
-				{
-					if (owner != null &&
-						owner.ClassID == RnGenericRecTags.kClassId)
-						return owner.Guid;
-					if (targetObject is IText)
-					{
-						IRnGenericRec referringRecord;
-						if ((targetObject as IText).NotebookRecordRefersToThisText(out referringRecord))
-							return referringRecord.Guid;
-
-						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
-						// If the user is really doing the jump we need to make it now.
-						// Otherwise we just need to return something non-null to indicate the jump
-						// is possible (though this is not currently used).
-						if (forEnableOnly)
-							return targetObject.Guid;
-						// User is really making the jump. Create a notebook record, associate it, and jump.
-						var newNotebookRec = CreateAndAssociateNotebookRecord();
-						return newNotebookRec.Guid;
-					}
-					// Try TargetId by default
-				}
-				else if (tool == AreaServices.InterlinearEditMachineName)
-				{
-					if (targetObject.ClassID == TextTags.kClassId)
-					{
-						return targetObject.Guid;
-					}
-				}
-			}
-			return cmd.TargetId;
-		}
-
-		private IRnGenericRec CreateAndAssociateNotebookRecord()
-		{
-			if (!(CurrentSlice.MyCmObject is IText))
-			{
-				throw new ArgumentException("CurrentSlice.Object ought to be a Text object.");
-			}
-
-			// Create new Notebook record
-			((IText)CurrentSlice.MyCmObject).AssociateWithNotebook(true);
-			IRnGenericRec referringRecord;
-			(CurrentSlice.MyCmObject as IText)NotebookRecordRefersToThisText(out referringRecord);
-			return referringRecord;
-		}
-#endif
-
 		/// <summary>
 		/// Called by reflection when a new object is inserted into the list. A change of current
 		/// object should not ALWAYS make the data tree take focus, since that can be annoying when
@@ -3475,7 +3281,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Process the message to allow setting/focusing CurrentSlice.
 		/// </summary>
-		public bool OnReadyToSetCurrentSlice(object parameter)
+		private bool OnReadyToSetCurrentSlice(object parameter)
 		{
 			if (IsDisposed)
 			{
@@ -3495,11 +3301,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Respond to a broadcast message.  This is needed to fix LT-9713 and LT-9714.
+		/// Respond to a published message.  This is needed to fix LT-9713 and LT-9714.
 		/// </summary>
-		public void OnDelayedRefreshList(object sentValue)
+		private void DelayedRefreshList_Handler(object newValue)
 		{
-			DoNotRefresh = (bool)sentValue;
+			DoNotRefresh = (bool)newValue;
 		}
 
 		/// <summary>
@@ -3619,8 +3425,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-		#endregion IxCoreColleague message handlers
-
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -3664,6 +3468,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			PropertyTable.SetProperty(LanguageExplorerConstants.DataTree, this, settingsGroup: SettingsGroup.LocalSettings);
 			Subscriber.Subscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.DelayedRefreshList, DelayedRefreshList_Handler);
 			if (PersistenceProvder != null)
 			{
 				RestorePreferences();

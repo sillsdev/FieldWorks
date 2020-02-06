@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas
 
 		#endregion
 
-		#region Consruction and disposal
+		#region Construction and disposal
 		/// <summary />
 		protected ViewBase()
 		{
@@ -144,13 +144,6 @@ namespace LanguageExplorer.Areas
 				{
 					m_haveActiveRecordList = false;
 				}
-#if RANDYTODO
-				// Block for now.
-				if (m_mpParent != null)
-				{
-					m_mpParent.ShowFirstPaneChanged -= mp_ShowFirstPaneChanged;
-				}
-#endif
 			}
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
 			m_mpParent = null;
@@ -159,7 +152,7 @@ namespace LanguageExplorer.Areas
 			base.Dispose(disposing);
 		}
 
-		#endregion // Consruction and disposal
+		#endregion // Construction and disposal
 
 		#region Properties
 
@@ -340,10 +333,6 @@ namespace LanguageExplorer.Areas
 			var suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
 			if (suppress == "ifNotFirst")
 			{
-#if RANDYTODO
-				// Block for now.
-				mp.ShowFirstPaneChanged += mp_ShowFirstPaneChanged;
-#endif
 				m_mpParent = mp;
 				mp_ShowFirstPaneChanged(mp, new EventArgs());
 			}

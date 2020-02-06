@@ -331,12 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						return; // e.g., right after creating a new database, when previous one was open in chart pane.
 					}
-					// Call CChart.GetUnchartedWordForBookmark() by reflection to see where the chart
-					// thinks the bookmark should be.
-					var type = m_constChartPane.GetType();
-					var info = type.GetMethod("GetUnchartedWordForBookmark");
-					Debug.Assert(info != null);
-					curAnalysis = (AnalysisOccurrence)info.Invoke(m_constChartPane, null);
+					curAnalysis = m_constChartPane.GetUnchartedWordForBookmark();
 					break;
 				case ktpsTagging:
 					if (m_taggingPane != null)
@@ -1149,7 +1144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				var val = PropertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
+				var val = PropertyTable.GetValue(TextAndWordsArea.InterlinearTab, TabPageSelection.RawText.ToString());
 				if (Enum.GetNames(typeof(TabPageSelection)).Contains(val))
 				{
 					return (TabPageSelection)Enum.Parse(typeof(TabPageSelection), val);
@@ -1160,7 +1155,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			set
 			{
-				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true);
+				PropertyTable.SetProperty(TextAndWordsArea.InterlinearTab, value.ToString(), true);
 				if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 				{
 					ShowTabView();
@@ -1209,7 +1204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// Not sure what will happen with guid == Guid.Empty on the link...
 			var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
-			link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
+			link.LinkProperties.Add(new LinkProperty(TextAndWordsArea.InterlinearTab, InterlinearTab.ToString()));
 			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(link);
 		}

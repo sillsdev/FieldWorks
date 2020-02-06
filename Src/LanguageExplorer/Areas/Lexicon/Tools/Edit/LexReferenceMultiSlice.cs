@@ -442,10 +442,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			contextMenuStrip.Items.Add(fieldVis);
-#if RANDYTODO
-			Image imgHelp = ContainingDataTree.SmallImages.GetImage("Help");
-			contextMenuStrip.Items.Add(new ToolStripMenuItem(LexEdStrings.ksHelp, imgHelp, this.OnHelp));
-#endif
 		}
 
 		/// <summary />

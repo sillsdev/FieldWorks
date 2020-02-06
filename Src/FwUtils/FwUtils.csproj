@@ -227,7 +227,6 @@
     <Compile Include="IReadonlyPropertyTable.cs" />
     <Compile Include="IdleProcessingHelper.cs" />
     <Compile Include="IScrCheckInventory.cs" />
-    <Compile Include="ISettings.cs" />
     <Compile Include="LcmExtensions.cs" />
     <Compile Include="LinkProperty.cs" />
     <Compile Include="MatchedPairList.cs" />

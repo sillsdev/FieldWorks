@@ -1315,6 +1315,20 @@ namespace LanguageExplorer.Impls
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
+			this.Closing += OnClosing;
+		}
+
+		private void OnClosing(object sender, CancelEventArgs e)
+		{
+			e.Cancel = false;
+			Publisher.Publish(LanguageExplorerConstants.ConsideringClosing, e);
+			if (e.Cancel)
+			{
+				return;
+			}
+			_parserMenuManager.DisconnectFromParser();
+			PropertyTable.SetProperty(LanguageExplorerConstants.windowState, WindowState, true, settingsGroup: SettingsGroup.GlobalSettings);
+			SaveSettings();
 		}
 
 		private void DoImageHack()

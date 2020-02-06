@@ -131,9 +131,10 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters toolId=&quot;bulkEditWordforms&quot; clerk=&quot;concordanceWords&quot; convertDummiesSelected=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;WfiWordform&quot; selectColumn=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot; bulkDeleteIfZero=&quot;FullConcordanceCount&quot;&gt;
+        ///&lt;parameters toolId=&quot;bulkEditWordforms&quot; clerk=&quot;concordanceWords&quot; treeBarAvailability=&quot;NotAllowed&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;WfiWordform&quot; selectColumn=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot; bulkDeleteIfZero=&quot;FullConcordanceCount&quot;&gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot;/&gt;
-        ///	&lt;includ [rest of string was truncated]&quot;;.
+        ///	&lt;includeColumns /&gt;
+        ///&lt;/parameters&gt;.
         /// </summary>
         internal static string BulkEditWordformsToolParameters {
             get {
@@ -168,7 +169,7 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///		&lt;/parameters&gt;
         ///	&lt;/wordOccurrenceList&gt;
         ///	&lt;ITextControl&gt;
-        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; hideTitleContents=&quot;true&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
+        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
         ///	&lt;/ITextControl&gt;
         ///&lt;/root&gt;.
         /// </summary>
@@ -210,13 +211,31 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///		&lt;/parameters&gt;
         ///	&lt;/wordOccurrenceList&gt;
         ///	&lt;ITextControl&gt;
-        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; hideTitleContents=&quot;true&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
+        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
         ///	&lt;/ITextControl&gt;
         ///&lt;/root&gt;.
         /// </summary>
         internal static string ConcordanceToolParameters {
             get {
                 return ResourceManager.GetString("ConcordanceToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;root&gt;
+        ///	&lt;normal fontsize=&quot;105%&quot; color=&quot;Black&quot; underline=&quot;none&quot;/&gt;
+        ///	&lt;gloss fontsize=&quot;90%&quot; color=&quot;DarkGray&quot;/&gt;
+        ///	&lt;speech fontsize=&quot;100%&quot; color=&quot;Green&quot; undercolor=&quot;Green&quot; underline=&quot;dotted&quot; brackets=&quot;[]&quot;/&gt;
+        ///	&lt;song fontsize=&quot;100%&quot; color=&quot;DarkMagenta&quot; brackets=&quot;[]&quot; undercolor=&quot;Plum&quot;/&gt;
+        ///	&lt;dependent fontsize=&quot;100%&quot; color=&quot;blue&quot; brackets=&quot;[]&quot;/&gt;
+        ///	&lt;speechMkr color=&quot;Green&quot; brackets=&quot;[]&quot;/&gt;
+        ///	&lt;songMkr color=&quot;DarkMagenta&quot; brackets=&quot;[]&quot;/&gt;
+        ///	&lt;dependentMkr color=&quot;Blue&quot; brackets=&quot;[]&quot;/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ConstituentChartStyleInfo {
+            get {
+                return ResourceManager.GetString("ConstituentChartStyleInfo", resourceCulture);
             }
         }
         
@@ -772,12 +791,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;wordList&gt;
-        ///		&lt;parameters id=&quot;wordList&quot; convertDummiesSelected=&quot;true&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;wordList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot;&gt;
         ///			&lt;includeColumns /&gt;
         ///		&lt;/parameters&gt;
         ///	&lt;/wordList&gt;
         ///	&lt;wordOccurrenceListUpper&gt;
-        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; convertDummiesInView=&quot;false&quot; convertDummiesSelected=&quot;true&quot; filterBar=&quot;true&quot; ShowOwnerShortname=&quot;true&quot; altTitleId=&quot;Wor [rest of string was truncated]&quot;;.
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; filterBar=&quot;true&quot; ShowOwnerShortname=&quot;true&quot; altTitleId=&quot;WordListConcordance-Matches&quot;&gt;
+        ///			&lt;includeColumns /&gt;
+        ///		&lt;/parameters&gt;
+        ///	&lt;/wordOccurrenceList [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WordListConcordanceToolParameters {
             get {

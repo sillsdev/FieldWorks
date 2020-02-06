@@ -87,6 +87,8 @@ namespace LanguageExplorer
 		internal const string DataTree = "DataTree";
 		internal const string ActiveListSelectedObject = "ActiveListSelectedObject";
 		internal const string StopParser = "StopParser";
+		internal const string ConsideringClosing = "ConsideringClosing";
+		internal const string DelayedRefreshList = "DelayedRefreshList";
 		#endregion Misc
 	}
 }

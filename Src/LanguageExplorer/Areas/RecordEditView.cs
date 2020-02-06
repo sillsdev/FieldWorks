@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -104,6 +104,7 @@ namespace LanguageExplorer.Areas
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			MyDataTree.InitializeFlexComponent(flexComponentParameters);
+			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 		}
 
 		#endregion
@@ -151,6 +152,7 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue.Remove(ShowRecordOnIdle);
 				components?.Dispose();
 				_uiWidgetController.RemoveUserControlHandlers(this);
@@ -179,7 +181,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
@@ -190,10 +191,15 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		public bool OnConsideringClosing(object argument, CancelEventArgs args)
+		private void ConsideringClosing_Handler(object newValue)
 		{
+			var args = (CancelEventArgs)newValue;
+			if (args.Cancel)
+			{
+				// Someone else wants to cancel.
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		/// <summary>
@@ -385,10 +391,6 @@ namespace LanguageExplorer.Areas
 			MyDataTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			MyRecordList.UpdateRecordTreeBarIfNeeded();
 			MyDataTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
-			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
-#if RANDYTODO
-			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
-#endif
 			var sDatabase = Cache.ProjectId.Name;
 			MyDataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase), Inventory.GetInventory("parts", sDatabase));
 			if (MyDataTree.AccessibilityObject != null)
@@ -512,76 +514,39 @@ namespace LanguageExplorer.Areas
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 			}
 			var area = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			string toolId;
+			string xmlParametersData;
+			string configureText = null;
 			switch (area)
 			{
 				case AreaServices.NotebookAreaMachineName:
-					toolId = AreaServices.NotebookDocumentToolMachineName;
+					xmlParametersData = AreaResources.NotebookDocumentParameters;
 					break;
 				case AreaServices.LexiconAreaMachineName:
-					toolId = AreaServices.LexiconDictionaryMachineName;
+					xmlParametersData = AreaResources.LexiconClassifiedDictionaryParameters;
+					configureText = AreaResources.Classified_Dictionary;
 					break;
 				default:
 					return;
 			}
-			var toolInXmlConfig = FindToolInXMLConfig(toolId);
-			if (toolInXmlConfig == null)
+			using (var docView = new XmlDocView(XDocument.Parse(xmlParametersData).Root, Cache, MyRecordList, _uiWidgetController, configureText))
+			using (var pd = new PrintDocument())
+			using (var dlg = new PrintDialog())
 			{
-				return;
-			}
-			var innerControlNode = GetToolInnerControlNodeWithRightLayout(toolInXmlConfig);
-			if (innerControlNode == null)
-			{
-				return;
-			}
-			using (var docView = CreateDocView(innerControlNode))
-			{
-				using (var pd = new PrintDocument())
-				using (var dlg = new PrintDialog())
+				dlg.Document = pd;
+				dlg.AllowSomePages = true;
+				dlg.AllowSelection = false;
+				dlg.PrinterSettings.FromPage = 1;
+				dlg.PrinterSettings.ToPage = 1;
+				if (dlg.ShowDialog() != DialogResult.OK)
 				{
-					dlg.Document = pd;
-					dlg.AllowSomePages = true;
-					dlg.AllowSelection = false;
-					dlg.PrinterSettings.FromPage = 1;
-					dlg.PrinterSettings.ToPage = 1;
-					if (dlg.ShowDialog() != DialogResult.OK)
-					{
-						return;
-					}
-					// REVIEW: .NET does not appear to handle the collation setting correctly
-					// so for now, we do not support non-collated printing.  Forcing the setting
-					// seems to work fine.
-					dlg.Document.PrinterSettings.Collate = true;
-					docView.PrintFromDetail(pd, MyRecordList.CurrentObject.Hvo);
+					return;
 				}
+				// REVIEW: .NET does not appear to handle the collation setting correctly
+				// so for now, we do not support non-collated printing.  Forcing the setting
+				// seems to work fine.
+				dlg.Document.PrinterSettings.Collate = true;
+				docView.PrintFromDetail(pd, MyRecordList.CurrentObject.Hvo);
 			}
-		}
-
-		private XElement GetToolInnerControlNodeWithRightLayout(XElement docViewConfig)
-		{
-			var paramNode = docViewConfig.XPathSelectElement("control//parameters[@layout = \"" + m_printLayout + "\"]");
-			return paramNode?.Parent;
-		}
-
-		private XElement FindToolInXMLConfig(string docToolValue)
-		{
-			// At this point m_configurationParameters holds the RecordEditView parameter node.
-			// We need to find the tool that has a value attribute matching our input
-			// parameter (docToolValue).
-#if RANDYTODO
-			var path = ".//tools/tool[@value = \""+docToolValue+"\"]";
-			return m_configurationParametersElement.Document.XPathSelectElement(path);
-#else
-			return null; // TODO: Find it another way, since there is no tool element now.
-#endif
-		}
-
-		private XmlDocView CreateDocView(XElement parentConfigNode)
-		{
-			var docView = (XmlDocView)DynamicLoader.CreateObjectUsingLoaderNode(parentConfigNode);
-			// TODO: Not right yet!
-			docView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			return docView;
 		}
 
 		#endregion

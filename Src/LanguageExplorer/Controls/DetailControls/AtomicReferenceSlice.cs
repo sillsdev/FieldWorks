@@ -161,20 +161,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var arl = (AtomicReferenceLauncher)Control;
 			arl.UpdateDisplayFromDatabase();
 		}
-		public override void RegisterWithContextHelper()
-		{
-			if (Control == null)
-			{
-				return;
-			}
-			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
-			var launcher = (AtomicReferenceLauncher)Control;
-#if RANDYTODO
-			// TODO: Skip it for now, and figure out what to do with those context menus
-			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.AtomicRefViewControl, caption, HelpId});
-			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.PanelControl, caption, HelpId, "Button"});
-#endif
-		}
 
 		#region IVwNotifyChange Members
 		/// <summary>

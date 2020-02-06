@@ -46,16 +46,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary />
 		protected XmlBrowseViewVc m_xbvvc;
-#if RANDYTODO
-		/*
-		// TODO: Sort out that flid business to see if they are real model properties, virtual properties of real classes, or simply made-for-views-code flids.
-		// TODO: Then, can a case be made to name it better?
-
-		JasonN: "I had one thought about the fakeFlid stuff, I liked your general re-naming better but in the BrowseView locality isn't it always a listFlid? If we can make any of the variables that are always a list id have a name that indicates that it would help some poor future developers. Otherwise I'm happy with the change now. Actually I'm happy with the change now anyhow, that's just what I was thinking. (I reviewed it hours ago but I hadn't seen the name change yet)."
-		RR: "Some times they are real properties, but other times they are not, depending on the tool."
-		JasonN: "Yeah, I think they are sometimes real, and sometimes made up, but always pointing at a list. (In the BrowseViewer)"
-		*/
-#endif
 		/// <summary />
 		protected XElement _configurationSpec;
 		/// <summary />
@@ -91,6 +81,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected int m_tagMe = XMLViewsDataCache.ktagTagMe;
 		/// <summary />
 		protected bool m_fHandlingMouseUp;
+		private Point _scrollPosition = new Point(0, 0);
 		private IContainer components;
 
 		#endregion Data members
@@ -1051,8 +1042,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private Point m_ScrollPosition = new Point(0, 0);
-
 		/// <summary>
 		/// Because we turn AutoScroll off to suppress the scroll bars, we need our own
 		/// private representation of the actual scroll position.
@@ -1063,39 +1052,38 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				return m_ScrollPosition;
+				return _scrollPosition;
 			}
 
 			set
 			{
-				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
-
-				var newValue = value.Y;
-				const int minValue = 0;
-				var maxValue = ScrollPositionMaxUserReachable;
-				if (newValue < minValue)
+				if (_scrollPosition == value)
 				{
-					newValue = minValue;
+					return;
+				}
+				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
+				var newValueForY = value.Y;
+				const int minValueForY = 0;
+				var maxValueForY = ScrollPositionMaxUserReachable;
+				if (newValueForY < minValueForY)
+				{
+					newValueForY = minValueForY;
 				}
 				// Don't scroll so far down so you can't see any rows.
-				if (newValue > maxValue)
+				if (newValueForY > maxValueForY)
 				{
-					newValue = maxValue;
+					newValueForY = maxValueForY;
 				}
-				m_ScrollPosition.Y = -newValue;
+				_scrollPosition.Y = -newValueForY;
 				Debug.Assert(m_bv.ScrollBar.Maximum >= 0, "ScrollBar.Maximum is unexpectedly a negative value");
 				// The assignment to 'Value' can (and was LT-3091) throw an exception
-				Debug.Assert(m_bv.ScrollBar.Minimum <= minValue, "minValue setting could allow attempt to set out of bounds");
-#if RANDYTODO
-				// TODO: Called multiple times, and it throws in an early call. Figure out to make it not be called more than once.
-				Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
-#endif
+				Debug.Assert(m_bv.ScrollBar.Minimum <= minValueForY, "minValue setting could allow attempt to set out of bounds");
+				Debug.Assert(m_bv.ScrollBar.Maximum >= maxValueForY, "maxValue setting could allow attempt to set out of bounds");
 				// to minimize recursive calls, don't set the scroll bar unless it's wrong.
-				if (m_bv.ScrollBar.Value != newValue)
+				if (m_bv.ScrollBar.Value != newValueForY)
 				{
-					m_bv.ScrollBar.Value = newValue;
+					m_bv.ScrollBar.Value = newValueForY;
 				}
-
 				// Achieve the scroll by just invalidating. We'd like to optimize this sometime...
 				Invalidate();
 			}
@@ -1707,7 +1695,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			Subscriber.Subscribe("SaveScrollPosition", SaveScrollPosition);
 			Subscriber.Subscribe("RestoreScrollPosition", RestoreScrollPosition);
-			SetSelectedRowHighlighting();//read the property table
+			SetSelectedRowHighlighting();
 		}
 
 		#endregion

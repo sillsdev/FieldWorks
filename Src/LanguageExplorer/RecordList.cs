@@ -1434,6 +1434,8 @@ namespace LanguageExplorer
 		/// </summary>
 		public string SortName { get; set; }
 
+		public IRecordList SubservientRecordList => _subservientRecordList;
+
 		public bool SuppressSaveOnChangeRecord { get; set; }
 
 		public bool SuspendLoadingRecordUntilOnJumpToRecord

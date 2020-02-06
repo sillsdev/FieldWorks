@@ -2,9 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if RANDYTODO
-	// TODO: This really needs to be refactored with MasterCategoryListDlg.cs
-#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

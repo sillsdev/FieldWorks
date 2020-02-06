@@ -37,6 +37,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		[Import]
 		private IPropertyTable _propertyTable;
 		[Import]
+		private IPublisher _publisher;
+		[Import]
 		private ISubscriber _subscriber;
 		private LcmCache _cache;
 
@@ -81,7 +83,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _cache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
+			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, _propertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex, _recordList, dataTree, _recordBrowseView, showHiddenFieldsPropertyName);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), _cache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -451,13 +453,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				var cache = _dataTree.Cache;
 				var labels = MergeOrMoveCandidates(currentPartOfSpeech).Where(pos => !pos.SubPossibilitiesOS.Contains(currentPartOfSpeech))
 					.Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
+
+				IPartOfSpeech newOwner = null;
 				using (var dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_move_to, null))
 				{
 					dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
 						var currentPOS = currentPartOfSpeech;
-						var newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
+						newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
 						UowHelpers.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, () =>
 						{
 							newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
@@ -466,13 +470,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 								newOwner.SubPossibilitiesOS.Add(currentPOS);
 							}
 						});
-#if RANDYTODO
-					// TODO: Does the Jump broadcast still need to be done?
-					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
-					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
-#endif
+						_recordList.JumpToRecord(newOwner.MainPossibility.Hvo);
 					}
+				}
+				if (newOwner != null)
+				{
+					_recordList.JumpToRecord(newOwner.MainPossibility.Hvo);
 				}
 			}
 
@@ -486,22 +489,21 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				var currentPartOfSpeech = (IPartOfSpeech)slice.MyCmObject;
 				var cache = _dataTree.Cache;
 				var labels = MergeOrMoveCandidates(currentPartOfSpeech).Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
+				IPartOfSpeech survivor = null;
 				using (var dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_merge_into, null))
 				{
 					dlg.SetHelpTopic("khtpMergeCategories");
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
 						var currentPOS = currentPartOfSpeech;
-						var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
+						survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
 						// Pass false to MergeObject, since we really don't want to merge the string info.
 						UowHelpers.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, () => survivor.MergeObject(currentPOS, false));
-#if RANDYTODO
-					// TODO: Does the Jump broadcast still need to be done?
-					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
-					// Have to jump to a main PartOfSpeech, as RecordList doesn't know anything about subcategories.
-					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
-#endif
 					}
+				}
+				if (survivor != null)
+				{
+					_recordList.JumpToRecord(survivor.MainPossibility.Hvo);
 				}
 			}
 

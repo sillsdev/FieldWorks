@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -57,6 +58,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			InitBase();
 
+			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 			m_fullyInitialized = true;
 		}
 
@@ -76,6 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				m_rootSite?.Dispose();
 			}
 			m_rootSite = null;
@@ -88,10 +91,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#region Message Handlers
 
-		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
+		private void ConsideringClosing_Handler(object newValue)
 		{
+			var args = (CancelEventArgs)newValue;
+			if (args.Cancel)
+			{
+				// Someone else wants to cancel.
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		#endregion // Message Handlers

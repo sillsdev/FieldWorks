@@ -261,7 +261,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
 				{
-					Publisher.Publish("DelayedRefreshList", fOldDoNotRefresh);
+					Publisher.Publish(LanguageExplorerConstants.DelayedRefreshList, fOldDoNotRefresh);
 				}
 			}
 		}

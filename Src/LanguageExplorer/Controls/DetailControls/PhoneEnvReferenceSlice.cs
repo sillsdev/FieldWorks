@@ -116,17 +116,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public override void RegisterWithContextHelper()
-		{
-			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", string.Empty));
-			var launcher = MyLauncher;
-#if RANDYTODO
-			// TODO: Skip it for now, and figure out what to do with those context menus
-			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[1], caption, HelpId});
-			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[0], caption, HelpId, "Button"});
-#endif
-		}
-
 		/// <summary>
 		/// Handle changes in the size of the underlying view.
 		/// </summary>

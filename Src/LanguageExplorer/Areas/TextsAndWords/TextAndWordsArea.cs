@@ -36,6 +36,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string TextSelectedWord = "TextSelectedWord";
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
+		internal const string InterlinearTab = "InterlinearTab";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;

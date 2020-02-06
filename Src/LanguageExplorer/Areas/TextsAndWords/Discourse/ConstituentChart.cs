@@ -66,6 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private ISharedEventHandlers _sharedEventHandlers;
 		private UiWidgetController _uiWidgetController;
 		private bool _interlineMasterWantsExportDiscourseChartMenu;
+		private ContextMenuStrip _contextMenuStrip;
 		private InterlinVc Vc { get; }
 
 		#endregion
@@ -492,7 +493,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols, m_templateSelectionPanel });
 		}
 
-		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
+		private static void TemplateSelectionPanel_Layout(object sender, EventArgs e)
 		{
 			var panel = (Panel)sender;
 			if (panel.Controls.Count != 0)
@@ -1332,11 +1333,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// find the index in the button row.
 			DisposeContextMenu(this, new EventArgs());
 			var btn = (Button)sender;
-			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(GetColumnOfButton(btn));
-			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
-			m_contextMenuStrip.Show(btn, new Point(0, btn.Height));
+			_contextMenuStrip = m_logic.InsertIntoChartContextMenu(GetColumnOfButton(btn));
+			_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
+			_contextMenuStrip.Show(btn, new Point(0, btn.Height));
 		}
-		private ContextMenuStrip m_contextMenuStrip;
 
 		private void contextMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
@@ -1349,12 +1349,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void DisposeContextMenu(object sender, EventArgs e)
 		{
 			Application.Idle -= DisposeContextMenu;
-			if (m_contextMenuStrip == null || m_contextMenuStrip.IsDisposed)
+			if (_contextMenuStrip == null || _contextMenuStrip.IsDisposed)
 			{
 				return;
 			}
-			m_contextMenuStrip.Dispose();
-			m_contextMenuStrip = null;
+			_contextMenuStrip.Dispose();
+			_contextMenuStrip = null;
 		}
 
 		protected override void OnGotFocus(EventArgs e)
@@ -1362,38 +1362,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			base.OnGotFocus(e);
 			m_ribbon.Focus();
 			// Enhance: decide which one should have focus.
-		}
-
-#if RANDYTODO
-		/// <summary>
-		///  If this control is a colleague, export Discourse should be available.
-		/// </summary>
-		public bool OnDisplayExportDiscourse(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = m_chart != null;
-			// in concordance we may have no chart if no text selected.
-			display.Visible = true;
-			return true;
-		}
-#endif
-
-		/// <summary>
-		/// Implement export of discourse material.
-		/// </summary>
-		public bool OnExportDiscourse(object argument)
-		{
-			// guards against LT-8309, though I could not reproduce all cases.
-			if (m_chart == null || Body == null || m_logic == null)
-			{
-				return false;
-			}
-			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, Body.Vc, m_logic.WsLineNumber))
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.ShowDialog(this);
-			}
-
-			return true; // we handled this
 		}
 
 		public bool NotesColumnOnRight => m_headerMainCols.NotesOnRight;

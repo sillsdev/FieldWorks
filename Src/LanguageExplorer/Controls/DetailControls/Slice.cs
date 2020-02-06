@@ -437,23 +437,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Miscellaneous UI methods
 
-		/// <summary />
-		public virtual void RegisterWithContextHelper()
-		{
-			if (Control != null)//grouping nodes do not have a control
-			{
-				//It's OK to send null as an id
-				if (Publisher != null) // helpful for robustness and testing.
-				{
-#if RANDYTODO
-					// TODO: Skip it for now, and figure out what to do with those context menus
-					var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
-					Publisher.Publish("RegisterHelpTargetWithId", new object[] { Control, caption, HelpId });
-#endif
-				}
-			}
-		}
-
 		protected virtual string HelpId => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 
 		/// <summary>

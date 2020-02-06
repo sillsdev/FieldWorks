@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas
 	{
 		private System.ComponentModel.Container components = null;
 
-		#region Consruction and disposal
+		#region Construction and disposal
 
 		/// <summary />
 		protected RecordView()
@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas
 			base.Dispose(disposing);
 		}
 
-		#endregion // Consruction and disposal
+		#endregion // Construction and disposal
 
 		#region Other methods
 

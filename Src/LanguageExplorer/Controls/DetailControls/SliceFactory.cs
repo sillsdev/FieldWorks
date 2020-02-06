@@ -474,11 +474,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						newSlice = new GhostReferenceVectorSlice(cache, obj, node);
 						break;
 					}
-				case "command":
-					{
-						newSlice = new CommandSlice(node.Element("deParams"));
-						break;
-					}
 				case null:  //grouping nodes do not necessarily have any editor
 					{
 						newSlice = new Slice();

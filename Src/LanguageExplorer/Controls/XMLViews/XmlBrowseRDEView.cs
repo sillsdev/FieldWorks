@@ -64,6 +64,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				Subscriber.Unsubscribe("areaChoiceParameters", CleanupPendingEdits);
 				Subscriber.Unsubscribe("currentContentControlParameters", CleanupPendingEdits);
 			}
@@ -120,16 +121,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region XCore message handlers
 
-		/// <summary>
-		/// This name is magic for an xCoreColleague that is active at the time when an xWindow is being closed.
-		/// If some active colleague implements this method, it gets a chance to do something special as the
-		/// xWindow closes (and can veto the close, though we aren't really using that here).
-		/// </summary>
-		/// <returns></returns>
-		public bool OnConsideringClosing(object sender, CancelEventArgs arg)
+		private void ConsideringClosing_Handler(object newValue)
 		{
-			arg.Cancel = CleanupPendingEdits();  // NB: "CleanupPendingEdits" always returns false.
-			return arg.Cancel; // if we want to cancel, others don't need to be asked.
+			// NB: "CleanupPendingEdits" always returns false.
+			CleanupPendingEdits();
 		}
 
 		#region Overrides of XmlBrowseViewBase
@@ -142,6 +137,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
+			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 			Subscriber.Subscribe("areaChoiceParameters", CleanupPendingEdits);
 			Subscriber.Subscribe("currentContentControlParameters", CleanupPendingEdits);
 		}
