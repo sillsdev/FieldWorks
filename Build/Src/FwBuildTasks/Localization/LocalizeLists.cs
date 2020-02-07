@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private static readonly string[] AcceptableTranslationStates = { "translated", "final" };
 		private static readonly XmlNamespaceManager NameSpaceManager = MakeNamespaceManager();
 
+		private static readonly XNamespace SilNamespace = "software.sil.org";
 		private static XmlNamespaceManager MakeNamespaceManager()
 		{
 			var nsm = new XmlNamespaceManager(new NameTable());
@@ -50,7 +51,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		/// <remarks>
 		/// NB: for those of you wondering why these are in such a ridiculous order,
-		/// this is the order in which FLEx exports the lists.
+		/// this is the order in which FLEx exports the lists. Preserving this order
+		/// allows diffing of exports with round-tripped files to ensure losslessness.
 		/// </remarks>
 		private static readonly List<ListInfo> ListToXliffMap = new List<ListInfo>
 		{
@@ -92,6 +94,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private static readonly ConversionMap RevNameMap = new ConversionMap("ReverseName", "_RevName");
 		private static readonly ConversionMap RevAbbrMap = new ConversionMap("ReverseAbbr", "_RevAbbr"); // for LexEntryType
 		private static readonly ConversionMap RevAbbrevMap = new ConversionMap("ReverseAbbreviation", "_RevAbbrev"); // for LexRefType
+		private static readonly ConversionMap GlsAppendMap = new ConversionMap("GlossAppend", "_GlsApp");
 		private static readonly ConversionMap DescMap = new ConversionMap("Description", "_Desc");
 		private static readonly ConversionMap QuestionsMap = new ConversionMap("Questions", "_Qs");
 		private static readonly ConversionMap QuestionMap = new ConversionMap("Question", "_Q");
@@ -100,6 +103,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		private static readonly AttConversionMap GuidMap = new AttConversionMap("guid", "guid");
 		private static readonly AttConversionMap StyleMap = new AttConversionMap("namedStyle", "style");
+
+		private static readonly SubTypeMap SubtypesMap = new SubTypeMap("LexEntryType", "LexEntryInflType");
 
 		#region Xml LocalizedLists To Xliff
 		/// <param name="sourceFile">path to the XML file containing lists to localize</param>
@@ -129,6 +134,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			if (listElements.Length != ExpectedListCount)
 				throw new ArgumentException(
 					$"Source file has an unexpected list count. {listElements.Length} instead of {ExpectedListCount}");
+			// LexEntryInflTypes have a field GlossPrepend that exists, but the original designers didn't expect anyone to use it.
+			// We don't ship anything of this type, but we do want to alert any future developers on the odd chance that we might.
+			if (sourceDoc.XPathSelectElement("//GlossPrepend") != null)
+				throw new NotSupportedException("GlossPrepend is not supported because we weren't shipping any at the time of writing.");
 
 			var academicDomainsList = new XDocument(new XElement("Lists"));
 			var miscLists = new XDocument(new XElement("Lists"));
@@ -361,32 +370,48 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private static void AddPossibilitiesToGroup(string possibilityType, XElement possibilitiesElement,
 			string possibilitiesId, XElement possibilitiesGroup)
 		{
-			var possibilityElements = possibilitiesElement.Elements(possibilityType);
+			var handleSubtypes = possibilityType == SubtypesMap.SuperType;
+			var possibilityElements = handleSubtypes
+				? possibilitiesElement.Elements().Where(e => e.Name == SubtypesMap.SuperType || e.Name == SubtypesMap.SubType)
+				: possibilitiesElement.Elements(possibilityType);
 			int possIndex = 0;
 			foreach (var possibility in possibilityElements)
 			{
 				var possId = possibilitiesId + "_" + possIndex;
-				var possibilityGroup = XElement.Parse(string.Format(EmptyGroup, possId));
-				ConvertAttributeAsElement(GuidMap, possibility, possibilityGroup);
-				ConvertAUniToXliff(possibility, possibilityGroup, possId, NameMap);
-				ConvertAUniToXliff(possibility, possibilityGroup, possId, AbbrMap);
-				ConvertAUniToXliff(possibility, possibilityGroup, possId, RevNameMap);
-				ConvertAUniToXliff(possibility, possibilityGroup, possId, RevAbbrMap);
-				ConvertAUniToXliff(possibility, possibilityGroup, possId, RevAbbrevMap);
-				ConvertDescription(possibility, possibilityGroup, possId);
-				ConvertQuestions(possibility, possibilityGroup, possId);
-				ConvertSubPossibilities(possibility, possibilityGroup, possibilityType, possId);
-				possibilitiesGroup.Add(possibilityGroup);
+				var possGroup = XElement.Parse(string.Format(EmptyGroup, possId));
+				if (handleSubtypes && possibility.Name != possibilityType)
+				{
+					var typeElem = XElement.Load(new XmlTextReader(
+						$"<sil:type>{possibility.Name}</sil:type>",
+						XmlNodeType.Element,
+						new XmlParserContext(null, NameSpaceManager, null, XmlSpace.None)));
+					possGroup.Add(typeElem);
+
+				}
+				ConvertAttributeAsElement(GuidMap, possibility, possGroup);
+				ConvertAUniToXliff(possibility, possGroup, possId, NameMap);
+				ConvertAUniToXliff(possibility, possGroup, possId, AbbrMap);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevNameMap);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrMap);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrevMap);
+				ConvertAUniToXliff(possibility, possGroup, possId, GlsAppendMap);
+				ConvertDescription(possibility, possGroup, possId);
+				ConvertQuestions(possibility, possGroup, possId);
+				ConvertSubPossibilities(possibility, possGroup, possibilityType, possId);
+				possibilitiesGroup.Add(possGroup);
 				++possIndex;
 			}
 		}
 
+		/// <summary>
+		/// Store attributes in custom XLIFF elements
+		/// </summary>
 		private static void ConvertAttributeAsElement(AttConversionMap attMap, XElement sourceElement, XElement targetElement)
 		{
 			var attValue = sourceElement.Attribute(attMap.AttName)?.Value;
 			if (attValue != null)
 			{
-				var attElemString = $"<sil:{attMap.SilEltName}>{attValue}</sil:{attMap.SilEltName}>";
+				var attElemString = $"<sil:{attMap.SilEltName}>{SecurityElement.Escape(attValue)}</sil:{attMap.SilEltName}>";
 				var attElement = XElement.Load(new XmlTextReader(attElemString,
 					XmlNodeType.Element,
 					new XmlParserContext(null, NameSpaceManager, null, XmlSpace.None)));
@@ -409,23 +434,27 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var localizedLists = new XDocument();
 			localizedLists.Add(XElement.Parse($"<?xml version='1.0' encoding='UTF-8'?><Lists date='{DateTime.Now:MM/dd/yyy H:mm:ss zzz}'/>"));
 
-			var xliffDocs = new List<XDocument>();
-			foreach (var file in xliffFiles)
-			{
-				xliffDocs.Add(XDocument.Load(file));
-			}
+			var xliffDocs = xliffFiles.Select(XDocument.Load);
 
 			CombineXliffDocuments(xliffDocs, localizedLists);
 			localizedLists.Save(outputList);
 		}
 
-		private static void CombineXliffDocuments(List<XDocument> xliffDocs, XDocument localizedLists)
+		/// <remarks>
+		/// By concatenating the XLIFF files into a single document before converting, we can restore the lists
+		/// in the same order in which FieldWorks exported them.
+		/// </remarks>
+		private static void CombineXliffDocuments(IEnumerable<XDocument> xliffDocs, XDocument localizedLists)
 		{
 			var listsElement = localizedLists.Root;
-			foreach (var xliffList in xliffDocs)
+			var masterDoc = XDocument.Parse(string.Format(XliffBody, "master.xlf"));
+			masterDoc.XPathSelectElement("/xliff/file").Add(new XAttribute("target-language", "."));
+			var masterBody = masterDoc.XPathSelectElement("/xliff/file/body");
+			foreach (var xliffDocument in xliffDocs)
 			{
-				ConvertXliffToLists(xliffList, listsElement);
+				masterBody.Add(xliffDocument.XPathSelectElements("xliff/file/body/group"));
 			}
+			ConvertXliffToLists(masterDoc, listsElement);
 		}
 
 		internal static void ConvertXliffToLists(XDocument xliffList, XElement listsElement)
@@ -475,7 +504,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				var element = XElement.Parse($"<{item.ElementName}/>");
 				var source = XElement.Parse("<AStr ws='en'/>");
-				var target = XElement.Parse($"<AStr ws='{targetLanguage}'/>"); // TODO (Hasso) 2020.01: use the correct target language
+				var target = XElement.Parse($"<AStr ws='{targetLanguage}'/>");
 				element.Add(source);
 				element.Add(target);
 				foreach (var transUnit in elements)
@@ -516,7 +545,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			var xliffSource = astrTransUnit.Element("source");
 			var xliffTarget = astrTransUnit.Element("target");
-			var sourceRun = XElement.Parse($"<Run ws='en'/>");
+			var sourceRun = XElement.Parse("<Run ws='en'/>");
 			var targetRun = XElement.Parse($"<Run ws='{targetLanguage}'/>");
 			sourceRun.Add(xliffSource?.Value);
 			if(IsTranslated(xliffTarget))
@@ -574,7 +603,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		private static void ConvertPossibilityFromXliff(XElement possItem, string itemClass, XElement possGroup, string targetLanguage)
 		{
-			var possElem = XElement.Parse($"<{itemClass}/>");
+			var possElem = XElement.Parse($"<{possItem.Element(SilNamespace + "type")?.Value ?? itemClass}/>");
 			ConvertAttributeFromXliff(GuidMap, possItem, possElem);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, NameMap);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, AbbrMap);
@@ -582,15 +611,18 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, RevNameMap);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, RevAbbrMap);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, RevAbbrevMap);
+			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, GlsAppendMap);
 			ConvertQuestionsFromXliff(possItem, possElem, targetLanguage);
 			ConvertSubPossibilitiesFromXliff(possItem, possElem, itemClass, targetLanguage);
 			possGroup.Add(possElem);
 		}
 
+		/// <summary>
+		/// Convert attributes that were stored in custom XLIFF elements
+		/// </summary>
 		private static void ConvertAttributeFromXliff(AttConversionMap attMap, XElement source, XElement target, XElement optionalTarget = null)
 		{
-			XNamespace sil = "software.sil.org";
-			var attElem = source.Element(sil + attMap.SilEltName);
+			var attElem = source.Element(SilNamespace + attMap.SilEltName);
 			if (attElem != null)
 			{
 				target.SetAttributeValue(attMap.AttName, attElem.Value);
@@ -653,5 +685,17 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		public string AttName { get; }
 		public string SilEltName { get; }
+	}
+
+	internal struct SubTypeMap
+	{
+		public SubTypeMap(string SuperType, string SubType)
+		{
+			this.SuperType = SuperType;
+			this.SubType = SubType;
+		}
+
+		public string SuperType { get; }
+		public string SubType { get; }
 	}
 }

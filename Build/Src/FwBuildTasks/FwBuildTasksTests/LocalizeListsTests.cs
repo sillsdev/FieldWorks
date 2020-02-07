@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -48,9 +49,18 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void SplitSourceLists_MissingSourceFileThrows()
+		{
+			var message = Assert.Throws<ArgumentException>(() =>
+					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath()))
+				.Message;
+			StringAssert.Contains("The source file does not exist", message);
+		}
+
+		[Test]
 		public void SplitSourceLists_InvalidXmlThrows()
 		{
-			var notListsXml = "<notlists><somethingElse/></notlists>";
+			const string notListsXml = "<notlists><somethingElse/></notlists>";
 			using (var stringReader = new StringReader(notListsXml))
 			using (var xmlReader = new XmlTextReader(stringReader))
 			{
@@ -63,7 +73,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void SplitSourceLists_MissingListsThrows()
 		{
-			var oneListXml = "<Lists><List/></Lists>";
+			const string oneListXml = "<Lists><List/></Lists>";
 			using (var stringReader = new StringReader(oneListXml))
 			using (var xmlReader = new XmlTextReader(stringReader))
 			{
@@ -73,13 +83,39 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			}
 		}
 
+		/// <summary>
+		/// LexEntryInflTypes have a field GlossPrepend that exists, but the original designers didn't expect anyone to use it.
+		/// We don't ship anything of this type, but we do want to alert any future developers on the odd chance that we might.
+		/// </summary>
 		[Test]
-		public void SplitSourceLists_MissingSourceFileThrows()
+		public void SplitSourceLists_GlossPrepend_Throws()
 		{
-			var message = Assert.Throws<ArgumentException>(() =>
-					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath()))
-				.Message;
-			StringAssert.Contains("The source file does not exist", message);
+			const int expectedListCount = 29;
+			const string listsOpenXml = @"<Lists date='2020-02-12 3:40:16 PM'>";
+			const string listXml = @"<List owner='LexDb' field='VariantEntryTypes' itemClass='LexEntryType'>
+				<Possibilities>
+					<LexEntryInflType>
+						<Name>
+							<AUni ws='en'>Prepending</AUni>
+						</Name>
+						<GlossPrepend>
+							<AUni ws='en'>prp.</AUni>
+						</GlossPrepend>
+					</LexEntryInflType></Possibilities></List></Lists>";
+			var xmlBuilder = new StringBuilder(listsOpenXml);
+			for (var i = 1; i < expectedListCount; i++)
+			{
+				xmlBuilder.Append("<List/>");
+			}
+			xmlBuilder.Append(listXml);
+
+			using (var stringReader = new StringReader(xmlBuilder.ToString()))
+			using (var xmlReader = new XmlTextReader(stringReader))
+			{
+				var message = Assert.Throws<NotSupportedException>(() =>
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath())).Message;
+				StringAssert.Contains("GlossPrepend is not supported", message);
+			}
 		}
 
 		[Test]
@@ -340,6 +376,89 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/*[local-name()='style'][text()='" + style + "']");
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/source[text()='" + unstyledText + "']", 1, true);
+		}
+
+		[Test]
+		public void ConvertListToXliff_LexEntryInflTypesCreated()
+		{
+			const string letGuid = "024b62c9-93b3-41a0-ab19-587a0030219a";
+			const string letName = "Dialectal Variant";
+			const string leItParentGuid = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c";
+			const string leItParentName = "Irregularly Inflected Form";
+			const string leItGuid = "837ebe72-8c1d-4864-95d9-fa313c499d78";
+			const string leItName = "Past";
+			const string leItAbbr = "pst.";
+			const string leItDesc = "tldr";
+			const string leItRevName = "Past of";
+			const string leItRevAbbr = "pst. of";
+			const string leItGlsAppend = ".pst";
+			const string listXml = @"<Lists date='2020-02-07 3:40:16 PM'>
+				<List owner='LexDb' field='VariantEntryTypes' itemClass='LexEntryType'>
+					<Possibilities>
+						<LexEntryType guid='" + letGuid + @"'>
+							<Name><AUni ws='en'>" + letName + @"</AUni></Name>
+						</LexEntryType>
+						<LexEntryInflType guid='" + leItParentGuid + @"'>
+							<Name>
+								<AUni ws='en'>" + leItParentName + @"</AUni>
+							</Name>
+							<SubPossibilities>
+								<LexEntryInflType guid='" + leItGuid + @"'>
+									<Name>
+										<AUni ws='en'>" + leItName + @"</AUni>
+									</Name>
+									<Abbreviation>
+										<AUni ws='en'>" + leItAbbr + @"</AUni>
+									</Abbreviation>
+									<Description>
+										<AStr ws='en'>
+											<Run ws='en'>" + leItDesc + @"</Run>
+										</AStr>
+									</Description>
+									<ReverseName>
+										<AUni ws='en'>" + leItRevName + @"</AUni>
+									</ReverseName>
+									<ReverseAbbr>
+										<AUni ws='en'>" + leItRevAbbr + @"</AUni>
+									</ReverseAbbr>
+									<GlossAppend>
+										<AUni ws='en'>" + leItGlsAppend + @"</AUni>
+									</GlossAppend>
+								</LexEntryInflType>
+							</SubPossibilities>
+						</LexEntryInflType></Possibilities></List></Lists>";
+			var xmlDoc = XDocument.Parse(listXml);
+
+			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc).ToString();
+
+			// verify the normal LexEntryType
+			const string xpathToLexEntryType = "//group/group[@id='LexDb_VariantEntryTypes_Poss_0']";
+			const string xSubPathToInflTypeType = "/*[local-name()='type'][text()='LexEntryInflType']";
+			AssertThatXmlIn.String(xliff).HasNoMatchForXpath(xpathToLexEntryType + xSubPathToInflTypeType);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToLexEntryType + "/trans-unit/source[text()='" + letName + "']", 1, true);
+			// verify the parent LexEntryInflType
+			const string xpathToParentLexEntryInflType = "//group/group[@id='LexDb_VariantEntryTypes_Poss_1']";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLexEntryInflType + xSubPathToInflTypeType, 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToParentLexEntryInflType + "/trans-unit/source[text()='" + leItParentName + "']", 1, true);
+			// verify the subpossibility LexEntryInflType
+			const string xPathToLeit = xpathToParentLexEntryInflType + "/group/group[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0']";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xPathToLeit + xSubPathToInflTypeType, 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeit + "/*[local-name()='guid'][text()='" + leItGuid + "']", 1, true);
+			const string xPathToLeitTu = xPathToLeit + "/trans-unit";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Name']/source[text()='" + leItName + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Abbr']/source[text()='" + leItAbbr + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeit + "/group/trans-unit/source[text()='" + leItDesc + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevName']/source[text()='" + leItRevName + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevAbbr']/source[text()='" + leItRevAbbr + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_GlsApp']/source[text()='" + leItGlsAppend + "']", 1, true);
 		}
 
 		[Test]
@@ -727,6 +846,95 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				xpathToDescAStr + "/Run[text()='" + styledTrans + "' and @namedStyle='" + style + "']", 1, true);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToDescAStr + "/Run[text()='" + unstyledTrans + "' and not (@namedStyle)]", 1, true);
+		}
+
+		[Test]
+		public void ConvertXliffToLists_LexEntryInflTypesCreated()
+		{
+			const string letName = "Dialectal Variant";
+			const string leItParentName = "Irregularly Inflected Form";
+			const string leItGuid = "837ebe72-8c1d-4864-95d9-fa313c499d78";
+			const string leItName = "Past";
+			const string leItAbbr = "pst.";
+			const string leItDesc = "tldr";
+			const string leItRevName = "Past of";
+			const string leItRevAbbr = "pst. of";
+			const string leItGlsAppend = ".pst";
+			const string xliff = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
+				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='de'>
+					<body>
+						<group id='LexDb_VariantEntryTypes'>
+							<group id='LexDb_VariantEntryTypes_Poss'>
+								<group id='LexDb_VariantEntryTypes_Poss_0'>
+									<sil:guid>024b62c9-93b3-41a0-ab19-587a0030219a</sil:guid>
+									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_Name'>
+										<source>" + letName + @"</source>
+									</trans-unit>
+								</group>
+								<group id='LexDb_VariantEntryTypes_Poss_1'>
+									<sil:type>LexEntryInflType</sil:type>
+									<sil:guid>01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c</sil:guid>
+									<trans-unit id='LexDb_VariantEntryTypes_Poss_1_Name'>
+										<source>" + leItParentName + @"</source>
+									</trans-unit>
+									<group id='LexDb_VariantEntryTypes_Poss_1_SubPos'>
+										<group id='LexDb_VariantEntryTypes_Poss_1_SubPos_0'>
+											<sil:type>LexEntryInflType</sil:type>
+											<sil:guid>" + leItGuid + @"</sil:guid>
+											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Name'>
+												<source>" + leItName + @"</source>
+											</trans-unit>
+											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Abbr'>
+												<source>" + leItAbbr + @"</source>
+											</trans-unit>
+											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevName'>
+												<source>" + leItRevName + @"</source>
+											</trans-unit>
+											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevAbbr'>
+												<source>" + leItRevAbbr + @"</source>
+											</trans-unit>
+											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_GlsApp'>
+												<source>" + leItGlsAppend + @"</source>
+											</trans-unit>
+											<group id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Desc'>
+												<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Desc_0'>
+													<source>" + leItDesc + @"</source>
+												</trans-unit>
+											</group>
+										</group>
+									</group>
+								</group>
+							</group>
+						</group>
+					</body></file></xliff>";
+			var xliffDoc = XDocument.Parse(xliff);
+
+			var listsElement = XElement.Parse("<Lists/>");
+			LocalizeLists.ConvertXliffToLists(xliffDoc, listsElement);
+			var result = listsElement.ToString();
+
+			// verify the normal LexEntryType
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("//List", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"//List[@owner='LexDb' and @field='VariantEntryTypes' and @itemClass='LexEntryType']", 1, true);
+			const string xpathToLet = "//List/Possibilities/LexEntryType";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLet, 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLet + "/Name/AUni[text()='" + letName + "']", 1, true);
+			// verify the parent LexEntryInflType
+			const string xpathToParentLeit = "//List/Possibilities/LexEntryInflType";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLeit, 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLeit + "/Name/AUni[text()='" + leItParentName + "']", 1, true);
+			// verify the subpossibility LexEntryInflType (TODO)
+			const string xpathToLeit = xpathToParentLeit + "/SubPossibilities/LexEntryInflType";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit, 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "[@guid='" + leItGuid + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "/Name/AUni[text()='" + leItName + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "/Abbreviation/AUni[text()='" + leItAbbr + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "/ReverseName/AUni[text()='" + leItRevName + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "/ReverseAbbr/AUni[text()='" + leItRevAbbr + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "/GlossAppend/AUni[text()='" + leItGlsAppend + "']", 1, true);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToLeit + "/Description/AStr/Run[text()='" + leItDesc + "']", 1, true);
 		}
 
 		[Test]
