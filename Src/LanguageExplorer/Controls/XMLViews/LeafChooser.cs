@@ -18,7 +18,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// We want to display only the possibilities that have inflection classes (either themselves
 	/// or some descendant), plus the inflection classes themselves.
 	/// </summary>
-	public class LeafChooser : ReallySimpleListChooser
+	internal class LeafChooser : ReallySimpleListChooser
 	{
 		private readonly int m_leafFlid;
 

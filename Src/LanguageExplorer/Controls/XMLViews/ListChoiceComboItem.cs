@@ -27,46 +27,30 @@ namespace LanguageExplorer.Controls.XMLViews
 		private FwComboBox m_combo;
 		private bool m_fAtomic;
 		private XElement m_colSpec;
-		private Type m_filterType; // non-null for external fields.
+		/// <summary>non-null for external fields.</summary>
+		private Type m_filterType;
 		/// <summary />
-		protected bool m_includeAbbr;
+		private bool m_includeAbbr;
 		/// <summary />
-		protected string m_bestWS;
+		private string m_bestWS;
 
-		/// <summary>
-		/// There should be some refactoring done on how we access the xml attributes 'includeAbbr' and 'ws'
-		/// </summary>
-		/// <remarks>
-		/// NOTE: For labels with abbreviations using "LongName" rather than "AbbrAndNameTSS" seems to load quicker for Semantic Domains and AnthroCodes.
-		/// </remarks>
-		protected string GetDisplayPropertyName => m_includeAbbr ? "LongName" : "ShortNameTSS";
+		private string GetDisplayPropertyName => m_includeAbbr ? "LongName" : "ShortNameTSS";
 
 		/// <summary />
-		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
+		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType = null)
 			: base(tssName, null, fsi)
 		{
 			m_colSpec = fsi.Spec;
-
 			if (filterType == null)
 			{
 				// If the list doesn't exist, m_hvoList (below) will be SpecialHVOValues.kHvoUninitializedObject.
 				m_hvoList = BulkEditBar.GetNamedListHvo(cache, fsi.Spec, "list");
-				// This basically duplicates the loading of treeBarHandler properties. Currently, we don't have access
-				// to that information in XMLViews, and even if we did, the information may not be loaded until
-				// the user actually switches to that RecordList.
-				string owningClass;
-				string property;
-				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
-				Debug.Assert(false, "No 'WindowConfiguration' element here in ListChoiceComboItem constructor.");
-				// TODO: "recordList" is a child of now obsolete "clerk" elements.
-				// TODO: "treeBarHandler" is an optional sibling of "recordList".
-				// TODO: Notebook browse views have no "treeBarHandlerNode", so go with the defaults for that tool.
-				// TODO: Worry about other tools later on, probably with an overloaded constructor with the two values.
-				var windowConfiguration = propertyTable.GetValue<XElement>("WindowConfiguration");
-				var recordListNode = windowConfiguration.XPathSelectElement(string.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
-				var treeBarHandlerNode = recordListNode.Parent.XPathSelectElement("treeBarHandler");
-				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(treeBarHandlerNode, "includeAbbr");
-				m_bestWS = XmlUtils.GetOptionalAttributeValue(treeBarHandlerNode, "ws", null);
+				var treeBarHandler = propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList.MyTreeBarHandler;
+				if (treeBarHandler != null)
+				{
+					m_includeAbbr = treeBarHandler.IncludeAbbreviation;
+					m_bestWS = treeBarHandler.BestWritingSystem;
+				}
 			}
 			else
 			{

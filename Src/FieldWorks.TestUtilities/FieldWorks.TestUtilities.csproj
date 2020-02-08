@@ -88,6 +88,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
@@ -121,6 +125,7 @@
     <Compile Include="MessageBoxStub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
+    <Compile Include="TestFwApplicationSettings.cs" />
     <Compile Include="TestFwStylesheet.cs" />
     <Compile Include="XmlHelper.cs" />
   </ItemGroup>

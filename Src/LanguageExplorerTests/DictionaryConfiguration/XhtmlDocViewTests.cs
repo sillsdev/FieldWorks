@@ -5,62 +5,39 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Areas.Lexicon.Reversals;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
-#if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	[TestFixture]
-	public class XhtmlDocViewTests : AppTestBase
+	public class XhtmlDocViewTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private XElement _parametersElement;
 		private IRecordList _recordList;
 		private StatusBar _statusBar;
+		private const string ConfigurationTemplate = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest'>" +
+													 "<Publications></Publications></DictionaryConfiguration>";
+		private const string ConfigurationTemplateWithAllPublications = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest' allPublications='true'>" +
+																		"<Publications></Publications></DictionaryConfiguration>";
 
-	#region Overrides of LcmTestBase
+		#region Overrides of LcmTestBase
 
-		public override void TestSetup()
+		public override void FixtureSetup()
 		{
-			base.TestSetup();
-
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
-			_statusBar = new StatusBar();
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var revIdx = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-				Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(revIdx);
-				revIdx.WritingSystem = "en";
-				_flexComponentParameters.PropertyTable.SetProperty("ReversalIndexGuid", revIdx.Guid.ToString());
-			});
-			_recordList = LexiconArea.AllReversalEntriesFactoryMethod(Cache, _flexComponentParameters, LexiconArea.AllReversalEntries, _statusBar);
-		}
-
-		public override void TestTearDown()
-		{
-			_recordList.Dispose();
-			_flexComponentParameters.PropertyTable.Dispose();
-			_statusBar.Dispose();
-			_flexComponentParameters = null;
-			_statusBar = null;
-			_recordList = null;
-
-			base.TestTearDown();
-		}
-
-		protected override void FixtureInit()
-		{
-			// Init() is called from AppTestBase's TestFixtureSetup, so we won't call it here.
+			base.FixtureSetup();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if (Directory.Exists(testProjPath))
 			{
@@ -81,27 +58,50 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			base.FixtureTeardown();
 		}
 
-	#endregion
+		public override void TestSetup()
+		{
+			base.TestSetup();
 
-		private const string ConfigurationTemplate = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest'>" +
-		"<Publications></Publications></DictionaryConfiguration>";
-		private const string ConfigurationTemplateWithAllPublications = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest' allPublications='true'>" +
-		"<Publications></Publications></DictionaryConfiguration>";
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			_statusBar = new StatusBar();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var revIdx = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
+				Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(revIdx);
+				revIdx.WritingSystem = "en";
+				_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, revIdx.Guid.ToString());
+			});
+			_recordList = ReversalServices.AllReversalEntriesFactoryMethod(Cache, _flexComponentParameters, LanguageExplorerConstants.AllReversalEntries, _statusBar);
+			_recordList.InitializeFlexComponent(_flexComponentParameters);
+		}
+
+		public override void TestTearDown()
+		{
+			_recordList.Dispose();
+			_flexComponentParameters.PropertyTable.Dispose();
+			_statusBar.Dispose();
+			_flexComponentParameters = null;
+			_statusBar = null;
+			_recordList = null;
+
+			base.TestTearDown();
+		}
+
+		#endregion
 
 		[Test]
 		public void SplitPublicationsByConfiguration_AllPublicationIsIn()
 		{
-			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
-				using(var filePrintMenu = new ToolStripMenuItem())
-				using(var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.InitializeFlexComponent(_flexComponentParameters);
 					docView.SetConfigObjectName("Dictionary");
@@ -109,9 +109,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					List<string> pubsInConfig;
 					List<string> pubsNotInConfig;
 					// SUT
-					docView.SplitPublicationsByConfiguration(
-						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-						tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
+					docView.SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
 					CollectionAssert.Contains(pubsInConfig, testPubName.Text);
 					CollectionAssert.DoesNotContain(pubsNotInConfig, testPubName.Text);
 				}
@@ -121,10 +119,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitPublicationsByConfiguration_UnmatchedPublicationIsOut()
 		{
-			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
@@ -133,9 +131,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -143,9 +140,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					List<string> pubsInConfig;
 					List<string> pubsNotInConfig;
 					// SUT
-					docView.SplitPublicationsByConfiguration(
-						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-						tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
+					docView.SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
 					CollectionAssert.DoesNotContain(pubsInConfig, testPubName.Text);
 					CollectionAssert.Contains(pubsNotInConfig, testPubName.Text);
 				}
@@ -155,17 +150,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitPublicationsByConfiguration_MatchedPublicationIsIn()
 		{
-			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Foo"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Foo" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -173,9 +167,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					List<string> inConfig;
 					List<string> outConfig;
 					// SUT
-					docView.SplitPublicationsByConfiguration(
-						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-						tempConfigFile.Path, out inConfig, out outConfig);
+					docView.SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, tempConfigFile.Path, out inConfig, out outConfig);
 					CollectionAssert.Contains(inConfig, testPubName.Text);
 					CollectionAssert.DoesNotContain(outConfig, testPubName.Text);
 				}
@@ -185,12 +177,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitConfigurationsByPublication_ConfigWithAllPublicationIsIn()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "AllPubsConf" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -200,8 +191,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					var configurations = new Dictionary<string, string>();
 					configurations["AConfigPubtest"] = tempConfigFile.Path;
 					// SUT
-					docView.SplitConfigurationsByPublication(configurations,
-																		  "TestPub", out configsWithPub, out configsWithoutPub);
+					docView.SplitConfigurationsByPublication(configurations, "TestPub", out configsWithPub, out configsWithoutPub);
 					CollectionAssert.Contains(configsWithPub.Values, tempConfigFile.Path);
 					CollectionAssert.DoesNotContain(configsWithoutPub.Values, tempConfigFile.Path);
 				}
@@ -211,16 +201,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitConfigurationsByPublication_AllPublicationIsMatchedByEveryConfiguration()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "NoPubsConf"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "NoPubsConf" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -230,8 +219,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					var configurations = new Dictionary<string, string>();
 					configurations["AConfigPubtest"] = tempConfigFile.Path;
 					// SUT
-					docView.SplitConfigurationsByPublication(configurations,
-																		  xWorksStrings.AllEntriesPublication, out configsWithPub, out configsWithoutPub);
+					docView.SplitConfigurationsByPublication(configurations, LanguageExplorerResources.AllEntriesPublication, out configsWithPub, out configsWithoutPub);
 					CollectionAssert.Contains(configsWithPub.Values, tempConfigFile.Path);
 					CollectionAssert.IsEmpty(configsWithoutPub.Values, tempConfigFile.Path);
 				}
@@ -241,10 +229,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitConfigurationsByPublication_UnmatchedPublicationIsOut()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
@@ -253,9 +241,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Unremarkable"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "Unremarkable" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -265,8 +252,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					var configurations = new Dictionary<string, string>();
 					configurations["AConfigPubtest"] = tempConfigFile.Path;
 					// SUT
-					docView.SplitConfigurationsByPublication(configurations,
-																		  "TestPub", out configsWithPub, out configsWithoutPub);
+					docView.SplitConfigurationsByPublication(configurations, "TestPub", out configsWithPub, out configsWithoutPub);
 					CollectionAssert.DoesNotContain(configsWithPub.Values, tempConfigFile.Path);
 					CollectionAssert.Contains(configsWithoutPub.Values, tempConfigFile.Path);
 				}
@@ -276,17 +262,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void SplitConfigurationsByPublication_MatchedPublicationIsIn()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "baz"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(), "baz" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -296,35 +281,34 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					var configurations = new Dictionary<string, string>();
 					configurations["AConfigPubtest"] = tempConfigFile.Path;
 					// SUT
-					docView.SplitConfigurationsByPublication(configurations,
-																		  "TestPub", out configsWithPub, out configsWithoutPub);
+					docView.SplitConfigurationsByPublication(configurations, "TestPub", out configsWithPub, out configsWithoutPub);
 					CollectionAssert.Contains(configsWithPub.Values, tempConfigFile.Path);
 					CollectionAssert.DoesNotContain(configsWithoutPub.Values, tempConfigFile.Path);
 				}
 			}
 		}
 
+#if RANDYTODO
 		[Test]
 		public void GetValidConfigurationForPublication_ReturnsAlreadySelectedConfigIfValid()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				// Change the project path to temp for this test
 				Cache.ProjectId.Path = Path.GetTempPath();
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
 				{
 					var configPathForTest = Path.Combine(Path.GetTempPath(), "ConfigurationSettings", "Dictionary");
 					try
 					{
 						Directory.CreateDirectory(configPathForTest);
-						using(var tempConfigFile = TempFile.WithFilename(Path.Combine(configPathForTest, "Squirrel"+ReversalIndexServices.ConfigFileExtension)))
+						using (var tempConfigFile = TempFile.WithFilename(Path.Combine(configPathForTest, "Squirrel" + ReversalIndexServices.ConfigFileExtension)))
 						{
 							docView.SetConfigObjectName("Dictionary");
 							docView.InitializeFlexComponent(_flexComponentParameters);
@@ -342,26 +326,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 			}
 		}
+#endif
 
 		[Test]
 		public void GetValidConfigurationForPublication_AllEntriesReturnsAlreadySelectedConfig()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
-
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
 				var subDir = Path.Combine(Path.GetTempPath(), "Dictionary");
 				Directory.CreateDirectory(subDir); // required by DictionaryConfigurationListener.GetCurrentConfiguration()
 				try
 				{
-					using (var filePrintMenu = new ToolStripMenuItem())
-					using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-					using (var tempConfigFile = TempFile.WithFilename(Path.Combine(subDir, "baz"+ReversalIndexServices.ConfigFileExtension)))
+					using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+					using (var tempConfigFile = TempFile.WithFilename(Path.Combine(subDir, "baz" + ReversalIndexServices.ConfigFileExtension)))
 					{
 						docView.SetConfigObjectName("Dictionary");
 						docView.InitializeFlexComponent(_flexComponentParameters);
@@ -370,8 +353,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
-						Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
-										Is.StringContaining(tempConfigFile.Path));
+						Assert.That(docView.GetValidConfigurationForPublication(LanguageExplorerResources.AllEntriesPublication), Is.StringContaining(tempConfigFile.Path));
 					}
 				}
 				finally
@@ -381,20 +363,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		[Test]
+#if RANDYTODO
+		[Test, Ignore("This fails fails one way when run by itself, but fails another way when run with the others!")]
 		public void GetValidConfigurationForPublication_PublicationThatMatchesNoConfigReturnsNull()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("NotTheTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configSansTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTheTestPub</Publication></Publications>");
 				var overrideFiles = new List<TempFile>();
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
@@ -405,26 +387,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						// override every shipped config with a config that does not have the TestPub publication
 						var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "*" + ReversalIndexServices.ConfigFileExtension);
 						var overrideCount = 0;
-						foreach(var shippedFile in shippedFileList)
+						foreach (var shippedFile in shippedFileList)
 						{
 							++overrideCount;
 							var tempFileName = Path.Combine(projConfigs, overrideCount + ReversalIndexServices.ConfigFileExtension);
 							var tempConfigFile = TempFile.WithFilename(tempFileName);
 							overrideFiles.Add(tempConfigFile);
-							using(var stream = new FileStream(shippedFile, FileMode.Open))
+							using (var stream = new FileStream(shippedFile, FileMode.Open))
 							{
 								var doc = new XmlDocument();
 								doc.Load(stream);
 								var node = doc.SelectSingleNode("DictionaryConfiguration");
 								var shippedName = node.Attributes["name"].Value;
-								File.WriteAllText(tempConfigFile.Path,
-														configSansTestPub.Replace("name='AConfigPubtest'", "name='"+shippedName+"'"));
+								File.WriteAllText(tempConfigFile.Path, configSansTestPub.Replace("name='AConfigPubtest'", "name='" + shippedName + "'"));
 							}
 						}
 						// SUT
 						var result = docView.GetValidConfigurationForPublication("TestPub");
 						// Delete all our temp files before asserting so they are sure to go away
-						foreach(var tempFile in overrideFiles)
+						foreach (var tempFile in overrideFiles)
 						{
 							tempFile.Dispose();
 						}
@@ -438,13 +419,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		[Test]
+		[Test, Ignore("This test fails one way when run by itself, but fails another way when run with the others!")]
 		public void GetValidConfigurationForPublication_ConfigurationContainingPubIsPicked()
 		{
-			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
@@ -454,13 +435,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var nonMatchingConfig = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
 				//Change the name for the matching config so that our two user configs don't conflict with each other
-				var matchingConfig = ConfigurationTemplate.Replace("</Publications>",
-																					"<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
+				var matchingConfig = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
 				var dictionaryConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
-				using (var filePrintMenu = new ToolStripMenuItem())
-				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList, filePrintMenu))
-				using (var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "NoMatch"+ReversalIndexServices.ConfigFileExtension)))
-				using(var matchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "Match"+ReversalIndexServices.ConfigFileExtension)))
+				using (var docView = new TestXhtmlDocView(_parametersElement, Cache, _recordList))
+				using (var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "NoMatch" + ReversalIndexServices.ConfigFileExtension)))
+				using (var matchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath, "Match" + ReversalIndexServices.ConfigFileExtension)))
 				{
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
@@ -475,11 +454,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 			}
 		}
+#endif
 
-		private class TestXhtmlDocView : XhtmlDocView
+		private sealed class TestXhtmlDocView : XhtmlDocView
 		{
-			internal TestXhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem printMenu)
-				: base(configurationParametersElement, cache, recordList, printMenu)
+			internal TestXhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+				: base(configurationParametersElement, cache, recordList)
 			{
 			}
 
@@ -489,5 +469,4 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 	}
-#endif
 }

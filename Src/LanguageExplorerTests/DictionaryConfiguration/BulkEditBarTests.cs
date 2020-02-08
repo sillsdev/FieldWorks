@@ -4,362 +4,445 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using LanguageExplorer;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
+using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using LanguageExplorer.Filters;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 #if RANDYTODO
+	// TODO: Tests have the same problem with mis-matched classes, as does the "Bulk Edit Entries" tool. Fix one, fix both (maybe).
 	// (FLEx) JohnT: I did a first rough cut at updating these tests, but it will take really understanding them
 	// to figure out what needs to be mocked or set up so they can work.
-	public class BulkEditBarTestsBase : AppTestBase
+	internal class BulkEditBarTestsBase : MemoryOnlyBackendProviderTestBase
 	{
-		protected IPropertyTable m_propertyTable;
-		protected BulkEditBarForTests m_bulkEditBar;
-		protected BrowseViewerForTests m_bv;
-		protected ObservableCollection<ICmObject> m_createdObjectList;
+		private ICmPossibilityFactory m_possFact;
+		private ICmPossibilityRepository m_possRepo;
+		private IPartOfSpeechFactory m_posFact;
+		private IPartOfSpeechRepository m_posRepo;
+		private ILexEntryFactory m_entryFact;
+		private ILexSenseFactory m_senseFact;
+		private IMoStemAllomorphFactory m_stemFact;
+		private IMoAffixAllomorphFactory m_affixFact;
+		private FlexComponentParameters _flexComponentParameters;
+		private RecordBrowseViewForTests _recordBrowseViewForTests;
+		protected BulkEditBarForTests _bulkEditBarForTests;
+		protected BrowseViewerForTests _browseViewerForTests;
+		protected List<ICmObject> _createdObjectList;
+		private StatusBar _statusBar;
+		private EntriesOrChildClassesRecordList _entriesOrChildClassesRecordList;
+		private IRecordListRepository _recordListRepository;
+		private DummyApp _dummyApp;
+		private bool _sldrInitializedByMe;
 
 	#region Setup and Teardown
 
-		/// <summary>
-		/// Run by FixtureInit() in AppTestBase
-		/// </summary>
-		protected override void FixtureInit()
+		public override void FixtureSetup()
 		{
-			m_createdObjectList = new ObservableCollection<ICmObject>();
-			m_createdObjectList.CollectionChanged += m_createdObjectList_CollectionChanged;
-		}
+			base.FixtureSetup();
 
-		void m_createdObjectList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (e.Action == NotifyCollectionChangedAction.Add)
+			if (!Sldr.IsInitialized)
 			{
-				var objType = e.NewItems[0].GetType().ToString();
-				var lastword = objType.Substring(objType.LastIndexOf(".") + 1);
-				Console.WriteLine("*** Added a {0} to our object list.", lastword);
+				_sldrInitializedByMe = true;
+				Sldr.Initialize();
 			}
+			// Cache factories.
+			var servLoc = Cache.ServiceLocator;
+			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
+			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
+			m_posFact = servLoc.GetInstance<IPartOfSpeechFactory>();
+			m_posRepo = servLoc.GetInstance<IPartOfSpeechRepository>();
+			m_entryFact = servLoc.GetInstance<ILexEntryFactory>();
+			m_senseFact = servLoc.GetInstance<ILexSenseFactory>();
+			m_stemFact = servLoc.GetInstance<IMoStemAllomorphFactory>();
+			m_affixFact = servLoc.GetInstance<IMoAffixAllomorphFactory>();
+			_createdObjectList = new List<ICmObject>();
 		}
 
-		/// <summary>
-		/// Run by FixtureCleanup() in AppTestBase
-		/// </summary>
-		public override void TearDown()
+		/// <summary />
+		public override void FixtureTeardown()
 		{
-			m_createdObjectList.CollectionChanged -= m_createdObjectList_CollectionChanged;
-			m_createdObjectList = null;
+			if (_sldrInitializedByMe)
+			{
+				Sldr.Cleanup();
+				_sldrInitializedByMe = false;
+			}
+			_createdObjectList = null;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		[SetUp]
-		public void Initialize()
+		/// <summary />
+		public override void TestSetup()
 		{
-			CreateAndInitializeNewWindow();
-#if RANDYTODO
-			((MockFwXWindow)m_window).ActivateTool("bulkEditEntriesOrSenses");
-#endif
-			GetBulkEditBarAndBrowseViewerFromWindow();
+			base.TestSetup();
+
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stemMT = GetMorphTypeOrCreateOne("stem");
+				var rootMT = GetMorphTypeOrCreateOne("root");
+				var boundRootMT = GetMorphTypeOrCreateOne("bound root");
+				var adjPOS = GetGrammaticalCategoryOrCreateOne("adjective", Cache.LangProject.PartsOfSpeechOA);
+				var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
+				var transVbPOS = GetGrammaticalCategoryOrCreateOne("transitive verb", verbPOS);
+				var nounPOS = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				var concNounPOS = GetGrammaticalCategoryOrCreateOne("concrete noun", nounPOS);
+				// le='pus' mtype='root' Sense1(gle='green' pos='adj.')
+				AddLexeme(_createdObjectList, "pus", rootMT, "green", adjPOS);
+				// le='bili' mtype='bound root' Sense1(gle='to.see' pos='trans.verb' inflCls=1)
+				//     cit.form='himbilira'     Sense2(gle='to.understand' pos='trans.verb' inflCls=1)
+				var le = AddLexeme(_createdObjectList, "bili", "himbilira", boundRootMT, "to.see", transVbPOS);
+				AddSenseToEntry(_createdObjectList, le, "to.understand", transVbPOS);
+				// le='underlying form' mtype='root' Sense1(gle='English gloss' pos='noun')
+				//     cit.form='ztestmain'     (... several more senses...)
+				var le2 = AddLexeme(_createdObjectList, "underlying form", "ztestmain", rootMT, "English gloss", nounPOS);
+				AddSubSenseToSense(_createdObjectList, le2.AllSenses[0], "English subsense gloss1.1", concNounPOS);
+				AddSenseToEntry(_createdObjectList, le2, "English gloss2", null);
+				AddSubSenseToSense(_createdObjectList, le2.AllSenses[0], "English subsense gloss1.2", null);
+				var stemAllomorph = m_stemFact.Create();
+				le2.AlternateFormsOS.Add(stemAllomorph);
+				stemAllomorph.Form.set_String(Cache.DefaultVernWs, "stem allomorph");
+				_createdObjectList.Add(stemAllomorph);
+				var affixAllomorph = m_affixFact.Create();
+				le2.AlternateFormsOS.Add(affixAllomorph);
+				affixAllomorph.Form.set_String(Cache.DefaultVernWs, "affix allomorph");
+				_createdObjectList.Add(affixAllomorph);
+			});
+			_dummyApp = new DummyApp();
+			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.App, _dummyApp);
+			_statusBar = new StatusBar();
+			_entriesOrChildClassesRecordList = new EntriesOrChildClassesRecordList(AreaServices.EntriesOrChildren, _statusBar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Cache.LanguageProject.LexDbOA);
+			_entriesOrChildClassesRecordList.InitializeFlexComponent(_flexComponentParameters);
+			_recordListRepository = _flexComponentParameters.PropertyTableGetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository);
+			_recordListRepository.ActiveRecordList = _entriesOrChildClassesRecordList;
+			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
+			var parametersElement = root.Element("parameters");
+			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
+			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
+			_recordBrowseViewForTests = new RecordBrowseViewForTests(parametersElement, Cache, _entriesOrChildClassesRecordList);
+			_recordBrowseViewForTests.InitializeFlexComponent(_flexComponentParameters);
+			_browseViewerForTests = (BrowseViewerForTests)_recordBrowseViewForTests.BrowseViewer;
+			_bulkEditBarForTests = (BulkEditBarForTests)_browseViewerForTests.BulkEditBar;
 		}
 
-		[TearDown]
-		public void CleanUp()
+		public override void TestTearDown()
 		{
 			UndoAllActions();
-			// delete property table settings.
-			m_propertyTable.RemoveLocalAndGlobalSettings();
+			_flexComponentParameters.PropertyTable.RemoveProperty(LanguageExplorerConstants.App);
+			_flexComponentParameters.PropertyTable.RemoveProperty(LanguageExplorerConstants.RecordListRepository);
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			_flexComponentParameters = null;
+			_statusBar?.Dispose();
+			_statusBar = null;
+			_dummyApp?.Dispose();
+			_dummyApp = null;
+			_recordListRepository?.Dispose();
+			_recordListRepository = null;
+			_entriesOrChildClassesRecordList?.Dispose();
+			_entriesOrChildClassesRecordList = null;
+			_recordBrowseViewForTests?.Dispose();
+			_recordBrowseViewForTests = null;
+			_browseViewerForTests?.Dispose();
+			_browseViewerForTests = null;
+			_bulkEditBarForTests?.Dispose();
+			_bulkEditBarForTests = null;
 
-			//if (m_bulkEditBar != null)
-			//    m_bulkEditBar.Dispose();
-
-			if (m_window != null && !m_window.IsDisposed)
-				m_window.Dispose(); // disposes m_bulkEditBar and m_bv!
-
-			m_bulkEditBar = null;
-			m_bv = null;
-			m_window = null;
+			base.TestTearDown();
 		}
 
 		private void UndoAllActions()
 		{
 			// Often looping through Undo() is not enough because changing
 			// 'CurrentContentControl' zaps undo stack!
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyTestData);
-			m_createdObjectList.Clear();
-		}
-
-		private void CreateAndInitializeNewWindow()
-		{
-#if RANDYTODO
-			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
-			m_propertyTable = m_window.PropTable;
-			((MockFwXWindow)m_window).ClearReplacements();
-			ProcessPendingItems();
-			ControlAssemblyReplacements();
-			m_window.LoadUI(m_configFilePath); // actually loads UI here.
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);
-			//m_window.Show(); // doesn't seem to make any difference!
-#endif
-		}
-
-		/// <summary>
-		/// Any db object created here or in tests must be added to m_createdObjectList.
-		/// </summary>
-		private void CreateTestData()
-		{
-			var stemMT = GetMorphTypeOrCreateOne("stem");
-			var rootMT = GetMorphTypeOrCreateOne("root");
-			var boundRootMT = GetMorphTypeOrCreateOne("bound root");
-			var adjPOS = GetGrammaticalCategoryOrCreateOne("adjective", Cache.LangProject.PartsOfSpeechOA);
-			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
-			var transVbPOS = GetGrammaticalCategoryOrCreateOne("transitive verb", verbPOS);
-			var nounPOS = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-			var concNounPOS = GetGrammaticalCategoryOrCreateOne("concrete noun", nounPOS);
-
-			// le='pus' mtype='root' Sense1(gle='green' pos='adj.')
-			AddLexeme(m_createdObjectList, "pus", rootMT, "green", adjPOS);
-
-			// le='bili' mtype='bound root' Sense1(gle='to.see' pos='trans.verb' inflCls=1)
-			//     cit.form='himbilira'     Sense2(gle='to.understand' pos='trans.verb' inflCls=1)
-			var le = AddLexeme(m_createdObjectList, "bili", "himbilira", boundRootMT, "to.see",
-				transVbPOS);
-			AddSenseToEntry(m_createdObjectList, le, "to.understand", transVbPOS);
-
-			// le='underlying form' mtype='root' Sense1(gle='English gloss' pos='noun')
-			//     cit.form='ztestmain'     (... several more senses...)
-			var le2 = AddLexeme(m_createdObjectList, "underlying form", "ztestmain", rootMT,
-				"English gloss", nounPOS);
-			AddSubSenseToSense(m_createdObjectList, le2.AllSenses[0], "English subsense gloss1.1",
-				concNounPOS);
-			AddSenseToEntry(m_createdObjectList, le2, "English gloss2", null);
-			AddSubSenseToSense(m_createdObjectList, le2.AllSenses[0], "English subsense gloss1.2",
-				null);
-			IPhEnvironment env = null;
-			AddStemAllomorphToEntry(m_createdObjectList, le2, "stem allomorph", env);
-			AddAffixAllomorphToEntry(m_createdObjectList, le2, "affix allomorph", env);
-		}
-
-		/// <summary>
-		/// Use m_createdObjectList to destroy all test data created in CreateTestData()
-		/// and in tests.
-		/// </summary>
-		protected void DestroyTestData()
-		{
-			foreach (ICmObject obj in m_createdObjectList)
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				if (!obj.IsValidObject)
-					continue; // owned object could have been deleted already by owner
-				if (obj is IMoMorphType || obj is IPartOfSpeech)
-					continue; // these don't need to be deleted between tests
-				if (obj is ILexEntry)
-					obj.Delete();
-				if (obj is ICmSemanticDomain)
-					obj.Delete();
-				if (obj is ILexEntryRef)
-					obj.Delete();
-				// Some types won't get deleted directly (e.g. ILexSense),
-				// but should get deleted by their owner.
+				foreach (var obj in _createdObjectList)
+				{
+					if (!obj.IsValidObject)
+					{
+						continue; // owned object could have been deleted already by owner
+					}
+					if (obj is IMoMorphType || obj is IPartOfSpeech)
+					{
+						continue; // these don't need to be deleted between tests
+					}
+					if (obj is ILexEntry)
+					{
+						obj.Delete();
+					}
+					if (obj is ICmSemanticDomain)
+					{
+						obj.Delete();
+					}
+					if (obj is ILexEntryRef)
+					{
+						obj.Delete();
+					}
+					// Some types won't get deleted directly (e.g. ILexSense),
+					// but should get deleted by their owner.
+				}
+
+			});
+			_createdObjectList.Clear();
+		}
+
+		/// <summary>
+		/// Will find a morph type (if one exists) with the given (analysis ws) name.
+		/// If not found, will create the morph type in the Lexicon MorphTypes list.
+		/// </summary>
+		protected IMoMorphType GetMorphTypeOrCreateOne(string morphTypeName)
+		{
+			var poss = m_possRepo.AllInstances().FirstOrDefault(someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == morphTypeName);
+			if (poss != null)
+			{
+				return poss as IMoMorphType;
 			}
+			var owningList = Cache.LangProject.LexDbOA.MorphTypesOA;
+			var ws = Cache.DefaultAnalWs;
+			poss = m_possFact.Create(new Guid(), owningList);
+			poss.Name.set_String(ws, morphTypeName);
+			return poss as IMoMorphType;
 		}
 
-		protected void ProcessPendingItems()
+		/// <summary>
+		/// Will find a variant entry type (if one exists) with the given (analysis ws) name.
+		/// If not found, will create the variant entry type in the Lexicon VariantEntryTypes list.
+		/// </summary>
+		protected ILexEntryType GetVariantTypeOrCreateOne(string variantTypeName)
 		{
-#if RANDYTODO
-			// used in CreateAndInitializeWindow() and in MasterRefresh()
-			//m_mediator = m_window.Mediator;
-			((MockFwXWindow)m_window).ProcessPendingItems();
-#endif
-		}
-
-		private void GetBulkEditBarAndBrowseViewerFromWindow()
-		{
-#if RANDYTODO
-			m_bulkEditBar = ((MockFwXWindow)m_window).FindControl("BulkEditBar") as BulkEditBarForTests;
-			m_bv = m_bulkEditBar.Parent as BrowseViewerForTests;
-#endif
-		}
-
-		private void ControlAssemblyReplacements()
-		{
-			ControlAssemblyReplacement replacement = new ControlAssemblyReplacement
+			var poss = m_possRepo.AllInstances().FirstOrDefault(someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == variantTypeName);
+			if (poss != null)
 			{
-				m_toolName = "bulkEditEntriesOrSenses",
-				m_controlName = "EntryOrSenseBulkEdit",
-				m_targetAssembly = "xWorks.dll",
-				m_targetControlClass = "LanguageExplorer.Works.RecordBrowseView",
-				m_newAssembly = "xWorksTests.dll",
-				m_newControlClass = "LanguageExplorer.Works.BulkEditBarTestsBase+RecordBrowseViewForTests"
+				return poss as ILexEntryType;
+			}
+			// shouldn't get past here; they're already defined.
+			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			var ws = Cache.DefaultAnalWs;
+			poss = m_possFact.Create(new Guid(), owningList);
+			poss.Name.set_String(ws, variantTypeName);
+			return poss as ILexEntryType;
+		}
+
+		/// <summary>
+		/// Will find a grammatical category (if one exists) with the given (analysis ws) name.
+		/// If not found, will create a category as a subpossibility of a grammatical category.
+		/// </summary>
+		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, IPartOfSpeech owningCategory)
+		{
+			return GetGrammaticalCategoryOrCreateOne(catName, null, owningCategory);
+		}
+
+		/// <summary>
+		/// Will find a grammatical category (if one exists) with the given (analysis ws) name.
+		/// If not found, will create the grammatical category in the owning list.
+		/// </summary>
+		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList)
+		{
+			return GetGrammaticalCategoryOrCreateOne(catName, owningList, null);
+		}
+
+		/// <summary>
+		/// Will find a grammatical category (if one exists) with the given (analysis ws) name.
+		/// If not found, will create a grammatical category either as a possibility of a list,
+		/// or as a subpossibility of a category.
+		/// </summary>
+		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList, IPartOfSpeech owningCategory)
+		{
+			var category = m_posRepo.AllInstances().FirstOrDefault(someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == catName);
+			if (category != null)
+			{
+				return category;
+			}
+			var ws = Cache.DefaultAnalWs;
+			if (owningList == null)
+			{
+				if (owningCategory == null)
+				{
+					throw new ArgumentException("Grammatical category not found and insufficient information given to create one.");
+				}
+				category = m_posFact.Create(new Guid(), owningCategory);
+			}
+			else
+			{
+				category = m_posFact.Create(new Guid(), owningList);
+			}
+			category.Name.set_String(ws, catName);
+			return category;
+		}
+
+		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, string citationForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech catPoss)
+		{
+			var ws = Cache.DefaultVernWs;
+			var le = AddLexeme(addList, lexForm, morphTypePoss, gloss, catPoss);
+			le.CitationForm.set_String(ws, citationForm);
+			return le;
+		}
+
+		protected ILexEntry AddLexeme(IList<ICmObject> addList, string lexForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech categoryPoss)
+		{
+			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
+			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
+			var entry = m_entryFact.Create(comp);
+			addList.Add(entry);
+			return entry;
+		}
+
+		protected ILexEntry AddVariantLexeme(IList<ICmObject> addList, IVariantComponentLexeme origLe, string lexForm, IMoMorphType morphTypePoss, string gloss,
+			IPartOfSpeech categoryPoss, ILexEntryType varType)
+		{
+			Guard.ArgumentNotNull(varType, nameof(varType));
+
+			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
+			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
+			var entry = m_entryFact.Create(comp);
+			var ler = entry.MakeVariantOf(origLe, varType);
+			addList.Add(entry);
+			addList.Add(ler);
+			return entry;
+		}
+
+		protected ILexSense AddSenseToEntry(IList<ICmObject> addList, ILexEntry le, string gloss, IPartOfSpeech catPoss)
+		{
+			var msa = new SandboxGenericMSA
+			{
+				MainPOS = catPoss
 			};
-#if RANDYTODO
-			((MockFwXWindow)m_window).AddReplacement(replacement);
-#endif
+			var sense = m_senseFact.Create(le, msa, gloss);
+			addList.Add(sense);
+			return sense;
+		}
+
+		protected ILexSense AddSubSenseToSense(IList<ICmObject> addList, ILexSense ls, string gloss, IPartOfSpeech catPoss)
+		{
+			var msa = new SandboxGenericMSA
+			{
+				MainPOS = catPoss
+			};
+			var sense = m_senseFact.Create(new Guid(), ls);
+			sense.SandboxMSA = msa;
+			sense.Gloss.set_String(Cache.DefaultAnalWs, gloss);
+			addList.Add(sense);
+			return sense;
 		}
 
 	#endregion Setup and Teardown
 
-		protected void MasterRefresh()
+		internal sealed class BulkEditBarForTests : BulkEditBar
 		{
-#if RANDYTODO
-			m_window.OnMasterRefresh(null);
-#endif
-			ProcessPendingItems();
-			GetBulkEditBarAndBrowseViewerFromWindow();
-		}
-
-#if RANDYTODO
-		protected internal class BulkEditBarForTests : BulkEditBar
-		{
-			/// <summary>
-			/// m_window is needed for processing xcore messages when simulating user events.
-			/// </summary>
-			readonly MockFwXWindow m_wnd;
-
-			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, LcmCache cache)
-				: base(bv, spec, mediator, propertyTable, cache)
+			internal BulkEditBarForTests(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
+				: base(bv, spec, flexComponentParameters, cache)
 			{
-				m_wnd = propertyTable.GetValue<MockFwXWindow>(LanguageExplorerConstants.window);
 			}
 
 			internal void SwitchTab(string tabName)
 			{
-				int tabIndex = (int)Enum.Parse(typeof(BulkEditBar.BulkEditBarTabs), tabName);
+				var tabIndex = (int)Enum.Parse(typeof(BulkEditBarTabs), tabName);
 				m_operationsTabControl.SelectedIndex = tabIndex;
-				m_wnd.ProcessPendingItems();
 			}
 
 			/// <summary>
 			///
 			/// </summary>
-			internal int SelectedTab
-			{
-				get { return m_operationsTabControl.SelectedIndex; }
-			}
+			internal int SelectedTab => m_operationsTabControl.SelectedIndex;
 
 			/// <summary>
 			///
 			/// </summary>
-			internal FieldComboItem SelectedTargetFieldItem
-			{
-				get { return m_currentTargetCombo.SelectedItem as FieldComboItem; }
-			}
+			internal FieldComboItem SelectedTargetFieldItem => CurrentTargetCombo.SelectedItem as FieldComboItem;
 
 			internal FieldComboItem SetTargetField(string label)
 			{
-				m_currentTargetCombo.Text = label;
-				if (m_currentTargetCombo.Text != label)
-					throw new ApplicationException(String.Format("Couldn't change to target field {0}, need to ShowColumn()", label));
-				// trigger event explictly, since tests don't do it reliably.
-				m_wnd.ProcessPendingItems();
+				CurrentTargetCombo.Text = label;
+				if (CurrentTargetCombo.Text != label)
+				{
+					throw new ApplicationException($"Couldn't change to target field {label}, need to ShowColumn()");
+				}
+				// trigger event explicitly, since tests don't do it reliably.
 				return SelectedTargetFieldItem;
 			}
 
 			internal List<FieldComboItem> GetTargetFields()
 			{
-				List<FieldComboItem> items = new List<FieldComboItem>();
-				foreach (FieldComboItem item in m_currentTargetCombo.Items)
+				var items = new List<FieldComboItem>();
+				foreach (FieldComboItem item in CurrentTargetCombo.Items)
+				{
 					items.Add(item);
+				}
 				return items;
 			}
 
 			internal Control GetTabControlChild(string controlName)
 			{
-				Control[] matches = m_operationsTabControl.SelectedTab.Controls.Find(controlName, true);
+				var matches = m_operationsTabControl.SelectedTab.Controls.Find(controlName, true);
 				if (matches != null && matches.Length > 0)
+				{
 					return matches[0];
+				}
 				return null;
 			}
 
-			internal IBulkEditSpecControl CurrentBulkEditSpecControl
-			{
-				get { return m_beItems[m_itemIndex].BulkEditControl; }
-			}
+			internal IBulkEditSpecControl CurrentBulkEditSpecControl => m_beItems[m_itemIndex].BulkEditControl;
 
-			/// <summary>
-			/// See comments on PersistSettings.
-			/// </summary>
-			bool m_fSaveSettings = false;
 			protected internal override void SaveSettings()
 			{
 				if (PersistSettings)
+				{
 					base.SaveSettings();
+				}
 			}
 
-			/// <summary>
-			/// For some reason, my (EricP's) version of ReSharper (4.1.933.3)
-			/// takes a LONG time to run tests when trying to XmlSerialize BulkEditBarTabPage settings.
-			/// In any case, it's probably reasonable to not care about Persisting Settings except
-			/// for tests that switch between BulkEditBar tabs or do a MasterRefresh().
-			///
-			/// Here's where it takes too long:
-			/// JetBrains.ReSharper.TaskRunnerFramework.dll!JetBrains.ReSharper.TaskRunnerFramework.AssemblyLoader.ResolveAssemblyFileByName(string name = "XMLViews.XmlSerializers, Version=1.0.3443.22565, Culture=neutral, PublicKeyToken=null", bool isFullName = true) Line 173 + 0x8 bytes	C#
-			/// JetBrains.ReSharper.TaskRunnerFramework.dll!JetBrains.ReSharper.TaskRunnerFramework.AssemblyLoader.ResolveAssembly(object sender = {System.AppDomain}, System.ResolveEventArgs args = {System.ResolveEventArgs}) Line 107 + 0xd bytes	C#
-			/// XMLUtils.DLL!SIL.Utils.XmlUtils.SerializeObjectToXmlString(object objToSerialize = {SIL.FieldWorks.Common.Controls.BulkEditBar.ListChoiceTabPageSettings}) Line 592 + 0x26 bytes	C#
-			/// LanguageExplorer.DLL!LanguageExplorer.Controls.XMLViews.BulkEditBar.BulkEditTabPageSettings.SerializeSettings() Line 2566 + 0x8 bytes	C#
-			/// </summary>
-			internal bool PersistSettings
-			{
-				get { return m_fSaveSettings; }
-				set { m_fSaveSettings = value; }
-			}
+			internal bool PersistSettings { get; set; }
 
 			internal void ClickPreview()
 			{
 				m_previewButton_Click(null, EventArgs.Empty);
-				m_wnd.ProcessPendingItems();
 			}
 
 			internal void ClickApply()
 			{
 				m_ApplyButton_Click(null, EventArgs.Empty);
-				m_wnd.ProcessPendingItems();
 			}
 
 			internal void ClickSuggest()
 			{
 				m_suggestButton_Click(null, EventArgs.Empty);
-				m_wnd.ProcessPendingItems();
 			}
 		}
 
-		protected internal class BrowseViewerForTests : BrowseViewer
+		internal class BrowseViewerForTests : BrowseViewer
 		{
-			MockFwXWindow m_wnd = null;
-
-			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache,
-				Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
-				: base(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
+			internal BrowseViewerForTests(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
+				: base(nodeSpec, hvoRoot, cache, sortItemProvider, sdaRecordList)
 			{
-				m_wnd = m_propertyTable.GetValue<MockFwXWindow>(LanguageExplorerConstants.window);
-				m_xbv.MakeRoot(); // needed to process OnRecordNavigation
 			}
 
-			///  <summary>
-			///
-			///  </summary>
-			///  <param name="bv"></param>
-			///  <param name="spec"></param>
-			///  <param name="mediator"></param>
-			/// <param name="propertyTable"></param>
-			/// <param name="cache"></param>
-			///  <returns></returns>
-			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, LcmCache cache)
+			///  <summary />
+			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
 			{
-				return new BulkEditBarForTests(bv, spec, mediator, propertyTable, cache);
+				return new BulkEditBarForTests(bv, spec, flexComponentParameters, cache);
 			}
 
 			private AnywhereMatcher CreateAnywhereMatcher(string pattern, int ws)
@@ -380,18 +463,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			internal FilterSortItem SetFilter(string columnName, string filterType, string query)
 			{
 				// get ColumnInfo for specified column
-				FilterSortItem fsiTarget = FindColumnInfo(columnName);
-				int index = fsiTarget.Combo.FindStringExact(filterType);
+				var fsiTarget = FindColumnInfo(columnName);
+				var index = fsiTarget.Combo.FindStringExact(filterType);
 				if (index < 0)
+				{
 					return null;
-
-				FilterComboItem fci = fsiTarget.Combo.Items[index] as FilterComboItem;
+				}
+				var fci = fsiTarget.Combo.Items[index] as FilterComboItem;
 				if (filterType.EndsWith("..."))
 				{
 					// these are dialogs
 					if (filterType == "Filter for...")
 					{
-						int ws = (fci as FindComboItem).Ws;
+						var ws = (fci as FindComboItem).Ws;
 						(fci as FindComboItem).Matcher = CreateAnywhereMatcher(query, ws);
 						fci.InvokeWithInstalledMatcher();
 					}
@@ -406,18 +490,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					// invoke simple filters.
 					fci.Invoke();
 				}
-				m_wnd.ProcessPendingItems();
 				return fsiTarget;
 			}
 
 			private FilterSortItem FindColumnInfo(string columnName)
 			{
 				FilterSortItem fsiTarget = null;
-				foreach (FilterSortItem fsi in m_filterBar.ColumnInfo)
+				foreach (var fsi in FilterBar.ColumnInfo)
 				{
-					if (fsi.Spec.Attributes["label"].Value == columnName ||
-						fsi.Spec.Attributes["headerlabel"] != null &&
-						fsi.Spec.Attributes["headerlabel"].Value == columnName)
+					if (fsi.Spec.Attribute("label").Value == columnName || fsi.Spec.Attribute("headerlabel") != null && fsi.Spec.Attribute("headerlabel").Value == columnName)
 					{
 						fsiTarget = fsi;
 						break;
@@ -428,30 +509,29 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal FilterSortItem SetSort(string columnName)
 			{
-				FilterSortItem fsiTarget = FindColumnInfo(columnName);
-				List<FilterSortItem> fsiList = new List<FilterSortItem>(m_filterBar.ColumnInfo);
-				int indexColSpec = fsiList.IndexOf(fsiTarget);
-				int indexOfColumnHeader = indexColSpec + ColumnIndexOffset();
+				var fsiTarget = FindColumnInfo(columnName);
+				var fsiList = new List<FilterSortItem>(FilterBar.ColumnInfo);
+				var indexColSpec = fsiList.IndexOf(fsiTarget);
+				var indexOfColumnHeader = indexColSpec + ColumnIndexOffset();
 				m_lvHeader_ColumnLeftClick(this, new ColumnClickEventArgs(indexOfColumnHeader));
-				m_wnd.ProcessPendingItems();
 				return fsiTarget;
 			}
 
 			internal void ShowColumn(string layoutName)
 			{
 				// get column matching the given layoutName
-				List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName);
-				if (this.IsColumnHidden(colSpec))
+				var possibleColumns = BrowseView.Vc.ComputePossibleColumns();
+				var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName);
+				if (IsColumnHidden(colSpec))
 				{
-					this.AppendColumn(colSpec);
+					AppendColumn(colSpec);
 					UpdateColumnList();
 				}
 			}
 
 			internal void OnUncheckAll()
 			{
-				base.OnUncheckAll(null, EventArgs.Empty);
+				OnUncheckAll(null, EventArgs.Empty);
 			}
 
 			internal void UnselectItem(int hvo)
@@ -466,32 +546,38 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal void UncheckItems(IEnumerable<int> items)
 			{
-				foreach (int hvo in items)
+				foreach (var hvo in items)
+				{
 					UnselectItem(hvo);
+				}
 			}
 
 			internal IList<int> UncheckedItems()
 			{
 				IList<int> uncheckedItems = new List<int>();
-				foreach (int hvoItem in AllItems)
+				foreach (var hvoItem in AllItems)
 				{
 					if (!IsItemChecked(hvoItem))
+					{
 						uncheckedItems.Add(hvoItem);
+					}
 				}
 
 				return uncheckedItems;
 			}
 		}
 
-		protected class RecordBrowseViewForTests : RecordBrowseView
+		internal class RecordBrowseViewForTests : RecordBrowseView
 		{
-			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
-				LcmCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+
+			internal RecordBrowseViewForTests(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
+				: base(browseViewDefinitions, cache, recordList)
 			{
-				var app = propertyTable.GetValue<MockFwXApp>(LanguageExplorerConstants.App);
-				return new BrowseViewerForTests(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache,
-					mediator, propertyTable,
-					sortItemProvider, sda);
+			}
+
+			protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController)
+			{
+				return new BrowseViewerForTests(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 			}
 
 			protected override void PersistSortSequence()
@@ -500,43 +586,36 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 
 		}
-#endif
 	}
 
-#if RANDYTODO // Restore once Mediator/pubsub all work again
 	[TestFixture]
-	public class BulkEditBarTests : BulkEditBarTestsBase
+	internal class BulkEditBarTests : BulkEditBarTestsBase
 	{
 	#region BulkEditEntries tests
 		[Test]
 		public void ChoiceFilters()
 		{
-			m_bulkEditBar.PersistSettings = true;
-			m_bulkEditBar.SwitchTab("ListChoice");
+			_bulkEditBarForTests.PersistSettings = true;
+			_bulkEditBarForTests.SwitchTab("ListChoice");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
-			//FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form");
-			m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form");
+			//FilterSortItem fsFilter = _browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "underlying form");
+			_browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "underlying form");
 			// next make a chooser filter on "Entry Type" column
-			//fsFilter = m_bv.SetFilter("Morph Type", "Choose...", "root");
-			m_bv.SetFilter("Morph Type", "Choose...", "root");
-			m_bv.SetSort("Lexeme Form");
-
+			//fsFilter = _browseViewerForTests.SetFilter("Morph Type", "Choose...", "root");
+			_browseViewerForTests.SetFilter("Morph Type", "Choose...", "root");
+			_browseViewerForTests.SetSort("Lexeme Form");
 			// Make sure our filters have worked to limit the data
-			Assert.AreEqual(1, m_bv.AllItems.Count);
-
+			Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 			// now switch list items to senses, and see if our Main Entry filter still has results.
 			// TargetField == Sense (e.g. "Grammatical Category")
-			m_bulkEditBar.SetTargetField("Grammatical Category");
-			Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			_bulkEditBarForTests.SetTargetField("Grammatical Category");
+			Assert.AreEqual("Grammatical Category", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			// make sure current record is a Sense
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
-
-			// make sure we can refresh and still have the filter set.
-			MasterRefresh();
-			Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.AreEqual(4, _browseViewerForTests.AllItems.Count);
+			Assert.AreEqual("Grammatical Category", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
+			Assert.AreEqual(4, _browseViewerForTests.AllItems.Count);
 		}
 
 		[Test]
@@ -545,28 +624,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Setup test
 			AddOneVariantEachToHimbiliraSenseAndPusEntry();
 			// LT-9940 Bulk Edit List Choice tab, the "Choose..." button loses its label.
-			m_bulkEditBar.PersistSettings = true;
-			m_bulkEditBar.SwitchTab("ListChoice");
+			_bulkEditBarForTests.PersistSettings = true;
+			_bulkEditBarForTests.SwitchTab("ListChoice");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
-			m_bv.ShowColumn("VariantEntryTypesBrowse");
-			using (var fsFilter = m_bv.SetFilter("Variant Types", "Non-blanks", ""))
+			_browseViewerForTests.ShowColumn("VariantEntryTypesBrowse");
+			using (var fsFilter = _browseViewerForTests.SetFilter("Variant Types", "Non-blanks", ""))
 			{
-				m_bv.SetSort("Lexeme Form");
-				Assert.AreEqual(2, m_bv.AllItems.Count);
-
+				_browseViewerForTests.SetSort("Lexeme Form");
+				Assert.AreEqual(2, _browseViewerForTests.AllItems.Count);
 				// TargetField == Complex or Variant Entry References (e.g. "Variant Types")
-				m_bulkEditBar.SetTargetField("Variant Types");
-				Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-
+				_bulkEditBarForTests.SetTargetField("Variant Types");
+				Assert.AreEqual("Variant Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 				// verify there are 2 rows
-				Assert.AreEqual(2, m_bv.AllItems.Count);
-				Assert.AreEqual("Choose...", m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text);
-
-				// make sure we can refresh and still have the filter set.
-				MasterRefresh();
-				Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-				Assert.AreEqual(2, m_bv.AllItems.Count);
-				Assert.AreEqual("Choose...", m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text);
+				Assert.AreEqual(2, _browseViewerForTests.AllItems.Count);
+				Assert.AreEqual("Choose...", _bulkEditBarForTests.CurrentBulkEditSpecControl.Control.Text);
+				Assert.AreEqual("Variant Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
+				Assert.AreEqual(2, _browseViewerForTests.AllItems.Count);
+				Assert.AreEqual("Choose...", _bulkEditBarForTests.CurrentBulkEditSpecControl.Control.Text);
 			}
 		}
 
@@ -579,8 +653,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var nounPOS = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				result.Add(AddVariantLexeme(m_createdObjectList, le1, "pusa", rootMT, "greenish",
-					nounPOS, dialVar));
+				result.Add(AddVariantLexeme(_createdObjectList, le1, "pusa", rootMT, "greenish", nounPOS, dialVar));
 			});
 			result.Add(AddOneVariantToHimbiliraSense());
 			return result;
@@ -595,13 +668,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				result = AddVariantLexeme(m_createdObjectList, entry.SensesOS[1], "rimbolira", rootMT,
-					"to.understand", verbPOS, spellVar);
+				result = AddVariantLexeme(_createdObjectList, entry.SensesOS[1], "rimbolira", rootMT, "to.understand", verbPOS, spellVar);
 			});
 			return result;
 		}
 
-		int GetClassOfObject(int hvo)
+		private int GetClassOfObject(int hvo)
 		{
 			return Cache.ServiceLocator.GetObject(hvo).ClassID;
 		}
@@ -610,60 +682,56 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ListChoiceTargetSelection()
 		{
 			//MessageBox.Show("Debug ListChoiceTargetSelection");
-			m_bulkEditBar.SwitchTab("ListChoice");
+			_bulkEditBarForTests.SwitchTab("ListChoice");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
-			using (FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form")) // 'underlying form'
+			using (_browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "underlying form"))
 			{
-				m_bv.SetSort("Lexeme Form");
-				Assert.AreEqual(1, m_bv.AllItems.Count);
+				_browseViewerForTests.SetSort("Lexeme Form");
+				Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 				// Make sure we have the expected target fields
-				List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
+				var targetFields = _bulkEditBarForTests.GetTargetFields();
 				Assert.AreEqual(2, targetFields.Count);
 				Assert.AreEqual("Morph Type", targetFields[0].ToString());
 				Assert.AreEqual("Grammatical Category", targetFields[1].ToString());
-
 				// TargetField == Entry (e.g. "Morph Type")
-				m_bulkEditBar.SetTargetField("Morph Type");
-				Assert.AreEqual("Morph Type", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				_bulkEditBarForTests.SetTargetField("Morph Type");
+				Assert.AreEqual("Morph Type", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 				// make sure current record is an Entry
-				int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
+				var hvoOfCurrentEntry = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 				Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
 				// verify there is still only 1 row.
-				Assert.AreEqual(1, m_bv.AllItems.Count);
+				Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 				// Set sorter on a sense field and make sure unchecking one entry unchecks them all
-				m_bv.SetSort("Grammatical Category");
-				int numOfEntryRows = m_bv.AllItems.Count;
+				_browseViewerForTests.SetSort("Grammatical Category");
+				var numOfEntryRows = _browseViewerForTests.AllItems.Count;
 				// we expect to have more than one Entry rows when sorted on a sense field
 				Assert.Less(1, numOfEntryRows);
-				Assert.AreEqual(numOfEntryRows, m_bv.CheckedItems.Count);	// all checked.
+				Assert.AreEqual(numOfEntryRows, _browseViewerForTests.CheckedItems.Count);	// all checked.
 				// check current item, should check all rows.
-				m_bv.SetCheckedItems(new List<int>());	// uncheck all rows.
-				Assert.AreEqual(0, m_bv.CheckedItems.Count);
-				m_bv.SetCheckedItems(new List<int>(new int[] { hvoOfCurrentEntry }));
-				Assert.AreEqual(numOfEntryRows, m_bv.CheckedItems.Count);
-
+				_browseViewerForTests.SetCheckedItems(new List<int>());	// uncheck all rows.
+				Assert.AreEqual(0, _browseViewerForTests.CheckedItems.Count);
+				_browseViewerForTests.SetCheckedItems(new List<int>(new[] { hvoOfCurrentEntry }));
+				Assert.AreEqual(numOfEntryRows, _browseViewerForTests.CheckedItems.Count);
 				// TargetField == Sense (e.g. "Grammatical Category")
-				m_bulkEditBar.SetTargetField("Grammatical Category");
-				Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				_bulkEditBarForTests.SetTargetField("Grammatical Category");
+				Assert.AreEqual("Grammatical Category", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 				// make sure current record is a Sense
-				int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+				var hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 				Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 				// Make sure filter is still applied on right column during the transition.
 				// verify there are 4 rows
-				Assert.AreEqual(4, m_bv.AllItems.Count);
-
+				Assert.AreEqual(4, _browseViewerForTests.AllItems.Count);
 				// make sure checking only one sense should only check one row.
-				m_bv.SetCheckedItems(new List<int>());	// uncheck all rows.
-				m_bv.SetCheckedItems(new List<int>(new int[] { hvoOfCurrentSense }));
-				Assert.AreEqual(1, m_bv.CheckedItems.Count);
-
+				_browseViewerForTests.SetCheckedItems(new List<int>());	// uncheck all rows.
+				_browseViewerForTests.SetCheckedItems(new List<int>(new[] { hvoOfCurrentSense }));
+				Assert.AreEqual(1, _browseViewerForTests.CheckedItems.Count);
 				// take off the filter and make sure switching between Senses/Entries maintains a selection
 				// in the ownership tree.
-				m_bv.SetFilter("Lexeme Form", "Show All", null);
-				hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+				_browseViewerForTests.SetFilter("Lexeme Form", "Show All", null);
+				hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 				// now switch back to Entry level
-				m_bulkEditBar.SetTargetField("Morph Type");
-				hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
+				_bulkEditBarForTests.SetTargetField("Morph Type");
+				hvoOfCurrentEntry = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 				Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
 				// make sure this entry owns the Sense we were on.
 				Assert.AreEqual(hvoOfCurrentEntry, Cache.ServiceLocator.GetObject(hvoOfCurrentSense).OwnerOfClass<ILexEntry>().Hvo);
@@ -674,7 +742,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ListChoiceTargetSemDomSuggest()
 		{
 			// Add some Semantic Domains
-			var semDomDict = AddSemanticDomains(m_bv.Cache);
+			var semDomDict = AddSemanticDomains(_browseViewerForTests.Cache);
 			var oilSemDom = semDomDict["oil"];
 			var greenSemDom = semDomDict["green"];
 			var subsenseSemDom = semDomDict["subsense"];
@@ -682,58 +750,46 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			GrabSensesWeNeed(out green, out see, out understand, out subsense1, out subsense2, out english1);
 			// give 'understand' a pre-existing 'oil' semantic domain
 			AddSemanticDomainToSense(understand, oilSemDom);
-
-			m_bulkEditBar.SwitchTab("ListChoice");
-			m_bv.ShowColumn("DomainsOfSensesForSense");
-			Assert.AreEqual(3, m_bv.AllItems.Count);
+			_bulkEditBarForTests.SwitchTab("ListChoice");
+			_browseViewerForTests.ShowColumn("DomainsOfSensesForSense");
+			Assert.AreEqual(3, _browseViewerForTests.AllItems.Count);
 			// Make sure we have the expected target fields
-			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
+			var targetFields = _bulkEditBarForTests.GetTargetFields();
 			Assert.AreEqual(3, targetFields.Count);
 			Assert.AreEqual("Morph Type", targetFields[0].ToString());
 			Assert.AreEqual("Grammatical Category", targetFields[1].ToString());
 			Assert.AreEqual("Semantic Domains", targetFields[2].ToString());
-
 			// TargetField == Sense (e.g. "Semantic Domains")
-			using (m_bulkEditBar.SetTargetField("Semantic Domains"))
+			using (_bulkEditBarForTests.SetTargetField("Semantic Domains"))
 			{
-				Assert.AreEqual("Semantic Domains", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				Assert.AreEqual("Semantic Domains", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 				// make sure current record is an Sense
-				int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+				var hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 				Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 				// verify there are now 7 rows.
-				Assert.AreEqual(7, m_bv.AllItems.Count);
+				Assert.AreEqual(7, _browseViewerForTests.AllItems.Count);
 				// make sure checking only one sense should only check one row.
-				m_bv.SetCheckedItems(new List<int>()); // uncheck all rows.
-				m_bv.SetCheckedItems(new List<int>(new int[] {hvoOfCurrentSense}));
-				Assert.AreEqual(1, m_bv.CheckedItems.Count);
-
+				_browseViewerForTests.SetCheckedItems(new List<int>()); // uncheck all rows.
+				_browseViewerForTests.SetCheckedItems(new List<int>(new[] {hvoOfCurrentSense}));
+				Assert.AreEqual(1, _browseViewerForTests.CheckedItems.Count);
 				// Set all items to be checked (so ClickApply works on all of them)
-				m_bv.SetCheckedItems(m_bv.AllItems);
-
-				m_bulkEditBar.ClickSuggest(); // make sure we don't crash clicking Suggest button
-				m_bulkEditBar.ClickApply();
-
+				_browseViewerForTests.SetCheckedItems(_browseViewerForTests.AllItems);
+				_bulkEditBarForTests.ClickSuggest(); // make sure we don't crash clicking Suggest button
+				_bulkEditBarForTests.ClickApply();
 				// Verify that clicking Apply adds "semantic domains" to any entries
 				// whose glosses match something in the domain name (and that it doesn't for others)
-				Assert.AreEqual(greenSemDom, green.SemanticDomainsRC.FirstOrDefault(),
-					"'green' should have gotten a matching domain");
-				Assert.AreEqual(oilSemDom, understand.SemanticDomainsRC.FirstOrDefault(),
-					"'to.understand' should still have its pre-existing domain");
-				Assert.AreEqual(0, see.SemanticDomainsRC.Count,
-					"'to.see' should not have gotten a domain");
-				Assert.AreEqual(0, english1.SemanticDomainsRC.Count,
-					"'English gloss' should not have gotten a domain");
-				Assert.AreEqual(subsenseSemDom, subsense1.SemanticDomainsRC.FirstOrDefault(),
-					"'English subsense gloss1.1' should have gotten a matching domain");
-				Assert.AreEqual(subsenseSemDom, subsense2.SemanticDomainsRC.FirstOrDefault(),
-					"'English subsense gloss1.2' should have gotten a matching domain");
+				Assert.AreEqual(greenSemDom, green.SemanticDomainsRC.FirstOrDefault(), "'green' should have gotten a matching domain");
+				Assert.AreEqual(oilSemDom, understand.SemanticDomainsRC.FirstOrDefault(), "'to.understand' should still have its pre-existing domain");
+				Assert.AreEqual(0, see.SemanticDomainsRC.Count, "'to.see' should not have gotten a domain");
+				Assert.AreEqual(0, english1.SemanticDomainsRC.Count, "'English gloss' should not have gotten a domain");
+				Assert.AreEqual(subsenseSemDom, subsense1.SemanticDomainsRC.FirstOrDefault(), "'English subsense gloss1.1' should have gotten a matching domain");
+				Assert.AreEqual(subsenseSemDom, subsense2.SemanticDomainsRC.FirstOrDefault(), "'English subsense gloss1.2' should have gotten a matching domain");
 			}
 		}
 
 		private void AddSemanticDomainToSense(ILexSense understand, ICmSemanticDomain oilSemDom)
 		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				() => understand.SemanticDomainsRC.Add(oilSemDom));
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => understand.SemanticDomainsRC.Add(oilSemDom));
 		}
 
 		private void GrabSensesWeNeed(out ILexSense green, out ILexSense see, out ILexSense understand,
@@ -777,67 +833,62 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = new Dictionary<string, ICmSemanticDomain>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				result = domainWordsToCreate.ToDictionary(domainWord => domainWord,
-					domainWord => MakeNewSemDom(semDomFact, semDomList, domainWord));
+				result = domainWordsToCreate.ToDictionary(domainWord => domainWord, domainWord => MakeNewSemDom(semDomFact, semDomList, domainWord));
 			});
 			return result;
 		}
 
-		private ICmSemanticDomain MakeNewSemDom(ICmSemanticDomainFactory semDomFact, ICmPossibilityList semDomList,
-			string domainWord)
+		private ICmSemanticDomain MakeNewSemDom(ICmSemanticDomainFactory semDomFact, ICmPossibilityList semDomList, string domainWord)
 		{
 			var newDomain = semDomFact.Create();
 			semDomList.PossibilitiesOS.Add(newDomain);
 			newDomain.Name.SetAnalysisDefaultWritingSystem(domainWord);
-			m_createdObjectList.Add(newDomain);
+			_createdObjectList.Add(newDomain);
 			return newDomain;
 		}
 
 		[Test]
 		public void BulkCopyTargetSelection()
 		{
-			m_bulkEditBar.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
-			FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...",
-				"underlying form"); // 'underlying form'
-			m_bv.SetSort("Lexeme Form");
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			var fsFilter = _browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "underlying form"); // 'underlying form'
+			_browseViewerForTests.SetSort("Lexeme Form");
+			Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 			// Make sure we have the expected target fields
-			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
+			var targetFields = _bulkEditBarForTests.GetTargetFields();
 			Assert.AreEqual(4, targetFields.Count);
 			Assert.AreEqual("Lexeme Form", targetFields[0].ToString());
 			Assert.AreEqual("Citation Form", targetFields[1].ToString());
 			Assert.AreEqual("Glosses", targetFields[2].ToString());
 			Assert.AreEqual("Definition", targetFields[3].ToString());
-
 			// TargetField == Entry
-			m_bulkEditBar.SetTargetField("Citation Form");
+			_bulkEditBarForTests.SetTargetField("Citation Form");
 			// make sure current record is an Entry
-			int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
+			var hvoOfCurrentEntry = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
 			// verify there is still only 1 row.
-			Assert.AreEqual(1, m_bv.AllItems.Count);
-
+			Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 			// TargetField == Sense
-			m_bulkEditBar.SetTargetField("Glosses");
+			_bulkEditBarForTests.SetTargetField("Glosses");
 			// make sure current record is a Sense
-			int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+			int hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.AreEqual(4, _browseViewerForTests.AllItems.Count);
 		}
 
 		[Test]
 		public void DeleteTargetSelection()
 		{
-			m_bulkEditBar.SwitchTab("Delete");
+			_bulkEditBarForTests.SwitchTab("Delete");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
-			FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form"); // 'underlying form'
-			m_bv.SetSort("Lexeme Form");
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			_browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "underlying form");
+			_browseViewerForTests.SetSort("Lexeme Form");
+			Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
 			// Make sure we have the expected target fields
-			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
+			var targetFields = _bulkEditBarForTests.GetTargetFields();
 			Assert.AreEqual(7, targetFields.Count);
 			Assert.AreEqual("Lexeme Form", targetFields[0].ToString());
 			Assert.AreEqual("Citation Form", targetFields[1].ToString());
@@ -846,26 +897,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual("Grammatical Category", targetFields[4].ToString());
 			Assert.AreEqual("Entries (Rows)", targetFields[5].ToString());
 			Assert.AreEqual("Senses (Rows)", targetFields[6].ToString());
-
 			// TargetField == Sense
-			m_bulkEditBar.SetTargetField("Senses (Rows)");
+			_bulkEditBarForTests.SetTargetField("Senses (Rows)");
 			// make sure current record is a Sense
-			int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+			int hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
-
+			Assert.AreEqual(4, _browseViewerForTests.AllItems.Count);
 			// TargetField == Entry
-			m_bulkEditBar.SetTargetField("Entries (Rows)");
+			_bulkEditBarForTests.SetTargetField("Entries (Rows)");
 			// make sure current record is an Entry
-			int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
+			var hvoOfCurrentEntry = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
 			// verify there is still only 1 row.
-			Assert.AreEqual(1, m_bv.AllItems.Count);
-
-			m_bv.ShowColumn("VariantEntryTypesBrowse");
-			targetFields = m_bulkEditBar.GetTargetFields();
+			Assert.AreEqual(1, _browseViewerForTests.AllItems.Count);
+			_browseViewerForTests.ShowColumn("VariantEntryTypesBrowse");
+			targetFields = _bulkEditBarForTests.GetTargetFields();
 			Assert.AreEqual(9, targetFields.Count);
 			Assert.AreEqual("Variant Types", targetFields[5].ToString());
 			Assert.AreEqual("Complex or Variant Entry References (Rows)", targetFields[8].ToString());
@@ -877,7 +925,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void Pronunciations_ListChoice_Locations()
 		{
-			m_bulkEditBar.PersistSettings = true;
+			_bulkEditBarForTests.PersistSettings = true;
 			// setup data.
 			AddPronunciation();
 			AddTwoLocations();
@@ -891,98 +939,87 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				out firstEntryWithoutPronunciation,
 				out entriesWithoutPronunciations,
 				out pronunciations);
-			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// SUT
 			// first select an entry with a pronunciation, and see if we move to that entry's pronunciation
 			// when we switch to pronunciations list.
-			clerk.JumpToRecord(firstEntryWithPronunciation.Hvo);
-			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			recordList.JumpToRecord(firstEntryWithPronunciation.Hvo);
+			Assert.AreEqual(firstEntryWithPronunciation.Hvo, recordList.CurrentObject.Hvo);
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
-
-			m_bulkEditBar.SwitchTab("ListChoice");
-			int cOriginal = m_bv.ColumnSpecs.Count;
+			Assert.Less(0, recordList.CurrentIndex);
+			_bulkEditBarForTests.SwitchTab("ListChoice");
+			var cOriginal = _browseViewerForTests.ColumnSpecs.Count;
 			// add column for Pronunciation Location
-			m_bv.ShowColumn("Location");
+			_browseViewerForTests.ShowColumn("Location");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
-			m_bulkEditBar.SetTargetField("Pronunciation-Location");
-			Assert.AreEqual("Pronunciation-Location", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.AreEqual(cOriginal + 1, _browseViewerForTests.ColumnSpecs.Count);
+			_bulkEditBarForTests.SetTargetField("Pronunciation-Location");
+			Assert.AreEqual("Pronunciation-Location", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			// check number of options and first is "jungle" (or Empty?)
-			FwComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as FwComboBox;
+			var listChoiceControl = _bulkEditBarForTests.GetTabControlChild("m_listChoiceControl") as FwComboBox;
 			Assert.IsNotNull(listChoiceControl);
 			// expect to have some options.
 			Assert.Less(2, listChoiceControl.Items.Count);
 			// expect the first option to be of class CmLocation
-			HvoTssComboItem item = listChoiceControl.Items[0] as HvoTssComboItem;
+			var item = listChoiceControl.Items[0] as HvoTssComboItem;
 			Assert.AreEqual(CmLocationTags.kClassId, GetClassOfObject(item.Hvo));
 			// check browse view class changed to LexPronunciation
-			Assert.AreEqual(LexPronunciationTags.kClassId, m_bv.ListItemsClass);
+			Assert.AreEqual(LexPronunciationTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// check that clerk list has also changed.
-			Assert.AreEqual(LexPronunciationTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.AreEqual(LexPronunciationTags.kClassId, _browseViewerForTests.SortItemProvider.ListItemsClass);
 			// make sure the list size includes all pronunciations, and all entries that don't have pronunciations.
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
-
+			Assert.AreEqual(recordList.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
 			// make sure we're on the pronunciation of the entry we changed from
-			Assert.AreEqual(firstPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(firstPronunciation.Hvo, recordList.CurrentObject.Hvo);
 			// change the first pronunciation's (non-existing) location to something else
 			Assert.AreEqual(null, firstPronunciation.LocationRA);
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
 			// set list choice to the first location (eg. 'jungle')
 			listChoiceControl.SelectedItem = item;
-
-			int cPronunciations = firstEntryWithPronunciation.PronunciationsOS.Count;
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			var cPronunciations = firstEntryWithPronunciation.PronunciationsOS.Count;
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// make sure we changed the list option and didn't add another separate pronunciation.
 			Assert.AreEqual(item.Hvo, firstPronunciation.LocationRA.Hvo);
 			Assert.AreEqual(cPronunciations, firstEntryWithPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
-
+			Assert.AreEqual(recordList.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
 			// now create a new pronunciation on an entry that does not have one.
 			cPronunciations = firstEntryWithoutPronunciation.PronunciationsOS.Count;
 			Assert.AreEqual(0, cPronunciations);
-			clerk.JumpToRecord(firstEntryWithoutPronunciation.Hvo);
-			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, clerk.CurrentObject.Hvo);
-			int currentIndex = clerk.CurrentIndex;
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutPronunciation.Hvo }));
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-
+			recordList.JumpToRecord(firstEntryWithoutPronunciation.Hvo);
+			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, recordList.CurrentObject.Hvo);
+			var currentIndex = recordList.CurrentIndex;
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstEntryWithoutPronunciation.Hvo }));
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// check that current index has remained the same.
-			Assert.AreEqual(currentIndex, clerk.CurrentIndex);
+			Assert.AreEqual(currentIndex, recordList.CurrentIndex);
 			// but current object (entry) still does not have a Pronunciation
 			Assert.AreEqual(0, firstEntryWithoutPronunciation.PronunciationsOS.Count);
-
 			// now change the location to something else, and make sure we still didn't create a pronunciation.
-			HvoTssComboItem item2 = listChoiceControl.Items[1] as HvoTssComboItem;
+			var item2 = listChoiceControl.Items[1] as HvoTssComboItem;
 			listChoiceControl.SelectedItem = item2;
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			Assert.AreEqual(0, firstEntryWithoutPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
-
-			// refresh list, and make sure the clerk still has the entry.
-			MasterRefresh();
-			clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(recordList.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, recordList.CurrentObject.Hvo);
 			// also make sure the total count of the list has not changed.
 			// we only converted an entry (ghost) to pronunciation.
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			Assert.AreEqual(recordList.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
 		}
 
 		private void AddTwoLocations()
 		{
 			var locList = Cache.LangProject.LocationsOA;
 			if (locList.PossibilitiesOS.Count > 0)
+			{
 				return; // already created by previous test
+			}
 			var analWs = Cache.DefaultAnalWs;
 			var locFact = Cache.ServiceLocator.GetInstance<ICmLocationFactory>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -1010,7 +1047,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var pronunciation = pronuncFact.Create();
 				entry.PronunciationsOS.Add(pronunciation);
 				pronunciation.Form.set_String(Cache.DefaultVernWs, "Pronunciation");
-				Console.WriteLine("*** We just added a pronunciation called 'Pronunciation' to entry {0}.", entry.HeadWord.Text);
+				Console.WriteLine($"*** We just added a pronunciation called 'Pronunciation' to entry {entry.HeadWord.Text}.");
 			});
 		}
 
@@ -1022,7 +1059,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			entriesWithoutPronunciations = new List<ILexEntry>();
 			pronunciations = new List<ILexPronunciation>();
 			// find an entry with pronunciations.
-			foreach (ILexEntry entry in Cache.LangProject.LexDbOA.Entries)
+			foreach (var entry in Cache.LangProject.LexDbOA.Entries)
 			{
 				if (entry.PronunciationsOS.Count > 0)
 				{
@@ -1033,16 +1070,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						firstPronunciation = entry.PronunciationsOS[0];
 						var newPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 						pronunciations.Add(newPronunciation);
-						NonUndoableUnitOfWorkHelper.Do(
-							Cache.ActionHandlerAccessor, () =>
-								entry.PronunciationsOS.Add(newPronunciation));
+						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => entry.PronunciationsOS.Add(newPronunciation));
 					}
 				}
 				else
 				{
 					entriesWithoutPronunciations.Add(entry);
 					if (firstEntryWithoutPronunciation == null)
+					{
 						firstEntryWithoutPronunciation = entry;
+					}
 				}
 			}
 		}
@@ -1065,38 +1102,32 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				out firstEntryWithoutPronunciation,
 				out entriesWithoutPronunciations,
 				out pronunciations);
-
 			// do a bulk copy from LexemeForm to Pronunciations
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("Pronunciation");
-			m_bv.ShowColumn("CVPattern");
-			m_bv.ShowColumn("Tone");
-
-			FwOverrideComboBox bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
-			NonEmptyTargetControl bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("Pronunciation");
+			_browseViewerForTests.ShowColumn("CVPattern");
+			_browseViewerForTests.ShowColumn("Tone");
+			var bulkCopySourceCombo = _bulkEditBarForTests.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			var bcNonEmptyTargetControl = _bulkEditBarForTests.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
 			// set to overwrite
 			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.Overwrite;
 			bulkCopySourceCombo.Text = "Lexeme Form";
 			// first bulk copy the "Pronunciations" field, which is a multilingual field
-			m_bulkEditBar.SetTargetField("Pronunciations");
-
+			_bulkEditBarForTests.SetTargetField("Pronunciations");
 			// first bulk copy into an existing pronunciation
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstPronunciation.Hvo }));
 			Assert.AreEqual(firstPronunciation.Form.VernacularDefaultWritingSystem.Text, "Pronunciation");
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-			string lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
+			var lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
 			Assert.AreEqual(lexemeForm, firstPronunciation.Form.VernacularDefaultWritingSystem.Text);
-
 			// next bulk copy into an empty (ghost) pronunciation
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutPronunciation.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstEntryWithoutPronunciation.Hvo }));
 			lexemeForm = firstEntryWithoutPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			Assert.AreEqual(1, firstEntryWithoutPronunciation.PronunciationsOS.Count);
 			Assert.AreEqual(lexemeForm, firstEntryWithoutPronunciation.PronunciationsOS[0].Form.VernacularDefaultWritingSystem.Text);
 		}
@@ -1119,38 +1150,32 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				out firstEntryWithoutPronunciation,
 				out entriesWithoutPronunciations,
 				out pronunciations);
-
 			// do a bulk copy from LexemeForm to Pronunciations
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("Pronunciation");
-			m_bv.ShowColumn("CVPattern");
-			m_bv.ShowColumn("Tone");
-
-			FwOverrideComboBox bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
-			NonEmptyTargetControl bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("Pronunciation");
+			_browseViewerForTests.ShowColumn("CVPattern");
+			_browseViewerForTests.ShowColumn("Tone");
+			var bulkCopySourceCombo = _bulkEditBarForTests.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			var bcNonEmptyTargetControl = _bulkEditBarForTests.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
 			// set to overwrite
 			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.Overwrite;
 			bulkCopySourceCombo.Text = "Lexeme Form";
 			// first bulk copy the "Pronunciations" field, which is a multilingual field
-			m_bulkEditBar.SetTargetField("Tones");
-
+			_bulkEditBarForTests.SetTargetField("Tones");
 			// first bulk copy into an existing pronunciation
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstPronunciation.Hvo }));
 			Assert.AreEqual(firstPronunciation.Tone.Text, null);
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-			string lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
+			var lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
 			Assert.AreEqual(lexemeForm, firstPronunciation.Tone.Text);
-
 			// next bulk copy into an empty (ghost) pronunciation
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutPronunciation.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstEntryWithoutPronunciation.Hvo }));
 			lexemeForm = firstEntryWithoutPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			Assert.AreEqual(1, firstEntryWithoutPronunciation.PronunciationsOS.Count);
 			Assert.AreEqual(lexemeForm, firstEntryWithoutPronunciation.PronunciationsOS[0].Tone.Text);
 		}
@@ -1165,34 +1190,30 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var pusEntry = Cache.LangProject.LexDbOA.Entries.FirstOrDefault(e => e.HeadWord.Text == "pus");
 			var complexEntry = AddOneComplexEntry(pusEntry);
 			var complexEntryRef = complexEntry.EntryRefsOS[0];
-
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				complexEntry.Comment.SetAnalysisDefaultWritingSystem("Complex Form note");
-				complexEntryRef.Summary.SetAnalysisDefaultWritingSystem("exising comment");
+				complexEntryRef.Summary.SetAnalysisDefaultWritingSystem("existing comment");
 			});
-
 			// do a bulk copy from LexemeForm to Pronunciations
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("NoteForEntry");
-			m_bv.ShowColumn("ComplexFormsSummaryPub");
-
-			FwOverrideComboBox bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
-			NonEmptyTargetControl bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("NoteForEntry");
+			_browseViewerForTests.ShowColumn("ComplexFormsSummaryPub");
+			var bulkCopySourceCombo = _bulkEditBarForTests.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			var bcNonEmptyTargetControl = _bulkEditBarForTests.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
 			// set to overwrite
 			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.Overwrite;
 			bulkCopySourceCombo.Text = "Note";
 			// first try to bulk copy the "Note" field to the Complex Form Comment field, which is a multilingual field
-			using (m_bulkEditBar.SetTargetField("Complex Form Comment"))
+			using (_bulkEditBarForTests.SetTargetField("Complex Form Comment"))
 			{
 				// try bulk copy into an existing Comment
-				m_bv.OnUncheckAll();
-				m_bv.SetCheckedItems(new List<int>(new int[] {complexEntryRef.Hvo}));
-				Assert.AreEqual("exising comment", complexEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
-
-				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-				m_bulkEditBar.ClickApply();
-				string result = complexEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
+				_browseViewerForTests.OnUncheckAll();
+				_browseViewerForTests.SetCheckedItems(new List<int>(new[] {complexEntryRef.Hvo}));
+				Assert.AreEqual("existing comment", complexEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+				_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+				_bulkEditBarForTests.ClickApply();
+				var result = complexEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
 				Assert.AreEqual("Complex Form note", result);
 			}
 		}
@@ -1210,27 +1231,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				variantEntry.Comment.SetAnalysisDefaultWritingSystem("Variant note");
 			});
-
 			// do a bulk copy from Entry-level Note to Variant Comment
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("NoteForEntry");
-			m_bv.ShowColumn("VariantsSummaryPub");
-
-			var bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
-			var bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("NoteForEntry");
+			_browseViewerForTests.ShowColumn("VariantsSummaryPub");
+			var bulkCopySourceCombo = _bulkEditBarForTests.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			var bcNonEmptyTargetControl = _bulkEditBarForTests.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
 			// try bulk copy into an empty Comment
 			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.DoNothing;
 			bulkCopySourceCombo.Text = "Note";
-
 			// try to bulk copy the "Note" field to the Variant Comment field, which is a multilingual field
-			using (m_bulkEditBar.SetTargetField("Variant Comment"))
+			using (_bulkEditBarForTests.SetTargetField("Variant Comment"))
 			{
-				m_bv.OnUncheckAll();
-				m_bv.SetCheckedItems(new List<int>(new int[] {variantEntryRef.Hvo}));
+				_browseViewerForTests.OnUncheckAll();
+				_browseViewerForTests.SetCheckedItems(new List<int>(new[] {variantEntryRef.Hvo}));
 				Assert.IsNullOrEmpty(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
-
-				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-				m_bulkEditBar.ClickApply();
+				_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+				_bulkEditBarForTests.ClickApply();
 				var result = variantEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
 				Assert.AreEqual("Variant note", result);
 			}
@@ -1245,13 +1262,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			IMoForm firstAllomorph = null;
 			ILexEntry firstEntryWithAllomorph = null;
 			ILexEntry firstEntryWithoutAllomorph = null;
-			List<ILexEntry> entriesWithoutAllomorphs = new List<ILexEntry>();
-			List<IMoForm> allomorphs = new List<IMoForm>();
-			UndoableUnitOfWorkHelper.Do("SetupAllomorphsData", "SetupAllomorphsData",
-				Cache.ActionHandlerAccessor, () =>
+			var entriesWithoutAllomorphs = new List<ILexEntry>();
+			var allomorphs = new List<IMoForm>();
+			UndoableUnitOfWorkHelper.Do("SetupAllomorphsData", "SetupAllomorphsData", Cache.ActionHandlerAccessor, () =>
 			{
 				// find an entry with allomorphs.
-				foreach (ILexEntry entry in Cache.LangProject.LexDbOA.Entries)
+				foreach (var entry in Cache.LangProject.LexDbOA.Entries)
 				{
 					if (entry.AlternateFormsOS.Count > 0)
 					{
@@ -1269,7 +1285,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					{
 						entriesWithoutAllomorphs.Add(entry);
 						if (firstEntryWithoutAllomorph == null)
+						{
 							firstEntryWithoutAllomorph = entry;
+						}
 					}
 				}
 			});
@@ -1286,7 +1304,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void Allomorphs_IsAbstractForm()
 		{
-			m_bulkEditBar.PersistSettings = true;
+			_bulkEditBarForTests.PersistSettings = true;
 			// setup data.
 			IMoForm firstAllomorph;
 			ILexEntry firstEntryWithAllomorph;
@@ -1298,91 +1316,76 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				out firstEntryWithoutAllomorph,
 				out entriesWithoutAllomorphs,
 				out allomorphs);
-			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
+			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// first select an entry with an allomorph , and see if we move to that entry's allomorphs
 			// when we switch to "Is Abstract Form (Allomorph)" for target field.
-			clerk.JumpToRecord(firstEntryWithAllomorph.Hvo);
-			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			recordlist.JumpToRecord(firstEntryWithAllomorph.Hvo);
+			Assert.AreEqual(firstEntryWithAllomorph.Hvo, recordlist.CurrentObject.Hvo);
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
-
-			m_bulkEditBar.SwitchTab("ListChoice");
-			int cOriginal = m_bv.ColumnSpecs.Count;
+			Assert.Less(0, recordlist.CurrentIndex);
+			_bulkEditBarForTests.SwitchTab("ListChoice");
+			var cOriginal = _browseViewerForTests.ColumnSpecs.Count;
 			// add column for "Is Abstract Form (Allomorph)"
-			m_bv.ShowColumn("IsAbstractFormForAllomorph");
+			_browseViewerForTests.ShowColumn("IsAbstractFormForAllomorph");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
-			m_bulkEditBar.SetTargetField("Is Abstract Form (Allomorph)");
-			Assert.AreEqual("Is Abstract Form (Allomorph)", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.AreEqual(cOriginal + 1, _browseViewerForTests.ColumnSpecs.Count);
+			_bulkEditBarForTests.SetTargetField("Is Abstract Form (Allomorph)");
+			Assert.AreEqual("Is Abstract Form (Allomorph)", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			// check number of options and second is "yes"
-			ComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as ComboBox;
+			var listChoiceControl = _bulkEditBarForTests.GetTabControlChild("m_listChoiceControl") as ComboBox;
 			Assert.IsNotNull(listChoiceControl);
 			// expect to have some options (yes & no).
 			Assert.AreEqual(2, listChoiceControl.Items.Count);
-			IntComboItem item = listChoiceControl.Items[1] as IntComboItem;
+			var item = listChoiceControl.Items[1] as IntComboItem;
 			Assert.AreEqual("yes", item.ToString()); // 'yes'
 			// check browse view class changed to MoForm
-			Assert.AreEqual(MoFormTags.kClassId, m_bv.ListItemsClass);
+			Assert.AreEqual(MoFormTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// check that clerk list has also changed.
-			Assert.AreEqual(MoFormTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.AreEqual(MoFormTags.kClassId, _browseViewerForTests.SortItemProvider.ListItemsClass);
 			// make sure the list size includes all allomorphs, and all entries that don't have allomorphs.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
-
+			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
 			// make sure we're on the first allomorph of the entry we changed from
-			Assert.AreEqual(firstAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(firstAllomorph.Hvo, recordlist.CurrentObject.Hvo);
 			// change the first allomorphs's IsAbstract to something else
 			Assert.AreEqual(false, firstAllomorph.IsAbstract);
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstAllomorph.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstAllomorph.Hvo }));
 			listChoiceControl.SelectedItem = item; // change to 'yes'
-
-			int cAllomorphs = firstEntryWithAllomorph.AlternateFormsOS.Count;
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			var cAllomorphs = firstEntryWithAllomorph.AlternateFormsOS.Count;
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// make sure we changed the list option and didn't add another separate allomorph.
 			Assert.AreEqual(Convert.ToBoolean(item.Value), firstAllomorph.IsAbstract);
 			Assert.AreEqual(cAllomorphs, firstEntryWithAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
-
+			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
 			// now try previewing and setting IsAbstract on an entry that does not have an allomorph.
 			cAllomorphs = firstEntryWithoutAllomorph.AlternateFormsOS.Count;
 			Assert.AreEqual(0, cAllomorphs);
-			clerk.JumpToRecord(firstEntryWithoutAllomorph.Hvo);
-			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
-			int currentIndex = clerk.CurrentIndex;
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutAllomorph.Hvo }));
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-
+			recordlist.JumpToRecord(firstEntryWithoutAllomorph.Hvo);
+			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, recordlist.CurrentObject.Hvo);
+			int currentIndex = recordlist.CurrentIndex;
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { firstEntryWithoutAllomorph.Hvo }));
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// check that current index has remained the same.
-			Assert.AreEqual(currentIndex, clerk.CurrentIndex);
+			Assert.AreEqual(currentIndex, recordlist.CurrentIndex);
 			// We no longer create allomorphs as a side-effect of setting "Is Abstract Form (Allomorph)"
 			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
-			//IMoForm newAllomorph = firstEntryWithoutAllomorph.AlternateFormsOS[0];
-			//// make sure we gave the new allomorph the expected setting.
-			//Assert.AreEqual(Convert.ToBoolean(item.Value), newAllomorph.IsAbstract);
-
 			// now try changing the (non-existent) IsAbstract to something else, and make sure we didn't
 			// create another allomorph.
-			IntComboItem item2 = listChoiceControl.Items[0] as IntComboItem;
+			var item2 = listChoiceControl.Items[0] as IntComboItem;
 			listChoiceControl.SelectedItem = item2;
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// make sure there still isn't a new allomorph.
 			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
-
-			// refresh list, and make sure the clerk now has the same entry.
-			this.MasterRefresh();
-			clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, recordlist.CurrentObject.Hvo);
 			// also make sure the total count of the list has not changed.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
 		}
 
 		/// <summary>
@@ -1394,76 +1397,64 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variantList = AddOneVariantEachToHimbiliraSenseAndPusEntry();
 			var secondVariantRef = variantList[1].EntryRefsOS[0];
 			var choiceFreeVariant = GetVariantTypeOrCreateOne("Free Variant");
-
 			// SUT
-			m_bulkEditBar.SwitchTab("ListChoice");
-			int cOriginal = m_bv.ColumnSpecs.Count;
+			_bulkEditBarForTests.SwitchTab("ListChoice");
+			var cOriginal = _browseViewerForTests.ColumnSpecs.Count;
 			// add column for Pronunciation Location
-			m_bv.ShowColumn("VariantEntryTypesBrowse");
+			_browseViewerForTests.ShowColumn("VariantEntryTypesBrowse");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
-			m_bulkEditBar.SetTargetField("Variant Types");
-			Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			clerk.JumpToRecord(secondVariantRef.Hvo);
-			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(secondVariantRef, clerk.CurrentObject as ILexEntryRef);
+			Assert.AreEqual(cOriginal + 1, _browseViewerForTests.ColumnSpecs.Count);
+			_bulkEditBarForTests.SetTargetField("Variant Types");
+			Assert.AreEqual("Variant Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
+			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			recordlist.JumpToRecord(secondVariantRef.Hvo);
+			Assert.AreEqual(secondVariantRef, recordlist.CurrentObject as ILexEntryRef);
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
-			secondVariantRef = clerk.CurrentObject as ILexEntryRef;
-			ILexEntryType firstVariantRefType = secondVariantRef.VariantEntryTypesRS[0];
+			Assert.Less(0, recordlist.CurrentIndex);
+			secondVariantRef = recordlist.CurrentObject as ILexEntryRef;
+			var firstVariantRefType = secondVariantRef.VariantEntryTypesRS[0];
 			Assert.AreEqual("Spelling Variant", firstVariantRefType.Name.AnalysisDefaultWritingSystem.Text);
-
 			// check number of options
-			ComplexListChooserBEditControl listChoiceControl = m_bulkEditBar.CurrentBulkEditSpecControl as ComplexListChooserBEditControl;
+			var listChoiceControl = _bulkEditBarForTests.CurrentBulkEditSpecControl as ComplexListChooserBEditControl;
 			Assert.IsNotNull(listChoiceControl);
 			// check browse view class changed to LexPronunciation
-			Assert.AreEqual(LexEntryRefTags.kClassId, m_bv.ListItemsClass);
+			Assert.AreEqual(LexEntryRefTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// check that clerk list has also changed.
-			Assert.AreEqual(LexEntryRefTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.AreEqual(LexEntryRefTags.kClassId, _browseViewerForTests.SortItemProvider.ListItemsClass);
 			// allow changing an existing variant entry type to something else.
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { secondVariantRef.Hvo }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { secondVariantRef.Hvo }));
 			// set list choice to "Free Variant" and Replace mode.
-
 			listChoiceControl.ChosenObjects = new ICmObject[] { choiceFreeVariant };
 			listChoiceControl.ReplaceMode = true;
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// make sure we gave the LexEntryRef the expected type.
 			Assert.AreEqual(choiceFreeVariant.Hvo, secondVariantRef.VariantEntryTypesRS[0].Hvo);
-
 			// Now try to add a variant entry type to a complex entry reference,
 			// verify nothing changed.
 			// Setup data.
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var entryPus = entryRepo.AllInstances().First();
 			var complexEntry = AddOneComplexEntry(entryPus);
-			int hvoComplexRef = complexEntry.EntryRefsOS[0].Hvo;
-
+			var hvoComplexRef = complexEntry.EntryRefsOS[0].Hvo;
 			// SUT (2)
-			m_bv.ShowColumn("ComplexEntryTypesBrowse");
+			_browseViewerForTests.ShowColumn("ComplexEntryTypesBrowse");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 2, m_bv.ColumnSpecs.Count);
-			m_bulkEditBar.SetTargetField("Complex Form Types");
-			Assert.AreEqual("Complex Form Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-			clerk.JumpToRecord(hvoComplexRef);
-			ILexEntryRef complexEntryRef = clerk.CurrentObject as ILexEntryRef;
+			Assert.AreEqual(cOriginal + 2, _browseViewerForTests.ColumnSpecs.Count);
+			_bulkEditBarForTests.SetTargetField("Complex Form Types");
+			Assert.AreEqual("Complex Form Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
+			recordlist.JumpToRecord(hvoComplexRef);
+			var complexEntryRef = recordlist.CurrentObject as ILexEntryRef;
 			Assert.AreEqual(0, complexEntryRef.VariantEntryTypesRS.Count);
-
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { hvoComplexRef }));
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { hvoComplexRef }));
 			// set list choice to "Free Variant" and Replace mode.
-
 			listChoiceControl.ChosenObjects = new ICmObject[] { choiceFreeVariant };
 			listChoiceControl.ReplaceMode = true;
-
-			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
-			m_bulkEditBar.ClickApply();
-
+			_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
+			_bulkEditBarForTests.ClickApply();
 			// make sure we didn't add a variant entry type to the complex entry ref.
 			Assert.AreEqual(0, complexEntryRef.VariantEntryTypesRS.Count);
 		}
@@ -1473,20 +1464,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			ILexEntry result = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				result = AddLexeme(m_createdObjectList, "pus compound",
-					  GetMorphTypeOrCreateOne("phrase"), "envy",
-					  GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA));
+				result = AddLexeme(_createdObjectList, "pus compound", GetMorphTypeOrCreateOne("phrase"), "envy", GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA));
 				var ler = MakeComplexFormLexEntryRef(result);
 				ler.PrimaryLexemesRS.Add(part);
-				m_createdObjectList.Add(ler);
-				m_createdObjectList.Add(result);
+				_createdObjectList.Add(ler);
+				_createdObjectList.Add(result);
 			});
 			return result;
 		}
 
 		private ILexEntryRef MakeComplexFormLexEntryRef(ILexEntry ownerEntry)
 		{
-			ILexEntryRef result = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			var result = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			ownerEntry.EntryRefsOS.Add(result);
 			result.RefType = LexEntryRefTags.krtComplexForm;
 			return result;
@@ -1499,7 +1488,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	/// Maintain consistency of checked boxes when switching to target fields owned by different classes. (LT-8986)
 	/// </summary>
 	[TestFixture]
-	public class BulkEditCheckBoxBehaviorTests : BulkEditBarTestsBase
+	internal class BulkEditCheckBoxBehaviorTests : BulkEditBarTestsBase
 	{
 		/// <summary>
 		/// queries the lexical database to find an entry with multiple descendents
@@ -1509,45 +1498,38 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			ILexPronunciation dummy;
 			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out dummy);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			clerk.UpdateList(true);
+			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			recordlist.UpdateList(true);
 			return ZZZparentEntry;
 		}
 
 		private ILexEntry CreateZZZparentEntryWithMultipleSensesAndPronunciation(out ILexPronunciation pronunciation)
 		{
-			string formLexEntry = "ZZZparentEntry";
+			var formLexEntry = "ZZZparentEntry";
 			ILexEntry parentEntry = null;
 			ILexPronunciation pronunc;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				int clsidForm = 0;
+				var clsidForm = 0;
 				parentEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm),
 					TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
 				var parentEntrySense1 = parentEntry.SensesOS[0];
-				var parentEntrySense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
-					parentEntry, null, "ZZZparentEntry.sense2");
+				var parentEntrySense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(parentEntry, null, "ZZZparentEntry.sense2");
 				pronunc = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 				parentEntry.PronunciationsOS.Add(pronunc);
 				pronunc.Form.set_String(Cache.DefaultVernWs, "samplePronunciation");
-				m_createdObjectList.Add(parentEntry);
-				m_createdObjectList.Add(parentEntrySense1);
-				m_createdObjectList.Add(parentEntrySense2);
+				_createdObjectList.Add(parentEntry);
+				_createdObjectList.Add(parentEntrySense1);
+				_createdObjectList.Add(parentEntrySense2);
 			});
 			pronunciation = parentEntry.PronunciationsOS.Last();
 			return parentEntry;
 		}
 
-		private ICollection<ILexEntry> FindEntriesWithoutSenses()
+		private IEnumerable<ILexEntry> FindEntriesWithoutSenses()
 		{
-			IList<ILexEntry> entries = new List<ILexEntry>();
-			foreach (var e in Cache.LangProject.LexDbOA.Entries)
-			{
-				if (e.SensesOS.Count == 0)
-					entries.Add(e);
-			}
-			return entries;
+			return Cache.LangProject.LexDbOA.Entries.Where(e => e.SensesOS.Count == 0).ToList();
 		}
 
 		private IDictionary<int, int> GetParentOfClassMap(IList<int> items, int clsidParent)
@@ -1558,109 +1540,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var objItem = Cache.ServiceLocator.GetObject(hvoItem);
 				var owner = objItem.OwnerOfClass(clsidParent);
 				if (owner == null)
+				{
 					continue;
+				}
 				var hvoEntry = owner.Hvo;
 				itemToParent.Add(hvoItem, hvoEntry);
 
 			}
 			return itemToParent;
 		}
-
-	#region FilterBehavior
-
-		protected abstract class FilterBehavior : IDisposable
-		{
-			protected BulkEditCheckBoxBehaviorTests m_testFixture;
-
-			protected FilterBehavior(BulkEditCheckBoxBehaviorTests testFixture)
-			{
-				m_testFixture = testFixture;
-				FirstBehavior();
-			}
-
-			static internal FilterBehavior Create(BulkEditCheckBoxBehaviorTests testFixture)
-			{
-				if (testFixture is BulkEditCheckBoxBehaviorTestsWithFilterChanges)
-					return new PusAndShowAll(testFixture);
-				else
-					return new NoFilter(testFixture);
-			}
-
-	#region Disposable stuff
-#if DEBUG
-			/// <summary/>
-			~FilterBehavior()
-			{
-				Dispose(false);
-			}
-#endif
-
-			/// <summary/>
-			public bool IsDisposed { get; private set; }
-
-			/// <summary/>
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
-				if (fDisposing && !IsDisposed)
-				{
-					// dispose managed and unmanaged objects
-					FinalBehavior();
-					m_testFixture = null;
-				}
-				IsDisposed = true;
-			}
-	#endregion
-
-			protected abstract void FirstBehavior();
-
-			protected abstract void FinalBehavior();
-		}
-
-		protected class PusAndShowAll : FilterBehavior
-		{
-			internal PusAndShowAll(BulkEditCheckBoxBehaviorTests testFixture)
-				: base(testFixture)
-			{
-			}
-
-			protected override void FirstBehavior()
-			{
-				m_testFixture.m_bv.SetFilter("Lexeme Form", "Filter for...", "pus");
-			}
-
-			protected override void FinalBehavior()
-			{
-				m_testFixture.m_bv.SetFilter("Lexeme Form", "Show All", null);
-			}
-		}
-
-		protected class NoFilter : FilterBehavior
-		{
-			internal NoFilter(BulkEditCheckBoxBehaviorTests testFixture)
-				: base(testFixture)
-			{
-			}
-
-			protected override void FirstBehavior()
-			{
-				// no behavior
-			}
-
-			protected override void FinalBehavior()
-			{
-				// no behavior
-			}
-		}
-
-	#endregion FilterBehavior
 
 	#region CheckboxBehavior_LT8986
 
@@ -1675,25 +1563,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public virtual void CheckboxBehavior_AllItemsShouldBeInitiallyCheckedPlusRefreshBehavior()
 		{
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
-			// check that clerk list has also changed.
-			Assert.AreEqual(clerk.ListSize, m_bv.CheckedItems.Count);
-
-			// Verify that Refresh doesn't change current selection state
-			MasterRefresh();
-			Assert.AreEqual(clerk.ListSize, m_bv.CheckedItems.Count);
-
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			// check that record list has also changed.
+			Assert.AreEqual(recordList.ListSize, _browseViewerForTests.CheckedItems.Count);
+			Assert.AreEqual(recordList.ListSize, _browseViewerForTests.CheckedItems.Count);
 			// Try again in unchecked state
-			m_bv.OnUncheckAll();
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
-			MasterRefresh();
-
+			_browseViewerForTests.OnUncheckAll();
+			Assert.AreEqual(0, _browseViewerForTests.CheckedItems.Count);
 			// Verify that Refresh doesn't change current selection state
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
+			Assert.AreEqual(0, _browseViewerForTests.CheckedItems.Count);
 		}
 
 		/// <summary>
@@ -1704,52 +1585,44 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public virtual void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
 		{
 			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
-
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// select only "ZZZparentEntry" before we filter it out.
-			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { ZZZparentEntry.Hvo }));
-			Assert.AreEqual(1, m_bv.CheckedItems.Count);
-
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SetCheckedItems(new List<int>(new int[] { ZZZparentEntry.Hvo }));
+			Assert.AreEqual(1, _browseViewerForTests.CheckedItems.Count);
 			// Filter on "pus" and make sure everything now unselected.
-			m_bv.SetFilter("Lexeme Form", "Filter for...", "pus");
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
-
+			_browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "pus");
+			Assert.AreEqual(0, _browseViewerForTests.CheckedItems.Count);
 			// Broaden the to include everything again, and make sure that
 			// our entry is still selected.
-			m_bv.SetFilter("Lexeme Form", "Show All", null);
-			Assert.AreEqual(1, m_bv.CheckedItems.Count);
-			Assert.AreEqual(ZZZparentEntry.Hvo, m_bv.CheckedItems[0]);
+			_browseViewerForTests.SetFilter("Lexeme Form", "Show All", null);
+			Assert.AreEqual(1, _browseViewerForTests.CheckedItems.Count);
+			Assert.AreEqual(ZZZparentEntry.Hvo, _browseViewerForTests.CheckedItems[0]);
 		}
 
 		[Test]
 		public virtual void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Unselected()
 		{
-			ILexEntry ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
+			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// unselect our test data
-			m_bv.UnselectItem(ZZZparentEntry.Hvo);
-			IList<int> unselectedItems = m_bv.UncheckedItems();
+			_browseViewerForTests.UnselectItem(ZZZparentEntry.Hvo);
+			var unselectedItems = _browseViewerForTests.UncheckedItems();
 			Assert.AreEqual(1, unselectedItems.Count);
 			Assert.AreEqual(ZZZparentEntry.Hvo, unselectedItems[0]);
-
 			// Filter on "pus" and make sure nothing is unselected.
-			m_bv.SetFilter("Lexeme Form", "Filter for...", "pus");
-			IList<int> unselectedItemsAfterFilterPus = m_bv.UncheckedItems();
+			_browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "pus");
+			var unselectedItemsAfterFilterPus = _browseViewerForTests.UncheckedItems();
 			Assert.AreEqual(0, unselectedItemsAfterFilterPus.Count);
-
 			// Extend our filter and make sure we've restored the thing we had selected.
-			m_bv.SetFilter("Lexeme Form", "Show All", null);
-			IList<int> unselectedItemsAfterShowAll = m_bv.UncheckedItems();
+			_browseViewerForTests.SetFilter("Lexeme Form", "Show All", null);
+			var unselectedItemsAfterShowAll = _browseViewerForTests.UncheckedItems();
 			Assert.AreEqual(1, unselectedItemsAfterShowAll.Count);
 			Assert.AreEqual(ZZZparentEntry.Hvo, unselectedItemsAfterShowAll[0]);
 		}
@@ -1764,20 +1637,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public virtual void CheckboxBehavior_DescendentItemsShouldInheritSelection_Select()
 		{
 			// find a lex entry that has multiple senses (i.e. descendents).
-			ILexEntry entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
-
-			m_bv.OnUncheckAll();
+			var entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
+			_browseViewerForTests.OnUncheckAll();
 			// select the entry.
-			m_bv.SetCheckedItems(new List<int>(new [] { entryWithMultipleDescendents.Hvo }));
+			_browseViewerForTests.SetCheckedItems(new List<int>(new [] { entryWithMultipleDescendents.Hvo }));
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Glosses");
-
+			{
+				_bulkEditBarForTests.SetTargetField("Glosses");
+			}
 			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
-			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
+			var checkedItems = new HashSet<int>(_browseViewerForTests.CheckedItems);
 			Assert.AreEqual(allSensesForEntry.Count, checkedItems.Count, "Checked items mismatched.");
 			Assert.IsTrue(checkedItems.SetEquals(allSensesForEntry), "Checked items mismatched.");
 		}
@@ -1786,21 +1658,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public virtual void CheckboxBehavior_DescendentItemsShouldInheritSelection_UnSelect()
 		{
 			// find a lex entry that has multiple senses (i.e. descendents).
-			ILexEntry entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
+			var entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// unselect the entry.
-			m_bv.UnselectItem(entryWithMultipleDescendents.Hvo);
-
+			_browseViewerForTests.UnselectItem(entryWithMultipleDescendents.Hvo);
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Glosses");
-
+			{
+				_bulkEditBarForTests.SetTargetField("Glosses");
+			}
 			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
-			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
+			var uncheckedItems = new HashSet<int>(_browseViewerForTests.UncheckedItems());
 			Assert.AreEqual(allSensesForEntry.Count, uncheckedItems.Count, "Unchecked items mismatched.");
 			Assert.IsTrue(uncheckedItems.SetEquals(allSensesForEntry), "Unchecked items mismatched.");
 		}
@@ -1815,25 +1685,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CheckboxBehavior_ParentClassesItemsShouldInheritSelection_Selected()
 		{
 			// find a lex entry that has multiple senses (i.e. descendents).
-			ILexEntry entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
+			var entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
 			// some entries (like variants) don't have senses, so we need to factor those into our results.
-			ICollection<ILexEntry> entriesWithoutSenses = FindEntriesWithoutSenses();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Glosses");
-			Assert.AreEqual(LexSenseTags.kClassId, m_bv.ListItemsClass);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
-			m_bv.OnUncheckAll();
+			var entriesWithoutSenses = FindEntriesWithoutSenses();
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Glosses");
+			Assert.AreEqual(LexSenseTags.kClassId, _browseViewerForTests.ListItemsClass);
+			_browseViewerForTests.OnUncheckAll();
 			// select the sense.
-			m_bv.SetCheckedItems(new int[] { entryWithMultipleDescendents.AllSenses[0].Hvo });
-
+			_browseViewerForTests.SetCheckedItems(new int[] { entryWithMultipleDescendents.AllSenses[0].Hvo });
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Lexeme Form");
-
+			{
+				_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			}
 			var selectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
 			selectedEntries.UnionWith(entriesWithoutSenses.Select(e => e.Hvo));
-			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
+			var checkedItems = new HashSet<int>(_browseViewerForTests.CheckedItems);
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count, "Checked items mismatched.");
 			Assert.IsTrue(checkedItems.SetEquals(selectedEntries), "Checked items mismatched.");
 		}
@@ -1845,22 +1712,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CheckboxBehavior_ParentClassesItemsShouldInheritSelection_UnSelected()
 		{
 			// find a lex entry that has multiple senses (i.e. descendents).
-			ILexEntry entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bulkEditBar.SetTargetField("Glosses");
-			Assert.AreEqual(LexSenseTags.kClassId, m_bv.ListItemsClass);
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
+			var entryWithMultipleDescendents = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_bulkEditBarForTests.SetTargetField("Glosses");
+			Assert.AreEqual(LexSenseTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// unselect all the senses belonging to this entry
-			m_bv.UncheckItems(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
-
+			_browseViewerForTests.UncheckItems(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
 			// switch to the parent list
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Lexeme Form");
-
+			{
+				_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			}
 			var unselectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
-			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
+			var uncheckedItems = new HashSet<int>(_browseViewerForTests.UncheckedItems());
 			Assert.AreEqual(unselectedEntries.Count, uncheckedItems.Count, "Unchecked items mismatched.");
 			Assert.IsTrue(uncheckedItems.SetEquals(unselectedEntries), "Unchecked items mismatched.");
 		}
@@ -1877,25 +1741,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// first create an entry with a pronunciation and some senses.
 			ILexPronunciation pronunciation;
-			ILexEntry parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("Pronunciation");
-			m_bulkEditBar.SetTargetField("Pronunciations");
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			// go through each of the pronunciation items, and find the LexEntry owner.
-			IDictionary<int, int> pronunciationsToEntries = GetParentOfClassMap(m_bv.AllItems,
-				LexEntryTags.kClassId);
+			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("Pronunciation");
+			_bulkEditBarForTests.SetTargetField("Pronunciations");
 			// uncheck everything before we switch to sibling list.
-			m_bv.OnUncheckAll();
-			m_bv.SelectItem(pronunciation.Hvo);
+			_browseViewerForTests.OnUncheckAll();
+			_browseViewerForTests.SelectItem(pronunciation.Hvo);
 			// now switch to (sense) sibling list
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Glosses");
+			{
+				_bulkEditBarForTests.SetTargetField("Glosses");
+			}
 			// validate that only the siblings are selected.
 			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
-			Assert.AreEqual(hvoSenseSiblings.Count, m_bv.CheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.SetEquals(new HashSet<int>(m_bv.CheckedItems)));
+			Assert.AreEqual(hvoSenseSiblings.Count, _browseViewerForTests.CheckedItems.Count);
+			Assert.IsTrue(hvoSenseSiblings.SetEquals(new HashSet<int>(_browseViewerForTests.CheckedItems)));
 		}
 
 		[Test]
@@ -1903,52 +1764,42 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// first create an entry with a pronunciation and some senses.
 			ILexPronunciation pronunciation;
-			ILexEntry parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("Pronunciation");
-			m_bulkEditBar.SetTargetField("Pronunciations");
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
-			// go through each of the pronunciation items, and find the LexEntry owner.
-			IDictionary<int, int> pronunciationsToEntries = GetParentOfClassMap(m_bv.AllItems,
-				LexEntryTags.kClassId);
+			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("Pronunciation");
+			_bulkEditBarForTests.SetTargetField("Pronunciations");
 			// Unselect one sibling
-			m_bv.UnselectItem(pronunciation.Hvo);
+			_browseViewerForTests.UnselectItem(pronunciation.Hvo);
 			// now switch to (sense) sibling list
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Glosses");
+			{
+				_bulkEditBarForTests.SetTargetField("Glosses");
+			}
 			// validate that only the siblings are unselected.
 			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
-			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
+			var uncheckedItems = new HashSet<int>(_browseViewerForTests.UncheckedItems());
 			Assert.AreEqual(hvoSenseSiblings.Count, uncheckedItems.Count);
 			Assert.IsTrue(hvoSenseSiblings.SetEquals(uncheckedItems));
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		[Test]
 		public void CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_UnselectAll()
 		{
-			// first create an entry with a pronunciation and some senses.
-			ILexPronunciation pronunciation;
-			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
 			// some entries (like variants) don't have senses, so we need to factor those into our results.
 			var entriesWithoutSenses = FindEntriesWithoutSenses();
-
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("Allomorph");
-			m_bulkEditBar.SetTargetField("Glosses");
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("Allomorph");
+			_bulkEditBarForTests.SetTargetField("Glosses");
 			// Unselect All
-			m_bv.OnUncheckAll();
+			_browseViewerForTests.OnUncheckAll();
 			// now switch to allomorphs
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Allomorphs");
+			{
+				_bulkEditBarForTests.SetTargetField("Allomorphs");
+			}
 			// validate that everything (except variant allomorph?) is still not selected.
-			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
+			var checkedItems = new HashSet<int>(_browseViewerForTests.CheckedItems);
 			var selectedEntries = new HashSet<int>(entriesWithoutSenses.Select(e => e.Hvo));
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count);
 		}
@@ -1965,64 +1816,162 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void CheckboxBehavior_SelectParentsThatWereNotInOwnershipTreeOfChildList()
 		{
-			m_bulkEditBar.SwitchTab("BulkCopy");
-			m_bv.ShowColumn("ExampleTranslation");
-			m_bulkEditBar.SetTargetField("Example Translations");
-			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
+			_bulkEditBarForTests.SwitchTab("BulkCopy");
+			_browseViewerForTests.ShowColumn("ExampleTranslation");
+			_bulkEditBarForTests.SetTargetField("Example Translations");
+			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// having fewer translations than parent entries is strange
 			// but it's currently the only way we can allow bulk editing translations.
 			// We can allow ghosting for Examples that don't have translations
 			// but not for a translation of a ghosted (not-yet existing) Example.
-			Assert.Less(clerk.ListSize, Cache.LangProject.LexDbOA.Entries.Count());
-
+			Assert.Less(recordList.ListSize, Cache.LangProject.LexDbOA.Entries.Count());
 			// Uncheck everything before we switch to parent list
-			m_bv.OnUncheckAll();
-			var uncheckedTranslationItems = m_bv.UncheckedItems();
-			Assert.AreEqual(uncheckedTranslationItems.Count, clerk.ListSize);
-
+			_browseViewerForTests.OnUncheckAll();
+			var uncheckedTranslationItems = _browseViewerForTests.UncheckedItems();
+			Assert.AreEqual(uncheckedTranslationItems.Count, recordList.ListSize);
 			// go through each of the translation items, and find the LexEntry owner.
-			var translationsToEntries = GetParentOfClassMap(uncheckedTranslationItems,
-				LexEntryTags.kClassId);
+			var translationsToEntries = GetParentOfClassMap(uncheckedTranslationItems, LexEntryTags.kClassId);
 			var expectedUnselectedEntries = new HashSet<int>(translationsToEntries.Values);
-
 			// Now switch to Entries and expect the new parent items to be selected.
 			using (FilterBehavior.Create(this))
-				m_bulkEditBar.SetTargetField("Lexeme Form");
-
-			var entriesSelected = new HashSet<int>(m_bv.CheckedItems);
-			var entriesUnselected = new HashSet<int>(m_bv.UncheckedItems());
+			{
+				_bulkEditBarForTests.SetTargetField("Lexeme Form");
+			}
+			var entriesSelected = new HashSet<int>(_browseViewerForTests.CheckedItems);
+			var entriesUnselected = new HashSet<int>(_browseViewerForTests.UncheckedItems());
 			Assert.AreEqual(expectedUnselectedEntries.Count, entriesUnselected.Count, "Unselected items mismatched.");
 			Assert.IsTrue(expectedUnselectedEntries.SetEquals(entriesUnselected), "Unselected items mismatched.");
 			Assert.Greater(entriesSelected.Count, 0);
 		}
 
-		/// <summary>
-		///
-		/// Review: (EricP) Ask about the scenario about user changing their mind about the target,
-		/// and then selecting more then they wanted to.
-		///
-		/// (JohnT)
-		/// 7. Behavior should not depend on any state that was not visible before the current change.
-		/// For example, if the user changes from a Sense field to an Entry field
-		/// and then back to a Sense one, extra senses may become checked
-		/// (where some but not all the senses of an entry were originally checked).
-		/// We could conceivably remember which senses were previously checked
-		/// and make use of this for any entries that didn't change state,
-		/// or at least if NO entries changed state since we were last showing a Sense field.
-		/// However, the result of changing from an Entry field to a Sense field is
-		/// then unpredictable from what the user can see...it depends on past actions he may have forgotten.
-		/// </summary>
-		[Test]
-		public void CheckboxBehavior_PreserveChildMixedSelectedionsUnlessUserChangesSelectionState()
+	#endregion MaintainCheckboxesSwitchingTargetListOwners_LT8986
+
+		private abstract class FilterBehavior : IDisposable
 		{
-			// TODO.
-			//Assert.Fail();
+			private BulkEditCheckBoxBehaviorTests m_testFixture;
+
+			private FilterBehavior(BulkEditCheckBoxBehaviorTests testFixture)
+			{
+				m_testFixture = testFixture;
+				FirstBehavior();
+			}
+
+			internal static FilterBehavior Create(BulkEditCheckBoxBehaviorTests testFixture)
+			{
+				if (testFixture is BulkEditCheckBoxBehaviorTestsWithFilterChanges)
+				{
+					return new PusAndShowAll(testFixture);
+				}
+				return new NoFilter(testFixture);
+			}
+
+	#region Disposable stuff
+			/// <summary/>
+			~FilterBehavior()
+			{
+				Dispose(false);
+			}
+
+			/// <summary/>
+			private bool IsDisposed { get; set; }
+
+			/// <summary/>
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary/>
+			protected virtual void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					// dispose managed and unmanaged objects
+					FinalBehavior();
+					m_testFixture = null;
+				}
+				IsDisposed = true;
+			}
+	#endregion
+
+			protected abstract void FirstBehavior();
+
+			protected abstract void FinalBehavior();
+
+			private sealed class PusAndShowAll : FilterBehavior
+			{
+				internal PusAndShowAll(BulkEditCheckBoxBehaviorTests testFixture)
+					: base(testFixture)
+				{
+				}
+
+				protected override void FirstBehavior()
+				{
+					m_testFixture._browseViewerForTests.SetFilter("Lexeme Form", "Filter for...", "pus");
+				}
+
+				protected override void FinalBehavior()
+				{
+					m_testFixture._browseViewerForTests.SetFilter("Lexeme Form", "Show All", null);
+				}
+			}
+
+			private sealed class NoFilter : FilterBehavior
+			{
+				internal NoFilter(BulkEditCheckBoxBehaviorTests testFixture)
+					: base(testFixture)
+				{
+				}
+
+				protected override void FirstBehavior()
+				{
+					// no behavior
+				}
+
+				protected override void FinalBehavior()
+				{
+					// no behavior
+				}
+			}
+		}
+	}
+
+
+	/// <summary>
+	/// Add a layer of complexity to certain BulkEditCheckBoxBehaviorTests by performing a filter
+	/// before switching list classes (e.g. entries to senses).
+	/// </summary>
+	[TestFixture]
+	internal class BulkEditCheckBoxBehaviorTestsWithFilterChanges : BulkEditCheckBoxBehaviorTests
+	{
+		/// <summary />
+		[Test, Ignore("no need to test again.")]
+		public override void CheckboxBehavior_AllItemsShouldBeInitiallyCheckedPlusRefreshBehavior()
+		{
+			// no need to test again, when subclass has already done so.
 		}
 
+		/// <summary />
+		[Test, Ignore("no need to test again.")]
+		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
+		{
+			// no need to test again, when subclass has already done so.
+		}
 
-
-	#endregion MaintainCheckboxesSwitchingTargetListOwners_LT8986
+		/// <summary />
+		[Test, Ignore("no need to test again.")]
+		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Unselected()
+		{
+			// no need to test again, when subclass has already done so.
+		}
 	}
-#endif
 #endif
 }

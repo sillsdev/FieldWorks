@@ -67,7 +67,13 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		#region IRecordBarHandler implementation
+		protected virtual bool Editable => true;
+
+		#region ITreeBarHandler implementation
+
+		public string BestWritingSystem => m_bestWS;
+
+		public bool IncludeAbbreviation => m_includeAbbr;
 
 		/// <summary>
 		/// Check whether the given hvo is represented by a TreeNode.
@@ -76,8 +82,6 @@ namespace LanguageExplorer.Areas
 		{
 			return m_hvoToTreeNodeTable.ContainsKey(hvo);
 		}
-
-		protected virtual bool Editable => true;
 
 		public virtual void PopulateRecordBar(IRecordList list)
 		{
@@ -158,7 +162,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		#endregion IRecordBarHandler implementation
+		#endregion ITreeBarHandler implementation
 
 		#region IDisposable implementation
 

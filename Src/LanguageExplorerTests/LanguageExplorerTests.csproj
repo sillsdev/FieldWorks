@@ -317,9 +317,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxControllerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextRecordClerkTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoicesTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinSfmImportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreakerTests.cs" />
@@ -366,13 +364,11 @@
     <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />
     <Compile Include="Areas\TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="Areas\AddCustomFieldDialogTests.cs" />
-    <Compile Include="Areas\Lexicon\AllReversalEntriesRecordListTests.cs" />
     <Compile Include="DictionaryConfiguration\BulkEditBarTests.cs" />
     <Compile Include="DictionaryConfiguration\ConfigurableDictionaryNodeTests.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTestHelpers.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTests.cs" />
-    <Compile Include="DictionaryConfiguration\ControlAssemblyReplacement.cs" />
     <Compile Include="DictionaryConfiguration\CssGeneratorTests.cs" />
     <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
     <Compile Include="Areas\Lists\DeleteCustomListTests.cs" />
@@ -410,12 +406,10 @@
     <Compile Include="Impls\RecordListRepositoryTests.cs" />
     <Compile Include="Impls\UploadToWebonaryControllerTests.cs" />
     <Compile Include="Impls\UploadToWebonaryModelTests.cs" />
-    <Compile Include="AppTestBase.cs" />
     <Compile Include="DictionaryConfiguration\Migration\DictionaryConfigurationMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\FirstAlphaMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\FirstBetaMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigratorTests.cs" />
-    <Compile Include="DictionaryConfiguration\Migration\StubContentControlProvider.cs" />
     <Compile Include="Controls\XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="Controls\XMLViews\DhListViewTests.cs" />
     <Compile Include="Controls\XMLViews\LayoutMergerTests.cs" />

@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
@@ -834,51 +833,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(TextParamHvo);
 			var list = obj as ICmPossibilityList;
-			if (list == null)
+			if (!(list?.AllPossibilities().First() is ICmCustomItem))
 			{
-				return null;
-			}
-			var listFlid = list.OwningFlid;
-			string listField = null;
-			string listOwnerClass = null;
-			if (list.Owner != null)
-			{
-				listField = Cache.MetaDataCacheAccessor.GetFieldName(listFlid);
-				listOwnerClass = Cache.MetaDataCacheAccessor.GetClassName(listFlid / 1000);
-			}
-			var itemClass = Cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
-			// We need to dynamically figure out a tool for this list.
-			string sTool = null;
-			Debug.Assert(false, "No 'WindowConfiguration' element here in ReallySimpleListChooser->GenerateChooserInfoForCustomNode.");
-			var windowConfig = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-			if (windowConfig != null)
-			{
-				// The easiest search is through various jump command parameters.
-				foreach (var xnCommand in windowConfig.Elements("/window/commands/command"))
-				{
-					var xnParam = xnCommand.Element("parameters");
-					if (xnParam != null)
-					{
-						if (XmlUtils.GetOptionalAttributeValue(xnParam, "className") == itemClass &&
-							XmlUtils.GetOptionalAttributeValue(xnParam, "ownerClass") == listOwnerClass &&
-							XmlUtils.GetOptionalAttributeValue(xnParam, "ownerField") == listField)
-						{
-							sTool = XmlUtils.GetOptionalAttributeValue(xnParam, "tool");
-							if (!string.IsNullOrEmpty(sTool))
-							{
-								break;
-							}
-						}
-					}
-				}
-				// Couldn't find anything in the commands, try the record lists and tools.
-				if (string.IsNullOrEmpty(sTool))
-				{
-					sTool = ScanToolsAndLists(windowConfig, listOwnerClass, listField);
-				}
-			}
-			if (string.IsNullOrEmpty(sTool))
-			{
+				// List is null, or it doesn't hold custom items.
 				return null;
 			}
 			var label = list.Name.UserDefaultWritingSystem.Text;
@@ -890,49 +847,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				new XElement("chooserLink",
 					new XAttribute("type", "goto"),
 					new XAttribute("label", $"Edit the {XmlUtils.MakeSafeXmlAttribute(label)} list"),
-					new XAttribute("tool", XmlUtils.MakeSafeXmlAttribute(sTool))));
-		}
-
-		private static string ScanToolsAndLists(XElement windowConfig, string listOwnerClass, string listField)
-		{
-			foreach (var xnItem in windowConfig.Elements("/window/lists/list/item"))
-			{
-				foreach (var xnClerk in xnItem.Elements("parameters/clerks/clerk"))
-				{
-					var recordListId = XmlUtils.GetOptionalAttributeValue(xnClerk, "id");
-					if (string.IsNullOrEmpty(recordListId))
-					{
-						continue;
-					}
-					var xnList = xnClerk.Element("recordList");
-					if (xnList == null)
-					{
-						continue;
-					}
-					if (XmlUtils.GetOptionalAttributeValue(xnList, "owner") == listOwnerClass && XmlUtils.GetOptionalAttributeValue(xnList, "property") == listField)
-					{
-						foreach (var xnTool in xnItem.Elements("parameters/tools/tool"))
-						{
-							var sTool = XmlUtils.GetOptionalAttributeValue(xnTool, "value");
-							if (string.IsNullOrEmpty(sTool))
-							{
-								continue;
-							}
-							var xnParam = xnTool.Element("control/parameters/control/parameters");
-							if (xnParam == null)
-							{
-								continue;
-							}
-							var recordList = XmlUtils.GetOptionalAttributeValue(xnParam, "clerk");
-							if (recordList == recordListId)
-							{
-								return sTool;
-							}
-						}
-					}
-				}
-			}
-			return null;
+					new XAttribute("tool", XmlUtils.MakeSafeXmlAttribute($"CustomList_{list.Guid}_Edit"))));
 		}
 
 		private void InitHelpBrowser()

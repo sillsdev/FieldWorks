@@ -9,6 +9,8 @@ namespace LanguageExplorer
 {
 	internal interface ITreeBarHandler : IDisposable
 	{
+		string BestWritingSystem { get; }
+		bool IncludeAbbreviation { get; }
 		bool IsItemInTree(int hvo);
 		void PopulateRecordBar(IRecordList list);
 		void UpdateSelection(ICmObject currentObject);

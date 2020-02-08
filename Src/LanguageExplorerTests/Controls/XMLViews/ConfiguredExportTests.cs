@@ -93,7 +93,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz" };
-
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
 			using (var stream = new MemoryStream())

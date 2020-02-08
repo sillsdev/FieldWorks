@@ -36,9 +36,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		private UiWidgetController _uiWidgetController;
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController = null)
 			: base(configurationParametersElement, cache, recordList)
 		{
+			// Tests don't have 'uiWidgetController'.
 			_uiWidgetController = uiWidgetController;
 		}
 
@@ -79,7 +80,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
-				_uiWidgetController.RemoveUserControlHandlers(this);
+				_uiWidgetController?.RemoveUserControlHandlers(this);
 			}
 			_uiWidgetController = null;
 

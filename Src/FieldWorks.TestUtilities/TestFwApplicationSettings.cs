@@ -4,9 +4,10 @@
 
 using System.IO;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities
 {
 	/// <summary>
 	/// Test application settings class
@@ -14,25 +15,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class TestFwApplicationSettings : IFwApplicationSettings
 	{
 		/// <inheritdoc />
-		public bool UpdateGlobalWSStore { get; set; }
+		bool IFwApplicationSettings.UpdateGlobalWSStore { get; set; }
 
 		/// <inheritdoc />
-		public ReportingSettings Reporting { get; set; }
+		ReportingSettings IFwApplicationSettings.Reporting { get; set; }
 
 		/// <inheritdoc />
-		public string LocalKeyboards { get; set; }
+		string IFwApplicationSettings.LocalKeyboards { get; set; }
 
 		/// <inheritdoc />
-		public string WebonaryUser { get; set; }
+		string IFwApplicationSettings.WebonaryUser { get; set; }
 
 		/// <inheritdoc />
-		public string WebonaryPass { get; set; }
-
-		/// <summary />
-		public XDocument ConfigXml { get; set; }
+		string IFwApplicationSettings.WebonaryPass { get; set; }
 
 		/// <inheritdoc />
-		public void UpgradeIfNecessary()
+		void IFwApplicationSettings.UpgradeIfNecessary()
 		{
 			using (var stream = new MemoryStream())
 			{
@@ -44,15 +42,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <inheritdoc />
-		public void Save()
+		void IFwApplicationSettings.Save()
 		{
 			// Do nothing.
 		}
 
 		/// <inheritdoc />
-		public void DeleteCorruptedSettingsFilesIfPresent()
+		void IFwApplicationSettings.DeleteCorruptedSettingsFilesIfPresent()
 		{
 			// Do nothing.
 		}
+
+		/// <summary />
+		internal XDocument ConfigXml { get; set; }
 	}
 }

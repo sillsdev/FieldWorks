@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This flag is set when the dialog is used to add an allomorph and the
 		/// type of morpheme deduced from the punctuation of the new form doesn't
-		/// match the type of any exising MoMorph. This used to disable the OK
+		/// match the type of any existing MoMorph. This used to disable the OK
 		/// button, but now it's just a warning.
 		/// </summary>
 		public bool InconsistentType { get; protected set; }

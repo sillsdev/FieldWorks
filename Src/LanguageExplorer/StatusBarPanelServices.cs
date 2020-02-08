@@ -17,7 +17,12 @@ namespace LanguageExplorer
 		/// <summary />
 		internal static void SetStatusPanelMessage(StatusBar statusBar, string newContent)
 		{
-			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newContent;
+			// Some tests don't have those panels.
+			var panel = statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage];
+			if (panel != null)
+			{
+				panel.Text = newContent;
+			}
 		}
 
 		internal static StatusBarProgressPanel GetStatusBarProgressPanel(StatusBar statusBar)
@@ -44,7 +49,12 @@ namespace LanguageExplorer
 		/// <summary />
 		internal static void SetStatusPanelRecordNumber(StatusBar statusBar, string newContent)
 		{
-			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelRecordNumber].Text = newContent;
+			// Some tests don't have those panels.
+			var panel = statusBar.Panels[LanguageExplorerConstants.StatusBarPanelRecordNumber];
+			if (panel != null)
+			{
+				panel.Text = newContent;
+			}
 		}
 
 		internal static void ClearBasicStatusBars(StatusBar statusBar)

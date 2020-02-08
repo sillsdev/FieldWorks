@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
@@ -695,5 +696,141 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 
 		#endregion
+		private sealed class DummyLcmUI : ILcmUI
+		{
+			private readonly ISynchronizeInvoke m_synchronizeInvoke;
+
+			internal DummyLcmUI(ISynchronizeInvoke synchronizeInvoke)
+			{
+				m_synchronizeInvoke = synchronizeInvoke;
+			}
+
+			/// <summary>
+			/// Gets the object that is used to invoke methods on the main UI thread.
+			/// </summary>
+			public ISynchronizeInvoke SynchronizeInvoke
+			{
+				get { return m_synchronizeInvoke; }
+			}
+
+			/// <summary>
+			/// Gets the error message.
+			/// </summary>
+			/// <value>
+			/// The error message.
+			/// </value>
+			public string ErrorMessage { get; private set; }
+
+			/// <summary>
+			/// Check with user regarding conflicting changes
+			/// </summary>
+			/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
+			public bool ConflictingSave()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Gets the last time that there was user activity.
+			/// </summary>
+			public DateTime LastActivityTime
+			{
+				get { return DateTime.Now; }
+			}
+
+			/// <summary>
+			/// Check with user regarding which files to use
+			/// </summary>
+			/// <returns></returns>
+			public FileSelection ChooseFilesToUse()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Check with user regarding restoring linked files in the project folder or original path
+			/// </summary>
+			/// <returns>True if user wishes to restore linked files in project folder. False to leave them in the original location.</returns>
+			public bool RestoreLinkedFilesInProjectFolder()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Cannot restore linked files to original path.
+			/// Check with user regarding restoring linked files in the project folder or not at all
+			/// </summary>
+			/// <returns>OkYes to restore to project folder, OkNo to skip restoring linked files, Cancel otherwise</returns>
+			public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Displays information to the user
+			/// </summary>
+			/// <param name="type"></param>
+			/// <param name="message"></param>
+			/// <param name="caption"></param>
+			/// <param name="helpTopic"></param>
+			public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Displays the circular reference breaker report.
+			/// </summary>
+			public void DisplayCircularRefBreakerReport(string report, string caption)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Show a dialog or output to the error log, as appropriate.
+			/// </summary>
+			/// <param name="error">the exception you want to report</param>
+			/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
+			/// <c>false</c>.</param>
+			/// <returns>True if the error was lethal and the user chose to exit the application,
+			/// false otherwise.</returns>
+			public void ReportException(Exception error, bool isLethal)
+			{
+				// Store the message so we can check it later
+				ErrorMessage = error.Message;
+			}
+
+			/// <summary>
+			/// Reports duplicate guids to the user
+			/// </summary>
+			/// <param name="errorText">The error text.</param>
+			public void ReportDuplicateGuids(string errorText)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Ask user if they wish to restore an XML project from a backup project file.
+			/// </summary>
+			/// <param name="projectPath">The project path.</param>
+			/// <param name="backupPath">The backup path.</param>
+			/// <returns></returns>
+			/// <exception cref="System.NotImplementedException"></exception>
+			public bool OfferToRestore(string projectPath, string backupPath)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Present a message to the user and allow the options to Retry or Cancel
+			/// </summary>
+			/// <param name="msg">The message.</param>
+			/// <param name="caption">The caption.</param>
+			/// <returns>True to retry.  False otherwise</returns>
+			public bool Retry(string msg, string caption)
+			{
+				throw new NotSupportedException();
+			}
+		}
 	}
 }

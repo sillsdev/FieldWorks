@@ -13,15 +13,16 @@ using SIL.LCModel;
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
-	public class DictionaryConfigurationServicesTests : AppTestBase
+	public class DictionaryConfigurationServicesTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private IPropertyTable _propertyTable;
 
 		#region Overrides of LcmTestBase
 
-		protected override void FixtureInit()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 		}

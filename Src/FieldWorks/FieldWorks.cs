@@ -21,6 +21,8 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using Gecko;
 using LanguageExplorer;
 using LanguageExplorer.LcmUi;
@@ -2691,7 +2693,7 @@ namespace SIL.FieldWorks
 					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
-				s_activeMainWnd.PropertyTable.SetProperty("AppSettings", s_appSettings);
+				s_activeMainWnd.PropertyTable.SetProperty(FwUtils.AppSettings, s_appSettings);
 			}
 			catch (StartupException ex)
 			{
@@ -3744,5 +3746,131 @@ namespace SIL.FieldWorks
 			CloseAllMainWindowsForApp(s_flexApp);
 		}
 		#endregion
+
+		/// <summary>
+		/// This class encapsulates the application settings for FW.
+		/// </summary>
+		private sealed class FwApplicationSettings : IFwApplicationSettings
+		{
+			private readonly Common.FwUtils.Properties.Settings m_settings;
+
+			/// <summary />
+			internal FwApplicationSettings()
+			{
+				m_settings = Common.FwUtils.Properties.Settings.Default;
+			}
+
+			/// <inheritdoc />
+			bool IFwApplicationSettings.UpdateGlobalWSStore
+			{
+				get { return m_settings.UpdateGlobalWSStore; }
+				set { m_settings.UpdateGlobalWSStore = value; }
+			}
+
+			/// <inheritdoc />
+			ReportingSettings IFwApplicationSettings.Reporting
+			{
+				get { return m_settings.Reporting; }
+				set { m_settings.Reporting = value; }
+			}
+
+			/// <inheritdoc />
+			string IFwApplicationSettings.LocalKeyboards
+			{
+				get { return m_settings.LocalKeyboards; }
+				set { m_settings.LocalKeyboards = value; }
+			}
+
+			/// <inheritdoc />
+			string IFwApplicationSettings.WebonaryUser
+			{
+				get { return m_settings.WebonaryUser; }
+				set { m_settings.WebonaryUser = value; }
+			}
+
+			/// <inheritdoc />
+			string IFwApplicationSettings.WebonaryPass
+			{
+				get { return m_settings.WebonaryPass; }
+				set { m_settings.WebonaryPass = value; }
+			}
+
+			/// <inheritdoc />
+			void IFwApplicationSettings.UpgradeIfNecessary()
+			{
+				if (m_settings.CallUpgrade)
+				{
+					// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
+					m_settings.Save();
+					m_settings.Upgrade();
+					var baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+					if (Directory.Exists(baseConfigFolder))
+					{
+						// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
+						// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
+						var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
+						directoryList.Sort();
+						var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
+						using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+						{
+							FwUtils.MigrateIfNecessary(stream, this);
+						}
+					}
+					m_settings.CallUpgrade = false;
+					m_settings.Save();
+				}
+			}
+
+			/// <inheritdoc />
+			void IFwApplicationSettings.Save()
+			{
+				m_settings.Save();
+			}
+
+			/// <inheritdoc />
+			void IFwApplicationSettings.DeleteCorruptedSettingsFilesIfPresent()
+			{
+				var pathToConfigFiles = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+				if (!Directory.Exists(pathToConfigFiles))
+				{
+					return;
+				}
+
+				var localConfigFolders = new List<string>(Directory.EnumerateDirectories(pathToConfigFiles));
+				localConfigFolders.Sort();
+				var highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : string.Empty;
+				var corruptFileFound = false;
+
+				while (highestVersionFolder != string.Empty)
+				{
+					try
+					{
+						var highestVersionConfigPath = Path.Combine(highestVersionFolder, "user.config");
+						if (File.Exists(highestVersionConfigPath))
+						{
+							using (var stream = new FileStream(highestVersionConfigPath, FileMode.Open))
+							{
+								// This will throw an exception if the file is corrupted (LT-18643 Null bytes written to user.config file)
+								XDocument.Load(stream);
+							}
+						}
+					}
+					catch (XmlException)
+					{
+						corruptFileFound = true;
+						Directory.Delete(highestVersionFolder, true);
+					}
+					localConfigFolders.Remove(highestVersionFolder);
+					highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : string.Empty;
+				}
+				if (!corruptFileFound)
+				{
+					return;
+				}
+				var caption = Properties.Resources.ksCorruptSettingsFileCaption;
+				var text = Properties.Resources.ksDeleteAndReportCorruptSettingsFile;
+				MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
 	}
 }

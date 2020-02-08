@@ -6,14 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using LanguageExplorer;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Areas;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -23,7 +21,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	/// There's still a good deal of integration test to this (it uses chunks of SimpleRootSite and LCM and the Views code)
 	/// but at least it's not using all of XmlDocView and the XML configuration.
 	/// </summary>
-#if RANDYTODO // Restore once Mediator/pubsub all work again
 	[TestFixture]
 	public class ItemClickedTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -33,10 +30,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// test data
 			var kick = MakeEntry("kick", "strike with foot");
 			var boot = MakeEntry("boot", "strike with boot");
-			var lexRefType = MakeLexRefType("TestRelation");
-			var lexRef = MakeLexReference(lexRefType, kick.SensesOS[0]);
+			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+			{
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			}
+			var lexRefType = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lexRefType);
+			lexRefType.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseSequence;
+			lexRefType.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("TestRelation", Cache.DefaultAnalWs);
+			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			lexRefType.MembersOC.Add(lexRef);
+			lexRef.TargetsRS.Add(kick.SensesOS[0]);
 			lexRef.TargetsRS.Add(boot.SensesOS[0]);
-
 			// Make the view to test.
 			using (var view = new TestRootSite(Cache, kick.Hvo))
 			{
@@ -44,38 +49,30 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var dummy = view.Handle; // triggers MakeRoot as handle is created
 				var dummy2 = view.RootBox.Width; // triggers constructing boxes.
 				view.PerformLayout();
-
-				int widthKick = view.Vc.ItemWidths[kick.LexemeFormOA.Hvo];
-				int widthKickSense = view.Vc.ItemWidths[kick.SensesOS[0].Hvo];
-
+				var widthKick = view.Vc.ItemWidths[kick.LexemeFormOA.Hvo];
+				var widthKickSense = view.Vc.ItemWidths[kick.SensesOS[0].Hvo];
 				var mockItems = new MockSortItemProvider();
 				mockItems.Items.AddRange(new[] { kick.Hvo, boot.Hvo });
 				var nullAdjuster = new NullTargetAdjuster();
-
 				// click on the lexeme form: should find nothing, it's a root object.
-				Point where = new Point(1, 1);
+				var where = new Point(1, 1);
 				var result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.Null);
-
 				// click on the gloss of kick: should find nothing, it's still part of the root.
 				where = new Point(widthKick + 5, 1);
 				result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.Null);
-
 				// click on the gloss, asking for a sense: should find nothing, no containing sense
 				result = XmlDocView.SubitemClicked(where, LexSenseTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.Null);
-
 				// click on the synonym: should find the other entry.
 				where = new Point(widthKick + widthKickSense * 2 + 5, 1);
 				result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.EqualTo(boot));
-
 				// Should not return the item it otherwise would if it is not a possible target.
 				mockItems.Items.Remove(boot.Hvo);
 				result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.Null);
-
 				// MainEntryFromSubEntryTargetAdjuster should convert subentry to main entry
 				// Make boot a subentry of bootRoot
 				var bootRoot = MakeEntry("boo", "fragment of boot");
@@ -96,161 +93,126 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// </summary>
 		private ILexEntry MakeEntry(string lf, string gloss)
 		{
-			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
-			form.Form.VernacularDefaultWritingSystem =
-				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
-			AddSense(entry, gloss);
+			form.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 
-		private ILexSense AddSense(ILexEntry entry, string gloss)
+		private sealed class MockSortItemProvider : ISortItemProvider
 		{
-			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
-				Cache.DefaultAnalWs);
-			return sense;
-		}
+			internal readonly List<int> Items = new List<int>();
 
-		private ILexReference MakeLexReference(ILexRefType owner, ILexSense firstTarget)
-		{
-			ILexReference result = null;
-			result = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-			owner.MembersOC.Add(result);
-			result.TargetsRS.Add(firstTarget);
-			return result;
-		}
-		private ILexRefType MakeLexRefType(string name)
-		{
-			ILexRefType result = null;
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
-			result.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseSequence;
-			result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
-			return result;
-		}
-	}
+			#region ISortItemProvider Members
 
-	class TestRootSite : SimpleRootSite
-	{
-		private LcmCache m_cache;
-		private int _hvoRoot;
-
-		public TestRootSite(LcmCache cache, int root)
-		{
-			m_cache = cache;
-			_hvoRoot = root;
-		}
-
-		public TestVc Vc { get; set; }
-
-		public override void MakeRoot()
-		{
-			Vc = new TestVc(m_cache);
-
-			WritingSystemFactory = m_cache.WritingSystemFactory;
-
-			base.MakeRoot();
-
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
-
-			m_rootb.SetRootObject(_hvoRoot, Vc, 1, null);
-		}
-	}
-
-	class TestVc: VwBaseVc
-	{
-		private LcmCache m_cache;
-
-		public TestVc(LcmCache cache)
-		{
-			m_cache = cache;
-		}
-
-		public Dictionary<int, int> ItemWidths = new Dictionary<int, int>();
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the main interesting method of displaying objects and fragments of them. Most
-		/// subclasses should override.
-		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// -----------------------------------------------------------------------------------
-		public override void Display(IVwEnv vwenv, int hvo, int frag)
-		{
-			switch (frag)
+			int ISortItemProvider.AppendItemsFor(int hvo)
 			{
-				case 1: // LexEntry
-					vwenv.OpenParagraph();
-					vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, 2);
-					vwenv.AddObjVecItems(LexEntryTags.kflidSenses, this, 3);
-					vwenv.CloseParagraph();
-					break;
-				case 2: // MoForm
-					vwenv.AddStringAltMember(MoFormTags.kflidForm, m_cache.DefaultVernWs, this);
-					NoteItemWidth(vwenv, hvo, MoFormTags.kflidForm, m_cache.DefaultVernWs);
-					break;
-				case 3: // LexSense
-					vwenv.AddStringAltMember(LexSenseTags.kflidGloss, m_cache.DefaultAnalWs, this);
-					NoteItemWidth(vwenv, hvo, LexSenseTags.kflidGloss, m_cache.DefaultAnalWs);
-					int flid = m_cache.MetaDataCacheAccessor.GetFieldId("LexSense", "LexSenseReferences", false);
-					vwenv.AddObjVecItems(flid, this, 4);
-					break;
-				case 4: // LexReference
-					vwenv.AddObjVecItems(LexReferenceTags.kflidTargets, this, 5);
-					break;
-				case 5: // target of lex reference, which in our test data is made to be a sense
-					vwenv.AddStringAltMember(LexSenseTags.kflidGloss, m_cache.DefaultAnalWs, this);
-					NoteItemWidth(vwenv, hvo, LexSenseTags.kflidGloss, m_cache.DefaultAnalWs);
-					break;
+				throw new NotSupportedException();
+			}
+
+			int ISortItemProvider.IndexOf(int hvo)
+			{
+				return Items.IndexOf(hvo);
+			}
+
+			int ISortItemProvider.ListItemsClass
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			void ISortItemProvider.RemoveItemsFor(int hvo)
+			{
+				throw new NotSupportedException();
+			}
+
+			IManyOnePathSortItem ISortItemProvider.SortItemAt(int index)
+			{
+				throw new NotSupportedException();
+			}
+
+			#endregion
+		}
+
+		private sealed class TestRootSite : SimpleRootSite
+		{
+			private LcmCache m_cache;
+			private int _hvoRoot;
+
+			internal TestRootSite(LcmCache cache, int root)
+			{
+				m_cache = cache;
+				_hvoRoot = root;
+			}
+
+			public TestVc Vc { get; set; }
+
+			public override void MakeRoot()
+			{
+				Vc = new TestVc(m_cache);
+				WritingSystemFactory = m_cache.WritingSystemFactory;
+				base.MakeRoot();
+				RootBox.DataAccess = m_cache.DomainDataByFlid;
+				RootBox.SetRootObject(_hvoRoot, Vc, 1, null);
 			}
 		}
 
-		private void NoteItemWidth(IVwEnv vwenv, int hvo, int flid, int ws)
+		private sealed class TestVc : VwBaseVc
 		{
-			var tss = vwenv.DataAccess.get_MultiStringAlt(hvo, flid, ws);
-			int mpx, mpy;
-			vwenv.get_StringWidth(tss, null, out mpx, out mpy);
-			int dx = mpx*96/72000; // to pixels
-			ItemWidths[hvo] = dx;
-		}
-	}
-#endif
-	class MockSortItemProvider : ISortItemProvider
-	{
-		public List<int> Items = new List<int>();
-		#region ISortItemProvider Members
+			private readonly LcmCache _cache;
 
-		public int AppendItemsFor(int hvo)
-		{
-			throw new NotImplementedException();
-		}
+			internal TestVc(LcmCache cache)
+			{
+				_cache = cache;
+			}
 
-		public int IndexOf(int hvo)
-		{
-			return Items.IndexOf(hvo);
-		}
+			internal readonly Dictionary<int, int> ItemWidths = new Dictionary<int, int>();
 
-		public int ListItemsClass
-		{
-			get { throw new NotImplementedException(); }
-		}
+			/// <summary>
+			/// This is the main interesting method of displaying objects and fragments of them. Most
+			/// subclasses should override.
+			/// </summary>
+			public override void Display(IVwEnv vwenv, int hvo, int frag)
+			{
+				switch (frag)
+				{
+					case 1: // LexEntry
+						vwenv.OpenParagraph();
+						vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, 2);
+						vwenv.AddObjVecItems(LexEntryTags.kflidSenses, this, 3);
+						vwenv.CloseParagraph();
+						break;
+					case 2: // MoForm
+						vwenv.AddStringAltMember(MoFormTags.kflidForm, _cache.DefaultVernWs, this);
+						NoteItemWidth(vwenv, hvo, MoFormTags.kflidForm, _cache.DefaultVernWs);
+						break;
+					case 3: // LexSense
+						vwenv.AddStringAltMember(LexSenseTags.kflidGloss, _cache.DefaultAnalWs, this);
+						NoteItemWidth(vwenv, hvo, LexSenseTags.kflidGloss, _cache.DefaultAnalWs);
+						var flid = _cache.MetaDataCacheAccessor.GetFieldId("LexSense", "LexSenseReferences", false);
+						vwenv.AddObjVecItems(flid, this, 4);
+						break;
+					case 4: // LexReference
+						vwenv.AddObjVecItems(LexReferenceTags.kflidTargets, this, 5);
+						break;
+					case 5: // target of lex reference, which in our test data is made to be a sense
+						vwenv.AddStringAltMember(LexSenseTags.kflidGloss, _cache.DefaultAnalWs, this);
+						NoteItemWidth(vwenv, hvo, LexSenseTags.kflidGloss, _cache.DefaultAnalWs);
+						break;
+				}
+			}
 
-		public void RemoveItemsFor(int hvo)
-		{
-			throw new NotImplementedException();
+			private void NoteItemWidth(IVwEnv vwenv, int hvo, int flid, int ws)
+			{
+				var tss = vwenv.DataAccess.get_MultiStringAlt(hvo, flid, ws);
+				int mpx, mpy;
+				vwenv.get_StringWidth(tss, null, out mpx, out mpy);
+				var dx = mpx * 96 / 72000; // to pixels
+				ItemWidths[hvo] = dx;
+			}
 		}
-
-		public IManyOnePathSortItem SortItemAt(int index)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
 	}
 }

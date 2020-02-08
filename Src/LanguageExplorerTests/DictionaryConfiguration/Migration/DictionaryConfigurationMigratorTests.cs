@@ -93,6 +93,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 #if RANDYTODO
 		// TODO: This one fails for some reason.
+		// TODO: And, when it runs, MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies also fails, so they are tired together somehow.
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_MatchesLabelsWhenUIIsLocalized()
 		{

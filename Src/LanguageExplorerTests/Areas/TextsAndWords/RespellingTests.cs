@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.XMLViews;
@@ -31,18 +30,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 
 		#region Overrides of FdoTestBase
 
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
-			{
-#if RANDYTODO
-				// TODO: Get this and tests to not use TranslatedScriptureOA and things in it.
-#endif
-				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
-			});
-		}
-
 		/// <summary>
 		/// Done before each test.
 		/// Overriders should call base method.
@@ -51,8 +38,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		{
 			base.TestSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-			_flexComponentParameters.PropertyTable.SetProperty("cache", Cache);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 		}
 
 		/// <summary>
@@ -67,11 +53,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 				}
 				Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
-				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>("InterestingTexts");
+				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>(AreaServices.InterestingTexts);
 				if (interestingTextlist != null)
 				{
 					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
-					_flexComponentParameters.PropertyTable.RemoveProperty("InterestingTexts");
+					_flexComponentParameters.PropertyTable.RemoveProperty(AreaServices.InterestingTexts);
 				}
 				_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.cache);
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
@@ -102,14 +88,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
-
-			respellUndoaction.AllChanged = false;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			respellUndoAction.AllChanged = false;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
@@ -122,14 +105,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
 			const string ksWordToReplace = "somelongwords";
 			const string ksNewWord = "s";
-			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
-
-			respellUndoaction.AllChanged = false;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			respellUndoAction.AllChanged = false;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
@@ -143,17 +123,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksWordToReplace = "multimorphemic";
 			const string ksNewWord = "massivemorphemic";
 			var morphs = new[] { "multi", "morphemic" };
-			var respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(ksParaText, ksWordToReplace, ksNewWord, morphs, out para);
-
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para, true, morphs);
 			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, "Should have 2 morph bundles before spelling change.");
-
-			respellUndoaction.AllChanged = true;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			respellUndoAction.AllChanged = true;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.CopyAnalyses = true; // in the dialog this is always true?
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count, "Unexpected morph bundle contents for 'be'");
 			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, "Wrong morph bundle count for 'multimorphemic'");
 			Assert.AreEqual(0, para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count, "Unexpected morph bundle contents for 'are'");
@@ -174,14 +150,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, false, out para);
-
-			respellUndoaction.AllChanged = false;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			respellUndoAction.AllChanged = false;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
@@ -198,14 +171,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, true, out para);
-
-			respellUndoaction.AllChanged = false;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para,  true);
+			respellUndoAction.AllChanged = false;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[2] is IWfiGloss);
@@ -227,9 +197,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, true, out para);
-
-			UndoableUnitOfWorkHelper.Do("Undo Added BT", "Redo Added BT", m_actionHandler, () =>
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para, true);
+			UndoableUnitOfWorkHelper.Do("Undo Added FT", "Redo Added FT", m_actionHandler, () =>
 			{
 				var i = 0;
 				foreach (var seg in para.SegmentsOS)
@@ -237,20 +206,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					seg.FreeTranslation.SetAnalysisDefaultWritingSystem("Segment " + (i++) + " FT");
 				}
 			});
-
-			respellUndoaction.AllChanged = false;
-			respellUndoaction.KeepAnalyses = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(_flexComponentParameters.Publisher);
-
+			respellUndoAction.AllChanged = false;
+			respellUndoAction.KeepAnalyses = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[2] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[4] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[5] is IWfiGloss);
 			Assert.AreEqual("Segment 0 FT", para.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-
 			Assert.IsTrue(para.SegmentsOS[1].AnalysesRS[0] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[1].AnalysesRS[1] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[1].AnalysesRS[2] is IWfiGloss);
@@ -258,21 +223,17 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			Assert.IsTrue(para.SegmentsOS[1].AnalysesRS[5] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[1].AnalysesRS[7] is IWfiGloss);
 			Assert.AreEqual("Segment 1 FT", para.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-
 			Assert.IsTrue(para.SegmentsOS[2].AnalysesRS[0] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[2].AnalysesRS[3] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[2].AnalysesRS[4] is IWfiGloss);
 			Assert.IsTrue(para.SegmentsOS[2].AnalysesRS[6] is IWfiGloss);
 			Assert.AreEqual("Segment 2 FT", para.SegmentsOS[2].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-
 			Assert.IsTrue(para.SegmentsOS[3].AnalysesRS[0] is IWfiGloss);
 			Assert.AreEqual("Segment 3 FT", para.SegmentsOS[3].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-
 			Assert.AreEqual(3, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// Test simulating single spelling change in a single segment in a paragraph. Should
 		/// be possible to undo this change.
@@ -280,226 +241,93 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeSingleOccurrence_InSingleSegment()
 		{
-			IStTxtPara para;
+			IStTxtPara paragraph;
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "hope";
 			const string ksNewWord = ksWordToReplace + "ful";
-
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
-				ksWordToReplace, ksNewWord, false, StTxtParaTags.kClassId, out para);
-
-			respellUndoaction.AllChanged = true;
-			respellUndoaction.CopyAnalyses = false;
-			respellUndoaction.KeepAnalyses = false;
-			respellUndoaction.PreserveCase = true;
-			respellUndoaction.UpdateLexicalEntries = true;
-
-			respellUndoaction.DoIt(m_publisher);
-
-			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out paragraph);
+			respellUndoAction.AllChanged = true;
+			respellUndoAction.CopyAnalyses = false;
+			respellUndoAction.KeepAnalyses = false;
+			respellUndoAction.PreserveCase = true;
+			respellUndoAction.UpdateLexicalEntries = true;
+			respellUndoAction.DoIt(_flexComponentParameters.Publisher);
+			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), paragraph.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
-#endif
 
-		/// <summary>
-		/// Sets up para and respell undo action.
-		/// </summary>
-		/// <param name="sParaText">The paragraph text.</param>
-		/// <param name="sWordToReplace">The word to replace.</param>
-		/// <param name="sNewWord">The new word.</param>
-		/// <param name="fCreateGlosses">if set to <c>true</c> in addition to wordforms, glosses
-		/// are created for each word in the text and analyses are hooked up to those glosses
-		/// instead of just the wordforms.</param>
-		/// <param name="para">The para.</param>
-		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
-		/// occurrences of a word</returns>
-		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText, string sWordToReplace, string sNewWord, bool fCreateGlosses, out IStTxtPara para)
+		private RespellUndoAction SetUpParaAndRespellUndoAction(string paragraphText, string wordToReplace, string newWord, out IStTxtPara paragraph, bool createGlosses = false, string[] morphsToCreate = null)
 		{
-			return SetUpParaAndRespellUndoAction(sParaText, sWordToReplace, sNewWord, fCreateGlosses, ScrTxtParaTags.kClassId, out para);
-		}
-
-		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText, string sWordToReplace, string sNewWord, bool fCreateGlosses, int clidPara, out IStTxtPara para)
-		{
-			var paraFrags = new List<IParaFragment>();
-			IStTxtPara paraT = null;
+			var paraFragments = new List<IParaFragment>();
+			// Can't use "paragraph" in this method, so use "paragraphSurrogate" until the very end.
+			IStTxtPara paragraphSurrogate = null;
 			IStText stText = null;
-			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
+			UndoableUnitOfWorkHelper.Do("Undo create text", "Redo create text", m_actionHandler, () =>
 			{
-				if (clidPara == ScrTxtParaTags.kClassId)
+				var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+				stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+				text.ContentsOA = stText;
+				paragraphSurrogate = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+				stText.ParagraphsOS.Add(paragraphSurrogate);
+				paragraphSurrogate.Contents = TsStringUtils.MakeString(paragraphText, Cache.DefaultVernWs);
+				foreach (var seg in paragraphSurrogate.SegmentsOS)
 				{
-					var book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
-					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					var owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic, new object[] { book.Guid });
-					ReflectionHelper.SetField(stText, "m_owner", owner);
-				}
-				else
-				{
-					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-					text.ContentsOA = stText;
-					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-				}
-				foreach (var seg in paraT.SegmentsOS)
-				{
-					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
-					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
+					LcmTestHelper.CreateAnalyses(seg, paragraphSurrogate.Contents, seg.BeginOffset, seg.EndOffset, createGlosses);
+					var thisSegParaFrags = new List<IParaFragment>(); //GetParaFragmentsInSegmentForWord(seg, wordToReplace);
+					IAnalysis analysis = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs, wordToReplace);
+					var ichStart = 0;
+					int ichWe;
+					while ((ichWe = seg.BaselineText.Text.IndexOf(wordToReplace, ichStart)) >= 0)
+					{
+						ichStart = ichWe + wordToReplace.Length;
+						ichWe += seg.BeginOffset;
+						thisSegParaFrags.Add(new ParaFragment(seg, ichWe, ichWe + wordToReplace.Length, analysis));
+					}
+					if (morphsToCreate != null)
+					{
+						var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
+						// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
+						// Still need to add WfiMorphBundles as per morphsToCreate.
+						foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
+						{
+							var wfiAnalysis = wordform.AnalysesOC.First();
+							if (wfiAnalysis.MorphBundlesOS.Count != 0)
+							{
+								continue;
+							}
+							foreach (var morpheme in morphsToCreate)
+							{
+								var bundle = morphFact.Create();
+								wfiAnalysis.MorphBundlesOS.Add(bundle);
+								bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
+							}
+						}
+					}
+					paraFragments.AddRange(thisSegParaFrags);
 				}
 			});
-
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
 			var dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
-			if (clidPara == ScrTxtParaTags.kClassId)
-			{
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
-			}
-			else
-			{
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
-			}
+			dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new[] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.InitializeFlexComponent(_flexComponentParameters);
-			rsda.SetOccurrences(0, paraFrags);
+			rsda.SetOccurrences(0, paraFragments);
 			var publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			var xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
-
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.get_IntProp(paragraphSurrogate.Hvo, CmObjectTags.kflidClass)).Return(StTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
 			xmlCache.MetaDataCache = new RespellingMdc(Cache.GetManagedMetaDataCache());
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
-
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, wordToReplace, newWord);
 			foreach (var hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 			{
 				respellUndoaction.AddOccurrence(hvoFake);
 			}
-			para = paraT;
+			paragraph = paragraphSurrogate;
 			return respellUndoaction;
-		}
-
-		/// <summary>
-		/// Sets up para and respell undo action.
-		/// </summary>
-		/// <param name="sParaText">The paragraph text.</param>
-		/// <param name="sWordToReplace">The word to replace.</param>
-		/// <param name="sNewWord">The new word.</param>
-		/// <param name="morphs">Array of substrings from sNewWord to build WfiMorphBundles for</param>
-		/// <param name="para">The para.</param>
-		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
-		/// occurrences of a word</returns>
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText, string sWordToReplace, string sNewWord, string[] morphs, out IStTxtPara para)
-		{
-			return SetUpParaAndRespellUndoAction_MultiMorphemic(sParaText, sWordToReplace, sNewWord, morphs, ScrTxtParaTags.kClassId, out para);
-		}
-
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText, string sWordToReplace, string sNewWord, string[] morphsToCreate, int clidPara, out IStTxtPara para)
-		{
-			var paraFrags = new List<IParaFragment>();
-			IStTxtPara paraT = null;
-			IStText stText = null;
-			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
-			{
-				if (clidPara == ScrTxtParaTags.kClassId)
-				{
-					var book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
-					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					var owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic, new object[] { book.Guid });
-					ReflectionHelper.SetField(stText, "m_owner", owner);
-				}
-				else
-				{
-					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-					text.ContentsOA = stText;
-					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-				}
-				foreach (var seg in paraT.SegmentsOS)
-				{
-					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
-					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
-					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
-					paraFrags.AddRange(thisSegParaFrags);
-				}
-			});
-
-			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
-			var dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
-			Cache.ServiceLocator.GetInstance<IStTextRepository>());
-			if (clidPara == ScrTxtParaTags.kClassId)
-			{
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
-			}
-			else
-			{
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
-			}
-			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
-			rsda.InitializeFlexComponent(_flexComponentParameters);
-			rsda.SetOccurrences(0, paraFrags);
-			var publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			var xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
-
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
-			xmlCache.MetaDataCache = new RespellingMdc(Cache.GetManagedMetaDataCache());
-			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
-
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
-			foreach (var hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
-			{
-				respellUndoaction.AddOccurrence(hvoFake);
-			}
-			para = paraT;
-			return respellUndoaction;
-		}
-
-		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
-		{
-			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
-			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
-			// Still need to add WfiMorphBundles as per morphsToCreate.
-			foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
-			{
-				var analysis = wordform.AnalysesOC.First();
-				if (analysis.MorphBundlesOS.Count != 0)
-				{
-					continue;
-				}
-				foreach (var morpheme in morphsToCreate)
-				{
-					var bundle = morphFact.Create();
-					analysis.MorphBundlesOS.Add(bundle);
-					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Enumerates the para fragments for all occurrences of the given word in the given
-		/// segment.
-		/// </summary>
-		/// <param name="seg">The segment.</param>
-		/// <param name="word">The word to find.</param>
-		private IEnumerable<IParaFragment> GetParaFragmentsInSegmentForWord(ISegment seg, string word)
-		{
-			IAnalysis analysis = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs, word);
-			var ichStart = 0;
-			int ichWe;
-			while ((ichWe = seg.BaselineText.Text.IndexOf(word, ichStart)) >= 0)
-			{
-				ichStart = ichWe + word.Length;
-				ichWe += seg.BeginOffset;
-				yield return new ParaFragment(seg, ichWe, ichWe + word.Length, analysis);
-			}
 		}
 	}
 }

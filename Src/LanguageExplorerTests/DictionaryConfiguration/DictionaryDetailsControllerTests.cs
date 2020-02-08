@@ -16,21 +16,23 @@ using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
-	public class DictionaryDetailsControllerTests : AppTestBase
+	public class DictionaryDetailsControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private DictionaryDetailsController _staticDDController; // for testing methods that would be static if not for m_propertyTable
 
 		#region Overrides of LcmTestBase
 
-		protected override void FixtureInit()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			GenerateStyles();
 

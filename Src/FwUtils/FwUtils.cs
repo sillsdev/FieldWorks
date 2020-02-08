@@ -59,6 +59,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string HandleLocalHotlink = "HandleLocalHotlink";
 
 		/// <summary />
+		public const string AppSettings = "AppSettings";
+
+		/// <summary />
 		public const char kStyleNamesDelimiter = '\uFFFD';
 
 		/// <summary>

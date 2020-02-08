@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
 		private BulkEditEntriesOrSensesMenuHelper _toolMenuHelper;
-		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -65,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			// SortItemProvider was: 5035
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(AreaServices.EntriesOrChildren, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
@@ -134,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		internal static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Guard.AssertThat(recordListId == EntriesOrChildren, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{EntriesOrChildren}'.");
+			Guard.AssertThat(recordListId == AreaServices.EntriesOrChildren, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{AreaServices.EntriesOrChildren}'.");
 			/*
             <clerk id="entriesOrChildren">
               <recordList owner="LexDb" property="Entries">

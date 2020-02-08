@@ -1257,8 +1257,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "LanguageExplorerTests";
 			var style = GenerateStyle("subscript");
-			var fontInfo = new FontInfo();
-			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSub;
+			var fontInfo = new FontInfo
+			{
+				m_superSub = { ExplicitValue = FwSuperscriptVal.kssvSub }
+			};
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -1268,9 +1270,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Style = "subscript",
 				IsEnabled = true
 			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, Cache, _lcmStyleSheet);
 			//make sure that fontinfo with the subscript overrides made it into css
@@ -1284,8 +1287,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "LanguageExplorerTests";
 			var style = GenerateStyle("superscript");
-			var fontInfo = new FontInfo();
-			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSuper;
+			var fontInfo = new FontInfo
+			{
+				m_superSub = { ExplicitValue = FwSuperscriptVal.kssvSuper }
+			};
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -1295,9 +1300,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Style = "superscript",
 				IsEnabled = true
 			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, Cache, _lcmStyleSheet);
 			//make sure that fontinfo with the superscript overrides made it into css

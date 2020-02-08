@@ -5,41 +5,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorer.Areas;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
-#if RANDYTODO
 	/// <summary>
 	/// Tests the InterestingTextsList class.
 	/// </summary>
 	[TestFixture]
 	public class InterestingTextsTests
 	{
-		MockStTextRepository m_mockStTextRepo;
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
+		private static int s_nextHvo = 1;
+		private FlexComponentParameters _flexComponentParameters;
+		MockStTextRepository _mockStTextRepo;
+		private InterestingTextsChangedArgs _lastTextsChangedArgs;
+		private readonly List<IScrSection> _mockedSections = new List<IScrSection>();
 
 		[SetUp]
 		public void Initialize()
 		{
-			m_mockStTextRepo = new MockStTextRepository();
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new Test.TestUtils.MockPublisher());
-			m_sections.Clear();
+			_mockStTextRepo = new MockStTextRepository();
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_mockedSections.Clear();
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			m_mediator.Dispose();
-			m_mediator = null;
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			_flexComponentParameters = null;
 		}
 
 		/// <summary>
@@ -48,73 +49,47 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GetCoreTexts()
 		{
-			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			var mockTextRep = MakeMockTextRepoWithTwoMockTexts();
+			var testObj = new InterestingTextList(_flexComponentParameters.PropertyTable, mockTextRep, _mockStTextRepo);
+			VerifyList(CurrentTexts(mockTextRep), testObj.InterestingTexts, "texts from initial list of two");
 			// Make sure it works if there are none.
-			Assert.AreEqual(0, new InterestingTextList(m_mediator, m_propertyTable, new MockTextRepository(), m_mockStTextRepo).InterestingTexts.Count());
-			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[0].ContentsOA));
+			Assert.AreEqual(0, new InterestingTextList(_flexComponentParameters.PropertyTable, new MockTextRepository(), _mockStTextRepo).InterestingTexts.Count());
+			Assert.IsTrue(testObj.IsInterestingText(mockTextRep._texts[0].ContentsOA));
 			Assert.IsFalse(testObj.IsInterestingText(new MockStText()));
 		}
 
 		[Test]
 		public void AddAndRemoveCoreTexts()
 		{
-			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
+			var mockTextRep = MakeMockTextRepoWithTwoMockTexts();
+			var testObj = new InterestingTextList(_flexComponentParameters.PropertyTable, mockTextRep, _mockStTextRepo);
 			Assert.AreEqual(0, testObj.ScriptureTexts.Count());
 			testObj.InterestingTextsChanged += TextsChangedHandler;
-			MockText newText = AddMockText(mockTextRep, testObj);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			AddMockText(mockTextRep, testObj);
+			VerifyList(CurrentTexts(mockTextRep), testObj.InterestingTexts, "texts from initial list of two");
 			VerifyTextsChangedArgs(2, 1, 0);
-			var removed = mockTextRep.m_texts[1].ContentsOA;
+			var removed = mockTextRep._texts[1].ContentsOA;
 			RemoveText(mockTextRep, testObj,1);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			VerifyList(CurrentTexts(mockTextRep), testObj.InterestingTexts, "texts from initial list of two");
 			VerifyTextsChangedArgs(1, 0, 1);
-			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA), "text not removed still interesting");
+			Assert.IsTrue(testObj.IsInterestingText(mockTextRep._texts[1].ContentsOA), "text not removed still interesting");
 			Assert.IsFalse(testObj.IsInterestingText(removed), "removed text no longer interesting");
 		}
 
 		[Test]
 		public void ReplaceCoreText()
 		{
-			MockTextRepository mockTextRepo = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRepo, m_mockStTextRepo);
+			var mockTextRepo = MakeMockTextRepoWithTwoMockTexts();
+			var testObj = new InterestingTextList(_flexComponentParameters.PropertyTable, mockTextRepo, _mockStTextRepo);
 			var firstStText = testObj.InterestingTexts.First();
-			MockText firstText = firstStText.Owner as MockText;
+			var firstText = (IText)firstStText.Owner;
 			var replacement = new MockStText();
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			firstText.ContentsOA = replacement;
 			testObj.PropChanged(firstText.Hvo, TextTags.kflidContents, 0, 1, 1);
-
-			VerifyList(CurrentTexts(mockTextRepo),
-				testObj.InterestingTexts, "texts after replace");
+			VerifyList(CurrentTexts(mockTextRepo), testObj.InterestingTexts, "texts after replace");
 			// Various possibilities could be valid for the arguments...for now just verify we got something.
-			Assert.That(m_lastTextsChangedArgs, Is.Not.Null);
-		}
-
-		private InterestingTextList SetupTwoMockTextsAndOneScriptureSection(bool fIncludeScripture, out List<IStText> expectedScripture,
-			out List<IStText> expected)
-		{
-			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			MakeMockScriptureSection();
-			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true, true);
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, fIncludeScripture);
-			testObj.InterestingTextsChanged += TextsChangedHandler;
-			expectedScripture = new List<IStText>();
-			expectedScripture.Add(m_sections[0].ContentOA);
-			expectedScripture.Add(m_sections[0].HeadingOA);
-			VerifyScriptureList(testObj, expectedScripture, "Initially two Scripture texts");
-
-			expected = new List<IStText>(CurrentTexts(mockTextRep));
-			if (fIncludeScripture)
-				expected.AddRange(expectedScripture);
-			VerifyList(expected, testObj.InterestingTexts, "two ordinary and two Scripture texts");
-			return testObj;
+			Assert.That(_lastTextsChangedArgs, Is.Not.Null);
 		}
 
 		/// <summary>
@@ -123,80 +98,66 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void PropertyTableHasInvalidObjects()
 		{
-			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
+			var mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
-			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true, true);
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, true);
+			_flexComponentParameters.PropertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(new ICmObject[] { _mockedSections[0].ContentOA, _mockedSections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true, true);
+			var testObj = new InterestingTextList(_flexComponentParameters.PropertyTable, mockTextRep, _mockStTextRepo, true);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
-			var expectedScripture = new List<IStText>();
-			expectedScripture.Add(m_sections[0].ContentOA);
-			expectedScripture.Add(m_sections[0].HeadingOA);
+			var expectedScripture = new List<IStText>
+			{
+				_mockedSections[0].ContentOA,
+				_mockedSections[0].HeadingOA
+			};
 			VerifyList(expectedScripture, testObj.ScriptureTexts, "Just two valid Guids");
 		}
 
-		private void VerifyScriptureList(InterestingTextList testObj, List<IStText> expectedScripture, string comment)
-		{
-			VerifyList(expectedScripture, testObj.ScriptureTexts, comment);
-			Assert.AreEqual(InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>()),
-				m_propertyTable.GetValue<string>(InterestingTextList.PersistPropertyName));
-		}
-
-		private List<MockScrSection> m_sections = new List<MockScrSection>();
-
 		private void MakeMockScriptureSection()
 		{
-			var section = new MockScrSection();
-			m_sections.Add(section);
+			IScrSection section = new MockScrSection();
+			_mockedSections.Add(section);
 			section.ContentOA = new MockStText();
 			section.HeadingOA = new MockStText();
-			m_mockStTextRepo.m_texts.Add(section.ContentOA);
-			m_mockStTextRepo.m_texts.Add(section.HeadingOA);
+			_mockStTextRepo._texts.Add(section.ContentOA);
+			_mockStTextRepo._texts.Add(section.HeadingOA);
 		}
 
 		private void VerifyTextsChangedArgs(int insertAt, int inserted, int deleted)
 		{
-			Assert.AreEqual(insertAt, m_lastTextsChangedArgs.InsertedAt);
-			Assert.AreEqual(inserted, m_lastTextsChangedArgs.NumberInserted);
-			Assert.AreEqual(deleted, m_lastTextsChangedArgs.NumberDeleted);
+			Assert.AreEqual(insertAt, _lastTextsChangedArgs.InsertedAt);
+			Assert.AreEqual(inserted, _lastTextsChangedArgs.NumberInserted);
+			Assert.AreEqual(deleted, _lastTextsChangedArgs.NumberDeleted);
 		}
-
-		private InterestingTextsChangedArgs m_lastTextsChangedArgs;
 
 		private void TextsChangedHandler(object sender, InterestingTextsChangedArgs e)
 		{
-			m_lastTextsChangedArgs = e;
+			_lastTextsChangedArgs = e;
 		}
 
-		private List<IStText> CurrentTexts(MockTextRepository mockTextRep)
+		private static List<IStText> CurrentTexts(MockTextRepository mockTextRep)
 		{
-			return (mockTextRep.m_texts.Select(text => text.ContentsOA)).ToList();
+			return (mockTextRep._texts.Select(text => text.ContentsOA)).ToList();
 		}
 
-		private void RemoveText(MockTextRepository mockTextRep, InterestingTextList testObj, int index)
+		private static void RemoveText(MockTextRepository mockTextRep, InterestingTextList testObj, int index)
 		{
-			var oldTextHvo = mockTextRep.m_texts[index].Hvo;
-			((MockText)mockTextRep.m_texts[index]).IsValidObject = false;
-			((MockStText) mockTextRep.m_texts[index].ContentsOA).IsValidObject = false;
-			mockTextRep.m_texts.RemoveAt(index);
+			var oldTextHvo = mockTextRep._texts[index].Hvo;
+			((MockText)mockTextRep._texts[index]).IsValidObject = false;
+			((MockStText) mockTextRep._texts[index].ContentsOA).IsValidObject = false;
+			mockTextRep._texts.RemoveAt(index);
 			testObj.PropChanged(oldTextHvo, TextTags.kflidContents, 0, 0, 1);
 		}
 
-		private MockText AddMockText(MockTextRepository mockTextRep, InterestingTextList testObj)
+		private static void AddMockText(MockTextRepository mockTextRep, InterestingTextList testObj)
 		{
-			var newText = new MockText();
-			mockTextRep.m_texts.Add(newText);
+			IText newText = new MockText();
+			mockTextRep._texts.Add(newText);
 			testObj.PropChanged(newText.Hvo, TextTags.kflidContents, 0, 1, 0);
-			return newText;
 		}
 
-		static int s_nextHvo = 1;
-
-		static public int NextHvo() {
-			return s_nextHvo++; }
+		private static int NextHvo() { return s_nextHvo++; }
 
 		// Verify the two lists have the same members (not necessarily in the same order)
-		private void VerifyList(List<IStText> expected, IEnumerable<IStText> actual, string comment)
+		private static void VerifyList(List<IStText> expected, IEnumerable<IStText> actual, string comment)
 		{
 			Assert.AreEqual(expected.Count, actual.Count(), comment + " count");
 			var expectedSet = new HashSet<IStText>(expected);
@@ -207,821 +168,753 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(0, missing.Count(), comment + " has missing elements");
 		}
 
-		private MockTextRepository MakeMockTextRepoWithTwoMockTexts()
+		private static MockTextRepository MakeMockTextRepoWithTwoMockTexts()
 		{
 			var mockTextRep = new MockTextRepository();
 			var mockText1 = new MockText();
 			var mockText2 = new MockText();
-			mockTextRep.m_texts.Add(mockText1);
-			mockTextRep.m_texts.Add(mockText2);
+			mockTextRep._texts.Add(mockText1);
+			mockTextRep._texts.Add(mockText2);
 			return mockTextRep;
 		}
-	}
 
-	// REVIEW: The following looks like it should be using Rhino mocks, so it doesn't get broken every time the interfaces change
-	internal class MockCmObject : ICmObject
-	{
-		internal MockCmObject()
+		private sealed class MockStTextRepository : IStTextRepository
 		{
-			Hvo = InterestingTextsTests.NextHvo();
-			IsValidObject = true;
-			Guid = Guid.NewGuid();
+			internal readonly List<IStText> _texts = new List<IStText>();
 
-		}
-
-		public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
-		public int Hvo { get; private set;}
-
-		public ICmObject Owner { get; set;}
-
-		public int OwningFlid
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int OwnOrd
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int ClassID
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public Guid Guid { get; private set;}
-
-		public ICmObjectId Id
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ICmObject GetObject(ICmObjectRepository repo)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string ToXmlString()
-		{
-			throw new NotImplementedException();
-		}
-
-		public string ClassName
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		/// <summary>
-		/// Delete the recipient object.
-		/// </summary>
-		public void Delete()
-		{
-			throw new NotImplementedException();
-		}
-
-		public ILcmServiceLocator Services
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ICmObject m_mockOwnerOfClass;
-		public ICmObject OwnerOfClass(int clsid)
-		{
-			return m_mockOwnerOfClass;
-		}
-
-		public T OwnerOfClass<T>() where T : ICmObject
-		{
-			throw new NotImplementedException();
-		}
-
-		public ICmObject Self
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void PostClone(Dictionary<int, ICmObject> copyMap)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void AllReferencedObjects(List<ICmObject> collector)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsOwnedBy(ICmObject possibleOwner)
-		{
-			throw new NotImplementedException();
-		}
-
-		public ICmObject ReferenceTargetOwner(int flid)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsFieldRequired(int flid)
-		{
-			throw new NotImplementedException();
-		}
-
-		public int IndexInOwner
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsValidObject { get; set; }
-
-		public LcmCache Cache
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public void MergeObject(ICmObject objSrc)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool CanDelete
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ITsString ObjectIdName
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public string ShortName
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ITsString ShortNameTSS
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ITsString DeletionTextTSS
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ITsString ChooserNameTS
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public string SortKey
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public string SortKeyWs
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int SortKey2
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public string SortKey2Alpha
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public HashSet<ICmObject> ReferringObjects
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IEnumerable<ICmObject> OwnedObjects { get; private set; }
-	}
-
-	internal class MockScrSection : MockCmObject, IScrSection
-	{
-		private IStText m_heading;
-		public IStText HeadingOA
-		{
-			get { return m_heading; }
-			set
+			public IEnumerable<ICmObject> AllInstances(int classId)
 			{
-				m_heading = value;
-				if (m_heading != null)
-					((MockCmObject)m_heading).Owner = this;
+				throw new NotSupportedException();
 			}
-		}
 
-		private IStText m_content;
-		public IStText ContentOA
-		{
-			get { return m_content; }
-			set
+			public IStText GetObject(ICmObjectId id)
 			{
-				m_content = value;
-				if (m_content != null)
-					((MockCmObject) m_content).Owner = this;
+				throw new NotSupportedException();
 			}
-		}
 
-		public int VerseRefStart
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public int VerseRefEnd
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public int VerseRefMin
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public int VerseRefMax
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public bool ContainsChapter(int chapter)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsIntro
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int ContentParagraphCount
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int HeadingParagraphCount
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IEnumerable<IScrTxtPara> Paragraphs
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool IsFirstScriptureSection
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IScrSection PreviousSection
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IScrSection NextSection
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IStTxtPara FirstContentParagraph
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IStTxtPara LastContentParagraph
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IStTxtPara FirstHeadingParagraph
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IStTxtPara LastHeadingParagraph
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ContextValues Context
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool StartsWithVerseOrChapterNumber
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool StartsWithChapterNumber
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool ContainsReference(ScrReference reference)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void MoveHeadingParasToContent(int indexFirstPara, IStStyle newStyle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void MoveContentParasToHeading(int indexLastPara)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionHeading_atIP(int iParaSplit, int ichSplit)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SplitSectionHeading_ExistingParaBecomesContent(int iParaStart, int iParaEnd)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionContent_atIP(int iParaSplit, ITsString headingText, string headingParaStyle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionContent_atIP(int iParaSplit, int ichSplit)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionContent_atIP(int iParaSplit, int ichSplit, IStText newHeading)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(int iPara, int cParagraphs)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void DeleteParagraph(IScrTxtPara para)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void GetDisplayRefs(out BCVRef startRef, out BCVRef endRef)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<IScrFootnote> GetFootnotes()
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrFootnote FindFirstFootnote(out int iPara, out int ich, out int tag)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrFootnote FindLastFootnote(out int iPara, out int ich, out int tag)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void MoveContentParasToHeading(int indexLastPara, IStStyle newStyle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(int iPara, int cParagraphs, IStStyle newStyle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SplitSectionHeading_ExistingParaBecomesContent(int iParaStart, int iParaEnd, IStStyle newStyle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SetCloneProperties(ICmObject clone)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal class MockStTextRepository : IStTextRepository
-	{
-		public IEnumerable<ICmObject> AllInstances(int classId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<IStText> m_texts = new List<IStText>();
-
-		public IStText GetObject(ICmObjectId id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IStText GetObject(Guid id)
-		{
-			foreach (var st in m_texts)
-				if (st.Guid == id)
+			public IStText GetObject(Guid id)
+			{
+				foreach (var st in _texts.Where(st => st.Guid == id))
+				{
 					return st;
-			Assert.Fail("Looking for invalid Guid " + id);
-			return null; // make compiler happy.
-		}
+				}
+				Assert.Fail("Looking for invalid Guid " + id);
+				return null; // make compiler happy.
+			}
 
-		public bool TryGetObject(Guid id, out IStText obj)
-		{
-			foreach (var st in m_texts)
+			public bool TryGetObject(Guid id, out IStText obj)
 			{
-				if (st.Guid == id)
+				foreach (var st in _texts.Where(st => st.Guid == id))
 				{
 					obj = st;
 					return true;
 				}
+				obj = null;
+				return false;
 			}
-			obj = null;
-			return false;
-		}
 
-		public IStText GetObject(int hvo)
-		{
-			foreach (var st in m_texts)
-				if (st.Hvo == hvo)
-					return st;
-			Assert.Fail("Looking for invalid HVO " + hvo);
-			return null; // make compiler happy.
-		}
-
-		public bool TryGetObject(int hvo, out IStText obj)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<IStText> AllInstances()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int Count
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IList<IStText> GetObjects(IList<int> hvos)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-
-	internal class MockTextRepository : ITextRepository
-	{
-
-		public List<IText> m_texts = new List<IText>();
-
-		public IEnumerable<ICmObject> AllInstances(int classId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IText GetObject(ICmObjectId id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IText GetObject(Guid id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool TryGetObject(Guid guid, out IText obj)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IText GetObject(int hvo)
-		{
-			foreach (var st in m_texts)
-				if (st.Hvo == hvo)
-					return st;
-			Assert.Fail("Looking for invalid HVO " + hvo);
-			return null; // make compiler happy.
-		}
-
-		public bool TryGetObject(int hvo, out IText obj)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<IText> AllInstances()
-		{
-			return m_texts.ToArray();
-		}
-
-		public int Count
-		{
-			get { throw new NotImplementedException(); }
-		}
-	}
-
-	internal class MockText : MockCmObject, IText
-	{
-		public MockText()
-		{
-			ContentsOA = new MockStText();
-		}
-
-		public IRnGenericRec AssociatedNotebookRecord
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get or set the MediaFiles
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ICmMediaContainer MediaFilesOA
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public void AssociateWithNotebook(bool makeYourOwnUow)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IMultiString Source
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public string SoundFilePath
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-
-		private IStText m_contents;
-		public IStText ContentsOA
-		{
-			get { return m_contents; }
-			set
+			public IStText GetObject(int hvo)
 			{
-				if (m_contents != null)
-					((MockStText)m_contents).IsValidObject = false;
-				m_contents = value;
-				if (m_contents != null)
-					((MockCmObject)m_contents).Owner = this;
+				foreach (var st in _texts.Where(st => st.Hvo == hvo))
+				{
+					return st;
+				}
+				Assert.Fail("Looking for invalid HVO " + hvo);
+				return null; // make compiler happy.
+			}
+
+			public bool TryGetObject(int hvo, out IStText obj)
+			{
+				throw new NotSupportedException();
+			}
+
+			public IEnumerable<IStText> AllInstances()
+			{
+				throw new NotSupportedException();
+			}
+
+			public int Count
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			public IList<IStText> GetObjects(IList<int> hvos)
+			{
+				throw new NotSupportedException();
 			}
 		}
-		public ILcmReferenceCollection<ICmPossibility> GenresRC
+
+		private sealed class MockTextRepository : ITextRepository
 		{
-			get { throw new NotImplementedException(); }
+
+			internal readonly List<IText> _texts = new List<IText>();
+
+			public IEnumerable<ICmObject> AllInstances(int classId)
+			{
+				throw new NotSupportedException();
+			}
+
+			public IText GetObject(ICmObjectId id)
+			{
+				throw new NotSupportedException();
+			}
+
+			public IText GetObject(Guid id)
+			{
+				throw new NotSupportedException();
+			}
+
+			public bool TryGetObject(Guid guid, out IText obj)
+			{
+				throw new NotSupportedException();
+			}
+
+			public IText GetObject(int hvo)
+			{
+				foreach (var st in _texts.Where(st => st.Hvo == hvo))
+				{
+					return st;
+				}
+				Assert.Fail("Looking for invalid HVO " + hvo);
+				return null; // make compiler happy.
+			}
+
+			public bool TryGetObject(int hvo, out IText obj)
+			{
+				throw new NotSupportedException();
+			}
+
+			public IEnumerable<IText> AllInstances()
+			{
+				return _texts.ToArray();
+			}
+
+			public int Count
+			{
+				get { throw new NotSupportedException(); }
+			}
 		}
 
-		public IMultiUnicode Abbreviation
+		private class MockCmObject : ICmObject
 		{
-			get { throw new NotImplementedException(); }
+			private ICmObject _mockOwnerOfClass;
+			private readonly int _hvo;
+			private readonly Guid _guid;
+
+			internal MockCmObject()
+			{
+				_hvo = NextHvo();
+				IsValidObject = true;
+				_guid = Guid.NewGuid();
+			}
+
+			private IEnumerable<ICmObject> AllOwnedObjects { get; set; }
+
+			IEnumerable<ICmObject> ICmObject.AllOwnedObjects => AllOwnedObjects;
+
+			int ICmObject.Hvo => _hvo;
+
+			public ICmObject Owner { get; set; }
+
+			int ICmObject.OwningFlid
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int ICmObject.OwnOrd
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int ICmObject.ClassID
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			Guid ICmObject.Guid => _guid;
+
+			ICmObjectId ICmObjectOrId.Id
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ICmObject ICmObjectOrId.GetObject(ICmObjectRepository repo)
+			{
+				throw new NotSupportedException();
+			}
+
+			string ICmObject.ClassName
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			/// <summary>
+			/// Delete the recipient object.
+			/// </summary>
+			void ICmObject.Delete()
+			{
+				throw new NotSupportedException();
+			}
+
+			ILcmServiceLocator ICmObject.Services
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ICmObject ICmObject.OwnerOfClass(int clsid)
+			{
+				return _mockOwnerOfClass;
+			}
+
+			T ICmObject.OwnerOfClass<T>()
+			{
+				throw new NotSupportedException();
+			}
+
+			ICmObject ICmObject.Self
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool ICmObject.CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
+			{
+				throw new NotSupportedException();
+			}
+
+			void ICmObject.PostClone(Dictionary<int, ICmObject> copyMap)
+			{
+				throw new NotSupportedException();
+			}
+
+			void ICmObject.AllReferencedObjects(List<ICmObject> collector)
+			{
+				throw new NotSupportedException();
+			}
+
+			bool ICmObject.IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
+			{
+				throw new NotSupportedException();
+			}
+
+			bool ICmObject.IsOwnedBy(ICmObject possibleOwner)
+			{
+				throw new NotSupportedException();
+			}
+
+			ICmObject ICmObject.ReferenceTargetOwner(int flid)
+			{
+				throw new NotSupportedException();
+			}
+
+			bool ICmObject.IsFieldRequired(int flid)
+			{
+				throw new NotSupportedException();
+			}
+
+			int ICmObject.IndexInOwner
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IEnumerable<ICmObject> ICmObject.ReferenceTargetCandidates(int flid)
+			{
+				throw new NotSupportedException();
+			}
+
+			public bool IsValidObject { get; set; }
+
+			LcmCache ICmObject.Cache
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			void ICmObject.MergeObject(ICmObject objSrc)
+			{
+				throw new NotSupportedException();
+			}
+
+			void ICmObject.MergeObject(ICmObject objSrc, bool fLoseNoStringData)
+			{
+				throw new NotSupportedException();
+			}
+
+			bool ICmObject.CanDelete
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ITsString ICmObject.ObjectIdName
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			string ICmObject.ShortName
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ITsString ICmObject.ShortNameTSS
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ITsString ICmObject.DeletionTextTSS
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ITsString ICmObject.ChooserNameTS
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			string ICmObject.SortKey
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			string ICmObject.SortKeyWs
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int ICmObject.SortKey2
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			string ICmObject.SortKey2Alpha
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			HashSet<ICmObject> ICmObject.ReferringObjects
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IEnumerable<ICmObject> ICmObject.OwnedObjects
+			{
+				get { throw new NotSupportedException(); }
+			}
 		}
 
-		public bool IsTranslated
+		private sealed class MockScrSection : MockCmObject, IScrSection
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			private IStText _heading;
+			private IStText _content;
+
+			IStText IScrSection.HeadingOA
+			{
+				get { return _heading; }
+				set
+				{
+					_heading = value;
+					if (_heading != null)
+					{
+						((MockCmObject)_heading).Owner = this;
+					}
+				}
+			}
+
+			IStText IScrSection.ContentOA
+			{
+				get { return _content; }
+				set
+				{
+					_content = value;
+					if (_content != null)
+					{
+						((MockCmObject)_content).Owner = this;
+					}
+				}
+			}
+
+			int IScrSection.VerseRefStart
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			int IScrSection.VerseRefEnd
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			int IScrSection.VerseRefMin
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			int IScrSection.VerseRefMax
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			bool IScrSection.ContainsChapter(int chapter)
+			{
+				throw new NotSupportedException();
+			}
+
+			bool IScrSection.IsIntro
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int IScrSection.ContentParagraphCount
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int IScrSection.HeadingParagraphCount
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IEnumerable<IScrTxtPara> IScrSection.Paragraphs
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IScrSection.IsFirstScriptureSection
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IScrSection IScrSection.PreviousSection
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IScrSection IScrSection.NextSection
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IStTxtPara IScrSection.FirstContentParagraph
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IStTxtPara IScrSection.LastContentParagraph
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IStTxtPara IScrSection.FirstHeadingParagraph
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IStTxtPara IScrSection.LastHeadingParagraph
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ContextValues IScrSection.Context
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IScrSection.StartsWithVerseOrChapterNumber
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IScrSection.StartsWithChapterNumber
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IScrSection.ContainsReference(ScrReference reference)
+			{
+				throw new NotSupportedException();
+			}
+
+			void IScrSection.MoveHeadingParasToContent(int indexFirstPara, IStStyle newStyle)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrSection IScrSection.SplitSectionHeading_atIP(int iParaSplit, int ichSplit)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrSection IScrSection.SplitSectionContent_atIP(int iParaSplit, ITsString headingText, string headingParaStyle)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrSection IScrSection.SplitSectionContent_atIP(int iParaSplit, int ichSplit)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrSection IScrSection.SplitSectionContent_atIP(int iParaSplit, int ichSplit, IStText newHeading)
+			{
+				throw new NotSupportedException();
+			}
+
+			void IScrSection.GetDisplayRefs(out BCVRef startRef, out BCVRef endRef)
+			{
+				throw new NotSupportedException();
+			}
+
+			List<IScrFootnote> IScrSection.GetFootnotes()
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrFootnote IScrSection.FindFirstFootnote(out int iPara, out int ich, out int tag)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrFootnote IScrSection.FindLastFootnote(out int iPara, out int ich, out int tag)
+			{
+				throw new NotSupportedException();
+			}
+
+			void IScrSection.MoveContentParasToHeading(int indexLastPara, IStStyle newStyle)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrSection IScrSection.SplitSectionContent_ExistingParaBecomesHeading(int iPara, int cParagraphs, IStStyle newStyle)
+			{
+				throw new NotSupportedException();
+			}
+
+			void IScrSection.SplitSectionHeading_ExistingParaBecomesContent(int iParaStart, int iParaEnd, IStStyle newStyle)
+			{
+				throw new NotSupportedException();
+			}
+
+			void ICloneableCmObject.SetCloneProperties(ICmObject clone)
+			{
+				throw new NotSupportedException();
+			}
 		}
 
-
-		public IMultiUnicode Name
+		private sealed class MockText : MockCmObject, IText
 		{
-			get { throw new NotImplementedException(); }
+			private IStText _contents;
+
+			private IText AsIText => this;
+
+			internal MockText()
+			{
+				AsIText.ContentsOA = new MockStText();
+			}
+
+			public IRnGenericRec AssociatedNotebookRecord
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			/// <summary>
+			/// Get or set the MediaFiles
+			/// </summary>
+			public ICmMediaContainer MediaFilesOA
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			public void AssociateWithNotebook(bool makeYourOwnUow)
+			{
+				throw new NotSupportedException();
+			}
+
+			IMultiString IText.Source
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IStText IText.ContentsOA
+			{
+				get { return _contents; }
+				set
+				{
+					if (_contents != null)
+					{
+						((MockStText)_contents).IsValidObject = false;
+					}
+					_contents = value;
+					if (_contents != null)
+					{
+						((MockStText)_contents).Owner = this;
+					}
+				}
+			}
+
+			ILcmReferenceCollection<ICmPossibility> IText.GenresRC
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IMultiUnicode IText.Abbreviation
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IText.IsTranslated
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			IMultiUnicode ICmMajorObject.Name
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			DateTime ICmMajorObject.DateCreated
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			DateTime ICmMajorObject.DateModified
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			IMultiString ICmMajorObject.Description
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ILcmOwningCollection<IPublication> ICmMajorObject.PublicationsOC
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			ILcmOwningCollection<IPubHFSet> ICmMajorObject.HeaderFooterSetsOC
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IPubHFSet ICmMajorObject.FindHeaderFooterSetByName(string name)
+			{
+				throw new NotSupportedException();
+			}
 		}
 
-		public DateTime DateCreated
+		private sealed class MockStText : MockCmObject, IStText
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+			ILcmOwningSequence<IStPara> IStText.ParagraphsOS
+			{
+				get { throw new NotSupportedException(); }
+			}
 
-		public DateTime DateModified
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+			bool IStText.RightToLeft
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
 
-		public IMultiString Description
-		{
-			get { throw new NotImplementedException(); }
-		}
+			ILcmOwningCollection<ITextTag> IStText.TagsOC
+			{
+				get { throw new NotSupportedException(); }
+			}
 
-		public ILcmOwningCollection<IPublication> PublicationsOC
-		{
-			get { throw new NotImplementedException(); }
-		}
+			DateTime IStText.DateModified
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
 
-		public ILcmOwningCollection<IPubHFSet> HeaderFooterSetsOC
-		{
-			get { throw new NotImplementedException(); }
-		}
+			IStTxtPara IStText.this[int i]
+			{
+				get { throw new NotSupportedException(); }
+			}
 
-		public IPubHFSet FindHeaderFooterSetByName(string name)
-		{
-			throw new NotImplementedException();
+			bool IStText.IsEmpty
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IScrFootnote IStText.FindFirstFootnote(out int iPara, out int ich)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrFootnote IStText.FindLastFootnote(out int iPara, out int ich)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrFootnote IStText.FindNextFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
+			{
+				throw new NotSupportedException();
+			}
+
+			IScrFootnote IStText.FindPreviousFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
+			{
+				throw new NotSupportedException();
+			}
+
+			IStTxtPara IStText.AddNewTextPara(string paraStyleName)
+			{
+				throw new NotSupportedException();
+			}
+
+			IStTxtPara IStText.InsertNewTextPara(int iPos, string paraStyleName)
+			{
+				throw new NotSupportedException();
+			}
+
+			IStTxtPara IStText.InsertNewPara(int paragraphIndex, string paraStyleName, ITsString tss)
+			{
+				throw new NotSupportedException();
+			}
+
+			IMultiAccessorBase IStText.Title
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IMultiAccessorBase IStText.Source
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			IMultiAccessorBase IStText.Comment
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			List<ICmPossibility> IStText.GenreCategories
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			int IStText.MainWritingSystem
+			{
+				get { throw new NotSupportedException(); }
+			}
+
+			bool IStText.IsTranslation
+			{
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
+			}
+
+			HashSet<IWfiWordform> IStText.UniqueWordforms()
+			{
+				throw new NotSupportedException();
+			}
+
+			void IStText.DeleteParagraph(IStTxtPara para)
+			{
+				throw new NotSupportedException();
+			}
 		}
 	}
-
-	internal class MockStText : MockCmObject, IStText
-	{
-		public MockStText()
-		{
-		}
-
-		public ILcmOwningSequence<IStPara> ParagraphsOS
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool RightToLeft
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public ILcmOwningCollection<ITextTag> TagsOC
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public DateTime DateModified
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public IStTxtPara this[int i]
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool IsEmpty
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IScrFootnote FindFirstFootnote(out int iPara, out int ich)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrFootnote FindLastFootnote(out int iPara, out int ich)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrFootnote FindNextFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IScrFootnote FindPreviousFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IStTxtPara AddNewTextPara(string paraStyleName)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IStTxtPara InsertNewTextPara(int iPos, string paraStyleName)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IStTxtPara InsertNewPara(int paragraphIndex, string paraStyleName, ITsString tss)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IMultiAccessorBase Title
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IMultiAccessorBase Source
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IMultiAccessorBase Comment
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public List<ICmPossibility> GenreCategories
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public int MainWritingSystem
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool IsTranslation
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public HashSet<IWfiWordform> UniqueWordforms()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void DeleteParagraph(IStTxtPara para)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal class MockScrDraft : MockCmObject, IScrDraft
-	{
-		public IScrBook FindBook(int bookOrd)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string Description
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public ILcmOwningSequence<IScrBook> BooksOS
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public DateTime DateCreated
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public ScrDraftType Type
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public bool Protected
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public IScrBook AddBookCopy(IScrBook book)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void AddBookMove(IScrBook book)
-		{
-			throw new NotImplementedException();
-		}
-	}
-#endif
 }

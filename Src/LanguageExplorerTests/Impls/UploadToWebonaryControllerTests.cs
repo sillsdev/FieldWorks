@@ -4,108 +4,77 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using Ionic.Zip;
 using LanguageExplorer;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Impls
 {
-#if RANDYTODO
 	public class UploadToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private FwXApp m_application;
-		private FwXWindow m_window;
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-		private LcmStyleSheet m_styleSheet;
-		private StyleInfoTable m_owningTable;
-		private RecordList m_recordList;
+		private bool _isDisposed;
+		private FlexComponentParameters _flexComponentParameters;
+		private LcmStyleSheet _styleSheet;
+		private StyleInfoTable _owningStyleInfoTable;
+		private IRecordList _entriesRecordList;
+		private IRecordList _allReversalEntriesRecordList;
+		private StubContentControlProvider _stubContentControlProvider;
+		private StatusBar _statusBar;
 
-	#region Environment
+		#region Environment
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, includeFwApplicationSettings: true);
+			var propertyTable = _flexComponentParameters.PropertyTable;
+			var reversalIndexRepository = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			reversalIndexRepository.EnsureReversalIndicesExist(Cache, propertyTable);
 			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-			m_propertyTable.SetProperty("AppSettings", new FwApplicationSettings(), false);
-			m_propertyTable.SetPropertyPersistence("AppSettings", false);
-			m_mediator = m_window.Mediator;
-			m_mediator.AddColleague(new StubContentControlProvider());
-			m_window.LoadUI(configFilePath);
-			// set up clerk to allow DictionaryPublicationDecorator to be created during the UploadToWebonaryController driven export
-			const string reversalIndexClerk = @"<?xml version='1.0' encoding='UTF-8'?>
-			<root>
-				<clerks>
-					<clerk id='entries'>
-						<recordList owner='LexDb' property='Entries'/>
-					</clerk>
-					<clerk id='AllReversalEntries'>
-						<recordList owner = 'ReversalIndex' property='AllEntries'>
-						<dynamicloaderinfo assemblyPath = 'LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList'/>
-						</recordList>
-					</clerk>
-				</clerks>
-				<tools>
-					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView'>
-						<control>
-							<dynamicloaderinfo assemblyPath='xWorks.dll' class='LanguageExplorer.Works.XhtmlDocView'/>
-							<parameters area='lexicon' clerk='entries' layout='Bartholomew' layoutProperty='DictionaryPublicationLayout' editable='false' configureObjectName='Dictionary'/>
-						</control>
-					</tool>
-					<tool label='ReversalIndex' value='lexiconReversalIndex' icon='DocumentView'>
-						<control>
-							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.RecordEditView'/>
-							<parameters area = 'lexicon' clerk = 'AllReversalEntries' layout = 'Normal' treeBarAvailability = 'NotAllowed' emptyTitleId = 'No-ReversalIndexEntries' />
-						</control>
-					</tool>
-				</tools>
-			</root>";
-			var doc = new XmlDocument();
-			doc.LoadXml(reversalIndexClerk);
-			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			m_recordList = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
-			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
-
-			clerkNode = doc.SelectSingleNode("//tools/tool[@label='ReversalIndex']//parameters[@area='lexicon']");
-			m_recordList = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
-			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
-
-			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
+			_stubContentControlProvider = new StubContentControlProvider();
+			_stubContentControlProvider.InitializeFlexComponent(_flexComponentParameters);
+			_statusBar = new StatusBar();
+			var recordListRepositoryForTools = propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
+			_entriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.Entries, _statusBar, LexiconArea.EntriesFactoryMethod);
+			recordListRepositoryForTools.ActiveRecordList = _entriesRecordList;
+			_allReversalEntriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.AllReversalEntries, _statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
+			recordListRepositoryForTools.ActiveRecordList = _allReversalEntriesRecordList;
+			_flexComponentParameters.PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}_{AreaServices.LexiconAreaMachineName}", AreaServices.LexiconDictionaryMachineName);
 			Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
-			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
-
+			_styleSheet = new LcmStyleSheet();
+			_styleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
-
-			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
+			_owningStyleInfoTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 			var fontInfo = new FontInfo();
 			var letHeadStyle = new TestStyle(fontInfo, Cache) { Name = CssGenerator.LetterHeadingStyleName, IsParagraphStyle = false };
 			var dictNormStyle = new TestStyle(fontInfo, Cache) { Name = CssGenerator.DictionaryNormal, IsParagraphStyle = true };
-			m_styleSheet.Styles.Add(letHeadStyle);
-			m_styleSheet.Styles.Add(dictNormStyle);
-			m_owningTable.Add(CssGenerator.LetterHeadingStyleName, letHeadStyle);
-			m_owningTable.Add(CssGenerator.DictionaryNormal, dictNormStyle);
+			_styleSheet.Styles.Add(letHeadStyle);
+			_styleSheet.Styles.Add(dictNormStyle);
+			_owningStyleInfoTable.Add(CssGenerator.LetterHeadingStyleName, letHeadStyle);
+			_owningStyleInfoTable.Add(CssGenerator.DictionaryNormal, dictNormStyle);
 		}
 
 		[TestFixtureTearDown]
@@ -126,18 +95,29 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-	#region disposal
-		protected virtual void Dispose(bool disposing)
+		#region disposal
+		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
-				m_recordList?.Dispose();
-				m_application?.Dispose();
-				m_window?.Dispose();
-				m_mediator?.Dispose();
-				m_propertyTable?.Dispose();
+				_statusBar.Dispose();
+				_entriesRecordList.Dispose();
+				_allReversalEntriesRecordList.Dispose();
+				TestSetupServices.DisposeTrash(_flexComponentParameters);
 			}
+			_statusBar = null;
+			_entriesRecordList = null;
+			_allReversalEntriesRecordList = null;
+			_flexComponentParameters = null;
+
+			_isDisposed = true;
 		}
 
 		~UploadToWebonaryControllerTests()
@@ -155,8 +135,8 @@ namespace LanguageExplorerTests.Impls
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-	#endregion disposal
-	#endregion Environment
+		#endregion disposal
+		#endregion Environment
 
 		[Test]
 		public void UploadToWebonaryUsesViewConfigAndPub()
@@ -197,7 +177,6 @@ namespace LanguageExplorerTests.Impls
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 				testConfig["Test Config"] = model;
-
 				var reversalFormNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "ReversalForm",
@@ -223,10 +202,9 @@ namespace LanguageExplorerTests.Impls
 				reversalConfig["English"] = model;
 				model.Label = "English";
 				model.WritingSystem = "en";
-				List<string> reversalLanguage = new List<string>();
+				var reversalLanguage = new List<string>();
 				reversalLanguage.Add("English");
 				mockView.Model.SelectedReversals = reversalLanguage;
-
 				// create entry sufficient to generate xhtml and css
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
@@ -234,7 +212,6 @@ namespace LanguageExplorerTests.Impls
 				entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 				//SUT
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
-
 				// The names of the files being sent to webonary are listed while logging the zip
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.xhtml")), "xhtml not logged as compressed");
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.css")), "css not logged as compressed");
@@ -254,7 +231,6 @@ namespace LanguageExplorerTests.Impls
 			{
 				var view = SetUpView();
 				var model = view.Model;
-
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				Assert.That(view.StatusStrings.Any(s => s.Contains("Uploading")), "Inform that the process has started");
 				model.SiteName = null;
@@ -274,28 +250,28 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-	#region Test connection to local Webonary instance
+		#region Test connection to local Webonary instance
 
 		/// <summary>
 		/// Helper
 		/// </summary>
-		static string ConnectAndUpload(WebClient client)
+		private static string ConnectAndUpload(WebClient client)
 		{
-			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
-			var inputFile = "../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip";
+			const string targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
+			const string inputFile = "../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip";
 			var response = client.UploadFile(targetURI, inputFile);
 			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
 		}
-	#endregion
+		#endregion
 
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, null, null))
 			{
 				var view = new MockWebonaryDlg();
-				var model = new UploadToWebonaryModel(m_propertyTable);
+				var model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable);
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", null, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", model, null));
@@ -305,12 +281,12 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
-			var responseText = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, responseText))
+			var responseContents = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: responseContents))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						UserName = "nouser",
 						Password = "nopassword"
@@ -328,11 +304,11 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryReportsIncorrectSiteName()
 		{
 			// Test for a successful response indicating that a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: new byte[] { }, responseStatus: HttpStatusCode.Found))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -344,13 +320,15 @@ namespace LanguageExplorerTests.Impls
 			}
 
 			// Test with an exception which indicates a redirect should happen
-			var redirectException = new WebonaryClient.WebonaryException(new WebException("Redirected."));
-			redirectException.StatusCode = HttpStatusCode.Redirect;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[] { }))
+			var redirectException = new WebonaryException(new WebException("Redirected."))
+			{
+				StatusCode = HttpStatusCode.Redirect
+			};
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, redirectException, new byte[] { }))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -365,13 +343,15 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."));
-			ex.StatusCode = HttpStatusCode.BadRequest;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, ex, null))
+			var ex = new WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."))
+			{
+				StatusCode = HttpStatusCode.BadRequest
+			};
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, ex))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -386,19 +366,18 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UploadToWebonaryReportsSuccess()
 		{
-			var success = "Upload successful.";
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, Encoding.UTF8.GetBytes(success)))
+			const string success = "Upload successful.";
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: Encoding.UTF8.GetBytes(success)))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
 					}
 				};
 				controller.UploadToWebonary("../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
 				Assert.That(view.StatusStrings.Any(s => s.Contains("Upload successful")));
 			}
 		}
@@ -407,11 +386,11 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryErrorInProcessingHandled()
 		{
 			var webonaryProcessingErrorContent = Encoding.UTF8.GetBytes("Error processing data: bad data.");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, webonaryProcessingErrorContent))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: webonaryProcessingErrorContent))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -419,7 +398,6 @@ namespace LanguageExplorerTests.Impls
 				};
 				// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
 				controller.UploadToWebonary("fakebaddata.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
 				Assert.That(view.StatusStrings.Any(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0), "Should be an error reported");
 			}
 		}
@@ -433,29 +411,24 @@ namespace LanguageExplorerTests.Impls
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.htm"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.json"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xml"));
-
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpg"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.gif"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.png"));
-
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
-
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tiff"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.ico"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
-
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.au"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aifc"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wma"));
-
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.avi"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmv"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wvx"));
@@ -471,39 +444,32 @@ namespace LanguageExplorerTests.Impls
 		public void CompressExportedFiles_IncludesAcceptableMediaTypes()
 		{
 			var view = new MockWebonaryDlg();
-
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempDirectoryToCompress);
 			try
 			{
 				var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
-
 				// TIFF
 				var tiffFilename = Path.GetFileName(Path.GetTempFileName() + ".tif");
 				var tiffPath = Path.Combine(tempDirectoryToCompress, tiffFilename);
-				var tiffMagicNumber = new byte[] {0x49, 0x49, 0x2A};
+				var tiffMagicNumber = new byte[] { 0x49, 0x49, 0x2A };
 				File.WriteAllBytes(tiffPath, tiffMagicNumber);
-
 				// JPEG
 				var jpegFilename = Path.GetFileName(Path.GetTempFileName() + ".jpg");
 				var jpegPath = Path.Combine(tempDirectoryToCompress, jpegFilename);
-				var jpegMagicNumber = new byte[] {0xff, 0xd8};
+				var jpegMagicNumber = new byte[] { 0xff, 0xd8 };
 				File.WriteAllBytes(jpegPath, jpegMagicNumber);
-
 				// MP4
 				var mp4Filename = Path.GetFileName(Path.GetTempFileName() + ".mp4");
 				var mp4Path = Path.Combine(tempDirectoryToCompress, mp4Filename);
 				var mp4MagicNumber = new byte[] { 0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32 };
 				File.WriteAllBytes(mp4Path, mp4MagicNumber);
-
 				var xhtmlFilename = Path.GetFileName(Path.GetTempFileName() + ".xhtml");
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, xhtmlFilename);
-				var xhtmlContent = "<xhtml/>";
+				const string xhtmlContent = "<xhtml/>";
 				File.WriteAllText(xhtmlPath, xhtmlContent);
-
 				// SUT
 				UploadToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
-
 				// Verification
 				const string unsupported = ".*nsupported.*";
 				const string unsupportedRegex = ".*{0}" + unsupported;
@@ -513,14 +479,12 @@ namespace LanguageExplorerTests.Impls
 					Assert.True(uploadZip.EntryFileNames.Contains(jpegFilename), "Should have included supported JPEG file in file to upload.");
 					Assert.True(uploadZip.EntryFileNames.Contains(mp4Filename), "Should have included supported MP4 file in file to upload.");
 				}
-
 				var query = string.Format(unsupportedRegex, tiffFilename);
-				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
+				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count == 1), "Lack of support for the tiff file should have been reported to the user.");
 				query = string.Format(unsupportedRegex, jpegFilename);
-				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
+				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count == 1), "Should not have reported lack of support for the jpeg file.");
 				query = string.Format(unsupportedRegex, mp4Filename);
 				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count == 1), "Should not have reported lack of support for the mp4 file.");
-
 				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, unsupported).Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
 			}
 			finally
@@ -538,7 +502,7 @@ namespace LanguageExplorerTests.Impls
 			var view = SetUpView();
 			var model = view.Model;
 			model.SiteName = "mySiteName";
-			var expectedFilename = "mySiteName.zip";
+			const string expectedFilename = "mySiteName.zip";
 			var actualFilename = UploadToWebonaryController.UploadFilename(model, view);
 			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
 		}
@@ -568,10 +532,8 @@ namespace LanguageExplorerTests.Impls
 			var view = SetUpView();
 			var model = view.Model;
 			model.SiteName = sitename;
-
 			// SUT
 			var result = UploadToWebonaryController.UploadFilename(model, view);
-
 			Assert.That(result, Is.Null, "Fail on invalid characters.");
 			Assert.That(view.StatusStrings.Any(s => s.Contains("Invalid characters found in sitename")), "Inform that there was a problem");
 		}
@@ -579,21 +541,22 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void ResetsProptablesPublicationOnExit()
 		{
-			var originalPub = m_propertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
-			m_propertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+			var originalPub = _flexComponentParameters.PropertyTable.GetValue("SelectedPublication", "Main Dictionary");
+			_flexComponentParameters.PropertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar))
 			{
 				controller.ActivatePublication("Wiktionary");
-				Assert.AreEqual("Wiktionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't activate temp publication");
+				Assert.AreEqual("Wiktionary", _flexComponentParameters.PropertyTable.GetValue<string>("SelectedPublication", null), "Didn't activate temp publication");
 			}
-			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
+			Assert.AreEqual("Main Dictionary", _flexComponentParameters.PropertyTable.GetValue<string>("SelectedPublication", null), "Didn't reset publication");
 		}
 
-	#region Helpers
+		#region Helpers
 		/// <summary/>
 		private MockWebonaryDlg SetUpView()
 		{
-			return new MockWebonaryDlg {
+			return new MockWebonaryDlg
+			{
 				Model = SetUpModel()
 			};
 		}
@@ -604,16 +567,19 @@ namespace LanguageExplorerTests.Impls
 		public UploadToWebonaryModel SetUpModel()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "LanguageExplorerTests";
-
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			testConfig["Test Config"] = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> {
-					new ConfigurableDictionaryNode { FieldDescription = "LanguageExplorerTests.DictionaryConfiguration.TestRootClass"}
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "LanguageExplorerTests.DictionaryConfiguration.TestRootClass"
+					}
 				}
 			};
 
-			return new UploadToWebonaryModel(m_propertyTable)
+			return new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 			{
 				SiteName = "site",
 				UserName = "user",
@@ -629,13 +595,14 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public UploadToWebonaryController SetUpController()
 		{
-			return new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, Encoding.UTF8.GetBytes("Upload successful"));
+			return new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: Encoding.UTF8.GetBytes("Upload successful"));
 		}
 
 		internal class MockWebonaryDlg : IUploadToWebonaryView
 		{
 			// Collect the status messages that are generated during the export
 			public List<string> StatusStrings = new List<string>();
+
 			public void UpdateStatus(string statusString)
 			{
 				StatusStrings.Add(statusString);
@@ -660,26 +627,18 @@ namespace LanguageExplorerTests.Impls
 			public UploadToWebonaryModel Model { get; set; }
 		}
 
-		public class MockUploadToWebonaryController : UploadToWebonaryController
+		private sealed class MockUploadToWebonaryController : UploadToWebonaryController
 		{
 			/// <summary>
 			/// URI to upload data to.
 			/// </summary>
-			public string UploadURI { get; set; }
-
-			/// <summary>
-			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
-			/// </summary>
-			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, Mediator mediator)
-				: base(cache, propertyTable, mediator)
-			{
-			}
+			private string UploadURI { get; set; }
 
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
 			/// </summary>
-			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
-				byte[] responseContents, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, mediator)
+			internal MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar, WebonaryException exceptionResponse = null,
+				byte[] responseContents = null, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, publisher, statusBar)
 			{
 				CreateWebClient = () => new MockWebonaryClient(exceptionResponse, responseContents, responseStatus);
 			}
@@ -687,12 +646,12 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// Fake web client to allow unit testing of controller code without needing to connect to a server
 			/// </summary>
-			public class MockWebonaryClient : IWebonaryClient
+			private sealed class MockWebonaryClient : IWebonaryClient
 			{
-				private readonly WebonaryClient.WebonaryException _exceptionResponse;
+				private readonly WebonaryException _exceptionResponse;
 				private readonly byte[] _responseContents;
 
-				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
+				internal MockWebonaryClient(WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -706,7 +665,7 @@ namespace LanguageExplorerTests.Impls
 					GC.SuppressFinalize(this);
 				}
 
-				protected virtual void Dispose(bool disposing)
+				private void Dispose(bool disposing)
 				{
 					System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 				}
@@ -720,7 +679,9 @@ namespace LanguageExplorerTests.Impls
 				public byte[] UploadFileToWebonary(string address, string fileName)
 				{
 					if (_exceptionResponse != null)
+					{
 						throw _exceptionResponse;
+					}
 					return _responseContents;
 				}
 
@@ -732,7 +693,92 @@ namespace LanguageExplorerTests.Impls
 				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
 			}
 		}
-	#endregion
+		#endregion
+
+		/// <summary>
+		/// This class is for use in unit tests that need to use the ActivateClerk functionality. For instance to imitate switching
+		/// tools for testing export functionality.
+		/// </summary>
+		/// <remarks>To use add the following to your TestFixtureSetup: m_mediator.AddColleague(new StubContentControlProvider());</remarks>
+		private sealed class StubContentControlProvider : IFlexComponent
+		{
+			private const string m_contentControlDictionary =
+				@"<control>
+					<parameters PaneBarGroupId='PaneBar_Dictionary'>
+						<control>
+							<parameters area='lexicon' clerk='entries' />
+						</control>
+						<!-- The following configureLayouts node is only required to help migrate old configurations to the new format -->
+						<configureLayouts>
+							<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'>
+								<configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />
+								<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' />
+							</layoutType>
+							<layoutType label='Root-based (complex forms as subentries)' layout='publishRoot'>
+								<configure class='LexEntry' label='Main Entry' layout='publishRootEntry' />
+								<configure class='LexEntry' label='Minor Entry' layout='publishRootMinorEntry' hideConfig='true' />
+							</layoutType>
+						</configureLayouts>
+					</parameters>
+				</control>";
+			private readonly XmlNode m_testControlDictNode;
+
+			private const string m_contentControlReversal =
+				@"<control>
+					<parameters id='reversalIndexEntryList' PaneBarGroupId='PaneBar-ReversalIndicesMenu'>
+						<control>
+							<parameters area='lexicon' clerk='AllReversalEntries' />
+						</control>
+						<configureLayouts>
+							<layoutType label='All Reversal Indexes' layout='publishReversal'>
+								<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalIndexEntry' />
+							</layoutType>
+							<layoutType label='$wsName' layout='publishReversal-$ws'>
+								<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalIndexEntry-$ws' />
+							</layoutType>
+						</configureLayouts>
+					</parameters>
+				</control>";
+			private readonly XmlNode m_testControlRevNode;
+
+			public StubContentControlProvider()
+			{
+				var doc = new XmlDocument();
+				doc.LoadXml(m_contentControlDictionary);
+				m_testControlDictNode = doc.DocumentElement;
+				var reversalDoc = new XmlDocument();
+				reversalDoc.LoadXml(m_contentControlReversal);
+				m_testControlRevNode = reversalDoc.DocumentElement;
+			}
+
+			/// <summary>
+			/// This is called by reflection through the mediator. We need so that we can migrate through the PreHistoricMigrator.
+			/// </summary>
+			// ReSharper disable once UnusedMember.Local
+			private bool OnGetContentControlParameters(object parameterObj)
+			{
+				var param = parameterObj as Tuple<string, string, XmlNode[]>;
+				if (param == null)
+				{
+					return false;
+				}
+				var result = param.Item3;
+				Assert.That(param.Item2 == "lexiconDictionary" || param.Item2 == "reversalToolEditComplete", "No params for tool: " + param.Item2);
+				result[0] = param.Item2 == "lexiconDictionary" ? m_testControlDictNode : m_testControlRevNode;
+				return true;
+			}
+
+			public IPropertyTable PropertyTable { get; private set; }
+			public IPublisher Publisher { get; private set; }
+			public ISubscriber Subscriber { get; private set; }
+			public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+				PropertyTable = flexComponentParameters.PropertyTable;
+				Publisher = flexComponentParameters.Publisher;
+				Subscriber = flexComponentParameters.Subscriber;
+			}
+		}
 	}
-#endif
 }

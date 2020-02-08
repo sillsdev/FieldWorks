@@ -245,8 +245,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable).Styles["Dictionary-Normal"]);
-			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+			// Some tests don't have the expected style.
+			var styleSheet = FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable);
+			if (styleSheet != null)
+			{
+				if (styleSheet.Styles.Contains("Dictionary-Normal"))
+				{
+					var normalStyle = styleSheet.Styles["Dictionary-Normal"];
+					var dictionaryNormalStyle = new ExportStyleInfo(normalStyle);
+					return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+				}
+			}
+			return true; // default is LTR
 		}
 
 		/// <summary>

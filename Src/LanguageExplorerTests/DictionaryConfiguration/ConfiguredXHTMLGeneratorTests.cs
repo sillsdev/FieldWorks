@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Filters;
@@ -63,8 +62,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 			}
-			_recordListRepositoryForTools = new RecordListRepository(Cache, _flexComponentParameters);
-			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
+			_recordListRepositoryForTools = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
 			_recordList = CreateRecordList();
 			_recordListRepositoryForTools.AddRecordList(_recordList);
@@ -8550,8 +8548,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 #if RANDYTODO
-		// TODO: The test recently developed an 'allergy' to Jenkins,
-		// TODO: and won't pass on Windows or Linux, but runs fine locally.
 		[Test]
 		public void SavePublishedHtmlWithCustomCssFile()
 		{

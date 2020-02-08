@@ -22,7 +22,7 @@ namespace LanguageExplorerTests
 	/// Tests of the decorator for dictionary views.
 	/// </summary>
 	[TestFixture]
-	public class DictionaryPublicationDecoratorTests : AppTestBase
+	public class DictionaryPublicationDecoratorTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		ILexEntryFactory m_entryFactory;
@@ -101,16 +101,9 @@ namespace LanguageExplorerTests
 
 		#region Overrides of LcmTestBase
 
-		public override void FixtureTeardown()
+		public override void FixtureSetup()
 		{
-			TestSetupServices.DisposeTrash(_flexComponentParameters);
-			_flexComponentParameters = null;
-
-			base.FixtureTeardown();
-		}
-
-		protected override void FixtureInit()
-		{
+			base.FixtureSetup();
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
@@ -220,6 +213,14 @@ namespace LanguageExplorerTests
 				m_revMockObjectListPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
 				m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revMockObjectListPublisher, ObjectListPublisher.OwningFlid);
 			});
+		}
+
+		public override void FixtureTeardown()
+		{
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			_flexComponentParameters = null;
+
+			base.FixtureTeardown();
 		}
 
 		private IReversalIndex CreateInterestingReversalEntries()

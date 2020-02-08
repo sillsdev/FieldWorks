@@ -198,7 +198,12 @@ namespace LanguageExplorer
 				{
 					if (propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != tempRecordList)
 					{
-						RecordListServices.SetRecordList(propertyTable.GetValue<Form>(FwUtils.window).Handle, tempRecordList);
+						// Some tests may not have a window.
+						var form = propertyTable.GetValue<Form>(FwUtils.window);
+						if (form != null)
+						{
+							RecordListServices.SetRecordList(form.Handle, tempRecordList);
+						}
 					}
 					tempRecordList.ActivateUI(false);
 				}

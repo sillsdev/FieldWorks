@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using LanguageExplorer.Filters;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -19,10 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		internal WordsUsedOnlyElsewhereFilter(LcmCache cache)
 		{
-			if (cache == null)
-			{
-				throw new ArgumentNullException(nameof(cache));
-			}
+			Guard.AgainstNull(cache, nameof(cache));
 			Cache = cache;
 		}
 

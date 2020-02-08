@@ -175,7 +175,12 @@ namespace LanguageExplorer.Areas
 			TriggerMessageBoxIfAppropriate();
 			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness && !MyRecordList.IsSubservientRecordList && PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
 			{
-				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+				var form = PropertyTable.GetValue<Form>(FwUtils.window);
+				// Some tests have no window.
+				if (form != null)
+				{
+					RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+				}
 			}
 			m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
 		}

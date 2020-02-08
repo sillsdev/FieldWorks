@@ -10,7 +10,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class MorphTypeChooser : SimpleListChooser
+	internal class MorphTypeChooser : SimpleListChooser
 	{
 		private CheckBox m_showAllTypesCheckBox;
 		private readonly ICmObject m_obj;

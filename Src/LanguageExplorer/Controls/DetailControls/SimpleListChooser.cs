@@ -22,8 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	public class SimpleListChooser : ReallySimpleListChooser
 	{
 		/// <summary />
-		public SimpleListChooser()
-			: base()
+		internal SimpleListChooser()
 		{
 		}
 

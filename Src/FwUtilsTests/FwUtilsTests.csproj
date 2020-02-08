@@ -214,7 +214,6 @@
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
-    <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
@@ -228,7 +227,6 @@
     <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
-    <Compile Include="TestFwApplicationSettings.cs" />
     <None Include="App.config" />
     <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />

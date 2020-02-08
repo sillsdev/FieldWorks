@@ -16,12 +16,11 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// </summary>
 	internal sealed class AllReversalEntriesRecordList : ReversalListBase
 	{
-		internal const string AllReversalEntries = "AllReversalEntries";
 		private IReversalIndexEntry _newItem;
 
 		/// <summary />
 		internal AllReversalEntriesRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(AllReversalEntries, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex, "AllEntries", ReversalIndexTags.kflidEntries))
+			: base(LanguageExplorerConstants.AllReversalEntries, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex, "AllEntries", ReversalIndexTags.kflidEntries))
 		{
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;

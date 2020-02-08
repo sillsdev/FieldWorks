@@ -663,7 +663,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (beSpec)
 			{
 				case "complexListMultiple":
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false));
 					break;
 				case "external":
 					var beType = DynamicLoader.TypeForLoaderNode(item.Spec);
@@ -706,7 +706,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "atomicFlatListItem": // Fall through
 				case "morphTypeListItem":  // Fall through
 				case "variantConditionListItem": // RBR: Not found in develop or master branches.
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true));
 					break;
 				default:
 					// if we didn't find it, try "chooserFilter", if we haven't already.

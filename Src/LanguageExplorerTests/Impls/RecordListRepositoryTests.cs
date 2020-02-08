@@ -19,15 +19,13 @@ namespace LanguageExplorerTests.Impls
 		public void RecordListRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
 		{
 			// Setup
-			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			try
 			{
 				using (var dummyWindow = new DummyFwMainWnd())
 				using (var statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS())
-				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, flexComponentParameters))
 				{
-					flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
-					flexComponentParameters.PropertyTable.SetProperty(FwUtils.cache, Cache);
+					var recordListRepository = flexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository);
 					flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, dummyWindow);
 
 					// Test 1. Make sure a bogus record list isn't in the repository.

@@ -478,41 +478,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// <summary>
-		/// Extracts the class.property information for a CmPossibilityList from a columnSpec.
-		/// </summary>
-		internal static void GetListInfo(XElement colSpec, out string owningClass, out string property)
-		{
-			GetPathInfoFromColumnSpec(colSpec, "list", "LangProject", out owningClass, out property);
-		}
-
-		/// <summary />
-		/// <param name="node"></param>
-		/// <param name="attrName"></param>
-		/// <param name="defaultOwningClass">if only the property is specified,
-		/// we'll use this as the default class for that property.</param>
-		/// <param name="owningClass"></param>
-		/// <param name="property"></param>
-		private static void GetPathInfoFromColumnSpec(XElement node, string attrName, string defaultOwningClass, out string owningClass, out string property)
-		{
-			var listpath = XmlUtils.GetMandatoryAttributeValue(node, attrName);
-			var parts = listpath.Trim().Split('.');
-			if (parts.Length > 1)
-			{
-				if (parts.Length != 2)
-				{
-					throw new FwConfigurationException("List id must not have more than two parts " + listpath);
-				}
-				owningClass = parts[0];
-				property = parts[1];
-			}
-			else
-			{
-				owningClass = defaultOwningClass;
-				property = parts[0];
-			}
-		}
-
 		private ICmPossibilityList GetNamedList(XElement node, string attrName)
 		{
 			return GetNamedList(m_cache, node, attrName);
@@ -552,7 +517,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			string owningClass;
 			string property;
-			GetPathInfoFromColumnSpec(node, attrName, "LangProject", out owningClass, out property);
+			var listPath = XmlUtils.GetMandatoryAttributeValue(node, attrName);
+			var parts = listPath.Trim().Split('.');
+			switch (parts.Length)
+			{
+				case 1:
+					owningClass = "LangProject";
+					property = parts[0];
+					break;
+				case 2:
+					owningClass = parts[0];
+					property = parts[1];
+					break;
+				default:
+					throw new FwConfigurationException($"List id must not have more than two parts: {listPath}");
+			}
 			var key = property;
 			ICmObject owner;
 			switch (owningClass)

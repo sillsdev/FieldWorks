@@ -367,27 +367,25 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				options.LexEntryForm = wff;
 				options.MakeMorph = (mff) =>
 				{
-					Guid slotType = GetSlotType(mff);
+					var slotType = GetSlotType(mff);
 					IMoMorphSynAnalysis msa1;
 					var mainEntry = MakeEntry("blondEntry", "", slotType, out msa1);
 					var mainSense = MakeSense(mainEntry, "fair haired", msa1);
-
 					IMoMorphSynAnalysis msa2;
 					var variantEntry = MakeEntry("blondeEntry", "", slotType, out msa2);
-					ILexEntryType letDialectalVariantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDialectalVar);
+					var letDialectalVariantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDialectalVar);
 					letDialectalVariantType.Abbreviation.set_String(Cache.DefaultAnalWs, "dial.var. of");
 					letDialectalVariantType.Name.set_String(Cache.DefaultAnalWs, "Dialectal Variant");
 					letDialectalVariantType.ReverseAbbr.set_String(Cache.DefaultAnalWs, "dial.var.");
-
 					variantEntry.MakeVariantOf(mainSense, letDialectalVariantType);
 					return variantEntry.LexemeFormOA;
 				};
-				options.MakeSense = (entry) =>
+				options.MakeSense = entry =>
 				{
 					var entryRef = entry.EntryRefsOS.First();
 					return entryRef.ComponentLexemesRS.First() as ILexSense;
 				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
+				options.MakeMsa = sense => { return sense.MorphoSyntaxAnalysisRA; };
 				var wmb = MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
 				var seg = para.SegmentsOS[0];
@@ -399,11 +397,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
-
 					Assert.That(imorphItemCurrentSandboxState, Is.EqualTo(1));
-
 					var handlerList =  handler.ComboList.Items;
-
 					Assert.That(handlerList[0].ToString(), Is.EqualTo("Add New Sense for blondeEntry ..."));
 					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ???, blondEntry+dial.var."));
 					Assert.That(handlerList[2].ToString(), Is.EqualTo("    Add New Sense..."));

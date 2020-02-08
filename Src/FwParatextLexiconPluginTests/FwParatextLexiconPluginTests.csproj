@@ -92,7 +92,6 @@
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>Properties\AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="DummyLcmUI.cs" />
     <Compile Include="LcmLexiconTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

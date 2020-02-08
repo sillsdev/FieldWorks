@@ -254,7 +254,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FieldWorksManager.cs" />
-    <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwNewLangProject.Designer.cs">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
     </Compile>
