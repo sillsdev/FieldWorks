@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using FieldWorks.TestUtilities;
 using LanguageExplorer.TestUtilities;
+using RootSite.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

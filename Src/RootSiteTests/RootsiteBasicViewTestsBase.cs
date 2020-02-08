@@ -4,6 +4,7 @@
 
 using FieldWorks.TestUtilities;
 using NUnit.Framework;
+using RootSite.TestUtilities;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 

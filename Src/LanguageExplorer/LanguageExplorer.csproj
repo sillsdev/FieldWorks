@@ -389,6 +389,7 @@
     </Compile>
     <Compile Include="IListTool.cs" />
     <Compile Include="IManyOnePathSortItem.cs" />
+    <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">

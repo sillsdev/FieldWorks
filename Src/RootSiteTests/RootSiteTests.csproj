@@ -147,6 +147,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="RootSite.TestUtilities, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\RootSite.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
@@ -226,13 +230,6 @@
     <Compile Include="BasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DummyBasicView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DummyBasicViewVc.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DummyEditingHelper.cs" />
     <Compile Include="MoreRootSiteTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -255,10 +252,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DummyBasicView.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DummyBasicView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\RootSiteTestsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RootSiteTestsResources.Designer.cs</LastGenOutput>

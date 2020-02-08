@@ -7,17 +7,18 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using FieldWorks.TestUtilities;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace RootSite.TestUtilities
 {
 	/// <summary>
 	/// Implementation of a basic view for testing, similar to DraftView
 	/// </summary>
-	public class DummyBasicView : RootSite
+	public class DummyBasicView : SIL.FieldWorks.Common.RootSites.RootSite
 	{
 		#region Data members
 		/// <summary />

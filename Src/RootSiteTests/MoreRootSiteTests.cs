@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using FieldWorks.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
+using RootSite.TestUtilities;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

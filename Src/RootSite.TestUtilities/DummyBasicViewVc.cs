@@ -4,12 +4,13 @@
 
 using System;
 using FieldWorks.TestUtilities;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace RootSite.TestUtilities
 {
 	/// <summary>
 	/// The class that displays the draft view.

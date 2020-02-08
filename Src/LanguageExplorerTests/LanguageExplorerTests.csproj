@@ -108,6 +108,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
+    <Reference Include="RootSite.TestUtilities, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\RootSite.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -268,6 +272,12 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
     <Compile Include="Filters\ManyOnePathSortItemsPersistenceTests.cs" />
+    <Compile Include="Impls\DummyFwFindReplaceDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Impls\FwFindReplaceDlgBaseTests.cs" />
+    <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
+    <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
     <Compile Include="MGA\GlossListTreeViewTest.cs" />
     <Compile Include="TestStyle.cs" />
     <Compile Include="Filters\DateTimeMatcherTests.cs" />

@@ -271,7 +271,7 @@ namespace LanguageExplorerTests.Controls
 			}
 		}
 
-		private sealed class DummyFootnoteView : RootSite
+		private sealed class DummyFootnoteView : SIL.FieldWorks.Common.RootSites.RootSite
 		{
 			private DummyFootnoteVc m_footnoteVc;
 			private bool m_displayTranslation;

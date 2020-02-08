@@ -33,7 +33,7 @@ namespace LanguageExplorer.Impls
 	/// <summary>
 	/// Find/Replace dialog
 	/// </summary>
-	internal sealed class FwFindReplaceDlg : Form, IMessageFilter
+	internal class FwFindReplaceDlg : Form, IMessageFilter
 	{
 		#region Constants
 		private const string kPersistenceLabel = "FindReplace_";
@@ -42,27 +42,27 @@ namespace LanguageExplorer.Impls
 
 		#region Events
 		/// <summary>Handler for MatchNotFound events.</summary>
-		private delegate bool MatchNotFoundHandler(object sender, string defaultMsg, MatchType type);
+		protected delegate bool MatchNotFoundHandler(object sender, string defaultMsg, MatchType type);
 
 		/// <summary>Fired when a match is not found.</summary>
-		private event MatchNotFoundHandler MatchNotFound;
+		protected event MatchNotFoundHandler MatchNotFound;
 		#endregion
 
 		#region Data members
 		/// <summary>all the search settings</summary>
 		private IVwPattern m_vwFindPattern;
 		/// <summary>Environment that keeps track of where we're finding</summary>
-		private FindCollectorEnv m_findEnvironment;
+		protected FindCollectorEnv m_findEnvironment;
 		/// <summary>The rootsite where the find operation will be performed</summary>
-		private IVwRootSite m_vwRootsite;
+		protected IVwRootSite m_vwRootsite;
 		/// <summary />
-		private LcmCache m_cache;
+		protected LcmCache m_cache;
 		private IApp m_app;
 		private bool m_cacheMadeLocally = false;
 		/// <summary />
 		private IVwSelection m_vwSelectionForPattern;
 		/// <summary />
-		private ITsString m_prevSearchText;
+		protected ITsString m_prevSearchText;
 		/// <summary />
 		private SearchKiller m_searchKiller = new SearchKiller();
 		private bool m_messageFilterInstalled;
@@ -76,24 +76,24 @@ namespace LanguageExplorer.Impls
 		private TabPage tabReplace;
 		private TabControl tabControls;
 		/// <summary />
-		private CheckBox chkMatchDiacritics;
+		protected CheckBox chkMatchDiacritics;
 		/// <summary />
-		private CheckBox chkMatchWS;
+		protected CheckBox chkMatchWS;
 		/// <summary />
-		private CheckBox chkMatchCase;
+		protected CheckBox chkMatchCase;
 		/// <summary />
-		private CheckBox chkMatchWholeWord;
+		protected CheckBox chkMatchWholeWord;
 		/// <summary>Panel containing advanced controls</summary>
-		private Panel panelSearchOptions;
+		protected Panel panelSearchOptions;
 		/// <summary />
-		private FwTextBox fweditFindText;
+		protected FwTextBox fweditFindText;
 		/// <summary />
-		private FwTextBox fweditReplaceText;
+		protected FwTextBox fweditReplaceText;
 		private IContainer components = null;
 		/// <summary />
-		private Label lblFindFormatText;
+		protected Label lblFindFormatText;
 		/// <summary />
-		private Label lblReplaceFormatText;
+		protected Label lblReplaceFormatText;
 		private bool m_initialActivate;
 		private bool m_inReplace;
 		private bool m_inFind;
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Impls
 		/// Setup button of the Find/Replace tab of the Bulk Edit bar.</summary>
 		private Button m_okButton;
 		/// <summary></summary>
-		private CheckBox chkUseRegularExpressions;
+		protected CheckBox chkUseRegularExpressions;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IPropertyTable m_propertyTable;
 		private string s_helpTopic;
@@ -114,26 +114,26 @@ namespace LanguageExplorer.Impls
 		private Button btnRegexMenuReplace;
 		private RegexHelperContextMenu _regexContextContextMenuFind;
 		/// <summary />
-		private MenuItem mnuWritingSystem;
+		protected MenuItem mnuWritingSystem;
 		/// <summary />
-		private MenuItem mnuStyle;
+		protected MenuItem mnuStyle;
 		private Button btnFormat;
 		/// <summary>The close button</summary>
 		/// <remarks>TE-4839: Changed the text from Cancel to Close according to TE Analyst (2007-06-22).</remarks>
-		private Button btnClose;
+		protected Button btnClose;
 		private Button btnFindNext;
 		private Button btnMore;
 		private Button btnReplace;
 		private Button btnReplaceAll;
 		private Panel panelBasic;
 		/// <summary />
-		private Label lblReplaceFormat;
+		protected Label lblReplaceFormat;
 		private Label lblReplaceText;
 		/// <summary />
 		private ContextMenu mnuFormat;
 		private Label lblSearchOptions;
 		/// <summary />
-		private Label lblFindFormat;
+		protected Label lblFindFormat;
 		private RegexHelperContextMenu _regexContextContextMenuReplace;
 
 		#endregion
@@ -977,7 +977,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Handle the Find Next button click event
 		/// </summary>
-		private void OnFindNext(object sender, EventArgs e)
+		protected void OnFindNext(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
 			{
@@ -1071,7 +1071,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Does the replace all.
 		/// </summary>
-		private void DoReplaceAll()
+		protected void DoReplaceAll()
 		{
 			var replaceCount = 0;
 			m_app?.EnableMainWindows(false);
@@ -1229,7 +1229,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Displays a message box that the regular expression is invalid.
 		/// </summary>
-		private void DisplayInvalidRegExMessage(string errorMessage)
+		protected virtual void DisplayInvalidRegExMessage(string errorMessage)
 		{
 			var errMsg = string.Format(FwCoreDlgs.kstidErrorInRegEx, errorMessage);
 			MessageBox.Show(this, errMsg, FwCoreDlgs.kstidErrorInRegExHeader, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1609,7 +1609,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Replace the existing selection with the string in the replace box, then find the next occurrance, if any.
 		/// </summary>
-		private void DoReplace(IVwSelection sel)
+		protected void DoReplace(IVwSelection sel)
 		{
 			SetupFindPattern();
 			if (IsReplacePossible(sel))
@@ -2132,7 +2132,7 @@ namespace LanguageExplorer.Impls
 		/// defined in this language project. The writing system of the current selection
 		/// (if there is exactly one) will be checked; otherwise, nothing will be checked.
 		/// </summary>
-		private void PopulateWritingSystemMenu()
+		internal void PopulateWritingSystemMenu()
 		{
 			// First clear any items added previously
 			mnuWritingSystem.MenuItems.Clear();
@@ -2203,7 +2203,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="fwTextBox">The Tss edit control whose selection should have the
 		/// specified style applied to it.</param>
 		/// <param name="sStyle">The name of the style to apply</param>
-		public void ApplyStyle(FwTextBox fwTextBox, string sStyle)
+		public virtual void ApplyStyle(FwTextBox fwTextBox, string sStyle)
 		{
 			// Apply the specified style to the current selection
 			if (sStyle.ToLowerInvariant() == FwCoreDlgs.kstidNoStyle.ToLowerInvariant())
@@ -2423,21 +2423,6 @@ namespace LanguageExplorer.Impls
 			return false;
 		}
 		#endregion
-
-		/// <summary>
-		/// Status of matches during find/replace
-		/// </summary>
-		private enum MatchType
-		{
-			/// <summary />
-			NotSet,
-			/// <summary>no match found after previous match</summary>
-			NoMoreMatchesFound,
-			/// <summary>no match found in whole document</summary>
-			NoMatchFound,
-			/// <summary>A replace all is done and it made replacements</summary>
-			ReplaceAllFinished
-		}
 
 		/// <summary>
 		/// Implements a search killer

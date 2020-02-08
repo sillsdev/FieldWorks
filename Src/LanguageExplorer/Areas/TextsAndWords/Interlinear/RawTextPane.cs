@@ -105,27 +105,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-				// Dispose managed resources here.
-				if (ContextMenuStrip != null)
-				{
 					var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
 					var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
-					var currentIndex = 0;
-					var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCut);
-					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCopy);
-					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdPaste);
-					currentIndex++;
-					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= CmdLexiconLookup_Click;
-					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= jumpHandler;
-					currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-					currentMenuItem.Click -= jumpHandler;
-					ContextMenuStrip.Dispose();
-				}
+				// Dispose managed resources here.
+				DisposeContextMenuStrip(sharedEventHandlers, jumpHandler);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -136,6 +119,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			_configurationParameters = null;
 		}
 
+		private void DisposeContextMenuStrip(ISharedEventHandlers sharedEventHandlers, EventHandler jumpHandler)
+		{
+			if (ContextMenuStrip == null)
+			{
+				return;
+			}
+			var currentIndex = 0;
+			var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCut);
+			currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCopy);
+			currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdPaste);
+			currentIndex++;
+			currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= CmdLexiconLookup_Click;
+			currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= jumpHandler;
+			currentMenuItem = ContextMenuStrip.Items[currentIndex++];
+			currentMenuItem.Click -= jumpHandler;
+			ContextMenuStrip.Dispose();
+		}
 		#endregion IDisposable override
 
 		#region implemention of IChangeRootObject
@@ -605,26 +610,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
 			var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
-			// Start: <menu id="mnuIText_RawText">
-			if (ContextMenuStrip != null)
-			{
-				var currentIndex = 0;
-				var currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCut);
-				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdCopy);
-				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= sharedEventHandlers.GetEventHandler(Command.CmdPaste);
-				currentIndex++;
-				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= CmdLexiconLookup_Click;
-				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= jumpHandler;
-				currentMenuItem = ContextMenuStrip.Items[currentIndex++];
-				currentMenuItem.Click -= jumpHandler;
-				ContextMenuStrip.Dispose();
-				ContextMenuStrip = null;
-			}
+			DisposeContextMenuStrip(sharedEventHandlers, jumpHandler);
+			// Start: <menu id="mnuIText_RawText">;
 			ContextMenuStrip = new ContextMenuStrip
 			{
 				Name = ContextMenuName.mnuIText_RawText.ToString()
