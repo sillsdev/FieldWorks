@@ -190,8 +190,8 @@
 			<L10nFiles Include="$(OutputDirForConfig)\id\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\km\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
-			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\rw\**\*"/>
@@ -200,6 +200,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\te\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\th\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
 			<!-- no need to install the following; most are installed by merge modules -->
@@ -289,7 +290,7 @@
 		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')"/>
 		<ItemGroup>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-			<TargetLocales Include="ar;az;de;es;fa;fr;hi;hu;id;km;ko;ms;ne;pt;ru;rw;sw;ta;te;th;tr;vi;zh-CN"/>
+			<TargetLocales Include="ar;az;de;es;fa;fr;hi;hu;id;km;ko;ms;ne;pt;ru;rw;sw;ta;te;th;tr;ur;vi;zh-CN"/>
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
 	</Target>
