@@ -101,7 +101,9 @@
     <Compile Include="FwBuildTasksTests\LocalizeListsTests.cs" />
     <Compile Include="FwBuildTasksTests\NormalizeLocalesTests.cs" />
     <Compile Include="FwBuildTasksTests\WxsToWxiTests.cs" />
+    <Compile Include="Localization\XliffToLists.cs" />
     <Compile Include="Localization\LocalizeLists.cs" />
+    <Compile Include="Localization\ListsToXliff.cs" />
     <Compile Include="LogMetadata.cs" />
     <Compile Include="Localization\NormalizeLocales.cs" />
     <Compile Include="WxsToWxi.cs" />

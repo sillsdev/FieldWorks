@@ -17,6 +17,10 @@
 	  "ignore": [
         "Src/**/*Tests/**/*"
       ]
+    },
+    {
+      "source": "Localizations/lists/*.xlf",
+      "translation": "/%locale%/Lists/%file_name%.%locale%.%file_extension%"
     }
   ]
 }

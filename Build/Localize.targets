@@ -1,38 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 
+	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="XliffToLists" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 
-	<!-- Localize all resx files -->
+	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
 	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;zipLocalizedLists;processLanguages-source"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
 
+	<PropertyGroup>
+		<L10nsDirectory>$(fwrt)/Localizations/l10ns</L10nsDirectory>
+		<ListsDirectory>$(fwrt)/Localizations/lists</ListsDirectory>
+	</PropertyGroup>
+
 	<!-- Update localizable files in Crowdin -->
 	<Target Name="uploadUpdatesForTranslation">
+		<ItemGroup>
+			<OldXliffs Include="$(ListsDirectory)/*.xlf"/>
+		</ItemGroup>
+		<ForceDelete Files="@(OldXliffs)"/>
+		<ListsToXliff SourceXml="$(ListsDirectory)/LocalizableLists.xml" XliffOutputDir="$(ListsDirectory)"/>
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v"/>
 	</Target>
 
 	<!-- Download translations from Crowdin -->
-	<PropertyGroup>
-		<L10nsDirectory>$(fwrt)/Localizations/l10ns</L10nsDirectory>
-	</PropertyGroup>
-	<Target Name="downloadTranslatedFiles">
+	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'">
+		<ForceDelete Files="$(L10nsDirectory)"/>
 		<!-- TODO (Hasso) 2020.01: retry failed downloads? -->
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(DownloadsDir)/Crowdin.zip"/>
-		<ForceDelete Files="$(L10nsDirectory)"/>
 		<Unzip ZipFilename="$(DownloadsDir)/Crowdin.zip" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 	</Target>
 
-	<!-- Zip LocalizedList-*.xml files from Localizations to DistFiles/Templates -->
-	<ItemGroup>
-		<LocalizedListFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
-	</ItemGroup>
+	<!-- Zip LocalizedLists-*.xml files from Localizations to DistFiles/Templates -->
 	<Target Name="zipLocalizedLists">
-		<Zip Source="@(LocalizedListFiles)" Destination="$(fwrt)/DistFiles/Templates" />
+		<ItemGroup>
+			<!-- List all locales:
+				Each subdirectory of the L10nsDirectory is a locale, but globbing finds files, not directories.
+				Each locale has exactly one strings-*.xml, in its root dir, so list these files to find locales and their directories -->
+			<StringsXmlFiles Include="$(L10nsDirectory)/*/strings-*.xml"/>
+		</ItemGroup>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="combineAndZipListsForOneLocale"
+			Properties="LocaleDir=%(RootDir)%(Directory);LocalePlus=%(StringsXmlFiles.RecursiveDir)"/>
+	</Target>
+
+	<!-- Combine list *.xlf files into a single .xml file for one `LocaleDir` and zip into DistFiles/Templates -->
+	<Target Name="combineAndZipListsForOneLocale">
+		<PropertyGroup>
+			<!-- LocalePlus is the locale's RecursiveDir, which contains a trailing '/' that must be trimmed here -->
+			<LocaleLength>$([MSBuild]::Subtract($(LocalePlus.Length), 1))</LocaleLength>
+			<Locale>$(LocalePlus.Substring(0, $(LocaleLength)))</Locale>
+			<OutputXml>$(LocaleDir)/Lists/LocalizedLists-$(Locale).xml</OutputXml>
+		</PropertyGroup>
+		<ItemGroup>
+			<XliffFiles Include="$(LocaleDir)/Lists/*.xlf"/>
+		</ItemGroup>
+		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
+		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
 	</Target>
 
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
