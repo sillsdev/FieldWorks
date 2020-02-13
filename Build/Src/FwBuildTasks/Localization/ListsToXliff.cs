@@ -20,10 +20,17 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		[Required]
 		public string XliffOutputDir { get; set; }
 
+		/// <summary>If specified, any strings in this locale will be included as 'final' translations</summary>
+		public string TargetLocale { get; set; }
+
 		public override bool Execute()
 		{
 			Log.LogMessage($"Converting '{SourceXml}' to XLIFF at '{XliffOutputDir}'.");
-			LocalizeLists.SplitSourceLists(SourceXml, XliffOutputDir);
+			if (string.IsNullOrWhiteSpace(TargetLocale))
+			{
+				TargetLocale = null;
+			}
+			LocalizeLists.SplitSourceLists(SourceXml, XliffOutputDir, TargetLocale);
 			return true;
 		}
 	}

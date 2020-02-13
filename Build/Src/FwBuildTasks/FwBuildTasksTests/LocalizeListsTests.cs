@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var testName = "TestFile.xml";
 			var xliffDoc = LocalizeLists.ConvertListToXliff(testName,
 				XDocument.Parse(
-					"<Lists><List owner=\"LexDb\" field=\"DomainTypes\" itemClass=\"CmPossibility\"/></Lists>"));
+					"<Lists><List owner=\"LexDb\" field=\"DomainTypes\" itemClass=\"CmPossibility\"/></Lists>"), null);
 			AssertThatXmlIn.String(xliffDoc.ToString())
 				.HasSpecifiedNumberOfMatchesForXpath($"/xliff/file[@original='{testName}']", 1);
 		}
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					<List owner='{owner}' field='{field}' itemClass='CmPossibility'>
 						<Name><AUni ws='en'>Academic Domains</AUni></Name>
 					</List>
-				</Lists>"));
+				</Lists>"), null);
 			var group = owner + "_" + field;
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 				$"/xliff/file/body/group[@id='{group}']/trans-unit[@id='{group}_Name']/source[text()='Academic Domains']", 1, true);
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void SplitSourceLists_MissingSourceFileThrows()
 		{
 			var message = Assert.Throws<ArgumentException>(() =>
-					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath()))
+					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath(), null))
 				.Message;
 			StringAssert.Contains("The source file does not exist", message);
 		}
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			using (var xmlReader = new XmlTextReader(stringReader))
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
-					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath())).Message;
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
 				StringAssert.Contains("Source file is not in the expected format", message);
 			}
 		}
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			using (var xmlReader = new XmlTextReader(stringReader))
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
-					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath())).Message;
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
 				StringAssert.Contains("Source file has an unexpected list count.", message);
 			}
 		}
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			using (var xmlReader = new XmlTextReader(stringReader))
 			{
 				var message = Assert.Throws<NotSupportedException>(() =>
-					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath())).Message;
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
 				StringAssert.Contains("GlossPrepend is not supported", message);
 			}
 		}
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Description>
 				</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null);
 			// Test for abbreviation trans-unit source
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 				"//group[@id='LangProject_AnthroList']/trans-unit[@id='LangProject_AnthroList_Abbr']/source", 1, true);
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null);
 			// This xpath matches the first possibility in the possibilities group
 			var xpathToPossGroup = "//group[@id='LangProject_AnthroList']/group[@id='LangProject_AnthroList_Poss']/group[@id='LangProject_AnthroList_Poss_0']";
 			// Test for abbreviation trans-unit source
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null);
 			// This xpath matches the first sub possibility of the first possibility in the possibilities group
 			var xpathToSubPosGroup = "//group[@id='LangProject_AnthroList']/group[@id='LangProject_AnthroList_Poss']/group/group[@id='LangProject_AnthroList_Poss_0_SubPos']";
 			// Test for subpossibility
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml)).ToString();
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null).ToString();
 			const string xpathToPossGroup = "//group[@id='LexDb_VariantEntryTypes']/group[@id='LexDb_VariantEntryTypes_Poss']/group";
 			// Test for reverse name
 			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml)).ToString();
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null).ToString();
 			const string xpathToPossGroup = "//group[@id='LexDb_References']/group[@id='LexDb_References_Poss']/group";
 			// Test for reverse name
 			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				</Possibilities>
 			</List></Lists>";
 
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), null);
 			// Verify that the GUID for SemanticDomain makes it to the file (ignore sil namespace via ugly hack)
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath("//group/*[local-name()='guid'][text()='" + guid + "']", 1);
 			// This xpath matches the first semantic domain
@@ -347,35 +347,38 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		public void ConvertListToXliff_RunStylesCreated()
+		public void EmptyDescription_DoesntCrash()
 		{
-			const string style = "Emphasized Text";
+			const string listXml = @"<Lists date='3/10/2011 12:13:25 PM'>
+				<List field='SemanticDomainList' itemClass='CmSemanticDomain' owner='LangProject'>
+					<Description></Description></List></Lists>";
+			var xmlDoc = XDocument.Parse(listXml);
+			LocalizeLists.ConvertListToXliff("test.xml", xmlDoc, null);
+		}
+
+		[Test]
+		public void ConvertListToXliff_RunsRunTogether()
+		{
 			const string styledText = "something";
 			const string unstyledText = "else";
 			const string listXml = @"<Lists>
 				<List owner='LangProject' field='AnthroList' itemClass='CmAnthroItem'>
 					<Description>
 						<AStr ws='en'>
-							<Run ws='en' namedStyle='" + style + @"'>" + styledText + @"</Run>
+							<Run ws='en' namedStyle='Emphasized Text'>" + styledText + @"</Run>
 							<Run ws='en'>" + unstyledText + @"</Run>
 						</AStr>
 					</Description>
 				</List></Lists>";
 			var xmlDoc = XDocument.Parse(listXml);
 
-			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc).ToString();
+			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc, null).ToString();
 			// Test for description trans-unit source
-			const string xpathToGroup = "//group/group[@id='LangProject_AnthroList_Desc']";
-			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToGroup + "/trans-unit", 2, true);
+			const string xpathToTransUnit = "//group/group[@id='LangProject_AnthroList_Desc']/trans-unit";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToTransUnit, 1, true);
 			// Test for content and styling
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_0']/*[local-name()='style'][text()='" + style + "']", 1, true);
-			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_0']/source[text()='" + styledText + "']", 1, true);
-			AssertThatXmlIn.String(xliff).HasNoMatchForXpath(
-				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/*[local-name()='style'][text()='" + style + "']");
-			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToGroup + "/trans-unit[@id='LangProject_AnthroList_Desc_1']/source[text()='" + unstyledText + "']", 1, true);
+				xpathToTransUnit + "[@id='LangProject_AnthroList_Desc_0']/source[text()='" + styledText + unstyledText + "']", 1, true);
 		}
 
 		[Test]
@@ -429,7 +432,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 						</LexEntryInflType></Possibilities></List></Lists>";
 			var xmlDoc = XDocument.Parse(listXml);
 
-			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc).ToString();
+			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc, null).ToString();
 
 			// verify the normal LexEntryType
 			const string xpathToLexEntryType = "//group/group[@id='LexDb_VariantEntryTypes_Poss_0']";
@@ -459,6 +462,101 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevAbbr']/source[text()='" + leItRevAbbr + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_GlsApp']/source[text()='" + leItGlsAppend + "']", 1, true);
+		}
+
+		[Test]
+		public void ConvertListsToXliffWithTranslations()
+		{
+			const string name = "နေစကြာဝဠာနှင့်";
+			const string desc1 = "သက်ဆိုင်သော စာလုံးများကို ";
+			const string desc2 = "ရည်ညွှန်းဖော်ပြရန်";
+			const string ques = "(1) ကျွန်ုပ်တို့ မြင်နိုင်သော";
+			const string eWord = "whatever";
+			const string eSent = "just testing";
+			const string subPosName = "မိုးကောင်းကင်";
+			const string listXml = @"<Lists date='3/10/2011 12:13:25 PM'>
+				<List field='SemanticDomainList' itemClass='CmSemanticDomain' owner='LangProject'>
+					<Description>
+						<AStr ws='en'>
+							<Run ws='en'></Run>
+						</AStr>
+						<AStr ws='my'>
+							<Run ws='my'>oops</Run>
+						</AStr>
+					</Description>
+					<Possibilities>
+						<CmSemanticDomain guid='63403699-07c1-43f3-a47c-069d6e4316e5'>
+							<Name>
+								<AUni ws='en'>Universe, creation</AUni>
+								<AUni ws='my'>" + name + @"</AUni>
+							</Name>
+							<Description>
+								<AStr ws='en'>
+									<Run ws='en'>Use this domain for general words.</Run>
+								</AStr>
+								<AStr ws='my'>
+									<Run ws='my'>" + desc1 + @"</Run>
+									<Run ws='my'>" + desc2 + @"</Run>
+								</AStr>
+							</Description>
+							<Questions>
+								<CmDomainQ>
+									<Question>
+										<AUni ws='en'>(1) What words refer to everything we can see?</AUni>
+										<AUni ws='my'>" + ques + @"</AUni>
+									</Question>
+									<ExampleWords>
+										<AUni ws='en'>universe</AUni>
+										<AUni ws='my'>" + eWord + @"</AUni>
+									</ExampleWords>
+									<ExampleSentences>
+										<AStr ws='en'>
+											<Run ws='en'>In the beginning God created &lt;the heavens and the earth&gt;.</Run>
+										</AStr>
+										<AStr ws='my'>
+											<Run ws='my'>" + eSent + @"</Run>
+										</AStr>
+									</ExampleSentences>
+								</CmDomainQ>
+							</Questions>
+							<SubPossibilities>
+								<CmSemanticDomain guid='999581c4-1611-4acb-ae1b-5e6c1dfe6f0c'>
+									<Name>
+										<AUni ws='en'>Sky</AUni>
+										<AUni ws='my'>" + subPosName + @"</AUni>
+									</Name>
+								</CmSemanticDomain>
+							</SubPossibilities>
+						</CmSemanticDomain>
+					</Possibilities></List></Lists>";
+			var xmlDoc = XDocument.Parse(listXml);
+
+			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc, "my").ToString();
+
+			// Verify the target language
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath("/xliff/file[@target-language='my']", 1, true);
+			// Verify contents
+			AssertThatXmlIn.String(xliff).HasNoMatchForXpath("//group[@id='LangProject_SemanticDomainList_Desc']");
+			const string poss0id = "LangProject_SemanticDomainList_Poss_0";
+			const string xpathToPoss0 = "//group/group[@id='" + poss0id + "']";
+			const string target = "/target[@state='final']";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPoss0 + "/trans-unit[@id='" + poss0id + "_Name']" + target + "[text()='" + name + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPoss0 + "/group/trans-unit[@id='" + poss0id + "_Desc_0']" + target + "[text()='" + desc1 + desc2 + "']", 1, true);
+			// verify questions
+			const string qid = poss0id + "_Qs_0";
+			const string xpathToQuestion = xpathToPoss0 + "//group[@id='" + qid + "']";
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToQuestion + "/trans-unit[@id='" + qid + "_Q']" + target + "[text()='" + ques + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToQuestion + "/trans-unit[@id='" + qid + "_EW']" + target + "[text()='" + eWord + "']", 1, true);
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToQuestion + "//trans-unit[@id='" + qid + "_ES_0']" + target + "[text()='" + eSent + "']", 1, true);
+			// verify SubPossibilities
+			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPoss0 + "/group/group/trans-unit[@id='" + poss0id + "_SubPos_0_Name']" + target + "[text()='" + subPosName + "']",
+				1, true);
 		}
 
 		[Test]
@@ -803,52 +901,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		public void ConvertXliffToLists_RunStylesCreated()
-		{
-			const string style = "Emphasized Text";
-			const string styledText = "something";
-			const string unstyledText = "else";
-			const string styledTrans = "Etwas";
-			const string unstyledTrans = "anderes";
-			const string targetWs = "de";
-			const string xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='test.xml' target-language='" + targetWs + @"'>
-					<body>
-						<group id='LangProject_AnthroList'>
-							<group id='LangProject_AnthroList_Desc'>
-								<trans-unit id='LangProject_AnthroList_Desc_0'>
-									<sil:style>" + style + @"</sil:style>
-									<source>" + styledText + @"</source>
-									<target state='final'>" + styledTrans + @"</target>
-								</trans-unit>
-								<trans-unit id='LangProject_AnthroList_Desc_1'>
-									<source>" + unstyledText + @"</source>
-									<target state='final'>" + unstyledTrans + @"</target>
-								</trans-unit>
-							</group>
-						</group>
-					</body></file></xliff>";
-			var xliffDoc = XDocument.Parse(xliffXml);
-
-			var listsElement = XElement.Parse("<Lists/>");
-			LocalizeLists.ConvertXliffToLists(xliffDoc, listsElement);
-			var result = listsElement.ToString();
-			// Test for description element
-			const string xpathToDescAStr = "/Lists/List[@owner='LangProject']/Description/AStr";
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToDescAStr + "/Run[@ws='en']", 2, true);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToDescAStr + "/Run[@ws='" + targetWs + "']", 2, true);
-			// Test for styling
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToDescAStr + "/Run[text()='" + styledText + "' and @namedStyle='" + style + "']", 1, true);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToDescAStr + "/Run[text()='" + unstyledText + "' and not (@namedStyle)]", 1, true);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToDescAStr + "/Run[text()='" + styledTrans + "' and @namedStyle='" + style + "']", 1, true);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToDescAStr + "/Run[text()='" + unstyledTrans + "' and not (@namedStyle)]", 1, true);
-		}
-
-		[Test]
 		public void ConvertXliffToLists_LexEntryInflTypesCreated()
 		{
 			const string letName = "Dialectal Variant";
@@ -959,7 +1011,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			// Test and verify the first direction
 			// ReSharper disable PossibleNullReferenceException - XPath Asserts ensure existence of XElements
-			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml));
+			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), "de");
 			const string xpathToPoss0 = "//group[@id='LangProject_AnthroList']/group/group[@id='LangProject_AnthroList_Poss_0']";
 			const string xpathToNameSource = xpathToPoss0 + "/trans-unit[@id='LangProject_AnthroList_Poss_0_Name']/source";
 			const string xpathToDescSource = xpathToPoss0 + "/group/trans-unit[@id='LangProject_AnthroList_Poss_0_Desc_0']/source";
@@ -969,8 +1021,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var descSourceElt = xliffDoc.XPathSelectElement(xpathToDescSource);
 			Assert.AreEqual(unescaped, nameSourceElt.Value);
 			Assert.AreEqual(unescaped, descSourceElt.Value);
-
-			AddTargetLanguage(xliffDoc);
 
 			// Test and verify the round trip
 			var roundTripped = XElement.Parse("<Lists/>");
@@ -995,30 +1045,23 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void IntegrationTest()
 		{
+			const string testTargetLanguage = "de";
+
 			// clean and create the output directory
 			const string outputDir = @"C:\WorkingFiles\XliffTestOutput";
 			TaskTestUtils.RecreateDirectory(outputDir);
 
 			// convert from XML to XLIFF
-			LocalizeLists.SplitSourceLists(@"C:\WorkingFiles\TranslatedListOutput.xml", outputDir);
-
-			// add a target language (required)
-			var files = Directory.GetFiles(@"C:\WorkingFiles\XLiffTestOutput", "*.xlf").ToList();
-			foreach (var file in files)
-			{
-				var xDoc = XDocument.Load(file);
-				AddTargetLanguage(xDoc);
-				xDoc.Save(file);
-			}
+			LocalizeLists.SplitSourceLists(@"C:\WorkingFiles\TranslatedListOutput.xml", outputDir, testTargetLanguage);
 
 			// convert from XLIFF to XML
-			LocalizeLists.CombineXliffFiles(files, @"C:\WorkingFiles\RoundTripped.xml");
-		}
+			var files = Directory.GetFiles(outputDir, "*.xlf").ToList();
+			const string roundTrippedFilepath = @"C:\WorkingFiles\RoundTripped.xml";
+			LocalizeLists.CombineXliffFiles(files, roundTrippedFilepath);
 
-		private static void AddTargetLanguage(XDocument xliffDoc)
-		{
-				var fileElement = xliffDoc.XPathSelectElement("/xliff/file");
-				fileElement?.Add(new XAttribute("target-language", "."));
+			// Test that the language was preserved.
+			// NB: if this fails, the test hangs.
+			AssertThatXmlIn.File(roundTrippedFilepath).HasAtLeastOneMatchForXpath($"//AStr[@ws='{testTargetLanguage}']");
 		}
 	}
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -35,7 +36,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				</file>
 			</xliff>";
 		private const string EmptyGroup = "<group id='{0}'></group>";
-		private const string EmptyTransUnit = "<trans-unit id='{0}'><source>{1}</source></trans-unit>";
+		private const string TransUnitTemplate = "<trans-unit id='{0}'><source>{1}</source></trans-unit>";
+		private const string FinalTargetTemplate = "<target state='final'>{0}</target>";
 		private const string TransUnit = "trans-unit";
 		private static readonly string[] AcceptableTranslationStates = { "translated", "final" };
 		private static readonly XmlNamespaceManager NameSpaceManager = MakeNamespaceManager();
@@ -102,14 +104,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private static readonly ConversionMap ExSentencesMap = new ConversionMap("ExampleSentences", "_ES");
 
 		private static readonly AttConversionMap GuidMap = new AttConversionMap("guid", "guid");
-		private static readonly AttConversionMap StyleMap = new AttConversionMap("namedStyle", "style");
 
 		private static readonly SubTypeMap SubtypesMap = new SubTypeMap("LexEntryType", "LexEntryInflType");
 
 		#region Xml LocalizedLists To Xliff
 		/// <param name="sourceFile">path to the XML file containing lists to localize</param>
 		/// <param name="localizationsRoot">path to save XLIFF files that are ready to upload to Crowdin</param>
-		public static void SplitSourceLists(string sourceFile, string localizationsRoot)
+		/// <param name="targetLang">If specified, any strings in this locale will be included as 'final' translations</param>
+		public static void SplitSourceLists(string sourceFile, string localizationsRoot, string targetLang)
 		{
 			if (!File.Exists(sourceFile))
 				throw new ArgumentException("The source file does not exist.",
@@ -120,11 +122,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					nameof(localizationsRoot));
 			using (var sourceXml = new XmlTextReader(sourceFile))
 			{
-				SplitLists(sourceXml, localizationsRoot);
+				SplitLists(sourceXml, localizationsRoot, targetLang);
 			}
 		}
 
-		internal static void SplitLists(XmlTextReader sourceFile, string localizationsRoot)
+		internal static void SplitLists(XmlTextReader sourceFile, string localizationsRoot, string targetLang)
 		{
 			var sourceDoc = XDocument.Load(sourceFile);
 			var listElements = sourceDoc.Root?.Elements("List").ToArray();
@@ -184,15 +186,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				}
 			}
 
-			var academicDomainsXliff = ConvertListToXliff(AcademicDomains, academicDomainsList);
+			var academicDomainsXliff = ConvertListToXliff(AcademicDomains, academicDomainsList, targetLang);
 			academicDomainsXliff.Save(Path.Combine(localizationsRoot, AcademicDomains));
-			var miscListsXliff = ConvertListToXliff(MiscLists, miscLists);
+			var miscListsXliff = ConvertListToXliff(MiscLists, miscLists, targetLang);
 			miscListsXliff.Save(Path.Combine(localizationsRoot, MiscLists));
-			var lexicalTypesXliff = ConvertListToXliff(LexicalTypes, lexicalTypesLists);
+			var lexicalTypesXliff = ConvertListToXliff(LexicalTypes, lexicalTypesLists, targetLang);
 			lexicalTypesXliff.Save(Path.Combine(localizationsRoot, LexicalTypes));
-			var semanticDomainsXliff = ConvertListToXliff(SemanticDomains, semanticDomainsList);
+			var semanticDomainsXliff = ConvertListToXliff(SemanticDomains, semanticDomainsList, targetLang);
 			semanticDomainsXliff.Save(Path.Combine(localizationsRoot, SemanticDomains));
-			var anthroCatXliff = ConvertListToXliff(AnthropologyCategories, anthropologyCatList);
+			var anthroCatXliff = ConvertListToXliff(AnthropologyCategories, anthropologyCatList, targetLang);
 			anthroCatXliff.Save(Path.Combine(localizationsRoot, AnthropologyCategories));
 		}
 
@@ -202,18 +204,22 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				&& list.Attribute("field")?.Value == x.Field);
 		}
 
-		internal static XDocument ConvertListToXliff(string listFileName, XDocument listsDoc)
+		internal static XDocument ConvertListToXliff(string listFileName, XDocument listsDoc, string targetLang)
 		{
 			var xliffDoc = XDocument.Parse(string.Format(XliffBody, listFileName));
+			if (targetLang != null)
+			{
+				xliffDoc.XPathSelectElement("/xliff/file").SetAttributeValue("target-language", targetLang);
+			}
 			var bodyElem = xliffDoc.XPathSelectElement("/xliff/file/body", NameSpaceManager);
 			foreach (var list in listsDoc.XPathSelectElements("/Lists/List"))
 			{
 				var listId = GetListId(list);
 				var group = XElement.Parse($"<group id='{listId}'/>");
-				ConvertAUniToXliff(list, group, listId, NameMap);
-				ConvertAUniToXliff(list, group, listId, AbbrMap);
-				ConvertDescription(list, group, listId);
-				ConvertPossibilities(list, group, GetPossTypeForList(list), listId);
+				ConvertAUniToXliff(list, group, listId, NameMap, targetLang);
+				ConvertAUniToXliff(list, group, listId, AbbrMap, targetLang);
+				ConvertAStrToXliff(list, group, listId, DescMap, targetLang);
+				ConvertPossibilities(list, group, GetPossTypeForList(list), listId, targetLang);
 				bodyElem?.Add(group);
 			}
 
@@ -230,33 +236,27 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			throw new ArgumentException("Unknown list found");
 		}
 
-		private static void ConvertAUniToXliff(XElement list, XElement group, string baseId, ConversionMap item)
+		private static void ConvertAUniToXliff(XElement list, XElement group, string baseId, ConversionMap item, string targetLang)
 		{
-			var source = list.Element(item.ElementName)?.Elements("AUni").First().Value;
+			var sourceElem = list.Element(item.ElementName);
+			var source = sourceElem?.Elements("AUni").First().Value;
 			if (string.IsNullOrWhiteSpace(source))
 			{
 				return;
 			}
-			var transUnit = XElement.Parse($"<trans-unit id='{baseId}{item.IdSuffix}'><source>{SecurityElement.Escape(source)}</source></trans-unit>");
+			var transUnit = XElement.Parse(string.Format(TransUnitTemplate, baseId + item.IdSuffix, SecurityElement.Escape(source)));
+			if (targetLang != null)
+			{
+				var target = sourceElem.XPathSelectElement($"AUni[@ws='{targetLang}']")?.Value;
+				if (!string.IsNullOrWhiteSpace(target))
+				{
+					transUnit.Add(XElement.Parse(string.Format(FinalTargetTemplate, SecurityElement.Escape(target))));
+				}
+			}
 			group.Add(transUnit);
 		}
 
-		private static void ConvertDescription(XElement owner, XElement group, string baseId)
-		{
-			var descriptionStrings = owner.Element(DescMap.ElementName)?.Elements("AStr");
-			var sourceNameNode = descriptionStrings?.First();
-			if (sourceNameNode == null) // No description found, no work to do
-			{
-				return;
-			}
-
-			var descId = baseId + DescMap.IdSuffix;
-			var descGroup = XElement.Parse(string.Format(EmptyGroup, descId));
-			ConvertRunsToTransUnits(sourceNameNode, descId, descGroup);
-			group.Add(descGroup);
-		}
-
-		private static void ConvertPossibilities(XElement owner, XElement group, string possibilityType, string baseId)
+		private static void ConvertPossibilities(XElement owner, XElement group, string possibilityType, string baseId, string targetLang)
 		{
 			var possibilitiesElement = owner.Element(PossMap.ElementName);
 			if (possibilitiesElement == null) // No Possibilities found, no work to do
@@ -266,14 +266,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var possibilitiesId = baseId + PossMap.IdSuffix;
 			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
-			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup);
+			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
 
 		/// <summary>
 		/// These are only found in Semantic Domains, but it doesn't hurt to handle them generically
 		/// </summary>
-		private static void ConvertQuestions(XElement owner, XElement group, string baseId)
+		private static void ConvertQuestions(XElement owner, XElement group, string baseId, string targetLang)
 		{
 			var questionsElement = owner.Element(QuestionsMap.ElementName);
 			if (questionsElement == null) // No Possibilities found, no work to do
@@ -283,11 +283,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var questionsId = baseId + QuestionsMap.IdSuffix;
 			var questionsGroup = XElement.Parse(string.Format(EmptyGroup, questionsId));
-			AddQuestionsToGroup(questionsElement, questionsId, questionsGroup);
+			AddQuestionsToGroup(questionsElement, questionsId, questionsGroup, targetLang);
 			group.Add(questionsGroup);
 		}
 
-		private static void AddQuestionsToGroup(XElement questionsElement, string questionsId, XElement questionsGroup)
+		private static void AddQuestionsToGroup(XElement questionsElement, string questionsId, XElement questionsGroup, string targetLang)
 		{
 			var questionElement = questionsElement.Elements("CmDomainQ");
 			int questionIndex = 0;
@@ -295,65 +295,53 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				var possId = questionsId + "_" + questionIndex;
 				var questionGroup = XElement.Parse(string.Format(EmptyGroup, possId));
-				ConvertQuestion(question, questionGroup, possId);
-				ConvertExampleWords(question, questionGroup, possId);
-				ConvertExampleSentences(question, questionGroup, possId);
+				ConvertAUniToXliff(question, questionGroup, possId, QuestionMap, targetLang);
+				ConvertAUniToXliff(question, questionGroup, possId, ExWordsMap, targetLang);
+				ConvertAStrToXliff(question, questionGroup, possId, ExSentencesMap, targetLang);
 				questionsGroup.Add(questionGroup);
 				++questionIndex;
 			}
 		}
 
-		private static void ConvertExampleSentences(XElement question, XElement questionGroup, string possId)
+		private static void ConvertAStrToXliff(XElement owner, XElement ownerGroup, string possId, ConversionMap item, string targetLang)
 		{
-			var exampleStrings = question.Element(ExSentencesMap.ElementName)?.Elements("AStr");
-			var sourceNameNode = exampleStrings?.First();
-			if (sourceNameNode == null) // No description found, no work to do
+			var itemNode = owner.Element(item.ElementName);
+			var source = AStrValue(itemNode?.Element("AStr"));
+			if (string.IsNullOrWhiteSpace(source)) // nothing to translate
 			{
 				return;
 			}
+			var target = targetLang == null ? null : AStrValue(itemNode?.XPathSelectElement($"AStr[@ws='{targetLang}']"));
 
-			var examplesId = possId + ExSentencesMap.IdSuffix;
-			var examplesGroup = XElement.Parse(string.Format(EmptyGroup, examplesId));
-			ConvertRunsToTransUnits(sourceNameNode, examplesId, examplesGroup);
-			questionGroup.Add(examplesGroup);
+			// 2020.02: Yes, conflating all runs into a single trans-unit loses some information, but we have only one string in our lists
+			// with multiple runs, and it is a royal pain to translate. In fact, no previous translators have bothered preserving run breaks.
+			// The run is in a subgroup all by itself because we started by preserving runs, and we didn't feel like removing the extra group.
+			var groupId = possId + item.IdSuffix;
+			var groupNode = XElement.Parse(string.Format(EmptyGroup, groupId));
+			var transUnit = XElement.Parse(string.Format(TransUnitTemplate, groupId + "_0", SecurityElement.Escape(source)));
+				if (!string.IsNullOrWhiteSpace(target))
+				{
+					transUnit.Add(XElement.Parse(string.Format(FinalTargetTemplate, SecurityElement.Escape(target))));
+				}
+			groupNode.Add(transUnit);
+			ownerGroup.Add(groupNode);
 		}
 
-		private static void ConvertRunsToTransUnits(XElement sourceNameNode, string parentId,
-			XElement group)
+		private static string AStrValue(XElement aStrElem)
 		{
-			int runIndex = 0;
-			foreach (var run in sourceNameNode.Elements("Run"))
+			if (aStrElem == null)
 			{
-				var transUnit = XElement.Parse($"<trans-unit id='{parentId + "_" + runIndex}'><source></source></trans-unit>");
-				transUnit.Element("source").Value = run.Value;
-				ConvertAttributeAsElement(StyleMap, run, transUnit);
-				group.Add(transUnit);
-				++runIndex;
+				return null;
 			}
+			var aStrBuilder = new StringBuilder();
+			foreach (var run in aStrElem.Elements("Run"))
+			{
+				aStrBuilder.Append(run.Value);
+			}
+			return aStrBuilder.ToString();
 		}
 
-		private static void ConvertQuestion(XElement question, XElement questionGroup, string possId)
-		{
-			var nameElements = question.Element(QuestionMap.ElementName)?.Elements("AUni");
-			var sourceNode = nameElements?.First();
-			var transUnit = XElement.Parse(string.Format(
-				EmptyTransUnit,
-				possId + QuestionMap.IdSuffix, sourceNode?.Value));
-			questionGroup.Add(transUnit);
-		}
-
-		private static void ConvertExampleWords(XElement question, XElement questionGroup, string possId)
-		{
-			var nameElements = question.Element(ExWordsMap.ElementName)?.Elements("AUni");
-			var sourceNode = nameElements?.First();
-			if (sourceNode?.Value == null)
-				return;
-			var transUnit = XElement.Parse($"<trans-unit id='{possId}{ExWordsMap.IdSuffix}'><source></source></trans-unit>");
-			transUnit.Element("source").Value = sourceNode.Value;
-			questionGroup.Add(transUnit);
-		}
-
-		private static void ConvertSubPossibilities(XElement owner, XElement group, string possibilityType, string baseId)
+		private static void ConvertSubPossibilities(XElement owner, XElement group, string possibilityType, string baseId, string targetLang)
 		{
 			var possibilitiesElement = owner.Element(SubPosMap.ElementName);
 			if (possibilitiesElement == null) // No Possibilities found, no work to do
@@ -363,12 +351,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var possibilitiesId = baseId + SubPosMap.IdSuffix;
 			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
-			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup);
+			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
 
 		private static void AddPossibilitiesToGroup(string possibilityType, XElement possibilitiesElement,
-			string possibilitiesId, XElement possibilitiesGroup)
+			string possibilitiesId, XElement possibilitiesGroup, string targetLang)
 		{
 			var handleSubtypes = possibilityType == SubtypesMap.SuperType;
 			var possibilityElements = handleSubtypes
@@ -389,15 +377,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 				}
 				ConvertAttributeAsElement(GuidMap, possibility, possGroup);
-				ConvertAUniToXliff(possibility, possGroup, possId, NameMap);
-				ConvertAUniToXliff(possibility, possGroup, possId, AbbrMap);
-				ConvertAUniToXliff(possibility, possGroup, possId, RevNameMap);
-				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrMap);
-				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrevMap);
-				ConvertAUniToXliff(possibility, possGroup, possId, GlsAppendMap);
-				ConvertDescription(possibility, possGroup, possId);
-				ConvertQuestions(possibility, possGroup, possId);
-				ConvertSubPossibilities(possibility, possGroup, possibilityType, possId);
+				ConvertAUniToXliff(possibility, possGroup, possId, NameMap, targetLang);
+				ConvertAUniToXliff(possibility, possGroup, possId, AbbrMap, targetLang);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevNameMap, targetLang);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrMap, targetLang);
+				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrevMap, targetLang);
+				ConvertAUniToXliff(possibility, possGroup, possId, GlsAppendMap, targetLang);
+				ConvertAStrToXliff(possibility, possGroup, possId, DescMap, targetLang);
+				ConvertQuestions(possibility, possGroup, possId, targetLang);
+				ConvertSubPossibilities(possibility, possGroup, possibilityType, possId, targetLang);
 				possibilitiesGroup.Add(possGroup);
 				++possIndex;
 			}
@@ -434,7 +422,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var localizedLists = new XDocument();
 			localizedLists.Add(XElement.Parse($"<?xml version='1.0' encoding='UTF-8'?><Lists date='{DateTime.Now:MM/dd/yyy H:mm:ss zzz}'/>"));
 
-			var xliffDocs = xliffFiles.Select(XDocument.Load);
+			var xliffDocs = xliffFiles.Select(XDocument.Load).ToList();
 
 			CombineXliffDocuments(xliffDocs, localizedLists);
 			localizedLists.Save(outputList);
@@ -444,17 +432,27 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// By concatenating the XLIFF files into a single document before converting, we can restore the lists
 		/// in the same order in which FieldWorks exported them.
 		/// </remarks>
-		private static void CombineXliffDocuments(IEnumerable<XDocument> xliffDocs, XDocument localizedLists)
+		private static void CombineXliffDocuments(List<XDocument> xliffDocs, XDocument localizedLists)
 		{
+			var targetLanguage = TargetLanguageOfXliffDoc(xliffDocs[0]);
+			if (xliffDocs.Any(d => TargetLanguageOfXliffDoc(d) != targetLanguage))
+			{
+				throw new ArgumentException("All documents must share the same target language", nameof(xliffDocs));
+			}
 			var listsElement = localizedLists.Root;
 			var masterDoc = XDocument.Parse(string.Format(XliffBody, "master.xlf"));
-			masterDoc.XPathSelectElement("/xliff/file").Add(new XAttribute("target-language", "."));
+			masterDoc.XPathSelectElement("/xliff/file").Add(new XAttribute("target-language", targetLanguage));
 			var masterBody = masterDoc.XPathSelectElement("/xliff/file/body");
 			foreach (var xliffDocument in xliffDocs)
 			{
 				masterBody.Add(xliffDocument.XPathSelectElements("xliff/file/body/group"));
 			}
 			ConvertXliffToLists(masterDoc, listsElement);
+		}
+
+		private static string TargetLanguageOfXliffDoc(XDocument xliffDoc)
+		{
+			return xliffDoc.XPathSelectElement("/xliff/file").Attribute("target-language").Value;
 		}
 
 		internal static void ConvertXliffToLists(XDocument xliffList, XElement listsElement)
@@ -552,7 +550,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				targetRun.Add(xliffTarget?.Value);
 			}
-			ConvertAttributeFromXliff(StyleMap, astrTransUnit, sourceRun, targetRun);
 			source.Add(sourceRun);
 			target.Add(targetRun);
 		}
