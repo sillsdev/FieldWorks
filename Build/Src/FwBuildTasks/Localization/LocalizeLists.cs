@@ -11,6 +11,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Microsoft.Build.Utilities;
+
 // ReSharper disable PossibleNullReferenceException - Wolf!
 
 namespace SIL.FieldWorks.Build.Tasks.Localization
@@ -111,7 +113,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// <param name="sourceFile">path to the XML file containing lists to localize</param>
 		/// <param name="localizationsRoot">path to save XLIFF files that are ready to upload to Crowdin</param>
 		/// <param name="targetLang">If specified, any strings in this locale will be included as 'final' translations</param>
-		public static void SplitSourceLists(string sourceFile, string localizationsRoot, string targetLang)
+		/// <param name="logger"/>
+		public static void SplitSourceLists(string sourceFile, string localizationsRoot, string targetLang,
+			TaskLoggingHelper logger = null)
 		{
 			if (!File.Exists(sourceFile))
 				throw new ArgumentException("The source file does not exist.",
@@ -122,11 +126,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					nameof(localizationsRoot));
 			using (var sourceXml = new XmlTextReader(sourceFile))
 			{
-				SplitLists(sourceXml, localizationsRoot, targetLang);
+				SplitLists(sourceXml, localizationsRoot, targetLang, logger);
 			}
 		}
 
-		internal static void SplitLists(XmlTextReader sourceFile, string localizationsRoot, string targetLang)
+		internal static void SplitLists(XmlTextReader sourceFile, string localizationsRoot, string targetLang,
+			TaskLoggingHelper logger = null)
 		{
 			var sourceDoc = XDocument.Load(sourceFile);
 			var listElements = sourceDoc.Root?.Elements("List").ToArray();
@@ -134,8 +139,13 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				throw new ArgumentException(
 					"Source file is not in the expected format, no Lists found under the root element.");
 			if (listElements.Length != ExpectedListCount)
-				throw new ArgumentException(
-					$"Source file has an unexpected list count. {listElements.Length} instead of {ExpectedListCount}");
+			{
+				var msg = $"Source file has an unexpected list count. {listElements.Length} instead of {ExpectedListCount}";
+				if (targetLang == null || logger == null)
+					throw new ArgumentException(msg);
+				logger.LogWarning($"{msg} for '{targetLang}'.");
+			}
+
 			// LexEntryInflTypes have a field GlossPrepend that exists, but the original designers didn't expect anyone to use it.
 			// We don't ship anything of this type, but we do want to alert any future developers on the odd chance that we might.
 			if (sourceDoc.XPathSelectElement("//GlossPrepend") != null)

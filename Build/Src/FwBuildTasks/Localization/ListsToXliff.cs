@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				TargetLocale = null;
 			}
-			LocalizeLists.SplitSourceLists(SourceXml, XliffOutputDir, TargetLocale);
+			LocalizeLists.SplitSourceLists(SourceXml, XliffOutputDir, TargetLocale, Log);
 			return true;
 		}
 	}

@@ -36,7 +36,7 @@
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 	</Target>
 
-	<!-- Zip LocalizedLists-*.xml files from Localizations to DistFiles/Templates -->
+	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
 	<Target Name="zipLocalizedLists">
 		<ItemGroup>
 			<!-- List all locales:
@@ -61,6 +61,25 @@
 		</ItemGroup>
 		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
 		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
+	</Target>
+
+	<!-- Convert LocalizedLists-*.xml files from Localizations to xliff to upload as completed translations -->
+	<Target Name="convertLocalizedListsToXliff">
+		<ItemGroup>
+			<ListsXmlFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
+			<OldXliffFiles Include="$(ListsDirectory)/*/*.xlf"/>
+		</ItemGroup>
+		<ForceDelete Files="@(OldXliffFiles)"/><!-- delete early to prevent race conditions during creation -->
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="splitListsForOneLocale"
+			Properties="ListsXml=%(ListsXmlFiles.Identity);BareFilename=%(Filename)"/>
+	</Target>
+	<Target Name="splitListsForOneLocale">
+		<PropertyGroup>
+			<Locale>$(BareFilename.Substring(15))</Locale><!-- there are 15 chars in 'LocalizedLists-' -->
+			<XliffOutputDir>$(ListsDirectory)/$(Locale)</XliffOutputDir>
+		</PropertyGroup>
+		<MakeDir Directories="$(XliffOutputDir)"/>
+		<ListsToXliff SourceXml="$(ListsXml)" XliffOutputDir="$(XliffOutputDir)" TargetLocale="$(Locale)"/>
 	</Target>
 
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
