@@ -8,6 +8,10 @@ echo
 
 PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
 
+# Optionally skip question about local libraries and set to use downloaded artifacts by running
+#   ./run-in-environ xbuild /t:WriteNonlocalDevelopmentPropertiesFile
+# The setting and paths can later be changed by editing LibraryDevelopment.properties
+
 "$(dirname "$0")"/run-in-environ xbuild "/t:RestoreNuGetPackages" && \
 "$(dirname "$0")"/run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile" && \
 "$(dirname "$0")"/run-in-environ xbuild "/t:refreshTargets" && \
