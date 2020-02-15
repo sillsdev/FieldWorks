@@ -108,14 +108,16 @@ namespace SIL.FieldWorks.IText
 		public void EstablishDefaultEntry_Empty_Basic()
 		{
 			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			using (var testSandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, mediator, propertyTable,
+					InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs)))
 			{
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var morph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 				entry.LexemeFormOA = morph;
 				morph.Form.set_String(Cache.DefaultVernWs, "here");
 				morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
-				var testSandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, mediator, new PropertyTable(mediator),
-					InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs));
+
 				testSandbox.RawWordform = TsStringUtils.MakeString("here", Cache.DefaultVernWs);
 				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "here", morph.MorphTypeRA, false));
 				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "notHere", morph.MorphTypeRA, false));
