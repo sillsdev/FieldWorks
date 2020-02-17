@@ -15,6 +15,7 @@
 	<PropertyGroup>
 		<L10nsDirectory>$(fwrt)/Localizations/l10ns</L10nsDirectory>
 		<ListsDirectory>$(fwrt)/Localizations/lists</ListsDirectory>
+		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 	</PropertyGroup>
 
 	<!-- Update localizable files in Crowdin -->
@@ -30,9 +31,8 @@
 	<!-- Download translations from Crowdin -->
 	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'">
 		<ForceDelete Files="$(L10nsDirectory)"/>
-		<!-- TODO (Hasso) 2020.01: retry failed downloads? -->
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(DownloadsDir)/Crowdin.zip"/>
-		<Unzip ZipFilename="$(DownloadsDir)/Crowdin.zip" ToDir="$(L10nsDirectory)"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="Exists('$(CrowdinZip)')"/>
+		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 	</Target>
 
