@@ -21,6 +21,10 @@
     {
       "source": "Localizations/lists/*.xlf",
       "translation": "/%locale%/Lists/%file_name%.%locale%.%file_extension%"
+    },
+    {
+      "source": "Localizations/LCM/**/*.resx",
+      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%"
     }
   ]
 }

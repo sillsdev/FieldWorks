@@ -13,19 +13,31 @@
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
 
 	<PropertyGroup>
-		<L10nsDirectory>$(fwrt)/Localizations/l10ns</L10nsDirectory>
-		<ListsDirectory>$(fwrt)/Localizations/lists</ListsDirectory>
+		<L10nsBaseDir>$(fwrt)/Localizations</L10nsBaseDir>
+		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
+		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 	</PropertyGroup>
 
 	<!-- Update localizable files in Crowdin -->
-	<Target Name="uploadUpdatesForTranslation">
+	<Target Name="uploadUpdatesForTranslation" DependsOnTargets="CopyLcmResxFiles">
 		<ItemGroup>
 			<OldXliffs Include="$(ListsDirectory)/*.xlf"/>
 		</ItemGroup>
 		<ForceDelete Files="@(OldXliffs)"/>
 		<ListsToXliff SourceXml="$(ListsDirectory)/LocalizableLists.xml" XliffOutputDir="$(ListsDirectory)"/>
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v"/>
+	</Target>
+
+	<Target Name="CopyLcmResxFiles">
+		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location."
+			Condition="'$(UseLocalLibraries)'!='Y'"/>
+		<ItemGroup>
+			<LcmResxFiles Include="$(LcmArtifactsDir)/../../src/**/*.resx"/>
+		</ItemGroup>
+		<Message Text="@(LcmResxFiles)" />
+		<Copy SourceFiles="@(LcmResxFiles)"
+			DestinationFiles="@(LcmResxFiles->'$(L10nsBaseDir)/LCM/%(RecursiveDir)%(Filename)%(Extension)')"/>
 	</Target>
 
 	<!-- Download translations from Crowdin -->
