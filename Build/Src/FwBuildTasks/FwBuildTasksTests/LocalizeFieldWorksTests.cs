@@ -48,6 +48,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			m_sut = new InstrumentedLocalizeFieldWorks();
 			m_rootPath = Path.Combine(Path.GetTempPath(), "XXTestRoot");
 			m_sut.RootDirectory = m_rootPath;
+			m_sut.OutputFolder = Path.Combine(m_rootPath, "Output");
+			m_sut.SrcFolder = Path.Combine(m_rootPath, "Src");
+			m_sut.L10nFileDirectory = Path.Combine(m_rootPath, "Localizations", "l10ns");
 			// wipe out anything left from last time
 			if (Directory.Exists(m_rootPath))
 				Directory.Delete(m_rootPath, true);

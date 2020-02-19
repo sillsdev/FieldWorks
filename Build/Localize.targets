@@ -38,7 +38,7 @@
 
 	<Target Name="CopyLcmResxFiles">
 		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location."
-			Condition="'$(UseLocalLibraries)'!='Y'"/>
+			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
 		<ItemGroup>
 			<LcmResxFiles Include="$(LcmArtifactsDir)/../../src/**/*.resx"/>
 		</ItemGroup>
@@ -52,6 +52,11 @@
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
+		<ItemGroup>
+			<Folders Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))" />
+		</ItemGroup>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="moveLcmFolders"
+			Properties="FolderToPrune=%(Folders.Identity)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 		<ItemGroup>
 			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))"/>
@@ -64,6 +69,16 @@
 			* Insert strings from messages.*.po into strings-*.xml -->
 	<Target Name="postProcessDownloadedTranslation">
 		<PoToXml PoFile="$(LocaleDir)/messages.$(Locale).po" StringsXml="$(LocaleDir)/strings-$(Locale).xml"/>
+	</Target>
+
+	<!-- LCM resx files in crowdin end up with extra folders because of the folder structure we use on upload this task
+		moves the files to a more convenient place to process after the download -->
+	<Target Name="moveLcmFolders">
+		<Message Text="Pruning Localizations/LCM in $(FolderToPrune)" />
+		<ItemGroup>
+			<TranslatedResxFiles Include="$(FolderToPrune)/Localizations/LCM/**/*.resx"/>
+		</ItemGroup>
+		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(FolderToPrune)/src/%(RecursiveDir)" />
 	</Target>
 
 	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
@@ -108,11 +123,31 @@
 
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
 	<Target Name="processLanguages-source">
-		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)" Build="SourceOnly"/>
+		<Error Text="To localize liblcm it must be cloned locally."
+			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
+	<!-- Process source for liblcm -->
+		<LocalizeFieldWorks
+			RootDirectory="$(LcmArtifactsDir)/../.."
+			SrcFolder="$(LcmArtifactsDir)/../../"
+			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			Config="$(config-capital)"
+			OutputFolder="$(fwrt)/Output"
+			Build="SourceOnly"/>
+	<!-- Process source for fieldworks -->
+		<LocalizeFieldWorks
+			RootDirectory="$(fwrt)"
+			SrcFolder="$(fwrt)/Src"
+			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			Config="$(config-capital)"
+			OutputFolder="$(fwrt)/Output"
+			CopyStringsXml="true"
+			Build="SourceOnly"/>
 	</Target>
 
 	<!-- Build localized dll's -->
 	<Target Name="processLanguages-binaries">
+		<Error Text="To localize liblcm it must be cloned locally."
+			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
 		<!-- REVIEW (Hasso) 2020.01: what does this copy? -->
 		<ItemGroup>
 			<LocalizationFiles Include="$(fwrt)/Localizations/Output/**/*.*" Condition="Exists('$(fwrt)/Localizations/Output')"/>
@@ -121,7 +156,23 @@
 			DestinationFiles="@(LocalizationFiles->'$(fwrt)/Output/%(RecursiveDir)%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true"/>
 
-		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)" Build="BinaryOnly"/>
+	<!-- Process source for liblcm -->
+		<LocalizeFieldWorks
+			RootDirectory="$(LcmArtifactsDir)/../.."
+			SrcFolder="$(LcmArtifactsDir)/../../"
+			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			Config="$(config-capital)"
+			OutputFolder="$(fwrt)/Output"
+			Build="BinaryOnly"/>
+	<!-- Process source for fieldworks -->
+		<LocalizeFieldWorks
+			RootDirectory="$(fwrt)"
+			SrcFolder="$(fwrt)/Src"
+			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			Config="$(config-capital)"
+			OutputFolder="$(fwrt)/Output"
+			CopyStringsXml="true"
+			Build="BinaryOnly"/>
 	</Target>
 
 </Project>

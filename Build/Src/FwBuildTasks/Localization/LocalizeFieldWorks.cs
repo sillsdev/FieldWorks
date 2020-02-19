@@ -61,6 +61,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		[Required]
 		public string RootDirectory { get; set; }
 
+		[Required]
+		public string SrcFolder { get; set; }
+
 		/// <summary>
 		/// What to build: Valid values are: SourceOnly, BinaryOnly, All
 		/// </summary>
@@ -71,25 +74,22 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// </summary>
 		public string Config { get; set; }
 
-		internal static readonly string L10nFileRelative = Path.Combine("Localizations", "l10ns"); // relative to root directory.
+		[Required]
+		public string OutputFolder { get; set; }
 
-		internal string L10nFileDirectory => Path.Combine(RootDirectory, L10nFileRelative);
+
+		[Required]
+		public string L10nFileDirectory { get; set; }
 
 		internal const string DistFilesFolderName = "DistFiles";
 		internal const string LExFolderName = "Language Explorer";
 		internal const string ConfigFolderName = "Configuration";
-		internal const string OutputFolderName = "Output";
-		internal const string SrcFolderName = "Src";
 
 		internal static readonly string AssemblyInfoName = "CommonAssemblyInfo.cs";
 
 		internal string AssemblyInfoPath => Path.Combine(SrcFolder, AssemblyInfoName);
 
 		internal string ConfigurationFolder => Path.Combine(RootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
-
-		internal string OutputFolder => Path.Combine(RootDirectory, OutputFolderName);
-
-		internal string SrcFolder => Path.Combine(RootDirectory, SrcFolderName);
 
 		internal bool BuildSource => Build != "BinaryOnly";
 
