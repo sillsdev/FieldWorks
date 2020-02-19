@@ -17,6 +17,8 @@
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
+		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')">WarnAndContinue</OnFailedCrowdinDownload>
+		<OnFailedCrowdinDownload Condition="!Exists('$(CrowdinZip)')">ErrorAndStop</OnFailedCrowdinDownload>
 	</PropertyGroup>
 
 	<!-- Update localizable files in Crowdin -->
@@ -43,7 +45,7 @@
 	<!-- Download translations from Crowdin -->
 	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'">
 		<ForceDelete Files="$(L10nsDirectory)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="Exists('$(CrowdinZip)')"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 	</Target>
@@ -78,7 +80,7 @@
 	<!-- Convert LocalizedLists-*.xml files from Localizations to xliff to upload as completed translations -->
 	<Target Name="convertLocalizedListsToXliff">
 		<ItemGroup>
-			<ListsXmlFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
+			<ListsXmlFiles Include="$(L10nsBaseDir)/LocalizedLists-*.xml"/>
 			<OldXliffFiles Include="$(ListsDirectory)/*/*.xlf"/>
 		</ItemGroup>
 		<ForceDelete Files="@(OldXliffFiles)"/><!-- delete early to prevent race conditions during creation -->
