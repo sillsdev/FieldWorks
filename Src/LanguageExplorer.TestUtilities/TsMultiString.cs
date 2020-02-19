@@ -7,7 +7,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.CacheLight
+namespace LanguageExplorer.TestUtilities
 {
 	internal class TsMultiString : ITsMultiString
 	{

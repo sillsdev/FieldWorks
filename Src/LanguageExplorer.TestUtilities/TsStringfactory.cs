@@ -8,7 +8,7 @@ using System.Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.CacheLight
+namespace LanguageExplorer.TestUtilities
 {
 	/// <summary>
 	/// This class helps the RealCacheLoader class by creating ITsStrings from Run XML elements.

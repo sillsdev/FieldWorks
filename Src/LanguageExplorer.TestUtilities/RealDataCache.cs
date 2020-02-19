@@ -12,7 +12,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.CacheLight
+namespace LanguageExplorer.TestUtilities
 {
 	/// <summary></summary>
 	public sealed class RealDataCache : IRealDataCache

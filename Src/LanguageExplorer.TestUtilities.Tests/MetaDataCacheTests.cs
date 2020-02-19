@@ -5,10 +5,9 @@
 using System;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.CacheLight;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.CacheLightTests
+namespace LanguageExplorer.TestUtilities.Tests
 {
 	/// <summary>
 	/// Test cache initialization.

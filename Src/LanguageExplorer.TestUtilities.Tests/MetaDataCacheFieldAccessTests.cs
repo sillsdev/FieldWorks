@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.CacheLightTests
+namespace LanguageExplorer.TestUtilities.Tests
 {
 	/// <summary>
 	/// Test the field access methods.

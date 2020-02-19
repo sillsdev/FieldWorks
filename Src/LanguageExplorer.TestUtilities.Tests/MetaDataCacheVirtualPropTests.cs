@@ -6,7 +6,7 @@ using System;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 
-namespace SIL.FieldWorks.CacheLightTests
+namespace LanguageExplorer.TestUtilities.Tests
 {
 	/// <summary>
 	/// Test the reverse access methods.

@@ -3,10 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.CacheLight;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.CacheLightTests
+namespace LanguageExplorer.TestUtilities.Tests
 {
 	/// <summary>
 	/// Base class for testing the field, class, and virtual methods.

@@ -80,10 +80,6 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="CacheLight">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetZip">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>

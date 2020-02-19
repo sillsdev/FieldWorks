@@ -8,7 +8,6 @@ using System.Drawing;
 using FieldWorks.TestUtilities;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;

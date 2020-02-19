@@ -11,7 +11,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>CacheLightTests</AssemblyName>
+    <AssemblyName>LanguageExplorer.TestUtilities.Tests</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -19,7 +19,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>SIL.FieldWorks.CacheLightTests</RootNamespace>
+    <RootNamespace>LanguageExplorer.TestUtilities.Tests</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -54,7 +54,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\CacheLightTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\LanguageExplorer.TestUtilities.Tests.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -101,7 +101,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\CacheLightTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\LanguageExplorer.TestUtilities.Tests.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -141,13 +141,13 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CacheLight">
-      <Name>CacheLight</Name>
-      <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
-    </Reference>
     <Reference Include="FieldWorks.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="LanguageExplorer.TestUtilities, Version=10.0.0.37390, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\LanguageExplorer.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

@@ -6,7 +6,7 @@ using System;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.CacheLight
+namespace LanguageExplorer.TestUtilities
 {
 	/// <summary>
 	/// Interface for RealDataCache that combines the different interfaces that RealDataCache

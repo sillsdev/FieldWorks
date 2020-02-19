@@ -5,14 +5,13 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.CacheLightTests
+namespace LanguageExplorer.TestUtilities.Tests
 {
 	/// <summary>
 	/// Tests the two main interfaces (ISilDataAccess and IVwCacheDa) for RealDataCache.

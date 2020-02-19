@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.CacheLight;
+using LanguageExplorer.TestUtilities;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;

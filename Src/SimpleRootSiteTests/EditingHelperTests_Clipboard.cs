@@ -4,8 +4,8 @@
 
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;

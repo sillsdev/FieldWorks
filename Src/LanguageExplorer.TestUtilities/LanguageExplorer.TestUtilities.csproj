@@ -83,6 +83,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.500, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -99,8 +103,13 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DummyApp.cs" />
+    <Compile Include="IRealDataCache.cs" />
+    <Compile Include="MetaDataCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealDataCache.cs" />
     <Compile Include="TestSetupServices.cs" />
+    <Compile Include="TsMultiString.cs" />
+    <Compile Include="TsStringfactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

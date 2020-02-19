@@ -15,7 +15,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.CacheLight
+namespace LanguageExplorer.TestUtilities
 {
 	/// <summary>
 	/// A database-less MetaDataCache implementation.

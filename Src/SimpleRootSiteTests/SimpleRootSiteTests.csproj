@@ -145,15 +145,11 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CacheLight">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
-    </Reference>
     <Reference Include="FieldWorks.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="LanguageExplorer.TestUtilities">
+    <Reference Include="LanguageExplorer.TestUtilities, Version=10.0.0.37778, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\LanguageExplorer.TestUtilities.dll</HintPath>
     </Reference>
