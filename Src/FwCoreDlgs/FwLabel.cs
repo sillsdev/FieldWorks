@@ -26,7 +26,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-
 		/// <summary>The rootsite that occupies 100% of the rectangle of this control</summary>
 		private InnerFwTextBox m_innerFwTextBox;
 		private ITsString m_tssOrig; // needed to support resize because the inner text box actually changes the string
@@ -39,10 +38,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwLabel()
 		{
 			m_innerFwTextBox = new InnerFwTextBox { ReadOnlyView = true };
-
 			Padding = new Padding(1, 2, 1, 1);
 			Controls.Add(m_innerFwTextBox);
-
 			// This causes us to get a notification when the string gets changed,
 			// so we can fire our TextChanged event.
 			m_sda = m_innerFwTextBox.DataAccess;
@@ -64,7 +61,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-
 			var renderer = Enabled ? new VisualStyleRenderer(VisualStyleElement.TextBox.TextEdit.Normal) : new VisualStyleRenderer(VisualStyleElement.TextBox.TextEdit.Disabled);
 			renderer.DrawBackground(e.Graphics, ClientRectangle, e.ClipRectangle);
 		}
@@ -153,14 +149,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_innerFwTextBox.EditingHelper.ApplyStyle(sStyle);
 			m_innerFwTextBox.RefreshDisplay();
-		}
-
-		/// <summary>
-		/// Applies the specified writing system to the current selection
-		/// </summary>
-		public void ApplyWS(int hvoWs)
-		{
-			m_innerFwTextBox.ApplyWS(hvoWs);
 		}
 
 		#endregion //Methods for applying styles and writing systems
@@ -349,11 +337,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-
 			var textRect = m_innerFwTextBox.TextRect;
 			var textHeight = textRect.Height;
 			var textWidth = textRect.Width;
-
 			if (textHeight > ClientRectangle.Height)
 			{
 				textHeight = ClientRectangle.Height;
@@ -362,7 +348,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				textWidth = ClientRectangle.Width;
 			}
-
 			var left = 0;
 			var top = 0;
 			switch (m_contentAlignment)
@@ -378,7 +363,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					left = ClientRectangle.Right - textWidth;
 					break;
 			}
-
 			switch (m_contentAlignment)
 			{
 				case System.Drawing.ContentAlignment.MiddleLeft:
@@ -392,11 +376,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					top = ClientRectangle.Bottom - textHeight;
 					break;
 			}
-
 			m_innerFwTextBox.Location = new Point(left, top);
 			m_innerFwTextBox.Width = textWidth;
 			m_innerFwTextBox.Height = m_innerFwTextBox.RootBox.Height;
-
 			var sel = m_innerFwTextBox.RootBox.MakeSimpleSel(true, false, false, false);
 			m_innerFwTextBox.ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
 		}

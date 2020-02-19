@@ -29,11 +29,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType)
+		public static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
-			var liftVersion = "0.13_ldml3";
+			const string liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
 				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
 			if (!success)
@@ -48,24 +48,19 @@ namespace SIL.FieldWorks.Common.Controls
 				return null; // user canceled.
 			}
 			obtainedProjectType = ObtainedProjectType.FieldWorks;
-
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, fwdataFileFullPathname);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
-
-			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()),
-				string.Format("vers: {0}, {1}", LcmCache.ModelVersion, liftVersion), 0);
+			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()), $"vers: {LcmCache.ModelVersion}, {liftVersion}", 0);
 			EnsureLinkedFoldersExist(fwdataFileFullPathname);
-
 			return fwdataFileFullPathname;
 		}
 
 		private static void EnsureLinkedFoldersExist(string fwdataFileFullPathname)
 		{
 			var projectFolder = Path.GetDirectoryName(fwdataFileFullPathname);
-
 			// LinkedFiles: main folder in project folder.
 			var linkedFilesDir = Path.Combine(projectFolder, "LinkedFiles");
 			if (!Directory.Exists(linkedFilesDir))
@@ -78,7 +73,6 @@ namespace SIL.FieldWorks.Common.Controls
 				"Others",
 				"Pictures"
 			};
-
 			foreach (var subfolderPath in subfolders
 				.Select(subfolder => Path.Combine(linkedFilesDir, subfolder))
 				.Where(subfolderPath => !Directory.Exists(subfolderPath)))
@@ -90,7 +84,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
+		private static string CreateProjectFromLift(Form parent, string liftPath)
 		{
 			string projectPath;
 			LcmCache cache;
@@ -103,12 +97,9 @@ namespace SIL.FieldWorks.Common.Controls
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, liftPath, parent, anthroListFile, cacheReceiver);
 				cache = cacheReceiver[0];
 			}
-
 			CallImportObtainedLexicon(cache, liftPath, parent);
-
 			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
 			cache.Dispose();
-
 			return projectPath;
 		}
 
@@ -142,14 +133,11 @@ namespace SIL.FieldWorks.Common.Controls
 			var synchronizeInvoke = (ISynchronizeInvoke)parameters[1];
 			var anthroFile = (string)parameters[2];
 			var cacheReceiver = (LcmCache[])parameters[3];
-
 			CoreWritingSystemDefinition wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
-
 			var projectPath = LcmCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
 				FwDirectoryFinder.LcmDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
-
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
 			cacheReceiver[0] = LcmCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentLcmUI(synchronizeInvoke), FwDirectoryFinder.LcmDirectories, new LcmSettings(), progress);

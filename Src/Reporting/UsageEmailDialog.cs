@@ -235,7 +235,6 @@ namespace SIL.Utils
 			applicationKey.SetValue("launches", launchCount.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// if you call this every time the application starts, it will send reports on the
 		/// specified launch number.  It will get version number and name out of the application.
@@ -250,7 +249,6 @@ namespace SIL.Utils
 		/// an e-mail.</param>
 		/// <param name="assembly">The assembly to use for getting version information (can be
 		/// <c>null</c>).</param>
-		/// ------------------------------------------------------------------------------------
 		public static void DoTrivialUsageReport(string applicationName, RegistryKey applicationKey,
 			string emailAddress, string topMessage, bool addStats, int launchNumber, Assembly assembly = null)
 		{

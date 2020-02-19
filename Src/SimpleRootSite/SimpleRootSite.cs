@@ -3583,12 +3583,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_fRootboxMade = true;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Subclasses should override CloseRootBox if something else is still using it
 		/// after the window closes. In that case the subclass should do nothing.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void CloseRootBox()
 		{
 			if (DesignMode || RootBox == null)

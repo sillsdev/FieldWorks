@@ -26,19 +26,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public void Selected()
 		{
-			this.UpdateDisplayFromModel((object)null, (EventArgs)null);
+			UpdateDisplayFromModel(null, null);
 		}
 
-		private void UpdateDisplayFromModel(object o, EventArgs eventArgs)
+		private static void UpdateDisplayFromModel(object o, EventArgs eventArgs)
 		{
-			;
 		}
 
 		/// <summary/>
 		public void MoveDataFromViewToModel()
 		{
-			if (this._updatingFromModel)
-				return;
 		}
 
 		/// <summary/>
@@ -73,7 +70,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_regionNameTextBox.TextChanged += _regionNameTextBox_TextChanged;
 			_regionCodeTextbox.TextChanged += _regionCodeTextbox_TextChanged;
 			_ietftagTextBox.TextChanged += _ietftagTextBox_TextChanged;
-
 		}
 
 		/// <summary/>
@@ -90,7 +86,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			_specialTypeComboBox.SelectedIndex = 0;
 			RemoveAllEventHandlers();
-
 			_model = modelCurrentWsSetupModel;
 			_abbreviation.Text = _model.Abbreviation;
 			_ietftagTextBox.Text = _model.Code;
@@ -107,20 +102,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				_scriptChooser.Items.Add(new ScriptChoiceView(scriptChoice.Label, scriptChoice));
 			}
-
 			if (_model.Script != null)
 			{
 				var index = scripts.IndexOf(r => r.Equals(_model.Script));
 				_scriptChooser.SelectedIndex = index;
 			}
-
 			_regionChooser.Items.Clear();
 			var modelRegions = _model.GetRegions().ToArray();
 			foreach (var regionChoice in modelRegions)
 			{
 				_regionChooser.Items.Add(new RegionChoiceView(regionChoice.Label, regionChoice));
 			}
-
 			if (_model.Region != null)
 			{
 				var index = modelRegions.IndexOf(r => r.Equals(_model.Region));
@@ -130,9 +122,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var standardVariants = _model.GetStandardVariants().ToArray();
 			foreach (var variant in standardVariants)
 			{
-				_standardVariantCombo.Items.Add(new VariantChoiceView(variant.Name, variant));
+				_standardVariantCombo.Items.Add(new VariantChoiceView(variant));
 			}
-
 			// _model.StandardVariant can be null in which case we will select 'None'
 			var variantIndex = standardVariants.IndexOf(v => v.Code == _model.StandardVariant);
 			_standardVariantCombo.SelectedIndex = variantIndex;
@@ -144,9 +135,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AddAllEventHandlers();
 		}
 
-		private class ScriptChoiceView : Tuple<string, ScriptListItem>
+		private sealed class ScriptChoiceView : Tuple<string, ScriptListItem>
 		{
-			public ScriptChoiceView(string label, ScriptListItem scriptChoice) : base(label, scriptChoice)
+			internal ScriptChoiceView(string label, ScriptListItem scriptChoice) : base(label, scriptChoice)
 			{
 			}
 
@@ -156,9 +147,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private class RegionChoiceView : Tuple<string, RegionListItem>
+		private sealed class RegionChoiceView : Tuple<string, RegionListItem>
 		{
-			public RegionChoiceView(string label, RegionListItem regionListItem) : base(label, regionListItem)
+			internal RegionChoiceView(string label, RegionListItem regionListItem) : base(label, regionListItem)
 			{
 			}
 
@@ -168,9 +159,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private class VariantChoiceView : Tuple<string, VariantListItem>
+		private sealed class VariantChoiceView : Tuple<string, VariantListItem>
 		{
-			public VariantChoiceView(string label, VariantListItem variant): base(variant.Name, variant)
+			internal VariantChoiceView(VariantListItem variant): base(variant.Name, variant)
 			{
 			}
 

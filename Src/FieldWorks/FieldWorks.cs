@@ -1659,7 +1659,7 @@ namespace SIL.FieldWorks
 							ObtainedProjectType obtainedProjectType;
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 												 // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, helpTopicProvider, out obtainedProjectType);
+							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
@@ -3274,7 +3274,6 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Get the directory this assembly is located in
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private static string DirectoryOfThisAssembly
 		{
 			get
@@ -3286,7 +3285,6 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged and managed resources
 		/// </summary>

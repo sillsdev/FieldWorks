@@ -10,15 +10,14 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 using System.Runtime.InteropServices;
+using SIL.Code;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Wrapper for all the information that a text selection contains.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[Serializable]
 	public class SelectionHelper
 	{
@@ -26,52 +25,46 @@ namespace SIL.FieldWorks.Common.RootSites
 		private SelInfo[] m_selInfo = new SelInfo[2];
 		private int m_iTop = -1;
 		private int m_ihvoEnd = -1;
-		private bool m_fEndSet = false;
+		private bool m_fEndSet;
 		/// <summary>Used for testing: holds SelectionHelper mock</summary>
 		public static SelectionHelper s_mockedSelectionHelper = null;
-
 		/// <summary>The distance the IP is from the top of the view</summary>
 		[NonSerialized]
-		protected int m_dyIPTop = 0;
-
+		protected int m_dyIPTop;
 		[NonSerialized]
 		private IVwRootSite m_rootSite;
-
 		[NonSerialized]
 		private IVwSelection m_vwSel;
 
 		#endregion
 
 		#region Construction and Initialization
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// The default constructor must be followed by a call to SetSelection before it will
 		/// really be useful
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public SelectionHelper()
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a selection helper based on an existing selection
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected SelectionHelper(IVwSelection vwSel, IVwRootSite rootSite)
 		{
 			m_vwSel = vwSel;
 			if (vwSel != null)
+			{
 				m_fEndSet = vwSel.IsRange;
+			}
 			RootSite = rootSite;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Copy constructor
 		/// </summary>
 		/// <param name="src">The source object</param>
-		/// ------------------------------------------------------------------------------------
 		public SelectionHelper(SelectionHelper src)
 		{
 			m_selInfo[0] = new SelInfo(src.SelectionInfo[0]);
@@ -84,19 +77,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_dyIPTop = src.m_dyIPTop;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a SelectionHelper with the information about the current selection.
 		/// </summary>
 		/// <param name="rootSite">The root site</param>
 		/// <returns>A new <see cref="SelectionHelper"/> object</returns>
-		/// -----------------------------------------------------------------------------------
 		public static SelectionHelper Create(IVwRootSite rootSite)
 		{
 			return GetSelectionInfo(null, rootSite);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a SelectionHelper with the information about the current selection.
 		/// </summary>
@@ -104,13 +94,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// null to create it from the given RootSite</param>
 		/// <param name="rootSite">The root site</param>
 		/// <returns>A new <see cref="SelectionHelper"/> object</returns>
-		/// ------------------------------------------------------------------------------------
 		public static SelectionHelper Create(IVwSelection vwSel, IVwRootSite rootSite)
 		{
 			return GetSelectionInfo(vwSel, rootSite);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all information about a selection by calling <c>IVwSelection.AllTextSelInfo</c>.
 		/// </summary>
@@ -118,52 +106,44 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// selection.</param>
 		/// <param name="rootSite">The root site</param>
 		/// <returns>A new <see cref="SelectionHelper"/> object</returns>
-		/// -----------------------------------------------------------------------------------
 		public static SelectionHelper GetSelectionInfo(IVwSelection vwSel, IVwRootSite rootSite)
 		{
 			if (s_mockedSelectionHelper != null)
+			{
 				return s_mockedSelectionHelper;
-
+			}
 			if (vwSel == null || !vwSel.IsValid)
 			{
 				vwSel = rootSite?.RootBox?.Selection;
 				if (vwSel == null || !vwSel.IsValid)
+				{
 					return null;
+				}
 			}
-
-			SelectionHelper helper = new SelectionHelper(vwSel, rootSite);
-
-			if (!helper.GetSelEndInfo(false))
-				return null;
-			if (!helper.GetSelEndInfo(true))
-				return null;
-
-			return helper;
+			var helper = new SelectionHelper(vwSel, rootSite);
+			return !helper.GetSelEndInfo(false) ? null :
+				!helper.GetSelEndInfo(true) ? null : helper;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get information about the selection
 		/// </summary>
 		/// <param name="fEnd"><c>true</c> to get information about the end of the selection,
 		/// otherwise <c>false</c>.</param>
 		/// <returns><c>true</c> if information retrieved, otherwise <c>false</c>.</returns>
-		/// -----------------------------------------------------------------------------------
 		private bool GetSelEndInfo(bool fEnd)
 		{
-			int i = fEnd ? 1 : 0;
-			int cvsli = m_vwSel.CLevels(fEnd) - 1;
+			var i = fEnd ? 1 : 0;
+			var cvsli = m_vwSel.CLevels(fEnd) - 1;
 			if (cvsli < 0)
 			{
 				cvsli = 0;
 			}
-
 			if (m_selInfo[i] == null)
 			{
 				m_selInfo[i] = new SelInfo();
 			}
-
-			using (ArrayPtr prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
+			using (var prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
 				m_vwSel.AllSelEndInfo(fEnd, out m_selInfo[i].ihvoRoot, cvsli, prgvsli,
 					out m_selInfo[i].tagTextProp, out m_selInfo[i].cpropPrevious, out m_selInfo[i].ich,
@@ -180,26 +160,26 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Methods to get selection properties
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Determines whether the specified flid is located in the level info for the selection
 		/// </summary>
 		/// <param name="flid">The flid.</param>
 		/// <param name="limitType">Type of the limit.</param>
 		/// <returns>true if the specified flid is found, false otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool IsFlidInLevelInfo(int flid, SelLimitType limitType)
 		{
-			SelLevInfo[] info = GetLevelInfo(limitType);
-			for (int i = 0; i < info.Length; i++)
+			var info = GetLevelInfo(limitType);
+			for (var i = 0; i < info.Length; i++)
 			{
 				if (info[i].tag == flid)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the selection level info for the specified tag found in the level info for
 		/// this selection.
@@ -210,13 +190,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>The level info for the specified tag</returns>
 		/// <exception cref="Exception">Thrown if the specified tag is not found in the level
 		/// info for the Anchor of the selection</exception>
-		/// ------------------------------------------------------------------------------------
 		public SelLevInfo GetLevelInfoForTag(int tag)
 		{
 			return GetLevelInfoForTag(tag, SelLimitType.Anchor);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the selection level info for the specified tag found in the level info for
 		/// this selection.
@@ -228,16 +206,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>The level info for the specified tag</returns>
 		/// <exception cref="Exception">Thrown if the specified tag is not found in the level
 		/// info of the selection</exception>
-		/// ------------------------------------------------------------------------------------
 		public SelLevInfo GetLevelInfoForTag(int tag, SelLimitType limitType)
 		{
 			SelLevInfo selLevInfo;
 			if (GetLevelInfoForTag(tag, limitType, out selLevInfo))
+			{
 				return selLevInfo;
+			}
 			throw new Exception("No selection level had the requested tag.");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieves the selection level info for the specified tag found in the level info for
 		/// this selection.
@@ -248,13 +226,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="selLevInfo">The level info for the specified tag, if found; undefined
 		/// otherwise</param>
 		/// <returns><c>true</c>if the specified tag is found; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool GetLevelInfoForTag(int tag, out SelLevInfo selLevInfo)
 		{
 			return GetLevelInfoForTag(tag, SelLimitType.Anchor, out selLevInfo);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieves the selection level info for the specified tag found in the level info for
 		/// this selection.
@@ -266,12 +242,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="selLevInfo">The level info for the specified tag, if found; undefined
 		/// otherwise</param>
 		/// <returns><c>true</c>if the specified tag is found; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool GetLevelInfoForTag(int tag, SelLimitType limitType,
-			out SelLevInfo selLevInfo)
+		public bool GetLevelInfoForTag(int tag, SelLimitType limitType, out SelLevInfo selLevInfo)
 		{
-			SelLevInfo[] info = GetLevelInfo(limitType);
-			for (int i = 0; i < info.Length; i++)
+			var info = GetLevelInfo(limitType);
+			for (var i = 0; i < info.Length; i++)
 			{
 				if (info[i].tag == tag)
 				{
@@ -283,7 +257,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the level number of the specified tag for this selection.
 		/// NOTE: This version only searches the anchor for the specified tag.
@@ -292,13 +265,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// (i.e. BaseStText.StTextTags.kflidParagraphs)</param>
 		/// <returns>The level number of the specified tag for this selection, or -1 if it
 		/// could not be found</returns>
-		/// ------------------------------------------------------------------------------------
 		public int GetLevelForTag(int tag)
 		{
 			return GetLevelForTag(tag, SelLimitType.Anchor);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the level number of the specified tag for this selection.
 		/// </summary>
@@ -308,53 +279,46 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </param>
 		/// <returns>The level number of the specified tag for this selection, or -1 if it
 		/// could not be found</returns>
-		/// ------------------------------------------------------------------------------------
 		public int GetLevelForTag(int tag, SelLimitType limitType)
 		{
-			SelLevInfo[] info = GetLevelInfo(limitType);
-			for (int i = 0; i < info.Length; i++)
+			var info = GetLevelInfo(limitType);
+			for (var i = 0; i < info.Length; i++)
 			{
 				if (info[i].tag == tag)
+				{
 					return i;
+				}
 			}
 			return -1;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the selection props for the current selection
 		/// </summary>
 		/// <param name="vttp">Returned array of ITsTextProps in the selection</param>
 		/// <param name="vvps">Returned array of IVwPropertyStores in the selection</param>
-		/// ------------------------------------------------------------------------------------
 		public void GetCurrSelectionProps(out ITsTextProps[] vttp, out IVwPropertyStore[] vvps)
 		{
 			int cttp;
 			GetSelectionProps(Selection, out vttp, out vvps, out cttp);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the location of the selection
 		/// TODO: Make this work in PrintLayout view
 		/// </summary>
 		/// <returns>point on the screen of the anchor of the selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public Point GetLocation()
 		{
 			// TODO: what if selection anchor is off the screen?
-
 			IVwGraphics viewGraphics;
 			Rect rectangleSource, rectangleDestination;
-
-			RootSite.GetGraphics(m_rootSite.RootBox, out viewGraphics,
-				out rectangleSource, out rectangleDestination);
+			RootSite.GetGraphics(m_rootSite.RootBox, out viewGraphics, out rectangleSource, out rectangleDestination);
 			Rect rectanglePrimary, rectangleSecondary;
 			try
 			{
 				bool isSplit;
 				bool shouldEndBeforeAnchor;
-
 				m_vwSel.Location(viewGraphics, rectangleSource, rectangleDestination,
 					out rectanglePrimary, out rectangleSecondary, out isSplit,
 					out shouldEndBeforeAnchor);
@@ -364,11 +328,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				RootSite.ReleaseGraphics(m_rootSite.RootBox, viewGraphics);
 			}
-			Point location = new Point(rectanglePrimary.left, rectanglePrimary.top);
-			return location;
+			return new Point(rectanglePrimary.left, rectanglePrimary.top);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the selection props for the specified IVwSelection
 		/// </summary>
@@ -377,34 +339,32 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vvps">Returned array of IVwPropertyStores in the selection</param>
 		/// <param name="cttp">Returned count of TsTxtProps (this is basically just the number
 		/// of runs in the selection)</param>
-		/// ------------------------------------------------------------------------------------
 		public static void GetSelectionProps(IVwSelection vwSel, out ITsTextProps[] vttp,
 			out IVwPropertyStore[] vvps, out int cttp)
 		{
-			Debug.Assert(vwSel != null);
+			Guard.AgainstNull(vwSel, nameof(vwSel));
 			vttp = null;
 			vvps = null;
 			cttp = 0;
 			if (!vwSel.IsValid)
+			{
 				return;
-
+			}
 			// The first call to GetSelectionProps gets the count of properties
 			vwSel.GetSelectionProps(0, ArrayPtr.Null, ArrayPtr.Null, out cttp);
 			if (cttp == 0)
-				return;
-
-			using (ArrayPtr pvTtp = MarshalEx.ArrayToNative<ITsTextProps>(cttp))
 			{
-				using (ArrayPtr pvVps = MarshalEx.ArrayToNative<IVwPropertyStore>(cttp))
-				{
-					vwSel.GetSelectionProps(cttp, pvTtp, pvVps, out cttp);
-					vttp = MarshalEx.NativeToArray<ITsTextProps>(pvTtp, cttp);
-					vvps = MarshalEx.NativeToArray< IVwPropertyStore>(pvVps, cttp);
-				}
+				return;
+			}
+			using (var pvTtp = MarshalEx.ArrayToNative<ITsTextProps>(cttp))
+			using (var pvVps = MarshalEx.ArrayToNative<IVwPropertyStore>(cttp))
+			{
+				vwSel.GetSelectionProps(cttp, pvTtp, pvVps, out cttp);
+				vttp = MarshalEx.NativeToArray<ITsTextProps>(pvTtp, cttp);
+				vvps = MarshalEx.NativeToArray< IVwPropertyStore>(pvVps, cttp);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is like GetSelectionProps, except that the vvpsSoft items include all
 		/// formatting MINUS the hard formatting in the text properties (ie, those derived by
@@ -414,50 +374,41 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vttp">Returned array of ITsTextProps in the selection</param>
 		/// <param name="vvpsSoft">Returned array of IVwPropertyStores in the selection</param>
 		/// <param name="cttp">Returned count of properties</param>
-		/// ------------------------------------------------------------------------------------
-		public static void GetHardAndSoftCharProps(IVwSelection vwSel,
-			out ITsTextProps[] vttp, out IVwPropertyStore[] vvpsSoft, out int cttp)
+		public static void GetHardAndSoftCharProps(IVwSelection vwSel, out ITsTextProps[] vttp, out IVwPropertyStore[] vvpsSoft, out int cttp)
 		{
 			vttp = null;
 			vvpsSoft = null;
-
 			GetSelectionProps(vwSel, out vttp, out vvpsSoft, out cttp);
-
 			if (cttp == 0)
-				return;
-
-			using (ArrayPtr pvTtp = MarshalEx.ArrayToNative<ITsTextProps>(cttp))
 			{
-				using (ArrayPtr pvVps = MarshalEx.ArrayToNative<IVwPropertyStore>(cttp))
-				{
-					vwSel.GetHardAndSoftCharProps(cttp, pvTtp, pvVps, out cttp);
-					vttp = MarshalEx.NativeToArray<ITsTextProps>(pvTtp, cttp);
-					vvpsSoft = MarshalEx.NativeToArray<IVwPropertyStore>(pvVps, cttp);
-				}
+				return;
+			}
+			using (var pvTtp = MarshalEx.ArrayToNative<ITsTextProps>(cttp))
+			using (var pvVps = MarshalEx.ArrayToNative<IVwPropertyStore>(cttp))
+			{
+				vwSel.GetHardAndSoftCharProps(cttp, pvTtp, pvVps, out cttp);
+				vttp = MarshalEx.NativeToArray<ITsTextProps>(pvTtp, cttp);
+				vvpsSoft = MarshalEx.NativeToArray<IVwPropertyStore>(pvVps, cttp);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the paragraph properties for the specified IVwSelection
 		/// </summary>
 		/// <param name="vwSel">The view Selection</param>
 		/// <param name="vvps">Returned array of IVwPropertyStores in the selection</param>
 		/// <param name="cvps">Returned count of IVwPropertyStores</param>
-		/// ------------------------------------------------------------------------------------
-		public static void GetParaProps(IVwSelection vwSel, out IVwPropertyStore[] vvps,
-			out int cvps)
+		public static void GetParaProps(IVwSelection vwSel, out IVwPropertyStore[] vvps, out int cvps)
 		{
 			vvps = null;
 			vwSel.GetParaProps(0, ArrayPtr.Null, out cvps);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<IVwPropertyStore>(cvps))
+			using (var arrayPtr = MarshalEx.ArrayToNative<IVwPropertyStore>(cvps))
 			{
 				vwSel.GetParaProps(cvps, arrayPtr, out cvps);
 				vvps = MarshalEx.NativeToArray<IVwPropertyStore>(arrayPtr, cvps);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the TsString of the property where the given selection limit is located. This
 		/// gets the entire TSS of the paragraph, not just the selected portion.
@@ -468,7 +419,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// the TsString containing the given limit of this Selection, or null if the selection
 		/// is not in a paragraph.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual ITsString GetTss(SelLimitType limit)
 		{
 			try
@@ -476,8 +426,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				ITsString tss;
 				int ich, hvoObj, tag, ws;
 				bool fAssocPrev;
-				Selection.TextSelInfo(IsEnd(limit), out tss, out ich, out fAssocPrev,
-					out hvoObj, out tag, out ws);
+				Selection.TextSelInfo(IsEnd(limit), out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
 				return tss;
 			}
 			catch
@@ -486,7 +435,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieve the language writing system used by the given selection. If the selection
 		/// has no writing system or contains more than one writing system, zero is returned.
@@ -497,13 +445,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </returns>
 		/// <remarks>ENHANCE JohnT (DaveO): This should this be a COM method for IVwSelection
 		/// </remarks>
-		/// -----------------------------------------------------------------------------------
 		public static int GetWsOfEntireSelection(IVwSelection vwsel)
 		{
 			return GetWsOfSelection(vwsel, false);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieve the first language writing system used by the given selection.
 		/// </summary>
@@ -511,13 +457,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>The first writing system in the selection, or zero if selection is null or
 		/// has no writing system</returns>
 		/// <remarks>ENHANCE JohnT: Should this be a COM method for IVwSelection?</remarks>
-		/// -----------------------------------------------------------------------------------
 		public static int GetFirstWsOfSelection(IVwSelection vwsel)
 		{
 			return GetWsOfSelection(vwsel, true);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the implementation for GetWsOfEntireSelection and GetFirstWsOfSelection. It
 		/// retrieves the language writing system used by the given selection.
@@ -530,37 +474,38 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// system or, if <paramref name="fStopAtFirstWs"/> is <c>false</c>, selection contains
 		/// more then one writing system.</returns>
 		/// <remarks>ENHANCE JohnT: Should this be a COM method for IVwSelection?</remarks>
-		/// -----------------------------------------------------------------------------------
 		private static int GetWsOfSelection(IVwSelection vwsel, bool fStopAtFirstWs)
 		{
 			if (vwsel == null)
+			{
 				return 0;
-
+			}
 			try
 			{
 				ITsTextProps[] vttp;
 				IVwPropertyStore[] vvps;
 				int cttp;
-
-				int wsSaveFirst = -1;
-
-				SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
-
+				var wsSaveFirst = -1;
+				GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
 				if (cttp == 0)
+				{
 					return 0;
-
-				foreach (ITsTextProps ttp in vttp)
+				}
+				foreach (var ttp in vttp)
 				{
 					int var;
-					int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs,
-						out var);
+					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 					if (ws != -1)
 					{
 						if (fStopAtFirstWs)
+						{
 							return ws;
+						}
 						// This will set wsSave the first time we find a ws in a run
 						if (wsSaveFirst == -1)
+						{
 							wsSaveFirst = ws;
+						}
 						else if (wsSaveFirst != ws)
 						{
 							// Multiple writing systems selected
@@ -568,15 +513,14 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-
 				// On the off chance we fund no writing systems at all, just return zero. It
 				// should be safe because we can't have an editable selection where we would
 				// really use the information.
 				return wsSaveFirst != -1 ? wsSaveFirst : 0;
 			}
-			catch (System.Runtime.InteropServices.ExternalException objException)
+			catch (ExternalException objException)
 			{
-				string msg = string.Format("{1} {2}{0}{0}{3}{0}{4}{0}{0}{5}{6}",
+				var msg = string.Format("{1} {2}{0}{0}{3}{0}{4}{0}{0}{5}{6}",
 					Environment.NewLine,
 					objException.ErrorCode,
 					objException.GetBaseException().Source,
@@ -584,53 +528,42 @@ namespace SIL.FieldWorks.Common.RootSites
 					objException.TargetSite,
 					objException.StackTrace,
 					objException.Source);
-
 				Debug.Assert(false, msg);
 				return 0;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine if selection is editable
 		/// </summary>
 		/// <param name="sel">Selection</param>
 		/// <returns><c>true</c> if selection is editable, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsEditable(IVwSelection sel)
 		{
 			return sel.CanFormatChar;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine if text that belongs to ttp and vps is editable.
 		/// </summary>
-		/// <param name="ttp"></param>
-		/// <param name="vps"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsEditable(ITsTextProps ttp, IVwPropertyStore vps)
 		{
 			int nVar;
-			int nVal = -1;
+			var nVal = -1;
 			if (ttp != null)
-				nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptEditable,
-					out nVar);
-
+			{
+				nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptEditable, out nVar);
+			}
 			if (nVal == -1 && vps != null)
+			{
 				nVal = vps.get_IntProperty((int)FwTextPropType.ktptEditable);
-
-			if (nVal == (int)TptEditable.ktptNotEditable ||
-				nVal == (int)TptEditable.ktptSemiEditable)
-				return false;
-
-			return true;
+			}
+			return nVal != (int)TptEditable.ktptNotEditable && nVal != (int)TptEditable.ktptSemiEditable;
 		}
 		#endregion
 
 		#region ReduceSelectionToIp methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Reduce a range selection to a simple insertion point, specifying which limit of
 		/// the range selection to use as the position for the new IP.
@@ -645,15 +578,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// entirely within a single StText, this parameter doesn't actually make any
 		/// difference.</param>
 		/// <param name="fMakeVisible">Indicates whether to scroll the IP into view.</param>
-		/// ------------------------------------------------------------------------------------
-		public static SelectionHelper ReduceSelectionToIp(IVwRootSite rootSite, SelLimitType limit,
-			bool fMakeVisible)
+		public static SelectionHelper ReduceSelectionToIp(IVwRootSite rootSite, SelLimitType limit, bool fMakeVisible)
 		{
 			return ReduceSelectionToIp(rootSite, limit, fMakeVisible, true);
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Reduce a range selection to a simple insertion point, specifying which limit of
 		/// the range selection to use as the position for the new IP.
@@ -669,24 +598,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// difference.</param>
 		/// <param name="fMakeVisible">Indicates whether to scroll the IP into view.</param>
 		/// <param name="fInstall">True to install the created selection, false otherwise</param>
-		/// ------------------------------------------------------------------------------------
-		public static SelectionHelper ReduceSelectionToIp(IVwRootSite rootSite, SelLimitType limit,
-			bool fMakeVisible, bool fInstall)
+		public static SelectionHelper ReduceSelectionToIp(IVwRootSite rootSite, SelLimitType limit, bool fMakeVisible, bool fInstall)
 		{
-			SelectionHelper helper = SelectionHelper.Create(rootSite);
-			if (helper == null)
-				return null;
-
-			return helper.ReduceSelectionToIp(limit, fMakeVisible, fInstall);
+			var helper = Create(rootSite);
+			return helper?.ReduceSelectionToIp(limit, fMakeVisible, fInstall);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the contrary limit
 		/// </summary>
-		/// <param name="limit"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		private SelLimitType ContraryLimit(SelLimitType limit)
 		{
 			switch(limit)
@@ -703,19 +623,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			return SelLimitType.Anchor;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Reduces this selection to an insertion point at the specified limit.
 		/// Will not install or make visible.
 		/// </summary>
 		/// <param name="limit">The current selection limit to reduce to</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void ReduceToIp(SelLimitType limit)
 		{
 			ReduceToIp(limit, false, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the workhorse that actually reduces a range selection to a simple insertion
 		/// point, given the specified index to indicate the limit where the IP is to be
@@ -725,11 +642,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fMakeVisible">Indicates whether to scroll the IP into view.</param>
 		/// <param name="fInstall">True to install the created selection, false otherwise</param>
 		/// <returns>The selection that was created</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwSelection ReduceToIp(SelLimitType limit, bool fMakeVisible, bool fInstall)
 		{
-			SelLimitType newLimit = ContraryLimit(limit);
-
+			var newLimit = ContraryLimit(limit);
 			// set the information for the IP for the other limit
 			SetTextPropId(newLimit, GetTextPropId(limit));
 			SetNumberOfPreviousProps(newLimit, GetNumberOfPreviousProps(limit));
@@ -740,11 +655,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			SetWritingSystem(newLimit, GetWritingSystem(limit));
 			SetNumberOfLevels(newLimit, GetNumberOfLevels(limit));
 			SetLevelInfo(newLimit, GetLevelInfo(limit));
-
 			return SetSelection(m_rootSite, fInstall, fMakeVisible);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a (new) selection helper that represents an insertion point at the specified
 		/// limit of this selection
@@ -759,17 +672,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// difference.</param>
 		/// <param name="fMakeVisible">Indicates whether to scroll the IP into view.</param>
 		/// <param name="fInstall">True to install the created selection, false otherwise</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual SelectionHelper ReduceSelectionToIp(SelLimitType limit, bool fMakeVisible,
-			bool fInstall)
+		public virtual SelectionHelper ReduceSelectionToIp(SelLimitType limit, bool fMakeVisible, bool fInstall)
 		{
-			SelectionHelper textSelHelper = new SelectionHelper(this);
+			var textSelHelper = new SelectionHelper(this);
 			return textSelHelper.ReduceToIp(limit, fMakeVisible, fInstall) == null ? null : textSelHelper;
 		}
 		#endregion
 
 		#region Methods to create and set selections
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Sets the selection by calling <c>IVwRootBox.MakeRangeSelection</c>.
 		/// </summary>
@@ -777,13 +688,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fMakeVisible">Determines whether or not to make the selection visible.
 		/// </param>
 		/// <returns>The selection</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual IVwSelection SetSelection(bool fInstall, bool fMakeVisible)
 		{
 			return SetSelection(m_rootSite, fInstall, fMakeVisible);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the selection by calling <c>IVwRootBox.MakeRangeSelection</c>.
 		/// </summary>
@@ -792,14 +701,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fMakeVisible">Determines whether or not to make the selection visible.
 		/// </param>
 		/// <returns>The selection</returns>
-		/// -----------------------------------------------------------------------------------
-		public virtual IVwSelection SetSelection(IVwRootSite rootSite, bool fInstall,
-			bool fMakeVisible)
+		public virtual IVwSelection SetSelection(IVwRootSite rootSite, bool fInstall, bool fMakeVisible)
 		{
 			return SetSelection(rootSite, fInstall, fMakeVisible, VwScrollSelOpts.kssoDefault);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the selection by calling <c>IVwRootBox.MakeRangeSelection</c>.
 		/// </summary>
@@ -809,19 +715,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </param>
 		/// <param name="scrollOption">Where to scroll the selection</param>
 		/// <returns>The selection, null if it could not return a valid one.</returns>
-		/// -----------------------------------------------------------------------------------
-		public virtual IVwSelection SetSelection(IVwRootSite rootSite, bool fInstall,
-			bool fMakeVisible, VwScrollSelOpts scrollOption)
+		public virtual IVwSelection SetSelection(IVwRootSite rootSite, bool fInstall, bool fMakeVisible, VwScrollSelOpts scrollOption)
 		{
 			if (rootSite == null || rootSite.RootBox == null)
+			{
 				return null;
+			}
 			m_rootSite = rootSite;
 			try
 			{
-				IVwSelection sel = MakeRangeSelection(rootSite.RootBox, fInstall);
+				var sel = MakeRangeSelection(rootSite.RootBox, fInstall);
 				if (sel == null)
+				{
 					return null;
-
+				}
 				if (fInstall && !sel.IsValid)
 				{
 					// We rarely expect to have an invalid selection after we install a new selection,
@@ -829,14 +736,11 @@ namespace SIL.FieldWorks.Common.RootSites
 					// (e.g. highlighting a row in a browse view cf. LT-5033.)
 					sel = MakeRangeSelection(rootSite, fInstall);
 				}
-				if (sel.IsValid)
-					m_vwSel = sel;
-				else
-					m_vwSel = null;
-
+				m_vwSel = sel.IsValid ? sel : null;
 				if (fMakeVisible && m_vwSel != null)
+				{
 					rootSite.ScrollSelectionIntoView(m_vwSel, scrollOption);
-
+				}
 				return m_vwSel;
 			}
 			catch (COMException)
@@ -852,7 +756,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make a range selection based upon our saved selection info.
 		/// NOTE: Installing the selection may trigger side effects that will invalidate the selection.
@@ -862,13 +765,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fInstall"></param>
 		/// <exception cref="Exception">overload throws if unable to make an end selection</exception>
 		/// <returns>a range selection (could become invalid as a side-effect of installing.)</returns>
-		/// -----------------------------------------------------------------------------------
 		private IVwSelection MakeRangeSelection(IVwRootSite rootSite, bool fInstall)
 		{
 			return MakeRangeSelection(rootSite.RootBox, fInstall);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make a range selection based upon our saved selection info.
 		/// NOTE: Installing the selection may trigger side effects that will invalidate the selection.
@@ -878,26 +779,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fInstall"></param>
 		/// <exception cref="Exception">throws if unable to make an end selection</exception>
 		/// <returns>a range selection (could become invalid as a side-effect of installing.)</returns>
-		/// -----------------------------------------------------------------------------------
 		public IVwSelection MakeRangeSelection(IVwRootBox rootBox, bool fInstall)
 		{
-			int iAnchor = 0;
-			int iEnd = 1;
+			const int iAnchor = 0;
+			var iEnd = 1;
 			if (!m_fEndSet)
-			{	// No end information set, so use iAnchor as end
+			{
+				// No end information set, so use iAnchor as end
 				iEnd = iAnchor;
 			}
 			if (m_selInfo[iEnd] == null)
 			{
 				m_selInfo[iEnd] = new SelInfo(m_selInfo[iAnchor]);
 			}
-
-			// This change was proposed in change set 37331 but it's not clear what crash sometimes happens if it's not done.
-			// Apparently it doesn't always crash because some TeDllTests fail if we do this.
-			// Don't make a selection if the property indicates not to: see comment about -2 in InterlinDocForAnalysis.HandleSelectionChange
-			//if (m_selInfo[iAnchor].tagTextProp == -2)
-			//    return null;  // crashes if allowed to continue
-
 			// we want to pass fInstall=false to MakeTextSelection so that it doesn't notify
 			// the RootSite of the selection change.
 			IVwSelection vwSelAnchor;
@@ -912,8 +806,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (Exception e)
 			{
-				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0,
-					"Making the anchor selection failed, this is probably an empty editable field.");
+				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0, "Making the anchor selection failed, this is probably an empty editable field.");
 				throw;
 			}
 			IVwSelection vwSelEnd;
@@ -929,37 +822,33 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (Exception)
 			{
-				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0,
-					"The anchor has rgvsli but the end does not; since making the end selection failed, this is probably a mistake.");
+				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0, "The anchor has rgvsli but the end does not; since making the end selection failed, this is probably a mistake.");
 				throw;
 			}
 			return rootBox.MakeRangeSelection(vwSelAnchor, vwSelEnd, fInstall);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make an insertion point based upon our saved anchor selection info. It will not be
 		/// set until after the unit of work.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetIPAfterUOW()
 		{
 			if (RootSite == null)
-				throw new InvalidOperationException(
-				"This version of SetIPAfterUOW should only be called when the SelectionHelper has been initialized with a rootsite.");
+			{
+				throw new InvalidOperationException("This version of SetIPAfterUOW should only be called when the SelectionHelper has been initialized with a rootsite.");
+			}
 			SetIPAfterUOW(RootSite);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make an insertion point based upon our saved anchor selection info. It will not be
 		/// set until after the unit of work.
 		/// </summary>
 		/// <param name="rootSite"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetIPAfterUOW(IVwRootSite rootSite)
 		{
-			int iAnchor = 0;
+			const int iAnchor = 0;
 			rootSite.RequestSelectionAtEndOfUow(rootSite.RootBox,
 				m_selInfo[iAnchor].ihvoRoot, m_selInfo[iAnchor].rgvsli.Length,
 				m_selInfo[iAnchor].rgvsli, m_selInfo[iAnchor].tagTextProp,
@@ -968,50 +857,53 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_selInfo[iAnchor].ttpSelProps);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the selection
 		/// </summary>
 		/// <param name="rootSite">The root site</param>
 		/// <returns>The selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwSelection SetSelection(IVwRootSite rootSite)
 		{
 			return SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Attempt to find a complete word that the selection corresponds to.
 		/// If it is a range, this is the word at its start.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public ITsString SelectedWord
 		{
 			get
 			{
 				try
 				{
-					SelectionHelper ip = this;
+					var ip = this;
 					if (IsRange)
 					{
 						ip = ReduceSelectionToIp(SelLimitType.Top, false, false);
-						if (ip == null)	// Save an exception being thrown by checking explicitly.
+						if (ip == null) // Save an exception being thrown by checking explicitly.
+						{
 							return null;
+						}
 						ip.SetSelection(RootSite, false, false);
 					}
-
-					IVwSelection selWord = ip.Selection.GrowToWord();
+					var selWord = ip.Selection.GrowToWord();
 					if (selWord == null || !selWord.IsRange)
+					{
 						return null;
-					SelectionHelper wordHelper = SelectionHelper.Create(selWord, RootSite);
-					ITsStrBldr bldr = wordHelper.GetTss(SelLimitType.Anchor).GetBldr();
-					int ichMin = Math.Min(wordHelper.IchAnchor, wordHelper.IchEnd);
-					int ichLim = Math.Max(wordHelper.IchAnchor, wordHelper.IchEnd);
+					}
+					var wordHelper = SelectionHelper.Create(selWord, RootSite);
+					var bldr = wordHelper.GetTss(SelLimitType.Anchor).GetBldr();
+					var ichMin = Math.Min(wordHelper.IchAnchor, wordHelper.IchEnd);
+					var ichLim = Math.Max(wordHelper.IchAnchor, wordHelper.IchEnd);
 					if (ichLim < bldr.Length)
+					{
 						bldr.ReplaceTsString(ichLim, bldr.Length, null);
+					}
 					if (ichMin > 0)
+					{
 						bldr.ReplaceTsString(0, ichMin, null);
+					}
 					return bldr.GetString();
 				}
 				catch(Exception)
@@ -1023,20 +915,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets and install the selection in the previously supplied rootsite.
 		/// </summary>
 		/// <param name="fMakeVisible">Indicates whether to scroll the selection into view
 		/// </param>
 		/// <returns>The selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwSelection SetSelection(bool fMakeVisible)
 		{
 			return SetSelection(m_rootSite, true, fMakeVisible, VwScrollSelOpts.kssoDefault);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The requested anchor and endpoint may be beyond the end of the string. Try to make
 		/// a selection as near the end of the string as possible.
@@ -1044,13 +933,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fMakeVisible">Indicates whether to scroll the selection into view
 		/// </param>
 		/// <returns>The selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwSelection MakeBest(bool fMakeVisible)
 		{
 			return MakeBest(m_rootSite, fMakeVisible);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The requested anchor and endpoint may be beyond the end of the string. Try to make
 		/// a selection as near the end of the string as possible.
@@ -1059,27 +946,27 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </param>
 		/// <param name="rootsite">The rootsite that will try take the selection</param>
 		/// <returns>The selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwSelection MakeBest(IVwRootSite rootsite, bool fMakeVisible)
 		{
-			//SelInfo ichAnchorOrig = m_selInfo[0];
-			//SelInfo ichEndOrig = m_selInfo[1];
-
 			// Try setting original selection
-			IVwSelection vwsel = SetSelection(rootsite, true, fMakeVisible,
-				VwScrollSelOpts.kssoDefault);
+			var vwsel = SetSelection(rootsite, true, fMakeVisible, VwScrollSelOpts.kssoDefault);
 			if (vwsel != null)
+			{
 				return vwsel;
-
+			}
 			// Otherwise try endpoint = anchor (if the endpoint is set)
 			if (m_fEndSet)
 			{
 				try
 				{
 					if (m_selInfo[1] == null || m_selInfo[0] < m_selInfo[1])
+					{
 						m_selInfo[1] = m_selInfo[0];
+					}
 					else
+					{
 						m_selInfo[0] = m_selInfo[1];
+					}
 				}
 				catch (ArgumentException)
 				{
@@ -1088,28 +975,31 @@ namespace SIL.FieldWorks.Common.RootSites
 					// is top
 					m_selInfo[1] = m_selInfo[0];
 				}
-
 				vwsel = SetSelection(rootsite, true, fMakeVisible);
 				if (vwsel != null)
+				{
 					return vwsel;
+				}
 			}
-
 			// If we can't find a selection try to create a selection at the end of the
 			// current paragraph.
 			IchAnchor = 0;
-			IVwSelection sel = SetSelection(rootsite, false, false);
+			var sel = SetSelection(rootsite, false, false);
 			if (sel == null)
+			{
 				return null;
+			}
 			bool fAssocPrev;
 			int hvoObj, tag, ws, ich;
 			ITsString tss;
 			sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
 			if (tss != null)
+			{
 				IchAnchor = tss.Length;
+			}
 			return SetSelection(rootsite, true, fMakeVisible, VwScrollSelOpts.kssoDefault);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Makes a selection then scrolls the window so the IP is at the same vertical
 		/// position it was when this selection helper object was created. This method is
@@ -1120,86 +1010,79 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns>True if a selection could be made (regardless of its accuracy.
 		/// Otherwise, false.</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool RestoreSelectionAndScrollPos()
 		{
 			if (RootSite == null)
+			{
 				return false;
-
+			}
 			// Try to restore the selection as best as possible.
 			if (MakeBest(true) == null)
+			{
 				return false;
-
+			}
 			RestoreScrollPos();
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scrolls the selection to its original scroll position.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RestoreScrollPos()
 		{
-			IRootSite site = RootSite as IRootSite;
+			var site = RootSite as IRootSite;
 			if (!Selection.IsValid)
 			{
 				SetSelection(false, false);
 				if (Selection == null || !Selection.IsValid)
+				{
 					return; // apparently we can't successfully make an equivalent selection.
+				}
 			}
-			if (site != null)
-				site.ScrollSelectionToLocation(Selection, m_dyIPTop);
+			site?.ScrollSelectionToLocation(Selection, m_dyIPTop);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the selection level for the specified tag.
 		/// </summary>
-		/// <param name="tag">The tag.</param>
-		/// ------------------------------------------------------------------------------------
 		public void RemoveLevel(int tag)
 		{
 			RemoveLevel(tag, SelLimitType.Anchor);
 			RemoveLevel(tag, SelLimitType.End);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the selection level for the specified tag.
 		/// </summary>
 		/// <param name="tag">The tag.</param>
 		/// <param name="type">Anchor or End</param>
-		/// ------------------------------------------------------------------------------------
 		private void RemoveLevel(int tag, SelLimitType type)
 		{
-			int iLevel = GetLevelForTag(tag, type);
+			var iLevel = GetLevelForTag(tag, type);
 			RemoveLevelAt(iLevel, type);
 		}
 
 		private void RemoveLevelAt(int iLevel, SelLimitType type)
 		{
 			if (iLevel < 0)
+			{
 				return;
-			SelLevInfo[] levInfo = GetLevelInfo(type);
-			List<SelLevInfo> temp = new List<SelLevInfo>(levInfo);
+			}
+			var levInfo = GetLevelInfo(type);
+			var temp = new List<SelLevInfo>(levInfo);
 			temp.RemoveAt(iLevel);
 			SetLevelInfo(type, temp.ToArray());
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Remove the specified level from the SelLevInfo for both ends.
 		/// </summary>
-		/// <param name="ilev"></param>
-		/// -----------------------------------------------------------------------------------
 		public void RemoveLevelAt(int ilev)
 		{
 			RemoveLevelAt(ilev, SelLimitType.Anchor);
 			RemoveLevelAt(ilev, SelLimitType.End);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Appends a selection level for the specified tag.
 		/// </summary>
@@ -1207,14 +1090,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="tag">The tag.</param>
 		/// <param name="ihvo">The index of the object to insert in the appended level</param>
 		/// <param name="ws">HVO of the writing system, if the property is a Multitext</param>
-		/// ------------------------------------------------------------------------------------
 		public void InsertLevel(int iLev, int tag, int ihvo, int ws)
 		{
 			InsertLevel(iLev, tag, ihvo, ws, SelLimitType.Anchor);
 			InsertLevel(iLev, tag, ihvo, ws, SelLimitType.End);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Appends a selection level for the specified tag.
 		/// </summary>
@@ -1223,12 +1104,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="ihvo">The index of the object to insert in the appended level</param>
 		/// <param name="type">Anchor or End</param>
 		/// <param name="ws">HVO of the writing system, if the property is a Multitext</param>
-		/// ------------------------------------------------------------------------------------
 		private void InsertLevel(int iLev, int tag, int ihvo, int ws, SelLimitType type)
 		{
-			SelLevInfo[] levInfo = GetLevelInfo(type);
-			List<SelLevInfo> temp = new List<SelLevInfo>(levInfo);
-			SelLevInfo level = new SelLevInfo();
+			var levInfo = GetLevelInfo(type);
+			var temp = new List<SelLevInfo>(levInfo);
+			var level = new SelLevInfo();
 			level.tag = tag;
 			level.ihvo = ihvo;
 			level.cpropPrevious = 0;
@@ -1237,21 +1117,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			SetLevelInfo(type, temp.ToArray());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Appends a selection level for the specified tag.
 		/// </summary>
 		/// <param name="tag">The tag.</param>
 		/// <param name="ihvo">The index of the object to insert in the appended level</param>
 		/// <param name="ws">HVO of the writing system, if the property is a Multitext</param>
-		/// ------------------------------------------------------------------------------------
 		public void AppendLevel(int tag, int ihvo, int ws)
 		{
 			AppendLevel(tag, ihvo, ws, SelLimitType.Anchor);
 			AppendLevel(tag, ihvo, ws, SelLimitType.End);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Appends a selection level for the specified tag.
 		/// </summary>
@@ -1259,26 +1136,23 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="ihvo">The index of the object to insert in the appended level</param>
 		/// <param name="type">Anchor or End</param>
 		/// <param name="ws">HVO of the writing system, if the property is a Multitext</param>
-		/// ------------------------------------------------------------------------------------
 		private void AppendLevel(int tag, int ihvo, int ws, SelLimitType type)
 		{
 			InsertLevel(GetNumberOfLevels(type), tag, ihvo, ws, type);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the internal scroll location for this selection to be up-to-date,
 		/// if possible.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void UpdateScrollLocation()
 		{
 			try
 			{
 				if (m_rootSite != null && m_rootSite is SimpleRootSite)
 				{
-					SimpleRootSite rootSite = (SimpleRootSite)m_rootSite;
-					IVwSelection sel = m_vwSel ?? m_rootSite.RootBox.Selection;
+					var rootSite = (SimpleRootSite)m_rootSite;
+					var sel = m_vwSel ?? m_rootSite.RootBox.Selection;
 					m_dyIPTop = rootSite.IPDistanceFromWindowTop(sel);
 				}
 			}
@@ -1290,7 +1164,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Private Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The selection helper stores two sets of selection levels: one for the anchor
 		/// (index 0) and one for the end (index 1). This property returns either 0 or 1
@@ -1300,20 +1173,22 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// the end, so this property returns 1; otherwise, it returns 0. If there is no
 		/// selection at all, then this arbitrarily returns 0;
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private int TopIndex
 		{
 			get
 			{
 				if (m_vwSel == null)
+				{
 					return 0;
+				}
 				if (m_iTop < 0)
+				{
 					m_iTop = m_vwSel.EndBeforeAnchor ? 1 : 0;
+				}
 				return m_iTop;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The selection helper stores two sets of selection levels: one for the anchor
 		/// (index 0) and one for the end (index 1). This property returns either 0 or 1
@@ -1323,32 +1198,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of the end, so this property returns 0; otherwise, it returns 1. If there is no
 		/// selection at all, then this arbitrarily returns 1;
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private int BottomIndex
-		{
-			get
-			{
-				return TopIndex == 1 ? 0 : 1;
-			}
-		}
+		private int BottomIndex => TopIndex == 1 ? 0 : 1;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the information about the selection
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal protected SelInfo[] SelectionInfo
-		{
-			get { return m_selInfo; }
-		}
+		protected internal SelInfo[] SelectionInfo => m_selInfo;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the index used for the appropriate limit type
 		/// </summary>
 		/// <param name="type">Limit type</param>
 		/// <returns>Index</returns>
-		/// ------------------------------------------------------------------------------------
 		private int GetIndex(SelLimitType type)
 		{
 			int i;
@@ -1371,13 +1232,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (m_selInfo[i] == null)
 			{
-				SelInfo otherEnd = m_selInfo[i == 0 ? 1 : 0];
+				var otherEnd = m_selInfo[i == 0 ? 1 : 0];
 				m_selInfo[i] = new SelInfo(otherEnd);
 			}
 			return i;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified type is the end.
 		/// </summary>
@@ -1385,7 +1245,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>
 		/// 	<c>true</c> if the specified type is the end; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		private bool IsEnd(SelLimitType type)
 		{
 			return (GetIndex(type) == 1);
@@ -1393,11 +1252,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
-		/// Gets wheter or not the selection is a range selection
+		/// Gets whether or not the selection is a range selection
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool IsRange
 		{
 			get
@@ -1407,26 +1265,23 @@ namespace SIL.FieldWorks.Common.RootSites
 				// in TE. This creates a range selection without updating the selection
 				// information in the SelectionHelper)
 				if (Selection != null)
+				{
 					return Selection.IsRange;
-
-				SelLevInfo[] anchorLev = GetLevelInfo(SelLimitType.Anchor);
-				SelLevInfo[] endLev = GetLevelInfo(SelLimitType.End);
-				return (IchAnchor != IchEnd || anchorLev[0] != endLev[0] ||
-					GetNumberOfLevels(SelLimitType.Anchor) != GetNumberOfLevels(SelLimitType.End));
+				}
+				var anchorLev = GetLevelInfo(SelLimitType.Anchor);
+				var endLev = GetLevelInfo(SelLimitType.End);
+				return IchAnchor != IchEnd || anchorLev[0] != endLev[0] || GetNumberOfLevels(SelLimitType.Anchor) != GetNumberOfLevels(SelLimitType.End);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets wheter or not the selection is valid
+		/// Gets whether or not the selection is valid
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool IsValid
 		{
 			get {return (Selection != null && Selection.IsValid);}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this selection is visible.
 		/// </summary>
@@ -1434,93 +1289,72 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// 	<c>true</c> if this instance is visible; otherwise, <c>false</c>. Also
 		/// <c>false</c> if no rootsite is set or root site isn't derived from SimpleRootSite.
 		/// </value>
-		/// ------------------------------------------------------------------------------------
-		public bool IsVisible
-		{
-			get
-			{
-				if (RootSite == null || !(RootSite is SimpleRootSite))
-					return false;
-				return ((SimpleRootSite)RootSite).IsSelectionVisible(Selection);
-			}
-		}
+		public bool IsVisible => RootSite is SimpleRootSite && ((SimpleRootSite)RootSite).IsSelectionVisible(Selection);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the selection that this <see cref="SelectionHelper"/> represents.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual IVwSelection Selection
-		{
-			get { return m_vwSel; }
-		}
+		public virtual IVwSelection Selection => m_vwSel;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the rootsite
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwRootSite RootSite
 		{
 			get { return m_rootSite; }
 			set
 			{
-				if (m_rootSite != null && m_rootSite is Control)
-					((Control)m_rootSite).Disposed -= new EventHandler(OnRootSiteDisposed);
-
+				if (m_rootSite is Control)
+				{
+					((Control)m_rootSite).Disposed -= OnRootSiteDisposed;
+				}
 				m_rootSite = value;
-
-				if (m_rootSite != null && m_rootSite is Control)
-					((Control)m_rootSite).Disposed += new EventHandler(OnRootSiteDisposed);
-
+				if (m_rootSite is Control)
+				{
+					((Control)m_rootSite).Disposed += OnRootSiteDisposed;
+				}
 				UpdateScrollLocation();
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when the root site gets disposed. We can't use m_rootSite any more.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void OnRootSiteDisposed(object sender, EventArgs e)
 		{
 			m_rootSite = null;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the number of levels needed to traverse the view objects to reach the
 		/// given limit of the selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetNumberOfLevels(SelLimitType type)
 		{
 			return GetSelInfo(type).rgvsli.Length;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the number of levels needed to traverse the view objects to reach the
 		/// given limit of the selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetNumberOfLevels(SelLimitType type, int value)
 		{
-			int iType = GetIndex(type);
+			var iType = GetIndex(type);
 			m_selInfo[iType].rgvsli = new SelLevInfo[value];
-			for (int i = 0; i < value; i++)
+			for (var i = 0; i < value; i++)
+			{
 				m_selInfo[iType].rgvsli[i] = new SelLevInfo();
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the number of levels needed to traverse the view objects to reach the
 		/// selected object(s).
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int NumberOfLevels
 		{
 			get
@@ -1533,159 +1367,123 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the internal selection info for the requested end of the selection.
 		/// </summary>
 		/// <param name="type">Anchor or End</param>
-		/// ------------------------------------------------------------------------------------
 		private SelInfo GetSelInfo(SelLimitType type)
 		{
 			return m_selInfo[GetIndex(type)];
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the index of the root object for the given limit of the selection. This
-		/// is 0 for views that don't display mutliple root objects).
+		/// is 0 for views that don't display multiple root objects).
 		/// </summary>
 		/// <param name="type">Anchor or End</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual int GetIhvoRoot(SelLimitType type)
 		{
 			return GetSelInfo(type).ihvoRoot;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the index of the root object for the given limit of the selection. This
-		/// is 0 for views that don't display mutliple root objects).
+		/// is 0 for views that don't display multiple root objects).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual void SetIhvoRoot(SelLimitType type, int value)
 		{
 			GetSelInfo(type).ihvoRoot = value;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the index of the root object (for views that display mutliple root
+		/// Gets or sets the index of the root object (for views that display multiple root
 		/// objects). Default is 0.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int IhvoRoot
 		{
 			get { return GetIhvoRoot(SelLimitType.Anchor); }
 			set { SetIhvoRoot(SelLimitType.Anchor, value); }
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the number of previous elements
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		[Obsolete("Use NumberOfPreviousProps instead")]
-		public int CpropPrevious
-		{
-			get { return m_selInfo[0].cpropPrevious; }
-			set { m_selInfo[0].cpropPrevious = value; }
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the tag/flid of the of the property containing the actual text in
 		/// which the selection occurs (this is the lowest level of the selection -- it is NOT
 		/// contained in the SelLevelInfo array). Default is 0, so it must be set explicitly
 		/// unless the SelectionHelper is being created from an existing selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public int TextPropId
 		{
 			get { return GetTextPropId(SelLimitType.Anchor); }
 			set { SetTextPropId(SelLimitType.Anchor, value); }
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the number of previous elements for the given limit of the selection
 		/// </summary>
 		/// <param name="type">Anchor or End</param>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetNumberOfPreviousProps(SelLimitType type)
 		{
 			return GetSelInfo(type).cpropPrevious;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the text property that occurs at the indicated end of the selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetTextPropId(SelLimitType type)
 		{
 			return GetSelInfo(type).tagTextProp;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the text property that occurs at the indicated end of the selection.
 		/// </summary>
 		/// <param name="type">Anchor or End</param>
 		/// <param name="tagTextProp">Text property</param>
-		/// -----------------------------------------------------------------------------------
 		public void SetTextPropId(SelLimitType type, int tagTextProp)
 		{
 			GetSelInfo(type).tagTextProp = tagTextProp;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the number of previous elements for the given limit of the selection
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetNumberOfPreviousProps(SelLimitType type, int value)
 		{
 			GetSelInfo(type).cpropPrevious = value;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the number of previous elements for the given limit of the selection
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual int NumberOfPreviousProps
 		{
 			get { return GetNumberOfPreviousProps(SelLimitType.Anchor); }
 			set { SetNumberOfPreviousProps(SelLimitType.Anchor, value); }
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the 0-based index of the character for the given limit of the selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetIch(SelLimitType type)
 		{
 			return GetSelInfo(type).ich;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the 0-based index of the character for the given limit of the selection.
 		/// If appropriate records that the end of the selection has been set explicitly.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetIch(SelLimitType type, int value)
 		{
 			if (type == SelLimitType.End)
+			{
 				m_fEndSet = true;
+			}
 			GetSelInfo(type).ich = value;
-
 			// Force recalculation of top/bottom of selection
 			m_iTop = -1;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the 0-based index of the character at which the selection begins (or
 		/// before which the insertion point is to be placed if IchAnchor == IchEnd)
@@ -1693,7 +1491,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <remarks>Note that if IchAnchor==IchEnd, setting IchAnchor will effectively move
 		/// the end as well. Set IchEnd (and thereby m_fEndSet) if you intend to make a range
 		/// selection!</remarks>
-		/// -----------------------------------------------------------------------------------
 		public virtual int IchAnchor
 		{
 			get { return GetIch(SelLimitType.Anchor); }
@@ -1703,12 +1500,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the character location to end the selection. Should be un-set or set
 		/// equal to IchAnchor for a simple insertion point.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int IchEnd
 		{
 			get { return GetIch(SelLimitType.End); }
@@ -1718,7 +1513,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the writing system associated with the insertion point.
 		/// <p>Note: If you need the writing system for the selection, you should
@@ -1726,13 +1520,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="type">Which end of the selection</param>
 		/// <returns>Writing system</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual int GetWritingSystem(SelLimitType type)
 		{
 			return GetSelInfo(type).ws;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the writing system associated with the insertion point.
 		/// <p>Note: If you need the writing system for the selection, you should
@@ -1740,100 +1532,87 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="type">Which end of the selection</param>
 		/// <param name="value">Writing system</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void SetWritingSystem(SelLimitType type, int value)
 		{
 			GetSelInfo(type).ws = value;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the writing system associated with the insertion point.
 		/// <p>Note: If you need the writing system for the selection, you should
 		/// use <see cref="GetFirstWsOfSelection"/>.</p>
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual int Ws
 		{
 			get { return GetWritingSystem(SelLimitType.Anchor); }
 			set { SetWritingSystem(SelLimitType.Anchor, value); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the text props associated with the given end of the selection.
 		/// </summary>
 		/// <param name="type">Which end of the selection</param>
 		/// <returns>Text props associated with the given end of the selection</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual ITsTextProps GetSelProps(SelLimitType type)
 		{
 			return GetSelInfo(type).ttpSelProps;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the text props associated with the given end of the selection.
 		/// </summary>
 		/// <param name="type">Which end of the selection</param>
 		/// <param name="value">Properties to set for the selection</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void SetSelProps(SelLimitType type, ITsTextProps value)
 		{
 			GetSelInfo(type).ttpSelProps = value;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the text properties associated with the insertion point. If selection
 		/// is a range, we're not sure you should necessarily even be doing this. This is
 		/// probably relevant only for insertion points.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual ITsTextProps SelProps
 		{
 			get { return GetSelProps(SelLimitType.End); }
 			set { SetSelProps(SelLimitType.End, value); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the text props for the text immediately before top of the selection.
 		/// </summary>
-		/// <returns>Text props associated with the charcter immediately before the top of the
+		/// <returns>Text props associated with the character immediately before the top of the
 		/// selection, or null if there is no preceding character</returns>
-		/// ------------------------------------------------------------------------------------
 		public ITsTextProps PropsBefore
 		{
 			get
 			{
-				int ichTop = GetIch(SelLimitType.Top);
+				var ichTop = GetIch(SelLimitType.Top);
 				if (ichTop <= 0)
+				{
 					return null;
-				ITsString tss = GetTss(SelLimitType.Top);
-				return (tss == null) ? null : tss.get_PropertiesAt(ichTop - 1);
+				}
+				var tss = GetTss(SelLimitType.Top);
+				return tss?.get_PropertiesAt(ichTop - 1);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the text props for the text immediately after the bottom of the selection.
 		/// </summary>
 		/// <returns>Text props associated with the charcter immediately after the bottom of the
 		/// selection, or null if there is no following character</returns>
-		/// ------------------------------------------------------------------------------------
 		public ITsTextProps PropsAfter
 		{
 			get
 			{
-				ITsString tss = GetTss(SelLimitType.Bottom);
-				int ichBottom = GetIch(SelLimitType.Bottom);
-				return (tss == null || ichBottom >= tss.Length) ? null :
-					tss.get_PropertiesAt(ichBottom);
+				var tss = GetTss(SelLimitType.Bottom);
+				var ichBottom = GetIch(SelLimitType.Bottom);
+				return tss == null || ichBottom >= tss.Length ? null : tss.get_PropertiesAt(ichBottom);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Indicates whether of not the insertion point should be associated with the
 		/// characters immediately preceding it in the view (default) or not.
@@ -1841,13 +1620,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="type">Which end of the selection</param>
 		/// <returns><c>true</c> to associate IP with preceding characters, otherwise
 		/// <c>false</c></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool GetAssocPrev(SelLimitType type)
 		{
 			return GetSelInfo(type).fAssocPrev;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Indicates whether of not the insertion point should be associated with the
 		/// characters immediately preceding it in the view (default) or not.
@@ -1855,49 +1632,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="type">Which end of the selection</param>
 		/// <param name="value"><c>true</c> to associate IP with preceding characters, otherwise
 		/// <c>false</c></param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void SetAssocPrev(SelLimitType type, bool value)
 		{
 			GetSelInfo(type).fAssocPrev = value;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Indicates whether of not the insertion point should be associated with the
 		/// characters immediately preceding it in the view (default) or not.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool AssocPrev
 		{
 			get { return GetAssocPrev(SelLimitType.Anchor); }
 			set { SetAssocPrev(SelLimitType.Anchor, value); }
 		}
 
-		//		/// -----------------------------------------------------------------------------------
-		//		/// <summary>
-		//		/// Gets or sets the index of the object containing the selection endpoint. This is
-		//		/// -1 by default, but should be set to a valid HVO if the selection spans multiple
-		//		/// paragraphs.
-		//		/// </summary>
-		//		/// -----------------------------------------------------------------------------------
-		//		public int IhvoEndPara
-		//		{
-		//			get { return m_ihvoEnd; }
-		//			set { m_ihvoEnd = value; }
-		//		}
-		//		/// -----------------------------------------------------------------------------------
-		//		/// <summary>
-		//		/// Gets or sets the text props to be used for any text that is entered after the
-		//		/// insertion point is set.
-		//		/// </summary>
-		//		/// -----------------------------------------------------------------------------------
-		//		public ITsTextProps Ttp
-		//		{
-		//			get { return m_ttp; }
-		//			set { m_ttp = value; }
-		//		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the array of VwSelLevInfo. Array elements should indicate the chain of
 		/// objects that needs to be traversed to get from the root object to object where the
@@ -1908,25 +1657,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="type">type</param>
 		/// <returns>The level info</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual SelLevInfo[] GetLevelInfo(SelLimitType type)
 		{
 			return GetSelInfo(type).rgvsli;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the array of SelLevInfo.
 		/// </summary>
 		/// <param name="type">type</param>
 		/// <param name="value">The level info</param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void SetLevelInfo(SelLimitType type, SelLevInfo[] value)
 		{
 			GetSelInfo(type).rgvsli = value;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the array of VwSelLevInfo. Array elements should indicate the chain of
 		/// objects that needs to be traversed to get from the root object to object where the
@@ -1935,11 +1680,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// its tag value set to BaseStText.StTextTags.kflidParagraphs. This is set
 		/// automatically whenever the array is resized using Cvsli.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public virtual SelLevInfo[] LevelInfo
-		{
-			get { return GetLevelInfo(SelLimitType.Anchor); }
-		}
+		public virtual SelLevInfo[] LevelInfo => GetLevelInfo(SelLimitType.Anchor);
 		#endregion
 	}
 }

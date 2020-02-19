@@ -44,7 +44,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private int m_numberOfWordForms;
 		private IParser m_parser;
 
-		/// ------------
 		/// <summary />
 		public ParserWorker(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{

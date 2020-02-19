@@ -73,7 +73,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					return true;
 				}
 			}
-
 			return false;
 		}
 
@@ -91,17 +90,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					numberSettingsCombo.Items.Add(standardNumberingSystem);
 				}
 			}
-			if (model.CurrentNumberingSystemDefinition.IsCustom)
-			{
-				numberSettingsCombo.SelectedItem = Strings.CustomNumberingSystem;
-			}
-			else
-			{
-				numberSettingsCombo.SelectedItem = CLDRNumberingSystems.GetDigitsForID(model.CurrentNumberingSystemDefinition.Id);
-			}
+			numberSettingsCombo.SelectedItem = model.CurrentNumberingSystemDefinition.IsCustom ? Strings.CustomNumberingSystem : CLDRNumberingSystems.GetDigitsForID(model.CurrentNumberingSystemDefinition.Id);
 			customDigits.SetDigits(model.CurrentNumberingSystemDefinition.Digits, string.IsNullOrWhiteSpace(model.CurrentDefaultFontName) ? "Segoe" : model.CurrentDefaultFontName,
 				model.CurrentDefaultFontSize == 0.0f ? 12 : model.CurrentDefaultFontSize);
-
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 			customDigits.Enabled = model.CurrentNumberingSystemDefinition.IsCustom;
 			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
@@ -143,7 +134,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_rightToLeftCheckbox.CheckedChanged -= RightToLeftCheckChanged;
 			_rightToLeftCheckbox.Checked = model.CurrentWsSetupModel.CurrentRightToLeftScript;
 			_rightToLeftCheckbox.CheckedChanged += RightToLeftCheckChanged;
-
 			if (model.ShowAdvancedScriptRegionVariantView)
 			{
 				_generalTab.Controls.Remove(_identifiersControl);
@@ -190,7 +180,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_lblEncodingConverter.Text = string.Format(FwCoreDlgs.WritingSystemSetup_EncodingConverterForImporting, model.WritingSystemName);
 			model.ShowModifyEncodingConverters = ShowModifyEncodingConverter;
-
 			BindEncodingConverterCombo(model);
 		}
 
@@ -199,19 +188,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_encodingConverterCombo.SelectedIndexChanged -= EncodingConverterComboSelectedIndexChanged;
 			var encConverters = model.GetEncodingConverters();
 			_encodingConverterCombo.Items.Clear();
-			foreach (string convName in encConverters)
+			foreach (var convName in encConverters)
 			{
 				_encodingConverterCombo.Items.Add(convName);
 			}
-
-			if (!string.IsNullOrEmpty(model.CurrentLegacyConverter))
-			{
-				_encodingConverterCombo.SelectedItem = model.CurrentLegacyConverter;
-			}
-			else
-			{
-				_encodingConverterCombo.SelectedItem = FwCoreDlgs.kstidNone;
-			}
+			_encodingConverterCombo.SelectedItem = !string.IsNullOrEmpty(model.CurrentLegacyConverter) ? model.CurrentLegacyConverter : FwCoreDlgs.kstidNone;
 			_encodingConverterCombo.SelectedIndexChanged += EncodingConverterComboSelectedIndexChanged;
 		}
 
@@ -247,7 +228,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							label = string.Format(FwCoreDlgs.xCopy, label);
 						} while (uniqueLabels.Contains(label));
 					}
-
 				}
 				_writingSystemList.Items.Add(new WsListItem(label, ws.WorkingWs.LanguageTag), ws.InCurrentList);
 				uniqueLabels.Add(label);
@@ -292,8 +272,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void ShowValidCharsEditor()
 		{
 			var currentWs = _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
-			using (var dlg = new ValidCharactersDlg(_model.Cache, null, _helpTopicProvider,
-				_app, currentWs, _model.CurrentWsSetupModel.CurrentDisplayLabel))
+			using (var dlg = new ValidCharactersDlg(_model.Cache, null, _helpTopicProvider, _app, currentWs, _model.CurrentWsSetupModel.CurrentDisplayLabel))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -320,7 +299,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (var dlg = new AddCnvtrDlg(_helpTopicProvider, _app, null, originalConverter, null, false))
 			{
 				dlg.ShowDialog();
-
 				// Either select the new one or select the old one
 				if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 				{
@@ -328,7 +306,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					return true;
 				}
 			}
-
 			return false;
 		}
 
@@ -350,8 +327,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool ConfirmMergeWritingSystem(string wsToMerge, out CoreWritingSystemDefinition mergeTarget)
 		{
 			mergeTarget = null;
-			if (DialogResult.No == MessageBox.Show(FwCoreDlgs.ksWSWarnWhenMergingWritingSystems,
-				FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo))
+			if (DialogResult.No == MessageBox.Show(FwCoreDlgs.ksWSWarnWhenMergingWritingSystems, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo))
 			{
 				return false;
 			}
@@ -363,19 +339,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					return true;
 				}
 			}
-
 			return false;
 		}
 
 		private bool ConfirmClearAdvancedData()
 		{
-			if (DialogResult.No == MessageBox.Show("Clearing the Advanced check box will remove all your advanced choices. Do you want to continue?",
-				"Clear Advanced", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2))
-			{
-				return false;
-			}
-
-			return true;
+			return DialogResult.No != MessageBox.Show("Clearing the Advanced check box will remove all your advanced choices. Do you want to continue?",
+					   "Clear Advanced", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 		}
 
 		private void ImportTranslatedList(string iculocaletoimport)
@@ -398,7 +368,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
 				customDigits.Enabled = true;
 			}
-
 			BindNumbersTab(_model.CurrentWsSetupModel);
 		}
 
@@ -648,11 +617,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return Item1;
 			}
-
-			public string Code => Item2;
 		}
 		#endregion
-
 
 		/// <summary>
 		/// Display a writing system dialog for the purpose of modifying a new project.
@@ -670,11 +636,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						((List<CoreWritingSystemDefinition>)newWritingSystems).Add(item.WorkingWs);
 					}
-
 					return true;
 				}
 			}
-
 			return false;
 		}
 

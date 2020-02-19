@@ -37,21 +37,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Level information</summary>
 		public SelLevInfo[] rgvsli = new SelLevInfo[0];
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new object of type <see cref="SelInfo"/>.
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		public SelInfo()
 		{
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Copy constructor
 		/// </summary>
 		/// <param name="src">The source object</param>
-		/// --------------------------------------------------------------------------------
 		public SelInfo(SelInfo src)
 		{
 			if (src == null)
@@ -68,7 +64,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			Array.Copy(src.rgvsli, rgvsli, src.rgvsli.Length);
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Compares <paramref name="s1"/> with <paramref name="s2"/>
 		/// </summary>
@@ -77,7 +72,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns><c>true</c> if s1 is less than s2, otherwise <c>false</c></returns>
 		/// <remarks>Both objects must have the same number of levels, otherwise
 		/// an <see cref="ArgumentException"/> will be thrown.</remarks>
-		/// --------------------------------------------------------------------------------
 		public static bool operator <(SelInfo s1, SelInfo s2)
 		{
 			if (s1.rgvsli.Length != s2.rgvsli.Length)
@@ -119,7 +113,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return true;
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Compares <paramref name="s1"/> with <paramref name="s2"/>
 		/// </summary>
@@ -128,7 +121,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns><c>true</c> if s1 is greater than s2, otherwise <c>false</c></returns>
 		/// <remarks>Both objects must have the same number of levels, otherwise
 		/// <c>false</c> will be returned.</remarks>
-		/// --------------------------------------------------------------------------------
 		public static bool operator >(SelInfo s1, SelInfo s2)
 		{
 			return s2 < s1;

@@ -32,20 +32,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private TextBox m_scriptAbbrev;
 		//Control member to hold the value of the scriptName string
 		private string m_scriptNameString;
-
 		private Label m_regionNameLabel;
 		private FwOverrideComboBox m_regionName;
 		private Label m_regionAbbrevLabel;
 		private TextBox m_regionAbbrev;
 		private string m_regionNameString;
-
 		private Label m_variantAbbrevLabel;
 		private FwOverrideComboBox m_variantName;
 		private TextBox m_variantAbbrev;
 		private string m_variantNameString;
-
 		private HelpProvider m_helpProvider;
-
 		private CoreWritingSystemDefinition m_ws;
 		private ScriptSubtag m_origScriptSubtag;
 		private RegionSubtag m_origRegionSubtag;
@@ -268,14 +264,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				return subtag;
 			}
-
 			set
 			{
 				if (value == null)
 				{
-					m_scriptAbbrev.Text = "";
+					m_scriptAbbrev.Text = string.Empty;
 					m_scriptAbbrev.Enabled = false;
-					ScriptName = "";
+					ScriptName = string.Empty;
 				}
 				else
 				{
@@ -316,14 +311,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				return subtag;
 			}
-
 			set
 			{
 				if (value == null)
 				{
-					m_regionAbbrev.Text = "";
+					m_regionAbbrev.Text = string.Empty;
 					m_regionAbbrev.Enabled = false;
-					RegionName = "";
+					RegionName = string.Empty;
 				}
 				else
 				{
@@ -340,7 +334,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					{
 						m_regionName.Items.Add(value);
 						m_regionName.SelectedIndex = m_regionName.Items.IndexOf(value);
-
 					}
 					m_regionAbbrev.Enabled = value.IsPrivateUse;
 					m_regionAbbrev.Text = value.Code;
@@ -381,15 +374,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					}
 				}
 			}
-
 			set
 			{
 				var variantSubtags = value.ToArray();
 				if (variantSubtags.Length == 0)
 				{
-					VariantName = "";
+					VariantName = string.Empty;
 					m_variantAbbrev.Enabled = false;
-					m_variantAbbrev.Text = "";
+					m_variantAbbrev.Text = string.Empty;
 				}
 				else
 				{
@@ -413,7 +405,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					{
 						variantSubtag = variantSubtags[0];
 					}
-
 					if (variantSubtag != null)
 					{
 						m_variantName.SelectedIndex = m_variantName.Items.IndexOf(variantSubtag);
@@ -423,13 +414,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 							m_variantName.Items.Add(variantSubtag);
 							VariantName = variantSubtag.Name;
 						}
-
 						m_variantAbbrev.Enabled = variantSubtag.IsPrivateUse && !m_ws.IsVoice;
 						m_variantAbbrev.Text = (variantSubtag.IsPrivateUse ? "x-" : "") + variantSubtag.Code;
 					}
 					else
 					{
-						VariantName = "";
+						VariantName = string.Empty;
 						m_variantAbbrev.Enabled = true;
 						m_variantAbbrev.Text = IetfLanguageTag.GetVariantCodes(variantSubtags);
 					}
@@ -446,7 +436,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return m_scriptNameString;
 			}
-
 			set
 			{
 				m_scriptNameString = value;
@@ -463,7 +452,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return m_regionNameString;
 			}
-
 			set
 			{
 				m_regionNameString = value;
@@ -480,7 +468,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return m_variantNameString;
 			}
-
 			set
 			{
 				m_variantNameString = value;
@@ -521,11 +508,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_scriptName.ClearItems();
 			m_scriptName.Items.AddRange(StandardSubtags.RegisteredScripts.Cast<object>().ToArray());
 			ScriptSubtag = m_origScriptSubtag;
-
 			m_regionName.ClearItems();
 			m_regionName.Items.AddRange(StandardSubtags.RegisteredRegions.Cast<object>().ToArray());
 			RegionSubtag = m_origRegionSubtag;
-
 			PopulateVariantCombo(false);
 			VariantSubtags = m_origVariantSubtags;
 			m_enableLangTagSideEffects = true;
@@ -544,112 +529,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			m_variantName.EndUpdate();
 			m_variantName.TextChanged += m_variantName_TextChanged;
-		}
-
-		/// <summary>
-		/// Check that the contents of the control are valid. If not, report the error
-		/// to the user and return false. This should prevent the user from closing the
-		/// containing form using OK, but not from cancelling.
-		/// </summary>
-		public bool CheckValid()
-		{
-			var caption = Strings.kstidError;
-			var scriptSubtag = ScriptSubtag;
-			// Can't allow a script name without an abbreviation.
-			if (scriptSubtag == null && !string.IsNullOrEmpty(m_scriptName.Text.Trim()))
-			{
-				MessageBox.Show(FindForm(), Strings.kstidMissingScrAbbr, caption);
-				return false;
-			}
-			if (scriptSubtag != null && scriptSubtag.IsPrivateUse)
-			{
-				if (StandardSubtags.RegisteredScripts.Contains(scriptSubtag.Code))
-				{
-					MessageBox.Show(FindForm(), Strings.kstidDupScrAbbr, caption);
-					return false;
-				}
-				if (!IetfLanguageTag.IsValidScriptCode(scriptSubtag.Code))
-				{
-					MessageBox.Show(FindForm(), Strings.kstidInvalidScrAbbr, caption);
-					return false;
-				}
-			}
-
-			var regionSubtag = RegionSubtag;
-			// Can't allow a country name without an abbreviation.
-			if (regionSubtag == null && !string.IsNullOrEmpty(m_regionName.Text.Trim()))
-			{
-				MessageBox.Show(FindForm(), Strings.kstidMissingRgnAbbr, caption);
-				return false;
-			}
-			if (regionSubtag != null && regionSubtag.IsPrivateUse)
-			{
-				if (StandardSubtags.RegisteredRegions.Contains(regionSubtag.Code))
-				{
-					MessageBox.Show(FindForm(), Strings.kstidDupRgnAbbr, caption);
-					return false;
-				}
-				if (!IetfLanguageTag.IsValidRegionCode(regionSubtag.Code))
-				{
-					MessageBox.Show(FindForm(), Strings.kstidInvalidRgnAbbr, caption);
-					return false;
-				}
-			}
-
-			var variantSubtags = VariantSubtags.ToArray();
-			// Can't allow a variant name without an abbreviation.
-			if (string.IsNullOrEmpty(m_variantAbbrev.Text.Trim()) && !string.IsNullOrEmpty(m_variantName.Text.Trim()))
-			{
-				MessageBox.Show(FindForm(), Strings.kstidMissingVarAbbr, caption);
-				return false;
-			}
-
-			if (variantSubtags.Length > 0)
-			{
-				foreach (var variantSubtag in variantSubtags)
-				{
-					if (variantSubtag.IsPrivateUse)
-					{
-						if (StandardSubtags.RegisteredVariants.Contains(variantSubtag.Code))
-						{
-							MessageBox.Show(FindForm(), Strings.kstidDupVarAbbr, caption);
-							return false;
-						}
-						if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
-						{
-							MessageBox.Show(FindForm(), Strings.kstidInvalidVarAbbr, caption);
-							return false;
-						}
-					}
-				}
-
-				var parts = variantSubtags.Select(v => v.Code).ToList();
-				// If these subtags are private use, the first element of each must also be distinct.
-				if (m_ws.Language.IsPrivateUse)
-				{
-					parts.Add(m_ws.Language.Code.Split('-').First());
-				}
-				if (scriptSubtag != null && scriptSubtag.IsPrivateUse)
-				{
-					parts.Add(scriptSubtag.Code.Split('-').First());
-				}
-				if (regionSubtag != null && regionSubtag.IsPrivateUse)
-				{
-					parts.Add(regionSubtag.Code.Split('-').First());
-				}
-				var uniqueParts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				foreach (var part in parts)
-				{
-					if (uniqueParts.Contains(part))
-					{
-						MessageBox.Show(FindForm(), string.Format(Strings.kstidDuplicateParts, part), caption);
-						return false;
-					}
-					uniqueParts.Add(part);
-				}
-			}
-
-			return true;
 		}
 
 		private bool IsVoiceWritingSystem => m_ws.IsVoice;
@@ -678,11 +557,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_scriptAbbrev.Enabled = ((ScriptSubtag)m_scriptName.Items[selIndex]).IsPrivateUse;
 				return;
 			}
-
 			if (string.IsNullOrEmpty(scriptName))
 			{
-				ScriptName = "";
-				m_scriptAbbrev.Text = "";
+				ScriptName = string.Empty;
+				m_scriptAbbrev.Text = string.Empty;
 				m_scriptAbbrev.Enabled = false;
 			}
 			else
@@ -690,7 +568,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_scriptAbbrev.Text = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(GetValidAbbr(scriptName, 4));
 				m_scriptAbbrev.Enabled = m_scriptName.Enabled; // true except for Zxxx for audio
 			}
-
 			// We need to prevent setting this if we already set it as a side effect of choosing audio.
 			// Otherwise the WS changes it to x-Zxxx.
 			if (!IsVoiceWritingSystem)
@@ -733,10 +610,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_regionAbbrev.Enabled = ((RegionSubtag)m_regionName.Items[selIndex]).IsPrivateUse;
 				return;
 			}
-
 			if (string.IsNullOrEmpty(regionName))
 			{
-				m_regionAbbrev.Text = "";
+				m_regionAbbrev.Text = string.Empty;
 				m_regionAbbrev.Enabled = false;
 			}
 			else
@@ -744,10 +620,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_regionAbbrev.Enabled = true;
 				m_regionAbbrev.Text = GetValidAbbr(regionName, 2).ToUpperInvariant();
 			}
-
 			RegionName = regionName;
 			m_ws.Region = RegionSubtag;
-
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
@@ -788,7 +662,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			else if (string.IsNullOrEmpty(variantName))
 			{
 				m_variantAbbrev.Enabled = false;
-				m_variantAbbrev.Text = "";
+				m_variantAbbrev.Text = string.Empty;
 			}
 			else
 			{
@@ -796,7 +670,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_variantAbbrev.Text = GetValidAbbr(variantName, 8).ToLowerInvariant();
 			}
 			VariantName = variantName;
-
 			HandleAudioVariant();
 			m_enableLangTagSideEffects = true;
 			OnScriptRegionVariantChanged(EventArgs.Empty);
@@ -828,13 +701,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				//we are changing from Audio to something else
 				if (m_scriptAbbrev.Text == WellKnownSubtags.AudioScript)
 				{
-					m_scriptAbbrev.Text = "";
-					ScriptName = "";
+					m_scriptAbbrev.Text = string.Empty;
+					ScriptName = string.Empty;
 					m_enableLangTagSideEffects = true;
 				}
-
 				m_ws.IsVoice = false;
-
 				// Safest to set AFTER we turn off IsVoice, but BEFORE we change the script, to avoid
 				// a temporary invalid state. But we can't, too bad, it's invalid until this line.
 				m_ws.Variants.Clear();
@@ -842,7 +713,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					m_ws.Variants.Add(variantSubtag);
 				}
-
 				m_scriptName.Enabled = true;
 			}
 		}
@@ -889,15 +759,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private static string GetValidAbbr(string name, int maxLen)
 		{
 			var sb = new StringBuilder();
-			foreach (var c in name)
+			foreach (var c in name.Where(c => IsValidAbbrChar(c)))
 			{
-				if (IsValidAbbrChar(c))
+				sb.Append(c);
+				if (sb.Length == maxLen)
 				{
-					sb.Append(c);
-					if (sb.Length == maxLen)
-					{
-						break;
-					}
+					break;
 				}
 			}
 			return sb.ToString();
@@ -916,7 +783,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private void m_scriptCode_TextChanged(object sender, EventArgs e)
 		{
 			m_ws.Script = ScriptSubtag;
-
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
@@ -926,7 +792,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private void m_regionCode_TextChanged(object sender, EventArgs e)
 		{
 			m_ws.Region = RegionSubtag;
-
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();

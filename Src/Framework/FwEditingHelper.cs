@@ -241,22 +241,10 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether or not a picture is selected. This version of the
-		/// method also answers true if the selection is in a picture caption.
-		/// </summary>
-		public virtual bool IsPictureSelected => (Picture != null);
-
-		/// <summary>
-		/// Gets a value indicating whether or not a picture is selected. This version answers
-		/// true only if the selection is truly of the picture itself.
-		/// </summary>
-		public virtual bool IsPictureReallySelected => IsPictureSelected && CurrentSelection.Selection.SelType == VwSelType.kstPicture;
-
-		/// <summary>
 		/// Represents a style context that can be applied anywhere in the view that
 		/// this EditingHelper belongs to
 		/// </summary>
-		public virtual ContextValues InternalContext { get; set; } = ContextValues.General;
+		public ContextValues InternalContext { get; set; } = ContextValues.General;
 
 		/// <summary>
 		/// Set to true to ignore selection changes.
@@ -265,13 +253,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// (TE-1325)
 		/// </summary>
 		public static bool IgnoreSelectionChanges { get; set; }
-
-		/// <summary>
-		/// Determine if the char style combo box should always be refreshed on selection
-		/// changes.
-		/// </summary>
-		/// <remarks>Override if your editing helper ever needs to force this</remarks>
-		public virtual bool ForceCharStyleComboRefresh => false;
 		#endregion
 
 		#region Private methods
@@ -293,7 +274,6 @@ namespace SIL.FieldWorks.Common.Framework
 			var helper = CurrentSelection;
 			var sel = helper.Selection;
 			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);
-
 			// If inserting a picture over a user prompt, need to set up info for a proper insertion
 			// in the empty paragraph.
 			if (propTag == SimpleRootSite.kTagUserPrompt)
@@ -334,7 +314,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// receive the tss after the ORC is inserted (typically a paragraph).</param>
 		/// <param name="propTag">The property that holds the string.</param>
 		/// <param name="ws">The writing system ID if the property is a multi-string.</param>
-		protected virtual void InsertPictureOrc(ICmPicture pict, ITsString tss, int ich, int hvoObj, int propTag, int ws)
+		protected void InsertPictureOrc(ICmPicture pict, ITsString tss, int ich, int hvoObj, int propTag, int ws)
 		{
 			var newTss = pict.InsertORCAt(tss, ich);
 			if (ws == 0)
@@ -382,7 +362,6 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 				}
 			}
-
 			if (fHasPicture)
 			{
 				// Vars to call TextSelInfo and find out whether it is a structured

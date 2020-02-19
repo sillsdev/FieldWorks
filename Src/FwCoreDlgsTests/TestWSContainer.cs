@@ -16,18 +16,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	internal class TestWSContainer : IWritingSystemContainer
 	{
 		private IWritingSystemContainer _writingSystemContainerImplementation;
-
-		private List<CoreWritingSystemDefinition> _vernacular =
-			new List<CoreWritingSystemDefinition>();
-
-		private List<CoreWritingSystemDefinition> _analysis =
-			new List<CoreWritingSystemDefinition>();
-
-		private List<CoreWritingSystemDefinition> _curVern =
-			new List<CoreWritingSystemDefinition>();
-
-		private List<CoreWritingSystemDefinition> _curAnaly =
-			new List<CoreWritingSystemDefinition>();
+		private List<CoreWritingSystemDefinition> _vernacular = new List<CoreWritingSystemDefinition>();
+		private List<CoreWritingSystemDefinition> _analysis = new List<CoreWritingSystemDefinition>();
+		private List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
+		private List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
 
 		public TestWSContainer(string[] vernacular, string[] analysis = null,
 			string[] curVern = null, string[] curAnaly = null)
@@ -41,7 +33,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_curVern.Add(ws);
 				}
 			}
-
 			if (analysis != null)
 			{
 				foreach (var lang in analysis)
@@ -54,7 +45,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-
 			if (curVern != null)
 			{
 				foreach (var lang in curVern)
@@ -62,7 +52,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_curVern.Add(new CoreWritingSystemDefinition(lang));
 				}
 			}
-
 			if (curAnaly != null)
 			{
 				foreach (var lang in curAnaly)
@@ -70,23 +59,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_curAnaly.Add(new CoreWritingSystemDefinition(lang));
 				}
 			}
-
 			Repo = new TestLdmlInXmlWritingSystemRepository();
-		}
-
-		public TestWSContainer(CoreWritingSystemDefinition[] vernacular)
-		{
-			_vernacular.AddRange(vernacular);
 		}
 
 		public void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws)
 		{
-			throw new System.NotImplementedException();
+			throw new System.NotSupportedException();
 		}
 
 		public void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws)
 		{
-			throw new System.NotImplementedException();
+			throw new System.NotSupportedException();
 		}
 
 		public IEnumerable<CoreWritingSystemDefinition> AllWritingSystems { get; }

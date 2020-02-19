@@ -43,25 +43,13 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <summary>
 		/// Get an array of SelLevInfo structs from the given selection.
 		/// </summary>
-		/// <param name="vwsel"></param>
-		/// <param name="cvsli"></param>
-		/// <param name="ihvoRoot"></param>
-		/// <param name="tagTextProp"></param>
-		/// <param name="cpropPrevious"></param>
-		/// <param name="ichAnchor"></param>
-		/// <param name="ichEnd"></param>
-		/// <param name="ws"></param>
-		/// <param name="fAssocPrev"></param>
-		/// <param name="ihvoEnd"></param>
-		/// <param name="ttp"></param>
-		/// <returns></returns>
 		public static SelLevInfo[] AllTextSelInfo(IVwSelection vwsel, int cvsli,
 			out int ihvoRoot, out int tagTextProp, out int cpropPrevious, out int ichAnchor,
 			out int ichEnd, out int ws, out bool fAssocPrev, out int ihvoEnd, out ITsTextProps ttp)
 		{
 			Debug.Assert(vwsel != null);
 
-			using (ArrayPtr rgvsliPtr = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
+			using (var rgvsliPtr = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
 				vwsel.AllTextSelInfo(out ihvoRoot, cvsli, rgvsliPtr,
 					out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
@@ -70,53 +58,27 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool Equals(object obj)
 		{
-			return obj is SelLevInfo && ((SelLevInfo)obj) == this;
+			return obj is SelLevInfo && (SelLevInfo)obj == this;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
 
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public static bool operator == (SelLevInfo left, SelLevInfo right)
 		{
-			return (left.hvo == right.hvo && left.ich == right.ich && left.ihvo == right.ihvo &&
-				left.tag == right.tag && left.ws == right.ws &&
-				left.cpropPrevious == right.cpropPrevious);
+			return left.hvo == right.hvo && left.ich == right.ich && left.ihvo == right.ihvo &&
+				   left.tag == right.tag && left.ws == right.ws &&
+				   left.cpropPrevious == right.cpropPrevious;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public static bool operator != (SelLevInfo left, SelLevInfo right)
 		{
 			return !(left == right);

@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.Controls
 	[Designer(typeof(ProgressLineDesigner))]
 	public partial class ProgressLine : LineControl
 	{
-		private int m_MinValue = 0;
+		private int m_MinValue;
 		private int m_MaxValue = 100;
 		private int m_Value;
 		private Brush m_BackBrush;

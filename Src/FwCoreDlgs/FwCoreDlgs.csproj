@@ -449,6 +449,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SharedBackendServicesHelper.cs" />
+    <Compile Include="SpellingDictionaryItem.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -473,9 +474,8 @@
     <Compile Include="WizardStep.Designer.cs">
       <DependentUpon>WizardStep.cs</DependentUpon>
     </Compile>
-    <Compile Include="WsMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="WSListItemModel.cs" />
+    <Compile Include="WSMenuItemModel.cs" />
     <EmbeddedResource Include="AddCnvtrDlg.resx">
       <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>

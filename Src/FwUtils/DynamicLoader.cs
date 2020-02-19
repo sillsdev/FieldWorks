@@ -32,7 +32,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				throw new ArgumentException(@"Required 'dynamicloaderinfo' XML node not found.", nameof(parentConfigNode));
 			}
-
 			return CreateObject(dynLoaderNode);
 		}
 
@@ -148,7 +147,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Assembly assembly;
 			var assemblyPath = GetAssembly(assemblyPath1, out assembly);
-
 			var className = className1.Trim();
 			object thing;
 			try
@@ -176,12 +174,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				throw new FwConfigurationException(CouldNotCreateObjectMsg(assemblyPath, className));
 			}
 			return thing;
-
-		}
-
-		public static object CreateNonPublicObject(string assemblyPath1, string className1, params object[] args)
-		{
-			return CreateObject(assemblyPath1, className1, BindingFlags.Instance | BindingFlags.NonPublic, args);
 		}
 
 		/// <summary>
@@ -196,6 +188,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			return GetPlugins<T>(FileLocationUtilities.DirectoryOfTheApplicationExecutable, pattern);
 		}
+
 		/// <summary>
 		/// Return a newly created instance of every type in every DLL in the specified directory which implements the indicated type.
 		/// Typically type is an interface, but I think it would work if it is a base class.

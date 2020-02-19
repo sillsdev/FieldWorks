@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private readonly string m_NumberOfActionsPlural;
 		private ScrollListBox m_Actions;
 		private readonly string m_Cancel;
-		private bool m_fIgnoreNextMouseMoved = false;
+		private bool m_fIgnoreNextMouseMoved;
 		#endregion
 
 		#region Delegates and Events
@@ -163,22 +163,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Public methods and properties
-		/// <summary>
-		/// Adjusts the height of the list. This should be called after all the items are
-		/// added.
-		/// </summary>
-		public void AdjustHeight()
-		{
-			// Adjust the height of the drop down. We want to show max. 10 items
-			var nMaxItems = Math.Min(m_Actions.Items.Count, 10);
-			Height = nMaxItems * m_Actions.ItemHeight + m_NumberOfUndoes.Height + 2 * SystemInformation.BorderSize.Height;
-
-			// Always select the first undo/redo action
-			if (m_Actions.Items.Count > 0)
-			{
-				SelectListItems(0, 0);
-			}
-		}
 
 		/// <summary>
 		/// Gets the collection of actions in the list box

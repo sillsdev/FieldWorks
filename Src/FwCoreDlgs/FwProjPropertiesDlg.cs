@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -31,7 +32,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected const int kExternalLinksTab = 1;
 		/// <summary>Index of the tab for sharing settings</summary>
 		protected const int kSharingTab = 2;
-
 		private LcmCache m_cache;
 		private readonly ILangProject m_langProj;
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -84,9 +84,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		public FwProjPropertiesDlg()
 		{
-			//
 			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 		}
 
@@ -100,14 +98,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// information</param>
 		public FwProjPropertiesDlg(LcmCache cache, IApp app, IHelpTopicProvider helpTopicProvider) : this()
 		{
-			if (cache == null)
-			{
-				throw new ArgumentNullException(nameof(cache), "Null Cache passed to FwProjProperties");
-			}
-
+			Guard.AgainstNull(cache, nameof(cache));
 			m_cache = cache;
 			m_txtProjName.Enabled = true;
-
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_langProj = m_cache.LanguageProject;
@@ -120,8 +113,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void InitializeProjectSharingTab()
 		{
-			m_projectLexiconSettingsDataMapper =
-				new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
+			m_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
 			m_projectLexiconSettings = new ProjectLexiconSettings();
 			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
 			m_enableProjectSharingCheckBox.Checked = m_projectLexiconSettings.ProjectSharing;
@@ -550,14 +542,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Public methods
 
 		/// <summary>
-		/// Shows the dialog as a modal dialog
-		/// </summary>
-		public int ShowDlg()
-		{
-			return (int)ShowDialog();
-		}
-
-		/// <summary>
 		/// Return true if something in the active writing system lists changed.
 		/// </summary>
 		public bool WritingSystemsChanged()
@@ -656,7 +640,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected void SaveInternal()
 		{
-			var wsContainer = m_cache.ServiceLocator.WritingSystems;
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
 			if (m_txtProjDescription.Text != m_sOrigDescription)
@@ -773,21 +756,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (!FwNewLangProjectModel.CheckForSafeProjectName(ref projectName, out errorMessage))
 				{
 					MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
 					m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
 					m_txtProjName.Text = projectName;
 					m_txtProjName.TextChanged += m_txtProjName_TextChanged;
 				}
-
 				if (!FwNewLangProjectModel.CheckForUniqueProjectName(projectName))
 				{
 					MessageBox.Show(string.Format(FwCoreDlgs.FwProjProperties_DuplicateProjectName, projectName, OriginalProjectName),
 						FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
-
-			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0 &&
-				(OriginalProjectName.Equals(m_txtProjName.Text) || FwNewLangProjectModel.CheckForUniqueProjectName(m_txtProjName.Text));
+			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0
+							  && (OriginalProjectName.Equals(m_txtProjName.Text) || FwNewLangProjectModel.CheckForUniqueProjectName(m_txtProjName.Text));
 			m_lblProjName.Text = m_txtProjName.Text;
 		}
 

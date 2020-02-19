@@ -23,8 +23,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		numericDotDigit,
 		/// <summary>The fraction is malformed</summary>
 		numericMalformedFraction,
-		/// <summary>The codepoint is outside the PUA range</summary>
-		outsidePua,
 		/// <summary>The codepoint is within the Surrogate range</summary>
 		inSurrogateRange,
 		/// <summary>Zero is not a valid code point</summary>

@@ -2,11 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Linq;
 
 namespace SIL.FieldWorks
 {
@@ -24,15 +21,6 @@ namespace SIL.FieldWorks
 		public static CompositionScopeDefinition AsScope(this ComposablePartCatalog catalog, params CompositionScopeDefinition[] children)
 		{
 			return new CompositionScopeDefinition(catalog, children);
-		}
-
-		/// <summary>
-		/// Create a globally scoped definition of parts.
-		/// </summary>
-		public static CompositionScopeDefinition AsScopeWithPublicSurface<T>(this ComposablePartCatalog catalog, params CompositionScopeDefinition[] children)
-		{
-			IEnumerable<ExportDefinition> definitions = catalog.Parts.SelectMany((p) => p.ExportDefinitions.Where((e) => e.ContractName == AttributedModelServices.GetContractName(typeof(T))));
-			return new CompositionScopeDefinition(catalog, children, definitions);
 		}
 	}
 }

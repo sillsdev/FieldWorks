@@ -192,32 +192,16 @@ namespace SIL.FieldWorks
 		}
 
 		#region Overriden Methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Ignores the close request if needed
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			Logger.WriteEvent("Closing new language project dialog with result "  + DialogResult);
 			base.OnClosing(e);
 		}
 
-		#endregion
-
-		#region Event handlers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show the New Language Project Dialog help topic
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void btnHelp_Click(object sender, EventArgs e)
-		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpFwNewLangProjHelpTopic");
-		}
 		#endregion
 
 		#region Interface methods

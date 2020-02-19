@@ -635,7 +635,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Base method to be extended by subclasses.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
 			// To fix FWR-2395, the code to make selections in the slave sites of a group

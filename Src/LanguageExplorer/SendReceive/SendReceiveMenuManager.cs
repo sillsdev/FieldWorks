@@ -471,7 +471,7 @@ namespace LanguageExplorer.SendReceive
 			private void ObtainAnyFlexBridgeProject_Click(object sender, EventArgs e)
 			{
 				ObtainedProjectType obtainedProjectType;
-				var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>(FwUtils.window), FlexApp, out obtainedProjectType);
+				var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>(FwUtils.window), out obtainedProjectType);
 				if (string.IsNullOrEmpty(newprojectPathname))
 				{
 					return; // We dealt with it.

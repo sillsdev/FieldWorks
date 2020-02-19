@@ -15,11 +15,6 @@ namespace SIL.FieldWorks.PaObjects
 		private readonly PaVariantOfInfo _variantInfo;
 
 		/// <summary />
-		public PaVariant()
-		{
-		}
-
-		/// <summary />
 		internal PaVariant(ILexEntryRef lxEntryRef)
 		{
 			var lx = lxEntryRef.OwnerOfClass<ILexEntry>();

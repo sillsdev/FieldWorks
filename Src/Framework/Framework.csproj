@@ -260,7 +260,6 @@
     <Compile Include="ScrollListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="StatusBarProgressHandler.cs" />
     <Compile Include="UndoRedoDropDown.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					var wf = GetDbWordform(lexicalForm);
 					return wf != null ? CreateEntryFromDbWordform(wf) : null;
 				default:
-					var dbEntry = GetDbLexeme(type, lexicalForm, homograph);
+					var dbEntry = GetDbLexeme(type, lexicalForm);
 					return dbEntry != null ? CreateEntryFromDbEntry(type, dbEntry) : null;
 			}
 		}
@@ -159,8 +159,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		public LexSense AddSenseToEntry(LexemeType type, string lexicalForm, int homograph)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Adding new sense to lexeme '" + lexicalForm + "' from an external application");
-
+			Logger.WriteEvent($"Adding new sense to lexeme '{lexicalForm}' from an external application");
 			return NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				var guid = string.Empty;
@@ -184,7 +183,7 @@ namespace SIL.FieldWorks.LexicalProvider
 						}
 					default:
 						{
-							var dbEntry = GetDbLexeme(type, lexicalForm, homograph);
+							var dbEntry = GetDbLexeme(type, lexicalForm);
 							if (dbEntry == null)
 							{
 								throw new ArgumentException("Entry in the lexicon not found for the specified information");
@@ -314,13 +313,12 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// Gets the DB LexEntry for the specified type and form (homograph currently ignored) or
 		/// null if none could be found.
 		/// </summary>
-		private ILexEntry GetDbLexeme(LexemeType type, string lexicalForm, int homograph)
+		private ILexEntry GetDbLexeme(LexemeType type, string lexicalForm)
 		{
 			if (type == LexemeType.Word)
 			{
 				throw new ArgumentException("LexEntry can not be found for the Lexeme type specified");
 			}
-
 			// ENHANCE: We may have to do something with the homograph number eventually, but
 			// currently there is no correlation between the homograph number in the DB and
 			// the homograph number passed from the external application.

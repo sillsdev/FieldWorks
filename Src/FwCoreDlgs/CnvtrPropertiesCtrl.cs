@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private int m_mappingWidth;
 
 		/// <summary>List of encoding converters in the list box which are not yet defined.</summary>
-		private Dictionary<string,EncoderInfo> m_undefinedList = new Dictionary<string,EncoderInfo>();
+		private Dictionary<string, EncoderInfo> m_undefinedList = new Dictionary<string, EncoderInfo>();
 
 		/// <summary>The actual specs string that will be used to initialize a new converter.</summary>
 		public string m_specs;
@@ -402,10 +402,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 								var name = idAndName.Item2;
 								var id = idAndName.Item1;
 								if (!string.IsNullOrEmpty(name))
-{
-								cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+								{
+									cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+								}
 							}
-						}
 						}
 						catch (Exception ee)
 						{
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					// Passed an invalid mapname. And yes, it does happen occasionally...
 					return;
-			}
+				}
 			}
 			// Find and select the appropriate item in cboConversion
 			var fMatchedConvType = false;
@@ -681,33 +681,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Fill in whatever specs control is visible.
 				switch (((CnvtrTypeComboItem)cboConverter.SelectedItem).Type)
 				{
-				case ConverterType.ktypeIcuConvert:
-				case ConverterType.ktypeIcuTransduce:
-				case ConverterType.ktypeCodePage:
-					// If it's a combo, try to select the item that corresponds to the old specs.
-					var fMatchedSpecs = false;
-					for (var i = 0; i < cboSpec.Items.Count; ++i)
-					{
-						// Note that EncConverters seems to convert specs to lower case
-						// but the names we get from ICU often include upper case.
-						if (((CnvtrSpecComboItem)cboSpec.Items[i]).Specs.ToUpperInvariant() == m_specs.ToUpperInvariant())
+					case ConverterType.ktypeIcuConvert:
+					case ConverterType.ktypeIcuTransduce:
+					case ConverterType.ktypeCodePage:
+						// If it's a combo, try to select the item that corresponds to the old specs.
+						var fMatchedSpecs = false;
+						for (var i = 0; i < cboSpec.Items.Count; ++i)
 						{
-							cboSpec.SelectedIndex = i;
-							fMatchedSpecs = true;
-							break;
+							// Note that EncConverters seems to convert specs to lower case
+							// but the names we get from ICU often include upper case.
+							if (((CnvtrSpecComboItem)cboSpec.Items[i]).Specs.ToUpperInvariant() == m_specs.ToUpperInvariant())
+							{
+								cboSpec.SelectedIndex = i;
+								fMatchedSpecs = true;
+								break;
+							}
 						}
-					}
-					if (!fMatchedSpecs)
-					{
-						// Review SusannaI(JohnT): should we put up a dialog?
-						cboSpec.SelectedIndex = -1; // nothing selected.
-					}
-					break;
-				default:
-					// If it's just a box the user can type in, just copy the old specs there.
-					// This applies for TecKit, CC Table, and RegEx converters.
-					txtMapFile.Text = m_specs;
-					break;
+						if (!fMatchedSpecs)
+						{
+							// Review SusannaI(JohnT): should we put up a dialog?
+							cboSpec.SelectedIndex = -1; // nothing selected.
+						}
+						break;
+					default:
+						// If it's just a box the user can type in, just copy the old specs there.
+						// This applies for TecKit, CC Table, and RegEx converters.
+						txtMapFile.Text = m_specs;
+						break;
 				}
 			}
 			else
@@ -881,9 +881,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (!string.IsNullOrEmpty(strFriendlyName))
 					{
 						myParent.SelectedConverter = strFriendlyName;
+					}
 				}
 			}
-		}
 		}
 
 #if AUTOCONFIGUREEX_AVAILABLE

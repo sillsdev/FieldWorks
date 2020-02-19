@@ -114,7 +114,6 @@ namespace SIL.FieldWorks.Resources
 		public static void MakeUndoRedoLabels(string stid, out string stUndo, out string stRedo)
 		{
 			var stRes = GetResourceString(stid);
-
 			// If we get here from a test, it might not find the correct resource.
 			// Just ignore it and set some dummy values
 			if (string.IsNullOrEmpty(stRes))
@@ -149,8 +148,7 @@ namespace SIL.FieldWorks.Resources
 			{
 				s_stringResources = new ResourceManager("SIL.FieldWorks.Resources.FwStrings", Assembly.GetExecutingAssembly());
 			}
-
-			return (stid == null ? "NullStringID" : s_stringResources.GetString(stid));
+			return stid == null ? "NullStringID" : s_stringResources.GetString(stid);
 		}
 
 		/// <summary>
@@ -174,19 +172,13 @@ namespace SIL.FieldWorks.Resources
 			{
 				s_helpResources = new ResourceManager("SIL.FieldWorks.Resources.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
-
-			return (stid == null ? "NullStringID" : s_helpResources.GetString(stid));
+			return stid == null ? "NullStringID" : s_helpResources.GetString(stid);
 		}
 
 		/// <summary>
 		/// Gets the one column selected icon for page layout.
 		/// </summary>
 		public static Image OneColumnSelectedIcon => Helper.m_imgLst53x43.Images[7];
-
-		/// <summary>
-		/// Gets the portrait page layout icon.
-		/// </summary>
-		public static Image PortraitIcon => Helper.m_imgLst53x43.Images[5];
 
 		/// <summary>
 		/// Gets the icon displayed in the styles combo box for paragraph styles.

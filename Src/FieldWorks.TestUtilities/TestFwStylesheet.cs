@@ -36,7 +36,7 @@ namespace FieldWorks.TestUtilities
 		private Dictionary<string, ITsTextProps> m_htStyleRules = new Dictionary<string, ITsTextProps>();
 
 		/// <summary>Used for assigning HVO's</summary>
-		private int m_hvoLast = 0;
+		private int m_hvoLast;
 
 		#region Methods of IVwStylesheet
 		/// <summary>

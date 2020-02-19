@@ -58,8 +58,6 @@ namespace SIL.FieldWorks.Common.Controls
 			OnItemLabel = 0x0004,
 			/// <summary>In the indentation associated with an item.</summary>
 			OnItemIndent = 0x0008,
-			/// <summary>On the button associated with an item.</summary>
-			OnItemButton = 0x0010,
 			/// <summary>In the area to the right of an item. </summary>
 			OnItemRight = 0x0020,
 			/// <summary>On the state icon for a tree-view item that is in a user-defined state.</summary>

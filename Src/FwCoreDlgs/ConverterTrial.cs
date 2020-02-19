@@ -57,20 +57,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DefaultExt = "txt",
 				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.ofDlg_Filter)
 			};
-
 			saveFileDialog = new SaveFileDialogAdapter
 			{
 				DefaultExt = "txt",
 				RestoreDirectory = true,
 				Filter = ofDlg.Filter
 			};
-
 			if (DesignMode)
 			{
 				return;
 			}
 			InputArgsChanged(); // set the initial state of the Convert button
-
 			// Set view properties.
 			m_fHasOutput = false;
 			m_svOutput = new SampleView
@@ -137,7 +134,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(selectFileButton, "selectFileButton");
 			selectFileButton.Name = "selectFileButton";
 			helpProvider1.SetShowHelp(selectFileButton, ((bool)(resources.GetObject("selectFileButton.ShowHelp"))));
-			selectFileButton.Click += new System.EventHandler(this.selectFileButton_Click);
+			selectFileButton.Click += new System.EventHandler(this.SelectFileButton_Click);
 			//
 			// label2
 			//
@@ -161,7 +158,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			helpProvider1.SetHelpString(this.convertButton, resources.GetString("convertButton.HelpString"));
 			this.convertButton.Name = "convertButton";
 			helpProvider1.SetShowHelp(this.convertButton, ((bool)(resources.GetObject("convertButton.ShowHelp"))));
-			this.convertButton.Click += new System.EventHandler(this.convertButton_Click);
+			this.convertButton.Click += new System.EventHandler(this.ConvertButton_Click);
 			//
 			// label3
 			//
@@ -234,28 +231,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InputArgsChanged();
 		}
 
-		private void convertButton_Click(object sender, EventArgs e)
+		private void ConvertButton_Click(object sender, EventArgs e)
 		{
-			if (!string.IsNullOrEmpty(m_mapname))
+			if (string.IsNullOrEmpty(m_mapname))
 			{
-				using (new WaitCursor(this))
-				{
-					try
-					{
-						DoFileConvert(Converters[m_mapname], ofDlg.FileName);
-					}
-					catch
-					{
-						var resourceStrings = new ResourceManager("SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings", Assembly.GetExecutingAssembly());
-						MessageBox.Show(this, resourceStrings.GetString("kstidErrorConvertingTestFile"), resourceStrings.GetString("kstidConversionError"));
-					}
-				}
-				saveFileButton.Enabled = m_fHasOutput;
-				m_svOutput.Enabled = m_fHasOutput;
+				return;
 			}
+			using (new WaitCursor(this))
+			{
+				try
+				{
+					DoFileConvert(Converters[m_mapname], ofDlg.FileName);
+				}
+				catch
+				{
+					var resourceStrings = new ResourceManager("SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings", Assembly.GetExecutingAssembly());
+					MessageBox.Show(this, resourceStrings.GetString("kstidErrorConvertingTestFile"), resourceStrings.GetString("kstidConversionError"));
+				}
+			}
+			saveFileButton.Enabled = m_fHasOutput;
+			m_svOutput.Enabled = m_fHasOutput;
 		}
 
-		private void selectFileButton_Click(object sender, EventArgs e)
+		private void SelectFileButton_Click(object sender, EventArgs e)
 		{
 			if (ofDlg.ShowDialog() == DialogResult.Cancel)
 			{
@@ -291,7 +289,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					var familyName = fontFamilies[j].Name;
 					outputFontCombo.Items.Add(familyName);
 				}
-
 				outputFontCombo.SelectedItem = m_svOutput.Font.Name;
 			}
 		}
@@ -321,7 +318,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_savedOutput = new StringBuilder();
 					m_svOutput.Clear(false);
 					m_fHasOutput = false;
-
 					// Read the lines of the input file, convert them, and display them
 					// in the view.
 					while (reader.Peek() > -1)
@@ -340,7 +336,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						m_savedOutput.AppendLine(sOutput);
 						m_fHasOutput = true;
 					}
-
 					reader.Close();
 					m_svOutput.CompleteSetText();
 				}
@@ -350,11 +345,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Convert one line of text for display
 		/// </summary>
-		private string ConvertOneLine(IEncConverter ec, string input)
+		private static string ConvertOneLine(IEncConverter ec, string input)
 		{
 			var marker = string.Empty;
 			var remainder = string.Empty;
-
 			// if the input string is empty, don't try to convert it
 			if (input == string.Empty)
 			{
@@ -375,7 +369,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				marker = input.Substring(0, spacePosition);
 				remainder = input.Substring(spacePosition);
 			}
-
 			return marker + ec.Convert(remainder);
 		}
 
@@ -461,10 +454,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary />
 			public string FontName
 			{
-				get
-				{
-					return m_fontName;
-				}
 				set
 				{
 					m_fontName = value;
@@ -547,15 +536,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			public override void MakeRoot()
 			{
 				if (!GotCacheOrWs || DesignMode)
+				{
 					return;
-
+				}
 				base.MakeRoot();
-
 				m_svc = new SampleVc
 				{
 					FontName = m_fontName
 				};
-
 				Clear(false);
 				RootBox.DataAccess = m_sda;
 				RootBox.SetRootObject(HvoRoot, m_svc, (int)SampleFrags.kfrText, null);

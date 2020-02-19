@@ -40,7 +40,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void FwNewLangProjectModel_VerifyCreateNewLangProject()
 		{
 			LcmCache cache = null;
-
 			var testProject = new FwNewLangProjectModel(true)
 			{
 				LoadProjectNameSetup = () => { },
@@ -59,16 +58,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					testProject.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
 				}
-
 				Assert.IsTrue(DbExists(DbName));
-
 				// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 				// we don't need a 'using'
 				cache = LcmCache.CreateCacheFromExistingData(
 					new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(DbName)), "en", new DummyLcmUI(),
 					FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 				CheckInitialSetOfPartsOfSpeech(cache);
-
 				Assert.AreEqual(2, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
 				Assert.AreEqual("German", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
 				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Last().LanguageName);
@@ -84,8 +80,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			finally
 			{
 				// Blow away the database to clean things up
-				if (cache != null)
-					cache.Dispose();
+				cache?.Dispose();
 				DestroyDb(DbName, false);
 			}
 		}
@@ -126,7 +121,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				string errorMessage;
 				Assert.True(FwNewLangProjectModel.CheckForUniqueProjectName("something else"), "unique name should be unique");
 				Assert.False(FwNewLangProjectModel.CheckForUniqueProjectName(DbName), "duplicate name should not be unique");
-
 				// Creating a new project is expensive (several seconds), so test this property that also checks uniqueness here:
 				var testModel = new FwNewLangProjectModel
 				{
@@ -159,7 +153,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-
 			var messageActual = testModel.InvalidProjectNameMessage;
 			Assert.That(messageActual, Is.StringStarting(messageStart));
 			Assert.That(messageActual, Is.StringContaining(FwUtilsStrings.ksIllegalNameExplanation));
@@ -180,7 +173,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-
 			var messageActual = testModel.InvalidProjectNameMessage;
 			Assert.That(messageActual, Is.StringStarting(messageStart));
 			Assert.That(messageActual, Is.StringContaining(FwUtilsStrings.ksIllegalNameExplanation));
@@ -201,7 +193,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
-
 			var messageActual = testModel.InvalidProjectNameMessage;
 			Assert.That(messageActual, Is.StringStarting(messageStart));
 			Assert.That(messageActual, Is.StringContaining(FwUtilsStrings.ksIllegalNameExplanation));
@@ -239,14 +230,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.True(testModel.Steps.Any(step => step.IsOptional), "Test data is invalid, no optional steps present");
 			foreach (var step in testModel.Steps)
 			{
-				if (!step.IsOptional)
-				{
-					step.IsComplete = true;
-				}
-				else
-				{
-					step.IsComplete = false;
-				}
+				step.IsComplete = !step.IsOptional;
 			}
 			Assert.True(testModel.CanFinish());
 		}
@@ -255,10 +239,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void FwNewLangProjectModel_CanGoBack()
 		{
-			var model = new FwNewLangProjectModel();
-			model.LoadProjectNameSetup = () => { };
-			model.LoadVernacularSetup = () => { };
-			model.ProjectName = DbName;
+			var model = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				ProjectName = DbName
+			};
 			Assert.False(model.CanGoBack());
 			model.Next();
 			Assert.True(model.CanGoBack());
@@ -271,12 +257,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void FwNewLangProjectModel_VernacularAndAnalysisSame_WarningIssued()
 		{
 			bool warningIssued = false;
-			var model = new FwNewLangProjectModel();
-			model.LoadProjectNameSetup = () => { };
-			model.LoadVernacularSetup = () => { };
-			model.LoadAnalysisSetup = () => { };
-			model.LoadAnalysisSameAsVernacularWarning = () => { warningIssued = true; };
-			model.ProjectName = DbName;
+			var model = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				LoadAnalysisSetup = () => { },
+				LoadAnalysisSameAsVernacularWarning = () => { warningIssued = true; },
+				ProjectName = DbName
+			};
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -295,13 +283,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void FwNewLangProjectModel_CanGoNext()
 		{
-			var model = new FwNewLangProjectModel();
-			model.LoadProjectNameSetup = () => { };
-			model.LoadVernacularSetup = () => { };
-			model.LoadAnalysisSetup = () => { };
-			model.LoadAdvancedWsSetup = () => { };
-			model.LoadAnthropologySetup = () => { };
-			model.ProjectName = DbName;
+			var model = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				LoadAnalysisSetup = () => { },
+				LoadAdvancedWsSetup = () => { },
+				LoadAnthropologySetup = () => { },
+				ProjectName = DbName
+			};
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -322,13 +312,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void FwNewLangProjectModel_CannotClickFinishWithBlankProjectName()
 		{
-			var model = new FwNewLangProjectModel();
-			model.LoadProjectNameSetup = () => { };
-			model.LoadVernacularSetup = () => { };
-			model.LoadAnalysisSetup = () => { };
-			model.LoadAdvancedWsSetup = () => { };
-			model.LoadAnthropologySetup = () => { };
-			model.ProjectName = DbName;
+			var model = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				LoadVernacularSetup = () => { },
+				LoadAnalysisSetup = () => { },
+				LoadAdvancedWsSetup = () => { },
+				LoadAnthropologySetup = () => { },
+				ProjectName = DbName
+			};
 			var fakeTestWs = new CoreWritingSystemDefinition("fr");
 			model.WritingSystemContainer.CurrentVernacularWritingSystems.Add(fakeTestWs);
 			model.WritingSystemContainer.VernacularWritingSystems.Add(fakeTestWs);
@@ -361,8 +353,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(2), "all");
 			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "first should be German");
 			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(2), "current");
-			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"),
-				"default should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "default should be German");
 		}
 
 		/// <summary/>
@@ -404,8 +395,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.Count, Is.EqualTo(1), "should be only one WS");
 			Assert.That(model.WritingSystemContainer.VernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "should be German");
 			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.Count, Is.EqualTo(1), "should be only one current");
-			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"),
-				"default should be German");
+			Assert.That(model.WritingSystemContainer.CurrentVernacularWritingSystems.First().LanguageTag, Is.EqualTo("de"), "default should be German");
 		}
 
 		/// <summary/>
@@ -463,12 +453,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
 		{
-			ILangProject lp = cache.LanguageProject;
-			int iCount = 0;
-			bool fAdverbFound = false;
-			bool fNounFound = false;
-			bool fProformFound = false;
-			bool fVerbFound = false;
+			var lp = cache.LanguageProject;
+			var iCount = 0;
+			var fAdverbFound = false;
+			var fNounFound = false;
+			var fProformFound = false;
+			var fVerbFound = false;
 			foreach (IPartOfSpeech pos in lp.PartsOfSpeechOA.PossibilitiesOS)
 			{
 				iCount++;
@@ -529,40 +519,39 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return Path.Combine(DbDirectory(dbName), LcmFileHelper.GetXmlDataFileName(dbName));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// See if the given FW database exists by attempting to establish a connection to it.
 		/// </summary>
 		/// <param name="dbName">Name of the FW database to look for</param>
 		/// <returns>true iff the underlying file exists.</returns>
-		/// ------------------------------------------------------------------------------------
 		private static bool DbExists(string dbName)
 		{
-			string sFile = DbFilename(dbName);
-			return File.Exists(sFile);
+			return File.Exists(DbFilename(dbName));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Blow away the given FW database.
 		/// </summary>
 		/// <param name="dbName">Name of the FW database to smoke</param>
 		/// <param name="failureIsFatal">If true, then failure to delete will fail tests.</param>
-		/// ------------------------------------------------------------------------------------
 		internal static void DestroyDb(string dbName, bool failureIsFatal)
 		{
 			try
 			{
-				string dir = DbDirectory(dbName);
+				var dir = DbDirectory(dbName);
 				Directory.Delete(dir, true);
 			}
 			catch
 			{
-				string msg = "The test database " + dbName + " could not be deleted.";
+				var msg = $"The test database {dbName} could not be deleted.";
 				if (failureIsFatal)
+				{
 					Assert.Fail(msg);
+				}
 				else
+				{
 					Debug.WriteLine(msg);
+				}
 			}
 		}
 	}

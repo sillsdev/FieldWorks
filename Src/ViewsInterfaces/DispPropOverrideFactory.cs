@@ -1,23 +1,16 @@
 // Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DispPropOverrideFactory.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Factory to create DispPropOverride objects which are initialized .
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public static class DispPropOverrideFactory
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make a (default) DispPropOverride that does nothing for the specified range of
 		/// characters.
@@ -28,10 +21,9 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <param name="ichOverrideLim">The character "limit" (in logical characters, relative
 		/// to the paragraph as laid out in the view) of the text whose properties will be
 		/// overridden.</param>
-		/// ------------------------------------------------------------------------------------
 		public static DispPropOverride Create(int ichOverrideMin, int ichOverrideLim)
 		{
-			DispPropOverride prop = new DispPropOverride();
+			var prop = new DispPropOverride();
 			unchecked
 			{
 				prop.chrp.clrBack = prop.chrp.clrFore = prop.chrp.clrUnder = (uint)FwTextPropConstants.knNinch;
