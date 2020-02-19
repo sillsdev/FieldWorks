@@ -21,6 +21,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
+#if RANDYTODO
 	[TestFixture]
 	public class XhtmlDocViewTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -469,4 +470,5 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 	}
+#endif
 }

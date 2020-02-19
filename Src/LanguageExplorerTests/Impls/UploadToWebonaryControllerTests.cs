@@ -31,6 +31,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Impls
 {
+#if RANDYTODO
 	public class UploadToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private bool _isDisposed;
@@ -781,4 +782,5 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 	}
+#endif
 }

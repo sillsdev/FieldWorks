@@ -44,7 +44,7 @@
 				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
 				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
 				// When launching FieldWorks, use this mono.
-				"PATH": "/opt/mono4-sil/bin:${env:PATH}",
+				"PATH": "/opt/mono5-sil/bin:${env:PATH}",
 				// Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
 				"MONO_ENVIRON": "${workspaceRoot}/environ"
 			},
@@ -63,7 +63,7 @@
 				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
 				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
 				// When launching FieldWorks, use this mono.
-				"PATH": "/opt/mono4-sil/bin:${env:PATH}",
+				"PATH": "/opt/mono5-sil/bin:${env:PATH}",
 				// Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
 				"MONO_ENVIRON": "${workspaceRoot}/environ"
 			},

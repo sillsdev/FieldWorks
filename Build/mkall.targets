@@ -273,6 +273,7 @@
 		</ItemGroup>
 		<ForceDelete Files="@(LcmFilesToDelete)" />
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
+		<SetEnvVar Variable="LD_PRELOAD" Value="" Condition="'$(OS)'=='Unix'"/>
 		<Message Text="Finished deleting the output directories!" />
 	</Target>
 

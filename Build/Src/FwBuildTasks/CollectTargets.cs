@@ -346,9 +346,8 @@ namespace FwBuildTasks
 						// <MsBuild> task
 						writer.WriteLine($"\t\t<MSBuild Projects=\"{m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")}\"");
 						writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
-						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"",
+						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"/>",
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), project.Replace(".", string.Empty));
-						writer.WriteLine($"\t\t\tToolsVersion=\"{ToolsVersion}\"/>");
 						// <Clouseau> verification task
 						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{AssemblyName}\"/>");
 

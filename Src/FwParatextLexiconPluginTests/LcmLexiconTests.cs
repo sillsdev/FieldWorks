@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void SetUp()
 		{
 			// Force initialization in ILRepacked SIL.WritingSystems assembly,
-			// even if a referenced SIl.WritingSystems assembly somewhere down
+			// even if a referenced SIL.WritingSystems assembly somewhere down
 			// the dependency chain, that we won't be using, was initialized.
 			if (!Sldr.IsInitialized)
 			{

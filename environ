@@ -10,8 +10,8 @@ BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono4-sil
-[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono4-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono5-sil
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
