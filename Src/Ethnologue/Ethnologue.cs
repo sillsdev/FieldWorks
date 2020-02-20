@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 
@@ -233,7 +234,6 @@ namespace SIL.Ethnologue
 				}
 			}
 			s_tblLanguageName.Sort();
-
 			// EthnologueTbl
 			s_tblEthnologue = new List<EthnologueTbl>();
 			s_mapIso6393ToIdx = new Dictionary<string, int>();
@@ -280,8 +280,7 @@ namespace SIL.Ethnologue
 			foreach (var rgs in rgLanguageCodes)
 			{
 				var sIso = rgs[langCodeId];
-				int idx;
-				if (!s_mapIso6393ToIdx.TryGetValue(sIso, out idx))
+				if (!s_mapIso6393ToIdx.TryGetValue(sIso, out var idx))
 				{
 					idx = s_tblEthnologue.Count;
 					s_tblEthnologue.Add(new EthnologueTbl(sIso, sIso));
@@ -289,13 +288,11 @@ namespace SIL.Ethnologue
 					s_mapIcuToIdx.Add(sIso, idx);
 				}
 			}
-
 			// LanguageLocation
 			s_tblLanguageLocation = new List<LanguageLocation>();
 			foreach (var rgs in rgLanguageIndex)
 			{
-				int nEthnologueIdx;
-				if (!s_mapIso6393ToIdx.TryGetValue(rgs[langIdxId], out nEthnologueIdx))
+				if (!s_mapIso6393ToIdx.TryGetValue(rgs[langIdxId], out var nEthnologueIdx))
 				{
 					nEthnologueIdx = -1;
 				}
@@ -303,13 +300,11 @@ namespace SIL.Ethnologue
 				var nLanguageNameIdx = s_tblLanguageName.BinarySearch(rgs[langIdxName]);
 				s_tblLanguageLocation.Add(new LanguageLocation(nEthnologueIdx, sCountryUsedInId, nLanguageNameIdx));
 			}
-
 			// EthnologueLocation
 			s_tblEthnologueLocation = new List<EthnologueLocation>();
 			foreach (var rgs in rgLanguageCodes)
 			{
-				int nEthnologueIdx;
-				if (!s_mapIso6393ToIdx.TryGetValue(rgs[langCodeId], out nEthnologueIdx))
+				if (!s_mapIso6393ToIdx.TryGetValue(rgs[langCodeId], out var nEthnologueIdx))
 				{
 					nEthnologueIdx = -1;
 				}
@@ -326,8 +321,7 @@ namespace SIL.Ethnologue
 		{
 			string sIcu = null;
 			var sEthno = sEthnologueCode.Trim();
-			int idx;
-			if (s_mapIso6393ToIdx.TryGetValue(sEthnologueCode, out idx))
+			if (s_mapIso6393ToIdx.TryGetValue(sEthnologueCode, out var idx))
 			{
 				sIcu = s_tblEthnologue[idx].Icu;
 			}
@@ -350,17 +344,20 @@ namespace SIL.Ethnologue
 			string sIso = null;
 			sCode = sCode.Trim();
 			var nLenCode = sCode.Length;
-			if (nLenCode == 2 || nLenCode == 3)
+			switch (nLenCode)
 			{
-				int idx;
-				if (s_mapIcuToIdx.TryGetValue(sCode, out idx))
+				case 2:
+				case 3:
 				{
-					sIso = s_tblEthnologue[idx].Iso6393;
+					if (s_mapIcuToIdx.TryGetValue(sCode, out var idx))
+					{
+						sIso = s_tblEthnologue[idx].Iso6393;
+					}
+					break;
 				}
-			}
-			else if (nLenCode == 4 && sCode[0] == 'e')
-			{
-				sIso = sCode.Substring(1);
+				case 4 when sCode[0] == 'e':
+					sIso = sCode.Substring(1);
+					break;
 			}
 			return sIso;
 		}
@@ -395,7 +392,6 @@ namespace SIL.Ethnologue
 			var rgNames = new List<Names>();
 			var query = sNameLike.ToLowerInvariant().Normalize(NormalizationForm.FormD);
 			var matchingLanguages = new List<int>();
-
 			// For every language, match query to a substring of language.
 			for (var i = 0; i < s_tblLanguageName.Count; ++i)
 			{
@@ -426,7 +422,6 @@ namespace SIL.Ethnologue
 					}
 				}
 			}
-
 			// If the first attempt fails, split name apart, and
 			// retry using the parts of the name.
 			if (matchingLanguages.Count == 0)
@@ -438,51 +433,35 @@ namespace SIL.Ethnologue
 				// Split into pieces (on space)
 				var queryComponents = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 				Debug.Assert(queryComponents.Length > 0);
-
 				// For each language, match any component of query to a substring of language.
 				for (var i = 0; i < s_tblLanguageName.Count; ++i)
 				{
 					var language = s_tblLanguageName[i].ToLowerInvariant();
-					var fMatch = true;
-
-					foreach (var queryComponent in queryComponents)
-					{
-						if (!language.Contains(queryComponent))
-						{
-							fMatch = false;
-							break;
-						}
-					}
+					var fMatch = queryComponents.All(queryComponent => language.Contains(queryComponent));
 					if (fMatch)
 					{
 						matchingLanguages.Add(i);
 					}
 				}
 			}
-
 			// For each language location that has a language that matched query,
 			// if any country uses the language then add the language and this information
 			// to the return list.
 			foreach (var matchedLanguage in matchingLanguages)
 			{
 				// For each language location
-				foreach (var languageLocation in s_tblLanguageLocation)
+				foreach (var languageLocation in s_tblLanguageLocation.Where(languageLocation => languageLocation.LanguageIdx == matchedLanguage))
 				{
-					// If the matched language is in the location
-					if (languageLocation.LanguageIdx == matchedLanguage)
+					// For each country, if the language is used in the country, add to return list.
+					for (var j = 0; j < s_tblCountry.Count; ++j)
 					{
-						// For each country, if the language is used in the country, add to return list.
-						for (var j = 0; j < s_tblCountry.Count; ++j)
+						if (s_tblCountry[j].Id == languageLocation.CountryUsedInId)
 						{
-							if (s_tblCountry[j].Id == languageLocation.CountryUsedInId)
-							{
-								rgNames.Add(new Names(matchedLanguage, s_tblLanguageName[matchedLanguage], languageLocation.CountryUsedInId, s_tblCountry[j].Name, languageLocation.EthnologueIdx, s_tblEthnologue[languageLocation.EthnologueIdx].Iso6393));
-							}
+							rgNames.Add(new Names(matchedLanguage, s_tblLanguageName[matchedLanguage], languageLocation.CountryUsedInId, s_tblCountry[j].Name, languageLocation.EthnologueIdx, s_tblEthnologue[languageLocation.EthnologueIdx].Iso6393));
 						}
 					}
 				}
 			}
-
 			SelectDistinctNames(rgNames);
 			return rgNames;
 		}
@@ -490,18 +469,7 @@ namespace SIL.Ethnologue
 		/// <summary>
 		/// Implements ordering by IsPrimaryName (true before false), LangName.
 		/// </summary>
-		private static int CompareOtherNames(OtherNames x, OtherNames y)
-		{
-			if (x.IsPrimaryName)
-			{
-				if (y.IsPrimaryName)
-				{
-					return x.LangName.CompareTo(y.LangName);
-				}
-				return -1;
-			}
-			return y.IsPrimaryName ? 1 : x.LangName.CompareTo(y.LangName);
-		}
+		private static int CompareOtherNames(OtherNames x, OtherNames y) => x.IsPrimaryName ? y.IsPrimaryName ? x.LangName.CompareTo(y.LangName) : -1 : y.IsPrimaryName ? 1 : x.LangName.CompareTo(y.LangName);
 
 		/// <summary>
 		/// Replaces the SQL stored function named fnGetOtherLanguageNames.
@@ -509,8 +477,7 @@ namespace SIL.Ethnologue
 		public List<OtherNames> GetOtherLanguageNames(string sEthnoCode)
 		{
 			var rgOtherNames = new List<OtherNames>();
-			int eId;
-			if (s_mapIso6393ToIdx.TryGetValue(sEthnoCode, out eId))
+			if (s_mapIso6393ToIdx.TryGetValue(sEthnoCode, out var eId))
 			{
 				foreach (var ll in s_tblLanguageLocation)
 				{
@@ -547,33 +514,27 @@ namespace SIL.Ethnologue
 			{
 				for (var i = 0; i < s_tblCountry.Count; ++i)
 				{
-					if (CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
+					if (!CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
 					{
-						foreach (var el in s_tblEthnologueLocation)
-						{
-							if (el.MainCountryUsedId == s_tblCountry[i].Id)
-							{
-								rgNames.Add(new Names(el.PrimaryNameIdx, s_tblLanguageName[el.PrimaryNameIdx], el.MainCountryUsedId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), el.EthnologueIdx, s_tblEthnologue[el.EthnologueIdx].Iso6393));
-							}
-						}
-						break;
+						continue;
 					}
+					rgNames.AddRange(s_tblEthnologueLocation
+						.Where(el => el.MainCountryUsedId == s_tblCountry[i].Id)
+						.Select(el => new Names(el.PrimaryNameIdx, s_tblLanguageName[el.PrimaryNameIdx], el.MainCountryUsedId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), el.EthnologueIdx, s_tblEthnologue[el.EthnologueIdx].Iso6393)));
+					break;
 				}
 			}
 			else
 			{
 				for (var i = 0; i < s_tblCountry.Count; ++i)
 				{
-					if (CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
+					if (!CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
 					{
-						foreach (var ll in s_tblLanguageLocation)
-						{
-							if (ll.CountryUsedInId == s_tblCountry[i].Id)
-							{
-								rgNames.Add(new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), ll.EthnologueIdx, s_tblEthnologue[ll.EthnologueIdx].Iso6393));
-							}
-						}
+						continue;
 					}
+					rgNames.AddRange(s_tblLanguageLocation
+						.Where(ll => ll.CountryUsedInId == s_tblCountry[i].Id)
+						.Select(ll => new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), ll.EthnologueIdx, s_tblEthnologue[ll.EthnologueIdx].Iso6393)));
 				}
 			}
 			SelectDistinctNames(rgNames);
@@ -588,11 +549,7 @@ namespace SIL.Ethnologue
 		private static bool CorrectedStartsWith(string test, string sCountryName)
 		{
 			var searchIn = test.ToLowerInvariant().Normalize(NormalizationForm.FormD);
-			if (searchIn.Length < sCountryName.Length)
-			{
-				return false;
-			}
-			return searchIn.Substring(0, sCountryName.Length) == sCountryName;
+			return searchIn.Length >= sCountryName.Length && searchIn.Substring(0, sCountryName.Length) == sCountryName;
 		}
 
 		/// <summary>
@@ -601,20 +558,17 @@ namespace SIL.Ethnologue
 		public List<Names> GetLanguagesForIso(string sIso6393)
 		{
 			var rgNames = new List<Names>();
-			int eId;
-			if (s_mapIso6393ToIdx.TryGetValue(sIso6393, out eId))
+			if (s_mapIso6393ToIdx.TryGetValue(sIso6393, out var eId))
 			{
-				foreach (var ll in s_tblLanguageLocation)
+				foreach (var ll in s_tblLanguageLocation.Where(ll => ll.EthnologueIdx == eId))
 				{
-					if (ll.EthnologueIdx == eId)
+					for (var j = 0; j < s_tblCountry.Count; ++j)
 					{
-						for (var j = 0; j < s_tblCountry.Count; ++j)
+						if (ll.CountryUsedInId != s_tblCountry[j].Id)
 						{
-							if (ll.CountryUsedInId == s_tblCountry[j].Id)
-							{
-								rgNames.Add(new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, s_tblCountry[j].Name, eId, sIso6393));
-							}
+							continue;
 						}
+						rgNames.Add(new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, s_tblCountry[j].Name, eId, sIso6393));
 					}
 				}
 			}
@@ -632,10 +586,11 @@ namespace SIL.Ethnologue
 			rgOtherNames.Sort(CompareOtherNames);
 			for (var i = rgOtherNames.Count - 1; i > 0; --i)
 			{
-				if (CompareOtherNames(rgOtherNames[i], rgOtherNames[i - 1]) == 0)
+				if (CompareOtherNames(rgOtherNames[i], rgOtherNames[i - 1]) != 0)
 				{
-					rgOtherNames.RemoveAt(i);
+					continue;
 				}
+				rgOtherNames.RemoveAt(i);
 			}
 		}
 

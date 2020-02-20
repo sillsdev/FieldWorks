@@ -59,15 +59,12 @@ namespace SIL.Ethnologue
 			Assert.GreaterOrEqual(res.Count, 8);
 			Assert.AreEqual("Amhara", res[0].LangName);
 			Assert.AreEqual("amh", res[0].EthnologueCode);
-
 			var res2 = eth.GetLanguageNamesLike("Amha", 'L');
 			Assert.Less(res2.Count, res.Count);
 			Assert.AreEqual("Amharic", res2[res2.Count - 1].LangName);
 			Assert.AreEqual("amh", res2[res2.Count - 1].EthnologueCode);
-
 			var res3 = eth.GetLanguageNamesLike("Amha", 'R');
-			Assert.AreEqual(res.Count, res3.Count);     // Not what I like, but SQL code did this.
-
+			Assert.AreEqual(res.Count, res3.Count);
 			var res4 = eth.GetLanguageNamesLike("chao", 'R');
 			Assert.GreaterOrEqual(res4.Count, 1);
 			Assert.AreEqual(res4[0].LangName, "Biao Chao");
@@ -86,7 +83,6 @@ namespace SIL.Ethnologue
 			Assert.AreEqual("AAVE", res[0].LangName);
 			Assert.AreEqual("US", res[0].CountryId);
 			Assert.AreEqual("United States", res[0].CountryName);
-
 			var res2 = eth.GetLanguagesForIso("aaa");
 			Assert.AreEqual(1, res2.Count);
 			Assert.AreEqual("Ghotuo", res2[0].LangName);
@@ -105,7 +101,6 @@ namespace SIL.Ethnologue
 			Assert.GreaterOrEqual(res.Count, 190); // This number is not as stable as the test seems to expect it may fail after an Ethnologue update
 			Assert.LessOrEqual(res.Count, 250);
 			Assert.AreEqual("aaq", res[0].EthnologueCode);
-
 			var res2 = eth.GetLanguagesInCountry("United States", false);
 			Assert.GreaterOrEqual(res2.Count, 900); // This number is not as stable as the test seems to expect it may fail after an Ethnologue update
 			Assert.NotNull(res2.Find(name => name.EthnologueCode == "eng"), "English is no longer spoken in the US?");

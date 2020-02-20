@@ -26,9 +26,6 @@ namespace SIL.Ethnologue
 		/// <summary>
 		/// Override to help debugging.
 		/// </summary>
-		public override string ToString()
-		{
-			return $"OtherNames: IsPrimaryName={IsPrimaryName}, LangName=\"{LangName}\"";
-		}
+		public override string ToString() => $"OtherNames: IsPrimaryName={IsPrimaryName}, LangName=\"{LangName}\"";
 	}
 }

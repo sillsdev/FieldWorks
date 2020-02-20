@@ -7,7 +7,6 @@
 		<Project name="FwCoreDlgsTests"/>
 	</TimeoutGroup>
 	<TimeoutGroup timeLimit="90">
-		<Project name="CacheLightTests"/>
 		<Project name="FieldWorksTests"/>
 		<Project name="FrameworkTests"/>
 		<Project name="FwControlsTests"/>

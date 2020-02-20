@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public IApp Application
 		{
-			set { m_app = value; }
+			set => m_app = value;
 		}
 
 		/// <summary>
@@ -98,8 +98,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool ConverterChanged
 		{
-			get { return DesignMode || m_fConverterChanged || m_undefinedList.ContainsKey(ConverterName); }
-			set { m_fConverterChanged = value; }
+			get => DesignMode || m_fConverterChanged || m_undefinedList.ContainsKey(ConverterName);
+			set => m_fConverterChanged = value;
 		}
 
 		/// <summary />
@@ -116,10 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool OnlyUnicode
 		{
-			get
-			{
-				return m_fOnlyUnicode;
-			}
+			get => m_fOnlyUnicode;
 			set
 			{
 				m_fOnlyUnicode = value;
@@ -132,7 +129,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		internal Dictionary<string, EncoderInfo> UndefinedConverters
 		{
-			set { m_undefinedList = value; }
+			set => m_undefinedList = value;
 		}
 
 		/// <inheritdoc />
@@ -311,7 +308,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void cboConverter_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			txtMapFile.Text = "";
+			txtMapFile.Text = string.Empty;
 			var fileTypes = new List<FileFilterType>
 			{
 				FileFilterType.AllFiles
@@ -322,7 +319,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// selects a mapping of a type we don't recognize. We display the filename box
 				// and file chooser with *.* as the file type since we have no idea what it
 				// should be.
-				ofDlg.DefaultExt = "";
+				ofDlg.DefaultExt = string.Empty;
 				ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
 				ofDlg.Title = AddConverterResources.kstrUnspecifiedTitle;
 				SetReadyToGiveMapFile();
@@ -394,13 +391,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						cboSpec.Items.Clear();
 						try
 						{
-							foreach (var idAndName in CodepageConversion.GetIdsAndNames("IANA"))
+							foreach (var (id, name) in CodepageConversion.GetIdsAndNames("IANA"))
 							{
-								// TODO: Once we switch to Mono 5 we can replace the next two lines with:
-								// var name = idAndName.name;
-								// var id = idAndName.id;
-								var name = idAndName.Item2;
-								var id = idAndName.Item1;
 								if (!string.IsNullOrEmpty(name))
 								{
 									cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
@@ -423,13 +415,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						foreach (var idAndName in Transliterator.GetIdsAndNames())
+						foreach (var (id, name) in Transliterator.GetIdsAndNames())
 						{
-							// TODO: Once we switch to Mono 5 we can replace the next two lines with:
-							// var name = idAndName.name;
-							// var id = idAndName.id;
-							var name = idAndName.Item2;
-							var id = idAndName.Item1;
 							cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
 						}
 						cboSpec.EndUpdate();
@@ -471,7 +458,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// if we are in UtU mode, pre-populate all as UtfU
 					setType = ConvType.Unicode_to_from_Unicode;
 				}
-
 				SetConverterType(setType);
 			}
 			m_fConverterChanged = true;
@@ -620,7 +606,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ConvType convType;
 			string implType;
 			EncoderInfo undefinedEncoder = null; // in case the current selection is not fully defined
-
 			if (conv != null)
 			{
 				convType = conv.ConversionType;
@@ -675,7 +660,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Retrieve this AFTER paths that set cboConverter.SelectedIndex, which has a side-effect
 			// (indirectly through setting txtMapFile.Text) of clearing m_specs.
 			m_specs = undefinedEncoder != null ? undefinedEncoder.m_fileName : conv.ConverterIdentifier;
-
 			if (m_supportedConverter)
 			{
 				// Fill in whatever specs control is visible.
@@ -886,8 +870,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-#if AUTOCONFIGUREEX_AVAILABLE
-#else
+#if !AUTOCONFIGUREEX_AVAILABLE
 		/// <summary>
 		/// Automatically configures.
 		/// </summary>
@@ -912,10 +895,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						var dt = DateTime.Now;
 						strFriendlyName = strTempConverterPrefix + $"id: '{rConfigurator.ConverterIdentifier}', created on '{dt.ToLongDateString()}' at '{dt.ToLongTimeString()}'";
-
 						// in this case, the Configurator didn't update the name
 						rIEncConverter.Name = strFriendlyName;
-
 						// one final thing missing: for this 'client', we have to put it into the 'this' collection
 						AddToCollection(rIEncConverter, strFriendlyName);
 					}
@@ -925,7 +906,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						//  the collection already, so just get its name so we can return it.
 						strFriendlyName = rConfigurator.ConverterFriendlyName;
 					}
-
 					return true;
 				}
 				if (rConfigurator.IsInRepository && !string.IsNullOrEmpty(rConfigurator.ConverterFriendlyName))
@@ -943,7 +923,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw;
 #endif
 			}
-
 			return false;
 		}
 
@@ -959,7 +938,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// always overwrite existing ones.
 				Converters.Remove(converterName);
 			}
-
 			Converters.Add(converterName, rConverter);
 		}
 #endif

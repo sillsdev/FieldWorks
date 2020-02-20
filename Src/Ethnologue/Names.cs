@@ -39,9 +39,6 @@ namespace SIL.Ethnologue
 		/// <summary>
 		/// Override to help debugging.
 		/// </summary>
-		public override string ToString()
-		{
-			return $"Names: LangName=\"{LangName}\", CountryId=\"{CountryId}\", CountryName=\"{CountryName}\", EthnologueCode=\"{EthnologueCode}\"";
-		}
+		public override string ToString() => $"Names: LangName=\"{LangName}\", CountryId=\"{CountryId}\", CountryName=\"{CountryName}\", EthnologueCode=\"{EthnologueCode}\"";
 	}
 }

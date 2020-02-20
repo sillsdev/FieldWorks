@@ -31,11 +31,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
 		public static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
 		{
-			bool dummy;
-			string fwdataFileFullPathname;
 			const string liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, liftVersion, null, null, out _, out var fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -53,7 +51,7 @@ namespace SIL.FieldWorks.Common.Controls
 				fwdataFileFullPathname = CreateProjectFromLift(parent, fwdataFileFullPathname);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
-			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()), $"vers: {LcmCache.ModelVersion}, {liftVersion}", 0);
+			UsageReporter.SendEvent("OpenProject", "SendReceive", $"Create from {obtainedProjectType.ToString()} repo", $"vers: {LcmCache.ModelVersion}, {liftVersion}", 0);
 			EnsureLinkedFoldersExist(fwdataFileFullPathname);
 			return fwdataFileFullPathname;
 		}
