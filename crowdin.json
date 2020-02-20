@@ -13,7 +13,7 @@
     },
     {
       "source": "/DistFiles/Language Explorer/Configuration/**/*.xml",
-      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%"
+      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%",
       "ignore": [ "/DistFiles/Language Explorer/Configuration/strings-*.xml" ],
       "content_segmentation": 0,
       "translatable_elements": [
@@ -22,7 +22,7 @@
     },
     {
       "source": "/DistFiles/Language Explorer/DefaultConfigurations/**/*.fwdictconfig",
-      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%"
+      "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%",
       "content_segmentation": 0,
       "translatable_elements": [
         "/DictionaryConfiguration[@name]",
