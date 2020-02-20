@@ -1,7 +1,13 @@
 #!/bin/bash -e
 # Install required dependencies for building FieldWorks
+# --verify will just verify, not install.
 
-# get packages from config file listed in the variable $1
+log()
+{
+	echo install-deps[$$]: "$@"
+}
+
+# Get packages from config file listed in the variable $1
 getPackages()
 {
 	packages=$(git config -f $(dirname "$0")/dependencies.config --get "$1" 2>/dev/null)
@@ -17,19 +23,35 @@ getPackages()
 # Install packages $@
 install()
 {
+	sudo apt-get update
 	if [ $# -gt 0 ]; then
 		sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"
 	fi
+}
+
+# Warn if any packages in $@ are not installed.
+verify()
+{
+	for package in "$@"; do
+		dpkg -s $package &>/dev/null || log "WARNING: Missing required package: $package"
+	done
 }
 
 distribution=$(lsb_release -i -s)
 version=$(lsb_release -c -s)
 arch=$(dpkg --print-architecture)
 
-sudo apt-get update
-install $(getPackages common.any)
-install $(getPackages common.$arch)
-install $(getPackages $distribution.any)
-install $(getPackages $distribution.$arch)
-install $(getPackages $version.any)
-install $(getPackages $version.$arch)
+packages="\
+	$(getPackages common.any) \
+	$(getPackages common.$arch) \
+	$(getPackages $distribution.any) \
+	$(getPackages $distribution.$arch) \
+	$(getPackages $version.any) \
+	$(getPackages $version.$arch)"
+
+if [[ $1 = --verify ]]; then
+	verify $packages
+	exit
+fi
+
+install $packages
