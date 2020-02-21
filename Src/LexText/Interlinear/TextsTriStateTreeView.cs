@@ -20,6 +20,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {
@@ -193,9 +194,7 @@ namespace SIL.FieldWorks.IText
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
-			// Create a collator ready for sorting:
-			var collator = new ManagedLgIcuCollator();
-
+			CollationDefinition wsCollator = new SystemCollationDefinition();
 			foreach (var tex in allTexts)
 			{
 				if (tex.GenresRC.Any())
@@ -218,15 +217,17 @@ namespace SIL.FieldWorks.IText
 				foundFirstText = true;
 				var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
 				var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
-				collator.Open(wsEngine.Id);
+				wsCollator = (wsEngine as WritingSystemDefinition)?.DefaultCollation;
 			}
 
 			if (!textsWithNoGenre.Any())
 			{
 				return textsNode;
 			}
+			if (wsCollator == null)
+				wsCollator = new SystemCollationDefinition();
 			// LT-12179: Order the TreeNodes alphabetically:
-			textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+			textsWithNoGenre.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
 			// Make a TreeNode for the texts with no known genre
 			var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray())
 			{
