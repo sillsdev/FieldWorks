@@ -1,4 +1,4 @@
-// Copyright (c) 2020 SIL International
+﻿// Copyright (c) 2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -976,7 +976,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string xpathToParentLeit = "//List/Possibilities/LexEntryInflType";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLeit, 1, true);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLeit + "/Name/AUni[text()='" + leItParentName + "']", 1, true);
-			// verify the subpossibility LexEntryInflType (TODO)
+			// verify the subpossibility LexEntryInflType
 			const string xpathToLeit = xpathToParentLeit + "/SubPossibilities/LexEntryInflType";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit, 1, true);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToLeit + "[@guid='" + leItGuid + "']", 1, true);

@@ -100,7 +100,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeListsTests.cs" />
     <Compile Include="FwBuildTasksTests\NormalizeLocalesTests.cs" />
+    <Compile Include="FwBuildTasksTests\PoToXmlTests.cs" />
     <Compile Include="FwBuildTasksTests\WxsToWxiTests.cs" />
+    <Compile Include="FwBuildTasksTests\XmlToPoTests.cs" />
+    <Compile Include="Localization\PoToXml.cs" />
+    <Compile Include="Localization\XmlToPo.cs" />
+    <Compile Include="Localization\POString.cs" />
     <Compile Include="Localization\XliffToLists.cs" />
     <Compile Include="Localization\LocalizeLists.cs" />
     <Compile Include="Localization\ListsToXliff.cs" />
