@@ -81,8 +81,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -133,8 +132,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -162,8 +160,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -194,9 +191,8 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(1, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
 				Assert.AreEqual("Italics", ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -224,8 +220,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -255,9 +250,8 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(1, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
 				Assert.AreEqual("Italics", ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -284,8 +278,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -312,8 +305,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -341,8 +333,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 
@@ -370,8 +361,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
 				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
 				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
-				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			}
 		}
 

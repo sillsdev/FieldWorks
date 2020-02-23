@@ -23,12 +23,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public static bool WarnOnOpeningSingleUserDialog(LcmCache cache)
 		{
-			if (!SharedBackendServices.AreMultipleApplicationsConnected(cache))
-			{
-				return true;
-			}
-			var msg = Strings.ksWarnOnOpeningSingleAppDialog.Replace("\\n", Environment.NewLine);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksOtherAppsUsingProjectCaption, MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK;
+			return !SharedBackendServices.AreMultipleApplicationsConnected(cache)
+				   || ThreadHelper.ShowMessageBox(null, Strings.ksWarnOnOpeningSingleAppDialog.Replace("\\n", Environment.NewLine),
+					   Strings.ksOtherAppsUsingProjectCaption, MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK;
 		}
 
 		/// <summary>
@@ -40,12 +37,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public static bool WarnOnConfirmingSingleUserChanges(LcmCache cache)
 		{
-			if (!SharedBackendServices.AreMultipleApplicationsConnected(cache))
-			{
-				return true;
-			}
-			var msg = Strings.ksWarnOnConfirmingSingleAppChanges.Replace("\\n", Environment.NewLine);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksNotAdvisableOtherAppsUsingProjectCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+			return !SharedBackendServices.AreMultipleApplicationsConnected(cache)
+				   || ThreadHelper.ShowMessageBox(null, Strings.ksWarnOnConfirmingSingleAppChanges.Replace("\\n", Environment.NewLine),
+					   Strings.ksNotAdvisableOtherAppsUsingProjectCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 		}
 	}
 }

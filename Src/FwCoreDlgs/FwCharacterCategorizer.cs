@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </returns>
 		public override bool IsWordFormingCharacter(char cc)
 		{
-			return m_validChars != null ? m_validChars.IsWordForming(cc) : TsStringUtils.IsWordForming(cc);
+			return m_validChars?.IsWordForming(cc) ?? TsStringUtils.IsWordForming(cc);
 		}
 
 		/// <summary>
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						break;
 					}
-					i = i + 1;
+					i += 1;
 					isFirstCharacterInWord = false;
 				}
 
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						break;
 					}
-					i = i + 1;
+					i += 1;
 				}
 
 				wap.Punct = text.Substring(punctOffset, i - punctOffset);

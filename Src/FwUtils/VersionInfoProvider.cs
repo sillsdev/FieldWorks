@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using SIL.Code;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -22,10 +23,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// will be hidden.</param>
 		public VersionInfoProvider(Assembly assembly, bool fShowSILInfo)
 		{
-			if (assembly == null)
-			{
-				throw new ArgumentNullException(nameof(assembly));
-			}
+			Guard.AgainstNull(assembly, nameof(assembly));
 
 			m_assembly = assembly;
 			m_fShowSILInfo = fShowSILInfo;
@@ -39,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var name = string.Empty;
 				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
 				var attrs = (AssemblyProductAttribute[])assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
-				if (attrs != null && attrs.Length > 0)
+				if (attrs.Length > 0)
 				{
 					name = attrs [0].Product;
 				}
@@ -71,8 +69,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-				string productVersion, productDate;
-				ParseInformationalVersion(assembly, out productVersion, out productDate);
+				ParseInformationalVersion(assembly, out var productVersion, out _);
 				if (string.IsNullOrEmpty(productVersion))
 				{
 					var fileVersion = Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
@@ -99,7 +96,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var attributes = m_assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-				return attributes != null && attributes.Length > 0 ? ((AssemblyTitleAttribute)attributes[0]).Title : InternalProductName;
+				return attributes.Length > 0 ? ((AssemblyTitleAttribute)attributes[0]).Title : InternalProductName;
 			}
 		}
 
@@ -111,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var attributes = m_assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				var version = (attributes.Length > 0) ? ((AssemblyFileVersionAttribute)attributes[0]).Version : InternalProductVersion;
+				var version = attributes.Length > 0 ? ((AssemblyFileVersionAttribute)attributes[0]).Version : InternalProductVersion;
 				var ichSpace = version.IndexOf(' ');
 				return ichSpace > 0 ? version.Remove(ichSpace) : version;
 			}
@@ -142,8 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// Set the application version text
 				var appVersion = InternalProductVersion;
-				string productVersion, productDate;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				ParseInformationalVersion(m_assembly, out _, out var productDate);
 				string bitness;
 				switch (IntPtr.Size)
 				{
@@ -187,15 +183,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				case 3:
 				{
-					productType = " " + versionParts[2];
+					productType = $" {versionParts[2]}";
 					goto case 2;
 				}
 				case 2:
 				{
-					int date = Convert.ToInt32(versionParts[1]);
+					var date = Convert.ToInt32(versionParts[1]);
 					if (date > 0)
 					{
-						DateTime dt = DateTime.FromOADate(date);
+						var dt = DateTime.FromOADate(date);
 						productDate = dt.ToString("yyyy/MM/dd");
 					}
 
@@ -217,8 +213,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				// Set the Fieldworks version text
-				string productVersion, productDate, productType;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				ParseInformationalVersion(m_assembly, out var productVersion, out _);
 				// Fill the expected parts to document and avoid a crash if we get an odd informational version
 				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
 				var realParts = productVersion.Split('.', ' ');

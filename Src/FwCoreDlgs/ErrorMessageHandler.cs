@@ -64,18 +64,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="message">The error message you wish to add</param>
 		public void AddMessage(TextBox textBox, ErrorMessage message)
 		{
-			HashSet<ErrorMessage> listOfMessages;
-			if (errorTable.TryGetValue(textBox, out listOfMessages))
-			{
-				// An entry for this message box exists
-				listOfMessages.Add(message);
-			}
-			else
+			if (!errorTable.TryGetValue(textBox, out var listOfMessages))
 			{
 				// Not found, so initialize it.
-				listOfMessages = new HashSet<ErrorMessage> { message };
+				listOfMessages = new HashSet<ErrorMessage>();
 				errorTable.Add(textBox, listOfMessages);
 			}
+			// An entry for this message box exists
+			listOfMessages.Add(message);
+
 			DisplayErrorTable();
 		}
 
@@ -112,7 +109,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// Clear the labels and retrieves the color value
 				label.ForeColor = m_errorColor;
-				label.Text = "";
+				label.Text = string.Empty;
 			}
 
 			foreach (var kvp in errorTable)
@@ -165,14 +162,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				starLabels.Add(textBox, newLabel);
 			}
 			//If there are no errors
-			if (starLabels.Count == 0)
-			{
-				m_enabledControl.Enabled = true;
-			}
-			else
-			{
-				m_enabledControl.Enabled = false;
-			}
+			m_enabledControl.Enabled = starLabels.Count == 0;
 		}
 
 		/// <summary>
@@ -181,8 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="textBox">The text box that may or may not have a star to remove.</param>
 		public void RemoveStar(TextBox textBox)
 		{
-			Label starLabel;
-			if (starLabels.TryGetValue(textBox, out starLabel))
+			if (starLabels.TryGetValue(textBox, out var starLabel))
 			{
 				// Remove the label
 				textBox.Parent.Controls.Remove(starLabel);
@@ -192,14 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				textBox.Parent.Refresh();
 			}
 			//If there are no errors
-			if (starLabels.Count == 0)
-			{
-				m_enabledControl.Enabled = true;
-			}
-			else
-			{
-				m_enabledControl.Enabled = false;
-			}
+			m_enabledControl.Enabled = starLabels.Count == 0;
 		}
 
 		#endregion

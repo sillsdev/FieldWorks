@@ -71,13 +71,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// write out the file contents
 				if (dataLines != null)
 				{
-					foreach (string sLine in dataLines)
+					foreach (var sLine in dataLines)
 					{
 						file.Write(EncodeLine(sLine, encoding));
 					}
 				}
 				file.Close();
-
 				return fileName;
 			}
 		}

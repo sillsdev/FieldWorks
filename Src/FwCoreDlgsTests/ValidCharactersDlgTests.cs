@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <param name="chr">The character (may consist of more than one Unicode codepoint.</param>
 			protected override ValidCharacterType GetCharacterType(string chr)
 			{
-				return (!string.IsNullOrEmpty(chr) && chr[0] != 0x5678) ? ValidCharacterType.DefinedUnknown : ValidCharacterType.None;
+				return !string.IsNullOrEmpty(chr) && chr[0] != 0x5678 ? ValidCharacterType.DefinedUnknown : ValidCharacterType.None;
 			}
 		}
 

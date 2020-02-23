@@ -32,8 +32,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private static void DigitBoxOnKeyPress(object sender, KeyEventArgs keyEventArgs)
 		{
 			// Reset to the default background color when the user starts editing
-			var digitBox = sender as TextBox;
-			if (digitBox != null)
+			if (sender is TextBox digitBox)
 			{
 				digitBox.BackColor = Color.Empty;
 			}
@@ -76,7 +75,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		private Font DigitFont
 		{
-			get { return _font; }
+			get => _font;
 			set
 			{
 				if (_font != null)

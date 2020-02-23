@@ -56,10 +56,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		/// <summary />
 		public Action GetKeyboardSetupAction()
 		{
-			return () =>
-			{
-				throw new NotSupportedException();
-			};
+			return () => throw new NotSupportedException();
 		}
 
 		/// <summary />

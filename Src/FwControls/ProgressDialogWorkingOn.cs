@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -120,14 +121,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string WorkingOnText
 		{
-			get
-			{
-				return m_LabelWorkingOn.Text;
-			}
-			set
-			{
-				m_LabelWorkingOn.Text = value;
-			}
+			get => m_LabelWorkingOn.Text;
+			set => m_LabelWorkingOn.Text = value;
 		}
 
 		/// <summary>
@@ -135,14 +130,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string ProgressLabel
 		{
-			get
-			{
-				return m_LabelCreationProgress.Text;
-			}
-			set
-			{
-				m_LabelCreationProgress.Text = value;
-			}
+			get => m_LabelCreationProgress.Text;
+			set => m_LabelCreationProgress.Text = value;
 		}
 
 		/// <summary>
@@ -151,14 +140,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Minimum
 		{
-			get
-			{
-				return m_ProgressBar.Minimum;
-			}
-			set
-			{
-				m_ProgressBar.Minimum = value;
-			}
+			get => m_ProgressBar.Minimum;
+			set => m_ProgressBar.Minimum = value;
 		}
 
 		/// <summary>
@@ -167,14 +150,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Maximum
 		{
-			get
-			{
-				return m_ProgressBar.Maximum;
-			}
-			set
-			{
-				m_ProgressBar.Maximum = value;
-			}
+			get => m_ProgressBar.Maximum;
+			set => m_ProgressBar.Maximum = value;
 		}
 	}
 }

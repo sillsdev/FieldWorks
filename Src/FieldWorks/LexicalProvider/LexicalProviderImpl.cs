@@ -41,8 +41,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		public void ShowEntry(string entry, EntryType entryType)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Showing entry from external application for the " + entryType + " " + entry);
-
+			Logger.WriteEvent($"Showing entry from external application for the {entryType} {entry}");
 			if (entryType != EntryType.Word)
 			{
 				throw new ArgumentException("Unknown entry type specified.");
@@ -66,8 +65,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		public void ShowRelatedWords(string entry, EntryType entryType)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Showing related word from external application for the " + entryType + " " + entry);
-
+			Logger.WriteEvent($"Showing related word from external application for the {entryType} {entry}");
 			if (entryType != EntryType.Word)
 			{
 				throw new ArgumentException("Unknown entry type specified.");
@@ -88,23 +86,14 @@ namespace SIL.FieldWorks.LexicalProvider
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
 
-			var entries = new List<LexicalEntry>();
-			foreach (var dbEntry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
-			{
-				var morphType = dbEntry.PrimaryMorphType;
-				if (morphType != null)
-				{
-					entries.Add(CreateEntryFromDbEntry(GetLexemeTypeForMorphType(morphType), dbEntry));
-				}
-			}
 			// Get all of the lexical entries in the database
-
+			var entries = (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+				.AllInstances()
+				.Select(dbEntry => new { dbEntry, morphType = dbEntry.PrimaryMorphType })
+				.Where(@t => @t.morphType != null)
+				.Select(@t => CreateEntryFromDbEntry(GetLexemeTypeForMorphType(@t.morphType), @t.dbEntry))).ToList();
 			// Get all the wordforms in the database
-			foreach (var wordform in m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances())
-			{
-				entries.Add(CreateEntryFromDbWordform(wordform));
-			}
-
+			entries.AddRange(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(CreateEntryFromDbWordform));
 			return entries;
 		}
 
@@ -128,8 +117,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		public void AddLexeme(LexicalEntry lexeme)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Adding new lexeme from an external application: " + lexeme.LexicalForm);
-
+			Logger.WriteEvent($"Adding new lexeme from an external application: {lexeme.LexicalForm}");
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				var sForm = lexeme.LexicalForm;
@@ -162,7 +150,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			Logger.WriteEvent($"Adding new sense to lexeme '{lexicalForm}' from an external application");
 			return NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				var guid = string.Empty;
+				string guid;
 				switch (type)
 				{
 					case LexemeType.Word:
@@ -208,8 +196,8 @@ namespace SIL.FieldWorks.LexicalProvider
 		public LexGloss AddGlossToSense(LexemeType type, string lexicalForm, int homograph, string senseId, string language, string text)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Adding new gloss to lexeme '" + lexicalForm + "' from an external application");
 
+			Logger.WriteEvent($"Adding new gloss to lexeme '{lexicalForm}' from an external application");
 			return NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				IMultiUnicode dbGlosses;
@@ -217,9 +205,8 @@ namespace SIL.FieldWorks.LexicalProvider
 				{
 					// The "sense" is actually an analysis for a wordform and our new
 					// gloss is a new meaning for that analysis.
-					Guid analysisGuid = new Guid(senseId.Substring(kAnalysisPrefix.Length));
-					IWfiAnalysis dbAnalysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(analysisGuid);
-					IWfiGloss dbGloss = dbAnalysis.MeaningsOC.FirstOrDefault();
+					var dbAnalysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(new Guid(senseId.Substring(kAnalysisPrefix.Length)));
+					var dbGloss = dbAnalysis.MeaningsOC.FirstOrDefault();
 					if (dbGloss == null)
 					{
 						dbGloss = m_cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
@@ -230,8 +217,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				}
 				else
 				{
-					Guid senseGuid = new Guid(senseId);
-					ILexSense dbSense = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(senseGuid);
+					var dbSense = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(new Guid(senseId));
 					dbGlosses = dbSense.Gloss;
 				}
 
@@ -247,8 +233,8 @@ namespace SIL.FieldWorks.LexicalProvider
 		public void RemoveGloss(LexemeType type, string lexicalForm, int homograph, string senseId, string language)
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-			Logger.WriteEvent("Removing gloss from lexeme '" + lexicalForm + "' from an external application");
 
+			Logger.WriteEvent($"Removing gloss from lexeme '{lexicalForm}' from an external application");
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				IMultiUnicode dbGlosses;
@@ -284,9 +270,6 @@ namespace SIL.FieldWorks.LexicalProvider
 		public void Save()
 		{
 			LexicalProviderManager.ResetLexicalProviderTimer();
-
-			// ENHANCE: We could do a save on the cache here. It doesn't seem really important
-			// since the cache will be saved automatically with 10 seconds of inactivity anyways.
 		}
 
 		/// <inheritdoc />
@@ -330,8 +313,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// </summary>
 		private IWfiWordform GetDbWordform(string lexicalForm)
 		{
-			IWfiWordform wf;
-			m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(TsStringUtils.MakeString(lexicalForm, m_cache.DefaultVernWs), true, out wf);
+			m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(TsStringUtils.MakeString(lexicalForm, m_cache.DefaultVernWs), true, out var wf);
 			return wf;
 		}
 
@@ -388,8 +370,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		{
 			for (var i = 0; i < glosses.StringCount; i++)
 			{
-				int ws;
-				var tssGloss = glosses.GetStringFromIndex(i, out ws);
+				var tssGloss = glosses.GetStringFromIndex(i, out var ws);
 				var icuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				sense.Glosses.Add(new LexGloss(icuLocale, tssGloss.Text));
 			}
@@ -437,9 +418,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				case LexemeType.Prefix: return morphType.IsPrefixishType;
 				case LexemeType.Suffix: return morphType.IsSuffixishType;
 				case LexemeType.Stem:
-					return morphType.IsStemType &&
-  morphType.Guid != MoMorphTypeTags.kguidMorphPhrase &&
-  morphType.Guid != MoMorphTypeTags.kguidMorphDiscontiguousPhrase;
+					return morphType.IsStemType && morphType.Guid != MoMorphTypeTags.kguidMorphPhrase && morphType.Guid != MoMorphTypeTags.kguidMorphDiscontiguousPhrase;
 				case LexemeType.Phrase:
 					return morphType.Guid == MoMorphTypeTags.kguidMorphPhrase || morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase;
 			}
@@ -527,13 +506,13 @@ namespace SIL.FieldWorks.LexicalProvider
 			#region Implementation of IPublisher
 
 			/// <inheritdoc />
-			public void Publish(string message, object newValue)
+			void IPublisher.Publish(string message, object newValue)
 			{
 				// Pretend to do something.
 			}
 
 			/// <inheritdoc />
-			public void Publish(IList<string> messages, IList<object> newValues)
+			void IPublisher.Publish(IList<string> messages, IList<object> newValues)
 			{
 				// Pretend to do something.
 			}
@@ -544,7 +523,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// <summary>
 		/// Do nothing ISubscriber, since there are no subscribers in the LexicalProviderImpl.
 		/// </summary>
-		private class MyDoNothingSubscriber : ISubscriber
+		private sealed class MyDoNothingSubscriber : ISubscriber
 		{
 			private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions = new Dictionary<string, HashSet<Action<object>>>();
 
@@ -563,7 +542,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			}
 
 			/// <inheritdoc />
-			public IReadOnlyDictionary<string, HashSet<Action<object>>> Subscriptions => new ReadOnlyDictionary<string, HashSet<Action<object>>>(_subscriptions);
+			IReadOnlyDictionary<string, HashSet<Action<object>>> ISubscriber.Subscriptions => new ReadOnlyDictionary<string, HashSet<Action<object>>>(_subscriptions);
 
 			#endregion
 		}

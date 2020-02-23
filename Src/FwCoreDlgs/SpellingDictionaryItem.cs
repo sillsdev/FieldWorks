@@ -35,9 +35,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public override bool Equals(object obj)
 		{
-			return !ReferenceEquals(null, obj) &&
-				   (ReferenceEquals(this, obj) || obj.GetType() == GetType() &&
-					Equals((SpellingDictionaryItem)obj));
+			return !ReferenceEquals(null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((SpellingDictionaryItem)obj));
 		}
 
 		/// <summary/>

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
@@ -148,8 +149,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </remarks>
 		public virtual int PercentDone
 		{
-			get { return _percentDone; }
-			set { _percentDone = value; }
+			get => _percentDone;
+			set => _percentDone = value;
 		}
 
 		/// <summary>
@@ -215,14 +216,8 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <summary />
 			public override int PercentDone
 			{
-				get
-				{
-					return (int)(m_acumulatedFractionOfTotal * 100);
-				}
-				set
-				{
-					throw new NotSupportedException();
-				}
+				get => (int)(m_acumulatedFractionOfTotal * 100);
+				set => throw new NotSupportedException();
 			}
 
 			/// <inheritdoc />
@@ -297,9 +292,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// splashscreen from the registry.
 			private void ReadIncrements()
 			{
-				var s = GetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, "2");
-				double dblResult;
-				if (double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out dblResult))
+				if (double.TryParse(GetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, "2"), System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out var dblResult))
 				{
 					m_expectedTotalMilliSeconds = (int)dblResult;
 				}
@@ -308,16 +301,14 @@ namespace SIL.FieldWorks.Common.Controls
 					m_expectedTotalMilliSeconds = 2;
 				}
 
-				var stepTimes = GetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, "");
-
+				var stepTimes = GetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, string.Empty);
 				m_expectedStepDurations = new List<double>();
 				if (stepTimes != "")
 				{
 					var aTimes = stepTimes.Split(null);
 					foreach (var time in aTimes)
 					{
-						double dblVal;
-						m_expectedStepDurations.Add(double.TryParse(time, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out dblVal) ? dblVal : 1.0);
+						m_expectedStepDurations.Add(double.TryParse(time, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out var dblVal) ? dblVal : 1.0);
 					}
 				}
 			}
@@ -328,10 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				var stepTimes = string.Empty;
 				var actualElapsedMilliseconds = ElapsedMilliSeconds();
-				foreach (var actualStepDuration in m_actualStepDurations)
-				{
-					stepTimes += actualStepDuration.ToString("0.####", System.Globalization.NumberFormatInfo.InvariantInfo) + " ";
-				}
+				stepTimes = m_actualStepDurations.Aggregate(stepTimes, (current, actualStepDuration) => current + (actualStepDuration.ToString("0.####", System.Globalization.NumberFormatInfo.InvariantInfo) + " "));
 				SetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, stepTimes);
 				SetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, actualElapsedMilliseconds.ToString("#.000000", System.Globalization.NumberFormatInfo.InvariantInfo));
 			}

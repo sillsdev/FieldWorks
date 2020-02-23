@@ -312,8 +312,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					continue;
 				}
 				// Don't overwrite the value if it exists already!
-				object dummyValue;
-				if (RegistryHelper.RegEntryValueExists(destSubKey, string.Empty, valueName, out dummyValue))
+				if (RegistryHelper.RegEntryValueExists(destSubKey, string.Empty, valueName, out _))
 				{
 					continue;
 				}

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
@@ -176,7 +177,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			internal CharacterGrid CurrentGrid
 			{
-				get { return m_currGrid; }
+				get => m_currGrid;
 				set
 				{
 					if ((value == m_gridWordForming || value == m_gridOther) && value != m_currGrid)
@@ -338,8 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			private void HandleCharGridCellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 			{
-				var grid = sender as CharacterGrid;
-				if (grid == null || e.Button != MouseButtons.Right)
+				if (!(sender is CharacterGrid grid) || e.Button != MouseButtons.Right)
 				{
 					return;
 				}
@@ -588,7 +588,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_app = app;
 			if (string.IsNullOrEmpty(wsName))
 			{
-				throw new ArgumentException("Parameter must not be null or empty.", "wsName");
+				throw new ArgumentException("Parameter must not be null or empty.", nameof(wsName));
 			}
 			if (cache != null)
 			{
@@ -846,15 +846,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kiTabData:
 					if (gridCharInventory.RowCount > 0)
 					{
-						chars = new List<string>();
-						foreach (var charRow in m_inventoryRows)
-						{
-							if (charRow.IsValid)
-							{
-								chars.Add(charRow.Character);
-							}
-						}
-						m_validCharsGridMngr.AddCharacters(chars);
+						m_validCharsGridMngr.AddCharacters(m_inventoryRows.Where(charRow => charRow.IsValid).Select(charRow => charRow.Character).ToList());
 					}
 					break;
 				case kiTabUnicode:
@@ -884,8 +876,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				else
 				{
 					// Adding Unicode code point
-					int codepoint;
-					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
+					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out var codepoint))
 					{
 						chr = ((char)codepoint).ToString(CultureInfo.InvariantCulture);
 						if (Character.IsMark(chr[0]))
@@ -958,7 +949,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else if (undefinedChars.Count < 7)
 					{
-						string codepoint = i.ToString("x4").ToUpperInvariant();
+						var codepoint = i.ToString("x4").ToUpperInvariant();
 						undefinedChars.Add(codepoint);
 					}
 				}
@@ -1106,7 +1097,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var txt = textbox.Text.Length >= 1 ? CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(textbox.Text) : string.Empty;
 			var chrCode = txt.Length >= 1 ? txt[0] : 0;
-			if (txt.Length > 1 || (chrCode > 0 && Character.IsMark(chrCode)))
+			if (txt.Length > 1 || chrCode > 0 && Character.IsMark(chrCode))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1115,8 +1106,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			lbl.Text = (chrCode == 0 ? string.Empty : string.Format((string)lbl.Tag, chrCode));
 
+			lbl.Text = chrCode == 0 ? string.Empty : string.Format((string)lbl.Tag, chrCode);
 			textbox.Tag = null;
 			lbl.ForeColor = SystemColors.ControlText;
 		}
@@ -1370,10 +1361,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void gridCharInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			var cell = gridCharInventory[e.ColumnIndex, e.RowIndex];
-			if (cell?.Tag is Font)
+			if (gridCharInventory[e.ColumnIndex, e.RowIndex]?.Tag is Font font)
 			{
-				e.CellStyle.Font = cell.Tag as Font;
+				e.CellStyle.Font = font;
 			}
 		}
 
@@ -1397,14 +1387,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			grpCharRange.Enabled = rbCharRange.Checked;
 			grpUnicodeValue.Enabled = rbUnicodeValue.Checked;
 
-			if (grpUnicodeValue.Enabled)
-			{
-				ActiveControl = txtUnicodeValue;
-			}
-			else
-			{
-				ActiveControl = (grpSingle.Enabled ? txtManualCharEntry : txtFirstChar);
-			}
+			ActiveControl = grpUnicodeValue.Enabled ? txtUnicodeValue : grpSingle.Enabled ? txtManualCharEntry : txtFirstChar;
 			tabControlAddFrom_SelectedIndexChanged(sender, e);
 		}
 
@@ -1524,15 +1507,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				foreach (var txtTokSub in tokenSubstrings)
 				{
-					string chr;
-					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
+					if (!normalizedChars.TryGetValue(txtTokSub.Text, out var chr))
 					{
 						chr = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(txtTokSub.Text);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr) || !TsStringUtils.IsValidChar(chr))
 						{
 							chr = string.Empty;
 						}
-
 						normalizedChars.Add(txtTokSub.Text, chr);
 					}
 					if (chr == string.Empty)
@@ -1541,9 +1522,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					// Determine how many times this character has occurred previously and update
 					// the counts for characters.
-					int charCount;
 					var fAddOccurrence = true;
-					if (m_characterCount.TryGetValue(chr, out charCount))
+					if (m_characterCount.TryGetValue(chr, out var charCount))
 					{
 						m_characterCount[chr]++;
 						fAddOccurrence = (charCount < kMaxOccurrences);
@@ -1554,8 +1534,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					// Only add the character occurrence to the list on the dialog if we have not
 					// exceeded the threshold for this character.
-					CharacterInventoryRow row;
-					if (!rows.TryGetValue(chr, out row))
+					if (!rows.TryGetValue(chr, out var row))
 					{
 						row = new CharacterInventoryRow(chr);
 						rows[chr] = row;
@@ -1593,13 +1572,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private int InventoryCharComparer(CharacterInventoryRow x, CharacterInventoryRow y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{
@@ -1617,13 +1595,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private static int InventoryCharCodeComparer(CharacterInventoryRow x, CharacterInventoryRow y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{
@@ -1637,13 +1614,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private static int InventoryCountComparer(CharacterInventoryRow x, CharacterInventoryRow y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{
@@ -1657,13 +1633,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private int InventoryIsValidComparer(CharacterInventoryRow x, CharacterInventoryRow y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{

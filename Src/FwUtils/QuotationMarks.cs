@@ -21,13 +21,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets a value indicating whether or not both opening and closing are empty.
 		/// </summary>
-		public bool IsEmpty => (string.IsNullOrEmpty(Opening.Trim()) && string.IsNullOrEmpty(Closing.Trim()));
+		public bool IsEmpty => string.IsNullOrEmpty(Opening.Trim()) && string.IsNullOrEmpty(Closing.Trim());
 
 		/// <summary>
 		/// Gets a value indicating whether or not one or the other of the quotation marks
 		/// exists but not both.
 		/// </summary>
-		public bool IsComplete => (!string.IsNullOrEmpty(Opening.Trim()) && !string.IsNullOrEmpty(Closing.Trim()));
+		public bool IsComplete => !string.IsNullOrEmpty(Opening.Trim()) && !string.IsNullOrEmpty(Closing.Trim());
 
 		/// <summary>
 		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool Equals(QuotationMarks qmark)
 		{
-			return (Opening.Equals(qmark.Opening, StringComparison.Ordinal) && Closing.Equals(qmark.Closing, StringComparison.Ordinal));
+			return Opening.Equals(qmark.Opening, StringComparison.Ordinal) && Closing.Equals(qmark.Closing, StringComparison.Ordinal);
 		}
 
 		/// <summary>

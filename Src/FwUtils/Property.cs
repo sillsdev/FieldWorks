@@ -66,12 +66,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public override string ToString()
 		{
-			if (value == null)
-			{
-				return name + "= null";
-			}
-
-			return name + "= " + value;
+			return value == null ? $"{name}= null" : $"{name}= {value}";
 		}
 	}
 }

@@ -58,8 +58,7 @@ namespace SIL.FieldWorks
 		/// <returns>True if the link was successfully handled, false otherwise.</returns>------
 		public bool HandleLinkRequest(FwAppArgs link)
 		{
-			var isMyProject = FieldWorks.GetProjectMatchStatus(new ProjectId(link.DatabaseType, link.Database));
-			if (isMyProject != ProjectMatch.ItsMyProject)
+			if (FieldWorks.GetProjectMatchStatus(new ProjectId(link.DatabaseType, link.Database)) != ProjectMatch.ItsMyProject)
 			{
 				return false;
 			}

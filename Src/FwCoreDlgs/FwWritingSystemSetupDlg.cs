@@ -117,9 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (Keyboard.Controller != null && model.Cache != null)
 			{
-				IKeyboardDefinition userInterfaceKeyboard;
-				if (Keyboard.Controller.TryGetKeyboard(model.Cache.DefaultUserWs,
-					out userInterfaceKeyboard))
+				if (Keyboard.Controller.TryGetKeyboard(model.Cache.DefaultUserWs, out var userInterfaceKeyboard))
 				{
 					userInterfaceKeyboard.Activate();
 				}
@@ -378,10 +376,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void WritingSystemListSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (_model != null)
-			{
-				_model.SelectWs(_writingSystemList.SelectedIndex);
-			}
+			_model?.SelectWs(_writingSystemList.SelectedIndex);
 		}
 
 		private void EthnologueLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -457,8 +452,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// save the selected encoding converter
 			var str = _encodingConverterCombo.SelectedItem as string;
 			if (str == FwCoreDlgs.kstidNone)
+			{
 				str = null;
-
+			}
 			_model.CurrentLegacyConverter = str;
 		}
 
@@ -493,7 +489,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var listBox = (CheckedListBox)sender;
 			if (e.Button == MouseButtons.Right)
 			{
-				int index = listBox.IndexFromPoint(e.Location);
+				var index = listBox.IndexFromPoint(e.Location);
 				if (index != ListBox.NoMatches)
 				{
 					if (index != _model.CurrentWritingSystemIndex)
@@ -502,21 +498,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						listBox.Select();
 						listBox.SelectedIndex = index;
 					}
-					var disposeThese = new List<ToolStripMenuItem>();
-					foreach (ToolStripMenuItem item in _addMenuStrip.Items)
-					{
-						disposeThese.Add(item);
-					}
+					var disposeThese = _addMenuStrip.Items.Cast<ToolStripMenuItem>().ToList();
 					_addMenuStrip.Items.Clear();
 					foreach (var toolStripMenuItem in disposeThese)
 					{
 						toolStripMenuItem.Dispose();
 					}
-
 					foreach (var item in _model.GetRightClickMenuItems())
 					{
-						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler);
-						menuItem.Enabled = item.IsEnabled;
+						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler)
+						{
+							Enabled = item.IsEnabled
+						};
 						_addMenuStrip.Items.Add(menuItem);
 						_addMenuStrip.Show(listBox, e.Location);
 					}
@@ -524,10 +517,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else if (e.Button == MouseButtons.Left)
 			{
-				int index = listBox.IndexFromPoint(e.Location);
+				var index = listBox.IndexFromPoint(e.Location);
 				if (index == -1)
 				{
-
 				}
 			}
 		}

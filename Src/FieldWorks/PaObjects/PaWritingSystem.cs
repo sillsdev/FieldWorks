@@ -21,17 +21,16 @@ namespace SIL.FieldWorks.PaObjects
 		internal static string GetWritingSystemsAsXml(ILcmServiceLocator svcloc)
 		{
 			var wsList = new List<PaWritingSystem>();
-
 			foreach (var ws in svcloc.WritingSystems.AllWritingSystems)
 			{
-				if (!wsList.Any(w => w.Id == ws.Id))
+				if (wsList.Any(w => w.Id == ws.Id))
 				{
-					var isVern = svcloc.WritingSystems.VernacularWritingSystems.Contains(ws);
-					var isAnal = svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws);
-					wsList.Add(new PaWritingSystem(ws, svcloc, isVern, isAnal));
+					continue;
 				}
+				var isVern = svcloc.WritingSystems.VernacularWritingSystems.Contains(ws);
+				var isAnal = svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws);
+				wsList.Add(new PaWritingSystem(ws, svcloc, isVern, isAnal));
 			}
-
 			return XmlSerializationHelper.SerializeToString(wsList);
 		}
 

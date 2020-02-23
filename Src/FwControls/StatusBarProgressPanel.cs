@@ -78,8 +78,7 @@ namespace SIL.FieldWorks.Common.Controls
 			StepSize = 10;
 			Style = StatusBarPanelStyle.OwnerDraw;
 			TextFont = new Font(MiscUtils.StandardSansSerif, 8F);
-			const int TIMER_INTERVAL = 1000; //1000 milliseconds
-			timer1.Interval = TIMER_INTERVAL;
+			timer1.Interval = 1000; //1000 milliseconds
 			timer1.Start();
 		}
 
@@ -246,10 +245,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Style")]
 		public Font TextFont
 		{
-			get
-			{
-				return _textFont;
-			}
+			get => _textFont;
 			set
 			{
 				_textFont?.Dispose();

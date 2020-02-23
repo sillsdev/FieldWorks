@@ -31,11 +31,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_scrChecksDllFile = scrChecksDllFile;
 			m_scrCheck = scrCheck;
-			CharacterCategorizer = (categorizer != null) ? categorizer : new CharacterCategorizer();
+			CharacterCategorizer = categorizer ?? new CharacterCategorizer();
 			m_params = parameters;
 			m_tftList = new List<ITextToken>();
 			var i = 1;
-			foreach (string line in fileData)
+			foreach (var line in fileData)
 			{
 				m_tftList.Add(new TextFileToken(line, i++, scrRefFormatString));
 			}
@@ -45,10 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets the books present (not supported).
 		/// </summary>
-		public List<int> BooksPresent
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public List<int> BooksPresent => throw new NotSupportedException();
 
 		/// <summary>
 		/// Gets the character categorizer.
@@ -60,8 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string GetParameterValue(string key)
 		{
-			string param;
-			return m_params != null && m_params.TryGetValue(key, out param) ? param : string.Empty;
+			return m_params != null && m_params.TryGetValue(key, out var param) ? param : string.Empty;
 		}
 
 		/// <summary>
@@ -110,8 +106,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				var asm = Assembly.LoadFile(m_scrChecksDllFile);
 				var type = asm.GetType("SIL.FieldWorks.Common.FwUtils." + m_scrCheck);
-				var scrCharInventoryBldr = Activator.CreateInstance(type, this) as IScrCheckInventory;
-
+				var scrCharInventoryBldr = (IScrCheckInventory)Activator.CreateInstance(type, this);
 				return scrCharInventoryBldr.GetReferences(m_tftList, string.Empty);
 			}
 			catch
@@ -159,7 +154,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			public string ScrRefString
 			{
-				get { return string.Format(m_scrRefFmtString, m_iLine); }
+				get => string.Format(m_scrRefFmtString, m_iLine);
 				set { }
 			}
 
@@ -186,14 +181,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary />
 			public BCVRef MissingEndRef
 			{
-				get { return null; }
+				get => null;
 				set { }
 			}
 
 			/// <summary />
 			public BCVRef MissingStartRef
 			{
-				get { return null; }
+				get => null;
 				set { }
 			}
 

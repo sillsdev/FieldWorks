@@ -61,8 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.IsTrue(DbExists(DbName));
 				// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 				// we don't need a 'using'
-				cache = LcmCache.CreateCacheFromExistingData(
-					new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(DbName)), "en", new DummyLcmUI(),
+				cache = LcmCache.CreateCacheFromExistingData(new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(DbName)), "en", new DummyLcmUI(),
 					FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 				CheckInitialSetOfPartsOfSpeech(cache);
 				Assert.AreEqual(2, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
@@ -477,9 +476,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						fVerbFound = true;
 						break;
 					default:
-						string sFmt = "Unexpected CatalogSourceId ({0}) found in PartOfSpeech {1}.";
-						string sMsg = String.Format(sFmt, pos.CatalogSourceId, pos.Name.AnalysisDefaultWritingSystem);
-						Assert.Fail(sMsg);
+						Assert.Fail($"Unexpected CatalogSourceId ({pos.CatalogSourceId}) found in PartOfSpeech {pos.Name.AnalysisDefaultWritingSystem}.");
 						break;
 				}
 			}

@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		public void SelectMapping(string mapname)
 		{
-			var ec = (IEncConverter)Converters[mapname];
+			var ec = Converters[mapname];
 			lvConverterInfo.Items.Clear();
 
 			lvConverterInfo.Items.Add(new ListViewItem(new[] { "CodePageInput", ec.CodePageInput.ToString() }));

@@ -31,6 +31,8 @@ namespace SIL.FieldWorks
 		private sealed class LanguageProjectInfo
 		{
 			private string FullName { get; }
+			private string m_displayName;
+			private bool m_showExtenstion;
 
 			internal bool ShowExtenstion
 			{
@@ -41,19 +43,13 @@ namespace SIL.FieldWorks
 				}
 			}
 
-			private string m_displayName;
-			private bool m_showExtenstion;
-
 			internal LanguageProjectInfo(string filename)
 			{
 				FullName = filename;
 				m_displayName = Path.GetFileNameWithoutExtension(filename);
 			}
 
-			public override string ToString()
-			{
-				return m_displayName;
-			}
+			public override string ToString() => m_displayName;
 		}
 		#endregion
 
@@ -77,7 +73,7 @@ namespace SIL.FieldWorks
 			m_initialBounds = bounds;
 			m_initialSplitterPosition = splitterPosition;
 
-			StartPosition = (m_initialBounds == Rectangle.Empty ? FormStartPosition.CenterParent : FormStartPosition.Manual);
+			StartPosition = m_initialBounds == Rectangle.Empty ? FormStartPosition.CenterParent : FormStartPosition.Manual;
 		}
 
 		/// <summary />

@@ -153,14 +153,11 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public ButtonStyles ButtonStyle
 		{
-			get
-			{
-				return m_Style;
-			}
+			get => m_Style;
 			set
 			{
 				m_Style = value;
-				m_dpBorderWidth = (m_Style == ButtonStyles.Standard ? 2 : 1);
+				m_dpBorderWidth = m_Style == ButtonStyles.Standard ? 2 : 1;
 				Invalidate();
 			}
 		}
@@ -190,10 +187,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines how indented the button looks when pressed (ignored for popup button).")]
 		public SunkenAppearances SunkenAppearance
 		{
-			get
-			{
-				return m_SunkenAppearance;
-			}
+			get => m_SunkenAppearance;
 			set
 			{
 				m_SunkenAppearance = value;
@@ -214,10 +208,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines if the button's text will appear inside or outside the button area. If the ButtonHeight property is the full height of the control, this property is ignored.")]
 		public bool TextInButton
 		{
-			get
-			{
-				return m_fTextInButton;
-			}
+			get => m_fTextInButton;
 			set
 			{
 				m_fTextInButton = value;
@@ -261,10 +252,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines the button's size. This property is ignored when the ButtonFillsControl property is true.")]
 		public Size ButtonSize
 		{
-			get
-			{
-				return m_ButtonSize;
-			}
+			get => m_ButtonSize;
 			set
 			{
 				m_ButtonSize = value;
@@ -291,10 +279,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines if the button fills the entire control.")]
 		public bool ButtonFillsControl
 		{
-			get
-			{
-				return m_fButtonFillsControl;
-			}
+			get => m_fButtonFillsControl;
 			set
 			{
 				m_fButtonFillsControl = value;
@@ -545,23 +530,24 @@ namespace SIL.FieldWorks.Common.Controls
 				// rectangle the area below the button's rectangle.
 				if (!m_fTextInButton)
 				{
-					if (TextPosition == TextLocation.Below && m_rect.Height < this.Height)
+					switch (TextPosition)
 					{
-						// Make the text's rectangle 2 pixels smaller so the text doesn't get
-						// too close to the edges. ENHANCE: Should probably add a property
-						// called TextMargin or Padding or something like that, instead of
-						// hard coding the value to 2.
-						rc.Height = Height - m_rect.Height - 2;
-						rc.Y = m_rect.Height + 2;
-					}
-					else if (TextPosition == TextLocation.Right && m_rect.Width < this.Width)
-					{
-						// Make the text's rectangle 2 pixels smaller so the text doesn't get
-						// too close to the edges. ENHANCE: Should probably add a property
-						// called TextMargin or Padding or something like that, instead of
-						// hard coding the value to 2.
-						rc.Width = Width - m_rect.Width - 2;
-						rc.X = m_rect.Width + 2;
+						case TextLocation.Below when m_rect.Height < Height:
+							// Make the text's rectangle 2 pixels smaller so the text doesn't get
+							// too close to the edges. ENHANCE: Should probably add a property
+							// called TextMargin or Padding or something like that, instead of
+							// hard coding the value to 2.
+							rc.Height = Height - m_rect.Height - 2;
+							rc.Y = m_rect.Height + 2;
+							break;
+						case TextLocation.Right when m_rect.Width < Width:
+							// Make the text's rectangle 2 pixels smaller so the text doesn't get
+							// too close to the edges. ENHANCE: Should probably add a property
+							// called TextMargin or Padding or something like that, instead of
+							// hard coding the value to 2.
+							rc.Width = Width - m_rect.Width - 2;
+							rc.X = m_rect.Width + 2;
+							break;
 					}
 				}
 

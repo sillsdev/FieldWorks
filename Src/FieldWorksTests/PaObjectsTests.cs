@@ -32,9 +32,8 @@ namespace SIL.FieldWorks
 		[Test]
 		public void PaLexEntry_EtymologyEmptyWorks()
 		{
-			var entry = CreateLexEntry();
 			// SUT
-			var paEntry = new PaLexEntry(entry);
+			var paEntry = new PaLexEntry(CreateLexEntry());
 			Assert.Null(paEntry.Etymology);
 		}
 
@@ -55,8 +54,7 @@ namespace SIL.FieldWorks
 
 		private ILexEntry CreateLexEntry()
 		{
-			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			return factory.Create();
+			 return Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 		}
 
 		/// <summary />

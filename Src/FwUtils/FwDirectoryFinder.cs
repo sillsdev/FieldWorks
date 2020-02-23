@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </exception>
 		public static string ProjectsDirectory
 		{
-			get { return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects)); }
+			get => GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects));
 			set
 			{
 				if (ProjectsDirectory == value)

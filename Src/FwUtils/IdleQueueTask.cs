@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </returns>
 		public override bool Equals(object obj)
 		{
-			return obj is IdleQueueTask && Equals((IdleQueueTask)obj);
+			return obj is IdleQueueTask task && Equals(task);
 		}
 
 		/// <summary>

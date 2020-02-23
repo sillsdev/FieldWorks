@@ -128,10 +128,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public virtual object this[int index]
 		{
-			get
-			{
-				return m_list[index];
-			}
+			get => m_list[index];
 			set
 			{
 				var oldText = m_owner.TextOfItem(m_list[index]);
@@ -190,8 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			var citems = m_list.Count;
 			ClearAllItems();
-			var cda = m_owner.DataAccess as IVwCacheDa;
-			if (cda == null)
+			if (!(m_owner.DataAccess is IVwCacheDa cda))
 			{
 				return; // This can happen, when this is called when 'disposing' is false.
 			}

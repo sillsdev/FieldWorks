@@ -251,9 +251,6 @@
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ComposablePartCatalogExtensions.cs" />
-    <Compile Include="DuplicateProjectFoundDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwNewLangProject.Designer.cs">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
@@ -359,10 +356,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChooseLangProjectDialog.resx">
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
-      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwNewLangProject.resx">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>

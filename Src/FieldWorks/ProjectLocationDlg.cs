@@ -107,7 +107,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Verifies that the user has security permissions to write to the given folder, as well as basic file system read and write permissions
 		/// </summary>
-		private bool DirectoryIsSuitable(string folderToTest)
+		private static bool DirectoryIsSuitable(string folderToTest)
 		{
 			// A directory with invalid characters isn't suitable
 			string pathToTest;
@@ -141,30 +141,29 @@ namespace SIL.FieldWorks
 					using (var currentUserIdentity = WindowsIdentity.GetCurrent())
 					{
 						var userName = currentUserIdentity.User.Value;
-						if (
-							rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
-						currentUserIdentity.Groups.Contains(rule.IdentityReference))
+						if (rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
+							currentUserIdentity.Groups.Contains(rule.IdentityReference))
 						{
 							if ((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
 							{
-								if (rule.AccessControlType == AccessControlType.Allow)
+								switch (rule.AccessControlType)
 								{
-									readAllowed = true;
-								}
-								if (rule.AccessControlType == AccessControlType.Deny)
-								{
-									return false;
+									case AccessControlType.Allow:
+										readAllowed = true;
+										break;
+									case AccessControlType.Deny:
+										return false;
 								}
 							}
 							if ((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
 							{
-								if (rule.AccessControlType == AccessControlType.Allow)
+								switch (rule.AccessControlType)
 								{
-									writeAllowed = true;
-								}
-								if (rule.AccessControlType == AccessControlType.Deny)
-								{
-									return false;
+									case AccessControlType.Allow:
+										writeAllowed = true;
+										break;
+									case AccessControlType.Deny:
+										return false;
 								}
 							}
 						}
@@ -172,7 +171,6 @@ namespace SIL.FieldWorks
 				}
 				return readAllowed && writeAllowed;
 			}
-
 			// Linux
 			var ufi = new UnixDirectoryInfo(pathToTest);
 			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) && ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
@@ -193,7 +191,6 @@ namespace SIL.FieldWorks
 				fldrBrowse.ShowNewFolderButton = true;
 				fldrBrowse.Description = Properties.Resources.ksChooseProjectFolder;
 				var backupDirExists = FileUtils.DirectoryExists(m_tbProjectsFolder.Text);
-
 				// if the directory exists which is typed in the text box...
 				if (backupDirExists)
 				{

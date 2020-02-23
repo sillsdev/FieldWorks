@@ -30,8 +30,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// First string is the normalized order that ICU produces.
 				// Second string is the normalized order that .Net produces.
-				var icuStyleNormalizationOrder = "\u05E9\u05c1\u05b4\u0596";
-				var dotnetStyleNormalizationOrder = "\u05E9\u05b4\u05c1\u0596";
+				const string icuStyleNormalizationOrder = "\u05E9\u05c1\u05b4\u0596";
+				const string dotnetStyleNormalizationOrder = "\u05E9\u05b4\u05c1\u0596";
 				ReflectionHelper.SetField(ctrl, "m_fileData", new[] { icuStyleNormalizationOrder, dotnetStyleNormalizationOrder });
 
 				// SUT
@@ -40,10 +40,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Verify
 				var results = (string[])ReflectionHelper.GetField(ctrl, "m_fileData");
 				Assert.That(results.Length, Is.EqualTo(2));
-				Assert.That(results[0], Is.EqualTo(icuStyleNormalizationOrder),
-					GetMessage("Expect ICU-style normalization (from ICU order)", icuStyleNormalizationOrder, results[0]));
-				Assert.That(results[1], Is.EqualTo(icuStyleNormalizationOrder),
-					GetMessage("Expect ICU-style normalization (from .NET order)", icuStyleNormalizationOrder, results[1]));
+				Assert.That(results[0], Is.EqualTo(icuStyleNormalizationOrder), GetMessage("Expect ICU-style normalization (from ICU order)", icuStyleNormalizationOrder, results[0]));
+				Assert.That(results[1], Is.EqualTo(icuStyleNormalizationOrder), GetMessage("Expect ICU-style normalization (from .NET order)", icuStyleNormalizationOrder, results[1]));
 			}
 		}
 

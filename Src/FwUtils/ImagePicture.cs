@@ -151,34 +151,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		public int Attributes
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public int Attributes => throw new NotSupportedException();
 
 		/// <summary />
-		public int CurDC
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public int CurDC => throw new NotSupportedException();
 
 		/// <summary />
-		public int Handle
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public int Handle => throw new NotSupportedException();
 
 		/// <summary />
 		public bool KeepOriginalFormat
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary />
@@ -212,16 +197,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		public short Type
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public short Type => throw new NotSupportedException();
 
 		/// <summary />
-		public int hPal
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public int hPal => throw new NotSupportedException();
 
 		/// <summary />
 		public void put_hPal(int val)

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -73,8 +74,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public void Add(T obj)
 		{
-			var disposable = obj as IDisposable;
-			if (disposable == null)
+			if (!(obj is IDisposable disposable))
 			{
 				return;
 			}
@@ -86,12 +86,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool Contains(T obj)
 		{
-			if (m_ObjectsToDispose.Count == 0)
-			{
-				return false;
-			}
-			var disposable = obj as IDisposable;
-			return disposable != null && m_ObjectsToDispose.Contains(disposable);
+			return m_ObjectsToDispose.Any() && obj is IDisposable disposable && m_ObjectsToDispose.Contains(disposable);
 		}
 
 		/// <summary>
@@ -101,8 +96,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool Remove(T obj)
 		{
-			var disposable = obj as IDisposable;
-			return disposable != null && m_ObjectsToDispose.Remove(disposable);
+			return obj is IDisposable disposable && m_ObjectsToDispose.Remove(disposable);
 		}
 	}
 }

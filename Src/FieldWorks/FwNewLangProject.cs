@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Reporting;
 
@@ -22,11 +21,8 @@ namespace SIL.FieldWorks
 	public partial class FwNewLangProject : Form
 	{
 		#region Data members
-		private bool m_fCreateNew = true;
-		private ProjectInfo m_projInfo;
 		private readonly WritingSystemManager m_wsManager;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private string m_dbFile;
 		private FwNewLangProjectModel m_model;
 
 		#endregion
@@ -43,14 +39,7 @@ namespace SIL.FieldWorks
 		/// When there is a project with an identical name, the user has the option of opening
 		/// the existing project. In this case, this property has a value of false.
 		/// </summary>
-		public bool IsProjectNew { get; private set; } = true;
-
-		/// <summary>
-		/// Gets the information for an existing project.
-		/// The information in this property should only be used if the user attempted to create
-		/// an existing project and they want to open the existing project instead.
-		/// </summary>
-		public ProjectInfo Project { get; private set; }
+		public bool IsProjectNew { get; } = true;
 
 		#endregion
 
@@ -212,11 +201,7 @@ namespace SIL.FieldWorks
 		{
 			// We can't create a new database if the folder where it will go is
 			// Encrypted or compressed or nonexistent, so check for these first:
-			if (!CheckProjectDirectory(f, m_helpTopicProvider))
-			{
-				return 0; // can't go on.
-			}
-			return ShowDialog(f);
+			return !CheckProjectDirectory(f, m_helpTopicProvider) ? 0 : ShowDialog(f);
 		}
 
 		/// <summary>
@@ -290,7 +275,7 @@ namespace SIL.FieldWorks
 			using (var threadHelper = new ThreadHelper())
 			using (var progressDialog = new ProgressDialogWithTask(threadHelper))
 			{
-				m_dbFile = m_model.CreateNewLangProj(progressDialog, threadHelper);
+				DatabaseName = m_model.CreateNewLangProj(progressDialog, threadHelper);
 			}
 			Close();
 		}

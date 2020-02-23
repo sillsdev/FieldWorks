@@ -578,8 +578,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			m_qmList[0].Opening = "<<";
 			m_qmList[0].Closing = ">>";
-
-			for (int i = 2; i < 5; i++)
+			for (var i = 2; i < 5; i++)
 			{
 				m_qmList.AddLevel();
 				Assert.AreEqual(i + 1, m_qmList.Levels);
@@ -716,7 +715,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = "}";
 			Assert.AreEqual(2, m_qmList.TrimmedList.Levels);
 
-			QuotationMarksList qmTrimmed = m_qmList.TrimmedList;
+			var qmTrimmed = m_qmList.TrimmedList;
 			Assert.AreEqual(m_qmList[0].Opening, qmTrimmed[0].Opening);
 			Assert.AreEqual(m_qmList[0].Closing, qmTrimmed[0].Closing);
 			Assert.AreEqual(m_qmList[1].Opening, qmTrimmed[1].Opening);

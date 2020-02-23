@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// places, centimeters one, and all other units display to the nearest integer.</param>
 		/// <returns>A formatted (localized) string representing the given number of millipoints
 		/// in the requested units</returns>
-		static public string FormatMeasurement(double mptValue, MsrSysType msrType, bool fUseVariablePrecision)
+		public static string FormatMeasurement(double mptValue, MsrSysType msrType, bool fUseVariablePrecision)
 		{
 			var sFormat = "##########0.##";
 			if (fUseVariablePrecision)

@@ -56,8 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var stringReader = new StringReader(input))
 			using (var reader = XmlReader.Create(stringReader))
 			{
-				string vernWs, analysisWs;
-				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out var vernWs, out var analysisWs);
 				reader.Close();
 				Assert.That(vernWs, Is.EqualTo("mfo"));
 				Assert.That(analysisWs, Is.EqualTo("sp"));
@@ -103,8 +102,7 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var stringReader = new StringReader(input))
 			using (var reader = XmlReader.Create(stringReader))
 			{
-				string vernWs, analysisWs;
-				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out var vernWs, out var analysisWs);
 				reader.Close();
 				Assert.That(vernWs, Is.EqualTo("xyz"));
 				Assert.That(analysisWs, Is.EqualTo("qed"));
@@ -125,8 +123,7 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var stringReader = new StringReader(input))
 			using (var reader = XmlReader.Create(stringReader))
 			{
-				string vernWs, analysisWs;
-				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out var vernWs, out var analysisWs);
 				reader.Close();
 				Assert.That(vernWs, Is.EqualTo("fr"));
 				Assert.That(analysisWs, Is.EqualTo("en"));

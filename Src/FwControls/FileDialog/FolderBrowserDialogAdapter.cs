@@ -27,8 +27,8 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <inheritdoc />
 		public event EventHandler Disposed
 		{
-			add { m_dlg.Disposed += value; }
-			remove { m_dlg.Disposed -= value; }
+			add => m_dlg.Disposed += value;
+			remove => m_dlg.Disposed -= value;
 		}
 
 		/// <inheritdoc />
@@ -52,36 +52,36 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <inheritdoc />
 		public string Description
 		{
-			get { return m_dlg.Description; }
-			set { m_dlg.Description = value; }
+			get => m_dlg.Description;
+			set => m_dlg.Description = value;
 		}
 
 		/// <inheritdoc />
 		public Environment.SpecialFolder RootFolder
 		{
-			get { return m_dlg.RootFolder; }
-			set { m_dlg.RootFolder = value; }
+			get => m_dlg.RootFolder;
+			set => m_dlg.RootFolder = value;
 		}
 
 		/// <inheritdoc />
 		public string SelectedPath
 		{
-			get { return m_dlg.SelectedPath; }
-			set { m_dlg.SelectedPath = value; }
+			get => m_dlg.SelectedPath;
+			set => m_dlg.SelectedPath = value;
 		}
 
 		/// <inheritdoc />
 		public bool ShowNewFolderButton
 		{
-			get { return m_dlg.ShowNewFolderButton; }
-			set { m_dlg.ShowNewFolderButton = value; }
+			get => m_dlg.ShowNewFolderButton;
+			set => m_dlg.ShowNewFolderButton = value;
 		}
 
 		/// <inheritdoc />
 		public object Tag
 		{
-			get { return m_dlg.Tag; }
-			set { m_dlg.Tag = value; }
+			get => m_dlg.Tag;
+			set => m_dlg.Tag = value;
 		}
 		#endregion
 

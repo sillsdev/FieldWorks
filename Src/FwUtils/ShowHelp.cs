@@ -39,14 +39,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void ShowHelpTopic(IHelpTopicProvider helpTopicProvider, string helpFileKey, string helpTopicKey)
 		{
-			string helpFile;
-
 			// sanity check
 			if (helpTopicProvider == null || helpFileKey == null || helpTopicKey == null || string.Empty.Equals(helpFileKey) || string.Empty.Equals(helpTopicKey))
 			{
 				return;
 			}
 			// try to get a path to the help file.
+			string helpFile;
 			try
 			{
 				helpFile = FwDirectoryFinder.CodeDirectory + helpTopicProvider.GetHelpString(helpFileKey);

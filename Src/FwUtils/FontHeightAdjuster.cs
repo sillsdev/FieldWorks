@@ -39,8 +39,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			for (var irun = 0; irun < runCount; irun++)
 			{
 				var props = tss.get_Properties(irun);
-				int dummy;
-				var wsTmp = props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
+				var wsTmp = props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				var styleName = props.GetStrPropValue((int)FwTextStringProp.kstpNamedStyle);
 				int height;
 				string name;
@@ -100,9 +99,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			for (var irun = 0; irun < runCount; irun++)
 			{
 				var props = tss.get_Properties(irun);
-				int var;
-				props.GetIntPropValues((int)FwTextPropType.ktptFontSize, out var);
-				if (var != -1)
+				props.GetIntPropValues((int)FwTextPropType.ktptFontSize, out var nVar);
+				if (nVar != -1)
 				{
 					var bldr = tss.GetBldr();
 					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptFontSize, -1, -1);

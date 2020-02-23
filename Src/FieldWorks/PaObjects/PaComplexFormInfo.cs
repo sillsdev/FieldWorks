@@ -32,19 +32,21 @@ namespace SIL.FieldWorks.PaObjects
 			var pcfi = new PaComplexFormInfo(PaMultiString.Create(lxEntryRef.Summary, lxEntryRef.Cache.ServiceLocator), lxEntryRef.ComplexEntryTypesRS.Select(x => PaCmPossibility.Create(x)));
 			foreach (var component in lxEntryRef.ComponentLexemesRS)
 			{
-				if (component is ILexEntry)
+				switch (component)
 				{
-					pcfi.Components.Add(((ILexEntry)component).HeadWord.Text);
-				}
-				else if (component is ILexSense)
-				{
-					var lxSense = (ILexSense)component;
-					var text = lxSense.Entry.HeadWord.Text;
-					if (lxSense.Entry.SensesOS.Count > 1)
+					case ILexEntry entry:
+						pcfi.Components.Add(entry.HeadWord.Text);
+						break;
+					case ILexSense sense:
 					{
-						text += $" {lxSense.IndexInOwner + 1}";
+						var text = sense.Entry.HeadWord.Text;
+						if (sense.Entry.SensesOS.Count > 1)
+						{
+							text += $" {sense.IndexInOwner + 1}";
+						}
+						pcfi.Components.Add(text);
+						break;
 					}
-					pcfi.Components.Add(text);
 				}
 			}
 

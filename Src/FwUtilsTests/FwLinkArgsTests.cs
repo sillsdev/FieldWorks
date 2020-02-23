@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// different target guid
 		/// </summary>
 		[Test]
-		public void Equals_DiffereByGuid()
+		public void Equals_DiffersByGuid()
 		{
 			var args1 = new FwLinkArgs("myTool", Guid.NewGuid(), "myTag");
 			Assert.IsFalse(args1.Equals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")));
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// different target guid
 		/// </summary>
 		[Test]
-		public void EssentiallyEquals_DiffereByGuid()
+		public void EssentiallyEquals_DiffersByGuid()
 		{
 			var args1 = new FwLinkArgs("myTool", Guid.NewGuid(), "myTag");
 			Assert.IsFalse(args1.EssentiallyEquals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")));

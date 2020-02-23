@@ -4,6 +4,7 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms.Design;
 
 namespace SIL.FieldWorks.Common.Controls.Design
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.Common.Controls.Design
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			base.Dispose(disposing);
 		}
 	}

@@ -20,14 +20,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		#region IFolderBrowserDialog implementation
 		public string Description
 		{
-			get { return Title; }
-			set { Title = value; }
+			get => Title;
+			set => Title = value;
 		}
 
 		public Environment.SpecialFolder RootFolder
 		{
-			get { return InternalRootFolder.GetValueOrDefault(); }
-			set { InternalRootFolder = value; }
+			get => InternalRootFolder.GetValueOrDefault();
+			set => InternalRootFolder = value;
 		}
 
 		public string SelectedPath { get; set; }

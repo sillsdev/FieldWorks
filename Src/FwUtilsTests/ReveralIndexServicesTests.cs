@@ -52,8 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var normalFilename = GetFilenameForWs(riConfigDir, analWss[2]);
 				const string normalFileModified = "2015-03-14"; // arbitrary date in the past
 				CreateDummyConfigForWS(normalFilename, analWss[2]);
-				XAttribute normalFileModifiedAtt;
-				var normalFile = GetLastModifiedAttributeFromFile(normalFilename, out normalFileModifiedAtt);
+				var normalFile = GetLastModifiedAttributeFromFile(normalFilename, out var normalFileModifiedAtt);
 				normalFileModifiedAtt.Value = normalFileModified;
 				normalFile.Save(normalFilename);
 
@@ -73,8 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					Assert.That(File.Exists(filename), "No file for WS: " + ws);
 					Assert.AreEqual(ws, GetWsFromFile(filename), "Incorrect WS attribute in file");
 				}
-				XAttribute modifiedAtt;
-				GetLastModifiedAttributeFromFile(normalFilename, out modifiedAtt);
+				GetLastModifiedAttributeFromFile(normalFilename, out var modifiedAtt);
 				Assert.AreEqual(normalFileModified, modifiedAtt.Value, "File with proper name and WS should not have been modified");
 				var enWsLabel = WSMgr.Get(analWss[0]).DisplayLabel;
 				Assert.AreEqual(enWsLabel, "English", "English WS should have name English");

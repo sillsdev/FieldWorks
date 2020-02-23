@@ -130,17 +130,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var ex = GetExceptionIfInvalid();
-				if (ex == null)
+				switch (ex)
 				{
-					return true;
+					case null:
+						return true;
+					case StartupException _:
+						return false;
+					default:
+						// something totally unexpected that we don't know how to handle happened.
+						// Don't suppress it.
+						throw ex;
 				}
-				if (ex is StartupException)
-				{
-					return false;
-				}
-				// something totally unexpected that we don't know how to handle happened.
-				// Don't suppress it.
-				throw ex;
 			}
 		}
 		#endregion
@@ -217,13 +217,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>
 		/// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
 		/// </returns>
-		/// <exception cref="T:System.NullReferenceException">
-		/// The <paramref name="obj"/> parameter is null.
-		/// </exception>
 		public override bool Equals(object obj)
 		{
-			var projB = obj as ProjectId;
-			if (projB == null)
+			if (!(obj is ProjectId projB))
 			{
 				return false;
 			}

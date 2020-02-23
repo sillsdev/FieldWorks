@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IList<CoreWritingSystemDefinition> _curPron = new List<CoreWritingSystemDefinition>();
 
 		/// <summary/>
-		public IEnumerable<IWizardStep> Steps { get { return _steps; } }
+		public IEnumerable<IWizardStep> Steps => _steps;
 
 		/// <summary/>
 		public IWritingSystemContainer WritingSystemContainer { get; set; }
@@ -100,8 +99,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwNewLangProjectModel(bool useMemoryWsManager = false)
 		{
 			WritingSystemManager = useMemoryWsManager ? new WritingSystemManager() : new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
-			CoreWritingSystemDefinition englishWs;
-			WritingSystemManager.GetOrSet("en", out englishWs);
+			WritingSystemManager.GetOrSet("en", out var englishWs);
 			_allAnalysis.Add(englishWs);
 			_curAnalysis.Add(englishWs);
 			WritingSystemContainer = new MemoryWritingSystemContainer(_allAnalysis, _allVern, _curAnalysis, _curVernWss, _curPron);
@@ -203,7 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string ProjectName
 		{
-			get { return _projectName; }
+			get => _projectName;
 			set
 			{
 				_projectName = value;
@@ -217,10 +215,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				string errorMessage;
 				var projName = ProjectName;
-				return !string.IsNullOrEmpty(ProjectName?.Trim()) && CheckForSafeProjectName(ref projName, out errorMessage)
-					&& CheckForUniqueProjectName(projName);
+				return !string.IsNullOrEmpty(ProjectName?.Trim()) && CheckForSafeProjectName(ref projName, out _) && CheckForUniqueProjectName(projName);
 			}
 
 		}
@@ -235,19 +231,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					return FwCoreDlgs.NewProjectWizard_EnterProjectName;
 				}
 
-				string errorMessage;
 				var projName = ProjectName;
-				if (!CheckForSafeProjectName(ref projName, out errorMessage))
-				{
-					return errorMessage;
-				}
-
-				if (!CheckForUniqueProjectName(projName))
-				{
-					return string.Format(FwCoreDlgs.NewProjectWizard_DuplicateProjectName, projName);
-				}
-
-				return string.Empty;
+				return !CheckForSafeProjectName(ref projName, out var errorMessage)
+					? errorMessage : !CheckForUniqueProjectName(projName)
+						? string.Format(FwCoreDlgs.NewProjectWizard_DuplicateProjectName, projName) : string.Empty;
 			}
 		}
 
@@ -262,43 +249,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var defaultAnalysis = WritingSystemContainer.CurrentAnalysisWritingSystems.First();
 				var defaultVernacular = WritingSystemContainer.CurrentVernacularWritingSystems.First();
 				return LcmCache.CreateNewLangProj(progressDialog, ProjectName, FwDirectoryFinder.LcmDirectories,
-					threadHelper,
-					defaultAnalysis,
-					defaultVernacular,
-					"en",// TODO: replicate original
+					threadHelper, defaultAnalysis, defaultVernacular, "en",// TODO: replicate original
 					new HashSet<CoreWritingSystemDefinition>(WritingSystemContainer.AnalysisWritingSystems.Skip(1)),
 					new HashSet<CoreWritingSystemDefinition>(WritingSystemContainer.VernacularWritingSystems.Skip(1)),
 					AnthroModel.AnthroFileName);
 			}
 			catch (WorkerThreadException wex)
 			{
-				Exception e = wex.InnerException;
-				if (e is UnauthorizedAccessException)
+				var e = wex.InnerException;
+				switch (e)
 				{
-					if (MiscUtils.IsUnix)
-					{
+					case UnauthorizedAccessException _ when MiscUtils.IsUnix:
 						// Tell Mono user he/she needs to logout and log back in
 						MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
-					}
-					else
-					{
-						MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-							FwUtils.ksSuiteName);
-					}
-				}
-				else if (e is ApplicationException)
-				{
-					MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-						FwUtils.ksSuiteName);
-				}
-				else if (e is LcmInitializationException)
-				{
-					MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-						FwUtils.ksSuiteName);
-				}
-				else
-				{
-					throw new Exception(FwCoreDlgs.kstidErrApp, e);
+						break;
+					case UnauthorizedAccessException _:
+					case ApplicationException _:
+					case LcmInitializationException _:
+						MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtils.ksSuiteName);
+						break;
+					default:
+						throw new Exception(FwCoreDlgs.kstidErrApp, e);
 				}
 			}
 
@@ -330,28 +301,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (firstIllegalChar > 0)
 			{
 				var sbErrorMessage = new StringBuilder();
-				if (firstIllegalChar < 127) // likely an illegal symbol (e.g. /:\)
+				if (firstIllegalChar < 127)
 				{
+					// likely an illegal symbol (e.g. /:\)
 					// Prepare to show the message:
 					// Remove characters that cannot be keyboarded (below code point 32). The user doesn't
 					// need to be warned about these since they can't be entered via the keyboard.
 					var sIllegalCharsForMessage = sIllegalChars;
-					for (int n = 0; n < 32; n++)
+					for (var n = 0; n < 32; n++)
 					{
-						int index = sIllegalCharsForMessage.IndexOf((char)n);
+						var index = sIllegalCharsForMessage.IndexOf((char)n);
 						if (index >= 0)
+						{
 							sIllegalCharsForMessage = sIllegalCharsForMessage.Remove(index, 1);
+						}
 					}
-
 					sbErrorMessage.AppendFormat(FwUtilsStrings.ksIllegalNameMsg, sIllegalCharsForMessage);
 				}
-				else if (firstIllegalChar >= '\u00C0' && firstIllegalChar < '\u02B0') // likely a Latin character with diacritics
-				// (somewhere between u0190 and u02B0, "letters with diacritics" become interspersed with extended Latin letters)
+				else if (firstIllegalChar >= '\u00C0' && firstIllegalChar < '\u02B0')
 				{
+					// likely a Latin character with diacritics
+					// (somewhere between u0190 and u02B0, "letters with diacritics" become interspersed with extended Latin letters)
 					sbErrorMessage.AppendFormat(FwCoreDlgs.ksIllegalNameWithDiacriticsMsg, firstIllegalChar);
 				}
-				else // Unicode (which could be diacritics, non-Latin characters, spacing markers, emoji, or many other things)
+				else
 				{
+					// Unicode (which could be diacritics, non-Latin characters, spacing markers, emoji, or many other things)
 					sbErrorMessage.Append(FwCoreDlgs.ksIllegalNameNonRomanMsg);
 				}
 				sbErrorMessage.AppendLine().Append(FwUtilsStrings.ksIllegalNameExplanation);
@@ -418,8 +393,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void SetDefaultWsInLists(LanguageInfo selectedLanguage, IList<CoreWritingSystemDefinition> currentList,
-			ICollection<CoreWritingSystemDefinition> allList)
+		private void SetDefaultWsInLists(LanguageInfo selectedLanguage, IList<CoreWritingSystemDefinition> currentList, ICollection<CoreWritingSystemDefinition> allList)
 		{
 			SetDefaultWsInList(selectedLanguage, currentList);
 

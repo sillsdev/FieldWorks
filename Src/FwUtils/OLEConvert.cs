@@ -26,11 +26,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
-			if (Platform.IsWindows)
-			{
-				return GetIPictureDispFromPicture(image) as IPictureDisp;
-			}
-			return ImagePicture.FromImage(image);
+			return Platform.IsWindows ? GetIPictureDispFromPicture(image) as IPictureDisp : ImagePicture.FromImage(image);
 		}
 
 		/// <summary>

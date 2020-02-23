@@ -49,9 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>test tab</summary>
 		private ConverterTrial _converterTrial;
 		/// <summary>Encoding converters which have not yet been fully defined</summary>
-		private Dictionary<string, EncoderInfo> m_undefinedConverters =
-			new Dictionary<string, EncoderInfo>();
-
+		private Dictionary<string, EncoderInfo> m_undefinedConverters = new Dictionary<string, EncoderInfo>();
 		internal bool m_fOnlyUnicode;
 		internal bool m_outsideDlgChangedCnvtrs;
 		internal bool m_currentlyAdding;
@@ -605,10 +603,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-			get // used by Writing System Properties Dlg
-			{
-				return availableCnvtrsListBox.Text;
-			}
+			get => availableCnvtrsListBox.Text;
 		}
 
 		/// <summary>
@@ -647,10 +642,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-			get
-			{
-				return availableCnvtrsListBox.SelectedIndex;
-			}
+			get => availableCnvtrsListBox.SelectedIndex;
 		}
 
 		/// <summary>
@@ -658,8 +650,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string ConverterName
 		{
-			set { m_cnvtrPropertiesCtrl.txtName.Text = value; }
-			get { return m_cnvtrPropertiesCtrl.txtName.Text.Trim(); }
+			get => m_cnvtrPropertiesCtrl.txtName.Text.Trim();
+			set => m_cnvtrPropertiesCtrl.txtName.Text = value;
 		}
 
 		/// <summary>
@@ -707,20 +699,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void RefreshTabs()
 		{
 			// Check if newly selected EC is valid
-			if (availableCnvtrsListBox.SelectedItem != null)
+			if (availableCnvtrsListBox.SelectedItem == null)
 			{
-				// Loading newly selected EC
-				m_cnvtrPropertiesCtrl.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
-				var fValidEncConverter = m_encConverters.ContainsKey(ConverterName);
-				if (fValidEncConverter)
-				{
-					_converterTrial.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
-					m_advancedEncProps.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
-				}
-				SetUnchanged();
-				// make sure copy is disabled
-				SetStates();
+				return;
 			}
+			// Loading newly selected EC
+			m_cnvtrPropertiesCtrl.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
+			var fValidEncConverter = m_encConverters.ContainsKey(ConverterName);
+			if (fValidEncConverter)
+			{
+				_converterTrial.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
+				m_advancedEncProps.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
+			}
+			SetUnchanged();
+			// make sure copy is disabled
+			SetStates();
 		}
 
 		/// <summary>
@@ -728,30 +721,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void AddCnvtrTabCtrl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (!m_currentlyLoading && m_addCnvtrTabCtrl.SelectedIndex != 0)
+			if (m_currentlyLoading || m_addCnvtrTabCtrl.SelectedIndex == 0)
 			{
-				var returnToIndex = SelectedConverterIndex;
-				var returnToName = ConverterName;
-				if (AutoSave())
+				return;
+			}
+			var returnToIndex = SelectedConverterIndex;
+			var returnToName = ConverterName;
+			if (AutoSave())
+			{
+				// reselect (because it forgets otherwise)
+				if (!string.IsNullOrEmpty(returnToName))
 				{
-					// reselect (because it forgets otherwise)
-					if (!string.IsNullOrEmpty(returnToName))
-					{
-						SelectedConverter = returnToName;
-					}
-					else if (returnToIndex != -1)
-					{
-						SelectedConverterIndex = returnToIndex;
-					}
-					else
-					{
-						SelectedConverterIndex = 0;
-					}
+					SelectedConverter = returnToName;
+				}
+				else if (returnToIndex != -1)
+				{
+					SelectedConverterIndex = returnToIndex;
 				}
 				else
 				{
-					m_addCnvtrTabCtrl.SelectedIndex = 0;
+					SelectedConverterIndex = 0;
 				}
+			}
+			else
+			{
+				m_addCnvtrTabCtrl.SelectedIndex = 0;
 			}
 		}
 

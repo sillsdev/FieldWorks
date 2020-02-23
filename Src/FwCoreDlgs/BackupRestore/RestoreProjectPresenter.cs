@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public bool EmptyProjectName
 		{
-			get { return m_fEmptyProjectName; }
+			get => m_fEmptyProjectName;
 			set
 			{
 				m_fEmptyProjectName = value;
@@ -157,22 +157,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Gets the name of the default project to selected, usually the current project.
 		/// </summary>
-		public string DefaultProjectName
-		{
-			get
-			{
-				if (BackupRepository == null)
-				{
-					return m_restoreProjectView.Settings.Backup.ProjectName;
-				}
-				if (!string.IsNullOrEmpty(m_defaultProjectName) && BackupRepository.AvailableProjectNames.Contains(m_defaultProjectName))
-				{
-					return m_defaultProjectName;
-				}
-
-				return BackupRepository.AvailableProjectNames.FirstOrDefault() ?? string.Empty;
-			}
-		}
+		public string DefaultProjectName =>
+			BackupRepository == null ? m_restoreProjectView.Settings.Backup.ProjectName
+				: !string.IsNullOrEmpty(m_defaultProjectName) && BackupRepository.AvailableProjectNames.Contains(m_defaultProjectName)
+					? m_defaultProjectName
+					: BackupRepository.AvailableProjectNames.FirstOrDefault() ?? string.Empty;
 
 		/// <summary>
 		/// Gets the backup file repository.

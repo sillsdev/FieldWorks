@@ -197,8 +197,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static T DeserializeFromString<T>(string input) where T : class
 		{
-			Exception e;
-			return (DeserializeFromString<T>(input, out e));
+			return DeserializeFromString<T>(input, out _);
 		}
 
 		/// <summary>
@@ -207,8 +206,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static T DeserializeFromString<T>(string input, bool fKeepWhitespaceInElements)
 			where T : class
 		{
-			Exception e;
-			return (DeserializeFromString<T>(input, fKeepWhitespaceInElements, out e));
+			return DeserializeFromString<T>(input, fKeepWhitespaceInElements, out _);
 		}
 
 		/// <summary>
@@ -255,8 +253,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="filename">The filename from which to load</param>
 		public static T DeserializeFromFile<T>(string filename) where T : class
 		{
-			Exception e;
-			return DeserializeFromFile<T>(filename, false, out e);
+			return DeserializeFromFile<T>(filename, false, out _);
 		}
 
 		/// <summary>
@@ -312,25 +309,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// instance containing the event data.</param>
 		private static void deserializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)
 		{
-			if (e.Attr.LocalName == "lang")
+			if (e.Attr.LocalName != "lang")
 			{
-				// This is special handling for the xml:lang attribute that is used to specify
-				// the WS for the current paragraph, run in a paragraph, etc. The XmlTextReader
-				// treats xml:lang as a special case and basically skips over it (but it does
-				// set the current XmlLang to the specified value). This keeps the deserializer
-				// from getting xml:lang as an attribute which keeps us from getting these values.
-				// The fix for this is to look at the object that is being deserialized and,
-				// using reflection, see if it has any fields that have an XmlAttribute looking
-				// for the xml:lang and setting it to the value we get here. (TE-8328)
-				var obj = e.ObjectBeingDeserialized;
-				var type = obj.GetType();
-				foreach (var field in type.GetFields())
+				return;
+			}
+			// This is special handling for the xml:lang attribute that is used to specify
+			// the WS for the current paragraph, run in a paragraph, etc. The XmlTextReader
+			// treats xml:lang as a special case and basically skips over it (but it does
+			// set the current XmlLang to the specified value). This keeps the deserializer
+			// from getting xml:lang as an attribute which keeps us from getting these values.
+			// The fix for this is to look at the object that is being deserialized and,
+			// using reflection, see if it has any fields that have an XmlAttribute looking
+			// for the xml:lang and setting it to the value we get here. (TE-8328)
+			var obj = e.ObjectBeingDeserialized;
+			var type = obj.GetType();
+			foreach (var field in type.GetFields())
+			{
+				var bla = field.GetCustomAttributes(typeof(XmlAttributeAttribute), false);
+				if (bla.Length == 1 && ((XmlAttributeAttribute)bla[0]).AttributeName == "xml:lang")
 				{
-					var bla = field.GetCustomAttributes(typeof(XmlAttributeAttribute), false);
-					if (bla.Length == 1 && ((XmlAttributeAttribute)bla[0]).AttributeName == "xml:lang")
-					{
-						field.SetValue(obj, e.Attr.Value);
-					}
+					field.SetValue(obj, e.Attr.Value);
 				}
 			}
 		}

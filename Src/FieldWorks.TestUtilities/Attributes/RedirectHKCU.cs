@@ -36,15 +36,7 @@ namespace FieldWorks.TestUtilities.Attributes
 			get
 			{
 				var subKey = Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY");
-				if (string.IsNullOrEmpty(subKey))
-				{
-					return string.Empty;
-				}
-				if (subKey.EndsWith("\\"))
-				{
-					return subKey;
-				}
-				return subKey + "\\";
+				return string.IsNullOrEmpty(subKey) ? string.Empty : subKey.EndsWith("\\") ? subKey : subKey + "\\";
 			}
 		}
 
@@ -57,8 +49,7 @@ namespace FieldWorks.TestUtilities.Attributes
 
 			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
-				UIntPtr hKey;
-				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out hKey);
+				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out var hKey);
 				RegOverridePredefKey(HKEY_CURRENT_USER, hKey);
 				RegCloseKey(hKey);
 			}
@@ -69,8 +60,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		{
 			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
-				// End redirection. Otherwise test might fail when we run them multiple
-				// times in NUnit.
+				// End redirection. Otherwise test might fail when we run them multiple times in NUnit.
 				RegOverridePredefKey(HKEY_CURRENT_USER, UIntPtr.Zero);
 			}
 			base.AfterTest(testDetails);

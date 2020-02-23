@@ -126,9 +126,7 @@ namespace SIL.FieldWorks
 			FwUtils.InCrashedState = false;
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
-
-			var pathName = Path.Combine(DirectoryOfThisAssembly, "lib",
-				Environment.Is64BitProcess ? "x64" : "x86");
+			var pathName = Path.Combine(DirectoryOfThisAssembly, "lib", Environment.Is64BitProcess ? "x64" : "x86");
 			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
@@ -442,8 +440,7 @@ namespace SIL.FieldWorks
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			if (LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
 			{
-				MessageBox.Show(LanguageExplorerResources.LiftSRFailureDetectedOnStartupMessage,
-					LanguageExplorerResources.LiftSRFailureDetectedOnStartupTitle,
+				MessageBox.Show(LanguageExplorerResources.LiftSRFailureDetectedOnStartupMessage, LanguageExplorerResources.LiftSRFailureDetectedOnStartupTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 
@@ -480,7 +477,7 @@ namespace SIL.FieldWorks
 			}
 			Debug.Assert(!app.HasBeenFullyInitialized);
 
-			Logger.WriteEvent("Created application: " + app.GetType().Name);
+			Logger.WriteEvent($"Created application: {app.GetType().Name}");
 			return true;
 		}
 
@@ -492,7 +489,7 @@ namespace SIL.FieldWorks
 		{
 			if (!string.IsNullOrEmpty(appArgs.Database))
 			{
-				Logger.WriteEvent(string.Concat("Restoring project: ", appArgs.BackupFile));
+				Logger.WriteEvent($"Restoring project: {appArgs.BackupFile}");
 				RestoreCurrentProject(new FwRestoreProjectSettings(new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, appArgs.Database, appArgs.BackupFile, appArgs.RestoreOptions)), null);
 				return;
 			}
@@ -595,18 +592,7 @@ namespace SIL.FieldWorks
 		/// Gets a value indicating whether FieldWorks can be automatically shut down (as happens
 		/// after 30 minutes when running in server mode).
 		/// </summary>
-		internal static bool ProcessCanBeAutoShutDown
-		{
-			get
-			{
-				if (!s_allowFinalShutdown)
-				{
-					return false; // operation in process without FLEx window open
-				}
-
-				return s_flexApp == null || !s_flexApp.MainWindows.Any();
-			}
-		}
+		internal static bool ProcessCanBeAutoShutDown => !s_allowFinalShutdown || s_flexApp != null && s_flexApp.MainWindows.Any();
 
 		/// <summary>
 		/// Gets or sets a value indicating whether FieldWorks should stay running even when
@@ -1009,7 +995,7 @@ namespace SIL.FieldWorks
 		{
 			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
-				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
+				Logger.WriteEvent($"Unsupported culture: {eventArgs.Exception.Message}");
 				return;
 			}
 
@@ -1090,9 +1076,7 @@ namespace SIL.FieldWorks
 				var strMessage = ResourceHelper.GetResourceString("kstidProgError") + ResourceHelper.GetResourceString("kstidFatalError");
 
 				var strReport = string.Format(ResourceHelper.GetResourceString("kstidGotException"),
-					SupportEmail, exception.Source, Version,
-					ExceptionHelper.GetAllExceptionMessages(exception), innerE.Source,
-					innerE.TargetSite.Name, ExceptionHelper.GetAllStackTraces(exception));
+					SupportEmail, exception.Source, Version, ExceptionHelper.GetAllExceptionMessages(exception), innerE.Source, innerE.TargetSite.Name, ExceptionHelper.GetAllStackTraces(exception));
 				Trace.Assert(false, strMessage, strReport);
 			}
 			catch
@@ -1110,7 +1094,7 @@ namespace SIL.FieldWorks
 			get
 			{
 				var assembly = Assembly.GetEntryAssembly();
-				var attributes = (assembly == null) ? null : assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
+				var attributes = assembly == null ? null : assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
 				return attributes != null && attributes.Length > 0 ? ((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
 			}
 		}
@@ -1133,7 +1117,7 @@ namespace SIL.FieldWorks
 		/// One way we do this is to stop all the mediators we can find from processing messages.
 		/// </summary>
 		/// <returns>True if the exception was lethal and the user chose to exit,
-		/// false otherise</returns>
+		/// false otherwise</returns>
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
 			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
@@ -1245,8 +1229,7 @@ namespace SIL.FieldWorks
 			// If we try to use command-line arguments and it fails, we will use the Welcome dialog
 			// to help the user figure out what to do next.
 			var projId = new ProjectId(args.DatabaseType, args.Database);
-			StartupException projectOpenError;
-			if (TryCommandLineOption(projId, out projectOpenError))
+			if (TryCommandLineOption(projId, out var projectOpenError))
 			{
 				return projId;
 			}
@@ -1276,8 +1259,7 @@ namespace SIL.FieldWorks
 
 			var fOpenLastEditedProject = GetAutoOpenRegistrySetting(app);
 
-			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null &&
-				previousStartupStatus == StartupStatus.Successful)
+			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null && previousStartupStatus == StartupStatus.Successful)
 			{
 				return projId;
 			}
@@ -1312,16 +1294,16 @@ namespace SIL.FieldWorks
 				return false;
 			}
 			var ex = projId.GetExceptionIfInvalid();
-			if (ex is StartupException)
+			switch (ex)
 			{
-				exception = (StartupException)ex;
-				return false; // Invalid command-line arguments supplied.
+				case StartupException startupException:
+					exception = startupException;
+					return false; // Invalid command-line arguments supplied.
+				case null:
+					return true; // If valid command-line arguments are supplied, we go with that.
+				default:
+					throw ex; // Something totally unexpected happened, don't suppress it.
 			}
-			if (ex == null)
-			{
-				return true; // If valid command-line arguments are supplied, we go with that.
-			}
-			throw ex; // Something totally unexpected happened, don't suppress it.
 		}
 
 		/// <summary>
@@ -1343,19 +1325,19 @@ namespace SIL.FieldWorks
 					Logger.WriteEvent("User has decided to quit");
 					return false;
 				}
-				Logger.WriteEvent("User requested project " + projectId.UiName + " for BEP " + projectId.Type);
 
+				Logger.WriteEvent($"User requested project {projectId.UiName} for BEP {projectId.Type}");
 				// Look to see if another FieldWorks process is already running that is for
 				// the requested project. If so, then transfer the request to that process.
 				if (TryFindExistingProcess(projectId, args))
 				{
-					Logger.WriteEvent("Found FieldWorks.exe for project " + projectId.UiName + " for BEP " + projectId.Type);
+					Logger.WriteEvent($"Found FieldWorks.exe for project {projectId.UiName} for BEP {projectId.Type}");
 					return false; // Found another process for this project, so we're done.
 				}
 
 				// Now that we know what project to load and it is openable. Start a new
 				// log file for that project.
-				Logger.WriteEvent("Transferring log to project log file " + projectId.UiName);
+				Logger.WriteEvent($"Transferring log to project log file {projectId.UiName}");
 				Logger.Init(projectId.UiName);
 
 				var app = GetOrCreateApplication(args);
@@ -1409,7 +1391,7 @@ namespace SIL.FieldWorks
 
 			if (TryFindExistingProcess(projectId, new FwAppArgs(projectId.Handle, null, Guid.Empty)))
 			{
-				Logger.WriteEvent("Found existing FieldWorks.exe for project " + projectId.UiName + ". BEP:" + projectId.Type);
+				Logger.WriteEvent($"Found existing FieldWorks.exe for project {projectId.UiName}. BEP:{projectId.Type}");
 				return true; // Found another process for this project, so we're done.
 			}
 
@@ -1437,7 +1419,7 @@ namespace SIL.FieldWorks
 		/// <returns>True if the project was opened, false otherwise</returns>
 		internal static bool OpenProjectWithNewProcess(string projectName, params string[] otherArgs)
 		{
-			Logger.WriteEvent("Starting new FieldWorks.exe process for project " + projectName);
+			Logger.WriteEvent($"Starting new FieldWorks.exe process for project {projectName}");
 			var args = new List<string>
 			{
 				"-" + FwAppArgs.kProject,
@@ -1456,7 +1438,7 @@ namespace SIL.FieldWorks
 		/// <returns>The new process if started, otherwise, null</returns>
 		internal static Process OpenProjectWithRealNewProcess(string projectName, params string[] otherArgs)
 		{
-			Logger.WriteEvent("Starting new FieldWorks.exe process for project " + projectName);
+			Logger.WriteEvent($"Starting new FieldWorks.exe process for project {projectName}");
 			var args = new List<string>
 			{
 				"-" + FwAppArgs.kProject,
@@ -1656,10 +1638,10 @@ namespace SIL.FieldWorks
 							{
 								break;
 							}
-							ObtainedProjectType obtainedProjectType;
-							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
-												 // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType);
+							// If the user cancels the send/receive, this null will result in a return to the welcome dialog.
+							projectToTry = null;
+							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
+							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out var obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
@@ -1702,8 +1684,7 @@ namespace SIL.FieldWorks
 			}
 			while (projectToTry == null || !projectToTry.IsValid);
 
-			Logger.WriteEvent("Project selected in Welcome dialog: " + projectToTry);
-
+			Logger.WriteEvent($"Project selected in Welcome dialog: {projectToTry}");
 			WaitingForUserOrOtherFw = false;
 			return projectToTry;
 		}
@@ -1812,8 +1793,7 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		internal static void DeleteProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
-			var projectsInUse = new HashSet<string>(ProjectsInUseLocally);
-			using (var dlg = new FwDeleteProjectDlg(projectsInUse))
+			using (var dlg = new FwDeleteProjectDlg(new HashSet<string>(ProjectsInUseLocally)))
 			{
 				dlg.SetDialogProperties(helpTopicProvider);
 				dlg.ShowDialog(dialogOwner);
@@ -1869,8 +1849,7 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		internal static void RestoreProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
-			var databaseName = (Cache != null) ? Cache.ProjectId.Name : string.Empty;
-			using (var dlg = new RestoreProjectDlg(databaseName, helpTopicProvider))
+			using (var dlg = new RestoreProjectDlg(Cache != null ? Cache.ProjectId.Name : string.Empty, helpTopicProvider))
 			{
 				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				{
@@ -2040,11 +2019,7 @@ namespace SIL.FieldWorks
 			{
 				b = string.Empty;
 			}
-			if (a.Length > b.Length)
-			{
-				return -1;
-			}
-			return a.Length < b.Length ? 1 : a.CompareTo(b);
+			return a.Length > b.Length ? -1 : a.Length < b.Length ? 1 : a.CompareTo(b);
 		}
 
 		/// <summary>
@@ -2177,16 +2152,9 @@ namespace SIL.FieldWorks
 		/// Return true if a folder belongs to FieldWorks, that is, it is one that we recognize has
 		/// having a proper place in the Projects folder.
 		/// </summary>
-		private static bool IsFieldWorksProjectFolder(string projectFolder)
-		{
-			// If it contains a matching fwdata file it is a project folder.
-			return File.Exists(Path.ChangeExtension(Path.Combine(projectFolder, Path.GetFileName(projectFolder)), LcmFileHelper.ksFwDataXmlFileExtension));
-		}
+		private static bool IsFieldWorksProjectFolder(string projectFolder) => File.Exists(Path.ChangeExtension(Path.Combine(projectFolder, Path.GetFileName(projectFolder)), LcmFileHelper.ksFwDataXmlFileExtension));
 
-		private static bool IsFieldWorksSettingsFolder(string projectFolder)
-		{
-			return Directory.Exists(Path.Combine(projectFolder, LcmFileHelper.ksConfigurationSettingsDir));
-		}
+		private static bool IsFieldWorksSettingsFolder(string projectFolder) => Directory.Exists(Path.Combine(projectFolder, LcmFileHelper.ksConfigurationSettingsDir));
 
 		/// <summary>
 		/// Copies all files and folders in the specified old directory to the specified new
@@ -2418,12 +2386,10 @@ namespace SIL.FieldWorks
 					};
 
 					var backupService = new ProjectBackupService(cache, backupSettings);
-					string backupFile;
-					if (!backupService.BackupProject(progressDlg, out backupFile))
+					if (!backupService.BackupProject(progressDlg, out var backupFile))
 					{
 						var msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName)));
-						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) !=
-							DialogResult.Yes)
+						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 						{
 							File.Delete(backupFile);
 						}
@@ -2434,8 +2400,7 @@ namespace SIL.FieldWorks
 					if (MessageBox.Show(dialogOwner,
 						string.Format(FwCoreDlgs.FwCoreDlgs.ksBackupErrorCreatingZipfile, e.ProjectName, e.Message) +
 						Environment.NewLine + Environment.NewLine + Properties.Resources.ksBackupErrorDuringRestore,
-						FwCoreDlgs.FwCoreDlgs.ksBackupErrorCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) ==
-						DialogResult.No)
+						FwCoreDlgs.FwCoreDlgs.ksBackupErrorCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 					{
 						return false;
 					}
@@ -2636,9 +2601,9 @@ namespace SIL.FieldWorks
 		/// <param name="e">The <see cref="T:System.EventArgs"/> Not used.</param>
 		private static void FwMainWindowActivated(object sender, EventArgs e)
 		{
-			if (sender is IFwMainWnd)
+			if (sender is IFwMainWnd wnd)
 			{
-				s_activeMainWnd = (IFwMainWnd)sender;
+				s_activeMainWnd = wnd;
 			}
 		}
 
@@ -3140,9 +3105,11 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private static void CreateRemoteRequestListener()
 		{
-			IDictionary dict = new Hashtable(2);
-			dict["name"] = "FW App Instance Listener";
-			var maxPort = kStartingPort + 100;
+			IDictionary dict = new Hashtable(2)
+			{
+				["name"] = "FW App Instance Listener"
+			};
+			const int maxPort = kStartingPort + 100;
 			Exception lastException = null;
 			var fFoundAvailablePort = false;
 			for (var port = kStartingPort; !fFoundAvailablePort && port < maxPort; port++)
@@ -3278,10 +3245,8 @@ namespace SIL.FieldWorks
 		{
 			get
 			{
-				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-				var uri = new UriBuilder(codeBase);
-				var path = Uri.UnescapeDataString(uri.Path);
-				return Path.GetDirectoryName(path);
+				var uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
+				return Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
 			}
 		}
 
@@ -3403,9 +3368,7 @@ namespace SIL.FieldWorks
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
 			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
 			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
-			ulong diskSize;
-			ulong diskFree;
-			var cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);
+			var cDisks = MiscUtils.GetDiskDriveStats(out var diskSize, out var diskFree);
 			diskFree /= 1073742;  // 1024*1024*1024/1000 matches drive properties in Windows
 			diskSize /= 1073742;
 			ErrorReporter.AddProperty("LocalDiskCount", cDisks.ToString());
@@ -3513,8 +3476,8 @@ namespace SIL.FieldWorks
 		private static void ExecuteWithAppsShutDown(Func<ProjectId> action)
 		{
 			var allowFinalShutdownOrigValue = s_allowFinalShutdown;
-			s_allowFinalShutdown = false; // don't shutdown when we close all windows!
-
+			// don't shutdown when we close all windows!
+			s_allowFinalShutdown = false;
 			// Now shut down everything (windows, apps, cache, etc.)
 			GracefullyShutDown();
 
@@ -3537,8 +3500,8 @@ namespace SIL.FieldWorks
 					return;
 				}
 
-				Project = null; // Needs to be null in InitializeFirstApp
-
+				// Needs to be null in InitializeFirstApp
+				Project = null;
 				// Restart the default app from which the action was kicked off
 				var app = GetOrCreateApplication(new FwAppArgs(projId.Handle, string.Empty, Guid.Empty));
 				if (!InitializeFirstApp(app, projId))
@@ -3663,12 +3626,7 @@ namespace SIL.FieldWorks
 			}
 
 			var thisProjectId = Project; // Store in temp variable for thread safety
-			if (thisProjectId == null)
-			{
-				return ProjectMatch.DontKnowYet;
-			}
-
-			return thisProjectId.Equals(projectId) ? ProjectMatch.ItsMyProject : ProjectMatch.ItsNotMyProject;
+			return thisProjectId == null ? ProjectMatch.DontKnowYet : thisProjectId.Equals(projectId) ? ProjectMatch.ItsMyProject : ProjectMatch.ItsNotMyProject;
 		}
 
 		/// <summary>
@@ -3761,62 +3719,63 @@ namespace SIL.FieldWorks
 			/// <inheritdoc />
 			bool IFwApplicationSettings.UpdateGlobalWSStore
 			{
-				get { return m_settings.UpdateGlobalWSStore; }
-				set { m_settings.UpdateGlobalWSStore = value; }
+				get => m_settings.UpdateGlobalWSStore;
+				set => m_settings.UpdateGlobalWSStore = value;
 			}
 
 			/// <inheritdoc />
 			ReportingSettings IFwApplicationSettings.Reporting
 			{
-				get { return m_settings.Reporting; }
-				set { m_settings.Reporting = value; }
+				get => m_settings.Reporting;
+				set => m_settings.Reporting = value;
 			}
 
 			/// <inheritdoc />
 			string IFwApplicationSettings.LocalKeyboards
 			{
-				get { return m_settings.LocalKeyboards; }
-				set { m_settings.LocalKeyboards = value; }
+				get => m_settings.LocalKeyboards;
+				set => m_settings.LocalKeyboards = value;
 			}
 
 			/// <inheritdoc />
 			string IFwApplicationSettings.WebonaryUser
 			{
-				get { return m_settings.WebonaryUser; }
-				set { m_settings.WebonaryUser = value; }
+				get => m_settings.WebonaryUser;
+				set => m_settings.WebonaryUser = value;
 			}
 
 			/// <inheritdoc />
 			string IFwApplicationSettings.WebonaryPass
 			{
-				get { return m_settings.WebonaryPass; }
-				set { m_settings.WebonaryPass = value; }
+				get => m_settings.WebonaryPass;
+				set => m_settings.WebonaryPass = value;
 			}
 
 			/// <inheritdoc />
 			void IFwApplicationSettings.UpgradeIfNecessary()
 			{
-				if (m_settings.CallUpgrade)
+				if (!m_settings.CallUpgrade)
 				{
-					// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
-					m_settings.Save();
-					m_settings.Upgrade();
-					var baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
-					if (Directory.Exists(baseConfigFolder))
-					{
-						// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
-						// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
-						var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
-						directoryList.Sort();
-						var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
-						using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
-						{
-							FwUtils.MigrateIfNecessary(stream, this);
-						}
-					}
-					m_settings.CallUpgrade = false;
-					m_settings.Save();
+					return;
 				}
+				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
+				m_settings.Save();
+				m_settings.Upgrade();
+				var baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+				if (Directory.Exists(baseConfigFolder))
+				{
+					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
+					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
+					var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
+					directoryList.Sort();
+					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
+					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+					{
+						FwUtils.MigrateIfNecessary(stream, this);
+					}
+				}
+				m_settings.CallUpgrade = false;
+				m_settings.Save();
 			}
 
 			/// <inheritdoc />

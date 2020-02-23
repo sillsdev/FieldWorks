@@ -65,14 +65,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return InnerListBox.StyleSheet;
-			}
-			set
-			{
-				InnerListBox.StyleSheet = value;
-			}
+			get => InnerListBox.StyleSheet;
+			set => InnerListBox.StyleSheet = value;
 		}
 
 		/// <summary>
@@ -176,10 +170,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </remarks>
 		public override Color BackColor
 		{
-			get
-			{
-				return base.BackColor;
-			}
+			get => base.BackColor;
 			set
 			{
 				InnerListBox.BackColor = value;
@@ -192,10 +183,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Color ForeColor
 		{
-			get
-			{
-				return base.ForeColor;
-			}
+			get => base.ForeColor;
 			set
 			{
 				InnerListBox.ForeColor = value;
@@ -208,10 +196,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public int SelectedIndex
 		{
-			get
-			{
-				return m_selectedIndex;
-			}
+			get => m_selectedIndex;
 			set
 			{
 				if (value < -1 || value >= Items.Count)
@@ -241,10 +226,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public int HighlightedIndex
 		{
-			get
-			{
-				return m_highlightedIndex;
-			}
+			get => m_highlightedIndex;
 			set
 			{
 				if (value < -1 || value >= Items.Count)
@@ -286,14 +268,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public object SelectedItem
 		{
-			get
-			{
-				return GetItem(m_selectedIndex);
-			}
+			get => GetItem(m_selectedIndex);
 			set
 			{
-				int tmpIndex;
-				SetItem(value, out tmpIndex);
+				SetItem(value, out var tmpIndex);
 				// reset the initial highlighted item to this.
 				SelectedIndex = tmpIndex;
 			}
@@ -305,14 +283,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public object HighlightedItem
 		{
-			get
-			{
-				return GetItem(HighlightedIndex);
-			}
+			get => GetItem(HighlightedIndex);
 			set
 			{
-				int tmpIndex;
-				SetItem(value, out tmpIndex);
+				SetItem(value, out var tmpIndex);
 				HighlightedIndex = tmpIndex;
 			}
 		}
@@ -382,10 +356,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITsString SelectedTss
 		{
-			get
-			{
-				return m_selectedIndex < 0 ? null : TextOfItem(Items[m_selectedIndex]);
-			}
+			get => m_selectedIndex < 0 ? null : TextOfItem(Items[m_selectedIndex]);
 			set
 			{
 				if (value == null)
@@ -458,14 +429,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int WritingSystemCode
 		{
-			get
-			{
-				return InnerListBox.WritingSystemCode;
-			}
-			set
-			{
-				InnerListBox.WritingSystemCode = value;
-			}
+			get => InnerListBox.WritingSystemCode;
+			set => InnerListBox.WritingSystemCode = value;
 		}
 
 		/// <summary>
@@ -474,10 +439,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return InnerListBox.WritingSystemFactory;
-			}
+			get => InnerListBox.WritingSystemFactory;
 			set
 			{
 				InnerListBox.WritingSystemFactory = value;
@@ -529,13 +491,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public virtual ITsString TextOfItem(object item)
 		{
 			// Enhance JohnT: use ValueItem and reflection to retrieve specified property.
-			var result = item as ITsString;
-			if (result != null)
+			if (item is ITsString result)
 			{
 				return result;
 			}
-			var tv = item as ITssValue;
-			return tv != null ? tv.AsTss : TsStringUtils.MakeString(item?.ToString() ?? string.Empty, WritingSystemCode);
+			return item is ITssValue tv ? tv.AsTss : TsStringUtils.MakeString(item?.ToString() ?? string.Empty, WritingSystemCode);
 		}
 
 		#region IFwListBox Members

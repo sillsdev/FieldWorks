@@ -13,12 +13,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	{
 		private static bool EqualArrays(int[] expected, int[] actual)
 		{
-			if (expected.Length != actual.Length)
-			{
-				return false;
-			}
-
-			return !expected.Where((t, i) => t != actual[i]).Any();
+			return expected.Length == actual.Length && !expected.Where((t, i) => t != actual[i]).Any();
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 
 			base.Dispose(disposing);
 			IsDisposed = true;
@@ -109,38 +110,23 @@ namespace SIL.FieldWorks.Common.Controls
 		[Browsable(false)]
 		public Graphics Graphics
 		{
-			get
-			{
-				return g_graphics;
-			}
-			set
-			{
-				g_graphics = value;
-			}
+			get => g_graphics;
+			set => g_graphics = value;
 		}
 
 		/// <summary />
 		[Description("Determines the type of line (e.g. etched, solid, etc.)")]
 		public LineTypes LineType
 		{
-			get
-			{
-				return g_LineType;
-			}
-			set
-			{
-				g_LineType = value;
-			}
+			get => g_LineType;
+			set => g_LineType = value;
 		}
 
 		/// <summary />
 		[Description("Determines the thickness of lines of type Solid.")]
 		public int SolidLineThickness
 		{
-			get
-			{
-				return g_dypThickness;
-			}
+			get => g_dypThickness;
 			set
 			{
 				if (g_dypThickness != value)
@@ -155,14 +141,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines the color used to draw lines of type Solid.")]
 		public Color SolidLineColor
 		{
-			get
-			{
-				return g_penSolidLine.Color;
-			}
-			set
-			{
-				g_penSolidLine = new Pen(value, this.SolidLineThickness);
-			}
+			get => g_penSolidLine.Color;
+			set => g_penSolidLine = new Pen(value, SolidLineThickness);
 		}
 
 		/// <summary>
@@ -171,14 +151,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines the start location for the line.")]
 		public Point StartLocation
 		{
-			get
-			{
-				return g_StartLocation;
-			}
-			set
-			{
-				g_StartLocation = value;
-			}
+			get => g_StartLocation;
+			set => g_StartLocation = value;
 		}
 
 		/// <summary>
@@ -187,14 +161,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("Determines the end location for the line.")]
 		public Point EndLocation
 		{
-			get
-			{
-				return g_EndLocation;
-			}
-			set
-			{
-				g_EndLocation = value;
-			}
+			get => g_EndLocation;
+			set => g_EndLocation = value;
 		}
 
 		#endregion
@@ -291,20 +259,17 @@ namespace SIL.FieldWorks.Common.Controls
 			// Can't draw without a graphics object.
 			if (g_graphics == null)
 			{
-				throw (new ArgumentNullException());
+				throw new ArgumentNullException();
 			}
-
-			Point tmpEnd = new Point(g_EndLocation.X, g_EndLocation.Y + 1);
+			var tmpEnd = new Point(g_EndLocation.X, g_EndLocation.Y + 1);
 			switch (g_LineType)
 			{
 				case LineTypes.Etched:
 				case LineTypes.Raised:
 					g_graphics.DrawLine((g_LineType == LineTypes.Etched ? g_penDarkLine : g_penLightLine), g_StartLocation, g_EndLocation);
 					var tmpStart = new Point(g_StartLocation.X, g_StartLocation.Y + 1);
-
 					g_graphics.DrawLine((g_LineType == LineTypes.Etched ? g_penLightLine : g_penDarkLine), tmpStart, tmpEnd);
 					break;
-
 				case LineTypes.Solid:
 					g_graphics.DrawLine(g_penSolidLine, g_StartLocation, g_EndLocation);
 					break;

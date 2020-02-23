@@ -51,8 +51,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Give the label at the bottom of the list slightly different background from
 			// the background color of the rest of the list.
 			var clr = m_NumberOfUndoes.BackColor;
-			clr = Color.FromArgb(Math.Abs(clr.R - 15), Math.Abs(clr.G - 15), Math.Abs(clr.B - 15));
-			m_NumberOfUndoes.BackColor = clr;
+			m_NumberOfUndoes.BackColor = Color.FromArgb(Math.Abs(clr.R - 15), Math.Abs(clr.G - 15), Math.Abs(clr.B - 15));
 		}
 
 		/// <summary />

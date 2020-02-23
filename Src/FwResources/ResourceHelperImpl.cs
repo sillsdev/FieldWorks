@@ -59,8 +59,8 @@ namespace SIL.FieldWorks.Resources
 
 		protected static ResourceHelperImpl Helper
 		{
-			get { return ResourceHelper.Helper; }
-			set { ResourceHelper.Helper = value; }
+			get => ResourceHelper.Helper;
+			set => ResourceHelper.Helper = value;
 		}
 	}
 }

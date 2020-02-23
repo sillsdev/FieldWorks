@@ -751,9 +751,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// given their projects non-ASCII names to change other project properties without having to change their project names)
 			if (!OriginalProjectName.Equals(m_txtProjName.Text))
 			{
-				string errorMessage;
 				var projectName = m_txtProjName.Text;
-				if (!FwNewLangProjectModel.CheckForSafeProjectName(ref projectName, out errorMessage))
+				if (!FwNewLangProjectModel.CheckForSafeProjectName(ref projectName, out var errorMessage))
 				{
 					MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
@@ -766,8 +765,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
-			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0
-							  && (OriginalProjectName.Equals(m_txtProjName.Text) || FwNewLangProjectModel.CheckForUniqueProjectName(m_txtProjName.Text));
+			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0 && (OriginalProjectName.Equals(m_txtProjName.Text) || FwNewLangProjectModel.CheckForUniqueProjectName(m_txtProjName.Text));
 			m_lblProjName.Text = m_txtProjName.Text;
 		}
 

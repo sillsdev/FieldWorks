@@ -55,17 +55,9 @@ namespace SIL.FieldWorks
 
 		private static bool IsWindows7OrEarlier()
 		{
-			var os = Environment.OSVersion;
-			if (os.Platform != PlatformID.Win32NT)
-			{
-				return false;
-			}
 			// Windows 7 is 6.1; Windows 8 is 6.2
-			if (os.Version.Major > 6)
-			{
-				return false;
-			}
-			return os.Version.Major != 6 || os.Version.Minor <= 1;
+			var os = Environment.OSVersion;
+			return os.Platform == PlatformID.Win32NT && os.Version.Major <= 6 && (os.Version.Major != 6 || os.Version.Minor <= 1);
 		}
 
 		/// <summary>

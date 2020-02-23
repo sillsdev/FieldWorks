@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		public override Color ForeColor
 		{
-			get { return base.ForeColor; }
+			get => base.ForeColor;
 			set
 			{
 				base.ForeColor = value;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("If set the line will display as linear gradient")]
 		public Color ForeColor2
 		{
-			get { return m_foreColor2; }
+			get => m_foreColor2;
 			set
 			{
 				m_foreColor2 = value;
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Description("The linear gradient mode if ForeColor2 is set")]
 		public LinearGradientMode LinearGradientMode
 		{
-			get { return m_gradientMode; }
+			get => m_gradientMode;
 			set
 			{
 				m_gradientMode = value;
@@ -95,15 +95,9 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_brush == null)
 				{
-					if (m_foreColor2 == Color.Transparent)
-					{
-						m_brush = new SolidBrush(ForeColor);
-					}
-					else
-					{
-						m_brush = new LinearGradientBrush(new Rectangle(0, 0, WidthForBrush, HeightForBrush), ForeColor, ForeColor2, m_gradientMode);
-					}
-
+					m_brush = m_foreColor2 == Color.Transparent
+						? (Brush)new SolidBrush(ForeColor)
+						: new LinearGradientBrush(new Rectangle(0, 0, WidthForBrush, HeightForBrush), ForeColor, ForeColor2, m_gradientMode);
 					Invalidate();
 				}
 				return m_brush;

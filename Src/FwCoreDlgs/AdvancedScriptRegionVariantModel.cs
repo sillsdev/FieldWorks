@@ -40,24 +40,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				variants += OtherVariants;
 			}
 
-			IEnumerable<VariantSubtag> varaintList;
-			if (IetfLanguageTag.TryGetVariantSubtags(variants, out varaintList))
-			{
-				return varaintList;
-			}
-			return null;
+			return IetfLanguageTag.TryGetVariantSubtags(variants, out var variantList) ? variantList : null;
 		}
 
-		private CoreWritingSystemDefinition CurrentWs
-		{
-			get { return _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs; }
-		}
+		private CoreWritingSystemDefinition CurrentWs => _model.WorkingList[_model.CurrentWritingSystemIndex].WorkingWs;
 
 		/// <summary/>
 		public string Abbreviation
 		{
-			get { return _model.CurrentWsSetupModel.CurrentAbbreviation; }
-			set { _model.CurrentWsSetupModel.CurrentAbbreviation = value; }
+			get => _model.CurrentWsSetupModel.CurrentAbbreviation;
+			set => _model.CurrentWsSetupModel.CurrentAbbreviation = value;
 		}
 
 		/// <summary/>
@@ -70,15 +62,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public string Code {
-			get { return CurrentWs.LanguageTag; }
+			get => CurrentWs.LanguageTag;
 			set
 			{
 				ChangeCode -= ChangeCodeValue;
-				LanguageSubtag language;
-				ScriptSubtag script;
-				RegionSubtag region;
-				IEnumerable<VariantSubtag> variants;
-				if (IetfLanguageTag.TryGetSubtags(value, out language, out script, out region, out variants))
+				if (IetfLanguageTag.TryGetSubtags(value, out _, out var script, out var region, out var variants))
 				{
 					if (script != null)
 					{
@@ -112,7 +100,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public ScriptListItem Script
 		{
-			get { return _script; }
+			get => _script;
 			set
 			{
 				_script = value;
@@ -130,7 +118,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string ScriptName
 		{
-			get { return CurrentWs.Script?.Name; }
+			get => CurrentWs.Script?.Name;
 			set
 			{
 				if (CurrentWs.Script != null)
@@ -147,7 +135,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string ScriptCode
 		{
-			get { return CurrentWs?.Script?.Code; }
+			get => CurrentWs?.Script?.Code;
 			set
 			{
 				if (value == null)
@@ -162,8 +150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_script = new ScriptListItem(updatedTag);
 					return;
 				}
-				ScriptSubtag registeredScript = null;
-				if (StandardSubtags.RegisteredScripts.TryGet(value, out registeredScript))
+				if (StandardSubtags.RegisteredScripts.TryGet(value, out var registeredScript))
 				{
 					CurrentWs.Script = registeredScript;
 				}
@@ -185,7 +172,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string RegionName
 		{
-			get { return CurrentWs.Region?.Name; }
+			get => CurrentWs.Region?.Name;
 			set
 			{
 				if (CurrentWs.Region != null)
@@ -202,7 +189,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public RegionListItem Region
 		{
-			get { return _region; }
+			get => _region;
 			set
 			{
 				// We don't want to lose the RegionCode and RegionName if the user picks "QM" and already have a custom region set
@@ -223,7 +210,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string RegionCode
 		{
-			get { return CurrentWs?.Region?.Code; }
+			get => CurrentWs?.Region?.Code;
 			set
 			{
 				if (value == null)
@@ -239,16 +226,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_region = new RegionListItem(updatedTag);
 					return;
 				}
-				RegionSubtag registeredRegion = null;
-				if (StandardSubtags.RegisteredRegions.TryGet(value, out registeredRegion))
-				{
-					CurrentWs.Region = registeredRegion;
-				}
-				else
-				{
-					var updatedTag = new RegionSubtag(value, RegionName);
-					CurrentWs.Region = updatedTag;
-				}
+				CurrentWs.Region = StandardSubtags.RegisteredRegions.TryGet(value, out var registeredRegion) ? registeredRegion : new RegionSubtag(value, RegionName);
 			}
 		}
 
@@ -299,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				var otherVariantCodes = string.Empty;
 
-				bool foundPrivateUse = false;
+				var foundPrivateUse = false;
 				foreach (var variant in otherVariants)
 				{
 					if (!foundPrivateUse && variant.IsPrivateUse)
@@ -315,8 +293,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			set
 			{
-				IEnumerable<VariantSubtag> otherVariants;
-				IetfLanguageTag.TryGetVariantSubtags(value, out otherVariants);
+				IetfLanguageTag.TryGetVariantSubtags(value, out var otherVariants);
 				var otherVariantList = new List<VariantSubtag>(otherVariants);
 				var firstVariant = CurrentWs.Variants.FirstOrDefault();
 				if (firstVariant != null && !firstVariant.IsPrivateUse)
@@ -417,28 +394,39 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			public bool Equals(ScriptListItem other)
 			{
-				if (ReferenceEquals(null, other)) return false;
-				if (ReferenceEquals(this, other)) return true;
-				if (_script == null != (other._script == null))
+				if (ReferenceEquals(null, other))
+				{
 					return false;
-				if (_script == null && other._script == null)
+				}
+				if (ReferenceEquals(this, other))
+				{
 					return true;
-				return _script.IsPrivateUse == other.IsPrivateUse && _script.Code == other.Code && _script.Name == other.Name;
+				}
+				return _script == null == (other._script == null) &&
+					   (_script == null && other._script == null ||
+						_script.IsPrivateUse == other.IsPrivateUse &&
+						_script.Code == other.Code &&
+						_script.Name == other.Name);
 			}
 
 			/// <summary/>
 			public override bool Equals(object obj)
 			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != this.GetType()) return false;
-				return Equals((ScriptListItem)obj);
+				if (ReferenceEquals(null, obj))
+				{
+					return false;
+				}
+				if (ReferenceEquals(this, obj))
+				{
+					return true;
+				}
+				return obj.GetType() == GetType() && Equals((ScriptListItem)obj);
 			}
 
 			/// <summary/>
 			public override int GetHashCode()
 			{
-				return (_script != null ? _script.GetHashCode() : 0);
+				return _script != null ? _script.GetHashCode() : 0;
 			}
 
 			/// <summary>Allow cast of a ScriptListItem to a ScriptSubtag</summary>
@@ -469,7 +457,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			public string Code => _region?.Code;
 
 			/// <summary/>
-			public string Label => _region == null ? "None" : string.Format("{0} ({1})", _region.Name, _region.Code);
+			public string Label => _region == null ? "None" : $"{_region.Name} ({_region.Code})";
 
 			/// <summary>Allow cast of a RegionListItem to a RegionSubtag</summary>
 			public static implicit operator RegionSubtag(RegionListItem item)
@@ -480,9 +468,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			public bool Equals(RegionListItem other)
 			{
-				if (ReferenceEquals(null, other)) return false;
-				if (ReferenceEquals(this, other)) return true;
-				return Equals(_region, other._region);
+				return !ReferenceEquals(null, other) && (ReferenceEquals(this, other) || Equals(_region, other._region));
 			}
 
 			/// <summary/>
@@ -490,14 +476,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (ReferenceEquals(null, obj)) return false;
 				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != this.GetType()) return false;
-				return Equals((RegionListItem)obj);
+				return obj.GetType() == GetType() && Equals((RegionListItem)obj);
 			}
 
 			/// <summary/>
 			public override int GetHashCode()
 			{
-				return (_region != null ? _region.GetHashCode() : 0);
+				return _region != null ? _region.GetHashCode() : 0;
 			}
 		}
 
@@ -528,8 +513,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public bool ValidateOtherVariants(string otherVariants)
 		{
-			IEnumerable<VariantSubtag> tags;
-			return !otherVariants.EndsWith("-") && IetfLanguageTag.TryGetVariantSubtags(otherVariants, out tags);
+			return !otherVariants.EndsWith("-") && IetfLanguageTag.TryGetVariantSubtags(otherVariants, out _);
 		}
 
 		/// <summary/>
@@ -547,17 +531,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public bool ValidateIetfCode(string text)
 		{
-			string language;
-			string script;
-			string region;
-			string variant;
-			if (IetfLanguageTag.TryGetParts(_model.CurrentWsSetupModel?.CurrentLanguageTag, out language, out script, out region,
-				out variant))
-			{
-
-				return text.StartsWith(language) && IetfLanguageTag.IsValid(text);
-			}
-			throw new ApplicationException("Invalid code stored in the model");
+			return IetfLanguageTag.TryGetParts(_model.CurrentWsSetupModel?.CurrentLanguageTag, out var language, out _, out _, out _)
+				? text.StartsWith(language) && IetfLanguageTag.IsValid(text) : throw new ApplicationException("Invalid code stored in the model");
 		}
 	}
 }

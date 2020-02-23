@@ -4,7 +4,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public string BackupZipFile
 		{
-			get { return m_lblBackupZipFile.Text; }
+			get => m_lblBackupZipFile.Text;
 			set
 			{
 				if (m_lblBackupZipFile.Text != value)
@@ -143,10 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		private string TargetProjectName
 		{
-			get
-			{
-				return m_rdoUseOriginalName.Checked ? Settings.Backup.ProjectName : m_txtOtherProjectName.Text.Normalize();
-			}
+			get => m_rdoUseOriginalName.Checked ? Settings.Backup.ProjectName : m_txtOtherProjectName.Text.Normalize();
 			set
 			{
 				if (value == Settings.Backup.ProjectName)
@@ -173,8 +169,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///</summary>
 		public bool LinkedFiles
 		{
-			get { return m_linkedFiles.Checked; }
-			set { m_linkedFiles.Checked = value; }
+			get => m_linkedFiles.Checked;
+			set => m_linkedFiles.Checked = value;
 		}
 
 		///<summary>
@@ -182,8 +178,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///</summary>
 		public bool SupportingFiles
 		{
-			get { return m_supportingFiles.Checked; }
-			set { m_supportingFiles.Checked = value; }
+			get => m_supportingFiles.Checked;
+			set => m_supportingFiles.Checked = value;
 		}
 
 		///<summary>
@@ -191,8 +187,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///</summary>
 		public bool SpellCheckAdditions
 		{
-			get { return m_spellCheckAdditions.Checked; }
-			set { m_spellCheckAdditions.Checked = value; }
+			get => m_spellCheckAdditions.Checked;
+			set => m_spellCheckAdditions.Checked = value;
 		}
 
 		/// <summary>
@@ -503,9 +499,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				case 1: // Ctrl-A (select all)
 					return;
 			}
-			string errorMessage;
 			var character = e.KeyChar.ToString();
-			if (!FwNewLangProjectModel.CheckForSafeProjectName(ref character, out errorMessage))
+			if (!FwNewLangProjectModel.CheckForSafeProjectName(ref character, out var errorMessage))
 			{
 				MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				e.Handled = true; // This will cause the character NOT to be entered.

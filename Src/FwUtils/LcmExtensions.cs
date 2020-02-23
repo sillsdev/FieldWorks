@@ -79,8 +79,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				displayNameOfClass = className;
 			}
 			string alternateDisplayName;
-			var featureSystem = me.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
-			if (featureSystem != null)
+			if (me.OwnerOfClass(FsFeatureSystemTags.kClassId) is IFsFeatureSystem featureSystem)
 			{
 				var searchSpace = featureSystem.OwningFlid == LangProjectTags.kflidPhFeatureSystem ? "Phonological" : "List";
 				alternateDisplayName = StringTable.Table.GetString($"Feature-{searchSpace}", StringTable.AlternativeTypeNames);
@@ -170,8 +169,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				else
 				{
-					foreach (var para in me.ParagraphsOS.Cast<IStTxtPara>().Where(
-						para => !para.ParseIsCurrent))
+					foreach (var para in me.ParagraphsOS.Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent))
 					{
 						pp.Parse(para);
 					}
@@ -209,9 +207,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var itemsTypeName = StringTable.Table.GetString(listName, StringTable.PossibilityListItemTypeNames);
 			return itemsTypeName != AddAsteriskBrackets(listName)
 				? itemsTypeName
-				: (me.PossibilitiesOS.Any()
+				: me.PossibilitiesOS.Any()
 					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, StringTable.ClassNames)
-					: itemsTypeName);
+					: itemsTypeName;
 		}
 
 		public static List<ICmPossibility> AllPossibilities(this ICmPossibilityList me)

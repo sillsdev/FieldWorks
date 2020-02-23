@@ -25,9 +25,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void ConfigureVernacularClick(object sender, System.EventArgs e)
 		{
-			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer,
-				FwWritingSystemSetupModel.ListType.Vernacular,
-				_model.WritingSystemManager);
+			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer, FwWritingSystemSetupModel.ListType.Vernacular, _model.WritingSystemManager);
 			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel, _helpTopicProvider))
 			{
 				wsDlg.ShowDialog(this);
@@ -36,8 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void ConfigureAnalysisClick(object sender, System.EventArgs e)
 		{
-			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer, FwWritingSystemSetupModel.ListType.Analysis,
-				_model.WritingSystemManager);
+			var wsSetupModel = new FwWritingSystemSetupModel(_model.WritingSystemContainer, FwWritingSystemSetupModel.ListType.Analysis, _model.WritingSystemManager);
 			using (var wsDlg = new FwWritingSystemSetupDlg(wsSetupModel, _helpTopicProvider))
 			{
 				wsDlg.ShowDialog(this);

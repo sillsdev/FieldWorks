@@ -33,10 +33,7 @@ namespace GenerateHCConfig
 
 		public string Handle => Name;
 
-		public string PipeHandle
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public string PipeHandle => throw new NotSupportedException();
 
 		public string Name => System.IO.Path.GetFileNameWithoutExtension(Path);
 

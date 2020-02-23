@@ -49,17 +49,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsTrue(m_hvoEnglishWs != m_hvoGermanWs, "Writing systems should have different IDs");
 
 			// Create a couple of styles
-			int hvoStyle = m_stylesheet.MakeNewStyle();
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			var hvoStyle = m_stylesheet.MakeNewStyle();
+			var propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Arial");
-			m_stylesheet.PutStyle("StyleA", "bla", hvoStyle, 0, hvoStyle, 1, false, false,
-				propsBldr.GetTextProps());
 
+			m_stylesheet.PutStyle("StyleA", "bla", hvoStyle, 0, hvoStyle, 1, false, false, propsBldr.GetTextProps());
 			hvoStyle = m_stylesheet.MakeNewStyle();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Times New Roman");
-			m_stylesheet.PutStyle("StyleB", "bla", hvoStyle, 0, hvoStyle, 1, false, false,
-				propsBldr.GetTextProps());
 
+			m_stylesheet.PutStyle("StyleB", "bla", hvoStyle, 0, hvoStyle, 1, false, false, propsBldr.GetTextProps());
 			// Override the font size for each writing system and each style.
 			var fontOverrides = new List<FontOverride>(2);
 			FontOverride fo;

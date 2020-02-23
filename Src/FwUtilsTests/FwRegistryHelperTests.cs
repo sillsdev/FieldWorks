@@ -53,31 +53,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void AssertRegistryValuePresent(RegistryKey key, string subKey, string entryName)
 		{
-			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out _), "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 		}
 
 		private static void AssertRegistryValueNotPresent(RegistryKey key, string subKey, string entryName)
 		{
-			object valueObject;
-			Assert.IsFalse(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected absence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.IsFalse(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out _), "Expected absence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 		}
 
 		private static void AssertRegistryStringValueEquals(RegistryKey key, string subKey, string entryName, string expectedValue)
 		{
-			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out var valueObject), "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 			Assert.AreEqual(expectedValue, (string)valueObject);
 		}
 
 		private static void AssertRegistryIntValueEquals(RegistryKey key, string subKey, string entryName, int expectedValue)
 		{
-			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out var valueObject), "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 			Assert.AreEqual(expectedValue, (int)valueObject);
 		}
 

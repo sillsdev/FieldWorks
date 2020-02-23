@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.PaObjects
@@ -15,34 +16,24 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShouldWait(string name, string server)
 		{
 			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name));
-			return (matchStatus == ProjectMatch.DontKnowYet ||
-					matchStatus == ProjectMatch.WaitingForUserOrOtherFw ||
-					matchStatus == ProjectMatch.SingleProcessMode);
+			return matchStatus == ProjectMatch.DontKnowYet
+				   || matchStatus == ProjectMatch.WaitingForUserOrOtherFw
+				   || matchStatus == ProjectMatch.SingleProcessMode;
 		}
 
 		/// <summary />
-		public bool IsMyProject(string name, string server)
-		{
-			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name));
-			return (matchStatus == ProjectMatch.ItsMyProject);
-		}
+		public bool IsMyProject(string name, string server) => FieldWorks.GetProjectMatchStatus(new ProjectId(name)) == ProjectMatch.ItsMyProject;
 
 		/// <summary />
-		public string GetWritingSystems()
-		{
-			return PaWritingSystem.GetWritingSystemsAsXml(FieldWorks.Cache.ServiceLocator);
-		}
+		public string GetWritingSystems() => PaWritingSystem.GetWritingSystemsAsXml(FieldWorks.Cache.ServiceLocator);
 
 		/// <summary />
-		public string GetLexEntries()
-		{
-			return PaLexEntry.GetAllAsXml(FieldWorks.Cache.ServiceLocator);
-		}
+		public string GetLexEntries() => PaLexEntry.GetAllAsXml(FieldWorks.Cache.ServiceLocator);
 
 		/// <summary />
 		public void ExitProcess()
 		{
-			System.Windows.Forms.Application.Exit();
+			Application.Exit();
 		}
 	}
 }

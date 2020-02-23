@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -180,56 +181,32 @@ namespace SIL.FieldWorks.Common.Controls
 		[Browsable(false)]
 		public new bool CheckBoxes
 		{
-			get
-			{
-				return base.CheckBoxes;
-			}
-			set
-			{
-				base.CheckBoxes = value;
-			}
+			get => base.CheckBoxes;
+			set => base.CheckBoxes = value;
 		}
 
 		/// <summary />
 		[Browsable(false)]
 		public new int ImageIndex
 		{
-			get
-			{
-				return base.ImageIndex;
-			}
-			set
-			{
-				base.ImageIndex = value;
-			}
+			get => base.ImageIndex;
+			set => base.ImageIndex = value;
 		}
 
 		/// <summary />
 		[Browsable(false)]
 		public new ImageList ImageList
 		{
-			get
-			{
-				return base.ImageList;
-			}
-			set
-			{
-				base.ImageList = value;
-			}
+			get => base.ImageList;
+			set => base.ImageList = value;
 		}
 
 		/// <summary />
 		[Browsable(false)]
 		public new int SelectedImageIndex
 		{
-			get
-			{
-				return base.SelectedImageIndex;
-			}
-			set
-			{
-				base.SelectedImageIndex = value;
-			}
+			get => base.SelectedImageIndex;
+			set => base.SelectedImageIndex = value;
 		}
 		#endregion
 
@@ -314,12 +291,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return;
 			}
-			var state = GetChecked(node.FirstNode);
-			foreach (TreeNode child in node.Nodes)
-			{
-				state |= GetChecked(child);
-			}
-			if (InternalSetChecked(node, state))
+			if (InternalSetChecked(node, node.Nodes.Cast<TreeNode>().Aggregate(GetChecked(node.FirstNode), (current, child) => current | GetChecked(child))))
 			{
 				ChangeParent(node.Parent);
 			}

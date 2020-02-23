@@ -74,14 +74,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void OnEnter(object sender, EventArgs e)
 		{
-			var maxStringLength = 0;
-			foreach (var item in Items)
-			{
-				if (item.ToString().Length > maxStringLength)
-				{
-					maxStringLength = item.ToString().Length;
-				}
-			}
+			var maxStringLength = Items.Cast<object>().Select(item => item.ToString().Length).Concat(new[] { 0 }).Max();
 			const int factor = 6;
 			var maxwidth = maxStringLength * factor;
 			if (maxStringLength > 0 && DropDownWidth < maxwidth)

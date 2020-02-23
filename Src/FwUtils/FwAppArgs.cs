@@ -45,9 +45,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string kChooseProject = "chooseProject";
 		#endregion
 
-		#region Member variables
-		#endregion
-
 		#region Properties
 
 		/// <summary>
@@ -193,8 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public override bool EssentiallyEquals(FwLinkArgs lnk)
 		{
-			var appArgs = lnk as FwAppArgs;
-			return appArgs != null && base.EssentiallyEquals(lnk) && appArgs.Database == Database;
+			return lnk is FwAppArgs appArgs && base.EssentiallyEquals(lnk) && appArgs.Database == Database;
 		}
 		#endregion
 

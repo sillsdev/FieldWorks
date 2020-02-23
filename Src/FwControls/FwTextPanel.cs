@@ -4,7 +4,9 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -31,7 +33,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			base.Dispose(disposing);
 		}
 
@@ -74,7 +76,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Browsable(true)]
 		public override string Text
 		{
-			get { return base.Text; }
+			get => base.Text;
 			set
 			{
 				base.Text = value;
@@ -104,7 +106,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TextFormatFlags TextFormatFlags
 		{
-			get { return m_txtFmtFlags; }
+			get => m_txtFmtFlags;
 			set
 			{
 				m_txtFmtFlags = value;
@@ -124,19 +126,12 @@ namespace SIL.FieldWorks.Common.Controls
 		private void CalculateTextRectangle()
 		{
 			m_rcText = ClientRectangle;
-
 			if (ClipTextForChildControls)
 			{
-				var rightExtent = m_rcText.Right;
-				foreach (Control child in Controls)
-				{
-					rightExtent = Math.Min(rightExtent, child.Left);
-				}
-
+				var rightExtent = (from Control child in Controls select child.Left).Concat(new[] { m_rcText.Right }).Min();
 				if (rightExtent != m_rcText.Right && m_rcText.Contains(new Point(rightExtent, m_rcText.Top + m_rcText.Height / 2)))
 				{
-					m_rcText.Width -= (m_rcText.Right - rightExtent);
-
+					m_rcText.Width -= m_rcText.Right - rightExtent;
 					// Give a bit more to account for the
 					if ((m_txtFmtFlags & TextFormatFlags.LeftAndRightPadding) > 0)
 					{

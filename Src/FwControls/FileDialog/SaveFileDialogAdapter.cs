@@ -20,15 +20,15 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <inheritdoc />
 		public bool CreatePrompt
 		{
-			get { return ((ISaveFileDialog)m_dlg).CreatePrompt; }
-			set { ((ISaveFileDialog)m_dlg).CreatePrompt = value; }
+			get => ((ISaveFileDialog)m_dlg).CreatePrompt;
+			set => ((ISaveFileDialog)m_dlg).CreatePrompt = value;
 		}
 
 		/// <inheritdoc />
 		public bool OverwritePrompt
 		{
-			get { return ((ISaveFileDialog)m_dlg).OverwritePrompt; }
-			set { ((ISaveFileDialog)m_dlg).OverwritePrompt = value; }
+			get => ((ISaveFileDialog)m_dlg).OverwritePrompt;
+			set => ((ISaveFileDialog)m_dlg).OverwritePrompt = value;
 		}
 
 		/// <inheritdoc />

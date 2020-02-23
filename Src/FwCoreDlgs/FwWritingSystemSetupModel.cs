@@ -203,8 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public WritingSystemSetupModel CurrentWsSetupModel
 		{
-			get { return _currentWsSetupModel; }
-
+			get => _currentWsSetupModel;
 			private set
 			{
 				_currentWsSetupModel = value;
@@ -238,13 +237,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool ShowAdvancedScriptRegionVariantView
 		{
-			get
-			{
-				return _showAdvancedView || _currentWs.Language.IsPrivateUse ||
-					_currentWs.Script != null && _currentWs.Script.IsPrivateUse ||
-					_currentWs.Region != null && _currentWs.Region.IsPrivateUse ||
-					_currentWs.Variants.Count > 1 && !_currentWs.Variants.First().IsPrivateUse;
-			}
+			get => _showAdvancedView || _currentWs.Language.IsPrivateUse || _currentWs.Script != null && _currentWs.Script.IsPrivateUse
+				   || _currentWs.Region != null && _currentWs.Region.IsPrivateUse || _currentWs.Variants.Count > 1 && !_currentWs.Variants.First().IsPrivateUse;
 			set
 			{
 				if (ShowAdvancedScriptRegionVariantView && !_currentWs.Language.IsPrivateUse && ConfirmClearAdvanced())
@@ -411,7 +405,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string LanguageName
 		{
-			get { return _languageName; }
+			get => _languageName;
 			set
 			{
 				if (!string.IsNullOrEmpty(value) && value != _languageName)
@@ -434,7 +428,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public string EthnologueLabel => $"Ethnologue entry for {LanguageCode}";
 
 		/// <summary/>
-		public string EthnologueLink => string.Format("https://www.ethnologue.com/show_language.asp?code={0}", LanguageCode);
+		public string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
 
 		/// <summary/>
 		public int CurrentWritingSystemIndex => WorkingList.FindIndex(ws => ws.WorkingWs == _currentWs);
@@ -447,8 +441,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowMessageBox(FwCoreDlgs.kstidCantChangeEnglishWS);
 				return;
 			}
-			LanguageInfo info;
-			if (ShowChangeLanguage(out info))
+
+			if (ShowChangeLanguage(out var info))
 			{
 				if (WorkingList.Exists(ws => ws.WorkingWs.LanguageTag == info.LanguageTag))
 				{
@@ -456,11 +450,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					return;
 				}
 				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				LanguageSubtag languageSubtag;
-				ScriptSubtag scriptSubtag;
-				RegionSubtag regionSubtag;
-				IEnumerable<VariantSubtag> variantSubtags;
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _))
 				{
 					return;
 				}
@@ -491,8 +481,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private bool CheckChangingWSForSRProject()
 		{
-			var hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache?.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache?.ProjectId);
-			return !hasFlexOrLiftRepo || WorkingList.Where(ws => ws.OriginalWs != null).Where(ws => ws.WorkingWs.LanguageTag != ws.OriginalWs.LanguageTag).Any(ws => AcceptSharedWsChangeWarning(ws.OriginalWs.LanguageName));
+			return !(FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache?.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache?.ProjectId)) || WorkingList.Where(ws => ws.OriginalWs != null).Where(ws => ws.WorkingWs.LanguageTag != ws.OriginalWs.LanguageTag).Any(ws => AcceptSharedWsChangeWarning(ws.OriginalWs.LanguageName));
 		}
 
 		/// <summary>
@@ -673,13 +662,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void DeleteWritingSystems(
-			ICollection<CoreWritingSystemDefinition> currentWritingSystems,
-			ICollection<CoreWritingSystemDefinition> allWritingSystems,
-			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
-			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
+		private void DeleteWritingSystems(ICollection<CoreWritingSystemDefinition> currentWritingSystems, ICollection<CoreWritingSystemDefinition> allWritingSystems,
+			ICollection<CoreWritingSystemDefinition> otherWritingSystems, IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
 		{
-			var atLeastOneDeleted = false;
 			// Delete any writing systems that were removed from the active list and are not present in the other list
 			var deletedWsIds = new List<string>();
 			var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
@@ -693,10 +678,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
-					atLeastOneDeleted = true;
 				}
 			}
-			if (deletedWsIds.Count > 0)
+			if (deletedWsIds.Any())
 			{
 				_publisher?.Publish("WritingSystemDeleted", deletedWsIds.ToArray());
 			}
@@ -749,8 +733,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void MergeWritingSystem(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition mergeWithWsId;
-			if (!ConfirmMergeWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel, out mergeWithWsId))
+			if (!ConfirmMergeWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel, out var mergeWithWsId))
 			{
 				return;
 			}
@@ -772,9 +755,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CurrentWsListChanged = true;
 			}
-			if (otherList.Contains(_currentWs) || // will be hidden, not deleted
-				IsCurrentWsNew() || // it hasn't been created yet, so it has no data
-				ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
+			if (otherList.Contains(_currentWs) // will be hidden, not deleted
+				|| IsCurrentWsNew() // it hasn't been created yet, so it has no data
+				|| ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
 			{
 				WorkingList.RemoveAt(CurrentWritingSystemIndex);
 				SelectWs(WorkingList.First().WorkingWs);
@@ -785,18 +768,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// build a string that represents the tag for an audio input system for
 			// the current language and return if it is found in the list.
-			var languageCode = _currentWs.Language.Code;
-			var audioCode = $"{languageCode}-Zxxx-x-audio";
-			return WorkingList.Exists(item => item.WorkingWs.LanguageTag == audioCode);
+			return WorkingList.Exists(item => item.WorkingWs.LanguageTag == $"{_currentWs.Language.Code}-Zxxx-x-audio");
 		}
 
 		private bool ListHasIpaForSelectedWs()
 		{
 			// build a regex that will match an ipa input system for the current language
 			// and return if it is found in the list.
-			var languageCode = _currentWs.Language.Code;
-			var ipaMatch = $"^{languageCode}(-.*)?-fonipa.*";
-			return WorkingList.Exists(item => Regex.IsMatch(item.WorkingWs.LanguageTag, ipaMatch));
+			return WorkingList.Exists(item => Regex.IsMatch(item.WorkingWs.LanguageTag, $"^{_currentWs.Language.Code}(-.*)?-fonipa.*"));
 		}
 
 		private void AddNewLanguageHandler(object sender, EventArgs e)
@@ -805,12 +784,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-			LanguageInfo langInfo;
-			if (ShowChangeLanguage(out langInfo))
+			if (ShowChangeLanguage(out var langInfo))
 			{
-				CoreWritingSystemDefinition wsDef;
 				WSListItemModel wsListItem;
-				if (_wsManager.TryGet(langInfo.LanguageTag, out wsDef))
+				if (_wsManager.TryGet(langInfo.LanguageTag, out var wsDef))
 				{
 					// (LT-19728) At this point, wsDef is a live reference to an actual WS in this project.
 					// We don't want the user modifying plain English, or modifying any WS without performing the necessary update steps,
@@ -874,8 +851,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			variants.AddRange(_currentWs.Variants.Where(variant => variant != WellKnownSubtags.AudioPrivateUse));
 			var cleanScript = _currentWs.Script == null || _currentWs.Script.Code == WellKnownSubtags.AudioScript ? null : _currentWs.Script;
 			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, cleanScript, _currentWs.Region, variants);
-			CoreWritingSystemDefinition wsDef;
-			if (!_wsManager.TryGet(ipaLanguageTag, out wsDef))
+			if (!_wsManager.TryGet(ipaLanguageTag, out var wsDef))
 			{
 				wsDef = new CoreWritingSystemDefinition(ipaLanguageTag);
 				_wsManager.Set(wsDef);
@@ -910,9 +886,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public void ModifyEncodingConverters()
 		{
-			string selectedConverter;
 			var oldConverter = CurrentLegacyConverter;
-			if (ShowModifyEncodingConverters(oldConverter, out selectedConverter))
+			if (ShowModifyEncodingConverters(oldConverter, out var selectedConverter))
 			{
 				CurrentLegacyConverter = selectedConverter;
 			}
@@ -928,8 +903,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public string CurrentLegacyConverter
 		{
-			get { return _currentWs?.LegacyMapping; }
-			set { _currentWs.LegacyMapping = value; }
+			get => _currentWs?.LegacyMapping;
+			set => _currentWs.LegacyMapping = value;
 		}
 
 		/// <summary>
@@ -953,11 +928,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Should the vernacular language data be shared with the SLDR
 		/// </summary>
 		public bool IsSharingWithSldr {
-			get
-			{
-				return _projectLexiconSettings.AddWritingSystemsToSldr;
-			}
-			set { _projectLexiconSettings.AddWritingSystemsToSldr = value; }
+			get => _projectLexiconSettings.AddWritingSystemsToSldr;
+			set => _projectLexiconSettings.AddWritingSystemsToSldr = value;
 		}
 
 		/// <summary>
@@ -971,12 +943,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public SpellingDictionaryItem SpellingDictionary
 		{
-			get
-			{
-				return string.IsNullOrEmpty(_currentWs?.SpellCheckingId)
-					? new SpellingDictionaryItem(null, null)
-					: new SpellingDictionaryItem(_currentWs.SpellCheckingId.Replace('_', '-'), _currentWs.SpellCheckingId);
-			}
+			get => string.IsNullOrEmpty(_currentWs?.SpellCheckingId)
+					? new SpellingDictionaryItem(null, null) : new SpellingDictionaryItem(_currentWs.SpellCheckingId.Replace('_', '-'), _currentWs.SpellCheckingId);
 			set
 			{
 				if (_currentWs != null)

@@ -36,13 +36,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[XmlAttribute("valid")]
 		public bool Valid
 		{
-			get { return (Status == PuncPatternStatus.Valid); }
-			set { Status = (value ? PuncPatternStatus.Valid : PuncPatternStatus.Invalid); }
+			get => (Status == PuncPatternStatus.Valid);
+			set => Status = value ? PuncPatternStatus.Valid : PuncPatternStatus.Invalid;
 		}
 
 		/// <summary />
 		[XmlIgnore]
-		public int Count = 0;
+		public int Count;
 
 		/// <summary />
 		public PuncPattern()

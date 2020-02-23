@@ -43,8 +43,7 @@ namespace FieldWorks.TestUtilities.Tests
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, hvoNewStyle1, 0, false, false, props1);
 			var hvoNewStyle2 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("SecondStyle", "bla", hvoNewStyle2, 0, hvoNewStyle1, 0, false, false, props2);
-			string sHowDifferent;
-			var fEqual = TsTextPropsHelper.PropsAreEqual(props2, stylesheet.GetStyleRgch(0, "SecondStyle"), out sHowDifferent);
+			var fEqual = TsTextPropsHelper.PropsAreEqual(props2, stylesheet.GetStyleRgch(0, "SecondStyle"), out var sHowDifferent);
 			Assert.IsTrue(fEqual, sHowDifferent);
 			fEqual = TsTextPropsHelper.PropsAreEqual(props1, stylesheet.GetStyleRgch(0, "FirstStyle"), out sHowDifferent);
 			Assert.IsTrue(fEqual, sHowDifferent);

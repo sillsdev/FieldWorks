@@ -39,9 +39,6 @@ namespace SIL.FieldWorks.PaObjects
 		#endregion
 
 		/// <inheritdoc />
-		public override string ToString()
-		{
-			return Path.GetFileName(AbsoluteInternalPath);
-		}
+		public override string ToString() => Path.GetFileName(AbsoluteInternalPath);
 	}
 }

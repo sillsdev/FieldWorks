@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private static string ConvertOneLine(IEncConverter ec, string input)
 		{
 			var marker = string.Empty;
-			var remainder = string.Empty;
+			string remainder;
 			// if the input string is empty, don't try to convert it
 			if (input == string.Empty)
 			{

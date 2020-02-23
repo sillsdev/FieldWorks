@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
@@ -76,17 +77,9 @@ namespace FieldWorks.TestUtilities
 		/// <param name="ttp">TextProps, contains the formatting of the style</param>
 		public void PutStyle(string sName, string saUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps ttp)
 		{
-			TestStyle style = null; // our local reference
-
+			// our local reference
+			var style = m_rgStyles.FirstOrDefault(stStyle => stStyle.Hvo == hvoStyle);
 			// Get the matching TestStyle from the List of styles, if it's there
-			foreach (var stStyle in m_rgStyles)
-			{
-				if (stStyle.Hvo == hvoStyle)
-				{
-					style = stStyle;
-					break;
-				}
-			}
 			// If the hvoStyle is not in the List, this is a new style;
 			// create a new TestStyle and insert it into the List of styles
 			if (style == null)
@@ -162,8 +155,7 @@ namespace FieldWorks.TestUtilities
 		/// <returns>Returns type of the style (0 by default)</returns>
 		public int GetType(string sName)
 		{
-			var style = FindStyle(sName);
-			return style?.Type ?? 0;
+			return FindStyle(sName)?.Type ?? 0;
 		}
 
 		/// <summary>
@@ -298,19 +290,11 @@ namespace FieldWorks.TestUtilities
 		/// <summary>
 		/// Find the style with specified name
 		/// </summary>
-		/// <param name="name">Stylename to find</param>
+		/// <param name="name">Style name to find</param>
 		/// <returns>TestStyle if found, otherwise null.</returns>
 		private TestStyle FindStyle(string name)
 		{
-			foreach (var style in m_rgStyles)
-			{
-				if (style.Name == name)
-				{
-					return style;
-				}
-			}
-
-			return null; //not found
+			return m_rgStyles.FirstOrDefault(style => style.Name == name);
 		}
 
 		/// <summary>
@@ -320,14 +304,7 @@ namespace FieldWorks.TestUtilities
 		/// <returns>Name of the style if found, otherwise null.</returns>
 		private string GetStyleName(int hvo)
 		{
-			foreach (var stStyle in m_rgStyles)
-			{
-				if (stStyle.Hvo == hvo)
-				{
-					return stStyle.Name;
-				}
-			}
-			return null;
+			return m_rgStyles.Where(stStyle => stStyle.Hvo == hvo).Select(stStyle => stStyle.Name).FirstOrDefault();
 		}
 
 		/// <summary>

@@ -158,8 +158,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			// The original code here threw an exception if the pair key was already in the dictionary.
 			// We don't want to overwrite what's in memory with what's on disk, so we'll skip them in that case.
-			string dummyValue;
-			if (responseDict.TryGetValue(pair.key, out dummyValue))
+			if (responseDict.TryGetValue(pair.key, out _))
 			{
 				return;
 			}
@@ -189,8 +188,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// with that name does not exist</returns>
 		public static MessageBoxEx GetMessageBox(string name)
 		{
-			MessageBoxEx result;
-			s_messageBoxes.TryGetValue(name, out result);
+			s_messageBoxes.TryGetValue(name, out var result);
 			return result;
 		}
 
@@ -204,8 +202,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			{
 				return;
 			}
-			MessageBoxEx msgBox;
-			if (s_messageBoxes.TryGetValue(name, out msgBox))
+			if (s_messageBoxes.TryGetValue(name, out var msgBox))
 			{
 				s_messageBoxes.Remove(name);
 				msgBox.Dispose();

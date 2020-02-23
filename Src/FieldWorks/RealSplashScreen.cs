@@ -25,8 +25,8 @@ namespace SIL.FieldWorks
 		#region Events
 		event CancelEventHandler IProgress.Canceling
 		{
-			add { throw new NotSupportedException(); }
-			remove { throw new NotSupportedException(); }
+			add => throw new NotSupportedException();
+			remove => throw new NotSupportedException();
 		}
 		#endregion
 
@@ -404,10 +404,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public string Message
 		{
-			get
-			{
-				return lblMessage.Text;
-			}
+			get => lblMessage.Text;
 			set
 			{
 				// In some rare cases, setting the text causes an exception which should just
@@ -437,8 +434,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return marqueeGif.Visible; }
-			set { marqueeGif.Visible = value; }
+			get => marqueeGif.Visible;
+			set => marqueeGif.Visible = value;
 		}
 
 		/// <summary>
@@ -447,8 +444,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public bool AllowCancel
 		{
-			get { return false; }
-			set { throw new NotSupportedException(); }
+			get => false;
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -456,10 +453,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public int Position
 		{
-			get
-			{
-				return progressLine.Value;
-			}
+			get => progressLine.Value;
 			set
 			{
 				if (value < progressLine.MinValue)
@@ -482,14 +476,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public int Minimum
 		{
-			get
-			{
-				return progressLine.MinValue;
-			}
-			set
-			{
-				progressLine.MinValue = value;
-			}
+			get => progressLine.MinValue;
+			set => progressLine.MinValue = value;
 		}
 
 		/// <summary>
@@ -497,14 +485,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public int Maximum
 		{
-			get
-			{
-				return progressLine.MaxValue;
-			}
-			set
-			{
-				progressLine.MaxValue = value;
-			}
+			get => progressLine.MaxValue;
+			set => progressLine.MaxValue = value;
 		}
 
 		/// <summary>
@@ -527,8 +509,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public string Title
 		{
-			get { return Text; }
-			set { Text = value; }
+			get => Text;
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -536,14 +518,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public int StepSize
 		{
-			get
-			{
-				return progressLine.Step;
-			}
-			set
-			{
-				progressLine.Step = value;
-			}
+			get => progressLine.Step;
+			set => progressLine.Step = value;
 		}
 
 		#endregion

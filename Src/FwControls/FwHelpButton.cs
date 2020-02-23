@@ -32,8 +32,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[DefaultValue("&Help")]
 		public override string Text
 		{
-			get { return button.Text; }
-			set { button.Text = value; }
+			get => button.Text;
+			set => button.Text = value;
 		}
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DefaultValue(true)]
 		public bool ShowImage
 		{
-			get { return button.Image != null; }
+			get => button.Image != null;
 			set
 			{
 				if (value)

@@ -71,7 +71,7 @@ namespace FieldWorks.TestUtilities
 		/// <summary />
 		private static void CleanUpTempFolders()
 		{
-			foreach (string folder in s_foldersToDelete)
+			foreach (var folder in s_foldersToDelete)
 			{
 				try
 				{

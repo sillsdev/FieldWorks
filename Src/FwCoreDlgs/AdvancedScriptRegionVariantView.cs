@@ -76,8 +76,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			UnwireBeforeClosing();
-			if (disposing && this.components != null)
-				this.components.Dispose();
+			if (disposing)
+			{
+				components?.Dispose();
+			}
 			base.Dispose(disposing);
 		}
 

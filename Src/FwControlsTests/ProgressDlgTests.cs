@@ -33,24 +33,12 @@ namespace SIL.FieldWorks.Common.Controls
 		[TearDown]
 		public void Teardown()
 		{
-			if (m_timer != null)
-			{
-				m_timer.Dispose();
-				m_timer = null;
-			}
-
-			if (m_dlg != null)
-			{
-				m_dlg.Dispose();
-				m_dlg = null;
-			}
-
-			if (m_threadHelper != null)
-			{
-				m_threadHelper.Dispose();
-				m_threadHelper = null;
-			}
-
+			m_timer?.Dispose();
+			m_timer = null;
+			m_dlg?.Dispose();
+			m_dlg = null;
+			m_threadHelper?.Dispose();
+			m_threadHelper = null;
 		}
 
 		/// <summary>
@@ -82,8 +70,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("DesktopRequired")]
 		public void TestWithoutCancel()
 		{
-			var nProgress = (int)m_dlg.RunTask(false, BackgroundTask);
-			Assert.AreEqual(10, nProgress);
+			Assert.AreEqual(10, (int)m_dlg.RunTask(false, BackgroundTask));
 		}
 	}
 }

@@ -48,22 +48,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <inheritdoc />
-		public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine => throw new NotSupportedException();
 
 		/// <inheritdoc />
-		public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => throw new NotSupportedException();
 
 		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKey => FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
@@ -80,13 +68,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public RegistryKey FieldWorksVersionlessOld32BitRegistryKeyForWriting => FieldWorksVersionlessRegistryKey.CreateSubKey("WOW6432Node");
 
 		/// <inheritdoc />
-		public string UserLocaleValueName
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public string UserLocaleValueName => throw new NotSupportedException();
 		#endregion
 
 		/// <summary>

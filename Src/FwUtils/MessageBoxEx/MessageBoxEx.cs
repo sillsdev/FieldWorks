@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.Code;
 
 namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 {
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string Caption
 		{
-			set { _msgBox.Caption = value; }
+			set => _msgBox.Caption = value;
 		}
 
 		/// <summary>
@@ -36,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string Text
 		{
-			set { _msgBox.Message = value; }
+			set => _msgBox.Message = value;
 		}
 
 		/// <summary>
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public Icon CustomIcon
 		{
-			set { _msgBox.CustomIcon = value; }
+			set => _msgBox.CustomIcon = value;
 		}
 
 		/// <summary>
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public MessageBoxExIcon Icon
 		{
-			set { _msgBox.StandardIcon = (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), value.ToString()); }
+			set => _msgBox.StandardIcon = (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), value.ToString());
 		}
 
 		/// <summary>
@@ -60,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public Font Font
 		{
-			set { _msgBox.Font = value; }
+			set => _msgBox.Font = value;
 		}
 
 		/// <summary>
@@ -68,8 +69,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public bool AllowSaveResponse
 		{
-			get { return _msgBox.AllowSaveResponse; }
-			set { _msgBox.AllowSaveResponse = value; }
+			get => _msgBox.AllowSaveResponse;
+			set => _msgBox.AllowSaveResponse = value;
 		}
 
 		/// <summary>
@@ -77,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string SaveResponseText
 		{
-			set { _msgBox.SaveResponseText = value; }
+			set => _msgBox.SaveResponseText = value;
 		}
 
 		/// <summary>
@@ -90,8 +91,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public int Timeout
 		{
-			get { return _msgBox.Timeout; }
-			set { _msgBox.Timeout = value; }
+			get => _msgBox.Timeout;
+			set => _msgBox.Timeout = value;
 		}
 
 		#endregion
@@ -172,14 +173,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <param name="val">The return value in case this button is clicked</param>
 		public void AddButton(string text, string val)
 		{
-			if (text == null)
-			{
-				throw new ArgumentNullException(nameof(text), "Text of a button cannot be null");
-			}
-			if (val == null)
-			{
-				throw new ArgumentNullException(nameof(val), "Value of a button cannot be null");
-			}
+			Guard.AgainstNullOrEmptyString(text, nameof(text));
+			Guard.AgainstNullOrEmptyString(val, nameof(val));
 
 			var button = new MessageBoxExButton
 			{

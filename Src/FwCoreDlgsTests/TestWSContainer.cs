@@ -21,8 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
 		private List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
 
-		public TestWSContainer(string[] vernacular, string[] analysis = null,
-			string[] curVern = null, string[] curAnaly = null)
+		public TestWSContainer(string[] vernacular, string[] analysis = null, string[] curVern = null, string[] curAnaly = null)
 		{
 			foreach (var lang in vernacular)
 			{

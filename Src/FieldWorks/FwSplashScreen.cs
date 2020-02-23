@@ -221,16 +221,19 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					GetIntPropDelegate minMethod = () => m_splashScreen.Minimum;
-					return (int)m_splashScreen.Invoke(minMethod);
+					int MinMethod() => m_splashScreen.Minimum;
+					return (int)m_splashScreen.Invoke((GetIntPropDelegate)MinMethod);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate minMethod = delegate (int min) { m_splashScreen.Minimum = min; };
-					m_splashScreen.Invoke(minMethod, value);
+					void MinMethod(int min)
+					{
+						m_splashScreen.Minimum = min;
+					}
+					m_splashScreen.Invoke((SetIntPropDelegate)MinMethod, value);
 				}
 			}
 		}
@@ -244,16 +247,19 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					GetIntPropDelegate maxMethod = () => m_splashScreen.Maximum;
-					return (int)m_splashScreen.Invoke(maxMethod);
+					int MaxMethod() => m_splashScreen.Maximum;
+					return (int)m_splashScreen.Invoke((GetIntPropDelegate)MaxMethod);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate maxMethod = delegate (int max) { m_splashScreen.Maximum = max; };
-					m_splashScreen.Invoke(maxMethod, value);
+					void MaxMethod(int max)
+					{
+						m_splashScreen.Maximum = max;
+					}
+					m_splashScreen.Invoke((SetIntPropDelegate)MaxMethod, value);
 				}
 			}
 		}
@@ -267,16 +273,19 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					GetStringPropDelegate method = () => m_splashScreen.Message;
-					return (string)m_splashScreen.Invoke(method);
+					string Method() => m_splashScreen.Message;
+					return (string)m_splashScreen.Invoke((GetStringPropDelegate)Method);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetStringPropDelegate setMethod = delegate (string val) { m_splashScreen.Message = val; };
-					m_splashScreen.Invoke(setMethod, value);
+					void SetMethod(string val)
+					{
+						m_splashScreen.Message = val;
+					}
+					m_splashScreen.Invoke((SetStringPropDelegate)SetMethod, value);
 				}
 			}
 		}
@@ -291,16 +300,19 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					GetIntPropDelegate method = () => m_splashScreen.Position;
-					return (int)m_splashScreen.Invoke(method);
+					int Method() => m_splashScreen.Position;
+					return (int)m_splashScreen.Invoke((GetIntPropDelegate)Method);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate method = delegate (int val) { m_splashScreen.Position = val; };
-					m_splashScreen.Invoke(method, value);
+					void Method(int val)
+					{
+						m_splashScreen.Position = val;
+					}
+					m_splashScreen.Invoke((SetIntPropDelegate)Method, value);
 				}
 			}
 		}
@@ -314,16 +326,19 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					GetIntPropDelegate method = () => m_splashScreen.StepSize;
-					return (int)m_splashScreen.Invoke(method);
+					int Method() => m_splashScreen.StepSize;
+					return (int)m_splashScreen.Invoke((GetIntPropDelegate)Method);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate method = delegate (int val) { m_splashScreen.StepSize = val; };
-					m_splashScreen.Invoke(method, value);
+					void Method(int val)
+					{
+						m_splashScreen.StepSize = val;
+					}
+					m_splashScreen.Invoke((SetIntPropDelegate)Method, value);
 				}
 			}
 		}
@@ -333,7 +348,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public string Title
 		{
-			get { throw new Exception("The property 'Title' is not implemented."); }
+			get => throw new Exception("The property 'Title' is not implemented.");
 			set { }
 		}
 
@@ -353,15 +368,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get
-			{
-				if (m_splashScreen.InvokeRequired)
-				{
-					return (bool)m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
-				}
-				return m_splashScreen.IsIndeterminate;
-			}
-
+			get => m_splashScreen.InvokeRequired ? (bool)m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate)) : m_splashScreen.IsIndeterminate;
 			set
 			{
 				if (m_splashScreen.InvokeRequired)
@@ -369,7 +376,9 @@ namespace SIL.FieldWorks
 					m_splashScreen.Invoke((Action<bool>)(b => m_splashScreen.IsIndeterminate = b), value);
 				}
 				else
+				{
 					m_splashScreen.IsIndeterminate = value;
+				}
 			}
 		}
 
@@ -379,8 +388,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public bool AllowCancel
 		{
-			get { return false; }
-			set { throw new NotSupportedException(); }
+			get => false;
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary />

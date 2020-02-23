@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// (Unless it is zero, which is not a valid WS...hope it gets changed again if so.)
 				if (Tss.Length == 0 && value != 0)
 				{
-					Tss = TsStringUtils.MakeString("", value);
+					Tss = TsStringUtils.MakeString(string.Empty, value);
 				}
 			}
 		}
@@ -238,10 +238,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return base.StyleSheet;
-			}
+			get => base.StyleSheet;
 			set
 			{
 				if (base.StyleSheet != value)
@@ -325,10 +322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Point ScrollPosition
 		{
-			get
-			{
-				return AutoScroll ? base.ScrollPosition : m_ScrollPosition;
-			}
+			get => AutoScroll ? base.ScrollPosition : m_ScrollPosition;
 			set
 			{
 				if (AutoScroll)
@@ -374,10 +368,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 				return tss.Text ?? string.Empty;
 			}
-			set
-			{
-				Tss = TsStringUtils.MakeString(value, WritingSystemCode);
-			}
+			set => Tss = TsStringUtils.MakeString(value, WritingSystemCode);
 		}
 
 		/// <summary>
@@ -406,15 +397,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					return 0;
 				}
 
-				ITsString tss;
-				int ichAnchor;
-				bool fAssocPrev;
-				int hvoObj;
-				int tag;
-				int ws;
-				int ichEnd;
-				sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObj, out tag, out ws);
-				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
+				sel.TextSelInfo(true, out _, out var ichEnd, out _, out _, out _, out _);
+				sel.TextSelInfo(false, out _, out var ichAnchor, out _, out _, out _, out _);
 				return IntToExtIndex(Math.Min(ichAnchor, ichEnd));
 			}
 			set
@@ -448,15 +432,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					return 0;
 				}
 
-				ITsString tss;
-				int ichEnd;
-				bool fAssocPrev;
-				int hvoObj;
-				int tag;
-				int ws;
-				int ichAnchor;
-				sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObj, out tag, out ws);
-				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
+				sel.TextSelInfo(true, out _, out var ichEnd, out _, out _, out _, out _);
+				sel.TextSelInfo(false, out _, out var ichAnchor, out _, out _, out _, out _);
 				return Math.Abs(IntToExtIndex(ichAnchor) - IntToExtIndex(ichEnd));
 			}
 			set
@@ -480,15 +457,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false)]
 		public string SelectedText
 		{
-			get
-			{
-				return SelectedTss?.Text ?? string.Empty;
-			}
-
-			set
-			{
-				SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
-			}
+			get => SelectedTss?.Text ?? string.Empty;
+			set => SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
 		}
 
 		/// <summary>
@@ -497,11 +467,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false)]
 		public ITsString SelectedTss
 		{
-			get
-			{
-				return Tss?.Substring(SelectionStart, SelectionLength);
-			}
-
+			get => Tss?.Substring(SelectionStart, SelectionLength);
 			set
 			{
 				var selStart = SelectionStart;
@@ -597,10 +563,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				Rectangle rcPrimary;
 				using (new HoldGraphics(this))
 				{
-					bool fEndBeforeAnchor;
-					SelectionRectangle(wholeSel, out rcPrimary, out fEndBeforeAnchor);
+					SelectionRectangle(wholeSel, out rcPrimary, out _);
 				}
-
 				if (rcPrimary.Width < ClientRectangle.Width - HorizMargin * 2)
 				{
 					return base.MakeSelectionVisible(wholeSel, false);
@@ -613,10 +577,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					Logger.WriteError(new InvalidOperationException("MakeSelectionVisible called when no valid selection could be made."));
 					Logger.WriteEvent("m_rootb.Height = " + RootBox.Height);
 					Logger.WriteEvent("m_rootb.Width = " + RootBox.Width);
-					int hvoRoot, frag;
-					IVwViewConstructor vc;
-					IVwStylesheet stylesheet;
-					RootBox.GetRootObject(out hvoRoot, out vc, out frag, out stylesheet);
+					RootBox.GetRootObject(out var hvoRoot, out _, out var frag, out _);
 					Logger.WriteEvent("Root object = " + hvoRoot);
 					Logger.WriteEvent("Root fragment = " + frag);
 				}
@@ -649,7 +610,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			var tss = m_DataAccess.get_StringProp(khvoRoot, ktagText);
 			var hardBreakCount = SubstringCount(tss == null || tss.Length == 0 ? string.Empty : tss.Text.Substring(0, intIndex), LineBreak);
-			return intIndex + (hardBreakCount * (Environment.NewLine.Length - LineBreak.Length));
+			return intIndex + hardBreakCount * (Environment.NewLine.Length - LineBreak.Length);
 		}
 
 		/// <summary>
@@ -675,9 +636,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				content = content.Substring(extIndex);
 			}
-			var newLineCount = SubstringCount(content, Environment.NewLine);
 
-			return extIndex + (newLineCount * (LineBreak.Length - Environment.NewLine.Length));
+			return extIndex + SubstringCount(content, Environment.NewLine) * (LineBreak.Length - Environment.NewLine.Length);
 		}
 
 		private static int SubstringCount(string str, string substr)
@@ -696,10 +656,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Color BackColor
 		{
-			get
-			{
-				return base.BackColor;
-			}
+			get => base.BackColor;
 			set
 			{
 				base.BackColor = value;
@@ -712,10 +669,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Color ForeColor
 		{
-			get
-			{
-				return base.ForeColor;
-			}
+			get => base.ForeColor;
 			set
 			{
 				base.ForeColor = value;
@@ -738,18 +692,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				var sel = RootBox.MakeSimpleSel(true, false, false, false);
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot, rcDstRoot;
-					Rect rcSec, rcPrimary;
-					bool fSplit, fEndBeforeAnchor;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
-
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 					rect.X = rcPrimary.left;
 					rect.Y = rcPrimary.top;
 
 					sel = RootBox.MakeSimpleSel(false, false, false, false);
-					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 
+					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out _, out _, out _);
 					rect.Width = rcPrimary.right - rect.X;
 					rect.Height = RootBox.Height;
 				}
@@ -794,11 +744,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (sel != null)
 			{
 				// See if the desired thing is already selected. If so do nothing. This can prevent stack overflow!
-				ITsString tssDummy;
-				int ichAnchor, ichEnd, hvo, tag, ws;
-				bool fAssocPrev;
-				sel.TextSelInfo(true, out tssDummy, out ichEnd, out fAssocPrev, out hvo, out tag, out ws);
-				sel.TextSelInfo(false, out tssDummy, out ichAnchor, out fAssocPrev, out hvo, out tag, out ws);
+				sel.TextSelInfo(true, out _, out var ichEnd, out _, out _, out _, out _);
+				sel.TextSelInfo(false, out _, out var ichAnchor, out _, out _, out _, out _);
 				if (Math.Min(ichAnchor, ichEnd) == intStart && Math.Max(ichAnchor, ichEnd) == intEnd)
 				{
 					return;

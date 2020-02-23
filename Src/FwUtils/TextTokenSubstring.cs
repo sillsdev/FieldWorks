@@ -99,8 +99,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public string InventoryText
 		{
-			get { return (m_inventoryString ?? Text); }
-			set { m_inventoryString = value; }
+			get => m_inventoryString ?? Text;
+			set => m_inventoryString = value;
 		}
 
 		/// <summary>
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets or sets an error message associated with this substring (can be empty).
 		/// </summary>
-		public string Message { get; set; } = string.Empty;
+		public string Message { get; set; }
 
 		/// <summary>
 		/// Gets the character offset into the first token.

@@ -27,8 +27,8 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <inheritdoc />
 		public bool Multiselect
 		{
-			get { return ((IOpenFileDialog)m_dlg).Multiselect; }
-			set { ((IOpenFileDialog)m_dlg).Multiselect = value; }
+			get => ((IOpenFileDialog)m_dlg).Multiselect;
+			set => ((IOpenFileDialog)m_dlg).Multiselect = value;
 		}
 		#endregion
 	}

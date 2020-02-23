@@ -31,11 +31,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static uint GetGlyphIndices(IntPtr hdc, string lpstr, int c, [In, Out] ushort[] pgi, int fl)
 		{
-			if (Platform.IsWindows)
-			{
-				return GetGlyphIndicesWindows(hdc, lpstr, c, pgi, fl);
-			}
-			throw new NotSupportedException();
+			return Platform.IsWindows ? GetGlyphIndicesWindows(hdc, lpstr, c, pgi, fl) : throw new NotSupportedException();
 		}
 
 		[DllImport("gdi32.dll", EntryPoint = "SelectObject")]
@@ -43,11 +39,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static IntPtr SelectObject(IntPtr hdc, IntPtr hfont)
 		{
-			if (Platform.IsWindows)
-			{
-				return SelectObjectWindows(hdc, hfont);
-			}
-			throw new NotSupportedException();
+			return Platform.IsWindows ? SelectObjectWindows(hdc, hfont) : throw new NotSupportedException();
 		}
 
 		/// <summary>Event fired after the selected character in the grid changes.</summary>
@@ -122,7 +114,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public CoreWritingSystemDefinition WritingSystem
 		{
-			set { m_sortComparer = (value == null ? null : new TsStringComparer(value)); }
+			set => m_sortComparer = value == null ? null : new TsStringComparer(value);
 		}
 
 		/// <summary>
@@ -130,10 +122,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public new Font Font
 		{
-			get
-			{
-				return base.Font;
-			}
+			get => base.Font;
 			set
 			{
 				if (base.Font != value)
@@ -217,7 +206,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				var rows = (int)Math.Ceiling((double)NumberOfChars / NumberOfColumns);
-				return (rows > 0 ? rows : 0);
+				return rows > 0 ? rows : 0;
 			}
 		}
 
@@ -412,12 +401,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var i = GetListIndexFromCellAddress(e.ColumnIndex, e.RowIndex);
 			var chr = Chars != null && i < Chars.Count && i >= 0 ? Chars[i] : string.Empty;
-			string displayText;
 			if (m_charsWithMissingGlyphs.Contains(chr))
 			{
 				this[e.ColumnIndex, e.RowIndex].Tag = Properties.Resources.kimidMissingGlyph;
 			}
-			else if (m_specialCharStrings.TryGetValue(chr, out displayText))
+			else if (m_specialCharStrings.TryGetValue(chr, out var displayText))
 			{
 				e.Value = displayText;
 				this[e.ColumnIndex, e.RowIndex].Tag = m_fntForSpecialChar;
@@ -541,7 +529,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public string GetCharacterAt(int col, int row)
 		{
 			var i = GetListIndexFromCellAddress(col, row);
-			return (i >= 0 && i < m_chars.Count ? m_chars[i] : null);
+			return i >= 0 && i < m_chars.Count ? m_chars[i] : null;
 		}
 
 		/// <summary>
@@ -722,8 +710,7 @@ namespace SIL.FieldWorks.Common.Controls
 			foreach (var chr in m_chars)
 			{
 				var sz = TextRenderer.MeasureText(chr, Font);
-				string displayText;
-				if (!m_specialCharStrings.TryGetValue(chr, out displayText))
+				if (!m_specialCharStrings.TryGetValue(chr, out var displayText))
 				{
 					m_cellHeight = Math.Max(sz.Height + padding, m_cellHeight);
 					m_cellWidth = Math.Max(sz.Width + padding, m_cellWidth);

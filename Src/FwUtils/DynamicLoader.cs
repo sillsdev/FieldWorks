@@ -50,8 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return null;
 			}
 			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
-			Assembly assembly;
-			GetAssembly(assemblyPath, out assembly);
+			GetAssembly(assemblyPath, out var assembly);
 			return assembly.GetType(className.Trim());
 		}
 
@@ -86,8 +85,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						var argVal = XmlUtils.GetMandatoryAttributeValue(argNode, "value");
 						argDict.Add(argName, argVal);
 					}
-					string argValue;
-					if (argDict.TryGetValue("xpathToConfigurationNode", out argValue))
+					if (argDict.TryGetValue("xpathToConfigurationNode", out var argValue))
 					{
 						// "xpathToConfigurationNode" is a special argument for passing the nodes
 						// that the object we're creating knows how to process.
@@ -145,8 +143,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static object CreateObject(string assemblyPath1, string className1, BindingFlags flags, params object[] args)
 		{
-			Assembly assembly;
-			var assemblyPath = GetAssembly(assemblyPath1, out assembly);
+			var assemblyPath = GetAssembly(assemblyPath1, out var assembly);
 			var className = className1.Trim();
 			object thing;
 			try

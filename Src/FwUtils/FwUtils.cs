@@ -131,8 +131,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				throw new PlatformNotSupportedException();
 			}
-			string fontName;
-			if (m_mapLangToFont.TryGetValue(lang, out fontName))
+			if (m_mapLangToFont.TryGetValue(lang, out var fontName))
 			{
 				return fontName;
 			}
@@ -150,8 +149,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return null;
 			}
 			FcDefaultSubstitute(pattern);
-			FcResult result;
-			var fullPattern = FcFontMatch(IntPtr.Zero, pattern, out result);
+			var fullPattern = FcFontMatch(IntPtr.Zero, pattern, out var result);
 			if (result != FcResult.FcResultMatch)
 			{
 				FcPatternDestroy(pattern);
@@ -159,8 +157,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return null;
 			}
 			FcPatternDestroy(pattern);
-			IntPtr res;
-			var fcRes = FcPatternGetString(fullPattern, FC_FAMILY, 0, out res);
+			var fcRes = FcPatternGetString(fullPattern, FC_FAMILY, 0, out var res);
 			if (fcRes == FcResult.FcResultMatch)
 			{
 				fontName = Marshal.PtrToStringAuto(res);
@@ -460,13 +457,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// information)</returns>
 		private static IntPtr GetSidForProcessToken(IntPtr hToken)
 		{
-			var bufferLen = 256;
+			const int bufferLen = 256;
 			var buffer = Marshal.AllocHGlobal(bufferLen);
 
 			try
 			{
-				int returnLen;
-				return GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenUser, buffer, bufferLen, out returnLen) ? ((TOKEN_USER)Marshal.PtrToStructure(buffer, typeof(TOKEN_USER))).User.Sid : IntPtr.Zero;
+				return GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenUser, buffer, bufferLen, out _) ? ((TOKEN_USER)Marshal.PtrToStructure(buffer, typeof(TOKEN_USER))).User.Sid : IntPtr.Zero;
 			}
 			catch (Exception ex)
 			{
@@ -501,9 +497,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (MiscUtils.IsDotNet)
 				{
-					IntPtr procToken;
 					string sidString = null;
-					if (OpenProcessToken(procHandle, TOKEN_QUERY, out procToken))
+					if (OpenProcessToken(procHandle, TOKEN_QUERY, out var procToken))
 					{
 						var sid = GetSidForProcessToken(procToken);
 						if (sid != IntPtr.Zero)

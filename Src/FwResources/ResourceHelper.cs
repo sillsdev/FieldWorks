@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Resources
 
 		internal static ResourceHelperImpl Helper
 		{
-			get { return s_form ?? (s_form = new ResourceHelperImpl()); }
+			get => s_form ?? (s_form = new ResourceHelperImpl());
 			set
 			{
 				s_form?.Dispose();

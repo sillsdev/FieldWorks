@@ -155,10 +155,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool HasBorder
 		{
-			get
-			{
-				return m_hasBorder;
-			}
+			get => m_hasBorder;
 
 			set
 			{
@@ -189,10 +186,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new BorderStyle BorderStyle
 		{
-			get
-			{
-				return base.BorderStyle;
-			}
+			get => base.BorderStyle;
 
 			set
 			{
@@ -217,10 +211,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
-			get
-			{
-				return m_textPadding;
-			}
+			get => m_textPadding;
 
 			set
 			{
@@ -234,8 +225,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool SuppressEnter
 		{
-			get { return m_innerFwTextBox.SuppressEnter; }
-			set { m_innerFwTextBox.SuppressEnter = value; }
+			get => m_innerFwTextBox.SuppressEnter;
+			set => m_innerFwTextBox.SuppressEnter = value;
 		}
 
 		/// <summary>
@@ -314,14 +305,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool AdjustStringHeight
 		{
-			get
-			{
-				return m_innerFwTextBox.AdjustStringHeight;
-			}
-			set
-			{
-				m_innerFwTextBox.AdjustStringHeight = value;
-			}
+			get => m_innerFwTextBox.AdjustStringHeight;
+			set => m_innerFwTextBox.AdjustStringHeight = value;
 		}
 
 		private void m_innerFwTextBox_MouseEnter(object sender, EventArgs e)
@@ -616,15 +601,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override bool AutoScroll
 		{
-			get
-			{
-				return m_innerFwTextBox.AutoScroll;
-			}
-
-			set
-			{
-				m_innerFwTextBox.AutoScroll = value;
-			}
+			get => m_innerFwTextBox.AutoScroll;
+			set => m_innerFwTextBox.AutoScroll = value;
 		}
 
 		/// <summary>
@@ -632,15 +610,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool WordWrap
 		{
-			get
-			{
-				return m_innerFwTextBox.WordWrap;
-			}
-
-			set
-			{
-				m_innerFwTextBox.WordWrap = value;
-			}
+			get => m_innerFwTextBox.WordWrap;
+			set => m_innerFwTextBox.WordWrap = value;
 		}
 
 		/// <summary>
@@ -649,15 +620,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool AcceptsReturn
 		{
-			get
-			{
-				return m_innerFwTextBox.AcceptsReturn;
-			}
-
-			set
-			{
-				m_innerFwTextBox.AcceptsReturn = value;
-			}
+			get => m_innerFwTextBox.AcceptsReturn;
+			set => m_innerFwTextBox.AcceptsReturn = value;
 		}
 
 		/// <summary>
@@ -672,14 +636,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart
 		{
-			get
-			{
-				return m_innerFwTextBox.SelectionStart;
-			}
-			set
-			{
-				m_innerFwTextBox.SelectionStart = value;
-			}
+			get => m_innerFwTextBox.SelectionStart;
+			set => m_innerFwTextBox.SelectionStart = value;
 		}
 
 		/// <summary>
@@ -688,14 +646,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength
 		{
-			get
-			{
-				return m_innerFwTextBox.SelectionLength;
-			}
-			set
-			{
-				m_innerFwTextBox.SelectionLength = Math.Min(value, m_innerFwTextBox.Text.Length);
-			}
+			get => m_innerFwTextBox.SelectionLength;
+			set => m_innerFwTextBox.SelectionLength = Math.Min(value, m_innerFwTextBox.Text.Length);
 		}
 
 		/// <summary>
@@ -705,15 +657,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string SelectedText
 		{
-			get
-			{
-				return m_innerFwTextBox.SelectedText;
-			}
-
-			set
-			{
-				m_innerFwTextBox.SelectedText = value;
-			}
+			get => m_innerFwTextBox.SelectedText;
+			set => m_innerFwTextBox.SelectedText = value;
 		}
 
 		/// <summary>
@@ -723,15 +668,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITsString SelectedTss
 		{
-			get
-			{
-				return m_innerFwTextBox.SelectedTss;
-			}
-
-			set
-			{
-				m_innerFwTextBox.SelectedTss = value;
-			}
+			get => m_innerFwTextBox.SelectedTss;
+			set => m_innerFwTextBox.SelectedTss = value;
 		}
 
 		/// <summary>
@@ -739,14 +677,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string controlID
 		{
-			get
-			{
-				return m_innerFwTextBox.m_controlID;
-			}
-			set
-			{
-				m_innerFwTextBox.m_controlID = value;
-			}
+			get => m_innerFwTextBox.m_controlID;
+			set => m_innerFwTextBox.m_controlID = value;
 		}
 
 		/// <summary>
@@ -754,10 +686,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Color BackColor
 		{
-			get
-			{
-				return base.BackColor;
-			}
+			get => base.BackColor;
 			set
 			{
 				m_innerFwTextBox.BackColor = value;
@@ -770,10 +699,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Color ForeColor
 		{
-			get
-			{
-				return base.ForeColor;
-			}
+			get => base.ForeColor;
 			set
 			{
 				m_innerFwTextBox.ForeColor = value;
@@ -790,10 +716,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
-			get
-			{
-				return m_innerFwTextBox == null ? string.Empty : m_innerFwTextBox.Text;
-			}
+			get => m_innerFwTextBox == null ? string.Empty : m_innerFwTextBox.Text;
 			set
 			{
 				// set the text, if it changed (or it hasn't already been set).
@@ -816,14 +739,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual ITsString Tss
 		{
-			get
-			{
-				return m_innerFwTextBox?.Tss;
-			}
-			set
-			{
-				m_innerFwTextBox.Tss = value;
-			}
+			get => m_innerFwTextBox?.Tss;
+			set => m_innerFwTextBox.Tss = value;
 		}
 
 		/// <summary>
@@ -835,10 +752,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int WritingSystemCode
 		{
-			get
-			{
-				return m_innerFwTextBox.WritingSystemCode;
-			}
+			get => m_innerFwTextBox.WritingSystemCode;
 			set
 			{
 				Debug.Assert(value != 1, "This is most likely an inappropriate value!");
@@ -853,14 +767,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return m_innerFwTextBox.StyleSheet;
-			}
-			set
-			{
-				m_innerFwTextBox.StyleSheet = value;
-			}
+			get => m_innerFwTextBox.StyleSheet;
+			set => m_innerFwTextBox.StyleSheet = value;
 		}
 
 		/// <summary>
@@ -869,14 +777,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return m_innerFwTextBox.WritingSystemFactory;
-			}
-			set
-			{
-				m_innerFwTextBox.WritingSystemFactory = value;
-			}
+			get => m_innerFwTextBox.WritingSystemFactory;
+			set => m_innerFwTextBox.WritingSystemFactory = value;
 		}
 		#endregion Properties
 

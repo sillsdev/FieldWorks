@@ -32,10 +32,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <returns>A ILgWritingSystemFactory</returns>
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return m_wsf;
-			}
+			get => m_wsf;
 			set
 			{
 				m_strings.Clear();
@@ -74,8 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Debug.Assert(ws > WritingSystemServices.kwsFirstAnal); // FWNX-260: kwsFirstAnal not handled in C++ yet (March/2010).
 
 			var key = new HvoFlidWSKey(hvo, tag, ws);
-			ITsString tss;
-			if (!m_strings.TryGetValue(key, out tss))
+			if (!m_strings.TryGetValue(key, out var tss))
 			{
 				tss = TsStringUtils.EmptyString(ws == 0 ? m_wsf.UserWs : ws);
 				m_strings[key] = tss;
@@ -106,14 +102,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		public override IFwMetaDataCache MetaDataCache
 		{
-			get
-			{
-				return m_mdc;
-			}
-			set
-			{
-				base.MetaDataCache = value;
-			}
+			get => m_mdc;
+			set => base.MetaDataCache = value;
 		}
 
 		/// <summary>
@@ -260,15 +250,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				throw new NotSupportedException();
 			}
 
-			public int FieldCount
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int FieldCount => throw new NotSupportedException();
 
-			public int ClassCount
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int ClassCount => throw new NotSupportedException();
 		}
 	}
 }

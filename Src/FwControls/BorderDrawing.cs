@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -78,7 +79,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 
 			base.Dispose(disposing);
 
@@ -131,14 +132,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public Color BorderLightestColor
 		{
-			get
-			{
-				return m_penLightestEdge.Color;
-			}
-			set
-			{
-				m_penLightestEdge.Color = value;
-			}
+			get => m_penLightestEdge.Color;
+			set => m_penLightestEdge.Color = value;
 		}
 
 		/// <summary>
@@ -146,14 +141,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public Color BorderLightColor
 		{
-			get
-			{
-				return m_penLightEdge.Color;
-			}
-			set
-			{
-				m_penLightEdge.Color = value;
-			}
+			get => m_penLightEdge.Color;
+			set => m_penLightEdge.Color = value;
 		}
 
 		/// <summary>
@@ -161,14 +150,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public Color BorderDarkColor
 		{
-			get
-			{
-				return m_penDarkEdge.Color;
-			}
-			set
-			{
-				m_penDarkEdge.Color = value;
-			}
+			get => m_penDarkEdge.Color;
+			set => m_penDarkEdge.Color = value;
 		}
 
 		/// <summary>
@@ -176,14 +159,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public Color BorderDarkestColor
 		{
-			get
-			{
-				return m_penDarkestEdge.Color;
-			}
-			set
-			{
-				m_penDarkestEdge.Color = value;
-			}
+			get => m_penDarkestEdge.Color;
+			set => m_penDarkestEdge.Color = value;
 		}
 		#endregion
 

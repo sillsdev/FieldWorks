@@ -949,7 +949,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Options for <see cref="ActivateKeyboardLayout"/>.
 		/// </summary>
 		[Flags]
-		public enum KLF : int
+		public enum KLF
 		{
 			/// <summary>Pass no options to <see cref="ActivateKeyboardLayout"/></summary>
 			None = 0x00000000,
@@ -995,9 +995,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				if (s_monoWinFormsAssembly == null)
+				{
 #pragma warning disable 0612, 0618 // Using Obsolete method LoadWithPartialName.
 					s_monoWinFormsAssembly = Assembly.LoadWithPartialName("System.Windows.Forms");
 #pragma warning restore 0612, 0618
+				}
 				return s_monoWinFormsAssembly;
 			}
 		}
@@ -1009,7 +1011,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				if (s_xplatUIType == null)
+				{
 					s_xplatUIType = MonoWinFormsAssembly.GetType("System.Windows.Forms.XplatUI");
+				}
 				return s_xplatUIType;
 			}
 		}
@@ -1414,12 +1418,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		public static IntPtr GetParent(IntPtr hWnd)
 		{
-			if (Platform.IsWindows)
-			{
-				return GetParentWindows(hWnd);
-			}
-
-			return GetParentLinux(hWnd);
+			return Platform.IsWindows ? GetParentWindows(hWnd) : GetParentLinux(hWnd);
 		}
 
 		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetParent")]
@@ -1428,22 +1427,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static IntPtr GetParentLinux(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
-			if (temp != null && temp.Parent != null)
-				return temp.Parent.Handle;
-
-			return IntPtr.Zero;
+			return temp?.Parent?.Handle ?? IntPtr.Zero;
 		}
 
 
 		/// <summary/>
 		public static bool SetForegroundWindow(IntPtr hWnd)
 		{
-			if (Platform.IsWindows)
-			{
-				return SetForegroundWindowWindows(hWnd);
-			}
-
-			return SetForegroundWindowLinux(hWnd);
+			return Platform.IsWindows ? SetForegroundWindowWindows(hWnd) : SetForegroundWindowLinux(hWnd);
 		}
 
 		[DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
@@ -1480,12 +1471,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
 		{
-			if (Platform.IsWindows)
-			{
-				return GetWindowRectWindows(hWnd, out rect);
-			}
-
-			return GetWindowRectLinux(hWnd, out rect);
+			return Platform.IsWindows ? GetWindowRectWindows(hWnd, out rect) : GetWindowRectLinux(hWnd, out rect);
 		}
 
 		[DllImport("user32.dll", EntryPoint = "GetWindowRect")]
@@ -1506,10 +1492,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		public static IntPtr GetFocus()
 		{
-			if (Platform.IsWindows)
-				return GetFocusWindows();
-
-			return GetFocusLinux();
+			return Platform.IsWindows ? GetFocusWindows() : GetFocusLinux();
 		}
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetFocus")]
@@ -1519,9 +1502,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static IntPtr GetFocusLinux()
 		{
 			if (s_getFocus == null)
-				s_getFocus = XplatUI.GetMethod("GetFocus",
-					BindingFlags.NonPublic | BindingFlags.Static,
-					null, Type.EmptyTypes, null);
+			{
+				s_getFocus = XplatUI.GetMethod("GetFocus", BindingFlags.NonPublic | BindingFlags.Static, null, Type.EmptyTypes, null);
+			}
 			return (IntPtr)s_getFocus.Invoke(null, null);
 
 		}
@@ -1534,8 +1517,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int threadid)
 		{
 			if (Platform.IsWindows)
+			{
 				return SetWindowsHookExWindows(hookid, pfnhook, hinst, threadid);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowsHookEx");
 			return IntPtr.Zero;
@@ -1548,8 +1532,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl)
 		{
 			if (Platform.IsWindows)
+			{
 				return GetWindowPlacementWindows(hWnd, out lpwndpl);
-
+			}
 			Console.WriteLine("Warning using unimplemented method GetWindowPlacement");
 			lpwndpl = new WINDOWPLACEMENT();
 			return false;
@@ -1562,8 +1547,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool SetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lParam)
 		{
 			if (Platform.IsWindows)
+			{
 				return SetWindowPlacementWindows(hWnd, ref lParam);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowPlacement");
 			return false;
@@ -1576,8 +1562,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool UnhookWindowsHookEx(IntPtr hhook)
 		{
 			if (Platform.IsWindows)
+			{
 				return UnhookWindowsHookExWindows(hhook);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method UnhookWindowsHookEx");
 			return false;
@@ -1590,8 +1577,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static IntPtr CallNextHookEx(IntPtr hhook, int code, IntPtr wparam, IntPtr lparam)
 		{
 			if (Platform.IsWindows)
+			{
 				return CallNextHookExWindows(hhook, code, wparam, lparam);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method CallNextHookEx");
 			return IntPtr.Zero;
@@ -1604,8 +1592,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static IntPtr SetParent(IntPtr hChild, IntPtr hParent)
 		{
 			if (Platform.IsWindows)
+			{
 				return SetParentWindows(hChild, hParent);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetParent");
 			return IntPtr.Zero;
@@ -1619,8 +1608,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen)
 		{
 			if (Platform.IsWindows)
+			{
 				return MenuItemFromPointWindows(hWnd, hMenu, ptScreen);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method MenuItemFromPoint");
 			return 0;
@@ -1633,8 +1623,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool EndMenu()
 		{
 			if (Platform.IsWindows)
+			{
 				return EndMenuWindows();
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method EndMenu");
 			return false;
@@ -1647,8 +1638,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen)
 		{
 			if (Platform.IsWindows)
+			{
 				return ClientToScreenWindows(hWnd, ref ptScreen);
-
+			}
 			// TODO-Linux: Implement if neededs
 			Console.WriteLine("Warning using unimplemented method ClientToScreen");
 			return false;
@@ -1661,8 +1653,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen)
 		{
 			if (Platform.IsWindows)
+			{
 				return ScreenToClientWindows(hWnd, ref ptScreen);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method ScreenToClient");
 			return false;
@@ -1680,8 +1673,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static uint RegisterWindowMessage(string name)
 		{
 			if (Platform.IsWindows)
+			{
 				return RegisterWindowMessageWindows(name);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method RegisterWindowMessage");
 			return 0;
@@ -1707,8 +1701,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static int GetWindowLong(HandleRef hWnd, int nIndex)
 		{
 			if (Platform.IsWindows)
+			{
 				return GetWindowLongWindows(hWnd, nIndex);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method GetWindowLong");
 			return 0;
@@ -1728,8 +1723,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static int SetWindowLong(HandleRef hWnd, int nIndex, int dwNewLong)
 		{
 			if (Platform.IsWindows)
+			{
 				return SetWindowLongWindows(hWnd, nIndex, dwNewLong);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowLong");
 			return 0;
@@ -1830,8 +1826,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>If the function succeeds, the return value is <c>true</c>. If the function
 		/// fails, the return value is <c>false</c>.</returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool SetScrollRange(IntPtr hWnd, WhichScrollBar nBar, short nMinPos,
-			short nMaxPos, bool fRedraw);
+		public static extern bool SetScrollRange(IntPtr hWnd, WhichScrollBar nBar, short nMinPos, short nMaxPos, bool fRedraw);
 
 		/// <summary>
 		/// The GetScrollRange function retrieves the current minimum and maximum scroll box
@@ -1846,8 +1841,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>If the function succeeds, the return value is <c>true</c>. If the function
 		/// fails, the return value is <c>false</c>.</returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool GetScrollRange(IntPtr hWnd, WhichScrollBar nBar,
-			out short nMinPos, out short nMaxPos);
+		public static extern bool GetScrollRange(IntPtr hWnd, WhichScrollBar nBar, out short nMinPos, out short nMaxPos);
 		#endregion // Scrolling
 
 		#endregion
@@ -1917,10 +1911,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary></summary>
 		public static int GetCurrentThreadId()
 		{
-			if (Platform.IsWindows)
-				return GetCurrentThreadIdWindows();
-
-			return System.Threading.Thread.CurrentThread.ManagedThreadId;
+			return Platform.IsWindows ? GetCurrentThreadIdWindows() : System.Threading.Thread.CurrentThread.ManagedThreadId;
 		}
 
 		[DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetCurrentThreadId")]
@@ -1930,8 +1921,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static int GetWindowThreadProcessId(IntPtr hwnd, out int procID)
 		{
 			if (Platform.IsWindows)
+			{
 				return GetWindowThreadProcessIdWindows(hwnd, out procID);
-
+			}
 			using (var process = System.Diagnostics.Process.GetCurrentProcess())
 			{
 				procID = process.Id;
@@ -1951,29 +1943,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize)
 		{
 			if (Platform.IsWindows)
+			{
 				return GetModuleFileNameWindows(hModule, lpFilename, nSize);
-
+			}
 			return GetModuleFileNameLinux(hModule, lpFilename, nSize);
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileName")]
 		[PreserveSig]
-		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename,
-			[MarshalAs(UnmanagedType.U4)]int nSize);
+		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename, [MarshalAs(UnmanagedType.U4)]int nSize);
 
 		private static uint GetModuleFileNameLinux(IntPtr hModule, StringBuilder lpFilename,
 			int nSize)
 		{
 			if (hModule != IntPtr.Zero)
+			{
 				return 0; // not supported (yet)
-
-			byte[] buf = new byte[nSize];
-			int ret = readlink("/proc/self/exe", buf, buf.Length);
+			}
+			var buf = new byte[nSize];
+			var ret = readlink("/proc/self/exe", buf, buf.Length);
 			if (ret == -1)
+			{
 				return 0;
-			char[] cbuf = new char[nSize];
-			int nChars = Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
-			lpFilename.Append(new String(cbuf, 0, nChars));
+			}
+			var cbuf = new char[nSize];
+			var nChars = Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
+			lpFilename.Append(new string(cbuf, 0, nChars));
 			return (uint)nChars;
 		}
 
@@ -1997,8 +1992,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static uint WaitForSingleObject(IntPtr handle, uint milliseconds)
 		{
 			if (Platform.IsWindows)
+			{
 				return WaitForSingleObjectWindows(handle, milliseconds);
-
+			}
 			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method WaitForSingleObject");
 			return 0;
@@ -2955,7 +2951,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary></summary>
-		public enum HdrCtrlMsgs : int
+		public enum HdrCtrlMsgs
 		{
 			/// <summary></summary>
 			HDM_FIRST = 0x1200,
@@ -3405,16 +3401,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static Font GetCaptionFont()
 		{
-			NONCLIENTMETRICS ncm = new NONCLIENTMETRICS();
+			var ncm = new NONCLIENTMETRICS();
 			ncm.cbSize = Marshal.SizeOf(typeof(NONCLIENTMETRICS));
 			try
 			{
-				bool result = !Platform.IsWindows || SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0);
+				var result = !Platform.IsWindows || SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0);
 				//int lastError = Marshal.GetLastWin32Error();
 				return (result ? Font.FromLogFont(ncm.lfCaptionFont) : null);
 			}
 			catch { }
-
 			return null;
 		}
 
@@ -3443,7 +3438,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			IntPtr hdc, hFont, old, glyphSet;
 			List<FontRange> fontRanges;
-			using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+			using (var g = Graphics.FromHwnd(IntPtr.Zero))
 			{
 				hdc = g.GetHdc();
 				hFont = font.ToHfont();
@@ -3454,7 +3449,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				fontRanges = new List<FontRange>();
 				var count = Marshal.ReadInt32(glyphSet, 12);
 
-				for (int i = 0; i < count; i++)
+				for (var i = 0; i < count; i++)
 				{
 					var range = new FontRange
 					{ Low = (ushort)Marshal.ReadInt16(glyphSet, 16 + i * 4) };
@@ -3479,8 +3474,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool AreCharGlyphsInFont(string str, Font fnt)
 		{
 			if (str == null)
+			{
 				return false;
-
+			}
 			if (Platform.IsMono)
 			{
 				// TODO-Linux FWNX-159: port
@@ -3488,13 +3484,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return true;
 			}
 
-			foreach (char chr in str)
-			{
-				if (!IsCharGlyphInFont(chr, fnt))
-					return false;
-			}
-
-			return true;
+			return str.All(chr => IsCharGlyphInFont(chr, fnt));
 		}
 
 		/// <summary>
@@ -3513,9 +3503,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static bool IsCharGlyphInFont(char chr, Font fnt)
 		{
-			if ((int)chr <= 0 || fnt == null)
+			if (chr <= 0 || fnt == null)
+			{
 				return false;
-
+			}
 			var intval = Convert.ToUInt16(chr);
 			var ranges = GetUnicodeRangesForFont(fnt);
 			return ranges.Any(range => intval >= range.Low && intval <= range.High);
@@ -3577,10 +3568,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets a value indicating whether this is a symbol font.
 		/// </summary>
-		public Boolean IsSymbolCharSet
-		{
-			get { return lfCharSet == (byte)TextMetricsCharacterSet.Symbol; }
-		}
+		public bool IsSymbolCharSet => lfCharSet == (byte)TextMetricsCharacterSet.Symbol;
 	}
 
 	#endregion

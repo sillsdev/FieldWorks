@@ -16,13 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool CanLookupLexicon(this IVwSelection me)
 		{
 			// Enable the command if the selection exists and we actually have a word.
-			int ichMin;
-			int ichLim;
-			int hvoDummy;
-			int tagDummy;
-			int wsDummy;
-			ITsString tssDummy;
-			GetWordLimitsOfSelection(me, out ichMin, out ichLim, out hvoDummy, out tagDummy, out wsDummy, out tssDummy);
+			GetWordLimitsOfSelection(me, out var ichMin, out var ichLim, out _, out _, out _, out _);
 			return ichLim > ichMin;
 		}
 
@@ -31,13 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var enabled = false;
 			// Enable the command if the selection exists, we actually have a word, and it's in
 			// the default vernacular writing system.
-			int ichMin;
-			int ichLim;
-			int hvoDummy;
-			int tagDummy;
-			int ws;
-			ITsString tss;
-			me.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out tagDummy, out ws, out tss);
+			me.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out _, out _, out var ws, out var tss);
 			if (ws == 0)
 			{
 				ws = tss.GetWsFromString(ichMin, ichLim);
@@ -59,9 +47,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return;
 			}
-			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(false, out tss, out ichMin, out _, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out tss, out ichLim, out _, out hvo, out tag, out ws);
 		}
 
 		public static bool GetSelectedWordPos(this IVwSelection me, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
@@ -74,10 +61,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				ichMin = ichLim = -1;
 				return false;
 			}
-			ITsString tss;
-			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(false, out _, out ichMin, out _, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out _, out ichLim, out _, out hvo, out tag, out ws);
 			return ichLim > 0;
 		}
 	}

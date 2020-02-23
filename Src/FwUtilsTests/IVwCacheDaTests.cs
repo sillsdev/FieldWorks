@@ -76,8 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// test VecProp
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				int chvo;
-				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
+				m_ISilDataAccess.VecProp(1001, 2001, 10, out var chvo, arrayPtr);
 				Assert.AreEqual(0, chvo);
 
 				chvo = m_ISilDataAccess.get_VecSize(1001, 2001);
@@ -145,8 +144,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				int chvo;
-				m_ISilDataAccess.BinaryPropRgb(1112, 2221, ArrayPtr.Null, 0, out chvo);
+				m_ISilDataAccess.BinaryPropRgb(1112, 2221, ArrayPtr.Null, 0, out var chvo);
 				Assert.AreEqual(0, chvo);
 
 				var prgb = new byte[] { 3, 4, 5 };
@@ -182,8 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				int chvo;
-				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out chvo);
+				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out _);
 			}
 		}
 
@@ -234,8 +231,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
 			Assert.AreEqual(0, valNew);
 
-			bool f;
-			valNew = m_IVwCacheDa.get_CachedIntProp(1115, 2225, out f);
+			valNew = m_IVwCacheDa.get_CachedIntProp(1115, 2225, out var f);
 			Assert.AreEqual(false, f);
 			Assert.AreEqual(0, valNew);
 
@@ -320,10 +316,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var hvoVal = m_ISilDataAccess.get_ObjectProp(hvo, tag);
 			Assert.AreEqual(expValues[0], hvoVal);
 
-			int chvo;
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				m_ISilDataAccess.VecProp(hvo, tag, 10, out chvo, arrayPtr);
+				m_ISilDataAccess.VecProp(hvo, tag, 10, out var chvo, arrayPtr);
 				if (expValues[1] is int[])
 				{
 					Assert.AreEqual(((int[])expValues[1]).Length, chvo);
@@ -457,10 +452,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestCacheGuidProp_ForNonCmObjectGuid()
 		{
-			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			var nonObjFlid = 9005; //CmFilterTags.kflidApp
-			var objHvo1 = 1124;
-			var objHvo2 = 1125;
+			const int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			const int nonObjFlid = 9005; //CmFilterTags.kflidApp
+			const int objHvo1 = 1124;
+			const int objHvo2 = 1125;
 			var guid = Guid.NewGuid();
 
 			// Cache the guids in this order. When this test failed, caching the
@@ -492,10 +487,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestSetGuid_ForNonCmObjectGuid()
 		{
-			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			var nonObjFlid = 9005; //CmFilterTags.kflidApp
-			var objHvo1 = 1124;
-			var objHvo2 = 1125;
+			const int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			const int nonObjFlid = 9005; //CmFilterTags.kflidApp
+			const int objHvo1 = 1124;
+			const int objHvo2 = 1125;
 			var guid = Guid.NewGuid();
 
 			// Save the guids. When this test failed, the saved guid for object objHvo2
@@ -525,10 +520,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestRemoveObjRef_ForNonCmObjectGuid()
 		{
-			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			var nonObjFlid = 9005; //CmFilterTags.kflidApp
-			var objHvo1 = 1124;
-			var objHvo2 = 1125;
+			const int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			const int nonObjFlid = 9005; //CmFilterTags.kflidApp
+			const int objHvo1 = 1124;
+			const int objHvo2 = 1125;
 			var guid = Guid.NewGuid();
 
 			// Cache the guids in this order. When this test failed, caching

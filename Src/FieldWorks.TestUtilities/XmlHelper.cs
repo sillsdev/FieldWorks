@@ -170,10 +170,7 @@ namespace FieldWorks.TestUtilities
 					}
 					return false;
 				}
-				else
-				{
-					return true;
-				}
+				return true;
 			}
 			var expectedChildren = new List<XElement>(xeExpected.Elements());
 			var actualChildren = new List<XElement>(xeActual.Elements());
@@ -186,14 +183,7 @@ namespace FieldWorks.TestUtilities
 				}
 				return false;
 			}
-			for (var i = 0; i < expectedChildren.Count; ++i)
-			{
-				if (!EqualXml(expectedChildren[i], actualChildren[i], sb))
-				{
-					return false;
-				}
-			}
-			return true;
+			return !expectedChildren.Where((t, i) => !EqualXml(t, actualChildren[i], sb)).Any();
 		}
 
 		/// <summary>
@@ -241,17 +231,14 @@ namespace FieldWorks.TestUtilities
 			{
 				var match = false;
 				string badmatch = null;
-				foreach (var attrActual in actual)
+				foreach (var attrActual in actual.Where(attrActual => attrActual.Name == attrExpect.Name))
 				{
-					if (attrActual.Name == attrExpect.Name)
+					match = attrActual.Value == attrExpect.Value || attrActual.IsNamespaceDeclaration && attrExpect.IsNamespaceDeclaration;
+					if (!match && sb != null)
 					{
-						match = attrActual.Value == attrExpect.Value || attrActual.IsNamespaceDeclaration && attrExpect.IsNamespaceDeclaration;
-						if (!match && sb != null)
-						{
-							badmatch = string.Format("    but actual {0}=\"{1}\"", attrActual.Name, attrActual.Value);
-						}
-						break;
+						badmatch = $"    but actual {attrActual.Name}=\"{attrActual.Value}\"";
 					}
+					break;
 				}
 				if (!match)
 				{

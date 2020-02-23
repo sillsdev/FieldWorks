@@ -27,10 +27,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public void FixtureSetup()
 		{
 			m_wsManager = new WritingSystemManager();
-
 			// setup English ws.
-			CoreWritingSystemDefinition enWs;
-			m_wsManager.GetOrSet("en", out enWs);
+			m_wsManager.GetOrSet("en", out var enWs);
 			m_hvoEnglishWs = enWs.Handle;
 		}
 

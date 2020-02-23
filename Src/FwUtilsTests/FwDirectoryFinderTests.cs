@@ -46,8 +46,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CodeDirectory()
 		{
-			var currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
-			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(currentDir));
+			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"))));
 		}
 
 		/// <summary>
@@ -103,8 +102,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void DataDirectory()
 		{
-			var currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
-			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(currentDir));
+			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"))));
 		}
 
 		/// <summary>
@@ -113,8 +111,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void SourceDirectory()
 		{
-			var expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"));
-			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(expectedDir));
+			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"))));
 		}
 
 		/// <summary>
@@ -145,8 +142,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetCodeSubDirectory_InvalidDir()
 		{
-			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("NotExisting"),
-				Is.SamePath("NotExisting"));
+			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("NotExisting"), Is.SamePath("NotExisting"));
 		}
 
 		/// <summary>
@@ -177,8 +173,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetDataSubDirectory_InvalidDir()
 		{
-			Assert.That(FwDirectoryFinder.GetDataSubDirectory("NotExisting"),
-				Is.SamePath("NotExisting"));
+			Assert.That(FwDirectoryFinder.GetDataSubDirectory("NotExisting"), Is.SamePath("NotExisting"));
 		}
 
 		/// <summary>

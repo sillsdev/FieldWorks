@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.LCModel.Utils;
 
@@ -24,14 +25,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="wsName">Name of the writing system (used for error reporting).</param>
 		public static MatchedPairList Load(string xmlSrc, string wsName)
 		{
-			Exception e;
-			var list = XmlSerializationHelper.DeserializeFromString<MatchedPairList>(xmlSrc, out e);
+			var list = XmlSerializationHelper.DeserializeFromString<MatchedPairList>(xmlSrc, out var e);
 			if (e != null)
 			{
 				throw new ContinuableErrorException($"Invalid MatchedPairs field while loading the {wsName} writing system.", e);
 			}
 
-			return (list ?? new MatchedPairList());
+			return list ?? new MatchedPairList();
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool BelongsToPair(string pairPart)
 		{
-			return (GetPairForOpen(pairPart) != null || GetPairForClose(pairPart) != null);
+			return GetPairForOpen(pairPart) != null || GetPairForClose(pairPart) != null;
 		}
 
 		/// <summary>
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public bool IsMatchedPair(string open, string close)
 		{
 			var pair = GetPairForOpen(open);
-			return (pair != null && pair.Close == close);
+			return pair != null && pair.Close == close;
 		}
 
 		/// <summary>
@@ -62,15 +62,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public MatchedPair GetPairForOpen(string open)
 		{
-			foreach (var pair in this)
-			{
-				if (pair.Open == open)
-				{
-					return pair;
-				}
-			}
-
-			return null;
+			return this.FirstOrDefault(pair => pair.Open == open);
 		}
 
 		/// <summary>
@@ -78,15 +70,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public MatchedPair GetPairForClose(string close)
 		{
-			foreach (var pair in this)
-			{
-				if (pair.Close == close)
-				{
-					return pair;
-				}
-			}
-
-			return null;
+			return this.FirstOrDefault(pair => pair.Close == close);
 		}
 
 		/// <summary>
@@ -94,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool IsOpen(string open)
 		{
-			return (GetPairForOpen(open) != null);
+			return GetPairForOpen(open) != null;
 		}
 
 		/// <summary>
@@ -102,7 +86,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public bool IsClose(string close)
 		{
-			return (GetPairForClose(close) != null);
+			return GetPairForClose(close) != null;
 		}
 
 		/// <summary>

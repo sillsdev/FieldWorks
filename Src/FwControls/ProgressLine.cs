@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		public override Color BackColor
 		{
-			get { return base.BackColor; }
+			get => base.BackColor;
 			set
 			{
 				base.BackColor = value;
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DefaultValue(0)]
 		public int MinValue
 		{
-			get { return m_MinValue; }
+			get => m_MinValue;
 			set
 			{
 				if (value > m_MaxValue)
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DefaultValue(100)]
 		public int MaxValue
 		{
-			get { return m_MaxValue; }
+			get => m_MaxValue;
 			set
 			{
 				if (value < m_MinValue)
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DefaultValue(0)]
 		public int Value
 		{
-			get { return m_Value; }
+			get => m_Value;
 			set
 			{
 				var oldValue = m_Value;
@@ -101,14 +101,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else if (value > m_MaxValue)
 				{
-					if (WrapAround)
-					{
-						m_Value = 0;
-					}
-					else
-					{
-						m_Value = m_MaxValue;
-					}
+					m_Value = WrapAround ? 0 : m_MaxValue;
 				}
 				else
 				{

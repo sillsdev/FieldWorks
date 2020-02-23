@@ -45,8 +45,7 @@ namespace SIL.FieldWorks
 			// Only enable the Help button if we have a help topic for the fieldName
 			if (m_helpTopicProvider != null)
 			{
-				string keyword;
-				m_btnHelp.Enabled = HelpTopicIsValid(m_helpTopic, out keyword);
+				m_btnHelp.Enabled = HelpTopicIsValid(m_helpTopic, out var keyword);
 				if (m_btnHelp.Enabled)
 				{
 					if (m_helpProvider == null)

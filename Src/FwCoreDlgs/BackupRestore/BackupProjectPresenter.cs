@@ -89,13 +89,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			{
 				DestinationFolder = m_backupProjectView.DestinationFolder
 			};
-
 			var backupService = new ProjectBackupService(m_cache, settings);
-			string backupFile;
-			if (!backupService.BackupProject(progressDlg, out backupFile))
+			if (!backupService.BackupProject(progressDlg, out var backupFile))
 			{
-				var msg = string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName)));
-				if (MessageBox.Show(msg, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+				if (MessageBox.Show(string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName))), FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 				{
 					File.Delete(backupFile);
 				}

@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		private void m_lstProjects_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			m_btnDelete.Enabled = (((ListBox)sender).SelectedItems.Count > 0);
+			m_btnDelete.Enabled = ((ListBox)sender).SelectedItems.Count > 0;
 		}
 
 		/// <summary>
@@ -209,18 +209,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			// Make a copy of the selected items so we can iterate through them, deleting
 			// from the list box and maintaining the integrity of the collection being iterated.
-			var itemsToDelete = new List<ProjectInfo>();
-			foreach (ProjectInfo info in m_lstProjects.SelectedItems)
-			{
-				itemsToDelete.Add(info);
-			}
-			foreach (var info in itemsToDelete)
+			foreach (var info in m_lstProjects.SelectedItems.Cast<ProjectInfo>().ToList())
 			{
 				var folder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, info.DatabaseName);
-				var fExtraData = CheckForExtraData(info, folder);
 				string msg;
 				MessageBoxButtons buttons;
-				if (fExtraData)
+				if (CheckForExtraData(info, folder))
 				{
 					msg = ResourceHelper.FormatResourceString("kstidDeleteProjFolder", info.DatabaseName);
 					buttons = MessageBoxButtons.YesNoCancel;
@@ -315,33 +309,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return true;
 			}
-			foreach (var filepath in files)
-			{
-				var file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension && file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension)
-				{
-					return true;
-				}
-			}
-			return false;
+			return files.Select(Path.GetFileName).Any(file => file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension && file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension);
 		}
 
 		private static bool FolderContainsFiles(string folder)
 		{
-			var files = Directory.GetFiles(folder);
-			if (files.Length > 0)
-			{
-				return true;
-			}
-			var folders = Directory.GetDirectories(folder);
-			foreach (var dir in folders)
-			{
-				if (FolderContainsFiles(dir))
-				{
-					return true;
-				}
-			}
-			return false;
+			return Directory.GetFiles(folder).Length > 0 || Directory.GetDirectories(folder).Any(FolderContainsFiles);
 		}
 	}
 }

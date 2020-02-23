@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.LCModel.Utils;
 
@@ -24,8 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="wsName">Name of the writing system (used for error reporting).</param>
 		public static PuncPatternsList Load(string xmlSrc, string wsName)
 		{
-			Exception e;
-			var list = XmlSerializationHelper.DeserializeFromString<PuncPatternsList>(xmlSrc, out e);
+			var list = XmlSerializationHelper.DeserializeFromString<PuncPatternsList>(xmlSrc, out var e);
 			if (e != null)
 			{
 				throw new ContinuableErrorException($"Invalid PunctuationPatterns field while loading the {wsName} writing system.", e);
@@ -42,15 +42,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				foreach (var pattern in this)
-				{
-					if (pattern.Pattern == puncPattern)
-					{
-						return pattern;
-					}
-				}
-
-				return null;
+				return this.FirstOrDefault(pattern => pattern.Pattern == puncPattern);
 			}
 		}
 
@@ -65,10 +57,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public PuncPatternsList Clone()
 		{
 			var clone = new PuncPatternsList();
-			foreach (var pattern in this)
-			{
-				clone.Add(pattern.Clone());
-			}
+			clone.AddRange(this.Select(pattern => pattern.Clone()));
 			return clone;
 		}
 
@@ -81,16 +70,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// Only serialize those patterns with a valid or invalid status.
 				var tmpList = new PuncPatternsList();
-				foreach (var pattern in this)
+				foreach (var pattern in this.Where(pattern => pattern.Status != PuncPatternStatus.Unknown))
 				{
-					if (pattern.Status != PuncPatternStatus.Unknown)
-					{
-						// Data in SQL strings should not contain a single quote.
-						// Therefore, convert single quotes to ORCs, which will be
-						// converted to &#x27 below.
-						pattern.Pattern = pattern.Pattern.Replace("'", "\xFFFC");
-						tmpList.Add(pattern);
-					}
+					// Data in SQL strings should not contain a single quote.
+					// Therefore, convert single quotes to ORCs, which will be
+					// converted to &#x27 below.
+					pattern.Pattern = pattern.Pattern.Replace("'", "\xFFFC");
+					tmpList.Add(pattern);
 				}
 				var xml = XmlSerializationHelper.SerializeToString(tmpList);
 				// Replace ORCs with the hex codepoint value for single quote.
@@ -113,13 +99,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static int ContextComparer(PuncPattern x, PuncPattern y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{
@@ -133,13 +118,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static int CountComparer(PuncPattern x, PuncPattern y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{
@@ -153,13 +137,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static int StatusComparer(PuncPattern x, PuncPattern y)
 		{
-			if (x == null && y == null)
+			switch (x)
 			{
-				return 0;
-			}
-			if (x == null)
-			{
-				return -1;
+				case null when y == null:
+					return 0;
+				case null:
+					return -1;
 			}
 			if (y == null)
 			{

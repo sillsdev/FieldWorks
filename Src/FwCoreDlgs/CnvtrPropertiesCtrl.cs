@@ -811,19 +811,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="toState">True if enabling, False if disabling.</param>
 		public void EnableEntirePane(bool toState)
 		{
-			if (lblSpecs.Enabled != toState)
+			if (lblSpecs.Enabled == toState)
 			{
-				lblSpecs.Enabled = toState;
-				lblName.Enabled = toState;
-				lblConversion.Enabled = toState;
-				lblConverter.Enabled = toState;
-				cboConversion.Enabled = toState;
-				cboConverter.Enabled = toState;
-				cboSpec.Enabled = toState;
-				txtMapFile.Enabled = toState;
-				txtName.Enabled = toState;
-				btnMapFile.Enabled = toState;
+				return;
 			}
+			lblSpecs.Enabled = toState;
+			lblName.Enabled = toState;
+			lblConversion.Enabled = toState;
+			lblConverter.Enabled = toState;
+			cboConversion.Enabled = toState;
+			cboConverter.Enabled = toState;
+			cboSpec.Enabled = toState;
+			txtMapFile.Enabled = toState;
+			txtName.Enabled = toState;
+			btnMapFile.Enabled = toState;
 		}
 
 		/// <summary>

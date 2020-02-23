@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.PlatformUtilities;
@@ -75,10 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string Message
 		{
-			set
-			{
-				rtbMessage.Text = value;
-			}
+			set => rtbMessage.Text = value;
 		}
 
 		/// <summary>
@@ -86,10 +84,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string Caption
 		{
-			set
-			{
-				Text = value;
-			}
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -112,10 +107,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public string SaveResponseText
 		{
-			set
-			{
-				chbSaveResponse.Text = value;
-			}
+			set => chbSaveResponse.Text = value;
 		}
 
 		/// <summary>
@@ -123,10 +115,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public MessageBoxIcon StandardIcon
 		{
-			set
-			{
-				SetStandardIcon(value);
-			}
+			set => SetStandardIcon(value);
 		}
 
 		/// <summary>
@@ -146,10 +135,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public MessageBoxExButton CustomCancelButton
 		{
-			set
-			{
-				_cancelButton = value;
-			}
+			set => _cancelButton = value;
 		}
 
 		/// <summary>
@@ -181,13 +167,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			{
 				var maxLen = 0;
 				string maxStr = null;
-				foreach (var button in Buttons)
+				foreach (var button in Buttons.Where(button => button.Text != null && button.Text.Length > maxLen))
 				{
-					if (button.Text != null && button.Text.Length > maxLen)
-					{
-						maxLen = button.Text.Length;
-						maxStr = button.Text;
-					}
+					maxLen = button.Text.Length;
+					maxStr = button.Text;
 				}
 
 				return maxStr;
@@ -406,12 +389,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <inheritdoc />
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if ((int)keyData == (int)(Keys.Alt | Keys.F4) && !_allowCancel)
-			{
-				return true;
-			}
-
-			return base.ProcessCmdKey(ref msg, keyData);
+			return (int)keyData == (int)(Keys.Alt | Keys.F4) && !_allowCancel || base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		/// <inheritdoc />
@@ -488,10 +466,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			}
 			else
 			{
-				int maxWidth = _maxLayoutWidth;
+				var maxWidth = _maxLayoutWidth;
 				if (panelIcon.Size.Width != 0)
 				{
-					maxWidth = maxWidth - (panelIcon.Size.Width + ICON_MESSAGE_PADDING);
+					maxWidth -= panelIcon.Size.Width + ICON_MESSAGE_PADDING;
 				}
 
 				var messageRectSize = MeasureString(rtbMessage.Text, maxWidth);
@@ -567,16 +545,16 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 		private void AddOkButtonIfNoButtonsPresent()
 		{
-			if (Buttons.Count == 0)
+			if (Buttons.Any())
 			{
-				var okButton = new MessageBoxExButton
-				{
-					Text = MessageBoxExButtons.OK.ToString(),
-					Value = MessageBoxExButtons.OK.ToString()
-				};
-
-				Buttons.Add(okButton);
+				return;
 			}
+			var okButton = new MessageBoxExButton
+			{
+				Text = MessageBoxExButtons.OK.ToString(),
+				Value = MessageBoxExButtons.OK.ToString()
+			};
+			Buttons.Add(okButton);
 		}
 
 
@@ -618,9 +596,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			{
 				rtbMessage.Height -= requiredHeight - _maxHeight;
 			}
-			var height = Math.Min(requiredHeight, _maxHeight);
-			var width = Math.Min(requiredWidth, _maxWidth);
-			Size = new Size(width, height);
+			Size = new Size(Math.Min(requiredWidth, _maxWidth), Math.Min(requiredHeight, _maxHeight));
 		}
 
 		/// <summary>
@@ -653,7 +629,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				nextButtonLocation.X += buttonSize.Width + BUTTON_PADDING;
 			}
 
-			ShowInTaskbar = true;//hatton added
+			// Hatton added
+			ShowInTaskbar = true;
 		}
 
 		/// <summary>

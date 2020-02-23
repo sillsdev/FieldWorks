@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		public string Filter
 		{
-			get { return m_Filter; }
+			get => m_Filter;
 			set
 			{
 				if (value == null)
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		/// <summary>Always returns true with Gtk dialog</summary>
 		public bool CheckPathExists
 		{
-			get { return true; }
+			get => true;
 			set { }
 		}
 

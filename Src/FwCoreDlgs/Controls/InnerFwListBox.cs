@@ -72,10 +72,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				return m_writingSystem;
 			}
-			set
-			{
-				m_writingSystem = value;
-			}
+			set => m_writingSystem = value;
 		}
 
 		/// <summary>
@@ -85,10 +82,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		public bool ShowHighlight
 		{
-			get
-			{
-				return m_fShowHighlight;
-			}
+			get => m_fShowHighlight;
 			set
 			{
 				if (value == m_fShowHighlight)
@@ -223,12 +217,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return; // or set selected index to -1?
 			}
-			int index;
-			int dummyHvo, dummyTag, dummyPrev;
-			IVwPropertyStore vpsDummy;
 			// Level 0 would give info about ktagText and the hvo of the dummy line object.
 			// Level 1 gives info about which line object it is in the root.
-			sel.PropInfo(false, 1, out dummyHvo, out dummyTag, out index, out dummyPrev, out vpsDummy);
+			sel.PropInfo(false, 1, out _, out _, out var index, out _, out _);
 			Debug.Assert(index < Owner.Items.Count && index >= 0);
 			// We are getting an out-of-bounds crash in setting HighlightedIndex at times,
 			// for no apparent reason (after fixing the display bug of FWNX-803).
@@ -250,9 +241,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				var pt = new Point(e.X, e.Y);
 				HighlightFromMouse(PixelToView(pt), rcSrcRoot, rcDstRoot);
 			}
@@ -404,9 +393,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						DisplayList(vwenv);
 						break;
 					case kfragItems:
-						int index, hvoDummy, tagDummy;
 						var clev = vwenv.EmbeddingLevel;
-						vwenv.GetOuterObject(clev - 1, out hvoDummy, out tagDummy, out index);
+						vwenv.GetOuterObject(clev - 1, out _, out _, out var index);
 						var fHighlighted = m_listbox.IsHighlighted(index);
 						if (fHighlighted && m_listbox.ShowHighlight)
 						{

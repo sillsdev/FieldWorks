@@ -49,8 +49,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			public override bool Equals(object obj)
 			{
-				var other = obj as A;
-				return other != null && Name == other.Name;
+				return obj is A other && Name == other.Name;
 			}
 
 			public override int GetHashCode()

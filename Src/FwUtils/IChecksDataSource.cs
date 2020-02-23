@@ -64,9 +64,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Get information about characters and words.
 		/// This is needed for platform such as Paratext which allow the user to
-		/// overide some chracter info. Platform which don't allow this can mostly
+		/// override some character info. Platform which don't allow this can mostly
 		/// likely just use the distributed version of CharacterCategorizer with
-		/// an empty conctructor.
+		/// an empty constructor.
 		/// ISSUE: what to do about word medial punctuation, I think every application
 		/// will have to have a way to specify this list.
 		/// </summary>

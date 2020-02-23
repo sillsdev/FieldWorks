@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_progressDialog = new ProgressDialogWithTaskDlgImpl(m_owner);
 
 			// This is the only way to force handle creation for a form that is not yet visible.
-			var handle = m_progressDialog.Handle;
+			var dummy = m_progressDialog.Handle;
 		}
 
 		#endregion
@@ -169,10 +169,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public virtual string Title
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Title), null) : m_progressDialog.Title;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Title), null) : m_progressDialog.Title;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -189,10 +186,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public virtual string Message
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Message), null) : m_progressDialog.Message;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Message), null) : m_progressDialog.Message;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -209,10 +203,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public virtual int Position
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Position), null) : m_progressDialog.Position;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Position), null) : m_progressDialog.Position;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -229,10 +220,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public virtual int StepSize
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.StepSize), null) : m_progressDialog.StepSize;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.StepSize), null) : m_progressDialog.StepSize;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -251,11 +239,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? SynchronizeInvoke.Invoke(() => m_progressDialog.IsIndeterminate) : m_progressDialog.IsIndeterminate;
-			}
-
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? SynchronizeInvoke.Invoke(() => m_progressDialog.IsIndeterminate) : m_progressDialog.IsIndeterminate;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -274,10 +258,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Minimum
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null) : m_progressDialog.Minimum;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null) : m_progressDialog.Minimum;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -297,10 +278,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Maximum
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Maximum), null) : m_progressDialog.Maximum;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (int)SynchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Maximum), null) : m_progressDialog.Maximum;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)
@@ -322,10 +300,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string CancelButtonText
 		{
-			get
-			{
-				return SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.CancelButtonText), null) : m_progressDialog.CancelButtonText;
-			}
+			get => SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.CancelButtonText), null) : m_progressDialog.CancelButtonText;
 			set
 			{
 				if (SynchronizeInvoke.InvokeRequired)
@@ -342,10 +317,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public string CancelLabelText
 		{
-			get
-			{
-				return SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.CancelLabelText), null) : m_progressDialog.CancelLabelText;
-			}
+			get => SynchronizeInvoke.InvokeRequired ? (string)SynchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.CancelLabelText), null) : m_progressDialog.CancelLabelText;
 			set
 			{
 				if (SynchronizeInvoke.InvokeRequired)
@@ -365,14 +337,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool Restartable
 		{
-			get
-			{
-				return m_progressDialog.Restartable;
-			}
-			set
-			{
-				m_progressDialog.Restartable = value;
-			}
+			get => m_progressDialog.Restartable;
+			set => m_progressDialog.Restartable = value;
 		}
 		#endregion
 
@@ -387,10 +353,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool AllowCancel
 		{
-			get
-			{
-				return m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (bool)SynchronizeInvoke.Invoke((Func<bool>)(() => m_progressDialog.AllowCancel), null) : m_progressDialog.AllowCancel;
-			}
+			get => m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired ? (bool)SynchronizeInvoke.Invoke((Func<bool>)(() => m_progressDialog.AllowCancel), null) : m_progressDialog.AllowCancel;
 			set
 			{
 				if (m_fCreatedProgressDlg && SynchronizeInvoke.InvokeRequired)

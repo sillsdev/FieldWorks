@@ -28,8 +28,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public new bool DoubleBuffered
 		{
-			get { return base.DoubleBuffered; }
-			set { base.DoubleBuffered = value; }
+			get => base.DoubleBuffered;
+			set => base.DoubleBuffered = value;
 		}
 
 		/// <inheritdoc />
@@ -59,14 +59,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		public new BorderStyle BorderStyle
 		{
-			get { return base.BorderStyle; }
+			get => base.BorderStyle;
 			set
 			{
 				base.BorderStyle = value;
-
-				m_overrideBorderDrawing = (value == BorderStyle.FixedSingle &&
-					(Application.VisualStyleState == VisualStyleState.NonClientAreaEnabled ||
-					Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled));
+				m_overrideBorderDrawing = value == BorderStyle.FixedSingle &&
+										  (Application.VisualStyleState == VisualStyleState.NonClientAreaEnabled ||
+										   Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled);
 			}
 		}
 

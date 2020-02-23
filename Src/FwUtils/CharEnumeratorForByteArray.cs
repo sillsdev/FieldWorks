@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SIL.Code;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -18,10 +19,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary />
 		public CharEnumeratorForByteArray(byte[] data)
 		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
+			Guard.AgainstNull(data, nameof(data));
+
 			m_data = data;
 		}
 

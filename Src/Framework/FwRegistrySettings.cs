@@ -155,8 +155,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public int LoadingProcessId
 		{
-			get { return m_loadingProcessId.Value; }
-			set { m_loadingProcessId.Value = value; }
+			get => m_loadingProcessId.Value;
+			set => m_loadingProcessId.Value = value;
 		}
 
 		/// <summary>
@@ -165,8 +165,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public bool FirstTimeAppHasBeenRun
 		{
-			get { return m_firstTimeAppHasBeenRun.Value; }
-			set { m_firstTimeAppHasBeenRun.Value = value; }
+			get => m_firstTimeAppHasBeenRun.Value;
+			set => m_firstTimeAppHasBeenRun.Value = value;
 		}
 
 		/// <summary>
@@ -174,8 +174,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public int NumberOfLaunches
 		{
-			get { return m_numberOfLaunches.Value; }
-			set { m_numberOfLaunches.Value = value; }
+			get => m_numberOfLaunches.Value;
+			set => m_numberOfLaunches.Value = value;
 		}
 
 		/// <summary>
@@ -183,8 +183,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public int NumberOfSeriousCrashes
 		{
-			get { return m_numberOfSeriousCrashes.Value; }
-			set { m_numberOfSeriousCrashes.Value = value; }
+			get => m_numberOfSeriousCrashes.Value;
+			set => m_numberOfSeriousCrashes.Value = value;
 		}
 
 		/// <summary>
@@ -192,8 +192,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public int NumberOfAnnoyingCrashes
 		{
-			get { return m_numberOfAnnoyingCrashes.Value; }
-			set { m_numberOfAnnoyingCrashes.Value = value; }
+			get => m_numberOfAnnoyingCrashes.Value;
+			set => m_numberOfAnnoyingCrashes.Value = value;
 		}
 
 		/// <summary>
@@ -201,8 +201,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public int TotalAppRuntime
 		{
-			get { return m_totalAppRuntime.Value; }
-			set { m_totalAppRuntime.Value = value; }
+			get => m_totalAppRuntime.Value;
+			set => m_totalAppRuntime.Value = value;
 		}
 
 		/// <summary>
@@ -210,8 +210,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public string LatestAppStartupTime
 		{
-			get { return m_appStartupTime.Value; }
-			set { m_appStartupTime.Value = value; }
+			get => m_appStartupTime.Value;
+			set => m_appStartupTime.Value = value;
 		}
 
 		/// <summary>
@@ -221,8 +221,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public string LatestProject
 		{
-			get { return m_latestProject.Value; }
-			set { m_latestProject.Value = value; }
+			get => m_latestProject.Value;
+			set => m_latestProject.Value = value;
 		}
 
 		/// <summary>
@@ -230,8 +230,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public bool ShowSideBarSetting
 		{
-			get { return m_showSideBar.Value; }
-			set { m_showSideBar.Value = value; }
+			get => m_showSideBar.Value;
+			set => m_showSideBar.Value = value;
 		}
 
 		/// <summary>
@@ -239,8 +239,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public bool ShowStatusBarSetting
 		{
-			get { return m_showStatusBar.Value; }
-			set { m_showStatusBar.Value = value; }
+			get => m_showStatusBar.Value;
+			set => m_showStatusBar.Value = value;
 		}
 
 		/// <summary>
@@ -249,8 +249,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public bool AutoOpenLastEditedProject
 		{
-			get { return m_openLastEditedProject.Value; }
-			set { m_openLastEditedProject.Value = value; }
+			get => m_openLastEditedProject.Value;
+			set => m_openLastEditedProject.Value = value;
 		}
 		#endregion
 
@@ -266,8 +266,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public static int MeasurementUnitSetting
 		{
-			get { return s_measurementUnitSetting.Value; }
-			set { s_measurementUnitSetting.Value = value; }
+			get => s_measurementUnitSetting.Value;
+			set => s_measurementUnitSetting.Value = value;
 		}
 		#endregion
 

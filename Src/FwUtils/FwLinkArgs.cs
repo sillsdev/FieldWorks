@@ -226,13 +226,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>
 		/// 	<c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		/// <exception cref="T:System.NullReferenceException">
-		/// The <paramref name="obj"/> parameter is null.
-		/// </exception>
 		public override bool Equals(object obj)
 		{
-			var link = obj as FwLinkArgs;
-			if (link == null)
+			if (!(obj is FwLinkArgs link))
 			{
 				return false;
 			}

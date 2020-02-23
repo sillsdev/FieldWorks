@@ -223,10 +223,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public CoreWritingSystemDefinition WritingSystem
 		{
-			get
-			{
-				return m_ws;
-			}
+			get => m_ws;
 			set
 			{
 				m_ws = value;
@@ -254,13 +251,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						subtag = new ScriptSubtag(code, m_scriptName.Text.Trim());
 					}
 				}
-				else if (IsVoiceWritingSystem)
-				{
-					subtag = WellKnownSubtags.AudioScript;
-				}
 				else
 				{
-					subtag = (ScriptSubtag)m_scriptName.SelectedItem;
+					subtag = IsVoiceWritingSystem ? (ScriptSubtag)WellKnownSubtags.AudioScript : (ScriptSubtag)m_scriptName.SelectedItem;
 				}
 				return subtag;
 			}
@@ -327,8 +320,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					}
 					else //if the subtag has no name try to be nice and look one up, this avoids getting our controls in a bad state
 					{
-						RegionSubtag region;
-						RegionName = StandardSubtags.RegisteredRegions.TryGet(value.Code, out region) ? region.Name : value.Code;
+						RegionName = StandardSubtags.RegisteredRegions.TryGet(value.Code, out var region) ? region.Name : value.Code;
 					}
 					if (m_regionName.SelectedItem == null)
 					{
@@ -351,9 +343,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (m_variantAbbrev.Enabled)
 				{
 					var code = m_variantAbbrev.Text.Trim();
-					IEnumerable<VariantSubtag> variantSubtags;
-					code = Regex.Replace(code, "^x-", "");
-					if (IetfLanguageTag.TryGetVariantSubtags("x-" + code, out variantSubtags, m_variantNameString))
+					code = Regex.Replace(code, "^x-", string.Empty);
+					if (IetfLanguageTag.TryGetVariantSubtags("x-" + code, out var variantSubtags, m_variantNameString))
 					{
 						foreach (var variantSubtag in variantSubtags)
 						{
@@ -432,10 +423,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string ScriptName
 		{
-			get
-			{
-				return m_scriptNameString;
-			}
+			get => m_scriptNameString;
 			set
 			{
 				m_scriptNameString = value;
@@ -448,10 +436,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string RegionName
 		{
-			get
-			{
-				return m_regionNameString;
-			}
+			get => m_regionNameString;
 			set
 			{
 				m_regionNameString = value;
@@ -464,10 +449,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string VariantName
 		{
-			get
-			{
-				return m_variantNameString;
-			}
+			get => m_variantNameString;
 			set
 			{
 				m_variantNameString = value;
@@ -759,7 +741,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private static string GetValidAbbr(string name, int maxLen)
 		{
 			var sb = new StringBuilder();
-			foreach (var c in name.Where(c => IsValidAbbrChar(c)))
+			foreach (var c in name.Where(IsValidAbbrChar))
 			{
 				sb.Append(c);
 				if (sb.Length == maxLen)

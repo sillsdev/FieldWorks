@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
+
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
@@ -32,12 +34,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// make sure that all the characters are the same and they are alpha characters
 			stringValue = stringValue.ToUpper();
 			var firstChar = stringValue[0];
-			foreach (var ch in stringValue)
+			if (stringValue.Any(ch => ch != firstChar || !char.IsLetter(ch)))
 			{
-				if (ch != firstChar || !char.IsLetter(ch))
-				{
-					return -1;
-				}
+				return -1;
 			}
 			return stringValue[0] - 'A' + 1 + (stringValue.Length - 1) * 26;
 		}

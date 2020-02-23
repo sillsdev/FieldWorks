@@ -131,10 +131,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public CheckState HeadersCheckState
 		{
-			get
-			{
-				return m_state;
-			}
+			get => m_state;
 			set
 			{
 				m_state = value;
@@ -249,14 +246,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			var oldState = HeadersCheckState;
-			if (HeadersCheckState == CheckState.Checked)
-			{
-				HeadersCheckState = CheckState.Unchecked;
-			}
-			else
-			{
-				HeadersCheckState = CheckState.Checked;
-			}
+			HeadersCheckState = HeadersCheckState == CheckState.Checked ? CheckState.Unchecked : CheckState.Checked;
 			m_grid.InvalidateCell(m_col.HeaderCell);
 			var updateValues = true;
 			if (CheckChanged != null)
@@ -302,13 +292,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else
 			{
 				var state = ButtonState.Checked;
-				if (HeadersCheckState == CheckState.Unchecked)
+				switch (HeadersCheckState)
 				{
-					state = ButtonState.Normal;
-				}
-				else if (HeadersCheckState == CheckState.Indeterminate)
-				{
-					state |= ButtonState.Inactive;
+					case CheckState.Unchecked:
+						state = ButtonState.Normal;
+						break;
+					case CheckState.Indeterminate:
+						state |= ButtonState.Inactive;
+						break;
 				}
 				ControlPaint.DrawCheckBox(e.Graphics, rcBox, state | ButtonState.Flat);
 			}

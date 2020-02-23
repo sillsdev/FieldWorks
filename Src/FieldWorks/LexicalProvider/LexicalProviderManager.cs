@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				}
 				return;
 			}
-			Logger.WriteEvent("Started provider " + providerLocation + " for type " + providerType + ".");
+			Logger.WriteEvent($"Started provider {providerLocation} for type {providerType}.");
 			s_runningProviders.Add(providerType, providerHost);
 		}
 

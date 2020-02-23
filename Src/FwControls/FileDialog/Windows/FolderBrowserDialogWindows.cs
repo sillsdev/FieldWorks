@@ -19,8 +19,8 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		#region IFolderBrowserDialog implementation
 		public event EventHandler Disposed
 		{
-			add { m_dlg.Disposed += value; }
-			remove { m_dlg.Disposed -= value; }
+			add => m_dlg.Disposed += value;
+			remove => m_dlg.Disposed -= value;
 		}
 
 		public void Reset()
@@ -40,32 +40,32 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 
 		public string Description
 		{
-			get { return m_dlg.Description; }
-			set { m_dlg.Description = value; }
+			get => m_dlg.Description;
+			set => m_dlg.Description = value;
 		}
 
 		public Environment.SpecialFolder RootFolder
 		{
-			get { return m_dlg.RootFolder; }
-			set { m_dlg.RootFolder = value; }
+			get => m_dlg.RootFolder;
+			set => m_dlg.RootFolder = value;
 		}
 
 		public string SelectedPath
 		{
-			get { return m_dlg.SelectedPath; }
-			set { m_dlg.SelectedPath = value; }
+			get => m_dlg.SelectedPath;
+			set => m_dlg.SelectedPath = value;
 		}
 
 		public bool ShowNewFolderButton
 		{
-			get { return m_dlg.ShowNewFolderButton; }
-			set { m_dlg.ShowNewFolderButton = value; }
+			get => m_dlg.ShowNewFolderButton;
+			set => m_dlg.ShowNewFolderButton = value;
 		}
 
 		public object Tag
 		{
-			get { return m_dlg.Tag; }
-			set { m_dlg.Tag = value; }
+			get => m_dlg.Tag;
+			set => m_dlg.Tag = value;
 		}
 		#endregion
 

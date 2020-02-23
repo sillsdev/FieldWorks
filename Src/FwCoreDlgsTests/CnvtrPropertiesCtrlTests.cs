@@ -104,11 +104,8 @@ namespace AddConverterDlgTests
 				encConverters = new EncConverters();
 			}
 
-			if (m_myDlg != null)
-			{
-				m_myDlg.Dispose();
-				m_myDlg = null;
-			}
+			m_myDlg?.Dispose();
+			m_myDlg = null;
 
 			try
 			{
@@ -139,7 +136,7 @@ namespace AddConverterDlgTests
 			RemoveTestConverters(encConverters, "Installed mappings after test teardown:");
 		}
 
-		void RemoveTestConverters(EncConverters encConverters, string testMessage)
+		private static void RemoveTestConverters(EncConverters encConverters, string testMessage)
 		{
 			// Remove any encoding converters that were added for these tests.
 			encConverters.Remove("ZZZUnitTestCC");
@@ -305,8 +302,7 @@ namespace AddConverterDlgTests
 
 			// During the testing portion below, we will test two things:
 			// 1) That the cboConverter selected an item properly
-			// 2) That cboConversion was prepopulated properly
-
+			// 2) That cboConversion was pre-populated properly
 			m_myCtrl.setCboConverter(ConverterType.ktypeCC);
 			Assert.AreEqual(ConverterType.ktypeCC, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected CC type properly");
 			Assert.AreEqual(ConvType.Legacy_to_Unicode, ((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "CC type defaults to Legacy_to_Unicode");

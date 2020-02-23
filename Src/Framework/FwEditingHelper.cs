@@ -139,8 +139,7 @@ namespace SIL.FieldWorks.Common.Framework
 							var urlBottom = TsStringUtils.GetURL(sObjData);
 							if (urlBottom != urlTop)
 							{
-								int nVar;
-								var propsToUse = StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+								var propsToUse = StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 								currSel.Selection.SetTypingProps(propsToUse);
 							}
 							else if (stuInput[0] == (char)VwSpecialChars.kscDelForward || stuInput[0] == (char)VwSpecialChars.kscBackspace)
@@ -151,11 +150,9 @@ namespace SIL.FieldWorks.Common.Framework
 									var urlBefore = (ttpBefore == null) ? null : TsStringUtils.GetURL(ttpBefore.GetStrPropValue((int)FwTextPropType.ktptObjData));
 									var ttpAfter = currSel.PropsAfter;
 									var urlAfter = (ttpAfter == null) ? null : TsStringUtils.GetURL(ttpAfter.GetStrPropValue((int)FwTextPropType.ktptObjData));
-
 									if (urlBefore != urlTop && urlAfter != urlTop)
 									{
-										int nVar;
-										var propsToUse = ttpBefore ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+										var propsToUse = ttpBefore ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 										currSel.Selection.SetTypingProps(propsToUse);
 									}
 								}
@@ -166,19 +163,16 @@ namespace SIL.FieldWorks.Common.Framework
 								var urlBefore = (ttpBefore == null) ? null : TsStringUtils.GetURL(ttpBefore.GetStrPropValue((int)FwTextPropType.ktptObjData));
 								if (urlBefore != urlTop)
 								{
-									int nVar;
-									var propsToUse = ttpBefore ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+									var propsToUse = ttpBefore ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 									currSel.Selection.SetTypingProps(propsToUse);
 								}
 								else
 								{
 									var ttpAfter = currSel.PropsAfter;
 									var urlAfter = (ttpAfter == null) ? null : TsStringUtils.GetURL(ttpAfter.GetStrPropValue((int)FwTextPropType.ktptObjData));
-
 									if (urlAfter != urlBottom)
 									{
-										int nVar;
-										var propsToUse = ttpAfter ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+										var propsToUse = ttpAfter ?? StyleUtils.CharStyleTextProps(null, ttpTop.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 										currSel.Selection.SetTypingProps(propsToUse);
 									}
 								}
@@ -265,15 +259,9 @@ namespace SIL.FieldWorks.Common.Framework
 		public void InsertPicture(ICmPicture pict)
 		{
 			// get selection information
-			ITsString tss;
-			int ich;
-			bool fAssocPrev;
-			int hvoObj;
-			int ws;
-			int propTag;
 			var helper = CurrentSelection;
 			var sel = helper.Selection;
-			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);
+			sel.TextSelInfo(true, out var tss, out var ich, out _, out var hvoObj, out var propTag, out var ws);
 			// If inserting a picture over a user prompt, need to set up info for a proper insertion
 			// in the empty paragraph.
 			if (propTag == SimpleRootSite.kTagUserPrompt)
@@ -289,7 +277,7 @@ namespace SIL.FieldWorks.Common.Framework
 				helper = GetSelectionReducedToIp(SelLimitType.Top);
 				if (helper != null)
 				{
-					helper.Selection.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);
+					helper.Selection.TextSelInfo(true, out tss, out ich, out _, out hvoObj, out propTag, out ws);
 				}
 			}
 			if (tss == null)
@@ -366,13 +354,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				// Vars to call TextSelInfo and find out whether it is a structured
 				// text field.
-				ITsString tssDummy;
-				int ich;
-				bool fAssocPrev;
-				int hvoObj;
-				int tag;
-				int wsTmp;
-				vwselTargetLocation.TextSelInfo(false, out tssDummy, out ich, out fAssocPrev, out hvoObj, out tag, out wsTmp);
+				vwselTargetLocation.TextSelInfo(false, out _, out _, out _, out _, out var tag, out _);
 				if (tag != StTxtParaTags.kflidContents)
 				{
 					// TODO (EberhardB): This seems to be Notebook specific!

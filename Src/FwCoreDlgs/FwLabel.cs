@@ -179,14 +179,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string controlID
 		{
-			get
-			{
-				return m_innerFwTextBox.m_controlID;
-			}
-			set
-			{
-				m_innerFwTextBox.m_controlID = value;
-			}
+			get => m_innerFwTextBox.m_controlID;
+			set => m_innerFwTextBox.m_controlID = value;
 		}
 
 		/// <summary>
@@ -194,10 +188,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public override Color BackColor
 		{
-			get
-			{
-				return base.BackColor;
-			}
+			get => base.BackColor;
 			set
 			{
 				m_innerFwTextBox.BackColor = value;
@@ -210,10 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public override Color ForeColor
 		{
-			get
-			{
-				return base.ForeColor;
-			}
+			get => base.ForeColor;
 			set
 			{
 				m_innerFwTextBox.ForeColor = value;
@@ -229,10 +217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
-			get
-			{
-				return m_innerFwTextBox == null ? "" : m_innerFwTextBox.Text;
-			}
+			get => m_innerFwTextBox == null ? "" : m_innerFwTextBox.Text;
 			set
 			{
 				m_innerFwTextBox.Text = value;
@@ -246,10 +231,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Browsable(false)]
 		public virtual ITsString Tss
 		{
-			get
-			{
-				return m_innerFwTextBox.Tss;
-			}
+			get => m_innerFwTextBox.Tss;
 			set
 			{
 				m_tssOrig = value;
@@ -264,7 +246,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Category("Appearance")]
 		public virtual System.Drawing.ContentAlignment TextAlign
 		{
-			get { return m_contentAlignment; }
+			get => m_contentAlignment;
 			set
 			{
 				if (m_contentAlignment != value)
@@ -284,14 +266,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int WritingSystemCode
 		{
-			get
-			{
-				return m_innerFwTextBox.WritingSystemCode;
-			}
-			set
-			{
-				m_innerFwTextBox.WritingSystemCode = value;
-			}
+			get => m_innerFwTextBox.WritingSystemCode;
+			set => m_innerFwTextBox.WritingSystemCode = value;
 		}
 
 		/// <summary>
@@ -300,14 +276,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return m_innerFwTextBox.StyleSheet;
-			}
-			set
-			{
-				m_innerFwTextBox.StyleSheet = value;
-			}
+			get => m_innerFwTextBox.StyleSheet;
+			set => m_innerFwTextBox.StyleSheet = value;
 		}
 
 		/// <summary>
@@ -316,14 +286,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return m_innerFwTextBox.WritingSystemFactory;
-			}
-			set
-			{
-				m_innerFwTextBox.WritingSystemFactory = value;
-			}
+			get => m_innerFwTextBox.WritingSystemFactory;
+			set => m_innerFwTextBox.WritingSystemFactory = value;
 		}
 		#endregion // Properties
 

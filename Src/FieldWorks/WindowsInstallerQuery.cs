@@ -20,7 +20,7 @@ namespace SIL.FieldWorks
 		private const int ErrorUnknownProduct = 1605;
 
 		[DllImport("msi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		private static extern Int32 MsiGetProductInfo(string product, string property, StringBuilder valueBuf, ref Int32 cchValueBuf);
+		private static extern int MsiGetProductInfo(string product, string property, StringBuilder valueBuf, ref Int32 cchValueBuf);
 
 		[DllImport("msi.dll", CharSet = CharSet.Unicode)]
 		internal static extern uint MsiOpenProduct(string szProduct, out int hProduct);
@@ -35,11 +35,7 @@ namespace SIL.FieldWorks
 		/// <returns>True if this is an installed version</returns>
 		public static bool IsThisInstalled()
 		{
-			string productName;
-
-			var status = GetProductInfo(InstalledProductNameProperty, out productName);
-
-			return status != ErrorUnknownProduct;
+			return GetProductInfo(InstalledProductNameProperty, out _) != ErrorUnknownProduct;
 		}
 
 		private static int GetProductInfo(string propertyName, out string propertyValue)

@@ -326,18 +326,15 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetCheckedTagData()
 		{
 			using (var dummyButton = new Button())
+			using (var dummyLabel = new Label())
 			{
-				using (var dummyLabel = new Label())
-				{
-					m_bNode.Tag = dummyButton;
-					m_c2Node.Tag = dummyLabel;
-					m_treeView.SetChecked(m_bNode, TriStateTreeViewCheckState.Checked);
-					var list = m_treeView.GetCheckedTagData();
-
-					Assert.AreEqual(2, list.Count);
-					Assert.AreEqual(dummyButton, list[0]);
-					Assert.AreEqual(dummyLabel, list[1]);
-				}
+				m_bNode.Tag = dummyButton;
+				m_c2Node.Tag = dummyLabel;
+				m_treeView.SetChecked(m_bNode, TriStateTreeViewCheckState.Checked);
+				var list = m_treeView.GetCheckedTagData();
+				Assert.AreEqual(2, list.Count);
+				Assert.AreEqual(dummyButton, list[0]);
+				Assert.AreEqual(dummyLabel, list[1]);
 			}
 		}
 

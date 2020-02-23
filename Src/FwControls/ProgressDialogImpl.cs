@@ -77,14 +77,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string Message
 		{
-			get
-			{
-				return lblStatusMessage.Text;
-			}
-			set
-			{
-				lblStatusMessage.Text = value;
-			}
+			get => lblStatusMessage.Text;
+			set => lblStatusMessage.Text = value;
 		}
 
 		/// <summary>
@@ -93,14 +87,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Maximum
 		{
-			get
-			{
-				return progressBar.Maximum;
-			}
-			set
-			{
-				progressBar.Maximum = value;
-			}
+			get => progressBar.Maximum;
+			set => progressBar.Maximum = value;
 		}
 
 		/// <summary>
@@ -109,14 +97,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Minimum
 		{
-			get
-			{
-				return progressBar.Minimum;
-			}
-			set
-			{
-				progressBar.Minimum = value;
-			}
+			get => progressBar.Minimum;
+			set => progressBar.Minimum = value;
 		}
 
 		/// <summary>
@@ -125,10 +107,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int Position
 		{
-			get
-			{
-				return progressBar.Value;
-			}
+			get => progressBar.Value;
 			set
 			{
 				if (value < progressBar.Minimum)
@@ -159,14 +138,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string Title
 		{
-			get
-			{
-				return Text;
-			}
-			set
-			{
-				Text = value;
-			}
+			get => Text;
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -174,14 +147,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public int StepSize
 		{
-			get
-			{
-				return progressBar.Step;
-			}
-			set
-			{
-				progressBar.Step = value;
-			}
+			get => progressBar.Step;
+			set => progressBar.Step = value;
 		}
 
 		/// <summary>
@@ -195,15 +162,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool AllowCancel
 		{
-			get
-			{
-				return btnCancel.Visible && lblCancel.Visible;
-			}
+			get => btnCancel.Visible && lblCancel.Visible;
 			set
 			{
 				btnCancel.Visible = value;
 				lblCancel.Visible = value;
-
 				if (Visible && value)
 				{
 					// If the cancel button is showing then make sure that the user thinks he can
@@ -218,14 +181,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string CancelButtonText
 		{
-			get
-			{
-				return btnCancel.Text;
-			}
-			set
-			{
-				btnCancel.Text = value;
-			}
+			get => btnCancel.Text;
+			set => btnCancel.Text = value;
 		}
 
 		/// <summary>
@@ -233,10 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string CancelLabelText
 		{
-			get
-			{
-				return lblCancel.Text;
-			}
+			get => lblCancel.Text;
 			set
 			{
 				lblCancel.Text = value;
@@ -262,14 +216,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get
-			{
-				return progressBar.Style == ProgressBarStyle.Marquee;
-			}
-			set
-			{
-				progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
-			}
+			get => progressBar.Style == ProgressBarStyle.Marquee;
+			set => progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
 		}
 		#endregion
 

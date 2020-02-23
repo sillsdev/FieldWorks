@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.LCModel.Utils;
 
@@ -47,14 +48,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="wsName">Name of the writing system (used for error reporting).</param>
 		public static QuotationMarksList Load(string xmlSrc, string wsName)
 		{
-			Exception e;
-			var list = XmlSerializationHelper.DeserializeFromString<QuotationMarksList>(xmlSrc, out e);
+			var list = XmlSerializationHelper.DeserializeFromString<QuotationMarksList>(xmlSrc, out var e);
 			if (e != null)
 			{
 				throw new ContinuableErrorException($"Invalid QuotationMarks field while loading the {wsName} writing system.", e);
 			}
 
-			return (list == null || list.Levels == 0 ? NewList() : list);
+			return list == null || list.Levels == 0 ? NewList() : list;
 		}
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public void RemoveLastLevel()
 		{
-			if (QMarksList.Count > 0)
+			if (QMarksList.Any())
 			{
 				QMarksList.RemoveAt(QMarksList.Count - 1);
 			}
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var list = TrimmedList;
-				return (list.Levels == 0 ? null : XmlSerializationHelper.SerializeToString(TrimmedList));
+				return list.Levels == 0 ? null : XmlSerializationHelper.SerializeToString(TrimmedList);
 			}
 		}
 
@@ -205,21 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets a value indicating whether or not the list is empty at all levels.
 		/// </summary>
-		public bool IsEmpty
-		{
-			get
-			{
-				foreach (var qm in QMarksList)
-				{
-					if (!qm.IsEmpty)
-					{
-						return false;
-					}
-				}
-
-				return true;
-			}
-		}
+		public bool IsEmpty => QMarksList.All(qm => qm.IsEmpty);
 
 		/// <summary>
 		/// Finds the first level that is followed by a non empty level.

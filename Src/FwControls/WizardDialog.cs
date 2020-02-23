@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Resources;
 using System.Windows.Forms;
@@ -113,7 +114,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -240,13 +241,10 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Layout")]
 		public int StepPanelWidth
 		{
-			get
-			{
-				return panSteps.Width;
-			}
+			get => panSteps.Width;
 			set
 			{
-				if (value > 0 && value < this.Width)
+				if (value > 0 && value < Width)
 				{
 					panSteps.Width = value;
 					OnResize(null);
@@ -262,10 +260,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Appearance")]
 		public Font StepTextFont
 		{
-			get
-			{
-				return m_StepsFont;
-			}
+			get => m_StepsFont;
 			set
 			{
 				m_StepsFont = value;
@@ -293,10 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Misc")]
 		public int StepPageCount
 		{
-			get
-			{
-				return tabSteps.TabCount;
-			}
+			get => tabSteps.TabCount;
 			set
 			{
 				// Make sure there are never fewer pages than there are steps.
@@ -360,10 +352,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public string[] StepNames
 		{
-			get
-			{
-				return m_StepNames;
-			}
+			get => m_StepNames;
 			set
 			{
 				m_StepNames = value;
@@ -383,8 +372,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected bool NextButtonEnabled
 		{
-			get { return m_btnNext.Enabled; }
-			set { m_btnNext.Enabled = value; }
+			get => m_btnNext.Enabled;
+			set => m_btnNext.Enabled = value;
 		}
 
 		#endregion
@@ -524,8 +513,8 @@ namespace SIL.FieldWorks.Common.Controls
 				// Calculate the horizontal position for the vertical connecting
 				// line. (Subtracting 1 puts it just off center because the line
 				// will be 2 pixels thick.)
-				var xpConnectingLine = rcSquare.X + (kdxpStepSquareWidth / 2) - 1;
 
+				var xpConnectingLine = rcSquare.X + kdxpStepSquareWidth / 2 - 1;
 				// Create brushes for the colored squares and the step text.
 				using (SolidBrush brSquare = new SolidBrush(kclrPendingStep), brText = new SolidBrush(steps.TextColor))
 				{
@@ -553,8 +542,8 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 						// Draw the square next to the step text label.
 						e.Graphics.FillRectangle(brSquare, rcSquare);
-						rcSquare.Y += (dyStepHeight + kdypStepListSpacing);
 
+						rcSquare.Y += dyStepHeight + kdypStepListSpacing;
 						// Draw the vertical line connecting each step's square.
 						if (i < steps.LastStepNumber)
 						{
@@ -634,10 +623,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private void tabSteps_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			UpdateStepLabel();
-
 			// Disable the back button if on the first or last step.
-			m_btnBack.Enabled = (m_CurrentStepNumber > 0);
-
+			m_btnBack.Enabled = m_CurrentStepNumber > 0;
 			// If on the last step, change the Next button's text to read 'Finish'
 			// (or the localized equivalent).
 			m_btnNext.Text = m_CurrentStepNumber == LastStepNumber ? m_FinishText : m_NextText;
@@ -709,8 +696,8 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void UpdateStepLabel()
 		{
 			lblSteps.Text = string.Format(m_StepIndicatorFormat, (m_CurrentStepNumber + 1).ToString(), (LastStepNumber + 1).ToString());
-			lblSteps.Left = ClientSize.Width - (lblSteps.Width + (int)kdxpStepsLabelRightPadding);
 
+			lblSteps.Left = ClientSize.Width - (lblSteps.Width + kdxpStepsLabelRightPadding);
 			panSteps.Invalidate();
 		}
 

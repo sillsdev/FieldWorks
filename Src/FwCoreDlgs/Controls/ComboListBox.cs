@@ -49,10 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public ComboBoxState State
 		{
-			get
-			{
-				return m_state;
-			}
+			get => m_state;
 
 			set
 			{
@@ -66,15 +63,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool HasBorder
 		{
-			get
-			{
-				return BorderStyle != BorderStyle.None;
-			}
-
-			set
-			{
-				BorderStyle = value ? BorderStyle.FixedSingle : BorderStyle.None;
-			}
+			get => BorderStyle != BorderStyle.None;
+			set => BorderStyle = value ? BorderStyle.FixedSingle : BorderStyle.None;
 		}
 
 		/// <summary>
@@ -82,11 +72,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool UseVisualStyleBackColor
 		{
-			get
-			{
-				return false;
-			}
-
+			get => false;
 			set
 			{
 				// do nothing;
@@ -101,10 +87,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <inheritdoc />
 		public ComboBoxStyle DropDownStyle
 		{
-			get
-			{
-				return ComboBoxStyle.DropDownList;
-			}
+			get => ComboBoxStyle.DropDownList;
 			set
 			{
 				// required interface method does nothing at all.
@@ -114,11 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary />
 		public bool ActivateOnShow
 		{
-			get
-			{
-				return m_activateOnShow;
-			}
-
+			get => m_activateOnShow;
 			set
 			{
 				m_activateOnShow = value;
@@ -167,10 +146,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				return Items[SelectedIndex].ToString();
 			}
-			set
-			{
-				SelectedIndex = FindStringExact(value);
-			}
+			set => SelectedIndex = FindStringExact(value);
 		}
 
 		/// <inheritdoc />

@@ -22,15 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_stepName.Text = step.StepName;
 			_optionalIndicator.Visible = step.IsOptional;
 
-			if (step.IsComplete)
-			{
-				_statusImage.Image = Properties.Resources.WizardStepComplete;
-			}
-			else
-			{
-				_statusImage.Image = Properties.Resources.WizardNotComplete;
-			}
-
+			_statusImage.Image = step.IsComplete ? Properties.Resources.WizardStepComplete : Properties.Resources.WizardNotComplete;
 			_lineToNextImage.Image = Properties.Resources.WizardConnectToStep;
 			_lineToPreviousImage.Image = Properties.Resources.WizardConnectToStep;
 
@@ -43,14 +35,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				_lineToNextImage.Visible = false;
 			}
 
-			if (step.IsCurrent)
-			{
-				_stepName.Font = new Font(_stepName.Font, FontStyle.Bold | FontStyle.Underline);
-			}
-			else
-			{
-				_stepName.Font = new Font(_stepName.Font, FontStyle.Regular);
-			}
+			_stepName.Font = step.IsCurrent ? new Font(_stepName.Font, FontStyle.Bold | FontStyle.Underline) : new Font(_stepName.Font, FontStyle.Regular);
 		}
 	}
 }

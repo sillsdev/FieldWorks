@@ -66,8 +66,8 @@ namespace FixFwData
 
 			public string Message
 			{
-				get { return null; }
-				set { Console.Out.WriteLine(value); }
+				get => null;
+				set => Console.Out.WriteLine(value);
 			}
 
 			public int Position { get; set; }
@@ -77,13 +77,13 @@ namespace FixFwData
 			public ISynchronizeInvoke SynchronizeInvoke { get; private set; }
 			public bool IsIndeterminate
 			{
-				get { return false; }
+				get => false;
 				set { }
 			}
 
 			public bool AllowCancel
 			{
-				get { return false; }
+				get => false;
 				set { }
 			}
 		}

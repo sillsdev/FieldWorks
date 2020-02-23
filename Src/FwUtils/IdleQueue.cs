@@ -121,10 +121,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <value><c>true</c> if this instance is paused; otherwise, <c>false</c>.</value>
 		public bool IsPaused
 		{
-			get
-			{
-				return _paused;
-			}
+			get => _paused;
 
 			set
 			{

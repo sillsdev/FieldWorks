@@ -16,14 +16,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 
 		public bool CreatePrompt
 		{
-			get { return ((SaveFileDialog)m_dlg).CreatePrompt; }
-			set { ((SaveFileDialog)m_dlg).CreatePrompt = value; }
+			get => ((SaveFileDialog)m_dlg).CreatePrompt;
+			set => ((SaveFileDialog)m_dlg).CreatePrompt = value;
 		}
 
 		public bool OverwritePrompt
 		{
-			get { return ((SaveFileDialog)m_dlg).OverwritePrompt; }
-			set { ((SaveFileDialog)m_dlg).OverwritePrompt = value; }
+			get => ((SaveFileDialog)m_dlg).OverwritePrompt;
+			set => ((SaveFileDialog)m_dlg).OverwritePrompt = value;
 		}
 
 		public Stream OpenFile()

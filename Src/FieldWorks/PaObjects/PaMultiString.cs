@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// <summary />
 		public static PaMultiString Create(ITsMultiString msa, ILcmServiceLocator svcloc)
 		{
-			return (msa == null || msa.StringCount == 0 ? null : new PaMultiString(msa, svcloc));
+			return msa == null || msa.StringCount == 0 ? null : new PaMultiString(msa, svcloc);
 		}
 
 		/// <summary>
@@ -27,9 +27,7 @@ namespace SIL.FieldWorks.PaObjects
 		{
 			for (var i = 0; i < tsMultiString.StringCount; ++i)
 			{
-				int hvoWs;
-				var tss = tsMultiString.GetStringFromIndex(i, out hvoWs);
-
+				var tss = tsMultiString.GetStringFromIndex(i, out var hvoWs);
 				// hvoWs should *always* be found in AllWritingSystems.
 				var ws = svcloc.WritingSystems.AllWritingSystems.SingleOrDefault(w => w.Handle == hvoWs);
 				paMultiString.AddString(ws?.Id, tss.Text);
@@ -55,10 +53,8 @@ namespace SIL.FieldWorks.PaObjects
 
 			for (var i = 0; i < msa.StringCount; i++)
 			{
-				int hvoWs;
-				var tss = msa.GetStringFromIndex(i, out hvoWs);
+				var tss = msa.GetStringFromIndex(i, out var hvoWs);
 				Texts.Add(tss.Text);
-
 				// hvoWs should *always* be found in AllWritingSystems.
 				var ws = svcloc.WritingSystems.AllWritingSystems.SingleOrDefault(w => w.Handle == hvoWs);
 				WsIds.Add(ws?.Id);
@@ -100,9 +96,6 @@ namespace SIL.FieldWorks.PaObjects
 		#endregion
 
 		/// <inheritdoc />
-		public override string ToString()
-		{
-			return Texts[0];
-		}
+		public override string ToString() => Texts[0];
 	}
 }

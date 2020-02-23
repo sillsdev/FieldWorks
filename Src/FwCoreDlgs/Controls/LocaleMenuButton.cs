@@ -69,10 +69,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string SelectedLocaleId
 		{
-			get
-			{
-				return m_selectedLocale;
-			}
+			get => m_selectedLocale;
 			set
 			{
 				// This gets called during initialization with null.
@@ -80,8 +77,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					return; // Probably initialization.
 				}
-				string displayName;
-				if (TryGetDisplayName(value, out displayName))
+				if (TryGetDisplayName(value, out var displayName))
 				{
 					Text = displayName;
 					m_selectedLocale = value;
@@ -94,7 +90,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		private bool TryGetDisplayName(string locale, out string displayName)
+		private static bool TryGetDisplayName(string locale, out string displayName)
 		{
 			try
 			{
@@ -124,8 +120,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
-			string dummyDisplayName;
-			return !TryGetDisplayName(localeId, out dummyDisplayName);
+			return !TryGetDisplayName(localeId, out _);
 		}
 
 		/// <summary>
@@ -157,8 +152,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			foreach (var locale in Locale.AvailableLocales)
 			{
 				var name = locale.GetDisplayName(displayLocale);
-				IList<IcuIdAndName> entries;
-				if (!result.TryGetValue(locale.Language, out entries))
+				if (!result.TryGetValue(locale.Language, out var entries))
 				{
 					entries = new List<IcuIdAndName>();
 					result[locale.Language] = entries;

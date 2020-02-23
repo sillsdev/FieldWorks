@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void NullConstructor()
 		{
-			var array = new CharEnumeratorForByteArray(null);
+			var unused = new CharEnumeratorForByteArray(null);
 		}
 	}
 }

@@ -131,8 +131,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public string ScanMsgLabelText
 		{
-			get { return lblScanMsg.Text; }
-			set { lblScanMsg.Text = value; }
+			get => lblScanMsg.Text;
+			set => lblScanMsg.Text = value;
 		}
 
 		/// <summary>
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridView TokenGrid
 		{
-			get { return m_tokenGrid; }
+			get => m_tokenGrid;
 			private set
 			{
 				if (m_tokenGrid != null)
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Font ContextFont
 		{
-			get { return colContextAfter.DefaultCellStyle.Font; }
+			get => colContextAfter.DefaultCellStyle.Font;
 			private set
 			{
 				if (value != null)
@@ -206,13 +206,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		public void AddContextInfo(ContextInfo contextInfo)
 		{
-			List<ContextInfo> list;
-			if (!m_contextInfoLists.TryGetValue(contextInfo.Key, out list))
+			if (!m_contextInfoLists.TryGetValue(contextInfo.Key, out var list))
 			{
 				list = new List<ContextInfo>();
 				m_contextInfoLists[contextInfo.Key] = list;
 			}
-
 			list.Add(contextInfo);
 		}
 		#endregion
@@ -264,9 +262,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-			string sKey;
-			GetContextInfo(e.RowIndex, out sKey, out m_currContextItem);
 
+			GetContextInfo(e.RowIndex, out var sKey, out m_currContextItem);
 			if (sKey == null || m_contextInfoLists == null || !m_contextInfoLists.TryGetValue(sKey, out m_currContextInfoList))
 			{
 				m_currContextInfoList = new List<ContextInfo>();

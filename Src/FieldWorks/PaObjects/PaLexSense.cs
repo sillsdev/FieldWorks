@@ -43,34 +43,31 @@ namespace SIL.FieldWorks.PaObjects
 			Source = lxSense.Source.Text;
 			ScientificName = lxSense.ScientificName.Text;
 
-			AnthroCodes = lxSense.AnthroCodesRC.Select(x => PaCmPossibility.Create(x));
-			DomainTypes = lxSense.DomainTypesRC.Select(x => PaCmPossibility.Create(x));
-			Usages = lxSense.UsageTypesRC.Select(x => PaCmPossibility.Create(x));
-			SemanticDomains = lxSense.SemanticDomainsRC.Select(x => PaCmPossibility.Create(x));
+			AnthroCodes = lxSense.AnthroCodesRC.Select(PaCmPossibility.Create);
+			DomainTypes = lxSense.DomainTypesRC.Select(PaCmPossibility.Create);
+			Usages = lxSense.UsageTypesRC.Select(PaCmPossibility.Create);
+			SemanticDomains = lxSense.SemanticDomainsRC.Select(PaCmPossibility.Create);
 			Status = PaCmPossibility.Create(lxSense.StatusRA);
 			SenseType = PaCmPossibility.Create(lxSense.SenseTypeRA);
 
 			ICmPossibility poss = null;
-			var msa = lxSense.MorphoSyntaxAnalysisRA;
-			if (msa is IMoDerivAffMsa)
+			switch (lxSense.MorphoSyntaxAnalysisRA)
 			{
-				poss = ((IMoDerivAffMsa)msa).FromPartOfSpeechRA;
-			}
-			else if (msa is IMoDerivStepMsa)
-			{
-				poss = ((IMoDerivStepMsa)msa).PartOfSpeechRA;
-			}
-			else if (msa is IMoInflAffMsa)
-			{
-				poss = ((IMoInflAffMsa)msa).PartOfSpeechRA;
-			}
-			else if (msa is IMoStemMsa)
-			{
-				poss = ((IMoStemMsa)msa).PartOfSpeechRA;
-			}
-			else if (msa is IMoUnclassifiedAffixMsa)
-			{
-				poss = ((IMoUnclassifiedAffixMsa)msa).PartOfSpeechRA;
+				case IMoDerivAffMsa affMsa:
+					poss = affMsa.FromPartOfSpeechRA;
+					break;
+				case IMoDerivStepMsa stepMsa:
+					poss = stepMsa.PartOfSpeechRA;
+					break;
+				case IMoInflAffMsa affMsa:
+					poss = affMsa.PartOfSpeechRA;
+					break;
+				case IMoStemMsa stemMsa:
+					poss = stemMsa.PartOfSpeechRA;
+					break;
+				case IMoUnclassifiedAffixMsa affixMsa:
+					poss = affixMsa.PartOfSpeechRA;
+					break;
 			}
 			if (poss != null)
 			{

@@ -36,8 +36,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 			if (providerType == kLexicalProviderType)
 			{
-				var url = LexicalProviderManager.UrlPrefix + LexicalProviderManager.FixPipeHandle(FwUtils.GeneratePipeHandle(projhandle + ":LP"));
-				var projUri = new Uri(url);
+				var projUri = new Uri($"{LexicalProviderManager.UrlPrefix}{LexicalProviderManager.FixPipeHandle(FwUtils.GeneratePipeHandle($"{projhandle}:LP"))}");
 				LexicalProviderManager.StartProvider(projUri, new LexicalProviderImpl(m_cache), typeof(ILexicalProvider));
 				return projUri;
 			}

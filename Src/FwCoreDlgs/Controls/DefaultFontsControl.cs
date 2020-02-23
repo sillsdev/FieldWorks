@@ -43,9 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var installedFontCollection = new InstalledFontCollection())
 			{
 				// Mono doesn't sort the font names currently 20100322. Workaround for FWNX-273: Fonts not in alphabetical order
-				var fontFamilies = installedFontCollection.Families.OrderBy(family => family.Name);
-
-				foreach (var family in fontFamilies)
+				foreach (var family in installedFontCollection.Families.OrderBy(family => family.Name))
 				{
 					// The .NET framework is unforgiving of using a font that doesn't support the
 					// "regular"  style.  So we won't allow the user to even see them...
@@ -84,10 +82,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public CoreWritingSystemDefinition WritingSystem
 		{
-			get
-			{
-				return m_ws;
-			}
+			get => m_ws;
 			set
 			{
 				m_ws = value;
@@ -100,14 +95,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string DefaultNormalFont
 		{
-			get
-			{
-				return m_defaultFontComboBox.Text;
-			}
-			set
-			{
-				m_defaultFontComboBox.Text = value;
-			}
+			get => m_defaultFontComboBox.Text;
+			set => m_defaultFontComboBox.Text = value;
 		}
 
 		internal ComboBox DefaultFontComboBox => m_defaultFontComboBox;
@@ -257,8 +246,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// Finding a font missing should not result in persisting a font name change
 				if (string.Format(Strings.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
 				{
-					FontDefinition font;
-					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out font))
+					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out var font))
 					{
 						font = new FontDefinition(m_defaultFontComboBox.Text);
 					}

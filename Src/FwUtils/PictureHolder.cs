@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
@@ -27,12 +28,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public IPicture GetComPicture(string imagePath)
 		{
-			IPicture comPicture;
 			if (m_previousPictures == null)
 			{
 				m_previousPictures = new Dictionary<string, IPicture>();
 			}
-			if (m_previousPictures.TryGetValue(imagePath, out comPicture))
+			if (m_previousPictures.TryGetValue(imagePath, out var comPicture))
 			{
 				return comPicture;
 			}
@@ -60,12 +60,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public IPicture GetPicture(string key, Image source)
 		{
-			IPicture comPicture;
 			if (m_previousPictures == null)
 			{
 				m_previousPictures = new Dictionary<string, IPicture>();
 			}
-			if (!m_previousPictures.TryGetValue(key, out comPicture))
+			if (!m_previousPictures.TryGetValue(key, out var comPicture))
 			{
 				comPicture = (IPicture)OLEConvert.ToOLE_IPictureDisp(source);
 				m_previousPictures[key] = comPicture;
@@ -105,9 +104,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (m_previousPictures != null)
 				{
-					foreach (var kvp in m_previousPictures)
+					foreach (var picture in m_previousPictures.Select(kvp => kvp.Value))
 					{
-						var picture = kvp.Value;
 						ReleasePicture(picture);
 					}
 					m_previousPictures.Clear();
@@ -121,8 +119,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public void ReleasePicture(string key)
 		{
-			IPicture val;
-			if (m_previousPictures == null || !m_previousPictures.TryGetValue(key, out val))
+			if (m_previousPictures == null || !m_previousPictures.TryGetValue(key, out var val))
 			{
 				return;
 			}

@@ -167,7 +167,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 							}
 						}
 					}
-
 					// 2. Group elements can be nested, so merge them, too.
 					MergeCustomGroups(srcMatchingGroupNode, customGroupNode.Elements("group"));
 				}
@@ -176,7 +175,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string GetTxtAttributeValue(XElement element)
 		{
-			return XmlUtils.GetOptionalAttributeValue(element, "txt", XmlUtils.GetMandatoryAttributeValue(element, "id")); // 'id' is default, if no 'txt' attribute is present.
+			// 'id' is default, if no 'txt' attribute is present.
+			return XmlUtils.GetOptionalAttributeValue(element, "txt", XmlUtils.GetMandatoryAttributeValue(element, "id"));
 		}
 
 		/// <summary>
@@ -214,11 +214,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				throw new ApplicationException($"Could not find the root node, <strings> in {baseDirectory}");
 			}
-			string inheritPath = XmlUtils.GetOptionalAttributeValue(node, "inheritPath");
+			var inheritPath = XmlUtils.GetOptionalAttributeValue(node, "inheritPath");
 			if (!string.IsNullOrEmpty(inheritPath))
 			{
-				string path = Path.Combine(baseDirectory, inheritPath);
-				m_parent = new StringTable(path);
+				m_parent = new StringTable(Path.Combine(baseDirectory, inheritPath));
 			}
 		}
 
@@ -289,7 +288,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 
-			return items.ContainsKey(id) ? items[id] : m_parent != null ? m_parent.GetStringWithXPath(id, rootXPathFragment) : "*" + id + "*";
+			return items.ContainsKey(id) ? items[id] : m_parent != null ? m_parent.GetStringWithXPath(id, rootXPathFragment) : $"*{id}*";
 		}
 
 		/// <summary>
@@ -302,7 +301,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string GetStringWithXPath(string id, string groupXPathFragment)
 		{
 			id = id.Trim();
-			var node = m_document.XPathSelectElement("strings/" + groupXPathFragment + "string[@id='" + id + "']");
+			var node = m_document.XPathSelectElement($"strings/{groupXPathFragment}string[@id='{id}']");
 			if (node == null)
 			{
 				if (m_parent != null)
@@ -310,7 +309,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return m_parent.GetStringWithXPath(id, groupXPathFragment);
 				}
 				//not found
-				return "*" + id + "*";
+				return $"*{id}*";
 			}
 			return GetTxtAttributeValue(node);
 		}
@@ -380,7 +379,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var names = simplePath.Split('/');
 			foreach (var name in names)
 			{
-				path += "group[@id = '" + name.Trim() + "']/";
+				path += $"group[@id = '{name.Trim()}']/";
 			}
 			return path;
 		}
@@ -414,11 +413,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return sValue;
 			}
 			var sLocValue = GetStringWithRootXPath(sValue, GetXPathFragmentFromSimpleNotation("LocalizedLiterals"), false);
-			if (string.IsNullOrWhiteSpace(sLocValue))
-			{
-				return sValue;
-			}
-			return sLocValue == $"*{sValue}*" ? sValue : sLocValue;
+			return string.IsNullOrWhiteSpace(sLocValue) ? sValue : sLocValue == $"*{sValue}*" ? sValue : sLocValue;
 		}
 	}
 }

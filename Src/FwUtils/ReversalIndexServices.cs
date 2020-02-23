@@ -41,8 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var files = Directory.GetFiles(newWsFilePath, "*" + ConfigFileExtension, SearchOption.AllDirectories);
 				foreach (var file in files)
 				{
-					XAttribute wsAtt;
-					GetWsAttributeFromFile(file, out wsAtt);
+					GetWsAttributeFromFile(file, out var wsAtt);
 					if (wsAtt != null && !string.IsNullOrEmpty(wsAtt.Value) && !analysisWsArray.Contains(wsAtt.Value))
 					{
 						File.Delete(file);
@@ -65,8 +64,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWs + ConfigFileExtension);
 				if (File.Exists(newWsCompleteFilePath))
 				{
-					XAttribute wsAtt;
-					var configDoc = GetWsAttributeFromFile(newWsCompleteFilePath, out wsAtt);
+					var configDoc = GetWsAttributeFromFile(newWsCompleteFilePath, out var wsAtt);
 					if (wsAtt == null)
 					{
 						// How did we get here??? Only AllReversalIndexes should have no WS! Best I can figure, this is a pre-wsAtt config
@@ -134,8 +132,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return Guid.Empty;
 			}
-			Guid guid;
-			if (!Guid.TryParse(sGuid, out guid))
+			if (!Guid.TryParse(sGuid, out var guid))
 			{
 				return Guid.Empty;
 			}

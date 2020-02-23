@@ -93,8 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var categorizer = new FwCharacterCategorizer(validChars);
 
-			var wordsAndPunc = categorizer.WordAndPuncts("");
-
+			var wordsAndPunc = categorizer.WordAndPuncts(string.Empty);
 			// We expect one word to be returned.
 			Assert.AreEqual(0, wordsAndPunc.Count);
 		}

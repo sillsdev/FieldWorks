@@ -368,8 +368,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
 		public static bool IsFlexBridgeInstalled()
 		{
-			var fullName = FullFieldWorksBridgePath();
-			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
+			return FileUtils.FileExists(FullFieldWorksBridgePath()); // Flex Bridge exe has to exist
 		}
 
 		/// <summary>

@@ -205,11 +205,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ComboBoxState State
 		{
-			get
-			{
-				return m_state;
-			}
-
+			get => m_state;
 			set
 			{
 				m_state = value;
@@ -256,11 +252,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool HasBorder
 		{
-			get
-			{
-				return m_hasBorder;
-			}
-
+			get => m_hasBorder;
 			set
 			{
 				m_hasBorder = value;
@@ -290,11 +282,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new BorderStyle BorderStyle
 		{
-			get
-			{
-				return base.BorderStyle;
-			}
-
+			get => base.BorderStyle;
 			set
 			{
 				if (!Application.RenderWithVisualStyles)
@@ -317,11 +305,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
-			get
-			{
-				return m_textPadding;
-			}
-
+			get => m_textPadding;
 			set
 			{
 				m_textPadding = value;
@@ -334,11 +318,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool UseVisualStyleBackColor
 		{
-			get
-			{
-				return m_useVisualStyleBackColor;
-			}
-
+			get => m_useVisualStyleBackColor;
 			set
 			{
 				m_useVisualStyleBackColor = value;
@@ -349,8 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-
-		VisualStyleRenderer Renderer
+		private VisualStyleRenderer Renderer
 		{
 			get
 			{
@@ -453,14 +432,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return TextBox.StyleSheet;
-			}
-			set
-			{
-				TextBox.StyleSheet = value;
-			}
+			get => TextBox.StyleSheet;
+			set => TextBox.StyleSheet = value;
 		}
 
 		/// <summary />
@@ -478,10 +451,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <inheritdoc />
 		public override Color BackColor
 		{
-			get
-			{
-				return base.BackColor;
-			}
+			get => base.BackColor;
 			set
 			{
 				m_useVisualStyleBackColor = false;
@@ -496,10 +466,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <inheritdoc />
 		public override Color ForeColor
 		{
-			get
-			{
-				return base.ForeColor;
-			}
+			get => base.ForeColor;
 			set
 			{
 				if (TextBox != null)
@@ -521,10 +488,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
-			get
-			{
-				return TextBox == null ? string.Empty : TextBox.Text;
-			}
+			get => TextBox == null ? string.Empty : TextBox.Text;
 			set
 			{
 				if (!DesignMode)
@@ -542,10 +506,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public virtual ComboBoxStyle DropDownStyle
 		{
-			get
-			{
-				return m_dropDownStyle;
-			}
+			get => m_dropDownStyle;
 			set
 			{
 				if (value == m_dropDownStyle)
@@ -565,37 +526,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual ITsString Tss
 		{
-			get
-			{
-				return TextBox.Tss;
-			}
-			set
-			{
-				TextBox.Tss = value;
-			}
+			get => TextBox.Tss;
+			set => TextBox.Tss = value;
 		}
 
 		/// <summary />
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int WritingSystemCode
 		{
-			get
-			{
-				return TextBox.WritingSystemCode;
-			}
-			set
-			{
-				TextBox.WritingSystemCode = value;
-			}
+			get => TextBox.WritingSystemCode;
+			set => TextBox.WritingSystemCode = value;
 		}
 
 		/// <summary />
 		public int DropDownWidth
 		{
-			get
-			{
-				return m_dropDownBox.Form.Width;
-			}
+			get => m_dropDownBox.Form.Width;
 			set
 			{
 				m_fListWidthSet = true;
@@ -606,10 +552,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary />
 		public bool DroppedDown
 		{
-			get
-			{
-				return m_dropDownBox.Form.Visible;
-			}
+			get => m_dropDownBox.Form.Visible;
 			set
 			{
 				if (value)
@@ -630,14 +573,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return TextBox.WritingSystemFactory;
-			}
-			set
-			{
-				TextBox.WritingSystemFactory = value;
-			}
+			get => TextBox.WritingSystemFactory;
+			set => TextBox.WritingSystemFactory = value;
 		}
 
 		/// <summary>
@@ -651,10 +588,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override Font Font
 		{
-			get
-			{
-				return base.Font;
-			}
+			get => base.Font;
 			set
 			{
 				TextBox.Font = value;
@@ -726,14 +660,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool AdjustStringHeight
 		{
-			get
-			{
-				return TextBox.AdjustStringHeight;
-			}
-			set
-			{
-				TextBox.AdjustStringHeight = value;
-			}
+			get => TextBox.AdjustStringHeight;
+			set => TextBox.AdjustStringHeight = value;
 		}
 
 		/// <summary>

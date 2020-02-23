@@ -215,10 +215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public string FontName
 		{
-			get
-			{
-				return m_fontName;
-			}
+			get => m_fontName;
 			set
 			{
 				if (m_fontName == value)
@@ -271,8 +268,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					Enabled = false;
 					return;
 				}
-				int cfid;
-				m_featureEngine.GetFeatureIDs(0, null, out cfid);
+				m_featureEngine.GetFeatureIDs(0, null, out var cfid);
 				switch (cfid)
 				{
 					case 0:
@@ -579,9 +575,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void OnClick(EventArgs e)
 		{
 			var menu = components.ContextMenu("ContextMenu");
-			int cfid;
-			m_featureEngine.GetFeatureIDs(0, null, out cfid);
-
+			m_featureEngine.GetFeatureIDs(0, null, out var cfid);
 			// Get the list of features.
 			using (var idsM = MarshalEx.ArrayToNative<int>(cfid))
 			{
@@ -599,8 +593,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					continue; // Don't show Graphite built-in 'lang' feature.
 				}
-				string label;
-				m_featureEngine.GetFeatureLabel(id, kUiCodePage, out label);
+
+				m_featureEngine.GetFeatureLabel(id, kUiCodePage, out var label);
 				if (label.Length == 0)
 				{
 					//Create backup default string, ie, "Feature #1".
@@ -628,11 +622,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					// Minimum requirement is that there are two states and the values have
 					// ids of 0 and 1. We further require that the actual values belong to a
 					// natural boolean set.
-					string valueLabelT; // Label corresponding to 'true' etc, the checked value
-					m_featureEngine.GetFeatureValueLabel(id, 1, kUiCodePage, out valueLabelT);
-					string valueLabelF; // Label corresponding to 'false' etc, the unchecked val.
-					m_featureEngine.GetFeatureValueLabel(id, 0, kUiCodePage, out valueLabelF);
-
+					m_featureEngine.GetFeatureValueLabel(id, 1, kUiCodePage, out var valueLabelT);
+					m_featureEngine.GetFeatureValueLabel(id, 0, kUiCodePage, out var valueLabelF);
 					// Enhance: these should be based on a resource, or something that depends
 					// on the code page, if the code page is ever not constant.
 					switch (valueLabelT.ToLowerInvariant())
@@ -665,8 +656,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					var menuSub = new FontFeatureMenuItem(label, ifeat, this);
 					foreach (var valueId in valueIds)
 					{
-						string valueLabel;
-						m_featureEngine.GetFeatureValueLabel(id, valueId, kUiCodePage, out valueLabel);
+						m_featureEngine.GetFeatureValueLabel(id, valueId, kUiCodePage, out var valueLabel);
 						if (valueLabel.Length == 0)
 						{
 							// Create backup default string.

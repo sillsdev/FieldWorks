@@ -25,14 +25,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private struct ActCtx
 		{
 			public int cbSize;
-			public uint dwFlags;
+			private uint dwFlags;
 			public string lpSource;
-			public ushort wProcessorArchitecture;
-			public short wLangId;
-			public string lpAssemblyDirectory;
-			public string lpResourceName;
-			public string lpApplicationName;
-			public IntPtr hModule;
+			private ushort wProcessorArchitecture;
+			private short wLangId;
+			private string lpAssemblyDirectory;
+			private string lpResourceName;
+			private string lpApplicationName;
+			private IntPtr hModule;
 		}
 
 		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "CreateActCtxW")]

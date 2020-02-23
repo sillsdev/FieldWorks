@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Reporting;
 
@@ -25,10 +26,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary />
 		public GraphicsManager(Control parent)
 		{
-			if (parent == null)
-			{
-				throw new ArgumentNullException(nameof(parent));
-			}
+			Guard.AgainstNull(parent, nameof(parent));
 
 			m_parent = parent;
 		}

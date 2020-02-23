@@ -186,8 +186,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public string Comment
 		{
-			get { return m_comment.Text; }
-			set { m_comment.Text = value; }
+			get => m_comment.Text;
+			set => m_comment.Text = value;
 		}
 
 		/// <summary>
@@ -195,8 +195,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public bool IncludeConfigurationSettings
 		{
-			get { return m_configurationSettings.Checked; }
-			set { m_configurationSettings.Checked = value; }
+			get => m_configurationSettings.Checked;
+			set => m_configurationSettings.Checked = value;
 		}
 
 		/// <summary>
@@ -204,8 +204,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public bool IncludeLinkedFiles
 		{
-			get { return m_linkedFiles.Checked; }
-			set { m_linkedFiles.Checked = value; }
+			get => m_linkedFiles.Checked;
+			set => m_linkedFiles.Checked = value;
 		}
 
 		/// <summary>
@@ -213,8 +213,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public bool IncludeSupportingFiles
 		{
-			get { return m_supportingFiles.Checked; }
-			set { m_supportingFiles.Checked = value; }
+			get => m_supportingFiles.Checked;
+			set => m_supportingFiles.Checked = value;
 		}
 
 		///<summary>
@@ -222,8 +222,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///</summary>
 		public bool IncludeSpellCheckAdditions
 		{
-			get { return m_spellCheckAdditions.Checked; }
-			set { m_spellCheckAdditions.Checked = value; }
+			get => m_spellCheckAdditions.Checked;
+			set => m_spellCheckAdditions.Checked = value;
 		}
 
 		/// <summary>
@@ -231,8 +231,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		public string DestinationFolder
 		{
-			get { return m_destinationFolder.Text; }
-			set { m_destinationFolder.Text = value; }
+			get => m_destinationFolder.Text;
+			set => m_destinationFolder.Text = value;
 		}
 		#endregion
 	}

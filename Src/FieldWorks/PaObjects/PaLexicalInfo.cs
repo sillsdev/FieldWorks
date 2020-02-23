@@ -111,12 +111,8 @@ namespace SIL.FieldWorks.PaObjects
 			{
 				do
 				{
-					FieldWorks.RunOnRemoteClients(FieldWorks.kPaRemoteRequest, requestor =>
-					{
-						return LoadFwDataForPa((PaRemoteRequest)requestor, name, server, loadOnlyWs,
-							timeToWaitForLoadingData, newProcessStarted, out foundFwProcess);
-					});
 
+					FieldWorks.RunOnRemoteClients(FieldWorks.kPaRemoteRequest, requestor => LoadFwDataForPa((PaRemoteRequest)requestor, name, server, loadOnlyWs, timeToWaitForLoadingData, newProcessStarted, out foundFwProcess));
 					if (foundFwProcess)
 					{
 						return true;
@@ -152,9 +148,7 @@ namespace SIL.FieldWorks.PaObjects
 			return false;
 		}
 
-		private bool LoadFwDataForPa(PaRemoteRequest requestor, string name, string server,
-			bool loadOnlyWs, int timeToWaitForLoadingData,
-			bool newProcessStarted, out bool foundFwProcess)
+		private bool LoadFwDataForPa(PaRemoteRequest requestor, string name, string server, bool loadOnlyWs, int timeToWaitForLoadingData, bool newProcessStarted, out bool foundFwProcess)
 		{
 			foundFwProcess = false;
 

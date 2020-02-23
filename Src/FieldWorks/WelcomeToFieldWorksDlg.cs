@@ -66,8 +66,8 @@ namespace SIL.FieldWorks
 
 		public bool OpenLastProjectCheckboxIsChecked
 		{
-			get { return alwaysOpenLastProjectCheckBox.Checked; }
-			set { alwaysOpenLastProjectCheckBox.Checked = value; }
+			get => alwaysOpenLastProjectCheckBox.Checked;
+			set => alwaysOpenLastProjectCheckBox.Checked = value;
 		}
 
 		public void SetFirstOrLastProjectText(bool firstTimeOpening)
@@ -77,13 +77,13 @@ namespace SIL.FieldWorks
 
 		public string ProjectLinkUiName
 		{
-			get { return m_openSampleOrLastProjectLink.Text; }
-			set { m_openSampleOrLastProjectLink.Text = value; }
+			get => m_openSampleOrLastProjectLink.Text;
+			set => m_openSampleOrLastProjectLink.Text = value;
 		}
 
 		private string SetCheckboxText
 		{
-			set { alwaysOpenLastProjectCheckBox.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value); }
+			set => alwaysOpenLastProjectCheckBox.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value);
 		}
 
 		/// <summary>
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks
 			mainVerticalLayout.Width = shrunkWidth;
 
 			var heightOfVisibleControls = 0;
-			foreach (Control control in this.mainVerticalLayout.Controls)
+			foreach (Control control in mainVerticalLayout.Controls)
 			{
 				if (control.Visible == false)
 				{
