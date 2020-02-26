@@ -315,6 +315,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
 			Assert.IsFalse(args.HasLinkInformation);
+			StringAssert.Contains("database%3dmonkey%26", args.ToString(), "missing & after project.");
 		}
 
 		///--------------------------------------------------------------------------------------
